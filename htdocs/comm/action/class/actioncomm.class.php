@@ -579,22 +579,25 @@ class ActionComm extends CommonObject
 			// Now insert assigned users
 			if (!$error) {
 				//dol_syslog(var_export($this->userassigned, true));
+				$already_inserted = array();
 				foreach ($this->userassigned as $key => $val) {
 					if (!is_array($val)) {	// For backward compatibility when val=id
 						$val = array('id'=>$val);
 					}
 
 					if ($val['id'] > 0) {
+						if (!empty($already_inserted[$val['id']])) continue;
+
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
 						$sql .= " VALUES(".$this->id.", 'user', ".$val['id'].", ".(empty($val['mandatory']) ? '0' : $val['mandatory']).", ".(empty($val['transparency']) ? '0' : $val['transparency']).", ".(empty($val['answer_status']) ? '0' : $val['answer_status']).")";
 
 						$resql = $this->db->query($sql);
 						if (!$resql) {
-							if ($this->db->errno() != 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-								$error++;
-								dol_syslog('Error to process userassigned: ' . $this->db->lasterror(), LOG_ERR);
-								$this->errors[] = $this->db->lasterror();
-							}
+							$error++;
+							dol_syslog('Error to process userassigned: ' . $this->db->lasterror(), LOG_ERR);
+							$this->errors[] = $this->db->lasterror();
+						} else {
+							$already_inserted[$val['id']] = true;
 						}
 						//var_dump($sql);exit;
 					}
@@ -603,17 +606,20 @@ class ActionComm extends CommonObject
 
 			if (!$error) {
 				if (!empty($this->socpeopleassigned)) {
+					$already_inserted = array();
 					foreach ($this->socpeopleassigned as $id => $val) {
+						if (!empty($already_inserted[$val['id']])) continue;
+
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
 						$sql .= " VALUES(".$this->id.", 'socpeople', ".$id.", 0, 0, 0)";
 
 						$resql = $this->db->query($sql);
 						if (!$resql) {
-							if ($this->db->errno() != 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-								$error++;
-								dol_syslog('Error to process socpeopleassigned: ' . $this->db->lasterror(), LOG_ERR);
-								$this->errors[] = $this->db->lasterror();
-							}
+							$error++;
+							dol_syslog('Error to process socpeopleassigned: ' . $this->db->lasterror(), LOG_ERR);
+							$this->errors[] = $this->db->lasterror();
+						} else {
+							$already_inserted[$val['id']] = true;
 						}
 					}
 				}
@@ -1147,19 +1153,22 @@ class ActionComm extends CommonObject
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_resources where fk_actioncomm = ".$this->id." AND element_type = 'user'";
 				$resql = $this->db->query($sql);
 
+				$already_inserted = array();
 				foreach ($this->userassigned as $key => $val) {
 					if (!is_array($val)) {	// For backward compatibility when val=id
 						$val = array('id'=>$val);
 					}
+					if (!empty($already_inserted[$val['id']])) continue;
+
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
 					$sql .= " VALUES(".$this->id.", 'user', ".$val['id'].", ".(empty($val['mandatory']) ? '0' : $val['mandatory']).", ".(empty($val['transparency']) ? '0' : $val['transparency']).", ".(empty($val['answer_status']) ? '0' : $val['answer_status']).")";
 
 					$resql = $this->db->query($sql);
 					if (!$resql) {
-						if ($this->db->errno() != 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-							$error++;
-							$this->errors[] = $this->db->lasterror();
-						}
+						$error++;
+						$this->errors[] = $this->db->lasterror();
+					} else {
+						$already_inserted[$val['id']] = true;
 					}
 					//var_dump($sql);exit;
 				}
@@ -1170,16 +1179,19 @@ class ActionComm extends CommonObject
 				$resql = $this->db->query($sql);
 
 				if (!empty($this->socpeopleassigned)) {
+					$already_inserted = array();
 					foreach (array_keys($this->socpeopleassigned) as $id) {
+						if (!empty($already_inserted[$val['id']])) continue;
+
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
 						$sql .= " VALUES(".$this->id.", 'socpeople', ".$id.", 0, 0, 0)";
 
 						$resql = $this->db->query($sql);
 						if (!$resql) {
-							if ($this->db->errno() != 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-								$error++;
-								$this->errors[] = $this->db->lasterror();
-							}
+							$error++;
+							$this->errors[] = $this->db->lasterror();
+						} else {
+							$already_inserted[$val['id']] = true;
 						}
 					}
 				}
