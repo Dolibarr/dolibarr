@@ -185,7 +185,10 @@ class Website extends CommonObject
 		if (is_array($tmparray)) {
 			foreach ($tmparray as $key => $val) {
 				// It possible we have empty val here if postparam WEBSITE_OTHERLANG is empty or set like this : 'en,,sv' or 'en,sv,'
-				if (empty(trim($sublang))) continue;
+				if (empty(trim($val))) {
+					unset($tmparray[$key]);
+					continue;
+				}
 				$tmparray[$key] = preg_replace('/[_-].*$/', '', trim($val)); // en_US or en-US -> en
 			}
 			$this->otherlang = join(',', $tmparray);
@@ -497,7 +500,10 @@ class Website extends CommonObject
 		if (is_array($tmparray)) {
 			foreach ($tmparray as $key => $val) {
 				// It possible we have empty val here if postparam WEBSITE_OTHERLANG is empty or set like this : 'en,,sv' or 'en,sv,'
-				if (empty(trim($val))) continue;
+				if (empty(trim($val))) {
+					unset($tmparray[$key]);
+					continue;
+				}
 				$tmparray[$key] = preg_replace('/[_-].*$/', '', trim($val)); // en_US or en-US -> en
 			}
 			$this->otherlang = join(',', $tmparray);
