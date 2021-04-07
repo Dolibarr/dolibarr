@@ -1572,126 +1572,270 @@ class Form
 	/**
 	 *  Return list of all contacts (for a third party or all)
 	 *
-	 *  @param	int		$socid      	Id ot third party or 0 for all
-	 *  @param  string	$selected   	Id contact pre-selectionne
-	 *  @param  string	$htmlname  	    Name of HTML field ('none' for a not editable field)
-	 *  @param  int		$showempty      0=no empty value, 1=add an empty value, 2=add line 'Internal' (used by user edit), 3=add an empty value only if more than one record into list
-	 *  @param  string	$exclude        List of contacts id to exclude
-	 *  @param	string	$limitto		Disable answers that are not id in this array list
-	 *  @param	integer	$showfunction   Add function into label
-	 *  @param	string	$moreclass		Add more class to class style
-	 *  @param	integer	$showsoc	    Add company into label
-	 *  @param	int		$forcecombo		Force to use combo box
-	 *  @param	array	$events			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
-	 *  @param	bool	$options_only	Return options only (for ajax treatment)
-	 *  @param	string	$moreparam		Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
-	 *  @param	string	$htmlid			Html id to use instead of htmlname
-	 *  @return	int						<0 if KO, Nb of contact in list if OK
-	 *  @deprecated						You can use selectcontacts directly (warning order of param was changed)
+	 * @param	int		$socid      			Id ot third party or 0 for all
+	 * @param	string	$selected   			Id contact pre-selectionne
+	 * @param	string	$htmlname  	    		Name of HTML field ('none' for a not editable field)
+	 * @param	int		$showempty      		0=no empty value, 1=add an empty value, 2=add line 'Internal' (used by user edit), 3=add an empty value only if more than one record into list
+	 * @param	string	$exclude        		List of contacts id to exclude
+	 * @param	string	$limitto				Disable answers that are not id in this array list
+	 * @param	integer	$showfunction   		Add function into label
+	 * @param	string	$moreclass				Add more class to class style
+	 * @param	integer	$showsoc	    		Add company into label
+	 * @param	int		$forcecombo				Force to use combo box
+	 * @param	array	$events					Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+	 * @param	bool	$options_only			Return options only (for ajax treatment)
+	 * @param	string	$moreparam				Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
+	 * @param	string	$htmlid					Html id to use instead of htmlname
+	 * @param	bool	$multiple				add [] in the name of element and add 'multiple' attribut
+	 * @param	int		$disableifempty			Set tag 'disabled' on select if there is no choice
+	 * @param	bool	$new_ajax				Enabled new ajax search method
+	 * @param	string	$thirdparty_htmlname	Name of HTML field of the linked thirparty input
+	 * @param	int		$limit					Maximum number of elements
+	 * @param	int		$hidelabel				Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
+	 * @param	string	$ajaxurl				Url for ajax request in ajax_combobox()
+	 * @param	array	$ajaxparameters			Additionnals parameters for ajax request in ajax_combobox()
+	 * @param	array	$ajaxoptions			Options for ajax_autocompleter // Not used for this moment todo add ajaxoptions to ajax_combobox()
+	 * @return	int								<0 if KO, Nb of contact in list if OK
+	 * @deprected								You can use selectcontacts directly (warning order of param was changed)
 	 */
-	public function select_contacts($socid, $selected = '', $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $moreclass = '', $showsoc = 0, $forcecombo = 0, $events = array(), $options_only = false, $moreparam = '', $htmlid = '')
+	public function select_contacts($socid, $selected = '', $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '',
+									$showfunction = 0, $moreclass = '', $showsoc = 0, $forcecombo = 0, $events = array(), $options_only = false, $moreparam = '', $htmlid = '',
+									$multiple = false, $disableifempty = 0, $new_ajax = false, $thirdparty_htmlname = '', $limit = 20, $hidelabel = 1,
+									$ajaxurl = DOL_URL_ROOT . '/contact/ajax/contact.php', $ajaxparameters = array(), $ajaxoptions = array())
 	{
 		// phpcs:enable
-		print $this->selectcontacts($socid, $selected, $htmlname, $showempty, $exclude, $limitto, $showfunction, $moreclass, $options_only, $showsoc, $forcecombo, $events, $moreparam, $htmlid);
+		print $this->selectcontacts($socid, $selected, $htmlname, $showempty, $exclude, $limitto, $showfunction,
+			$moreclass, $options_only, $showsoc, $forcecombo, $events, $moreparam, $htmlid,
+			$multiple, $disableifempty, $new_ajax, $thirdparty_htmlname, $limit, $hidelabel, $ajaxurl, $ajaxparameters, $ajaxoptions);
 		return $this->num;
 	}
 
 	/**
-	 *	Return HTML code of the SELECT of list of all contacts (for a third party or all).
-	 *  This also set the number of contacts found into $this->num
+	 *	Output html form to select a contact
 	 *
-	 * @since 9.0 Add afterSelectContactOptions hook
-	 *
-	 *	@param	int			$socid      	Id ot third party or 0 for all or -1 for empty list
-	 *	@param  array|int	$selected   	Array of ID of pre-selected contact id
-	 *	@param  string		$htmlname  	    Name of HTML field ('none' for a not editable field)
-	 *	@param  int			$showempty     	0=no empty value, 1=add an empty value, 2=add line 'Internal' (used by user edit), 3=add an empty value only if more than one record into list
-	 *	@param  string		$exclude        List of contacts id to exclude
-	 *	@param	string		$limitto		Disable answers that are not id in this array list
-	 *	@param	integer		$showfunction   Add function into label
-	 *	@param	string		$moreclass		Add more class to class style
-	 *	@param	bool		$options_only	Return options only (for ajax treatment)
-	 *	@param	integer		$showsoc	    Add company into label
-	 * 	@param	int			$forcecombo		Force to use combo box (so no ajax beautify effect)
-	 *  @param	array		$events			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
-	 *  @param	string		$moreparam		Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
-	 *  @param	string		$htmlid			Html id to use instead of htmlname
-	 *  @param	bool		$multiple		add [] in the name of element and add 'multiple' attribut
-	 *  @param	integer		$disableifempty Set tag 'disabled' on select if there is no choice
-	 *	@return	 int|string					<0 if KO, HTML with select string if OK.
+	 * @param	int					$socid      			Id ot third party or 0 for all or -1 for empty list or -2 for without third party
+	 * @param	array|int|string	$selected   			Array of ID of pre-selected contact id
+	 * @param	string				$htmlname  	    		Name of HTML field ('none' for a not editable field)
+	 * @param	int					$showempty     			0=no empty value, 1=add an empty value, 2=add line 'Internal' (used by user edit), 3=add an empty value only if more than one record into list
+	 * @param	string				$exclude        		List of contacts id to exclude
+	 * @param	string				$limitto				Disable answers that are not id in this array list
+	 * @param	integer				$showfunction   		Add function into label
+	 * @param	string				$moreclass				Add more class to class style
+	 * @param	bool				$options_only			Return options only (for ajax treatment)
+	 * @param	integer				$showsoc	    		Add company into label
+	 * @param	int					$forcecombo				Force to use combo box (so no ajax beautify effect)
+	 * @param	array				$events					Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+	 * @param	string				$moreparam				Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
+	 * @param	string				$htmlid					Html id to use instead of htmlname
+	 * @param	bool				$multiple				add [] in the name of element and add 'multiple' attribut
+	 * @param	int					$disableifempty			Set tag 'disabled' on select if there is no choice
+	 * @param	bool				$new_ajax				Enabled new ajax search method
+	 * @param	string				$thirdparty_htmlname	Name of HTML field of the linked thirparty input
+	 * @param	int					$limit					Maximum number of elements
+	 * @param	int					$hidelabel				Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
+	 * @param	string				$ajaxurl				Url for ajax request in ajax_combobox()
+	 * @param	array				$ajaxparameters			Additionnals parameters for ajax request in ajax_combobox()
+	 * @param	array				$ajaxoptions			Options for ajax_autocompleter // Not used for this moment todo add ajaxoptions to ajax_combobox()
+	 * @return	string										HTML string with select box for contact
 	 */
-	public function selectcontacts($socid, $selected = '', $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $moreclass = '', $options_only = false, $showsoc = 0, $forcecombo = 0, $events = array(), $moreparam = '', $htmlid = '', $multiple = false, $disableifempty = 0)
+	public function selectcontacts($socid, $selected = '', $htmlname = 'contactid', $showempty = 0, $exclude = '',
+								   $limitto = '', $showfunction = 0, $moreclass = '', $options_only = false,
+								   $showsoc = 0, $forcecombo = 0, $events = array(), $moreparam = '', $htmlid = '',
+								   $multiple = false, $disableifempty = 0, $new_ajax = false, $thirdparty_htmlname = '', $limit = 20, $hidelabel = 1,
+								   $ajaxurl = DOL_URL_ROOT . '/contact/ajax/contact.php', $ajaxparameters = array(), $ajaxoptions = array())
+	{
+		global $conf, $user, $langs;
+
+		$out = '';
+
+		if (preg_match('/(\S|^)multiple(\S|$)/', $moreparam)) {
+			$moreparam = trim(preg_replace('/(\S|^)multiple(\S|$)/', '', $moreparam));
+			$multiple = true;
+		}
+
+		if (!empty($conf->use_javascript_ajax) && !empty($conf->global->CONTACT_USE_SEARCH_TO_SELECT) && !$forcecombo && $new_ajax) {
+			if (empty($htmlid)) $htmlid = $htmlname;
+
+			$ajax_parameters = array(
+				'htmlname' => array('key' => 'htmlname', 'value' => $htmlname),
+				'outjson' => array('key' => 'outjson', 'value' => 1),
+				'socid' => array('key' => 'socid', 'value' => $socid),
+				'limit' => array('key' => 'limit', 'value' => $limit),
+				'showfunction' => array('key' => 'showfunction', 'value' => $showfunction ? 1 : 0),
+				'showsoc' => array('key' => 'showsoc', 'value' => $showsoc ? 1 : 0),
+			);
+			if (!$multiple) $ajax_parameters["showempty"] = array('key' => 'showempty', 'value' => 1);
+			if (!empty($thirdparty_htmlname)) $ajax_parameters["socid"] = array('key' => 'socid', 'value' => $socid, 'input_selector' => '#' . $thirdparty_htmlname);
+			if (is_array($ajaxparameters)) $ajax_parameters = array_merge($ajax_parameters, $ajaxparameters);
+			$ajax_parameters = array_values($ajax_parameters);
+
+			require_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+			$out .= ajax_combobox($htmlid, $events, $conf->global->CONTACT_USE_SEARCH_TO_SELECT, 0, 'resolve', $ajaxurl, $ajax_parameters, $ajaxoptions);
+			$out .= '<style type="text/css">.ui-autocomplete { z-index: 250; }</style>';
+			if (!empty($thirdparty_htmlname)) {
+				// Clear selected contact(s) when selected third party changed
+				$out .= <<<SCRIPT
+	<script>
+		$(document).ready(function () {
+			$('#$thirdparty_htmlname').on('change', function() { $('#$htmlid').val('').change(); });
+		});
+	</script>
+SCRIPT;
+			}
+
+			if (empty($hidelabel)) $out .= $langs->trans("Name") . ' : ';
+			elseif ($hidelabel == 2) {
+				$out .= img_picto($langs->trans("Search"), 'search');
+			}
+			$out .= $this->selectcontactlist($socid, $selected, $htmlname, $showempty, '', '', $showfunction,
+				$showsoc, 1, array(), '', 0, false, 0, 0, $moreclass,
+				$moreparam, $htmlid, $multiple, 0, 1);
+			if ($hidelabel == 3) {
+				$out .= img_picto($langs->trans("Search"), 'search');
+			}
+		} else {
+			// Immediate load of all database
+			$out .= $this->selectcontactlist($socid, $selected, $htmlname, $showempty, $exclude, $limitto, $showfunction,
+				$showsoc, $forcecombo, $events, '', 0, $options_only, 0, $limit, $moreclass, $moreparam, $htmlid, $multiple, $disableifempty);
+		}
+
+		return $out;
+	}
+
+	/**
+	 *  Output html form to select a contact.
+	 *  Note, you must use the selectcontact to get the component to select a contact. This function must only be called by selectcontact.
+	 *  @since 9.0 Add afterSelectContactOptions hook
+	 *
+	 * @param	int				$socid      	Id ot third party or 0 for all or -1 for empty list or -2 for without third party
+	 * @param	string			$selected       Preselected type
+	 * @param	string			$htmlname       Name of field in form
+	 * @param	string			$showempty		0=no empty value, 1=add an empty value or text to use on empty line like 'SelectContact', 2=add line 'Internal' (used by user edit), 3=add an empty value only if more than one record into list
+	 * @param	string			$exclude        List of contacts id to exclude
+	 * @param	string			$limitto		Disable answers that are not id in this array list
+	 * @param	integer			$showfunction   Add function into label
+	 * @param	integer			$showsoc	    Add company into label
+	 * @param	int				$forcecombo		Force to use standard HTML select component without beautification
+	 * @param	array			$events			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+	 * @param	string			$filterkey		Filter on key value
+	 * @param	int				$outputmode		0=HTML select string, 1=Array
+	 * @param	bool			$options_only	Return options only (for ajax treatment)
+	 * @param	int				$page			Page of answers
+	 * @param	int				$limit			Limit number of answers
+	 * @param	string			$moreclass		Add more class to class style
+	 * @param	string			$moreparam      Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
+	 * @param	string			$htmlid			Html id to use instead of htmlname
+	 * @param	bool			$multiple       add [] in the name of element and add 'multiple' attribut (and return specific array if $outputmode == 1)
+	 * @param	int				$disableifempty	Set tag 'disabled' on select if there is no choice
+	 * @param	bool			$only_selected  Show only options selected
+	 * @return	string|array					HTML string or array
+	 */
+	public function selectcontactlist($socid, $selected = '', $htmlname = 'socid', $showempty = '', $exclude = '', $limitto = '',
+									  $showfunction = 0, $showsoc = 0, $forcecombo = 0, $events = array(), $filterkey = '',
+									  $outputmode = 0, $options_only = false, $page = 0, $limit = 20, $moreclass = 'minwidth100',
+									  $moreparam = '', $htmlid = '', $multiple = false, $disableifempty = 0, $only_selected = false)
 	{
 		global $conf, $langs, $hookmanager, $action;
 
 		$langs->load('companies');
 
-		if (empty($htmlid)) {
-			$htmlid = $htmlname;
-		}
-		$num = 0;
-
-		if ($selected === '') {
-			$selected = array();
-		} elseif (!is_array($selected)) {
-			$selected = array($selected);
-		}
 		$out = '';
+		$outarray = array();
+
+		if (empty($htmlid)) $htmlid = $htmlname;
+
+		if ($selected === '') $selected = array();
+		elseif (!is_array($selected)) $selected = array($selected);
 
 		if (!is_object($hookmanager)) {
-			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			include_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($this->db);
 		}
 
-		// We search third parties
+		// We search contacts
 		$sql = "SELECT sp.rowid, sp.lastname, sp.statut, sp.firstname, sp.poste, sp.email, sp.phone, sp.phone_perso, sp.phone_mobile, sp.town AS contact_town";
 		if ($showsoc > 0 || !empty($conf->global->CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST)) {
-			$sql .= ", s.nom as company, s.town AS company_town";
+			$sql .= " , s.nom as company, s.town AS company_town";
 		}
-		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "socpeople as sp";
 		if ($showsoc > 0 || !empty($conf->global->CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST)) {
-			$sql .= " LEFT OUTER JOIN  ".MAIN_DB_PREFIX."societe as s ON s.rowid=sp.fk_soc";
+			$sql .= " LEFT OUTER JOIN  " . MAIN_DB_PREFIX . "societe as s ON s.rowid=sp.fk_soc";
 		}
-		$sql .= " WHERE sp.entity IN (".getEntity('socpeople').")";
-		if ($socid > 0 || $socid == -1) {
-			$sql .= " AND sp.fk_soc=".$socid;
+		$sql .= " WHERE sp.entity IN (" . getEntity('socpeople') . ")";
+		if ($socid > 0 || $socid == -1) $sql .= " AND sp.fk_soc=" . $socid;
+		elseif ($socid == -2) $sql .= " AND (sp.fk_soc IS NULL OR sp.fk_soc = 0)";
+		if (!empty($conf->global->CONTACT_HIDE_INACTIVE_IN_COMBOBOX)) $sql .= " AND sp.statut <> 0";
+		if ($htmlname == 'none' || $only_selected) $sql .= " AND sp.rowid " . (empty($selected) ? "IS NULL" : "IN (" . implode(',', $selected). ")");
+		// Add criteria
+		if ($filterkey && $filterkey != '') {
+			$sql .= " AND (";
+			$prefix = empty($conf->global->CONTACT_DONOTSEARCH_ANYWHERE) ? '%' : '';    // Can use index if CONTACT_DONOTSEARCH_ANYWHERE is on
+			// For natural search
+			$scrit = explode(' ', $filterkey);
+			$i = 0;
+			if (count($scrit) > 1) $sql .= "(";
+			foreach ($scrit as $crit) {
+				if ($i > 0) $sql .= " AND ";
+				$sql .= "(sp.lastname LIKE '" . $this->db->escape($prefix . $crit) . "%'";
+				$sql .= " OR sp.firstname LIKE '" . $this->db->escape($prefix . $crit) . "%')";
+				$i++;
+			}
+			if (count($scrit) > 1) $sql .= ")";
+			$sql .= ")";
 		}
-		if (!empty($conf->global->CONTACT_HIDE_INACTIVE_IN_COMBOBOX)) {
-			$sql .= " AND sp.statut <> 0";
-		}
-		$sql .= " ORDER BY sp.lastname ASC";
+		$sql .= $this->db->order("sp.lastname", "ASC");
+		$sql .= $this->db->plimit($limit, $page);
 
-		dol_syslog(get_class($this)."::selectcontacts", LOG_DEBUG);
+		// Build output string
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 
 			if ($conf->use_javascript_ajax && !$forcecombo && !$options_only) {
-				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 				$out .= ajax_combobox($htmlid, $events, $conf->global->CONTACT_USE_SEARCH_TO_SELECT);
 			}
 
+			// Construct $out and $outarray
 			if ($htmlname != 'none' && !$options_only) {
-				$out .= '<select class="flat'.($moreclass ? ' '.$moreclass : '').'" id="'.$htmlid.'" name="'.$htmlname.(($num || empty($disableifempty)) ? '' : ' disabled').($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').' '.(!empty($moreparam) ? $moreparam : '').'>';
+				$out .= '<select id="' . $htmlid . '" name="' . $htmlname . ($multiple ? '[]' : '') . '" class="flat' . ($moreclass ? ' ' . $moreclass : '') . '"' .
+					($moreparam ? ' ' . $moreparam : '') . (!empty($conf->global->CONTACT_SEARCH_AUTOFOCUS) ? ' autofocus' : '') .
+					(($num || empty($disableifempty)) ? '' : ' disabled') . ($multiple ? ' multiple' : '') . '>' . "\n";
 			}
 
-			if (($showempty == 1 || ($showempty == 3 && $num > 1)) && !$multiple) {
-				$out .= '<option value="0"'.(in_array(0, $selected) ? ' selected' : '').'>&nbsp;</option>';
+			$textifempty = '';
+			// Do not use textifempty = ' ' or '&nbsp;' here, or search on key will search on ' key'.
+			//if (! empty($conf->use_javascript_ajax) || $forcecombo) $textifempty='';
+			if (!empty($conf->global->CONTACT_USE_SEARCH_TO_SELECT)) {
+				if ($showempty && !is_numeric($showempty)) $textifempty = $langs->trans($showempty);
 			}
-			if ($showempty == 2) {
-				$out .= '<option value="0"'.(in_array(0, $selected) ? ' selected' : '').'>-- '.$langs->trans("Internal").' --</option>';
+			if (!$multiple) {
+				if (($showempty == 1 || ($showempty == 3 && $num > 1))) {
+					$out .= '<option value="0"' . (in_array(0, $selected) ? ' selected' : '') . '>' . $textifempty . '</option>';
+				} elseif ($showempty == 2) {
+					$out .= '<option value="0"' . (in_array(0, $selected) ? ' selected' : '') . '>' . $langs->trans("Internal") . '</option>';
+				}
 			}
 
 			$i = 0;
 			if ($num) {
-				include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+				include_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
 				$contactstatic = new Contact($this->db);
 
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($resql);
 
+					$is_disabled = false;
+					if (is_array($exclude) && count($exclude) && in_array($obj->rowid, $exclude)) $is_disabled = true;
+					if (is_array($limitto) && count($limitto) && !in_array($obj->rowid, $limitto)) $is_disabled = true;
+					$is_selected = in_array($obj->rowid, $selected);
+
+					$contactstatic->id = $obj->rowid;
+					$contactstatic->lastname = $obj->lastname;
+					$contactstatic->firstname = $obj->firstname;
+					$label = $contactstatic->getFullName($langs);
 					// Set email (or phones) and town extended infos
-					$extendedInfos = '';
 					if (!empty($conf->global->CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST)) {
 						$extendedInfos = array();
 						$email = trim($obj->email);
@@ -1720,88 +1864,64 @@ class Form
 						}
 						$extendedInfos = implode(' - ', $extendedInfos);
 						if (!empty($extendedInfos)) {
-							$extendedInfos = ' - '.$extendedInfos;
+							$label .= ' - '.$extendedInfos;
 						}
+					}
+					if ($showfunction && $obj->poste) $label .= ' (' . $obj->poste . ')';
+					if (($showsoc > 0) && $obj->company) $label .= ' - (' . $obj->company . ')';
+
+					if (empty($outputmode)) {
+						if ($htmlname != 'none') {
+							$out .= '<option value="' . $obj->rowid . '"' . ($is_disabled ? ' disabled' : '') . ($is_selected ? ' selected' : '') . '>';
+						}
+						if ($htmlname != 'none' || $is_selected) $out .= $label;
+						if ($htmlname != 'none') {
+							$out .= '</option>';
+						}
+					} elseif ($htmlname != 'none' || $is_selected) {
+						array_push($outarray, array('key' => $obj->rowid, 'value' => $label, 'label' => $label, 'disabled' => $is_disabled));
 					}
 
-					$contactstatic->id = $obj->rowid;
-					$contactstatic->lastname = $obj->lastname;
-					$contactstatic->firstname = $obj->firstname;
-					if ($obj->statut == 1) {
-						if ($htmlname != 'none') {
-							$disabled = 0;
-							if (is_array($exclude) && count($exclude) && in_array($obj->rowid, $exclude)) {
-								$disabled = 1;
-							}
-							if (is_array($limitto) && count($limitto) && !in_array($obj->rowid, $limitto)) {
-								$disabled = 1;
-							}
-							if (!empty($selected) && in_array($obj->rowid, $selected)) {
-								$out .= '<option value="'.$obj->rowid.'"';
-								if ($disabled) {
-									$out .= ' disabled';
-								}
-								$out .= ' selected>';
-								$out .= $contactstatic->getFullName($langs).$extendedInfos;
-								if ($showfunction && $obj->poste) {
-									$out .= ' ('.$obj->poste.')';
-								}
-								if (($showsoc > 0) && $obj->company) {
-									$out .= ' - ('.$obj->company.')';
-								}
-								$out .= '</option>';
-							} else {
-								$out .= '<option value="'.$obj->rowid.'"';
-								if ($disabled) {
-									$out .= ' disabled';
-								}
-								$out .= '>';
-								$out .= $contactstatic->getFullName($langs).$extendedInfos;
-								if ($showfunction && $obj->poste) {
-									$out .= ' ('.$obj->poste.')';
-								}
-								if (($showsoc > 0) && $obj->company) {
-									$out .= ' - ('.$obj->company.')';
-								}
-								$out .= '</option>';
-							}
-						} else {
-							if (in_array($obj->rowid, $selected)) {
-								$out .= $contactstatic->getFullName($langs).$extendedInfos;
-								if ($showfunction && $obj->poste) {
-									$out .= ' ('.$obj->poste.')';
-								}
-								if (($showsoc > 0) && $obj->company) {
-									$out .= ' - ('.$obj->company.')';
-								}
-							}
-						}
-					}
 					$i++;
+					if (($i % 10) == 0) $out .= "\n";
 				}
 			} else {
-				$labeltoshow = ($socid != -1) ? ($langs->trans($socid ? "NoContactDefinedForThirdParty" : "NoContactDefined")) : $langs->trans('SelectAThirdPartyFirst');
-				$out .= '<option class="disabled" value="-1"'.(($showempty == 2 || $multiple) ? '' : ' selected').' disabled="disabled">';
-				$out .= $labeltoshow;
-				$out .= '</option>';
+				$key = -1;
+				if (empty($filterkey)) {
+					$label = ($socid != -1) ? ($langs->trans($socid ? "NoContactDefinedForThirdParty" : "NoContactDefined")) : $langs->trans('SelectAThirdPartyFirst');
+				} else {
+					$label = $langs->trans("NoResults");
+				}
+				if (empty($outputmode)) {
+					$out .= '<option value="' . $key . '"' . (($showempty == 2 || $multiple) ? '' : ' selected') . ' disabled>';
+					$out .= $label;
+					$out .= '</option>';
+				} else {
+					array_push($outarray, array('key' => $key, 'value' => $label, 'label' => $label, 'disabled' => true));
+				}
 			}
 
 			$parameters = array(
-				'socid'=>$socid,
-				'htmlname'=>$htmlname,
-				'resql'=>$resql,
-				'out'=>&$out,
-				'showfunction'=>$showfunction,
-				'showsoc'=>$showsoc,
+				'socid' => $socid,
+				'htmlid' => $htmlid,
+				'htmlname' => $htmlname,
+				'resql' => $resql,
+				'out' => &$out,
+				'outarray' => &$outarray,
+				'showfunction' => $showfunction,
+				'showsoc' => $showsoc,
 			);
 
-			$reshook = $hookmanager->executeHooks('afterSelectContactOptions', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+			$reshook = $hookmanager->executeHooks('afterSelectContactOptions', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
 
 			if ($htmlname != 'none' && !$options_only) {
-				$out .= '</select>';
+				$out .= '</select>' . "\n";
 			}
 
 			$this->num = $num;
+			$this->result = array('nbofcontacts' => $num);
+
+			if ($outputmode) return $outarray;
 			return $out;
 		} else {
 			dol_print_error($this->db);
@@ -5467,7 +5587,7 @@ class Form
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
 			print '<tr><td>';
-			print $this->selectcontacts($societe->id, $selected, $htmlname);
+			print $this->selectcontacts($societe->id, $selected, $htmlname, 0, '', '', 0, '', false, 0, 0, array(), '', '', false, 0, true);
 			$num = $this->num;
 			if ($num == 0) {
 				$addcontact = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));

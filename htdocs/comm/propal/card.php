@@ -1588,7 +1588,7 @@ if ($action == 'create') {
 		// Contacts (ask contact only if thirdparty already defined).
 		print "<tr><td>".$langs->trans("DefaultContact").'</td><td>';
 		print img_picto('', 'contact');
-		print $form->selectcontacts($soc->id, $contactid, 'contactid', 1, '', '', 0, 'minwidth300');
+		print $form->selectcontacts($soc->id, $contactid, 'contactid', 1, '', '', 0, 'minwidth300', false, 0, 0, array(), '', '', false, 0, true);
 		print '</td></tr>';
 
 		// Third party discounts info line

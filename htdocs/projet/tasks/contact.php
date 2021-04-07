@@ -426,7 +426,7 @@ if ($id > 0 || !empty($ref)) {
 
 				print '<td>';
 				$contactofproject = $projectstatic->getListContactId('external');
-				print $form->selectcontacts($selectedCompany, '', 'contactid', 0, '', $contactofproject, 0, '', false, 0, 0);
+				print $form->selectcontacts($selectedCompany, '', 'contactid', 0, '', $contactofproject, 0, '', false, 0, 0, array(), '', '', false, 0, true, 'newcompany');
 				$nbofcontacts = $form->num;
 				print '</td>';
 				print '<td>';

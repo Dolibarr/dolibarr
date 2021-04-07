@@ -143,7 +143,7 @@ if ($permission) {
 		<!--  <div class="tagtd nowrap noborderbottom"><?php echo img_object('', 'contact').' '.$langs->trans("ThirdPartyContacts"); ?></div>-->
 		<div class="tagtd maxwidthonsmartphone noborderbottom">
 			<?php
-			print img_object('', 'contact', 'class="pictofixedwidth"').$form->selectcontacts(($selectedCompany > 0 ? $selectedCompany : -1), '', 'contactid', 3, '', '', 1, 'minwidth100imp');
+			print img_object('', 'contact', 'class="pictofixedwidth"').$form->selectcontacts(($selectedCompany > 0 ? $selectedCompany : -1), '', 'contactid', 3, '', '', 1, 'minwidth100imp', false, 0, 0, array(), '', '', false, 0, true, 'newcompany');
 			$nbofcontacts = $form->num;
 
 			$newcardbutton = '';

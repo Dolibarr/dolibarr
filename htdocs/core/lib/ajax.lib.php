@@ -411,10 +411,19 @@ function ajax_dialog($title, $message, $w = 350, $h = 150)
  * @param  	int		$minLengthToAutocomplete	Minimum length of input string to start autocomplete
  * @param	int		$forcefocus					Force focus on field
  * @param	string	$widthTypeOfAutocomplete	'resolve' or 'off'
+ * @param	string	$ajax_url					Url for AJAX search
+ * @param	array	$ajax_parameters			Parameters for AJAX search
+ * @param	array   $ajax_options				Multiple options array // todo add from ajax_autocompleter()
+ *                                      		- Ex: array('update'=>array('field1','field2'...)) will reset field1 and field2 once select done
+ *                                      		- Ex: array('disabled'=> )
+ *                                      		- Ex: array('show'=> )
+ *                                      		- Ex: array('update_textarea'=> )
+ *                                      		- Ex: array('option_disabled'=> id to disable and warning to show if we select a disabled value (this is possible when using autocomplete ajax)
  * @return	string								Return html string to convert a select field into a combo, or '' if feature has been disabled for some reason.
  * @see selectArrayAjax() of html.form.class
  */
-function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 0, $forcefocus = 0, $widthTypeOfAutocomplete = 'resolve')
+function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 0, $forcefocus = 0,
+					   $widthTypeOfAutocomplete = 'resolve', $ajax_url = '', $ajax_parameters = array(), $ajax_options = array())
 {
 	global $conf;
 
@@ -439,59 +448,145 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 	if (empty($minLengthToAutocomplete)) {
 		$minLengthToAutocomplete = 0;
 	}
-
-	$tmpplugin = 'select2';
-	$msg = "\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id = '.$htmlname.' -->
-          <script>
-        	$(document).ready(function () {
-        		$(\''.(preg_match('/^\./', $htmlname) ? $htmlname : '#'.$htmlname).'\').'.$tmpplugin.'({
-        		    dir: \'ltr\',
-        			width: \''.$widthTypeOfAutocomplete.'\',		/* off or resolve */
-					minimumInputLength: '.$minLengthToAutocomplete.',
-					language: select2arrayoflanguage,
-    				containerCssClass: \':all:\',					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
-					selectionCssClass: \':all:\',					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
-					templateResult: function (data, container) {	/* Format visible output into combo list */
-	 					/* Code to add class of origin OPTION propagated to the new select2 <li> tag */
-						if (data.element) { $(container).addClass($(data.element).attr("class")); }
-					    //console.log(data.html);
-					    if (data.id == -1) return \'&nbsp;\';
-						if ($(data.element).attr("data-html") != undefined) return htmlEntityDecodeJs($(data.element).attr("data-html"));		// If property html set, we decode html entities and use this
-						return data.text;
-					},
-					templateSelection: function (selection) {		/* Format visible output of selected value */
-						if (selection.id == -1) return \'<span class="placeholder">\'+selection.text+\'</span>\';
-						return selection.text;
-					},
-					escapeMarkup: function(markup) {
-						return markup;
-					},
-					dropdownCssClass: \'ui-dialog\'
-				})';
-	if ($forcefocus) {
-		$msg .= '.select2(\'focus\')';
+	if (!is_array($ajax_parameters)) {
+		$ajax_parameters = array();
 	}
-	$msg .= ';'."\n";
+
+	$selector = preg_match('/^\./', $htmlname) ? $htmlname : '#' . $htmlname;
+	$tmpplugin = 'select2';
+	$msg = "\n<!-- JS CODE TO ENABLE $tmpplugin for id = $htmlname -->
+	<script>
+		jQuery(document).ready(function () {
+			function setParameters(parameters) {
+				var ajaxParameters = " . json_encode($ajax_parameters) . ";
+				
+				jQuery.map(ajaxParameters, function(item, idx) {
+					if (typeof item === 'object' && 'key' in item) {
+						var value = undefined;
+						if ('input_selector' in item) {
+							var input = jQuery(item.input_selector);
+							if (input.length > 0) {
+								var element_type = input.prop('tagName').toLowerCase();
+								if (element_type == 'input') element_type = input.attr('type').toLowerCase();
+	
+								switch(element_type) {
+									case 'radio':
+										value = jQuery('[name=\"' + input.attr('name') + '\"]').val();
+										break;
+									case 'checkbox':
+										value = input.is(':checked') ? 1 : 0;
+										break;
+									case 'textarea':
+										value = input.text();
+										break;
+									default:
+										value = input.val();
+								}
+							}
+						}
+						if (typeof value === 'undefined' && 'value' in item) {
+							value = item.value;
+						}  
+	
+						parameters[item.key] = value;
+					}
+				});
+				
+				return parameters;
+			}
+			
+			jQuery('{$selector}').{$tmpplugin}({
+				dir: 'ltr',
+				width: '{$widthTypeOfAutocomplete}',		/* off or resolve */
+				minimumInputLength: '{$minLengthToAutocomplete}',
+				language: select2arrayoflanguage,
+				containerCssClass: ':all:',					/* Line to add class of origin SELECT propagated to the new <span class=\"select2-selection...> tag */
+				selectionCssClass: ':all:',					/* Line to add class of origin SELECT propagated to the new <span class=\"select2-selection...> tag */
+				templateResult: function (data, container) {	/* Format visible output into combo list */
+					/* Code to add class of origin OPTION propagated to the new select2 <li> tag */
+					if (data.element) { jQuery(container).addClass(jQuery(data.element).attr(\"class\")); }
+					//console.log(data.html);
+					//if (data.id == -1) return '&nbsp;';
+					if (jQuery(data.element).attr(\"data-html\") != undefined) return htmlEntityDecodeJs(jQuery(data.element).attr(\"data-html\"));		// If property html set, we decode html entities and use this
+					return data.text;
+				},
+				templateSelection: function (selection) {		/* Format visible output of selected value */
+					if (selection.id == -1) return '<span class=\"placeholder\">'+selection.text+'</span>';
+					return selection.text;
+				},
+				escapeMarkup: function(markup) {
+					return markup;
+				},
+				dropdownCssClass: 'ui-dialog'";
+	if (!empty($ajax_url)) {
+		$msg .= ", minimumResultsForSearch: Infinity,
+				ajax: {
+					type: 'post',
+					url: '{$ajax_url}',
+					allowClear: true,
+					dataType: 'json',
+					delay: 250,
+					cache: false,
+					data: function (params) {
+						var queryParameters = setParameters({
+							q: params.term,
+							page: (params.page || 1) - 1,
+							exclude: this.val(),
+						});
+
+						return queryParameters;
+					},
+					processResults: function(data) {
+						var parameters = setParameters({});
+						var limit = 'limit' in parameters ? parameters.limit : 0;
+						var count = 0;
+
+						var new_data = [];
+						if (typeof data === 'object' && !('results' in data)) {
+							jQuery.map(data, function(item, idx) {
+								if (limit == 0 || count < limit) {
+									var id = item.key;
+									var label = 'label' in item ? item.label : item.value;
+									var disabled = 'disabled' in item ? item.disabled : false;
+
+									new_data.push({id: id, text: label, disabled: disabled});
+								}
+								count++;
+							});
+						}
+
+						return {
+							results: new_data,
+							pagination: {
+								more: limit != 0 && count >= limit
+							}
+						};
+					}
+				}";
+	}
+	$msg .= "})";
+	if ($forcefocus) $msg .= '.select2(\'focus\')';
+	$msg .= ';' . "\n";
 
 	if (is_array($events) && count($events)) {    // If an array of js events to do were provided.
 		$msg .= '
-			jQuery("#'.$htmlname.'").change(function () {
-				var obj = '.json_encode($events).';
-		   		$.each(obj, function(key,values) {
+			jQuery("#' . $htmlname . '").change(function () {
+				var obj = ' . json_encode($events) . ';
+		   		jQuery.each(obj, function(key,values) {
 	    			if (values.method.length) {
-	    				runJsCodeForEvent'.$htmlname.'(values);
+	    				runJsCodeForEvent' . $htmlname . '(values);
 	    			}
 				});
 			});
 
-			function runJsCodeForEvent'.$htmlname.'(obj) {
-				var id = $("#'.$htmlname.'").val();
+			function runJsCodeForEvent' . $htmlname . '(obj) {
+				var id = jQuery("#' . $htmlname . '").val();
 				var method = obj.method;
 				var url = obj.url;
 				var htmlname = obj.htmlname;
 				var showempty = obj.showempty;
-			    console.log("Run runJsCodeForEvent-'.$htmlname.' from ajax_combobox id="+id+" method="+method+" showempty="+showempty+" url="+url+" htmlname="+htmlname);
-				$.getJSON(url,
+			    console.log("Run runJsCodeForEvent-' . $htmlname . ' from ajax_combobox id="+id+" method="+method+" showempty="+showempty+" url="+url+" htmlname="+htmlname);
+				jQuery.getJSON(url,
 						{
 							action: method,
 							id: id,
@@ -499,33 +594,33 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 							showempty: showempty
 						},
 						function(response) {
-							$.each(obj.params, function(key,action) {
+							jQuery.each(obj.params, function(key,action) {
 								if (key.length) {
 									var num = response.num;
 									if (num > 0) {
-										$("#" + key).removeAttr(action);
+										jQuery("#" + key).removeAttr(action);
 									} else {
-										$("#" + key).attr(action, action);
+										jQuery("#" + key).attr(action, action);
 									}
 								}
 							});
-							$("select#" + htmlname).html(response.value);
+							jQuery("select#" + htmlname).html(response.value);
 							if (response.num) {
 								var selecthtml_str = response.value;
-								var selecthtml_dom=$.parseHTML(selecthtml_str);
+								var selecthtml_dom=jQuery.parseHTML(selecthtml_str);
 								if (typeof(selecthtml_dom[0][0]) !== \'undefined\') {
-                                   	$("#inputautocomplete"+htmlname).val(selecthtml_dom[0][0].innerHTML);
+                                   	jQuery("#inputautocomplete"+htmlname).val(selecthtml_dom[0][0].innerHTML);
 								}
 							} else {
-								$("#inputautocomplete"+htmlname).val("");
+								jQuery("#inputautocomplete"+htmlname).val("");
 							}
-							$("select#" + htmlname).change();	/* Trigger event change */
+							jQuery("select#" + htmlname).change();	/* Trigger event change */
 						}
 				);
 			}';
 	}
 
-	$msg .= '});'."\n";
+	$msg .= '});' . "\n";
 	$msg .= "</script>\n";
 
 	return $msg;
