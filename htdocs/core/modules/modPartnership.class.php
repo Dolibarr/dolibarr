@@ -179,10 +179,14 @@ class modPartnership extends DolibarrModules
 
 		$tabtoadd = ($conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') ? 'member' : 'thirdparty';
 
-		if($tabtoadd == 'member')
-			$this->tabs[] = array('data'=>'member:+partnership:Partnership:partnership@partnership:$user->rights->partnership->read:/partnership/partnership_list.php?id=__ID__');
-		else
-			$this->tabs[] = array('data'=>'thirdparty:+partnership:Partnership:partnership@partnership:$user->rights->partnership->read:/partnership/partnership_list.php?id=__ID__');
+		if($tabtoadd == 'member'){
+			$this->tabs[] = array('data'=>'member:+partnership:Partnership:partnership@partnership:$user->rights->partnership->read:/partnership/partnership.php?socid=__ID__');
+			$fk_mainmenu = "members";
+		}
+		else{
+			$this->tabs[] = array('data'=>'thirdparty:+partnership:Partnership:partnership@partnership:$user->rights->partnership->read:/partnership/partnership.php?socid=__ID__');
+			$fk_mainmenu = "companies";
+		}
 
 		// Example:
 		// $this->tabs[] = array('data'=>'objecttype:+tabname1:Title1:mylangfile@partnership:$user->rights->partnership->read:/partnership/mynewtab1.php?id=__ID__');  					// To add a new tab identified by code tabname1
@@ -303,11 +307,11 @@ class modPartnership extends DolibarrModules
 		//     'user'=>2,
 		// );
 		$this->menu[$r++] = array(
-			'fk_menu'=>'fk_mainmenu=companies', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'fk_menu'=>'fk_mainmenu='.$fk_mainmenu, // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'left', // This is a Top menu entry
 			'titre'=>'Partnership',
 			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
-			'mainmenu'=>'companies',
+			'mainmenu'=>$fk_mainmenu,
 			'leftmenu'=>'partnership',
 			'url'=>'/partnership/partnership_list.php',
 			'langs'=>'partnership', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
@@ -318,10 +322,10 @@ class modPartnership extends DolibarrModules
 			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
 		);
 		$this->menu[$r++] = array(
-			'fk_menu'=>'fk_mainmenu=companies,fk_leftmenu=partnership', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'fk_menu'=>'fk_mainmenu='.$fk_mainmenu.',fk_leftmenu=partnership', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'left', // This is a Left menu entry
 			'titre'=>'NewPartnership',
-			'mainmenu'=>'companies',
+			'mainmenu'=>$fk_mainmenu,
 			'leftmenu'=>'partnership_new',
 			'url'=>'/partnership/partnership_card.php?action=create',
 			'langs'=>'partnership', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
@@ -332,10 +336,10 @@ class modPartnership extends DolibarrModules
 			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
 		);
 		$this->menu[$r++] = array(
-			'fk_menu'=>'fk_mainmenu=companies,fk_leftmenu=partnership', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'fk_menu'=>'fk_mainmenu='.$fk_mainmenu.',fk_leftmenu=partnership', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'left', // This is a Left menu entry
 			'titre'=>'ListOfPartnerships',
-			'mainmenu'=>'companies',
+			'mainmenu'=>$fk_mainmenu,
 			'leftmenu'=>'partnership_list',
 			'url'=>'/partnership/partnership_list.php',
 			'langs'=>'partnership', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.

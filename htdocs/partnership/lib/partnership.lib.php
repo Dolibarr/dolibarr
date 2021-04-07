@@ -41,9 +41,9 @@ function partnershipAdminPrepareHead()
 	$h++;
 
 
-	$head[$h][0] = dol_buildpath("/partnership/admin/myobject_extrafields.php", 1);
+	$head[$h][0] = dol_buildpath("/partnership/admin/partnership_extrafields.php", 1);
 	$head[$h][1] = $langs->trans("ExtraFields");
-	$head[$h][2] = 'myobject_extrafields';
+	$head[$h][2] = 'partnership_extrafields';
 	$h++;
 
 
