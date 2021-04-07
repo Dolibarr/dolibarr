@@ -120,7 +120,7 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This is usel
 $dataseries = array();
 $colorseries = array();
 
-include_once DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
 print '<table class="noborder nohover centpercent">';
 print '<tr class="liste_titre">';

@@ -23,6 +23,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
@@ -74,12 +75,24 @@ print "<strong>PHP disable_functions</strong> = ";
 $arrayoffunctionsdisabled = explode(',', ini_get('disable_functions'));
 $arrayoffunctionstodisable = explode(',', 'pcntl_alarm,pcntl_fork,pcntl_waitpid,pcntl_wait,pcntl_wifexited,pcntl_wifstopped,pcntl_wifsignaled,pcntl_wifcontinued,pcntl_wexitstatus,pcntl_wtermsig,pcntl_wstopsig,pcntl_signal,pcntl_signal_get_handler,pcntl_signal_dispatch,pcntl_get_last_error,pcntl_strerror,pcntl_sigprocmask,pcntl_sigwaitinfo,pcntl_sigtimedwait,pcntl_exec,pcntl_getpriority,pcntl_setpriority,pcntl_async_signals');
 $arrayoffunctionstodisable2 = explode(',', 'exec,passthru,shell_exec,system,proc_open,popen');
-print join(', ', $arrayoffunctionsdisabled);
+$i = 0;
+foreach ($arrayoffunctionsdisabled as $functionkey) {
+	if ($i > 0) {
+		print ', ';
+	}
+	print '<span class="opacitymedium">'.$functionkey.'</span>';
+	$i++;
+}
 print "<br>\n";
 $todisabletext = '';
+$i = 0;
 foreach ($arrayoffunctionstodisable as $functiontodisable) {
 	if (! in_array($functiontodisable, $arrayoffunctionsdisabled)) {
-		$todisabletext .= img_picto($langs->trans("YouShouldSetThisToOff"), 'warning').' '.$functiontodisable;
+		if ($i > 0) {
+			$todisabletext .= ', ';
+		}
+		$todisabletext .= img_picto($langs->trans("YouShouldSetThisToOff"), 'warning').' <span class="opacitymedium">'.$functiontodisable.'</span>';
+		$i++;
 	}
 }
 if ($todisabletext) {
@@ -87,9 +100,14 @@ if ($todisabletext) {
 	print '<br>';
 }
 $todisabletext = '';
+$i = 0;
 foreach ($arrayoffunctionstodisable2 as $functiontodisable) {
 	if (! in_array($functiontodisable, $arrayoffunctionsdisabled)) {
-		$todisabletext .= img_picto($langs->trans("YouShouldSetThisToOff"), 'warning').' '.$functiontodisable;
+		if ($i > 0) {
+			$todisabletext .= ', ';
+		}
+		$todisabletext .= img_picto($langs->trans("YouShouldSetThisToOff"), 'warning').' <span class="opacitymedium">'.$functiontodisable.'</span>';
+		$i++;
 	}
 }
 if ($todisabletext) {
@@ -110,6 +128,7 @@ if ($test) {
 }
 print '<br>';
 
+print '<br>';
 print '<br>';
 print load_fiche_titre($langs->trans("ConfigurationFile").' ('.$conffile.')', '', 'folder');
 
@@ -133,11 +152,36 @@ print '<br>';
 
 print '<br>';
 print '<br>';
+print '<br>';
 print load_fiche_titre($langs->trans("PermissionsOnFiles"), '', 'folder');
 
 print '<strong>'.$langs->trans("PermissionsOnFilesInWebRoot").'</strong>: ';
-// TODO Check permission are read only except for custom dir
-print 'TODO';
+$arrayoffilesinroot = dol_dir_list(DOL_DOCUMENT_ROOT, 'all', 1, '', array('custom\/'), 'name', SORT_ASC, 4, 1, '', 1);
+$fileswithwritepermission = array();
+foreach ($arrayoffilesinroot as $fileinroot) {
+	// Test permission on file
+	if ($fileinroot['perm'] & 0222) {
+		$fileswithwritepermission[] = $fileinroot['relativename'];
+	}
+}
+if (empty($fileswithwritepermission)) {
+	print img_picto('', 'tick').' '.$langs->trans("NoWritableFilesFoundIntoRootDir");
+} else {
+	print img_warning().' '.$langs->trans("SomeFilesOrDirInRootAreWritable");
+	print '<br>'.$langs->trans("Example").': ';
+	$i = 0;
+	foreach ($fileswithwritepermission as $filewithwritepermission) {
+		if ($i > 0) {
+			print ', ';
+		}
+		print '<span class="opacitymedium">'.$filewithwritepermission.'</span>';
+		if ($i > 20) {
+			print ' ...';
+			break;
+		}
+		$i++;
+	}
+}
 print '<br>';
 
 print '<strong>'.$langs->trans("PermissionsOnFile", $conffile).'</strong>: ';		// $conffile is defined into filefunc.inc.php
@@ -164,6 +208,7 @@ print '<br>';
 print '<br>';
 
 print '<br>';
+print '<br>';
 print load_fiche_titre($langs->trans("Modules"), '', 'folder');
 
 // Module log
@@ -172,7 +217,11 @@ $test = empty($conf->syslog->enabled);
 if ($test) {
 	print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotRiskOfLeakWithThis");
 } else {
-	print img_picto('', 'warning').' '.$langs->trans("ModuleActivatedMayExposeInformation", $langs->transnoentities("Syslog"));
+	if ($conf->global->SYSLOG_LEVEL > LOG_NOTICE) {
+		print img_picto('', 'warning').' '.$langs->trans("ModuleActivatedMayExposeInformation", $langs->transnoentities("Syslog"));
+	} else {
+		print img_picto('', 'tick.png').' '.$langs->trans("ModuleSyslogActivatedButLevelNotTooVerbose", $langs->transnoentities("Syslog"), $conf->global->SYSLOG_LEVEL);
+	}
 	//print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
 }
 print '<br>';
@@ -190,6 +239,7 @@ print '<br>';
 
 print '<br>';
 print '<br>';
+print '<br>';
 print load_fiche_titre($langs->trans("Menu").' '.$langs->trans("SecuritySetup"), '', 'folder');
 
 //print '<strong>'.$langs->trans("PasswordEncryption").'</strong>: ';
@@ -199,15 +249,14 @@ if ($conf->global->MAIN_SECURITY_HASH_ALGO != 'password_hash') {
 	print '<strong>MAIN_SECURITY_SALT</strong> = '.(empty($conf->global->MAIN_SECURITY_SALT) ? $langs->trans("Undefined") : $conf->global->MAIN_SECURITY_SALT).'<br>';
 }
 if ($conf->global->MAIN_SECURITY_HASH_ALGO != 'password_hash') {
-	print '<span class="opacitymedium">The recommanded value for MAIN_SECURITY_HASH_ALGO is now \'password_hash\' but setting it now will make ALL existing passwords of all users not valid, so update is not possible.<br>';
+	print '<div class="info">The recommanded value for MAIN_SECURITY_HASH_ALGO is now \'password_hash\' but setting it now will make ALL existing passwords of all users not valid, so update is not possible.<br>';
 	print 'If you really want to switch, you must:<br>';
 	print '- Go on home - setup - other and add constant MAIN_SECURITY_HASH_ALGO to value \'password_hash\'<br>';
 	print '- In same session, WITHOUT LOGGING OUT, go into your admin user record and set a new password<br>';
 	print '- You can now logout and login with this new password. You must now reset password of all other users.<br>';
-	print '</span><br>';
+	print '</div><br>';
 }
 print '<br>';
-// TODO
 
 print '<strong>'.$langs->trans("AntivirusEnabledOnUpload").'</strong>: ';
 print empty($conf->global->MAIN_ANTIVIRUS_COMMAND) ? '' : img_picto('', 'tick').' ';
@@ -225,23 +274,26 @@ print '<br>';
 $securityevent = new Events($db);
 $eventstolog = $securityevent->eventstolog;
 
-print '<strong>'.$langs->trans("LogEvents").'</strong>: ';
-// Loop on each event type
-foreach ($eventstolog as $key => $arr) {
-	if ($arr['id']) {
-		$key = 'MAIN_LOGEVENTS_'.$arr['id'];
-		$value = empty($conf->global->$key) ? '' : $conf->global->$key;
-		if ($value) {
-			print $key.', ';
+print '<strong>'.$langs->trans("AuditedSecurityEvents").'</strong>: ';
+if (!empty($eventstolog) && is_array($eventstolog)) {
+	// Loop on each event type
+	$i = 0;
+	foreach ($eventstolog as $key => $arr) {
+		if ($arr['id']) {
+			$key = 'MAIN_LOGEVENTS_'.$arr['id'];
+			$value = empty($conf->global->$key) ? '' : $conf->global->$key;
+			if ($value) {
+				if ($i > 0) {
+					print ', ';
+				}
+				print '<span class="opacitymedium">'.$key.'</span>';
+				$i++;
+			}
 		}
 	}
+} else {
+	print img_warning().' '.$langs->trans("NoSecurityEventsAreAduited", $langs->transnoentities("Home").' - '.$langs->transnoentities("Setup").' - '.$langs->transnoentities("Audit"));
 }
-
-
-
-
-
-
 
 
 // End of page

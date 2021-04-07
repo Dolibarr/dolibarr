@@ -199,7 +199,7 @@ if (!empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING') {
 
 
 if ($modecompta == 'CREANCES-DETTES') {
-	$sql = "SELECT date_format(f.datef, '%Y-%m') as dm, sum(f.total) as amount, sum(f.total_ttc) as amount_ttc";
+	$sql = "SELECT date_format(f.datef,'%Y-%m') as dm, sum(f.total_ht) as amount, sum(f.total_ttc) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql .= " WHERE f.fk_statut in (1,2)";
 	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
@@ -668,7 +668,7 @@ print '</div>';
  Je commente toute cette partie car les chiffres affichees sont faux - Eldy.
  En attendant correction.
 
- $sql = "SELECT sum(f.total) as tot_fht,sum(f.total_ttc) as tot_fttc, p.rowid, p.ref, s.nom, s.rowid as socid, p.total_ht, p.total_ttc
+ $sql = "SELECT sum(f.total_ht) as tot_fht,sum(f.total_ttc) as tot_fttc, p.rowid, p.ref, s.nom, s.rowid as socid, p.total_ht, p.total_ttc
  FROM ".MAIN_DB_PREFIX."commande AS p, ".MAIN_DB_PREFIX."societe AS s
  LEFT JOIN ".MAIN_DB_PREFIX."co_fa AS co_fa ON co_fa.fk_commande = p.rowid
  LEFT JOIN ".MAIN_DB_PREFIX."facture AS f ON co_fa.fk_facture = f.rowid

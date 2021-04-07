@@ -120,7 +120,7 @@ if ($resql) {
 	}
 	$db->free($resql);
 
-	include_once DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
