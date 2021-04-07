@@ -861,7 +861,7 @@ span.fa.fa-plus-circle.paddingleft {
 
 /* Themes for badges */
 
-	<?php include dol_buildpath($path.'/theme/'.$theme.'/badges.inc.php', 0); ?>
+<?php include dol_buildpath($path.'/theme/'.$theme.'/badges.inc.php', 0); ?>
 
 .borderrightlight
 {

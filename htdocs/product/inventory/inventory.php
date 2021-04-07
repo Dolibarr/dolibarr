@@ -520,7 +520,7 @@ if ($object->id > 0) {
 		}
 		print '<td class="right"></td>';
 		print '<td class="center">';
-		print '<input type="submit" class="button paddingrightonly" name="addline" value="'.$langs->trans("Add").'">';
+		print '<input type="submit" class="button paddingright" name="addline" value="'.$langs->trans("Add").'">';
 		//print '<input type="submit" class="button paddingrightonly button-cancel" name="canceladdline" value="'.$langs->trans("Cancel").'">';
 		print '</td>';
 		// Actions

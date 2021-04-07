@@ -1057,6 +1057,33 @@ if ($conf->browser->layout == 'phone') {
 }
 
 
+div.div-for-modal {
+	/* display: none; */
+	position:absolute;
+	top:calc(50% - 200px);
+	left:calc(50% - 250px);
+	width:500px;  /* adjust as per your needs */
+	height:400px;   /* adjust as per your needs */
+	background: #fff;
+	border: 1px solid #bbb;
+	box-shadow: 2px 2px 20px #ddd;
+	z-index: 100;
+}
+
+div.div-for-modal-topright {
+	/* display: none; */
+	position:absolute;
+	top: 0;
+	right: 0;
+	width:50%;  /* adjust as per your needs */
+	height:250px;   /* adjust as per your needs */
+	background: #fff;
+	border: 1px solid #bbb;
+	box-shadow: 2px 2px 20px #ddd;
+	z-index: 1100;
+}
+
+
 div.confirmmessage {
 	padding-top: 6px;
 }
@@ -2620,7 +2647,7 @@ table.login_table_securitycode tr td {
 }
 
 div.login_block {
-	border-right: 1px solid rgba(0,0,0,0.3);
+	/* border-right: 1px solid rgba(0,0,0,0.3); */
 	padding-top: 3px;
 	padding-bottom: 3px;
 	<?php print $left; ?>: 0;
