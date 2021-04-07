@@ -91,3 +91,7 @@ EvntOrgConfirmed = Confirmed
 EvntOrgNotQualified = Not Qualified
 EvntOrgDone = Done
 EvntOrgCancelled = Cancelled
+#
+# Public page
+#
+EventOrgWelcomeMessage = This form allows you to register as a new participant to a conference.

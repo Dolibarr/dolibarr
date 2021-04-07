@@ -76,7 +76,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
 // Load translation files
-$langs->loadLangs(array("main", "members", "companies", "install", "other"));
+$langs->loadLangs(array("main", "members", "companies", "install", "other", "eventorganization"));
 
 /* Security check
 if (empty($conf->adherent->enabled)) {
@@ -180,45 +180,15 @@ if (empty($reshook) && $action == 'add') {
 
 	$db->begin();
 
-	// test if login already exists
-	if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
-		if (!GETPOST('login')) {
-			$error++;
-			$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Login"))."<br>\n";
-		}
-		$sql = "SELECT login FROM ".MAIN_DB_PREFIX."adherent WHERE login='".$db->escape(GETPOST('login'))."'";
-		$result = $db->query($sql);
-		if ($result) {
-			$num = $db->num_rows($result);
-		}
-		if ($num != 0) {
-			$error++;
-			$langs->load("errors");
-			$errmsg .= $langs->trans("ErrorLoginAlreadyExists")."<br>\n";
-		}
-		if (!GETPOSTISSET("pass1") || !GETPOSTISSET("pass2") || GETPOST("pass1", 'none') == '' || GETPOST("pass2", 'none') == '' || GETPOST("pass1", 'none') != GETPOST("pass2", 'none')) {
-			$error++;
-			$langs->load("errors");
-			$errmsg .= $langs->trans("ErrorPasswordsMustMatch")."<br>\n";
-		}
-		if (!GETPOST("email")) {
-			$error++;
-			$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("EMail"))."<br>\n";
-		}
-	}
-	if (GETPOST('type') <= 0) {
-		$error++;
-		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type"))."<br>\n";
-	}
-	if (!in_array(GETPOST('morphy'), array('mor', 'phy'))) {
-		$error++;
-		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv('Nature'))."<br>\n";
+	if (!GETPOST("email")) {
+	    $error++;
+	    $errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("EMail"))."<br>\n";
 	}
 	if (!GETPOST("lastname")) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Lastname"))."<br>\n";
 	}
-	if (GETPOST("firstname")) {
+	if (!GETPOST("firstname")) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Firstname"))."<br>\n";
 	}
@@ -227,51 +197,29 @@ if (empty($reshook) && $action == 'add') {
 		$langs->load("errors");
 		$errmsg .= $langs->trans("ErrorBadEMail", GETPOST("email"))."<br>\n";
 	}
-	$birthday = dol_mktime(GETPOST("birthhour", 'int'), GETPOST("birthmin", 'int'), GETPOST("birthsec", 'int'), GETPOST("birthmonth", 'int'), GETPOST("birthday", 'int'), GETPOST("birthyear", 'int'));
-	if (GETPOSTISSET("birthmonth") && empty($birthday)) {
-		$error++;
-		$langs->load("errors");
-		$errmsg .= $langs->trans("ErrorBadDateFormat")."<br>\n";
-	}
-	if (!empty($conf->global->MEMBER_NEWFORM_DOLIBARRTURNOVER)) {
-		if (GETPOST("morphy") == 'mor' && GETPOST('budget') <= 0) {
-			$error++;
-			$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("TurnoverOrBudget"))."<br>\n";
-		}
-	}
-
-	if (GETPOSTISSET('public')) {
-		$public = 1;
-	} else {
-		$public = 0;
-	}
-
 	if (!$error) {
-		// email a peu pres correct et le login n'existe pas
-		$adh = new Adherent($db);
-		$adh->statut      = -1;
-		$adh->public      = $public;
-		$adh->firstname   = GETPOST("firstname");
-		$adh->lastname    = GETPOST("lastname");
-		$adh->gender      = GETPOST("gender");
-		$adh->civility_id = GETPOST("civility_id");
-		$adh->societe     = GETPOST("societe");
-		$adh->address     = GETPOST("address");
-		$adh->zip         = GETPOST("zipcode");
-		$adh->town        = GETPOST("town");
-		$adh->email       = GETPOST("email");
-		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
-			$adh->login       = GETPOST("login");
-			$adh->pass        = GETPOST("pass1");
-		}
-		$adh->photo       = GETPOST("photo");
-		$adh->country_id  = GETPOST("country_id", 'int');
-		$adh->state_id    = GETPOST("state_id", 'int');
-		$adh->typeid      = GETPOST("type", 'int');
-		$adh->note_private = GETPOST("note_private");
-		$adh->morphy      = GETPOST("morphy");
-		$adh->birth       = $birthday;
-
+		// Client => fournisseur à 0
+		$thirdparty = new Client($db);
+		// Prospect forcé
+		$thirdparty->fk_prospectlevel = "Prospect";
+		$thirdparty->firstname   = GETPOST("firstname");
+		$thirdparty->lastname    = GETPOST("lastname");
+		$thirdparty->address     = GETPOST("address");
+		$thirdparty->zip         = GETPOST("zipcode");
+		$thirdparty->town        = GETPOST("town");
+		$thirdparty->email       = GETPOST("email");
+		$thirdparty->country_id  = GETPOST("country_id", 'int');
+		$thirdparty->state_id    = GETPOST("state_id", 'int');
+		
+		// @todo commit to generate the id, remove it ?
+		$db->commit();
+		
+		$db->begin();
+	    // @todo creation of an attendee
+		$confattendee = new ConferenceOrBoothAttendee($db);
+		$confattendee->alreadypaid = 0.0;
+		$confattendee->fk_soc = $thirdparty->rowid;
+		$confattendee->date_subscription = dol_now();
 
 		// Fill array 'array_options' with data from add form
 		$extrafields->fetch_name_optionals_label($adh->table_element);
@@ -500,13 +448,10 @@ print load_fiche_titre($langs->trans("NewSubscription"), '', '', 0, 0, 'center')
 
 print '<div align="center">';
 print '<div id="divsubscribe">';
-
 print '<div class="center subscriptionformhelptext justify">';
-if (!empty($conf->global->MEMBER_NEWFORM_TEXT)) {
-	print $langs->trans($conf->global->MEMBER_NEWFORM_TEXT)."<br>\n";
-} else {
-	print $langs->trans("NewSubscriptionDesc", $conf->global->MAIN_INFO_SOCIETE_MAIL)."<br>\n";
-}
+
+// Welcome message
+print $langs->trans("EventOrgWelcomeMessage");
 print '</div>';
 
 dol_htmloutput_errors($errmsg);
@@ -551,49 +496,12 @@ jQuery(document).ready(function () {
 
 print '<table class="border" summary="form to subscribe" id="tablesubscribe">'."\n";
 
-// Type
-if (empty($conf->global->MEMBER_NEWFORM_FORCETYPE)) {
-	$listoftype = $adht->liste_array();
-	$tmp = array_keys($listoftype);
-	$defaulttype = '';
-	$isempty = 1;
-	if (count($listoftype) == 1) {
-		$defaulttype = $tmp[0];
-		$isempty = 0;
-	}
-	print '<tr><td class="titlefield">'.$langs->trans("Type").' <FONT COLOR="red">*</FONT></td><td>';
-	print $form->selectarray("type", $adht->liste_array(), GETPOST('type') ?GETPOST('type') : $defaulttype, $isempty);
-	print '</td></tr>'."\n";
-} else {
-	$adht->fetch($conf->global->MEMBER_NEWFORM_FORCETYPE);
-	print '<input type="hidden" id="type" name="type" value="'.$conf->global->MEMBER_NEWFORM_FORCETYPE.'">';
-}
-// Moral/Physic attribute
-$morphys["phy"] = $langs->trans("Physical");
-$morphys["mor"] = $langs->trans("Moral");
-if (empty($conf->global->MEMBER_NEWFORM_FORCEMORPHY)) {
-	print '<tr class="morphy"><td class="titlefield">'.$langs->trans('MemberNature').' <FONT COLOR="red">*</FONT></td><td>'."\n";
-	print $form->selectarray("morphy", $morphys, GETPOST('morphy'), 1);
-	print '</td></tr>'."\n";
-} else {
-	print $morphys[$conf->global->MEMBER_NEWFORM_FORCEMORPHY];
-	print '<input type="hidden" id="morphy" name="morphy" value="'.$conf->global->MEMBER_NEWFORM_FORCEMORPHY.'">';
-}
-// Civility
-print '<tr><td class="titlefield">'.$langs->trans('UserTitle').'</td><td>';
-print $formcompany->select_civility(GETPOST('civility_id'), 'civility_id').'</td></tr>'."\n";
 // Lastname
 print '<tr><td>'.$langs->trans("Lastname").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="lastname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('lastname')).'"></td></tr>'."\n";
 // Firstname
 print '<tr><td>'.$langs->trans("Firstname").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="firstname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('firstname')).'"></td></tr>'."\n";
-// Gender
-print '<tr><td>'.$langs->trans("Gender").'</td>';
-print '<td>';
-$arraygender = array('man'=>$langs->trans("Genderman"), 'woman'=>$langs->trans("Genderwoman"));
-print $form->selectarray('gender', $arraygender, GETPOST('gender') ?GETPOST('gender') : $object->gender, 1);
-print '</td></tr>';
 // Company
-print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
+//print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
 // Address
 print '<tr><td>'.$langs->trans("Address").'</td><td>'."\n";
 print '<textarea name="address" id="address" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('address', 'restricthtml'), 0, 1).'</textarea></td></tr>'."\n";
@@ -623,6 +531,7 @@ if (!$country_id && !empty($conf->geoipmaxmind->enabled)) {
 $country_code = getCountry($country_id, 2, $db, $langs);
 print $form->select_country($country_id, 'country_id');
 print '</td></tr>';
+
 // State
 if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
 	print '<tr><td>'.$langs->trans('State').'</td><td>';
@@ -633,30 +542,8 @@ if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
 	}
 	print '</td></tr>';
 }
-// EMail
+// Email
 print '<tr><td>'.$langs->trans("Email").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="email" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
-// Login
-if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
-	print '<tr><td>'.$langs->trans("Login").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="login" maxlength="50" class="minwidth100"value="'.dol_escape_htmltag(GETPOST('login')).'"></td></tr>'."\n";
-	print '<tr><td>'.$langs->trans("Password").' <FONT COLOR="red">*</FONT></td><td><input type="password" maxlength="128" name="pass1" class="minwidth100" value="'.GETPOST("pass1").'"></td></tr>'."\n";
-	print '<tr><td>'.$langs->trans("PasswordAgain").' <FONT COLOR="red">*</FONT></td><td><input type="password" maxlength="128" name="pass2" class="minwidth100" value="'.GETPOST("pass2").'"></td></tr>'."\n";
-}
-// Birthday
-print '<tr id="trbirth" class="trbirth"><td>'.$langs->trans("DateOfBirth").'</td><td>';
-print $form->selectDate($birthday, 'birth', 0, 0, 1, "newmember", 1, 0);
-print '</td></tr>'."\n";
-// Photo
-print '<tr><td>'.$langs->trans("URLPhoto").'</td><td><input type="text" name="photo" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('photo')).'"></td></tr>'."\n";
-// Public
-print '<tr><td>'.$langs->trans("Public").'</td><td><input type="checkbox" name="public"></td></tr>'."\n";
-// Other attributes
-$tpl_context = 'public'; // define templae context to public
-include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
-// Comments
-print '<tr>';
-print '<td class="tdtop">'.$langs->trans("Comments").'</td>';
-print '<td class="tdtop"><textarea name="note_private" id="note_private" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('note_private', 'restricthtml'), 0, 1).'</textarea></td>';
-print '</tr>'."\n";
 
 // Add specific fields used by Dolibarr foundation for example
 if (!empty($conf->global->MEMBER_NEWFORM_DOLIBARRTURNOVER)) {

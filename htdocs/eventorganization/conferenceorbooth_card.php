@@ -493,9 +493,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	//$keyforbreak='fieldkeytoswitchonsecondcolumn';	// We change column just before this field
 	//unset($object->fields['fk_project']);				// Hide field already shown in banner
 	//unset($object->fields['fk_soc']);					// Hide field already shown in banner
-	$link = 'http://localhost/dolibarr/htdocs/public/members/attendee_subscription.php';
-	$object->fields['pubregister'] = array('type'=>'text', 'label'=>'Lien public d\'enregistrement à une conférence', 'enabled'=>'1', 'position'=>72, 'notnull'=>0, 'visible'=>1);
-	$object->pubregister = $link;
+	$link_subscription = 'http://localhost/dolibarr/htdocs/public/members/attendee_subscription.php';
+	$object->fields['pubregister'] = array('type'=>'url', 'label'=>'Lien public d\'enregistrement à une conférence', 'enabled'=>'1', 'position'=>72, 'notnull'=>0, 'visible'=>1);
+	$object->pubregister = $link_subscription;
 	$keyforbreak='pubregister';
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
 	//var_dump($object);
