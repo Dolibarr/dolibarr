@@ -85,16 +85,15 @@ if ($action == 'setting') {
 
 	$value = GETPOST('managed_for', 'alpha');
 
-	
+
 	$modulemenu = ($value == 'member') ? 'member' : 'thirdparty';
 	$res = dolibarr_set_const($db, "PARTNERSHIP_IS_MANAGED_FOR", $modulemenu, 'chaine', 0, '', $conf->entity);
 
 	$partnership->tabs = array();
-	if($modulemenu == 'member'){
+	if ($modulemenu == 'member') {
 		$partnership->tabs[] = array('data'=>'member:+partnership:Partnership:partnership@partnership:$user->rights->partnership->read:/partnership/partnership.php?socid=__ID__');
 		$fk_mainmenu = "members";
-	}
-	else{
+	} else {
 		$partnership->tabs[] = array('data'=>'thirdparty:+partnership:Partnership:partnership@partnership:$user->rights->partnership->read:/partnership/partnership.php?socid=__ID__');
 		$fk_mainmenu = "companies";
 	}
@@ -102,10 +101,9 @@ if ($action == 'setting') {
 	foreach ($partnership->menu as $key => $menu) {
 		$partnership->menu[$key]['mainmenu'] = $fk_mainmenu;
 
-		if($menu['leftmenu'] == 'partnership')
+		if ($menu['leftmenu'] == 'partnership')
 			$partnership->menu[$key]['fk_menu'] = 'fk_mainmenu='.$fk_mainmenu;
-		else
-			$partnership->menu[$key]['fk_menu'] = 'fk_mainmenu='.$fk_mainmenu.',fk_leftmenu=partnership';
+		else $partnership->menu[$key]['fk_menu'] = 'fk_mainmenu='.$fk_mainmenu.',fk_leftmenu=partnership';
 	}
 
 	$error += $partnership->delete_tabs();
@@ -113,7 +111,6 @@ if ($action == 'setting') {
 
 	$error += $partnership->delete_menus();
 	$error += $partnership->insert_menus();
-
 }
 
 if ($action) {
