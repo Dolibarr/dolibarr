@@ -78,10 +78,10 @@ print '<br>';
 $file_list = array('missing' => array(), 'updated' => array());
 
 // Local file to compare to
-$xmlshortfile = GETPOST('xmlshortfile', 'alpha') ?GETPOST('xmlshortfile', 'alpha') : '/install/filelist-'.DOL_VERSION.(empty($conf->global->MAIN_FILECHECK_LOCAL_SUFFIX) ? '' : $conf->global->MAIN_FILECHECK_LOCAL_SUFFIX).'.xml'.(empty($conf->global->MAIN_FILECHECK_LOCAL_EXT) ? '' : $conf->global->MAIN_FILECHECK_LOCAL_EXT);
-$xmlfile = DOL_DOCUMENT_ROOT.$xmlshortfile;
+$xmlshortfile = dol_sanitizeFileName(GETPOST('xmlshortfile', 'alpha') ? GETPOST('xmlshortfile', 'alpha') : 'filelist-'.DOL_VERSION.(empty($conf->global->MAIN_FILECHECK_LOCAL_SUFFIX) ? '' : $conf->global->MAIN_FILECHECK_LOCAL_SUFFIX).'.xml'.(empty($conf->global->MAIN_FILECHECK_LOCAL_EXT) ? '' : $conf->global->MAIN_FILECHECK_LOCAL_EXT));
+$xmlfile = DOL_DOCUMENT_ROOT.'/install/'.$xmlshortfile;
 // Remote file to compare to
-$xmlremote = GETPOST('xmlremote');
+$xmlremote = GETPOST('xmlremote', 'alphanohtml');
 if (empty($xmlremote) && !empty($conf->global->MAIN_FILECHECK_URL)) {
 	$xmlremote = $conf->global->MAIN_FILECHECK_URL;
 }
@@ -92,7 +92,13 @@ if (empty($xmlremote) && !empty($conf->global->$param)) {
 if (empty($xmlremote)) {
 	$xmlremote = 'https://www.dolibarr.org/files/stable/signatures/filelist-'.DOL_VERSION.'.xml';
 }
-
+if ($xmlremote && !preg_match('/^https?:\/\//', $xmlremote)) {
+}
+if ($xmlremote && !preg_match('/^https?:\/\//', $xmlremote)) {
+	$langs->load("errors");
+	setEventMessages($langs->trans("ErrorURLMustStartWithHttp", $xmlremote), '', 'errors');
+	$error++;
+}
 
 // Test if remote test is ok
 $enableremotecheck = true;
@@ -147,7 +153,7 @@ if (GETPOST('target') == 'local') {
 		}
 		$xml = simplexml_load_file($xmlfile);
 	} else {
-		print $langs->trans('XmlNotFound').': '.$xmlfile;
+		print '<div class="warning">'.$langs->trans('XmlNotFound').': '.$xmlfile.'</span>';
 		$error++;
 	}
 }
