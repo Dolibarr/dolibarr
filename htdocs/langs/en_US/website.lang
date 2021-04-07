@@ -144,3 +144,4 @@ SitemapGenerated=Sitemap Generated
 ImportFavicon=Favicon
 ErrorFaviconType=Favicon must be png
 ErrorFaviconSize=Favicon must be of size 32x32
+FaviconTooltip=Upload an image which needs to be a png of 32x32

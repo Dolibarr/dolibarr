@@ -3152,7 +3152,7 @@ if ($action == 'editcss') {
 
 	// Favicon
 	print '<tr><td>';
-	print $langs->trans('ImportFavicon');
+	print $form->textwithpicto($langs->trans('ImportFavicon'), $langs->trans('FaviconTooltip'));
 	print '</td><td>';
 	print '<input type="file" class="flat minwidth300" name="addedfile" id="addedfile"/>';
 	print '</tr></td>';
