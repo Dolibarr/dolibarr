@@ -839,7 +839,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire)
 {
 	$langs->load("orders");
 
-	$sql = "SELECT s.nom as name, s.rowid, c.rowid as commandeid, c.total_ttc, c.total_ht, c.tva as total_tva, c.ref, c.ref_client, c.fk_statut, c.date_valid as dv, c.facture as billed";
+	$sql = "SELECT s.nom as name, s.rowid, c.rowid as commandeid, c.fk_statut, c.total_ttc, c.total_ht, c.tva as total_tva, c.ref, c.ref_client, c.fk_statut, c.date_valid as dv, c.facture as billed";
     $sql .= ", s.code_client";
 	$sql .= ", s.entity";
     $sql .= ", s.email";
@@ -877,6 +877,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire)
 
 				$orderstatic->id = $obj->commandeid;
 				$orderstatic->ref = $obj->ref;
+				$orderstatic->statut = $obj->fk_statut;
                 $orderstatic->ref_client = $obj->ref_client;
                 $orderstatic->total_ht = $obj->total_ht;
                 $orderstatic->total_tva = $obj->total_tva;
