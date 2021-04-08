@@ -1344,7 +1344,7 @@ function dol_ucwords($string, $encoding = "UTF-8")
  * 	@param  string		$message				Line to log. ''=Show nothing
  *  @param  int			$level					Log level
  *												On Windows LOG_ERR=4, LOG_WARNING=5, LOG_NOTICE=LOG_INFO=6, LOG_DEBUG=6 si define_syslog_variables ou PHP 5.3+, 7 si dolibarr
- *												On Linux   LOG_ERR=3, LOG_WARNING=4, LOG_INFO=6, LOG_DEBUG=7
+ *												On Linux   LOG_ERR=3, LOG_WARNING=4, LOG_NOTICE=5, LOG_INFO=6, LOG_DEBUG=7
  *  @param	int			$ident					1=Increase ident of 1, -1=Decrease ident of 1
  *  @param	string		$suffixinfilename		When output is a file, append this suffix into default log filename.
  *  @param	string		$restricttologhandler	Force output of log only to this log handler
@@ -1549,7 +1549,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 		if ($picto) {
 			$out .= img_picto($title, ($pictoisfullpath ? '' : 'object_').$picto, '', $pictoisfullpath, 0, 0, '', 'imgTabTitle').' ';
 		}
-		$out .= '<span class="tabTitleText">'.dol_trunc($title, $limittitle).'</span>';
+		$out .= '<span class="tabTitleText">'.dol_escape_htmltag(dol_trunc($title, $limittitle)).'</span>';
 		$out .= '</a>';
 	}
 
@@ -1594,7 +1594,9 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 		}
 
 		if ($i < $limittoshow || $isactive) {
+			// Add a new entry
 			$out .= '<div class="inline-block tabsElem'.($isactive ? ' tabsElemActive' : '').((!$isactive && !empty($conf->global->MAIN_HIDE_INACTIVETAB_ON_PRINT)) ? ' hideonprint' : '').'"><!-- id tab = '.(empty($links[$i][2]) ? '' : $links[$i][2]).' -->';
+
 			if (isset($links[$i][2]) && $links[$i][2] == 'image') {
 				if (!empty($links[$i][0])) {
 					$out .= '<a class="tabimage'.($morecss ? ' '.$morecss : '').'" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
@@ -1603,16 +1605,18 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 				}
 			} elseif (!empty($links[$i][1])) {
 				//print "x $i $active ".$links[$i][2]." z";
-				if ($isactive) {
-					$out .= '<a'.(!empty($links[$i][2]) ? ' id="'.$links[$i][2].'"' : '').' class="tabactive tab inline-block'.($morecss ? ' '.$morecss : '').'" href="'.$links[$i][0].'">';
-					$out .= $links[$i][1];
-					$out .= '</a>'."\n";
-				} else {
-					$out .= '<a'.(!empty($links[$i][2]) ? ' id="'.$links[$i][2].'"' : '').' class="tabunactive tab inline-block'.($morecss ? ' '.$morecss : '').'" href="'.$links[$i][0].'">';
-					$out .= $links[$i][1];
+				$out .= '<div class="tab tab'.($isactive?'active':'unactive').'" style="margin: 0 !important">';
+				if (!empty($links[$i][0])) {
+					$out .= '<a'.(!empty($links[$i][2]) ? ' id="'.$links[$i][2].'"' : '').' class="tab inline-block'.($morecss ? ' '.$morecss : '').'" href="'.$links[$i][0].'">';
+				}
+				$out .= $links[$i][1];
+				if (!empty($links[$i][0])) {
 					$out .= '</a>'."\n";
 				}
+				$out .= empty($links[$i][4]) ? '' : $links[$i][4];
+				$out .= '</div>';
 			}
+
 			$out .= '</div>';
 		} else {
 			// The popup with the other tabs

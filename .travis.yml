@@ -1,6 +1,6 @@
 # This script is used by Travis CI to run automatically Continuous test integration
 # from Dolibarr GitHub repository.
-# For syntax, see http://about.travis-ci.org/docs/user/languages/php/
+# For syntax, see https://docs.travis-ci.com/user/languages/php/
 
 # We use dist: xenial to have php 5.6+ available
 os: linux

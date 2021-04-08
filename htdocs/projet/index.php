@@ -134,7 +134,7 @@ print_barre_liste($form->textwithpicto($title, $tooltiphelp), 0, $_SERVER["PHP_S
 
 
 // Get list of ponderated percent and colors for each status
-include_once DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 $listofoppstatus = array(); $listofopplabel = array(); $listofoppcode = array(); $colorseries = array();
 $sql = "SELECT cls.rowid, cls.code, cls.percent, cls.label";
 $sql .= " FROM ".MAIN_DB_PREFIX."c_lead_status as cls";

@@ -507,7 +507,7 @@ if ($object->id > 0) {
 	if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
 		$langs->load("products");
 		//Query from product/liste.php
-		$sql = 'SELECT p.rowid, p.ref, p.label, p.fk_product_type, p.entity,';
+		$sql = 'SELECT p.rowid, p.ref, p.label, p.fk_product_type, p.entity, p.tosell as status, p.tobuy as status_buy, p.tobatch as status_batch,';
 		$sql .= ' pfp.tms, pfp.ref_fourn as supplier_ref, pfp.price, pfp.quantity, pfp.unitprice';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'product_fournisseur_price as pfp';
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = pfp.fk_product";
@@ -539,6 +539,9 @@ if ($object->id > 0) {
 				$productstatic->label = $objp->label;
 				$productstatic->type = $objp->fk_product_type;
 				$productstatic->entity = $objp->entity;
+				$productstatic->status = $objp->status;
+				$productstatic->status_buy = $objp->status_buy;
+				$productstatic->status_batch = $objp->status_batch;
 
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">';

@@ -115,7 +115,7 @@ if (!empty($conf->facture->enabled) && !empty($user->rights->facture->lire)) {
 	$langs->load("boxes");
 	$tmpinvoice = new Facture($db);
 
-	$sql = "SELECT f.rowid, f.ref, f.fk_statut as status, f.type, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.paye, f.tms";
+	$sql = "SELECT f.rowid, f.ref, f.fk_statut as status, f.type, f.total_ht, f.total_tva, f.total_ttc, f.paye, f.tms";
 	$sql .= ", f.date_lim_reglement as datelimite";
 	$sql .= ", s.nom as name";
 	$sql .= ", s.rowid as socid";
@@ -140,7 +140,7 @@ if (!empty($conf->facture->enabled) && !empty($user->rights->facture->lire)) {
 	$reshook = $hookmanager->executeHooks('printFieldListWhereCustomerLastModified', $parameters);
 	$sql .= $hookmanager->resPrint;
 
-	$sql .= " GROUP BY f.rowid, f.ref, f.fk_statut, f.type, f.total, f.tva, f.total_ttc, f.paye, f.tms, f.date_lim_reglement,";
+	$sql .= " GROUP BY f.rowid, f.ref, f.fk_statut, f.type, f.total_ht, f.total_tva, f.total_ttc, f.paye, f.tms, f.date_lim_reglement,";
 	$sql .= " s.nom, s.rowid, s.code_client, s.code_compta, s.email,";
 	$sql .= " cc.rowid, cc.code";
 	$sql .= " ORDER BY f.tms DESC";
@@ -163,14 +163,14 @@ if (!empty($conf->facture->enabled) && !empty($user->rights->facture->lire)) {
 		print '<th width="16">&nbsp;</th>';
 		print '</tr>';
 		if ($num) {
-			$total_ttc = $totalam = $total = 0;
+			$total_ttc = $totalam = $total_ht = 0;
 			while ($i < $num && $i < $conf->liste_limit) {
 				$obj = $db->fetch_object($resql);
 
 				if ($i >= $max) {
 					$othernb += 1;
 					$i++;
-					$total += $obj->total_ht;
+					$total_ht += $obj->total_ht;
 					$total_ttc += $obj->total_ttc;
 					continue;
 				}
@@ -229,7 +229,7 @@ if (!empty($conf->facture->enabled) && !empty($user->rights->facture->lire)) {
 				print '</tr>';
 
 				$total_ttc += $obj->total_ttc;
-				$total += $obj->total_ht;
+				$total_ht += $obj->total_ht;
 				$totalam += $obj->am;
 
 				$i++;
@@ -306,7 +306,7 @@ if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_S
 		print "</tr>\n";
 		if ($num) {
 			$i = 0;
-			$total = $total_ttc = $totalam = 0;
+			$total_ht = $total_ttc = $totalam = 0;
 			$othernb = 0;
 
 			while ($i < $num) {
@@ -315,7 +315,7 @@ if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_S
 				if ($i >= $max) {
 					$othernb += 1;
 					$i++;
-					$total += $obj->total_ht;
+					$total_ht += $obj->total_ht;
 					$total_ttc += $obj->total_ttc;
 					continue;
 				}
@@ -353,7 +353,7 @@ if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_S
 				print '<td class="right">'.dol_print_date($db->jdate($obj->tms), 'day').'</td>';
 				print '<td>'.$facstatic->getLibStatut(3).'</td>';
 				print '</tr>';
-				$total += $obj->total_ht;
+				$total_ht += $obj->total_ht;
 				$total_ttc += $obj->total_ttc;
 				$totalam += $obj->am;
 				$i++;
@@ -416,7 +416,7 @@ if (!empty($conf->don->enabled) && !empty($user->rights->don->lire)) {
 		print '<th width="16">&nbsp;</th>';
 		print '</tr>';
 		if ($num) {
-			$total_ttc = $totalam = $total = 0;
+			$total_ttc = $totalam = $total_ht = 0;
 
 			while ($i < $num && $i < $max) {
 				$objp = $db->fetch_object($result);
@@ -424,7 +424,7 @@ if (!empty($conf->don->enabled) && !empty($user->rights->don->lire)) {
 				if ($i >= $max) {
 					$othernb += 1;
 					$i++;
-					$total += $obj->total_ht;
+					$total_ht += $obj->total_ht;
 					$total_ttc += $obj->total_ttc;
 					continue;
 				}
@@ -515,7 +515,7 @@ if (!empty($conf->tax->enabled) && !empty($user->rights->tax->charges->lire)) {
 					if ($i >= $max) {
 						$othernb += 1;
 						$i++;
-						$total += $obj->total_ht;
+						$total_ht += $obj->total_ht;
 						$total_ttc += $obj->total_ttc;
 						continue;
 					}
@@ -569,7 +569,7 @@ if (!empty($conf->facture->enabled) && !empty($conf->commande->enabled) && $user
 	$commandestatic = new Commande($db);
 	$langs->load("orders");
 
-	$sql = "SELECT sum(f.total) as tot_fht, sum(f.total_ttc) as tot_fttc";
+	$sql = "SELECT sum(f.total_ht) as tot_fht, sum(f.total_ttc) as tot_fttc";
 	$sql .= ", s.nom as name, s.email";
 	$sql .= ", s.rowid as socid";
 	$sql .= ", s.code_client, s.code_compta";
@@ -634,7 +634,7 @@ if (!empty($conf->facture->enabled) && !empty($conf->commande->enabled) && $user
 				if ($i >= $max) {
 					$othernb += 1;
 					$i++;
-					$total += $obj->total_ht;
+					$total_ht += $obj->total_ht;
 					$total_ttc += $obj->total_ttc;
 					continue;
 				}

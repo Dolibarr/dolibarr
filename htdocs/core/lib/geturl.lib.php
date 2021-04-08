@@ -190,6 +190,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 		$info = curl_getinfo($ch); // Reading of request must be done after sending request
 		$http_code = $info['http_code'];
+
 		if ($followlocation && ($http_code == 301 || $http_code == 302 || $http_code == 303 || $http_code == 307)) {
 			$newUrl = $info['redirect_url'];
 			$maxRedirection--;

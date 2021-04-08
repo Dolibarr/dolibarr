@@ -30,6 +30,23 @@ $maxheightmini = 72; // 16/9eme
 $quality = 80;
 
 
+/**
+ *      Return if a filename is file name of a supported image format
+ *
+ *      @param	int		$acceptsvg	0=Default (depends on setup), 1=Always accept SVG as image files
+ *      @return string				Return list fo image format
+ */
+function getListOfPossibleImageExt($acceptsvg = 0)
+{
+	global $conf;
+
+	$regeximgext = '\.gif|\.jpg|\.jpeg|\.png|\.bmp|\.webp|\.xpm|\.xbm'; // See also into product.class.php
+	if ($acceptsvg || !empty($conf->global->MAIN_ALLOW_SVG_FILES_AS_IMAGES)) {
+		$regeximgext .= '|\.svg'; // Not allowed by default. SVG can contains javascript
+	}
+
+	return $regeximgext;
+}
 
 /**
  *      Return if a filename is file name of a supported image format
@@ -40,12 +57,7 @@ $quality = 80;
  */
 function image_format_supported($file, $acceptsvg = 0)
 {
-	global $conf;
-
-	$regeximgext = '\.gif|\.jpg|\.jpeg|\.png|\.bmp|\.webp|\.xpm|\.xbm'; // See also into product.class.php
-	if ($acceptsvg || !empty($conf->global->MAIN_ALLOW_SVG_FILES_AS_IMAGES)) {
-		$regeximgext .= '|\.svg'; // Not allowed by default. SVG can contains javascript
-	}
+	$regeximgext = getListOfPossibleImageExt();
 
 	// Case filename is not a format image
 	$reg = array();

@@ -145,3 +145,7 @@ ImportFavicon=Favicon
 ErrorFaviconType=Favicon must be png
 ErrorFaviconSize=Favicon must be of size 32x32
 FaviconTooltip=Upload an image which needs to be a png of 32x32
+GenerateImgWebp=Convert all images into webp
+ConfirmGenerateImgWebp=If you confirm, you will generate all website's images in webp format...
+ConfirmImgWebpCreation=Confirm all images convertion
+SucessConvertImgWebp=Images successfully converted

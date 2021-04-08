@@ -681,7 +681,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 		}
 
 		if (!$error) {
-			$tmp = getURLContent($urltograb);
+			$tmp = getURLContent($urltograb, 'GET', '', 1, array(), array('http', 'https'), 0);
 			if ($tmp['curl_error_no']) {
 				$error++;
 				setEventMessages('Error getting '.$urltograb.': '.$tmp['curl_error_msg'], null, 'errors');
@@ -796,7 +796,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 					}
 
 					/*
-					$tmpgeturl = getURLContent($urltograbbis);
+					$tmpgeturl = getURLContent($urltograbbis, 'GET', '', 1, array(), array('http', 'https'), 0);
 					if ($tmpgeturl['curl_error_no'])
 					{
 						$error++;
@@ -861,7 +861,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 						continue;
 					}
 
-					$tmpgeturl = getURLContent($urltograbbis);
+					$tmpgeturl = getURLContent($urltograbbis, 'GET', '', 1, array(), array('http', 'https'), 0);
 					if ($tmpgeturl['curl_error_no']) {
 						$errorforsubresource++;
 						setEventMessages('Error getting link tag url '.$urltograbbis.': '.$tmpgeturl['curl_error_msg'], null, 'errors');
@@ -2263,6 +2263,36 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 	$action = 'preview';
 }
 
+$imagefolder = $conf->website->dir_output.'/'.$websitekey.'/medias/image/'.$websitekey.'/';
+
+if ($action == 'convertimgwebp' && $usercanedit) {
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+
+	$regeximgext = getListOfPossibleImageExt();
+
+	$filelist = dol_dir_list($imagefolder, "all", 1, $regeximgext);
+
+	foreach ($filelist as $filename) {
+		$filepath = $filename['fullname'];
+		if (!(substr_compare($filepath, 'webp', -strlen('webp')) === 0)) {
+			if (image_format_supported($filepath) == 1) {
+				$filepathnoext = preg_replace("/\..*/", "", $filepath);
+				$result = dol_imageResizeOrCrop($filepath, 0, 0, 0, 0, 0, $filepathnoext.'.webp');
+				if (!dol_is_file($result)) {
+					$error++;
+					setEventMessages($result, null, 'errors');
+				}
+			}
+		}
+		if ($error) {
+			break;
+		}
+	}
+	if (!$error) {
+		setEventMessages($langs->trans('SucessConvertImgWebp'), null);
+	}
+	$action = 'preview';
+}
 
 /*
  * View
@@ -2278,7 +2308,10 @@ if ($action == 'confirmgeneratesitemaps') {
 	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?website='.$website->ref, $langs->trans('ConfirmSitemapsCreation'), $langs->trans('ConfirmGenerateSitemaps', $object->ref), 'generatesitemaps', '', "yes", 1);
 	$action = 'preview';
 }
-
+if ($action == 'confirmconvertimgwebp') {
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?website='.$website->ref, $langs->trans('ConfirmImgWebpCreation'), $langs->trans('ConfirmGenerateImgWebp', $object->ref), 'convertimgwebp', '', "yes", 1);
+	$action = 'preview';
+}
 $helpurl = 'EN:Module_Website|FR:Module_Website_FR|ES:M&oacute;dulo_Website';
 
 $arrayofjs = array(
@@ -2497,6 +2530,7 @@ if (!GETPOST('hide_websitemenu')) {
 			// Generate site map
 			print '<a href="'.$_SERVER["PHP_SEFL"].'?action=confirmgeneratesitemaps&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("GenerateSitemaps")).'"><span class="fa fa-sitemap"><span></a>';
 
+			print '<a href="'.$_SERVER["PHP_SEFL"].'?action=confirmconvertimgwebp&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("GenerateImgWebp")).'"><span class="fa fa-cogs"><span></a>';
 			print ' &nbsp; ';
 
 			print '<a href="'.$_SERVER["PHP_SEFL"].'?action=replacesite&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("ReplaceWebsiteContent")).'"><span class="fa fa-search"><span></a>';
