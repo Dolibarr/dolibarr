@@ -28,3 +28,5 @@ SerialNumberAlreadyInUse=Le numéro de série %s est déjà utilisé pour le pro
 TooManyQtyForSerialNumber=Vous ne pouvez avoir qu'un produit %s avec le numéro de série %s
 BatchLotNumberingModules=Modèle de génération et contrôle des numéros de lot
 BatchSerialNumberingModules=Modèle de génération et contrôle des numéros de série
+BatchNotFoundInWareHouse=Le numéro de lot/série %s n'a pas été trouvé dans l'entrepôt pour le produit %s
+NotEnoughBatchInWareHouse=La quantité demandée pour %s n'est pas en stock dans l'entrepôt pour le produit %s
