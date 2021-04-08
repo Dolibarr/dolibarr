@@ -241,7 +241,7 @@ class Cells
      */
     public function getHighestColumn($row = null)
     {
-        if ($row == null) {
+        if ($row === null) {
             $colRow = $this->getHighestRowAndColumn();
 
             return $colRow['column'];
@@ -259,7 +259,7 @@ class Cells
             $columnList[] = Coordinate::columnIndexFromString($c);
         }
 
-        return Coordinate::stringFromColumnIndex(max($columnList) + 1);
+        return Coordinate::stringFromColumnIndex(max($columnList));
     }
 
     /**
@@ -272,7 +272,7 @@ class Cells
      */
     public function getHighestRow($column = null)
     {
-        if ($column == null) {
+        if ($column === null) {
             $colRow = $this->getHighestRowAndColumn();
 
             return $colRow['row'];

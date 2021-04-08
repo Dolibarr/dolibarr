@@ -62,7 +62,7 @@ class Csv extends BaseReader
      */
     public function __construct()
     {
-        $this->readFilter = new DefaultReadFilter();
+        parent::__construct();
     }
 
     /**
@@ -143,7 +143,7 @@ class Csv extends BaseReader
             return;
         }
 
-        return $this->skipBOM();
+        $this->skipBOM();
     }
 
     /**
@@ -155,7 +155,7 @@ class Csv extends BaseReader
             return;
         }
 
-        $potentialDelimiters = [',', ';', "\t", '|', ':', ' '];
+        $potentialDelimiters = [',', ';', "\t", '|', ':', ' ', '~'];
         $counts = [];
         foreach ($potentialDelimiters as $delimiter) {
             $counts[$delimiter] = [];
@@ -184,8 +184,9 @@ class Csv extends BaseReader
         // If number of lines is 0, nothing to infer : fall back to the default
         if ($numberLines === 0) {
             $this->delimiter = reset($potentialDelimiters);
+            $this->skipBOM();
 
-            return $this->skipBOM();
+            return;
         }
 
         // Calculate the mean square deviations for each delimiter (ignoring delimiters that haven't been found consistently)
@@ -230,7 +231,7 @@ class Csv extends BaseReader
             $this->delimiter = reset($potentialDelimiters);
         }
 
-        return $this->skipBOM();
+        $this->skipBOM();
     }
 
     /**
@@ -254,15 +255,13 @@ class Csv extends BaseReader
         $line = $line . $newLine;
 
         // Drop everything that is enclosed to avoid counting false positives in enclosures
-        $enclosure = preg_quote($this->enclosure, '/');
-        $line = preg_replace('/(' . $enclosure . '.*' . $enclosure . ')/U', '', $line);
+        $enclosure = '(?<!' . preg_quote($this->escapeCharacter, '/') . ')'
+            . preg_quote($this->enclosure, '/');
+        $line = preg_replace('/(' . $enclosure . '.*' . $enclosure . ')/Us', '', $line);
 
         // See if we have any enclosures left in the line
-        $matches = [];
-        preg_match('/(' . $enclosure . ')/', $line, $matches);
-
-        // if we still have an enclosure then we need to read the next line aswell
-        if (count($matches) > 0) {
+        // if we still have an enclosure then we need to read the next line as well
+        if (preg_match('/(' . $enclosure . ')/', $line) > 0) {
             $line = $this->getNextLine($line);
         }
 
@@ -547,7 +546,8 @@ class Csv extends BaseReader
         fclose($this->fileHandle);
 
         // Trust file extension if any
-        if (strtolower(pathinfo($pFilename, PATHINFO_EXTENSION)) === 'csv') {
+        $extension = strtolower(pathinfo($pFilename, PATHINFO_EXTENSION));
+        if (in_array($extension, ['csv', 'tsv'])) {
             return true;
         }
 

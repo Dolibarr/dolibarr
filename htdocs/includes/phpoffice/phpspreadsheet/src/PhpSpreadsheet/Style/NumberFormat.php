@@ -49,6 +49,8 @@ class NumberFormat extends Supervisor
     const FORMAT_CURRENCY_USD = '$#,##0_-';
     const FORMAT_CURRENCY_EUR_SIMPLE = '#,##0.00_-"€"';
     const FORMAT_CURRENCY_EUR = '#,##0_-"€"';
+    const FORMAT_ACCOUNTING_USD = '_("$"* #,##0.00_);_("$"* \(#,##0.00\);_("$"* "-"??_);_(@_)';
+    const FORMAT_ACCOUNTING_EUR = '_("€"* #,##0.00_);_("€"* \(#,##0.00\);_("€"* "-"??_);_(@_)';
 
     /**
      * Excel built-in number formats.
@@ -307,6 +309,22 @@ class NumberFormat extends Supervisor
             self::$builtInFormats[68] = 't0.00%';
             self::$builtInFormats[69] = 't# ?/?';
             self::$builtInFormats[70] = 't# ??/??';
+
+            // JPN
+            self::$builtInFormats[28] = '[$-411]ggge"年"m"月"d"日"';
+            self::$builtInFormats[29] = '[$-411]ggge"年"m"月"d"日"';
+            self::$builtInFormats[31] = 'yyyy"年"m"月"d"日"';
+            self::$builtInFormats[32] = 'h"時"mm"分"';
+            self::$builtInFormats[33] = 'h"時"mm"分"ss"秒"';
+            self::$builtInFormats[34] = 'yyyy"年"m"月"';
+            self::$builtInFormats[35] = 'm"月"d"日"';
+            self::$builtInFormats[51] = '[$-411]ggge"年"m"月"d"日"';
+            self::$builtInFormats[52] = 'yyyy"年"m"月"';
+            self::$builtInFormats[53] = 'm"月"d"日"';
+            self::$builtInFormats[54] = '[$-411]ggge"年"m"月"d"日"';
+            self::$builtInFormats[55] = 'yyyy"年"m"月"';
+            self::$builtInFormats[56] = 'm"月"d"日"';
+            self::$builtInFormats[58] = '[$-411]ggge"年"m"月"d"日"';
 
             // Flip array (for faster lookups)
             self::$flippedBuiltInFormats = array_flip(self::$builtInFormats);
@@ -596,7 +614,7 @@ class NumberFormat extends Supervisor
         }
 
         // Convert any other escaped characters to quoted strings, e.g. (\T to "T")
-        $format = preg_replace('/(\\\([^ ]))(?=(?:[^"]|"[^"]*")*$)/u', '"${2}"', $format);
+        $format = preg_replace('/(\\\(((.)(?!((AM\/PM)|(A\/P))))|([^ ])))(?=(?:[^"]|"[^"]*")*$)/u', '"${2}"', $format);
 
         // Get the sections, there can be up to four sections, separated with a semi-colon (but only if not a quoted literal)
         $sections = preg_split('/(;)(?=(?:[^"]|"[^"]*")*$)/u', $format);

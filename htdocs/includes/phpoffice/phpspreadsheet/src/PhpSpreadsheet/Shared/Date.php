@@ -192,7 +192,7 @@ class Date
         $interval = $days . ' days';
 
         return $baseDate->modify($interval)
-            ->setTime($hours, $minutes, $seconds);
+            ->setTime((int) $hours, (int) $minutes, (int) $seconds);
     }
 
     /**
@@ -244,12 +244,12 @@ class Date
     public static function dateTimeToExcel(DateTimeInterface $dateValue)
     {
         return self::formattedPHPToExcel(
-            $dateValue->format('Y'),
-            $dateValue->format('m'),
-            $dateValue->format('d'),
-            $dateValue->format('H'),
-            $dateValue->format('i'),
-            $dateValue->format('s')
+            (int) $dateValue->format('Y'),
+            (int) $dateValue->format('m'),
+            (int) $dateValue->format('d'),
+            (int) $dateValue->format('H'),
+            (int) $dateValue->format('i'),
+            (int) $dateValue->format('s')
         );
     }
 
@@ -325,11 +325,12 @@ class Date
      */
     public static function isDateTime(Cell $pCell)
     {
-        return self::isDateTimeFormat(
-            $pCell->getWorksheet()->getStyle(
-                $pCell->getCoordinate()
-            )->getNumberFormat()
-        );
+        return is_numeric($pCell->getValue()) &&
+            self::isDateTimeFormat(
+                $pCell->getWorksheet()->getStyle(
+                    $pCell->getCoordinate()
+                )->getNumberFormat()
+            );
     }
 
     /**
