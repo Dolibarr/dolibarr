@@ -493,11 +493,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	//$keyforbreak='fieldkeytoswitchonsecondcolumn';	// We change column just before this field
 	//unset($object->fields['fk_project']);				// Hide field already shown in banner
 	//unset($object->fields['fk_soc']);					// Hide field already shown in banner
-	$link_subscription = 'http://localhost/dolibarr/htdocs/public/members/attendee_subscription.php';
-	$link_subscription .= '?id='.GETPOST("id");
+	$link_subscription = 'http://localhost/dolibarr/htdocs/public/members/attendee_subscription.php?id=';
+	//$link_subscription .= base64_encode($id);
+	$key = 'DV3PH';
+	$link_subscription .= openssl_encrypt($id, 'aes-256-ctr', $key);
 	$object->fields['pubregister'] = array('type'=>'url', 'label'=>'Lien public d\'enregistrement à une conférence', 'enabled'=>'1', 'position'=>72, 'notnull'=>0, 'visible'=>1);
 	$object->pubregister = $link_subscription;
 	$keyforbreak='pubregister';
+
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
 	//var_dump($object);
 	// Other attributes. Fields from hook formObjectOptions and Extrafields.

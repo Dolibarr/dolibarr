@@ -74,7 +74,10 @@ $num = 0;
 $error = 0;
 $backtopage = GETPOST('backtopage', 'alpha');
 $action = GETPOST('action', 'aZ09');
-$id = GETPOST("id");
+//$id = base64_decode(GETPOST("id"));
+$key = 'DV3PH';
+$id = openssl_decrypt(GETPOST('id'), 'aes-256-ctr', $key);
+var_dump($id);
 
 // Load translation files
 $langs->loadLangs(array("main", "companies", "install", "other", "eventorganization"));
@@ -186,23 +189,41 @@ if (empty($reshook) && $action == 'add') {
 		// Vérifier si client existe 
 		$thirdparty = new Societe($db);
 		$nomsociete = GETPOST("societe");
-		// @todo utiliser fetch avec la "réf" 
+		// @todo utiliser fetch avec la "réf"
 		$resultfetchthirdparty = $thirdparty->fetch('', $nomsociete);
 		if($resultfetchthirdparty<0){
 		    $error++;
 		    $errmsg .= $thirdparty->error;
 		    $res = -1;
 		} elseif($resultfetchthirdparty==0){
-		    // si retour =0 : le créer
+		    // creation of a new thirdparty
 		    $thirdparty->name        = $nomsociete;
 		    $thirdparty->address     = GETPOST("address");
 		    $thirdparty->zip         = GETPOST("zipcode");
 		    $thirdparty->town        = GETPOST("town");
-		    // It's a prospect
 		    $thirdparty->client      = 2;
 		    $thirdparty->fournisseur = 0;
 		    $thirdparty->country_id  = GETPOST("country_id", 'int');
 		    $thirdparty->state_id    = GETPOST("state_id", 'int');
+		    
+		    //@todo jusqu'à la ligne 223 : pas sûr
+		    // Load object modCodeTiers
+		    $module = (!empty($conf->global->SOCIETE_CODECLIENT_ADDON) ? $conf->global->SOCIETE_CODECLIENT_ADDON : 'mod_codeclient_leopard');
+		    if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php') {
+		        $module = substr($module, 0, dol_strlen($module) - 4);
+		    }
+		    $dirsociete = array_merge(array('/core/modules/societe/'), $conf->modules_parts['societe']);
+		    foreach ($dirsociete as $dirroot) {
+		        $res = dol_include_once($dirroot.$module.'.php');
+		        if ($res) {
+		            break;
+		        }
+		    }
+		    $modCodeClient = new $module($db);
+		    $tmpcode = $object->code_client;
+		    if (empty($tmpcode) && !empty($modCodeClient->code_auto)) {
+		        $tmpcode = $modCodeClient->getNextValue($object, 0);
+		    }
 		    
 		    $res = $thirdparty->create($user);
 		} 
@@ -272,11 +293,11 @@ print '<div class="center subscriptionformhelptext justify">';
 
 // Welcome message
 print $langs->trans("EvntOrgWelcomeMessage");
-print GETPOST("id").".".'<br>';
+print $id.".".'<br>';
 print $langs->trans("EvntOrgStartDuration");
-print dol_print_date($conference->datep);
+print dol_print_date($conference->datep).' ';
 print $langs->trans("EvntOrgEndDuration");
-print dol_print_date($conference->datef).".";
+print ' '.dol_print_date($conference->datef).".";
 print '</div>';
 
 dol_htmloutput_errors($errmsg);
@@ -297,19 +318,6 @@ print dol_get_fiche_head('');
 print '<script type="text/javascript">
 jQuery(document).ready(function () {
     jQuery(document).ready(function () {
-        function initmorphy()
-        {
-                if (jQuery("#morphy").val()==\'phy\') {
-                    jQuery("#trcompany").hide();
-                }
-                if (jQuery("#morphy").val()==\'mor\') {
-                    jQuery("#trcompany").show();
-                }
-        };
-        initmorphy();
-        jQuery("#morphy").click(function() {
-            initmorphy();
-        });
         jQuery("#selectcountry_id").change(function() {
            document.newmember.action.value="create";
            document.newmember.submit();
@@ -317,7 +325,6 @@ jQuery(document).ready(function () {
     });
 });
 </script>';
-
 
 print '<table class="border" summary="form to subscribe" id="tablesubscribe">'."\n";
 
@@ -352,7 +359,6 @@ if (!$country_id && !empty($conf->geoipmaxmind->enabled)) {
 $country_code = getCountry($country_id, 2, $db, $langs);
 print $form->select_country($country_id, 'country_id');
 print '</td></tr>';
-
 // State
 if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
 	print '<tr><td>'.$langs->trans('State').'</td><td>';
