@@ -207,12 +207,14 @@ if ($action == 'edit') {
 	print '<tr class="liste_titre"><td class="titlefieldcreate">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	foreach ($arrayofparameters as $constname => $val) {
-		if ($val['enabled']==1) {
-			$setupnotempty++;
-			print '<tr class="oddeven"><td>';
-			$tooltiphelp = (($langs->trans($constname . 'Tooltip') != $constname . 'Tooltip') ? $langs->trans($constname . 'Tooltip') : '');
-			print '<span id="helplink'.$constname.'" class="spanforparamtooltip">'.$form->textwithpicto($langs->trans($constname), $tooltiphelp, 1, 'info', '', 0, 3, 'tootips'.$constname).'</span>';
-			print '</td><td>';
+	    if ($val['enabled']==1) {
+	        //if ($val['type'] != 'securekey'){
+	            $setupnotempty++;
+	            print '<tr class="oddeven"><td>';
+	            $tooltiphelp = (($langs->trans($constname . 'Tooltip') != $constname . 'Tooltip') ? $langs->trans($constname . 'Tooltip') : '');
+	            print '<span id="helplink'.$constname.'" class="spanforparamtooltip">'.$form->textwithpicto($langs->trans($constname), $tooltiphelp, 1, 'info', '', 0, 3, 'tootips'.$constname).'</span>';
+	            print '</td><td>';
+	        //}
 
 			if ($val['type'] == 'textarea') {
 				print '<textarea class="flat" name="'.$constname.'" id="'.$constname.'" cols="50" rows="5" wrap="soft">' . "\n";
@@ -256,17 +258,11 @@ if ($action == 'edit') {
 				require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 				$formcompany = new FormCompany($db);
 				print $formcompany->selectProspectCustomerType($conf->global->{$constname}, $constname);
-			} elseif ($val['type'] == 'securekey') {// Security key input field
-    			print '<tr class="oddeven">';
-    			print '<td class="fieldrequired">'.$langs->trans($constname)."</td>";
-    			print '<td><input required="required" type="text" class="flat" id="'.$constname.'" name="'.$constname.'" value="'.(GETPOST($constname, 'alpha') ?GETPOST($constname, 'alpha') : $conf->global->{$constname}).'" size="40">';
+			} elseif ($val['type'] == 'securekey') {
+    			print '<input required="required" type="text" class="flat" id="'.$constname.'" name="'.$constname.'" value="'.(GETPOST($constname, 'alpha') ?GETPOST($constname, 'alpha') : $conf->global->{$constname}).'" size="40">';
     			if (!empty($conf->use_javascript_ajax)) {
     			    print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token'.$constname.'" class="linkobject"');
     			}
-    			print '</td>';
-    			print "<td>&nbsp;</td>";
-    			print "</tr>";
-    			
     			if (!empty($conf->use_javascript_ajax)) {
     			    print "\n".'<script type="text/javascript">';
     			    print '$(document).ready(function () {
