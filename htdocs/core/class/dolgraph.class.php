@@ -113,7 +113,7 @@ class DolGraph
 
 		$color_file = DOL_DOCUMENT_ROOT . '/theme/' . $conf->theme . '/theme_vars.inc.php';
 		if (is_readable($color_file)) {
-			include_once $color_file;
+			include $color_file;
 			if (isset($theme_bordercolor)) {
 				$this->bordercolor = $theme_bordercolor;
 			}

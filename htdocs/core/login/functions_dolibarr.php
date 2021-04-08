@@ -106,7 +106,7 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 				if ($cryptType == 'auto') {
 					if (dol_verifyHash($passtyped, $passcrypted, '0')) {
 						$passok = true;
-						dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ok - ".$cryptType." of pass is ok");
+						dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ok - hash ".$cryptType." of pass is ok");
 					}
 				}
 
