@@ -861,7 +861,7 @@ span.fa.fa-plus-circle.paddingleft {
 
 /* Themes for badges */
 
-	<?php include dol_buildpath($path.'/theme/'.$theme.'/badges.inc.php', 0); ?>
+<?php include dol_buildpath($path.'/theme/'.$theme.'/badges.inc.php', 0); ?>
 
 .borderrightlight
 {
@@ -983,6 +983,19 @@ div.div-for-modal {
 	border: 1px solid #bbb;
 	box-shadow: 2px 2px 20px #ddd;
 	z-index: 100;
+}
+
+div.div-for-modal-topright {
+	/* display: none; */
+	position:absolute;
+	top: 0;
+	right: 0;
+	width:50%;  /* adjust as per your needs */
+	height:250px;   /* adjust as per your needs */
+	background: #fff;
+	border: 1px solid #bbb;
+	box-shadow: 2px 2px 20px #ddd;
+	z-index: 1100;
 }
 
 <?php
