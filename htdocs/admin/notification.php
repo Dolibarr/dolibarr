@@ -202,13 +202,14 @@ if (!empty($conf->global->NOTIFICATION_EMAIL_FROM) && !isValidEmail($conf->globa
 }
 print '</td>';
 print '</tr>';
+
 $arrayofnotifto = array(
 '',
 $langs->trans('notiftouser'),
 $langs->trans('notiftofixedemail'),
 $langs->trans('notiftouserandtofixedemail')
 );
-var_dump($arrayofnotifto,$conf->global->NOTIFICATION_EMAIL_DISABLE_CONFIRM_MESSAGE);
+
 print '<tr class="oddeven"><td>';
 print $langs->trans("NotificationDisableConfirmMessage").'</td>';
 print '<td>';
