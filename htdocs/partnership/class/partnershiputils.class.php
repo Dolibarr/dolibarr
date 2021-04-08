@@ -44,7 +44,7 @@ class PartnershipUtils
 	 *
 	 *  @param	DoliDb		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 		return 1;
