@@ -34,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/website2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formwebsite.class.php';
@@ -1314,6 +1315,37 @@ if ($action == 'updatecss' && $usercanedit) {
 		}
 
 		if (!$error) {
+			if (($_FILES['addedfile']["name"] != '')) {
+				$uploadfolder = $conf->website->dir_output.'/'.$websitekey;
+				if ($_FILES['addedfile']['type'] != 'image/png') {
+					$error++;
+					setEventMessages($langs->trans('ErrorFaviconType'), array(), 'errors');
+				}
+				$filetoread = realpath(dol_osencode($_FILES['addedfile']['tmp_name']));
+				$filesize = getimagesize($filetoread);
+				if ($filesize[0] != 32 || $filesize[1] != 32) {
+					$error++;
+					setEventMessages($langs->trans('ErrorFaviconSize'), array(), 'errors');
+				}
+				if (!$error) {
+					dol_add_file_process($uploadfolder, 1, 0, 'addedfile', 'favicon.png');
+				}
+			}
+			if ($error) {
+				if (!GETPOSTISSET('updateandstay')) {	// If we click on "Save And Stay", we don not make the redirect
+					$action = 'preview';
+					if ($backtopage) {
+						$backtopage = preg_replace('/searchstring=[^&]*/', '', $backtopage);	// Clean backtopage url
+						header("Location: ".$backtopage);
+						exit;
+					}
+				} else {
+					$action = 'editcss';
+				}
+			}
+		}
+
+		if (!$error) {
 			// Save master.inc.php file
 			dol_syslog("Save master file ".$filemaster);
 
@@ -2230,10 +2262,16 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 	}
 	$action = 'preview';
 }
+
 $imagefolder = $conf->website->dir_output.'/'.$websitekey.'/medias/image/'.$websitekey.'/';
+
 if ($action == 'convertimgwebp' && $usercanedit) {
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
-	$filelist = dol_dir_list($imagefolder, "all", 1);
+
+	$regeximgext = getListOfPossibleImageExt();
+
+	$filelist = dol_dir_list($imagefolder, "all", 1, $regeximgext);
+
 	foreach ($filelist as $filename) {
 		$filepath = $filename['fullname'];
 		if (!(substr_compare($filepath, 'webp', -strlen('webp')) === 0)) {
@@ -3145,6 +3183,13 @@ if ($action == 'editcss') {
 	print '<input type="text" class="flat" value="'.(GETPOSTISSET('virtualhost') ? GETPOST('virtualhost', 'alpha') : $virtualurl).'" name="virtualhost">';
 	print '</td>';
 	print '</tr>';
+
+	// Favicon
+	print '<tr><td>';
+	print $form->textwithpicto($langs->trans('ImportFavicon'), $langs->trans('FaviconTooltip'));
+	print '</td><td>';
+	print '<input type="file" class="flat minwidth300" name="addedfile" id="addedfile"/>';
+	print '</tr></td>';
 
 	// CSS file
 	print '<tr><td class="tdtop">';

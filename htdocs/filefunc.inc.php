@@ -298,7 +298,7 @@ if (!defined('NUSOAP_PATH')) {
 	define('NUSOAP_PATH', (!isset($dolibarr_lib_NUSOAP_PATH)) ?DOL_DOCUMENT_ROOT.'/includes/nusoap/lib/' : (empty($dolibarr_lib_NUSOAP_PATH) ? '' : $dolibarr_lib_NUSOAP_PATH.'/'));
 }
 if (!defined('PHPEXCELNEW_PATH')) {
-	define('PHPEXCELNEW_PATH', (!isset($dolibarr_lib_PHPEXCELNEW_PATH)) ?DOL_DOCUMENT_ROOT.'/includes/phpoffice/PhpSpreadsheet/' : (empty($dolibarr_lib_PHPEXCELNEW_PATH) ? '' : $dolibarr_lib_PHPEXCELNEW_PATH.'/'));
+	define('PHPEXCELNEW_PATH', (!isset($dolibarr_lib_PHPEXCELNEW_PATH)) ?DOL_DOCUMENT_ROOT.'/includes/phpoffice/phpspreadsheet/src/PhpSpreadsheet/' : (empty($dolibarr_lib_PHPEXCELNEW_PATH) ? '' : $dolibarr_lib_PHPEXCELNEW_PATH.'/'));
 }
 if (!defined('ODTPHP_PATH')) {
 	define('ODTPHP_PATH', (!isset($dolibarr_lib_ODTPHP_PATH)) ?DOL_DOCUMENT_ROOT.'/includes/odtphp/' : (empty($dolibarr_lib_ODTPHP_PATH) ? '' : $dolibarr_lib_ODTPHP_PATH.'/'));
