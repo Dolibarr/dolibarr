@@ -489,13 +489,8 @@ class Expedition extends CommonObject
 
 		$tab = $line_ext->detail_batch;
 		// create stockLocation Qty array
-		foreach ($tab as $detbatch)
-		{
-			if ($detbatch->entrepot_id)
-			{
-				$stockLocationQty[$detbatch->entrepot_id] += $detbatch->qty;
-			}
-		}
+		foreach ($tab as $detbatch) $stockLocationQty[$detbatch->entrepot_id] += $detbatch->qty;
+
 		// create shipment lines
 		foreach ($stockLocationQty as $stockLocation => $qty)
 		{
@@ -1008,6 +1003,7 @@ class Expedition extends CommonObject
 
 					$linebatch = new ExpeditionLineBatch($this->db);
 					$ret = $linebatch->fetchFromStock($value['id_batch']); // load serial, sellby, eatby
+//                    var_dump($ret, $value);exit;
 					if ($ret < 0)
 					{
 						$this->error = $linebatch->error;
