@@ -2230,10 +2230,16 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 	}
 	$action = 'preview';
 }
+
 $imagefolder = $conf->website->dir_output.'/'.$websitekey.'/medias/image/'.$websitekey.'/';
+
 if ($action == 'convertimgwebp' && $usercanedit) {
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
-	$filelist = dol_dir_list($imagefolder, "all", 1);
+
+	$regeximgext = getListOfPossibleImageExt();
+
+	$filelist = dol_dir_list($imagefolder, "all", 1, $regeximgext);
+
 	foreach ($filelist as $filename) {
 		$filepath = $filename['fullname'];
 		if (!(substr_compare($filepath, 'webp', -strlen('webp')) === 0)) {
