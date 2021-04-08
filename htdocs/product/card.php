@@ -307,6 +307,8 @@ if (empty($reshook)) {
 			$object->status             	 = GETPOST('statut');
 			$object->status_buy            = GETPOST('statut_buy');
 			$object->status_batch = GETPOST('status_batch');
+			$object->batch_mask = GETPOST('batch_mask', 'alpha');
+
 
 			$object->barcode_type          = GETPOST('fk_barcode_type');
 			$object->barcode = GETPOST('barcode');
@@ -475,6 +477,7 @@ if (empty($reshook)) {
 				$object->status                 = GETPOST('statut', 'int');
 				$object->status_buy             = GETPOST('statut_buy', 'int');
 				$object->status_batch = GETPOST('status_batch', 'aZ09');
+				$object->batch_mask = GETPOST('batch_mask', 'alpha');
 				$object->fk_default_warehouse   = GETPOST('fk_default_warehouse');
 				// removed from update view so GETPOST always empty
 				/*
@@ -1545,10 +1548,26 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Batch number managment
 			if ($conf->productbatch->enabled) {
 				if ($object->isProduct() || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
-					print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td colspan="3">';
+					print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td>';
 					$statutarray = array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"), '2' => $langs->trans("ProductStatusOnSerial"));
 					print $form->selectarray('status_batch', $statutarray, $object->status_batch);
-					print '</td></tr>';
+					print '</td>';
+					if ($object->status_batch !== '0' 
+					&& (($object->status_batch == '1' && $conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_LOT_ADDON == 'mod_lot_advanced') 
+					|| ($object->status_batch == '2' && $conf->global->PRODUCTBATCH_SN_ADDON == 'mod_sn_advanced' && $conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS))) {
+						$inherited_mask = $object->status_batch == '1' ? $conf->global->LOT_ADVANCED_MASK : $conf->global->SN_ADVANCED_MASK;
+						print '<td>'.$langs->trans("ManageLotMask").'</td>';
+						$mask = !is_empty($object->batch_mask) ? $object->batch_mask : $inherited_mask;
+						$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
+						$tooltip .= $langs->trans("GenericMaskCodes2");
+						$tooltip .= $langs->trans("GenericMaskCodes3");
+						$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
+						$tooltip .= $langs->trans("GenericMaskCodes5");
+						print '<td>';
+						print $form->textwithpicto('<input type="text" class="flat" size="24" name="batch_mask" id="batch_mask" value="'.$mask.'">', $tooltip, 1, 1);
+						print '</td>';
+					}
+					print '</tr>';
 				}
 			}
 
