@@ -97,6 +97,10 @@ if ($action == 'setvalue' && $user->admin) {
 		$error++;
 	}
 
+	$result = dolibarr_set_const($db, "NOTIFICATION_EMAIL_DISABLE_CONFIRM_MESSAGE", GETPOST("notif_disable", "alphawithlgt"), 'chaine', 0, '', $conf->entity);
+	if ($result < 0) {
+		$error++;
+	}
 
 	if (!$error) {
 		$db->commit();
@@ -196,6 +200,19 @@ print '<input size="32" type="email" name="email_from" value="'.$conf->global->N
 if (!empty($conf->global->NOTIFICATION_EMAIL_FROM) && !isValidEmail($conf->global->NOTIFICATION_EMAIL_FROM)) {
 	print ' '.img_warning($langs->trans("ErrorBadEMail"));
 }
+print '</td>';
+print '</tr>';
+$arrayofnotifto = array(
+'',
+$langs->trans('notiftouser'),
+$langs->trans('notiftofixedemail'),
+$langs->trans('notiftouserandtofixedemail')
+);
+var_dump($arrayofnotifto,$conf->global->NOTIFICATION_EMAIL_DISABLE_CONFIRM_MESSAGE);
+print '<tr class="oddeven"><td>';
+print $langs->trans("NotificationDisableConfirmMessage").'</td>';
+print '<td>';
+print $form->selectarray("notif_disable", $arrayofnotifto, $conf->global->NOTIFICATION_EMAIL_DISABLE_CONFIRM_MESSAGE, 0, 0, 0, '', 1, 0, 0, '', 'maxwidth400', 1);
 print '</td>';
 print '</tr>';
 print '</table>';

@@ -1662,6 +1662,7 @@ MailingDelay=Temps d'attente, en seconde, avant d'envoyer le prochain message
 NotificationSetup=Configuration du module Notification par email
 NotificationEMailFrom=Adresse émettrice (From) des emails envoyés lors des notifications
 FixedEmailTarget=Email fixe cible destinataires
+NotificationDisableConfirmMessage=Notifications desactivé dans les messages de confirmation
 ##### Sendings #####
 SendingsSetup=Configuration du module Expédition/Livraison
 SendingsReceiptModel=Modèles de bordereau d'expédition
