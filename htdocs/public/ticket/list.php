@@ -51,7 +51,7 @@ $langs->loadLangs(array("companies", "other", "ticket"));
 // Get parameters
 $track_id = GETPOST('track_id', 'alpha');
 $action = GETPOST('action', 'aZ09');
-$email = strtolower (GETPOST('email', 'alpha'));
+$email = strtolower(GETPOST('email', 'alpha'));
 
 if (GETPOST('btn_view_ticket_list')) {
 	unset($_SESSION['track_id_customer']);
@@ -61,7 +61,7 @@ if (isset($_SESSION['track_id_customer'])) {
 	$track_id = $_SESSION['track_id_customer'];
 }
 if (isset($_SESSION['email_customer'])) {
-	$email = strtolower ($_SESSION['email_customer']);
+	$email = strtolower($_SESSION['email_customer']);
 }
 
 $object = new Ticket($db);
