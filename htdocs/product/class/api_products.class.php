@@ -574,8 +574,8 @@ class Products extends DolibarrApi
 	/**
 	 * Get prices per customer for a product
 	 *
-	 * @param int $id ID of product
-	 * @param string   	$thirdparty_id	  Thirdparty id to filter orders of (example '1') {@pattern /^[0-9,]*$/i}
+	 * @param int 		$id 				ID of product
+	 * @param string   	$thirdparty_id	  	Thirdparty id to filter orders of (example '1') {@pattern /^[0-9,]*$/i}
 	 *
 	 * @return mixed
 	 *
@@ -591,6 +591,11 @@ class Products extends DolibarrApi
 
 		if (empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 			throw new RestException(400, 'API not available: this mode of pricing is not enabled by setup');
+		}
+
+		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
+		if ($socid > 0 && $socid != $thirdparty_id) {
+			throw new RestException(401, 'Getting prices for all customers or for the customer ID '.$thirdparty_id.' is not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->product->fetch($id);
@@ -700,6 +705,11 @@ class Products extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
+		if ($socid > 0 && $socid != $fourn_id) {
+			throw new RestException(401, 'Adding purchase price for the supplier ID '.$fourn_id.' is not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		$result = $this->productsupplier->add_fournisseur(DolibarrApiAccess::$user, $fourn_id, $ref_fourn, $qty);
 		if ($result < 0) {
 			throw new RestException(500, "Error adding supplier to product : ".$this->db->lasterror());
@@ -774,9 +784,19 @@ class Products extends DolibarrApi
 	{
 		global $db, $conf;
 
+		if (!DolibarrApiAccess::$user->rights->produit->lire) {
+			throw new RestException(401);
+		}
+
 		$obj_ret = array();
 
+		// Force id of company for external users
 		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
+		if ($socid > 0) {
+			if ($supplier != $socid || empty($supplier)) {
+				throw new RestException(401, 'As an external user, you can request only for your supplier id = '.$socid);
+			}
+		}
 
 		$sql = "SELECT t.rowid, t.ref, t.ref_ext";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product as t";
@@ -788,12 +808,15 @@ class Products extends DolibarrApi
 		$sql .= ' WHERE t.entity IN ('.getEntity('product').')';
 
 		if ($supplier > 0) {
-			$sql .= " AND s.fk_soc = ".$this->db->escape($supplier);
+			$sql .= " AND s.fk_soc = "((int) $supplier);
+		}
+		if ($socid > 0) {	// if external user
+			$sql .= " AND s.fk_soc = ".((int) $socid);
 		}
 		$sql .= " AND s.fk_product = t.rowid";
 		// Select products of given category
 		if ($category > 0) {
-			$sql .= " AND c.fk_categorie = ".$this->db->escape($category);
+			$sql .= " AND c.fk_categorie = ".((int) $category);
 			$sql .= " AND c.fk_product = t.rowid";
 		}
 		if ($mode == 1) {
@@ -878,6 +901,8 @@ class Products extends DolibarrApi
 			throw new RestException(403);
 		}
 
+		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
+
 		$result = $this->product->fetch($id, $ref, $ref_ext, $barcode);
 		if (!$result) {
 			throw new RestException(404, 'Product not found');
@@ -891,7 +916,7 @@ class Products extends DolibarrApi
 
 		if ($result) {
 			$product_fourn = new ProductFournisseur($this->db);
-			$product_fourn_list = $product_fourn->list_product_fournisseur_price($this->product->id, '', '', 0, 0);
+			$product_fourn_list = $product_fourn->list_product_fournisseur_price($this->product->id, '', '', 0, 0, ($socid > 0 ? $socid : 0));
 		}
 
 		foreach ($product_fourn_list as $tmpobj) {
@@ -911,7 +936,9 @@ class Products extends DolibarrApi
 	 * @param  string $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:color)"
 	 * @return array
 	 *
-	 * @throws RestException
+	 * @throws RestException 401
+	 * @throws RestException 404
+	 * @throws RestException 503
 	 *
 	 * @url GET attributes
 	 */
@@ -976,7 +1003,6 @@ class Products extends DolibarrApi
 	 * @param  int $id ID of Attribute
 	 * @return array
 	 *
-	 * @throws RestException
 	 * @throws RestException 401
 	 * @throws RestException 404
 	 *
@@ -1020,8 +1046,8 @@ class Products extends DolibarrApi
 	 * @param  string $ref Reference of Attribute
 	 * @return array
 	 *
-	 * @throws RestException 500
 	 * @throws RestException 401
+	 * @throws RestException 404
 	 *
 	 * @url GET attributes/ref/{ref}
 	 */
@@ -1272,7 +1298,10 @@ class Products extends DolibarrApi
 			throw new RestException(401);
 		}
 
-		$sql = "SELECT rowid, fk_product_attribute, ref, value FROM ".MAIN_DB_PREFIX."product_attribute_value WHERE ref LIKE '".trim($ref)."' AND fk_product_attribute = ".(int) $id." AND entity IN (".getEntity('product').")";
+		$ref = trim($ref);
+
+		$sql = "SELECT rowid, fk_product_attribute, ref, value FROM ".MAIN_DB_PREFIX."product_attribute_value";
+		$sql .= " WHERE ref LIKE '".$this->db->escape($ref)."' AND fk_product_attribute = ".((int) $id)." AND entity IN (".getEntity('product').")";
 
 		$query = $this->db->query($sql);
 
@@ -1312,7 +1341,10 @@ class Products extends DolibarrApi
 			throw new RestException(401);
 		}
 
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product_attribute_value WHERE ref LIKE '".trim($ref)."' AND fk_product_attribute = ".(int) $id." AND entity IN (".getEntity('product').")";
+		$ref = trim($ref);
+
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product_attribute_value";
+		$sql .= " WHERE ref LIKE '".$this->db->escape($ref)."' AND fk_product_attribute = ".((int) $id)." AND entity IN (".getEntity('product').")";
 		$query = $this->db->query($sql);
 
 		if (!$query) {
@@ -1383,11 +1415,13 @@ class Products extends DolibarrApi
 			throw new RestException(401);
 		}
 
+		$ref = trim($ref);
+
 		$return = array();
 
 		$sql = 'SELECT ';
 		$sql .= 'v.fk_product_attribute, v.rowid, v.ref, v.value FROM '.MAIN_DB_PREFIX.'product_attribute_value as v';
-		$sql .= " WHERE v.fk_product_attribute IN (SELECT rowid FROM ".MAIN_DB_PREFIX."product_attribute WHERE ref LIKE '".$this->db->escape(trim($ref))."')";
+		$sql .= " WHERE v.fk_product_attribute IN (SELECT rowid FROM ".MAIN_DB_PREFIX."product_attribute WHERE ref LIKE '".$this->db->escape($ref)."')";
 
 		$resql = $this->db->query($sql);
 
@@ -1428,7 +1462,7 @@ class Products extends DolibarrApi
 		}
 
 		$objectval = new ProductAttributeValue($this->db);
-		$objectval->fk_product_attribute = $id;
+		$objectval->fk_product_attribute = ((int) $id);
 		$objectval->ref = $ref;
 		$objectval->value = $value;
 
