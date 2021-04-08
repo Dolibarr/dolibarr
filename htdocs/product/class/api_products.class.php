@@ -172,6 +172,10 @@ class Products extends DolibarrApi
 	{
 		global $db, $conf;
 
+		if (!DolibarrApiAccess::$user->rights->produit->lire) {
+			throw new RestException(403);
+		}
+
 		$obj_ret = array();
 
 		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
