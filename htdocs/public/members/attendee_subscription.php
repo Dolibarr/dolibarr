@@ -77,7 +77,12 @@ $action = GETPOST('action', 'aZ09');
 //$id = base64_decode(GETPOST("id"));
 $key = 'DV3PH';
 $id = openssl_decrypt(GETPOST('id'), 'aes-256-ctr', $key);
-var_dump($id);
+
+// Securekey check
+$securekey = GETPOST('securekey', 'alpha');
+if ($securekey != $conf->global->EVENTORGANIZATION_SECUREKEY) {
+    exit;
+}
 
 // Load translation files
 $langs->loadLangs(array("main", "companies", "install", "other", "eventorganization"));
@@ -205,8 +210,9 @@ if (empty($reshook) && $action == 'add') {
 		    $thirdparty->fournisseur = 0;
 		    $thirdparty->country_id  = GETPOST("country_id", 'int');
 		    $thirdparty->state_id    = GETPOST("state_id", 'int');
+		    //$thirdparty->code_client = -1;
+		    //$thirdparty->code_fournisseur = -1;
 		    
-		    //@todo jusqu'à la ligne 223 : pas sûr
 		    // Load object modCodeTiers
 		    $module = (!empty($conf->global->SOCIETE_CODECLIENT_ADDON) ? $conf->global->SOCIETE_CODECLIENT_ADDON : 'mod_codeclient_leopard');
 		    if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php') {
@@ -220,9 +226,20 @@ if (empty($reshook) && $action == 'add') {
 		        }
 		    }
 		    $modCodeClient = new $module($db);
-		    $tmpcode = $object->code_client;
-		    if (empty($tmpcode) && !empty($modCodeClient->code_auto)) {
-		        $tmpcode = $modCodeClient->getNextValue($object, 0);
+		    // We verified if the tag prefix is used
+		    if ($modCodeClient->code_auto) {
+		        $prefixCustomerIsUsed = $modCodeClient->verif_prefixIsUsed();
+		    }
+		    $module = $conf->global->SOCIETE_CODECLIENT_ADDON;
+		    if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php') {
+		        $module = substr($module, 0, dol_strlen($module) - 4);
+		    }
+		    $dirsociete = array_merge(array('/core/modules/societe/'), $conf->modules_parts['societe']);
+		    foreach ($dirsociete as $dirroot) {
+		        $res = dol_include_once($dirroot.$module.'.php');
+		        if ($res) {
+		            break;
+		        }
 		    }
 		    
 		    $res = $thirdparty->create($user);
@@ -232,7 +249,7 @@ if (empty($reshook) && $action == 'add') {
 		    $error++;
 		    $errmsg .= $thirdparty->error;
 		} else {
-		    // @todo creation of an attendee
+		    // creation of an attendee
 		    $confattendee = new ConferenceOrBoothAttendee($db);
 		    $confattendee->fk_soc = $thirdparty->id;
 		    $confattendee->date_subscription = dol_now();
@@ -372,70 +389,6 @@ if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
 // Email
 print '<tr><td>'.$langs->trans("Email").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="email" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
 
-// Add specific fields used by Dolibarr foundation for example
-if (!empty($conf->global->MEMBER_NEWFORM_DOLIBARRTURNOVER)) {
-	$arraybudget = array('50'=>'<= 100 000', '100'=>'<= 200 000', '200'=>'<= 500 000', '300'=>'<= 1 500 000', '600'=>'<= 3 000 000', '1000'=>'<= 5 000 000', '2000'=>'5 000 000+');
-	print '<tr id="trbudget" class="trcompany"><td>'.$langs->trans("TurnoverOrBudget").' <FONT COLOR="red">*</FONT></td><td>';
-	print $form->selectarray('budget', $arraybudget, GETPOST('budget'), 1);
-	print ' € or $';
-
-	print '<script type="text/javascript">
-    jQuery(document).ready(function () {
-        initturnover();
-        jQuery("#morphy").click(function() {
-            initturnover();
-        });
-        jQuery("#budget").change(function() {
-                if (jQuery("#budget").val() > 0) { jQuery(".amount").val(jQuery("#budget").val()); }
-                else { jQuery("#budget").val(\'\'); }
-        });
-        /*jQuery("#type").change(function() {
-            if (jQuery("#type").val()==1) { jQuery("#morphy").val(\'mor\'); }
-            if (jQuery("#type").val()==2) { jQuery("#morphy").val(\'phy\'); }
-            if (jQuery("#type").val()==3) { jQuery("#morphy").val(\'mor\'); }
-            if (jQuery("#type").val()==4) { jQuery("#morphy").val(\'mor\'); }
-            initturnover();
-        });*/
-        function initturnover() {
-            if (jQuery("#morphy").val()==\'phy\') {
-                jQuery(".amount").val(20);
-                jQuery("#trbudget").hide();
-                jQuery("#trcompany").hide();
-            }
-            if (jQuery("#morphy").val()==\'mor\') {
-                jQuery(".amount").val(\'\');
-                jQuery("#trcompany").show();
-                jQuery("#trbirth").hide();
-                jQuery("#trbudget").show();
-                if (jQuery("#budget").val() > 0) { jQuery(".amount").val(jQuery("#budget").val()); }
-                else { jQuery("#budget").val(\'\'); }
-            }
-        }
-    });
-    </script>';
-	print '</td></tr>'."\n";
-}
-if (!empty($conf->global->MEMBER_NEWFORM_AMOUNT) || !empty($conf->global->MEMBER_NEWFORM_PAYONLINE)) {
-	// $conf->global->MEMBER_NEWFORM_SHOWAMOUNT is an amount
-	$amount = 0;
-	if (!empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
-		$amount = $conf->global->MEMBER_NEWFORM_AMOUNT;
-	}
-
-	if (!empty($conf->global->MEMBER_NEWFORM_PAYONLINE)) {
-		$amount = GETPOST('amount') ?GETPOST('amount') : $conf->global->MEMBER_NEWFORM_AMOUNT;
-	}
-	// $conf->global->MEMBER_NEWFORM_PAYONLINE is 'paypal', 'paybox' or 'stripe'
-	print '<tr><td>'.$langs->trans("Subscription").'</td><td class="nowrap">';
-	if (!empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)) {
-		print '<input type="text" name="amount" id="amount" class="flat amount" size="6" value="'.$amount.'">';
-	} else {
-		print '<input type="text" name="amount" id="amounthidden" class="flat amount" disabled size="6" value="'.$amount.'">';
-		print '<input type="hidden" name="amount" id="amount" class="flat amount" size="6" value="'.$amount.'">';
-	}
-	print ' '.$langs->trans("Currency".$conf->currency);
-	print '</td></tr>';
-}
 print "</table>\n";
 
 print dol_get_fiche_end();
