@@ -412,7 +412,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 							}
 
 							if ($module->isEnabled()) {
-								generate_tokendol_include_once('/'.$moduledir.'/class/'.strtolower($myTmpObjectKey).'.class.php');
+								dol_include_once('/'.$moduledir.'/class/'.strtolower($myTmpObjectKey).'.class.php');
 
 								print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
 								print $module->info();
