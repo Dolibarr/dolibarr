@@ -52,6 +52,7 @@
 -- Honduras
 -- (Italy)
 -- Luxembourg
+-- Netherlands
 
 
 
@@ -631,6 +632,21 @@ INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (14003, 'LU0012', '', 0, '', 'Mersch');
 
 
+-- Netherlands/Nederland Provinces (id country=17)
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1701, 'GR', NULL, NULL, NULL, 'Groningen');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1701, 'FR', NULL, NULL, NULL, 'Friesland');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1701, 'DR', NULL, NULL, NULL, 'Drenthe');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1701, 'OV', NULL, NULL, NULL, 'Overijssel');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1701, 'GD', NULL, NULL, NULL, 'Gelderland');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1701, 'FL', NULL, NULL, NULL, 'Flevoland');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1701, 'UT', NULL, NULL, NULL, 'Utrecht');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1701, 'NH', NULL, NULL, NULL, 'Noord-Holland');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1701, 'ZH', NULL, NULL, NULL, 'Zuid-Holland');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1701, 'ZL', NULL, NULL, NULL, 'Zeeland');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1701, 'NB', NULL, NULL, NULL, 'Noord-Brabant');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1701, 'LB', NULL, NULL, NULL, 'Limburg');
+
+
 -- Provinces Maroc - Moroco (id country=12)
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES('MA', 1209, '', 0, '', 'Province de Benslimane', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES('MA1', 1209, '', 0, '', 'Province de Berrechid', 1);
@@ -1184,21 +1200,6 @@ insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, nc
 insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('WV', 1101, '', 0, 'WEST VIRGINIA', 'West Virginia', 1);
 insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('WI', 1101, '', 0, 'WISCONSIN', 'Wisconsin', 1);
 insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('WY', 1101, '', 0, 'WYOMING', 'Wyoming', 1);
-
-
--- Provincies van het Koninkrijk der Nederlanden (id country=17)
-INSERT INTO llx_c_departements ( code_departement,fk_region,cheflieu,tncc,ncc,nom) VALUES ('GR',1701,NULL,NULL,NULL,'Groningen');
-INSERT INTO llx_c_departements ( code_departement,fk_region,cheflieu,tncc,ncc,nom) VALUES ('FR',1701,NULL,NULL,NULL,'Friesland');
-INSERT INTO llx_c_departements ( code_departement,fk_region,cheflieu,tncc,ncc,nom) VALUES ('DR',1701,NULL,NULL,NULL,'Drenthe');
-INSERT INTO llx_c_departements ( code_departement,fk_region,cheflieu,tncc,ncc,nom) VALUES ('OV',1701,NULL,NULL,NULL,'Overijssel');
-INSERT INTO llx_c_departements ( code_departement,fk_region,cheflieu,tncc,ncc,nom) VALUES ('GD',1701,NULL,NULL,NULL,'Gelderland');
-INSERT INTO llx_c_departements ( code_departement,fk_region,cheflieu,tncc,ncc,nom) VALUES ('FL',1701,NULL,NULL,NULL,'Flevoland');
-INSERT INTO llx_c_departements ( code_departement,fk_region,cheflieu,tncc,ncc,nom) VALUES ('UT',1701,NULL,NULL,NULL,'Utrecht');
-INSERT INTO llx_c_departements ( code_departement,fk_region,cheflieu,tncc,ncc,nom) VALUES ('NH',1701,NULL,NULL,NULL,'Noord-Holland');
-INSERT INTO llx_c_departements ( code_departement,fk_region,cheflieu,tncc,ncc,nom) VALUES ('ZH',1701,NULL,NULL,NULL,'Zuid-Holland');
-INSERT INTO llx_c_departements ( code_departement,fk_region,cheflieu,tncc,ncc,nom) VALUES ('ZL',1701,NULL,NULL,NULL,'Zeeland');
-INSERT INTO llx_c_departements ( code_departement,fk_region,cheflieu,tncc,ncc,nom) VALUES ('NB',1701,NULL,NULL,NULL,'Noord-Brabant');
-INSERT INTO llx_c_departements ( code_departement,fk_region,cheflieu,tncc,ncc,nom) VALUES ('LB',1701,NULL,NULL,NULL,'Limburg');
 
 
 -- San Salvador (id country=86)
