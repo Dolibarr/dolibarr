@@ -228,7 +228,7 @@ print '<tr class="oddeven"><td>'.$langs->trans("DefineAmountMemberType").'</td><
 foreach ($adht->liste_array(1) as $typeid => $type) {
 	print $type .' : ';
 	print '<input type="text" id="MEMBER_SUBSCRIPTION_AMOUNT_BY_TYPE['.$typeid.']" name="MEMBER_SUBSCRIPTION_AMOUNT_BY_TYPE['.$typeid.']" " size="5" value="'.(!empty($amountbytype[$typeid]) ? $amountbytype[$typeid] : '').'">';
-	print '<br />';
+	print '<br>';
 }
 print "</td></tr>\n";
 
