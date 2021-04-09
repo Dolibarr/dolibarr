@@ -57,7 +57,7 @@ $langs->loadLangs(array("companies", "other", "ticket"));
 $track_id = GETPOST('track_id', 'alpha');
 $cancel   = GETPOST('cancel', 'alpha');
 $action   = GETPOST('action', 'aZ09');
-$email    = GETPOST('email', 'alpha');
+$email    = GETPOST('email', 'email');
 
 if (GETPOST('btn_view_ticket')) {
 	unset($_SESSION['email_customer']);
@@ -106,14 +106,14 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		if ($ret && $object->dao->id > 0) {
 			// Check if emails provided is the one of author
 			$emailofticket = CMailFile::getValidAddress($object->dao->origin_email, 2);
-			if ($emailofticket == $email) {
+			if (strtolower($emailofticket) == strtolower($email)) {
 				$display_ticket = true;
 				$_SESSION['email_customer'] = $email;
 			} else {
 				// Check if emails provided is inside list of contacts
 				$contacts = $object->dao->liste_contact(-1, 'external');
 				foreach ($contacts as $contact) {
-					if ($contact['email'] == $email) {
+					if (strtolower($contact['email']) == strtolower($email)) {
 						$display_ticket = true;
 						$_SESSION['email_customer'] = $email;
 						break;
@@ -134,7 +134,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 			if ($object->dao->fk_user_create > 0) {
 				$tmpuser = new User($db);
 				$tmpuser->fetch($object->dao->fk_user_create);
-				if ($email == $tmpuser->email) {
+				if (strtolower($email) == strtolower($tmpuser->email)) {
 					$display_ticket = true;
 					$_SESSION['email_customer'] = $email;
 				}
@@ -143,7 +143,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 			if ($object->dao->fk_user_assign > 0 && $object->dao->fk_user_assign != $object->dao->fk_user_create) {
 				$tmpuser = new User($db);
 				$tmpuser->fetch($object->dao->fk_user_assign);
-				if ($email == $tmpuser->email) {
+				if (strtolower($email) == strtolower($tmpuser->email)) {
 					$display_ticket = true;
 					$_SESSION['email_customer'] = $email;
 				}
