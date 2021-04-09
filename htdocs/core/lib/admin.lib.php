@@ -587,12 +587,12 @@ function dolibarr_set_const($db, $name, $value, $type = 'string', $visible = 0, 
 	// use string instead of chaine
 	$type = $type == 'chaine' ? 'string' : $type;
 
-	// TODO activate verify type 
+	// TODO activate verify type
 	// $is_type_function = $type == 'yesno' ? 'is_integer' : is_'.$type;
 	// $name = $is_type_function($value) ? $name : '';
-	
+
 	// Encode with JSON if value is an array to store in DB
-	$value = is_array ($value) ? json_encode ($value) : $value;
+	$value = is_array($value) ? json_encode($value) : $value;
 
 	// Clean parameters
 	$name = trim($name);
