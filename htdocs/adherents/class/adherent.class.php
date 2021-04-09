@@ -1491,7 +1491,6 @@ class Adherent extends CommonObject
 	 *	@param	string		$emetteur_banque	Name of bank of cheque
 	 *	@param	int     	$datesubend			Date end subscription
 	 *	@param	int     	$fk_type 			Member type id
-	 *
 	 *	@return int         					rowid of record added, <0 if KO
 	 */
 	public function subscription($date, $amount, $accountid = 0, $operation = '', $label = '', $num_chq = '', $emetteur_nom = '', $emetteur_banque = '', $datesubend = 0, $fk_type = null)
