@@ -809,7 +809,6 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 }
 
 
-<<<<<<< HEAD
 /*
  * Opened (validated) order
  */
@@ -822,14 +821,6 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 	$sql .= ", s.canvas";
 	$sql .= " FROM ".MAIN_DB_PREFIX."commande as c";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-=======
-	$sql = "SELECT s.nom as name, s.rowid, c.rowid as commandeid, c.fk_statut, c.total_ttc, c.total_ht, c.tva as total_tva, c.ref, c.ref_client, c.fk_statut, c.date_valid as dv, c.facture as billed";
-    $sql .= ", s.code_client";
-	$sql .= ", s.entity";
-    $sql .= ", s.email";
-	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-	$sql .= ", ".MAIN_DB_PREFIX."commande as c";
->>>>>>> branch '12.0' of git@github.com:Dolibarr/dolibarr.git
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql .= " WHERE c.entity IN (".getEntity($orderstatic->element).")";
 	$sql .= " AND c.fk_soc = s.rowid";
@@ -862,18 +853,11 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 
 				$orderstatic->id = $obj->commandeid;
 				$orderstatic->ref = $obj->ref;
-<<<<<<< HEAD
 				$orderstatic->ref_client = $obj->ref_client;
+				$orderstatic->statut = $obj->fk_statut;
 				$orderstatic->total_ht = $obj->total_ht;
 				$orderstatic->total_tva = $obj->total_tva;
 				$orderstatic->total_ttc = $obj->total_ttc;
-=======
-				$orderstatic->statut = $obj->fk_statut;
-                $orderstatic->ref_client = $obj->ref_client;
-                $orderstatic->total_ht = $obj->total_ht;
-                $orderstatic->total_tva = $obj->total_tva;
-                $orderstatic->total_ttc = $obj->total_ttc;
->>>>>>> branch '12.0' of git@github.com:Dolibarr/dolibarr.git
 
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->name;
