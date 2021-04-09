@@ -672,7 +672,7 @@ function getGMTEasterDatetime($year)
  *  @return   	int|string					Number of non working days or error message string if error
  *  @see num_between_day(), num_open_day()
  */
-function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', $lastday = 0, $includefriday = -1, $includesaturday = -1, $includesunday = -1)
+function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', $lastday = 0, $includesaturday = -1, $includesunday = -1, $includefriday = -1)
 {
 	global $db, $conf, $mysoc;
 
@@ -687,7 +687,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 		$country_code = $mysoc->country_code;
 	}
 	if ($includefriday < 0) {
-				$includefriday = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY : 0);
+		$includefriday = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY : 0);
 	}
 	if ($includesaturday < 0) {
 		$includesaturday = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY : 1);
