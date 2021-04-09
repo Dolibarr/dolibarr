@@ -2695,9 +2695,9 @@ if ($module == 'initmodule') {
 									print dol_escape_htmltag($proplabel);
 									print '</td>';
 									if ($action == 'editproperty' && $propname == $propertykey) {
+										print '<td class="tdoverflowmax200">';
 										print '<input type="hidden" name="propname" value="'.dol_escape_htmltag($propname).'">';
 										print '<input type="hidden" name="proplabel" value="'.dol_escape_htmltag($proplabel).'">';
-										print '<td class="tdoverflowmax200">';
 										print '<input name="proptype" value="'.dol_escape_htmltag($proptype).'"></input>';
 										print '</td>';
 										print '<td class="tdoverflowmax200">';
