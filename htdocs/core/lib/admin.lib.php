@@ -536,10 +536,10 @@ function dolibarr_del_const($db, $name, $entity = 1)
 /**
  *	Recupere une constante depuis la base de donnees.
  *
- *	@param	    DoliDB		$db         Database handler
- *	@param	    string		$name		Nom de la constante
+ *	@param	    DoliDB		$db		Database handler
+ *	@param	    string		$name		Constant name
  *	@param	    int			$entity		Multi company id
- *	@return     string      			Valeur de la constante
+ *	@return     mixed      				Constant value
  *
  *	@see		dolibarr_del_const(), dolibarr_set_const(), dol_set_user_param()
  */
@@ -548,7 +548,8 @@ function dolibarr_get_const($db, $name, $entity = 1)
 	global $conf;
 	$value = '';
 
-	$sql = "SELECT ".$db->decrypt('value')." as value";
+	$sql = "SELECT ".$db->decrypt('value')." as value";";
+	$sql .= " , type "
 	$sql .= " FROM ".MAIN_DB_PREFIX."const";
 	$sql .= " WHERE name = ".$db->encrypt($name, 1);
 	$sql .= " AND entity = ".$entity;
@@ -558,7 +559,7 @@ function dolibarr_get_const($db, $name, $entity = 1)
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
 		if ($obj) {
-			$value = $obj->value;
+			$value = $obj->type == 'array' ? json_decode($obj->value, true) : $obj->value;
 		}
 	}
 	return $value;
@@ -568,10 +569,10 @@ function dolibarr_get_const($db, $name, $entity = 1)
 /**
  *	Insert a parameter (key,value) into database (delete old key then insert it again).
  *
- *	@param	    DoliDB		$db         Database handler
+ *	@param	    DoliDB		$db		Database handler
  *	@param	    string		$name		Name of constant
- *	@param	    string		$value		Value of constant
- *	@param	    string		$type		Type of constant ('chaine by default)
+ *	@param	    mixed		$value		Value of constant
+ *	@param	    string		$type		Type of constant ('string' by default)
  *	@param	    int			$visible	Is constant visible in Setup->Other page (0 by default)
  *	@param	    string		$note		Note on parameter
  *	@param	    int			$entity		Multi company id (0 means all entities)
@@ -579,9 +580,19 @@ function dolibarr_get_const($db, $name, $entity = 1)
  *
  *	@see		dolibarr_del_const(), dolibarr_get_const(), dol_set_user_param()
  */
-function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, $note = '', $entity = 1)
+function dolibarr_set_const($db, $name, $value, $type = 'string', $visible = 0, $note = '', $entity = 1)
 {
 	global $conf;
+
+	// use string instead of chaine
+	$type = $type == 'chaine' ? 'string' : $type;
+
+	// TODO activate verify type 
+	// $is_type_function = $type == 'yesno' ? 'is_integer' : is_'.$type;
+	// $name = $is_type_function($value) ? $name : '';
+	
+	// Encode with JSON if value is an array to store in DB
+	$value = is_array ($value) ? json_encode ($value) : $value;
 
 	// Clean parameters
 	$name = trim($name);
