@@ -98,10 +98,11 @@ $FULLTAG = GETPOST('FULLTAG');
 if (empty($FULLTAG)) {
 	$FULLTAG = GETPOST('fulltag');
 }
-$source = GETPOST('s', 'alpha') ?GETPOST('s', 'alpha') : GETPOST('source', 'alpha');
+$source = GETPOST('s', 'alpha') ? GETPOST('s', 'alpha') : GETPOST('source', 'alpha');
 $ref = GETPOST('ref');
 
 $suffix = GETPOST("suffix", 'aZ09');
+$membertypeid = GETPOST("membertypeid", 'int');
 
 
 // Detect $paymentmethod
@@ -339,7 +340,8 @@ if ($ispaymentok) {
 		$user->rights->facture = new stdClass();
 	}
 	if (empty($user->rights->adherent)) {
-		$user->rights->adherent = new stdClass(); $user->rights->adherent->cotisation = new stdClass();
+		$user->rights->adherent = new stdClass(); 
+		$user->rights->adherent->cotisation = new stdClass();
 	}
 	$user->rights->societe->creer = 1;
 	$user->rights->facture->creer = 1;
@@ -460,7 +462,7 @@ if ($ispaymentok) {
 				if (!$error) {
 					dol_syslog("Call ->subscription to create subscription", LOG_DEBUG, 0, '_payment');
 
-					$crowid = $object->subscription($datesubscription, $amount, $accountid, $operation, $label, $num_chq, $emetteur_nom, $emetteur_banque, $datesubend);
+					$crowid = $object->subscription($datesubscription, $amount, $accountid, $operation, $label, $num_chq, $emetteur_nom, $emetteur_banque, $datesubend, $membertypeid);
 					if ($crowid <= 0) {
 						$error++;
 						$errmsg = $object->error;

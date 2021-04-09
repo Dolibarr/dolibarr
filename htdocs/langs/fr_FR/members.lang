@@ -162,6 +162,7 @@ DocForLabels=Génération d'étiquettes d'adresses
 SubscriptionPayment=Paiement cotisation
 LastSubscriptionDate=Date de dernière adhésion
 LastSubscriptionAmount=Montant dernière adhésion
+LastMemberType=Ancien type de membre
 MembersStatisticsByCountries=Statistiques des membres par pays
 MembersStatisticsByState=Statistiques des membres par département/province/canton
 MembersStatisticsByTown=Statistiques des membres par ville

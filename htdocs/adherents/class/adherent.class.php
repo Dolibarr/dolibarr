@@ -1490,9 +1490,11 @@ class Adherent extends CommonObject
 	 *	@param	string		$emetteur_nom		Name of cheque writer
 	 *	@param	string		$emetteur_banque	Name of bank of cheque
 	 *	@param	int     	$datesubend			Date end subscription
+	 *	@param	int     	fk_type 			Member type id
+	 *
 	 *	@return int         					rowid of record added, <0 if KO
 	 */
-	public function subscription($date, $amount, $accountid = 0, $operation = '', $label = '', $num_chq = '', $emetteur_nom = '', $emetteur_banque = '', $datesubend = 0)
+	public function subscription($date, $amount, $accountid = 0, $operation = '', $label = '', $num_chq = '', $emetteur_nom = '', $emetteur_banque = '', $datesubend = 0, $fk_type = NULL)
 	{
 		global $conf, $langs, $user;
 
@@ -1523,6 +1525,7 @@ class Adherent extends CommonObject
 		$subscription->amount = $amount;
 		$subscription->note = $label; // deprecated
 		$subscription->note_public = $label;
+		$subscription->fk_type = $fk_type;
 
 		$rowid = $subscription->create($user);
 		if ($rowid > 0) {
