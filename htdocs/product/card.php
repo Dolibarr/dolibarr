@@ -1086,10 +1086,28 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Batch number management
 		if (!empty($conf->productbatch->enabled)) {
-			print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td colspan="3">';
+			print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td>';
 			$statutarray = array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"), '2' => $langs->trans("ProductStatusOnSerial"));
 			print $form->selectarray('status_batch', $statutarray, GETPOST('status_batch'));
-			print '</td></tr>';
+			print '</td>';
+			// Product specific batch number management
+			$status_batch = GETPOST('status_batch');
+			if ($status_batch !== '0' 
+			&& (($status_batch == '1' && $conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_LOT_ADDON == 'mod_lot_advanced') 
+			|| ($status_batch == '2' && $conf->global->PRODUCTBATCH_SN_ADDON == 'mod_sn_advanced' && $conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS))) {
+				$inherited_mask = $object->status_batch == '1' ? $conf->global->LOT_ADVANCED_MASK : $conf->global->SN_ADVANCED_MASK;
+				print '<td>'.$langs->trans("ManageLotMask").'</td>';
+				$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
+				$tooltip .= $langs->trans("GenericMaskCodes2");
+				$tooltip .= $langs->trans("GenericMaskCodes3");
+				$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
+				$tooltip .= $langs->trans("GenericMaskCodes5");
+				print '<td>';
+				print $form->textwithpicto('<input type="text" class="flat" size="24" name="batch_mask" id="batch_mask" value="'.$inherited_mask.'">', $tooltip, 1, 1);
+				print '</td>';
+			}
+			print '</tr>';
+
 		}
 
 		$showbarcode = empty($conf->barcode->enabled) ? 0 : 1;
@@ -2055,6 +2073,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td colspan="2">';
 					print $object->getLibStatut(0, 2);
 					print '</td></tr>';
+					if ((($object->status_batch == '1' && $conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_LOT_ADDON == 'mod_lot_advanced') 
+					|| ($object->status_batch == '2' && $conf->global->PRODUCTBATCH_SN_ADDON == 'mod_sn_advanced' && $conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS))) {
+						print '<tr><td>'.$langs->trans("ManageLotMask").'</td><td colspan="2">';
+						print $object->batch_mask;
+						print '</td></tr>';
+	
+					}
 				}
 			}
 
