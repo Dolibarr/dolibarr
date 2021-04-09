@@ -254,3 +254,4 @@ ReOpen=Reopen
 ConfirmFinish=Do you confirm the closing of the inventory ? This will generate all stock movements to update your stock.
 ObjectNotFound=%s not found
 MakeMovementsAndClose=Generate movements and close
+AutofillWithExpected=Auto-fill expected quantity with real quantity

@@ -132,6 +132,10 @@ class Thirdparties extends DolibarrApi
 	{
 		$obj_ret = array();
 
+		if (!DolibarrApiAccess::$user->rights->societe->lire) {
+			throw new RestException(401);
+		}
+
 		// case of external user, we force socids
 		$socids = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
 
@@ -1842,9 +1846,11 @@ class Thirdparties extends DolibarrApi
 	private function _fetch($rowid, $ref = '', $ref_ext = '', $barcode = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '')
 	{
 		global $conf;
+
 		if (!DolibarrApiAccess::$user->rights->societe->lire) {
 			throw new RestException(401);
 		}
+
 		if ($rowid === 0) {
 			$result = $this->company->initAsSpecimen();
 		} else {

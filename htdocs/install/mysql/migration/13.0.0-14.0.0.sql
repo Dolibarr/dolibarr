@@ -414,4 +414,7 @@ ALTER TABLE llx_partnership_extrafields ADD INDEX idx_partnership_fk_object(fk_o
 
 INSERT INTO llx_c_email_templates (entity,module,type_template,label,lang,position,topic,joinfiles,content) VALUES (0, 'partnership', 'member', '(AlertStatusPartnershipExpiration)', NULL, 100, '[__[MAIN_INFO_SOCIETE_NOM]__] - __(YourMembershipWillSoonExpireTopic)__', 0, '<body>\n <p>Dear __MEMBER_FULLNAME__,<br><br>\n__(YourMembershipWillSoonExpireContent)__</p>\n<br />\n\n            __(Sincerely)__ <br />\n            __[PARTNERSHIP_SOCIETE_NOM]__ <br />\n </body>\n');
 ALTER TABLE llx_facture_fourn ADD COLUMN date_closing datetime DEFAULT NULL after date_valid;
+
 ALTER TABLE llx_facture_fourn ADD COLUMN fk_user_closing integer DEFAULT NULL after fk_user_valid;
+
+ALTER TABLE llx_entrepot ADD COLUMN fk_project INTEGER DEFAULT NULL AFTER entity; -- project associated to warehouse if any
