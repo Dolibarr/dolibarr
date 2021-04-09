@@ -34,9 +34,9 @@ dol_include_once('partnership/lib/partnership.lib.php');
  */
 class PartnershipUtils
 {
-	var $db;							//!< To store db handler
-	var $error;							//!< To return error code (or message)
-	var $errors=array();				//!< To return several error codes (or messages)
+	public $db;							//!< To store db handler
+	public $error;							//!< To return error code (or message)
+	public $errors=array();				//!< To return several error codes (or messages)
 
 
 	/**
