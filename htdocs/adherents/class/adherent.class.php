@@ -1494,7 +1494,7 @@ class Adherent extends CommonObject
 	 *
 	 *	@return int         					rowid of record added, <0 if KO
 	 */
-	public function subscription($date, $amount, $accountid = 0, $operation = '', $label = '', $num_chq = '', $emetteur_nom = '', $emetteur_banque = '', $datesubend = 0, $fk_type = NULL)
+	public function subscription($date, $amount, $accountid = 0, $operation = '', $label = '', $num_chq = '', $emetteur_nom = '', $emetteur_banque = '', $datesubend = 0, $fk_type = null)
 	{
 		global $conf, $langs, $user;
 
