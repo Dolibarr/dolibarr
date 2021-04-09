@@ -72,7 +72,7 @@ class SupplierOrders extends DolibarrApi
 			throw new RestException(404, 'Supplier order not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, '', 'commande')) {
+		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, 'commande_fournisseur', 'commande')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -269,7 +269,7 @@ class SupplierOrders extends DolibarrApi
 			throw new RestException(404, 'Supplier order not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, '', 'commande')) {
+		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, 'commande_fournisseur', 'commande')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -303,7 +303,7 @@ class SupplierOrders extends DolibarrApi
 			throw new RestException(404, 'Supplier order not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, '', 'commande')) {
+		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, 'commande_fournisseur', 'commande')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -348,7 +348,7 @@ class SupplierOrders extends DolibarrApi
 			throw new RestException(404, 'Order not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, '', 'commande')) {
+		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, 'commande_fournisseur', 'commande')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 

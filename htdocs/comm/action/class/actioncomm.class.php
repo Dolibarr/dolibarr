@@ -82,16 +82,19 @@ class ActionComm extends CommonObject
 
 	/**
 	 * @var int Id into parent table llx_c_actioncomm (used only if option to use type is set)
+	 * 			This field is stored info fk_action. It contains the id into table llx_ac_actioncomm.
 	 */
 	public $type_id;
 
 	/**
 	 * @var string Calendar of event (Type of type of event). 'system'=Default calendar, 'systemauto'=Auto calendar, 'birthdate', 'holiday', 'module'=Calendar specific to a module
+	 *             This field contains the type into table llx_ac_actioncomm ('system', 'systemauto', ...). It should be named 'type_type'.
 	 */
 	public $type;
 
 	/**
 	 * @var string Code into parent table llx_c_actioncomm (used only if option to use type is set). With default setup, should be AC_OTH_AUTO or AC_OTH.
+	 *             This field contains the code into table llx_ac_actioncomm.
 	 */
 	public $type_code;
 
@@ -112,6 +115,7 @@ class ActionComm extends CommonObject
 
 	/**
 	 * @var string Free code to identify action. Ie: Agenda trigger add here AC_TRIGGERNAME ('AC_COMPANY_CREATE', 'AC_PROPAL_VALIDATE', ...)
+	 * 			   This field is stored into field 'code' into llx_actioncomm.
 	 */
 	public $code;
 

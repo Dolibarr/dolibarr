@@ -1072,7 +1072,7 @@ div.div-for-modal {
 
 div.div-for-modal-topright {
 	/* display: none; */
-	position:absolute;
+	position: fixed;
 	top: 0;
 	right: 0;
 	width:50%;  /* adjust as per your needs */
