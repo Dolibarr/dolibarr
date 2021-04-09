@@ -53,13 +53,13 @@ $langs->loadLangs(array("companies", "other", "ticket"));
 $track_id = GETPOST('track_id', 'alpha');
 $cancel   = GETPOST('cancel', 'alpha');
 $action   = GETPOST('action', 'aZ09');
-$email    = GETPOST('email', 'alpha');
+$email    = strtolower(GETPOST('email', 'alpha'));
 
 if (GETPOST('btn_view_ticket')) {
 	unset($_SESSION['email_customer']);
 }
 if (isset($_SESSION['email_customer'])) {
-	$email = $_SESSION['email_customer'];
+	$email = strtolower($_SESSION['email_customer']);
 }
 
 $object = new ActionsTicket($db);
@@ -103,7 +103,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		$ret = $object->fetch('', '', $track_id);
 		if ($ret && $object->dao->id > 0) {
 			// Check if emails provided is the one of author
-			$emailofticket = CMailFile::getValidAddress($object->dao->origin_email, 2);
+			$emailofticket = strtolower(CMailFile::getValidAddress($object->dao->origin_email, 2));
 			if ($emailofticket == $email)
 			{
 				$display_ticket = true;
@@ -113,7 +113,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 			else {
 				$contacts = $object->dao->liste_contact(-1, 'external');
 				foreach ($contacts as $contact) {
-					if ($contact['email'] == $email) {
+					if (strtolower($contact['email']) == $email) {
 						$display_ticket = true;
 						$_SESSION['email_customer'] = $email;
 						break;
@@ -135,7 +135,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 			{
 				$tmpuser = new User($db);
 				$tmpuser->fetch($object->dao->fk_user_create);
-				if ($email == $tmpuser->email) {
+				if ($email == strtolower($tmpuser->email)) {
 					$display_ticket = true;
 					$_SESSION['email_customer'] = $email;
 				}
@@ -145,7 +145,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 			{
 				$tmpuser = new User($db);
 				$tmpuser->fetch($object->dao->fk_user_assign);
-				if ($email == $tmpuser->email) {
+				if ($email == strtolower($tmpuser->email)) {
 					$display_ticket = true;
 					$_SESSION['email_customer'] = $email;
 				}
