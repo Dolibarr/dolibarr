@@ -1296,6 +1296,9 @@ if ($dirins && $action == 'addproperty' && !empty($module) && !empty($tabobj)) {
 if ($dirins && $action == 'confirm_deleteproperty' && $propertykey) {
 	$objectname = $tabobj;
 
+	$dirins = $dirread = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
+	$moduletype = $listofmodules[strtolower($module)]['moduletype'];
+
 	$srcdir = $dirread.'/'.strtolower($module);
 	$destdir = $dirins.'/'.strtolower($module);
 	dol_mkdir($destdir);
