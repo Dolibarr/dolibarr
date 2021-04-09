@@ -1212,7 +1212,7 @@ if ($dirins && ($action == 'droptable' || $action == 'droptableextrafields') && 
 	}
 }
 
-if ($dirins && ($action == 'addproperty' && empty($cancel)) && !empty($module) && !empty($tabobj)) {
+if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && !empty($tabobj)) {
 	$error = 0;
 
 	$objectname = $tabobj;
