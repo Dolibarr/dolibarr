@@ -1212,11 +1212,7 @@ if ($dirins && ($action == 'droptable' || $action == 'droptableextrafields') && 
 	}
 }
 
-if ($dirins && $action == 'saveeditproperty' && !empty($module) && !empty($tabobj) && empty($cancel)) {
-	print 'test';
-}
-
-if ($dirins && $action == 'addproperty' && !empty($module) && !empty($tabobj)) {
+if ($dirins && ($action == 'addproperty'  && empty($cancel)) && !empty($module) && !empty($tabobj)) {
 	$error = 0;
 
 	$objectname = $tabobj;
@@ -2699,63 +2695,62 @@ if ($module == 'initmodule') {
 									print dol_escape_htmltag($proplabel);
 									print '</td>';
 									if ($action == 'editproperty' && $propname == $propertykey) {
-										print '<input type="hidden" name="action" value="saveeditproperty">';
-										print '<input type="hidden" name="editpropname" value="'.dol_escape_htmltag($propname).'">';
-										print '<input type="hidden" name="editproplabel" value="'.dol_escape_htmltag($proplabel).'">';
+										print '<input type="hidden" name="propname" value="'.dol_escape_htmltag($propname).'">';
+										print '<input type="hidden" name="proplabel" value="'.dol_escape_htmltag($proplabel).'">';
 										print '<td class="tdoverflowmax200">';
-										print '<input name="editproptype" value="'.dol_escape_htmltag($proptype).'"></input>';
+										print '<input name="proptype" value="'.dol_escape_htmltag($proptype).'"></input>';
 										print '</td>';
 										print '<td class="tdoverflowmax200">';
-										print '<input name="editproparrayofkeyval" value="'.dol_escape_htmltag(json_encode($proparrayofkeyval)).'">';
+										print '<input name="proparrayofkeyval" value="'.dol_escape_htmltag(json_encode($proparrayofkeyval)).'">';
 										print '</input>';
 										print '</td>';
 										print '<td>';
-										print '<input class="center" name="editpropnotnull" size="2" value="'.dol_escape_htmltag($propnotnull).'">';
+										print '<input class="center" name="propnotnull" size="2" value="'.dol_escape_htmltag($propnotnull).'">';
 										print '</td>';
 										print '<td>';
-										print '<input class="center" name="editpropdefault" value="'.dol_escape_htmltag($propdefault).'">';
+										print '<input class="center" name="propdefault" value="'.dol_escape_htmltag($propdefault).'">';
 										print '</td>';
 										print '<td>';
-										print '<input class="center" name="editpropindex" size="2" value="'.dol_escape_htmltag($propindex).'">';
+										print '<input class="center" name="propindex" size="2" value="'.dol_escape_htmltag($propindex).'">';
 										print '</td>';
 										print '<td>';
-										print '<input class="center" name="editpropforeignkey" value="'.dol_escape_htmltag($propforeignkey).'">';
+										print '<input class="center" name="propforeignkey" value="'.dol_escape_htmltag($propforeignkey).'">';
 										print '</td>';
 										print '<td>';
-										print '<input class="right" name="editpropposition" value="'.dol_escape_htmltag($propposition).'">';
+										print '<input class="right" name="propposition" value="'.dol_escape_htmltag($propposition).'">';
 										print '</td>';
 										print '<td>';
-										print '<input class="center" name="editpropenabled" size="2" value="'.dol_escape_htmltag($propenabled).'">';
+										print '<input class="center" name="propenabled" size="2" value="'.dol_escape_htmltag($propenabled).'">';
 										print '</td>';
 										print '<td>';
-										print '<input class="center" name="editpropvisible" size="2" value="'.dol_escape_htmltag($propvisible).'">';
+										print '<input class="center" name="propvisible" size="2" value="'.dol_escape_htmltag($propvisible).'">';
 										print '</td>';
 										print '<td>';
-										print '<input class="center" name="editpropnoteditable" size="2" value="'.dol_escape_htmltag($propnoteditable).'">';
+										print '<input class="center" name="propnotable" size="2" value="'.dol_escape_htmltag($propnotable).'">';
 										print '</td>';
 										print '<td>';
-										print '<input class="center" name="editpropsearchall" size="2" value="'.dol_escape_htmltag($propsearchall).'">';
+										print '<input class="center" name="propsearchall" size="2" value="'.dol_escape_htmltag($propsearchall).'">';
 										print '</td>';
 										print '<td>';
-										print '<input class="center" name="editpropisameasure" size="2" value="'.dol_escape_htmltag($propisameasure).'">';
+										print '<input class="center" name="propisameasure" size="2" value="'.dol_escape_htmltag($propisameasure).'">';
 										print '</td>';
 										print '<td>';
-										print '<input class="center" name="editpropcss" value="'.dol_escape_htmltag($propcss).'">';
+										print '<input class="center" name="propcss" value="'.dol_escape_htmltag($propcss).'">';
 										print '</td>';
 										print '<td>';
-										print '<input class="center" name="editpropcssview" value="'.dol_escape_htmltag($propcssview).'">';
+										print '<input class="center" name="propcssview" value="'.dol_escape_htmltag($propcssview).'">';
 										print '</td>';
 										print '<td>';
-										print '<input class="center" name="editpropcsslist" value="'.dol_escape_htmltag($propcsslist).'">';
+										print '<input class="center" name="propcsslist" value="'.dol_escape_htmltag($propcsslist).'">';
 										print '</td>';
 										print '<td>';
-										print '<input class="center" name="editprophelp" value="'.dol_escape_htmltag($prophelp).'">';
+										print '<input class="center" name="prophelp" value="'.dol_escape_htmltag($prophelp).'">';
 										print '</td>';
 										print '<td>';
-										print '<input class="center" name="editpropshowoncombobox" size="2" value="'.dol_escape_htmltag($propshowoncombobox).'">';
+										print '<input class="center" name="propshowoncombobox" size="2" value="'.dol_escape_htmltag($propshowoncombobox).'">';
 										print '</td>';
 										print '<td>';
-										print '<input name="editpropcomment" value="'.dol_escape_htmltag($propcomment).'">';
+										print '<input name="propcomment" value="'.dol_escape_htmltag($propcomment).'">';
 										print '</td>';
 										print '<td>';
 										print '<input class="button" type="submit" name="edit" value="'.$langs->trans("Save").'">';
