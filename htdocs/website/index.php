@@ -590,6 +590,8 @@ if ($action == 'addsite' && $usercanedit) {
 	if (!$error) {
 		$arrayotherlang = explode(',', GETPOST('WEBSITE_OTHERLANG', 'alphanohtml'));
 		foreach ($arrayotherlang as $key => $val) {
+			// It possible we have empty val here if postparam WEBSITE_OTHERLANG is empty or set like this : 'en,,sv' or 'en,sv,'
+			if (empty(trim($val))) continue;
 			$arrayotherlang[$key] = substr(trim($val), 0, 2); // Kept short language code only
 		}
 
@@ -1297,6 +1299,8 @@ if ($action == 'updatecss' && $usercanedit) {
 			if (!$error) {
 				$arrayotherlang = explode(',', GETPOST('WEBSITE_OTHERLANG', 'alphanohtml'));
 				foreach ($arrayotherlang as $key => $val) {
+					// It possible we have empty val here if postparam WEBSITE_OTHERLANG is empty or set like this : 'en,,sv' or 'en,sv,'
+					if (empty(trim($val))) continue;
 					$arrayotherlang[$key] = substr(trim($val), 0, 2); // Kept short language code only
 				}
 
@@ -1740,6 +1744,10 @@ if ($action == 'updatemeta' && $usercanedit) {
 				$filename = basename($fileoldalias);
 				$sublangs = explode(',', $object->otherlang);
 				foreach ($sublangs as $sublang) {
+					// Under certain conditions $sublang can be an empty string
+					// ($object->otherlang with empty string or with string like this 'en,,sv')
+					// if is the case we try to re-delete the main alias file. Avoid it.
+					if (empty(trim($sublang))) continue;
 					$fileoldaliassub = $dirname.'/'.$sublang.'/'.$filename;
 					dol_delete_file($fileoldaliassub);
 				}
@@ -1759,6 +1767,10 @@ if ($action == 'updatemeta' && $usercanedit) {
 						$filename = basename($pathofwebsite.'/'.trim($tmpaliasalt).'.php');
 						$sublangs = explode(',', $object->otherlang);
 						foreach ($sublangs as $sublang) {
+							// Under certain conditions $ sublang can be an empty string
+							// ($object->otherlang with empty string or with string like this 'en,,sv')
+							// if is the case we try to re-delete the main alias file. Avoid it.
+							if (empty(trim($sublang))) continue;
 							$fileoldaliassub = $dirname.'/'.$sublang.'/'.$filename;
 							dol_delete_file($fileoldaliassub);
 						}
@@ -2772,6 +2784,7 @@ if (!GETPOST('hide_websitemenu')) {
 							$onlylang[$website->lang] = $website->lang.' ('.$langs->trans("Default").')';
 						}
 						foreach (explode(',', $website->otherlang) as $langkey) {
+							if (empty(trim($langkey))) continue;
 							$onlylang[$langkey] = $langkey;
 						}
 						$textifempty = $langs->trans("Default");

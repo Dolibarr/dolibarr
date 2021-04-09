@@ -60,7 +60,7 @@ $arrayofparameters = array(
 	'EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT'=>array('type'=>'emailtemplate:eventorganization_send', 'enabled'=>1),
 	'EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER'=>array('type'=>'emailtemplate:eventorganization_send', 'enabled'=>1),
 	'EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES'=>array('type'=>'emailtemplate:eventorganization_send', 'enabled'=>1),
-    'EVENTORGANIZATION_SECUREKEY'=>array('type'=>'securekey', 'enabled'=>1),
+    	'EVENTORGANIZATION_SECUREKEY'=>array('type'=>'securekey', 'enabled'=>1),
 );
 
 $error = 0;
@@ -74,7 +74,6 @@ $setupnotempty = 0;
 if ((float) DOL_VERSION >= 6) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 }
-
 
 if ($action == 'updateMask') {
 	$maskconstorder = GETPOST('maskconstorder', 'alpha');
@@ -198,6 +197,7 @@ print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, 'even
 // Setup page goes here
 echo '<span class="opacitymedium">'.$langs->trans("EventOrganizationSetupPage").'</span><br><br>';
 
+
 if ($action == 'edit') {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -208,13 +208,11 @@ if ($action == 'edit') {
 
 	foreach ($arrayofparameters as $constname => $val) {
 	    if ($val['enabled']==1) {
-	        //if ($val['type'] != 'securekey'){
-	            $setupnotempty++;
-	            print '<tr class="oddeven"><td>';
-	            $tooltiphelp = (($langs->trans($constname . 'Tooltip') != $constname . 'Tooltip') ? $langs->trans($constname . 'Tooltip') : '');
-	            print '<span id="helplink'.$constname.'" class="spanforparamtooltip">'.$form->textwithpicto($langs->trans($constname), $tooltiphelp, 1, 'info', '', 0, 3, 'tootips'.$constname).'</span>';
-	            print '</td><td>';
-	        //}
+	        $setupnotempty++;
+	        print '<tr class="oddeven"><td>';
+	        $tooltiphelp = (($langs->trans($constname . 'Tooltip') != $constname . 'Tooltip') ? $langs->trans($constname . 'Tooltip') : '');
+	        print '<span id="helplink'.$constname.'" class="spanforparamtooltip">'.$form->textwithpicto($langs->trans($constname), $tooltiphelp, 1, 'info', '', 0, 3, 'tootips'.$constname).'</span>';
+	        print '</td><td>';
 
 			if ($val['type'] == 'textarea') {
 				print '<textarea class="flat" name="'.$constname.'" id="'.$constname.'" cols="50" rows="5" wrap="soft">' . "\n";
@@ -414,7 +412,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 							}
 
 							if ($module->isEnabled()) {
-								generate_tokendol_include_once('/'.$moduledir.'/class/'.strtolower($myTmpObjectKey).'.class.php');
+								dol_include_once('/'.$moduledir.'/class/'.strtolower($myTmpObjectKey).'.class.php');
 
 								print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
 								print $module->info();
