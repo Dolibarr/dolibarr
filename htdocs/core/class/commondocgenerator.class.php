@@ -465,7 +465,7 @@ abstract class CommonDocGenerator
 		$array_key.'_total_localtax2'=>price2num($object->total_localtax2),
 		$array_key.'_total_ttc'=>price2num($object->total_ttc),
 
-		$array_key.'_multicurrency_code' => price2num($object->multicurrency_code),
+		$array_key.'_multicurrency_code' => $object->multicurrency_code,
 		$array_key.'_multicurrency_tx' => price2num($object->multicurrency_tx),
 		$array_key.'_multicurrency_total_ht' => price2num($object->multicurrency_total_ht),
 		$array_key.'_multicurrency_total_tva' => price2num($object->multicurrency_total_tva),
