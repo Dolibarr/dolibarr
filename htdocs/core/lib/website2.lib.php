@@ -104,7 +104,7 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 	}
 	// Save also alias into all language subdirectories if it is a main language
 	elseif (empty($objectpage->lang) || !in_array($objectpage->lang, explode(',', $object->otherlang))) {
-		if (empty($conf->global->WEBSITE_DISABLE_MAIN_LANGUAGE_INTO_LANGSUBDIR)) {
+		if (empty($conf->global->WEBSITE_DISABLE_MAIN_LANGUAGE_INTO_LANGSUBDIR) && !empty($object->otherlang)) {
 			$dirname = dirname($filealias);
 			$filename = basename($filealias);
 			foreach (explode(',', $object->otherlang) as $sublang) {
