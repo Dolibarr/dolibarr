@@ -263,6 +263,19 @@ if (empty($reshook) && $action == 'add') {
 
 	if (!$error) {
 		$db->commit();
+		
+		$project = new Project($db);
+		$resultproject = $project->fetch($object->fk_project);
+		if ($resultproject < 0){
+		    $error++;
+		    $errmsg .= $project->error;
+		} else {
+		    if (!empty($project->price_registration)){
+		        // @todo traiter invoice et payment page
+		    }
+		}
+		
+		// invoice
 		//Header("Location: ".$urlback);
 		//exit;
 	} else {
