@@ -224,10 +224,10 @@ print "</td></tr>\n";
 $adht = new AdherentType($db);
 $amountbytype = empty($conf->global->MEMBER_SUBSCRIPTION_AMOUNT_BY_TYPE) ? -1 : json_decode($conf->global->MEMBER_SUBSCRIPTION_AMOUNT_BY_TYPE, true);
 print '<tr class="oddeven"><td>'.$langs->trans("DefineAmountMemberType").'</td><td>';
-foreach ($adht->liste_array(1) as $typeid => $type){
-    print $type .' : ';
-    print '<input type="text" id="MEMBER_SUBSCRIPTION_AMOUNT_BY_TYPE['.$typeid.']" name="MEMBER_SUBSCRIPTION_AMOUNT_BY_TYPE['.$typeid.']" " size="5" value="'.(!empty($amountbytype[$typeid]) ? $amountbytype[$typeid] : '').'">';
-    print '<br />';
+foreach ($adht->liste_array(1) as $typeid => $type) {
+	print $type .' : ';
+	print '<input type="text" id="MEMBER_SUBSCRIPTION_AMOUNT_BY_TYPE['.$typeid.']" name="MEMBER_SUBSCRIPTION_AMOUNT_BY_TYPE['.$typeid.']" " size="5" value="'.(!empty($amountbytype[$typeid]) ? $amountbytype[$typeid] : '').'">';
+	print '<br />';
 }
 print "</td></tr>\n";
 
