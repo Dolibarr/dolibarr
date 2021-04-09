@@ -2755,9 +2755,9 @@ if ($module == 'initmodule') {
 										print '<td>';
 										print '<input name="propcomment" value="'.dol_escape_htmltag($propcomment).'">';
 										print '</td>';
-										print '<td>';
-										print '<input class="button" type="submit" name="edit" value="'.$langs->trans("Save").'">';
-										print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
+										print '<td class="center">';
+										print '<input class="button smallpaddingimp" type="submit" name="edit" value="'.$langs->trans("Save").'">';
+										print '<input class="button button-cancel smallpaddingimp" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 										print '</td>';
 									} else {
 										print '<td class="tdoverflowmax200">';
@@ -2825,9 +2825,8 @@ if ($module == 'initmodule') {
 										print '</td>';
 										print '<td class="center">';
 										if ($propname != 'rowid') {
-											print '<a href="'.$_SERVER["PHP_SELF"].'?action=deleteproperty&token='.newToken().'&propertykey='.urlencode($propname).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_delete().'</a>';
-											print '&nbsp';
-											print '<a href="'.$_SERVER["PHP_SELF"].'?action=editproperty&token='.newToken().'&propertykey='.urlencode($propname).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_edit().'</a>';
+											print '<a class="editfielda reposition marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=editproperty&token='.newToken().'&propertykey='.urlencode($propname).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_edit().'</a>';
+											print '<a class="marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=deleteproperty&token='.newToken().'&propertykey='.urlencode($propname).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_delete().'</a>';
 										}
 										print '</td>';
 									}
