@@ -666,9 +666,9 @@ function getGMTEasterDatetime($year)
  *  @param	int			$timestampEnd		Timestamp end (UTC with hour, min, sec = 0)
  *  @param	string			$country_code		Country code
  *  @param	int			$lastday		Last day is included, 0: no, 1:yes
- *  @param	int			$includefriday		Include friday as non working day (-1=use setup, 0=no, 1=yes)
  *  @param	int			$includesaturday	Include saturday as non working day (-1=use setup, 0=no, 1=yes)
  *  @param	int			$includesunday		Include sunday as non working day (-1=use setup, 0=no, 1=yes)
+ *  @param	int			$includefriday		Include friday as non working day (-1=use setup, 0=no, 1=yes)
  *  @return	int|string					Number of non working days or error message string if error
  *  @see num_between_day(), num_open_day()
  */
