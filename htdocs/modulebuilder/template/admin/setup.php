@@ -81,6 +81,7 @@ $arrayofparameters = array(
 	//'MYMODULE_MYPARAM4'=>array('type'=>'emailtemplate:thirdparty', 'enabled'=>1),
 	//'MYMODULE_MYPARAM5'=>array('type'=>'yesno', 'enabled'=>1),
 	//'MYMODULE_MYPARAM5'=>array('type'=>'thirdparty_type', 'enabled'=>1),
+    //'MYMODULE_MYPARAM6'=>array('type'=>'securekey', 'enabled'=>1),
 );
 
 $error = 0;
@@ -276,6 +277,26 @@ if ($action == 'edit') {
 				require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 				$formcompany = new FormCompany($db);
 				print $formcompany->selectProspectCustomerType($conf->global->{$constname}, $constname);
+			} elseif ($val['type'] == 'securekey') {
+			    print '<input required="required" type="text" class="flat" id="'.$constname.'" name="'.$constname.'" value="'.(GETPOST($constname, 'alpha') ?GETPOST($constname, 'alpha') : $conf->global->{$constname}).'" size="40">';
+			    if (!empty($conf->use_javascript_ajax)) {
+			        print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token'.$constname.'" class="linkobject"');
+			    }
+			    if (!empty($conf->use_javascript_ajax)) {
+			        print "\n".'<script type="text/javascript">';
+			        print '$(document).ready(function () {
+                        $("#generate_token'.$constname.'").click(function() {
+                	        $.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
+                		      action: \'getrandompassword\',
+                		      generic: true
+    				        },
+    				        function(token) {
+    					       $("#'.$constname.'").val(token);
+            				});
+                         });
+                    });';
+			        print '</script>';
+			    }
 			} else {
 				print '<input name="'.$constname.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.$conf->global->{$constname}.'">';
 			}
