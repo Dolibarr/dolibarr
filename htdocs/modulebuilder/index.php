@@ -1212,6 +1212,10 @@ if ($dirins && ($action == 'droptable' || $action == 'droptableextrafields') && 
 	}
 }
 
+if ($dirins && $action == 'saveeditproperty' && !empty($module) && !empty($tabobj) && empty($cancel)) {
+	print 'test';
+}
+
 if ($dirins && $action == 'addproperty' && !empty($module) && !empty($tabobj)) {
 	$error = 0;
 
@@ -2694,75 +2698,141 @@ if ($module == 'initmodule') {
 									print '<td>';
 									print dol_escape_htmltag($proplabel);
 									print '</td>';
-									print '<td class="tdoverflowmax200">';
-									print '<span title="'.dol_escape_htmltag($proptype).'">'.dol_escape_htmltag($proptype).'</span>';
-									print '</td>';
-									print '<td class="tdoverflowmax200">';
-									if ($proparrayofkeyval) {
-										print '<span title="'.dol_escape_htmltag(json_encode($proparrayofkeyval)).'">';
-										print dol_escape_htmltag(json_encode($proparrayofkeyval));
+									if ($action == 'editproperty' && $propname == $propertykey) {
+										print '<input type="hidden" name="action" value="saveeditproperty">';
+										print '<input type="hidden" name="editpropname" value="'.dol_escape_htmltag($propname).'">';
+										print '<input type="hidden" name="editproplabel" value="'.dol_escape_htmltag($proplabel).'">';
+										print '<td class="tdoverflowmax200">';
+										print '<input name="editproptype" value="'.dol_escape_htmltag($proptype).'"></input>';
+										print '</td>';
+										print '<td class="tdoverflowmax200">';
+										print '<input name="editproparrayofkeyval" value="'.dol_escape_htmltag(json_encode($proparrayofkeyval)).'">';
+										print '</input>';
+										print '</td>';
+										print '<td>';
+										print '<input class="center" name="editpropnotnull" size="2" value="'.dol_escape_htmltag($propnotnull).'">';
+										print '</td>';
+										print '<td>';
+										print '<input class="center" name="editpropdefault" value="'.dol_escape_htmltag($propdefault).'">';
+										print '</td>';
+										print '<td>';
+										print '<input class="center" name="editpropindex" size="2" value="'.dol_escape_htmltag($propindex).'">';
+										print '</td>';
+										print '<td>';
+										print '<input class="center" name="editpropforeignkey" value="'.dol_escape_htmltag($propforeignkey).'">';
+										print '</td>';
+										print '<td>';
+										print '<input class="right" name="editpropposition" value="'.dol_escape_htmltag($propposition).'">';
+										print '</td>';
+										print '<td>';
+										print '<input class="center" name="editpropenabled" size="2" value="'.dol_escape_htmltag($propenabled).'">';
+										print '</td>';
+										print '<td>';
+										print '<input class="center" name="editpropvisible" size="2" value="'.dol_escape_htmltag($propvisible).'">';
+										print '</td>';
+										print '<td>';
+										print '<input class="center" name="editpropnoteditable" size="2" value="'.dol_escape_htmltag($propnoteditable).'">';
+										print '</td>';
+										print '<td>';
+										print '<input class="center" name="editpropsearchall" size="2" value="'.dol_escape_htmltag($propsearchall).'">';
+										print '</td>';
+										print '<td>';
+										print '<input class="center" name="editpropisameasure" size="2" value="'.dol_escape_htmltag($propisameasure).'">';
+										print '</td>';
+										print '<td>';
+										print '<input class="center" name="editpropcss" value="'.dol_escape_htmltag($propcss).'">';
+										print '</td>';
+										print '<td>';
+										print '<input class="center" name="editpropcssview" value="'.dol_escape_htmltag($propcssview).'">';
+										print '</td>';
+										print '<td>';
+										print '<input class="center" name="editpropcsslist" value="'.dol_escape_htmltag($propcsslist).'">';
+										print '</td>';
+										print '<td>';
+										print '<input class="center" name="editprophelp" value="'.dol_escape_htmltag($prophelp).'">';
+										print '</td>';
+										print '<td>';
+										print '<input class="center" name="editpropshowoncombobox" size="2" value="'.dol_escape_htmltag($propshowoncombobox).'">';
+										print '</td>';
+										print '<td>';
+										print '<input name="editpropcomment" value="'.dol_escape_htmltag($propcomment).'">';
+										print '</td>';
+										print '<td>';
+										print '<input class="button" type="submit" name="edit" value="'.$langs->trans("Save").'">';
+										print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
+										print '</td>';
+									} else {
+										print '<td class="tdoverflowmax200">';
+										print '<span title="'.dol_escape_htmltag($proptype).'">'.dol_escape_htmltag($proptype).'</span>';
+										print '</td>';
+										print '<td class="tdoverflowmax200">';
+										if ($proparrayofkeyval) {
+											print '<span title="'.dol_escape_htmltag(json_encode($proparrayofkeyval)).'">';
+											print dol_escape_htmltag(json_encode($proparrayofkeyval));
+											print '</span>';
+										}
+										print '</td>';
+										print '<td class="center">';
+										print dol_escape_htmltag($propnotnull);
+										print '</td>';
+										print '<td>';
+										print dol_escape_htmltag($propdefault);
+										print '</td>';
+										print '<td class="center">';
+										print $propindex ? '1' : '';
+										print '</td>';
+										print '<td class="center">';
+										print $propforeignkey ? dol_escape_htmltag($propforeignkey) : '';
+										print '</td>';
+										print '<td class="right">';
+										print dol_escape_htmltag($propposition);
+										print '</td>';
+										print '<td class="center">';
+										print $propenabled ? dol_escape_htmltag($propenabled) : '';
+										print '</td>';
+										print '<td class="center">';
+										print $propvisible ? dol_escape_htmltag($propvisible) : '0';
+										print '</td>';
+										print '<td class="center">';
+										print $propnoteditable ? dol_escape_htmltag($propnoteditable) : '';
+										print '</td>';
+										print '<td class="center">';
+										print $propsearchall ? '1' : '';
+										print '</td>';
+										print '<td class="center">';
+										print $propisameasure ? dol_escape_htmltag($propisameasure) : '';
+										print '</td>';
+										print '<td class="center">';
+										print $propcss ? dol_escape_htmltag($propcss) : '';
+										print '</td>';
+										print '<td class="center">';
+										print $propcssview ? dol_escape_htmltag($propcssview) : '';
+										print '</td>';
+										print '<td class="center">';
+										print $propcsslist ? dol_escape_htmltag($propcsslist) : '';
+										print '</td>';
+										print '<td class="tdoverflowmax200">';
+										print $prophelp ? dol_escape_htmltag($prophelp) : '';
+										print '</td>';
+										print '<td class="center">';
+										print $propshowoncombobox ? dol_escape_htmltag($propshowoncombobox) : '';
+										print '</td>';
+										/*print '<td class="center">';
+										print $propdisabled?$propdisabled:'';
+										print '</td>';*/
+										print '<td class="tdoverflowmax200">';
+										print '<span title="'.dol_escape_htmltag($propcomment).'">';
+										print dol_escape_htmltag($propcomment);
 										print '</span>';
+										print '</td>';
+										print '<td class="center">';
+										if ($propname != 'rowid') {
+											print '<a href="'.$_SERVER["PHP_SELF"].'?action=deleteproperty&token='.newToken().'&propertykey='.urlencode($propname).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_delete().'</a>';
+											print '&nbsp';
+											print '<a href="'.$_SERVER["PHP_SELF"].'?action=editproperty&token='.newToken().'&propertykey='.urlencode($propname).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_edit().'</a>';
+										}
+										print '</td>';
 									}
-									print '</td>';
-									print '<td class="center">';
-									print dol_escape_htmltag($propnotnull);
-									print '</td>';
-									print '<td>';
-									print dol_escape_htmltag($propdefault);
-									print '</td>';
-									print '<td class="center">';
-									print $propindex ? '1' : '';
-									print '</td>';
-									print '<td class="center">';
-									print $propforeignkey ? dol_escape_htmltag($propforeignkey) : '';
-									print '</td>';
-									print '<td class="right">';
-									print dol_escape_htmltag($propposition);
-									print '</td>';
-									print '<td class="center">';
-									print $propenabled ? dol_escape_htmltag($propenabled) : '';
-									print '</td>';
-									print '<td class="center">';
-									print $propvisible ? dol_escape_htmltag($propvisible) : '0';
-									print '</td>';
-									print '<td class="center">';
-									print $propnoteditable ? dol_escape_htmltag($propnoteditable) : '';
-									print '</td>';
-									print '<td class="center">';
-									print $propsearchall ? '1' : '';
-									print '</td>';
-									print '<td class="center">';
-									print $propisameasure ? dol_escape_htmltag($propisameasure) : '';
-									print '</td>';
-									print '<td class="center">';
-									print $propcss ? dol_escape_htmltag($propcss) : '';
-									print '</td>';
-									print '<td class="center">';
-									print $propcssview ? dol_escape_htmltag($propcssview) : '';
-									print '</td>';
-									print '<td class="center">';
-									print $propcsslist ? dol_escape_htmltag($propcsslist) : '';
-									print '</td>';
-									print '<td class="tdoverflowmax200">';
-									print $prophelp ? dol_escape_htmltag($prophelp) : '';
-									print '</td>';
-									print '<td class="center">';
-									print $propshowoncombobox ? dol_escape_htmltag($propshowoncombobox) : '';
-									print '</td>';
-									/*print '<td class="center">';
-									print $propdisabled?$propdisabled:'';
-									print '</td>';*/
-									print '<td class="tdoverflowmax200">';
-									print '<span title="'.dol_escape_htmltag($propcomment).'">';
-									print dol_escape_htmltag($propcomment);
-									print '</span>';
-									print '</td>';
-									print '<td class="center">';
-									if ($propname != 'rowid') {
-										print '<a href="'.$_SERVER["PHP_SELF"].'?action=deleteproperty&token='.newToken().'&propertykey='.urlencode($propname).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_delete().'</a>';
-									}
-									print '</td>';
-
 									print '</tr>';
 								}
 							} else {
