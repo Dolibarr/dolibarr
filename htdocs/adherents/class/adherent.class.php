@@ -1490,7 +1490,7 @@ class Adherent extends CommonObject
 	 *	@param	string		$emetteur_nom		Name of cheque writer
 	 *	@param	string		$emetteur_banque	Name of bank of cheque
 	 *	@param	int     	$datesubend			Date end subscription
-	 *	@param	int     	fk_type 			Member type id
+	 *	@param	int     	$fk_type 			Member type id
 	 *
 	 *	@return int         					rowid of record added, <0 if KO
 	 */

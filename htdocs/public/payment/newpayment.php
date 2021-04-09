@@ -1442,7 +1442,7 @@ if ($source == 'membersubscription') {
 		// Last member type
 		print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("LastMemberType");
 		print '</td><td class="CTableRow'.($var ? '1' : '2').'">'.dol_escape_htmltag($member->type);
-		print "</td></tr>"."\n";
+		print "</td></tr>\n";
 	}
 
 	if (!empty($conf->global->MEMBER_SUBSCRIPTION_AMOUNT_BY_TYPE)) {
@@ -1462,12 +1462,12 @@ if ($source == 'membersubscription') {
 			print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("NewSubscription");
 			print '</td><td class="CTableRow'.($var ? '1' : '2').'">';
 			print $form->selectarray("typeid", $adht->liste_array(1), $member->typeid, 0, 0, 0, 'onchange="window.location.replace(\''.$urlwithroot.'/public/payment/newpayment.php?source='.$source.'&ref='.$ref.'&amount='.$amount.'&typeid=\' + this.value + \'&securekey='.$SECUREKEY.'\');"', 0, 0, 0, '', '', 1);
-			print "</td></tr>"."\n";
+			print "</td></tr>\n";
 		} elseif ($action == dopayment) {
 			print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("NewMemberType");
 			print '</td><td class="CTableRow'.($var ? '1' : '2').'">'.dol_escape_htmltag($member->type);
 			print '<input type="hidden" name="membertypeid" value="'.$member->typeid.'">';
-			print "</td></tr>"."\n";
+			print "</td></tr>\n";
 		}
 	}
 
