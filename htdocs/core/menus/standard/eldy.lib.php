@@ -361,7 +361,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	// HRM
 	$tmpentry = array(
 		'enabled'=>(!empty($conf->hrm->enabled) || (!empty($conf->holiday->enabled)) || !empty($conf->deplacement->enabled) || !empty($conf->expensereport->enabled) || !empty($conf->recruitment->enabled)),
-		'perms'=>(!empty($user->rights->hrm->employee->read) || !empty($user->rights->holiday->write) || !empty($user->rights->deplacement->lire) || !empty($user->rights->expensereport->lire) || !empty($user->rights->recruitment->recruitmentjobposition->read)),
+		'perms'=>(!empty($user->rights->user->user->lire) || !empty($user->rights->holiday->read) || !empty($user->rights->deplacement->lire) || !empty($user->rights->expensereport->lire) || !empty($user->rights->recruitment->recruitmentjobposition->read)),
 		'module'=>'hrm|holiday|deplacement|expensereport|recruitment'
 	);
 
@@ -1741,9 +1741,9 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 			if (!empty($conf->hrm->enabled)) {
 				$langs->load("hrm");
 
-				$newmenu->add("/user/list.php?mainmenu=hrm&leftmenu=hrm&mode=employee", $langs->trans("Employees"), 0, $user->rights->hrm->employee->read, '', $mainmenu, 'hrm');
-				$newmenu->add("/user/card.php?mainmenu=hrm&leftmenu=hrm&action=create&employee=1", $langs->trans("NewEmployee"), 1, $user->rights->hrm->employee->write);
-				$newmenu->add("/user/list.php?mainmenu=hrm&leftmenu=hrm&mode=employee&contextpage=employeelist", $langs->trans("List"), 1, $user->rights->hrm->employee->read);
+				$newmenu->add("/user/list.php?mainmenu=hrm&leftmenu=hrm&mode=employee", $langs->trans("Employees"), 0, $user->rights->user->user->lire, '', $mainmenu, 'hrm');
+				$newmenu->add("/user/card.php?mainmenu=hrm&leftmenu=hrm&action=create&employee=1", $langs->trans("NewEmployee"), 1, $user->rights->user->user->creer);
+				$newmenu->add("/user/list.php?mainmenu=hrm&leftmenu=hrm&mode=employee&contextpage=employeelist", $langs->trans("List"), 1, $user->rights->user->user->lire);
 			}
 
 			// Leave/Holiday/Vacation module
