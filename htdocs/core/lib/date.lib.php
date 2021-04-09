@@ -666,10 +666,10 @@ function getGMTEasterDatetime($year)
  *  @param	int			$timestampEnd		Timestamp end (UTC with hour, min, sec = 0)
  *  @param	string			$country_code		Country code
  *  @param	int			$lastday		Last day is included, 0: no, 1:yes
- *  @param	int                     $includefriday		Include friday as non working day (-1=use setup, 0=no, 1=yes)
+ *  @param	int			$includefriday		Include friday as non working day (-1=use setup, 0=no, 1=yes)
  *  @param	int			$includesaturday	Include saturday as non working day (-1=use setup, 0=no, 1=yes)
  *  @param	int			$includesunday		Include sunday as non working day (-1=use setup, 0=no, 1=yes)
- *  @return   	int|string					Number of non working days or error message string if error
+ *  @return	int|string					Number of non working days or error message string if error
  *  @see num_between_day(), num_open_day()
  */
 function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', $lastday = 0, $includesaturday = -1, $includesunday = -1, $includefriday = -1)
@@ -693,7 +693,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 		$includesaturday = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY : 1);
 	}
 	if ($includesunday < 0) {
-		$includesunday   = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY : 1);
+		$includesunday = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY : 1);
 	}
 
 	$country_id = dol_getIdFromCode($db, $country_code, 'c_country', 'code', 'rowid');
