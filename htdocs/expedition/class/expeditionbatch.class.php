@@ -32,6 +32,7 @@ class ExpeditionLineBatch extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'expeditionlignebatch';
+	public $table_element = 'expeditiondet_batch';
 
 	private static $_table_element = 'expeditiondet_batch'; //!< Name of table without prefix where object is stored
 
@@ -43,6 +44,19 @@ class ExpeditionLineBatch extends CommonObject
 	public $entrepot_id;
 	public $fk_origin_stock;
 	public $fk_expeditiondet;
+
+	/**
+	 * @var array fields of object product
+	 */
+    public $fields = array(
+        'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
+        'batch' => array('type' => 'varchar(128)', 'enabled' => 1, 'position' => 10),
+        'fk_origin_stock' => array('type' => 'integer', 'enabled' => 1, 'visible' => 0, 'default' => 1, 'notnull' => 1, 'position' => 20),
+        'eatby' => array('type' => 'date', 'enabled' => 1, 'position' => 500),
+        'sellby' => array('type' => 'date', 'enabled' => 1, 'position' => 501),
+        'qty' => array('type' => 'double', 'enabled' => 1,  'position' => 502, 'notnull' => 1),
+        'fk_expeditiondet' => array('type' => 'integer', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 510, 'foreignkey' => 'llx_expeditiondet.rowid'),
+	);
 
 	/**
 	 *  Constructor
@@ -229,4 +243,18 @@ class ExpeditionLineBatch extends CommonObject
 			return -1;
 		}
 	}
+
+    /**
+     * @return int $id or -1 if KO
+     */
+	public function updateQty() {
+	    $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET qty = '.floatval($this->qty).' WHERE rowid='.$this->id;
+
+	    if (!$this->db->query($sql))
+			{
+				$this->errors[] = $this->db->lasterror()." - sql=$sql";
+				return -1;
+			}
+	    else return $this->id;
+    }
 }

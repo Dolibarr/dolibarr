@@ -24,3 +24,5 @@ ShowLogOfMovementIfLot=Show log of movements for couple product/lot
 StockDetailPerBatch=Stock detail per lot
 ToDefine=To define
 DefineBatch = Please define batch
+NewBatch=New Batch
+NoBatch=No Batch

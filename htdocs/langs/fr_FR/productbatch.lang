@@ -24,3 +24,5 @@ ShowLogOfMovementIfLot=Afficher l'historique des mouvements de couple produit / 
 StockDetailPerBatch=Stock détaillé par lot
 ToDefine=À définir
 DefineBatch=Veuillez définir les lots ou numéros de série
+NewBatch=Nouveau Lot/Série
+NoBatch=Aucun Lot/Série

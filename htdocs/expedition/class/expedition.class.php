@@ -2517,6 +2517,20 @@ class Expedition extends CommonObject
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
+
+    public function getBatchToDefineLine($fk_product) {
+        foreach($this->lines as $line) {
+            if(! empty($line->detail_batch) && $line->product_tobatch) {
+                if(is_array($line->detail_batch)) {
+                    foreach($line->detail_batch as $dbatch) {
+                        if(empty($dbatch->fk_origin_stock) && $fk_product == $line->fk_product) {
+                            return $dbatch;
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 
