@@ -549,7 +549,7 @@ function dolibarr_get_const($db, $name, $entity = 1)
 	$value = '';
 
 	$sql = "SELECT ".$db->decrypt('value')." as value";";
-	$sql .= " , type "
+	$sql .= " , type";
 	$sql .= " FROM ".MAIN_DB_PREFIX."const";
 	$sql .= " WHERE name = ".$db->encrypt($name, 1);
 	$sql .= " AND entity = ".$entity;
