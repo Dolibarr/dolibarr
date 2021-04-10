@@ -571,7 +571,7 @@ function dolibarr_get_const($db, $name, $entity = 1)
  *	@param	    DoliDB		$db         Database handler
  *	@param	    string		$name		Name of constant
  *	@param	    string		$value		Value of constant
- *	@param	    string		$type		Type of constant ('chaine by default)
+ *	@param	    string		$type		Type of constant. Deprecated, only strings are allowed for $value. Caller must json encode/decode to store other type of data.
  *	@param	    int			$visible	Is constant visible in Setup->Other page (0 by default)
  *	@param	    string		$note		Note on parameter
  *	@param	    int			$entity		Multi company id (0 means all entities)
