@@ -775,6 +775,21 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 				//print 'annee='.$annee.' $jour='.$jour.' $mois='.$mois.' $jour_lundi_paques='.$jour_lundi_paques.' $mois_lundi_paques='.$mois_lundi_paques."\n";
 			}
 
+			//Good Friday
+			if (in_array('goodfriday', $specialdayrule)) {
+				// Pulls the date of Easter
+				$easter = getGMTEasterDatetime($annee);
+
+				// Calculates the date of Good Friday based on Easter
+				$date_good_friday  = $easter - (2 * 3600 * 24);
+				$dom_good_friday   = gmdate("d", $date_good_friday);
+				$month_good_friday = gmdate("m", $date_good_friday);
+
+				if ($dom_good_friday == $jour && $month_good_friday == $mois) {
+					$ferie = true;
+				}
+			}
+
 			if (in_array('ascension', $specialdayrule)) {
 				// Calcul du jour de l'ascension (39 days after easter day)
 				$date_paques = getGMTEasterDatetime($annee);
