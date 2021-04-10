@@ -373,14 +373,15 @@ insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) v
 
 
 CREATE TABLE llx_partnership(
-	-- BEGIN MODULEBUILDER FIELDS
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
 	ref varchar(128) DEFAULT '(PROV)' NOT NULL, 
+	status smallint NOT NULL DEFAULT '0', 
 	fk_soc integer, 
 	fk_member integer, 
-	date_partnership_start datetime NOT NULL, 
-	date_partnership_end datetime NOT NULL, 
-	status smallint NOT NULL DEFAULT '0', 
+	date_partnership_start date NOT NULL, 
+	date_partnership_end date NOT NULL, 
+	entity integer	DEFAULT 1 NOT NULL,	-- multi company id, 0 = all
+	reason_decline_or_cancel text NULL,
 	date_creation datetime NOT NULL, 
 	fk_user_creat integer NOT NULL, 
 	tms timestamp, 
@@ -389,10 +390,8 @@ CREATE TABLE llx_partnership(
 	note_public text, 
 	last_main_doc varchar(255), 
 	count_last_url_check_error integer DEFAULT '0', 
-	reason_decline_or_cancel text NULL,
 	import_key varchar(14), 
 	model_pdf varchar(255)
-	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
 
 ALTER TABLE llx_partnership ADD INDEX idx_partnership_rowid (rowid);

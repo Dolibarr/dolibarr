@@ -37,7 +37,8 @@ PartnershipAboutPage = Partnership about page
 #
 # Object
 #
-
+DatePartnershipStart=Start date
+DatePartnershipEnd=End date
 
 #
 # Template Mail
