@@ -108,7 +108,7 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 			$dirname = dirname($filealias);
 			$filename = basename($filealias);
 			foreach (explode(',', $object->otherlang) as $sublang) {
-                // Avoid to erase main alias file if $sublang is empty string
+				// Avoid to erase main alias file if $sublang is empty string
 				if (empty(trim($sublang))) continue;
 				$filealiassub = $dirname.'/'.$sublang.'/'.$filename;
 

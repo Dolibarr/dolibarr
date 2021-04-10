@@ -1459,10 +1459,10 @@ if ($source == 'membersubscription') {
 		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 		$adht = new AdherentType($db);
 		if ( !$action) {
-			$form = new Form($db); // so wecan call method selectarray
+			$form = new Form($db); // so we can call method selectarray
 			print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("NewSubscription");
 			print '</td><td class="CTableRow'.($var ? '1' : '2').'">';
-			print $form->selectarray("typeid", $adht->liste_array(1), $member->typeid, 0, 0, 0, 'onchange="window.location.replace(\''.$urlwithroot.'/public/payment/newpayment.php?source='.$source.'&ref='.$ref.'&amount='.$amount.'&typeid=\' + this.value + \'&securekey='.$SECUREKEY.'\');"', 0, 0, 0, '', '', 1);
+			print $form->selectarray("typeid", $adht->liste_array(1), $member->typeid, 0, 0, 0, 'onchange="window.location.replace(\''.$urlwithroot.'/public/payment/newpayment.php?source='.urlencode($source).'&ref='.urlencode($ref).'&amount='.urlencode($amount).'&typeid=\' + this.value + \'&securekey='.urlencode($SECUREKEY).'\');"', 0, 0, 0, '', '', 1);
 			print "</td></tr>\n";
 		} elseif ($action == dopayment) {
 			print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("NewMemberType");
