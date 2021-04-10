@@ -98,7 +98,7 @@ $next_month = $next['month'];
 $next_day   = $next['day'];
 
 // Define firstdaytoshow and lastdaytoshow (warning: lastdaytoshow is last second to show + 1)
-$firstdaytoshow = dol_mktime(0, 0, 0, $first_month, $first_day, $first_year);
+$firstdaytoshow = dol_mktime(0, 0, 0, $first_month, $first_day, $first_year, true);
 $lastdaytoshow = dol_time_plus_duree($firstdaytoshow, 7, 'd');
 
 if (empty($search_usertoprocessid) || $search_usertoprocessid == $user->id) {
