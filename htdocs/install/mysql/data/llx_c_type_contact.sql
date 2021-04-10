@@ -7,8 +7,6 @@
 -- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
 -- Copyright (C) 2021 	   Udo Tamm             <dev@dolibit.de>
 --
-
--- 
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
 -- the Free Software Foundation; either version 3 of the License, or
@@ -21,9 +19,8 @@
 --
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
---
---
 
+--
 -- Notes
 --
 -- Do not place a comment at the end of the line, this file is parsed when
