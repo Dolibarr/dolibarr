@@ -61,10 +61,6 @@ $socid = 0;
 $result = restrictedArea($user, 'projet', $projectid);
 
 $now = dol_now();
-$nowtmp = dol_getdate($now);
-$nowday = $nowtmp['mday'];
-$nowmonth = $nowtmp['mon'];
-$nowyear = $nowtmp['year'];
 
 $year = GETPOST('reyear', 'int') ?GETPOST('reyear', 'int') : (GETPOST("year", "int") ?GETPOST("year", "int") : (GETPOST("addtimeyear", "int") ?GETPOST("addtimeyear", "int") : date("Y")));
 $month = GETPOST('remonth', 'int') ?GETPOST('remonth', 'int') : (GETPOST("month", "int") ?GETPOST("month", "int") : (GETPOST("addtimemonth", "int") ?GETPOST("addtimemonth", "int") : date("m")));
@@ -73,7 +69,7 @@ $week = GETPOST("week", "int") ?GETPOST("week", "int") : date("W");
 
 $day = (int) $day;
 
-$search_categ = GETPOST("search_categ", 'alpha');
+//$search_categ = GETPOST("search_categ", 'alpha');
 $search_usertoprocessid = GETPOST('search_usertoprocessid', 'int');
 $search_task_ref = GETPOST('search_task_ref', 'alpha');
 $search_task_label = GETPOST('search_task_label', 'alpha');
@@ -153,7 +149,7 @@ if ($reshook < 0) {
 // Purge criteria
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 	$action = '';
-	$search_categ = '';
+	//$search_categ = '';
 	$search_usertoprocessid = $user->id;
 	$search_task_ref = '';
 	$search_task_label = '';
@@ -422,9 +418,7 @@ $nav = '<a class="inline-block valignmiddle" href="?year='.$prev_year."&amp;mont
 $nav .= dol_print_date(dol_mktime(0, 0, 0, $month, $day, $year), "%A").' ';
 $nav .= " <span id=\"month_name\">".dol_print_date(dol_mktime(0, 0, 0, $month, $day, $year), "day")." </span>\n";
 $nav .= '<a class="inline-block valignmiddle" href="?year='.$next_year."&amp;month=".$next_month."&amp;day=".$next_day.$param.'">'.img_next($langs->trans("Next"))."</a>\n";
-//$nav .= " &nbsp; (<a href=\"?year=".$nowyear."&amp;month=".$nowmonth."&amp;day=".$nowday.$param."\">".$langs->trans("Today")."</a>)";
 $nav .= ' '.$form->selectDate(-1, '', 0, 0, 2, "addtime", 1, 1).' ';
-//$nav .= ' <input type="submit" name="submitdateselect" class="button valignmiddle" value="'.$langs->trans("Refresh").'">';
 $nav .= ' <button type="submit" name="button_search_x" value="x" class="bordertransp"><span class="fa fa-search"></span></button>';
 
 $picto = 'clock';
