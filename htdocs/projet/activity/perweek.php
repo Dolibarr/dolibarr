@@ -184,7 +184,7 @@ if (GETPOST('submitdateselect')) {
 	if (GETPOST('remonth', 'int') && GETPOST('reday', 'int') && GETPOST('reyear', 'int')) {
 		$daytoparse = dol_mktime(0, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 	}
-	
+
 	$action = '';
 }
 
