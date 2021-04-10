@@ -2,12 +2,12 @@
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2013      Florian Henry	    <florian.henry@open-concept.pro>
- * Copyright (C) 2013      Juanjo Menent	    <jmenent@2byte.es>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2013      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
- * Copyright (C) 2015      Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2016      Meziane Sof		<virtualsof@yahoo.fr>
+ * Copyright (C) 2015-2021 Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2016      Meziane Sof          <virtualsof@yahoo.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -125,22 +125,22 @@ $permissiondellink = $user->rights->facture->creer; // Used by the include of ac
 $permissiontoedit = $user->rights->facture->creer; // Used by the include of actions_lineupdonw.inc.php
 
 $arrayfields = array(
-	'f.titre'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
-	's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1),
-	'f.total'=>array('label'=>$langs->trans("AmountHT"), 'checked'=>1),
-	'f.tva'=>array('label'=>$langs->trans("AmountVAT"), 'checked'=>1),
-	'f.total_ttc'=>array('label'=>$langs->trans("AmountTTC"), 'checked'=>1),
-	'f.fk_mode_reglement'=>array('label'=>$langs->trans("PaymentMode"), 'checked'=>0),
-	'f.fk_cond_reglement'=>array('label'=>$langs->trans("PaymentTerm"), 'checked'=>0),
-	'recurring'=>array('label'=>$langs->trans("RecurringInvoiceTemplate"), 'checked'=>1),
-	'f.frequency'=>array('label'=>$langs->trans("Frequency"), 'checked'=>1),
-	'f.unit_frequency'=>array('label'=>$langs->trans("FrequencyUnit"), 'checked'=>1),
-	'f.nb_gen_done'=>array('label'=>$langs->trans("NbOfGenerationDoneShort"), 'checked'=>1),
-	'f.date_last_gen'=>array('label'=>$langs->trans("DateLastGenerationShort"), 'checked'=>1),
-	'f.date_when'=>array('label'=>$langs->trans("NextDateToExecutionShort"), 'checked'=>1),
-	'status'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>100),
-	'f.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
-	'f.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
+	'f.titre'=>array('label'=>"Ref", 'checked'=>1),
+	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1),
+	'f.total_ht'=>array('label'=>"AmountHT", 'checked'=>1),
+	'f.total_tva'=>array('label'=>"AmountVAT", 'checked'=>1),
+	'f.total_ttc'=>array('label'=>"AmountTTC", 'checked'=>1),
+	'f.fk_mode_reglement'=>array('label'=>"PaymentMode", 'checked'=>0),
+	'f.fk_cond_reglement'=>array('label'=>"PaymentTerm", 'checked'=>0),
+	'recurring'=>array('label'=>"RecurringInvoiceTemplate", 'checked'=>1),
+	'f.frequency'=>array('label'=>"Frequency", 'checked'=>1),
+	'f.unit_frequency'=>array('label'=>"FrequencyUnit", 'checked'=>1),
+	'f.nb_gen_done'=>array('label'=>"NbOfGenerationDoneShort", 'checked'=>1),
+	'f.date_last_gen'=>array('label'=>"DateLastGenerationShort", 'checked'=>1),
+	'f.date_when'=>array('label'=>"NextDateToExecutionShort", 'checked'=>1),
+	'status'=>array('label'=>"Status", 'checked'=>1, 'position'=>100),
+	'f.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
+	'f.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
@@ -251,7 +251,7 @@ $today = dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['
  *  List mode
  */
 
-$sql = "SELECT s.nom as name, s.rowid as socid, f.rowid as facid, f.titre as title, f.total, f.tva as total_vat, f.total_ttc, f.frequency, f.unit_frequency,";
+$sql = "SELECT s.nom as name, s.rowid as socid, f.rowid as facid, f.titre as title, f.total_ht, f.total_tva, f.total_ttc, f.frequency, f.unit_frequency,";
 $sql .= " f.nb_gen_done, f.nb_gen_max, f.date_last_gen, f.date_when, f.suspended,";
 $sql .= " f.datec, f.tms,";
 $sql .= " f.fk_cond_reglement, f.fk_mode_reglement";
@@ -287,10 +287,10 @@ if ($search_societe) {
 	$sql .= natural_search('s.nom', $search_societe);
 }
 if ($search_montant_ht != '') {
-	$sql .= natural_search('f.total', $search_montant_ht, 1);
+	$sql .= natural_search('f.total_ht', $search_montant_ht, 1);
 }
 if ($search_montant_vat != '') {
-	$sql .= natural_search('f.tva', $search_montant_vat, 1);
+	$sql .= natural_search('f.total_tva', $search_montant_vat, 1);
 }
 if ($search_montant_ttc != '') {
 	$sql .= natural_search('f.total_ttc', $search_montant_ttc, 1);
@@ -455,13 +455,13 @@ if ($resql) {
 	if (!empty($arrayfields['s.nom']['checked'])) {
 		print '<td class="liste_titre left"><input class="flat" type="text" size="8" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"></td>';
 	}
-	if (!empty($arrayfields['f.total']['checked'])) {
+	if (!empty($arrayfields['f.total_ht']['checked'])) {
 		// Amount net
 		print '<td class="liste_titre right">';
 		print '<input class="flat" type="text" size="5" name="search_montant_ht" value="'.dol_escape_htmltag($search_montant_ht).'">';
 		print '</td>';
 	}
-	if (!empty($arrayfields['f.tva']['checked'])) {
+	if (!empty($arrayfields['f.total_tva']['checked'])) {
 		// Amount Vat
 		print '<td class="liste_titre right">';
 		print '<input class="flat" type="text" size="5" name="search_montant_vat" value="'.dol_escape_htmltag($search_montant_vat).'">';
@@ -570,11 +570,11 @@ if ($resql) {
 	if (!empty($arrayfields['s.nom']['checked'])) {
 		print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER['PHP_SELF'], "s.nom", "", $param, "", $sortfield, $sortorder);
 	}
-	if (!empty($arrayfields['f.total']['checked'])) {
-		print_liste_field_titre($arrayfields['f.total']['label'], $_SERVER['PHP_SELF'], "f.total", "", $param, 'class="right"', $sortfield, $sortorder);
+	if (!empty($arrayfields['f.total_total']['checked'])) {
+		print_liste_field_titre($arrayfields['f.total_ht']['label'], $_SERVER['PHP_SELF'], "f.total_ht", "", $param, 'class="right"', $sortfield, $sortorder);
 	}
-	if (!empty($arrayfields['f.tva']['checked'])) {
-		print_liste_field_titre($arrayfields['f.tva']['label'], $_SERVER['PHP_SELF'], "f.tva", "", $param, 'class="right"', $sortfield, $sortorder);
+	if (!empty($arrayfields['f.total_tva']['checked'])) {
+		print_liste_field_titre($arrayfields['f.total_tva']['label'], $_SERVER['PHP_SELF'], "f.total_tva", "", $param, 'class="right"', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['f.total_ttc']['checked'])) {
 		print_liste_field_titre($arrayfields['f.total_ttc']['label'], $_SERVER['PHP_SELF'], "f.total_ttc", "", $param, 'class="right"', $sortfield, $sortorder);
@@ -654,28 +654,28 @@ if ($resql) {
 					$totalarray['nbfield']++;
 				}
 			}
-			if (!empty($arrayfields['f.total']['checked'])) {
-				print '<td class="nowrap right">'.price($objp->total).'</td>'."\n";
+			if (!empty($arrayfields['f.total_ht']['checked'])) {
+				print '<td class="nowrap right amount">'.price($objp->total).'</td>'."\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
 				if (!$i) {
-					$totalarray['pos'][$totalarray['nbfield']] = 'f.total';
+					$totalarray['pos'][$totalarray['nbfield']] = 'f.total_ht';
 				}
-				$totalarray['val']['f.total'] += $objp->total;
+				$totalarray['val']['f.total_ht'] += $objp->total_ht;
 			}
-			if (!empty($arrayfields['f.tva']['checked'])) {
-				print '<td class="nowrap right">'.price($objp->total_vat).'</td>'."\n";
+			if (!empty($arrayfields['f.total_tva']['checked'])) {
+				print '<td class="nowrap right amount">'.price($objp->total_vat).'</td>'."\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
 				if (!$i) {
-					$totalarray['pos'][$totalarray['nbfield']] = 'f.tva';
+					$totalarray['pos'][$totalarray['nbfield']] = 'f.total_tva';
 				}
-				$totalarray['val']['f.tva'] += $objp->total_vat;
+				$totalarray['val']['f.total_tva'] += $objp->total_tva;
 			}
 			if (!empty($arrayfields['f.total_ttc']['checked'])) {
-				print '<td class="nowrap right">'.price($objp->total_ttc).'</td>'."\n";
+				print '<td class="nowrap right amount">'.price($objp->total_ttc).'</td>'."\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}

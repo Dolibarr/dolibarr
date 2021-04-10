@@ -268,7 +268,7 @@ print '<br><br>';
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="border centpercent">';
-print '<tr height="24">';
+print '<tr>';
 print '<td class="center">'.$langs->trans("Year").'</td>';
 print '<td class="center">'.$langs->trans("Number").'</td>';
 print '<td class="center">'.$langs->trans("AmountTotal").'</td>';
@@ -280,14 +280,16 @@ foreach ($data as $val) {
 	$year = $val['year'];
 	while ($year && $oldyear > $year + 1) {	// If we have empty year
 		$oldyear--;
-		print '<tr height="24">';
+		print '<tr>';
 		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.'">'.$oldyear.'</a></td>';
 		print '<td class="right">0</td>';
 		print '<td class="right">0</td>';
 		print '<td class="right">0</td>';
 		print '</tr>';
 	}
-	print '<tr height="24">';
+
+	// Total
+	print '<tr>';
 	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.'">'.$year.'</a></td>';
 	print '<td class="right">'.$val['nb'].'</td>';
 	print '<td class="right">'.price(price2num($val['total'], 'MT'), 1).'</td>';

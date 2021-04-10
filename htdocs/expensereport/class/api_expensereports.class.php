@@ -99,6 +99,10 @@ class ExpenseReports extends DolibarrApi
 	{
 		global $db, $conf;
 
+		if (!DolibarrApiAccess::$user->rights->expensereport->lire) {
+			throw new RestException(401);
+		}
+
 		$obj_ret = array();
 
 		// case of external user, $societe param is ignored and replaced by user's socid
@@ -108,7 +112,7 @@ class ExpenseReports extends DolibarrApi
 		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as t";
 		$sql .= ' WHERE t.entity IN ('.getEntity('expensereport').')';
 		if ($user_ids) {
-			$sql .= " AND t.fk_user_author IN (".$user_ids.")";
+			$sql .= " AND t.fk_user_author IN (".$this->db->sanitize($user_ids).")";
 		}
 
 		// Add sql filters
@@ -164,6 +168,7 @@ class ExpenseReports extends DolibarrApi
 		if (!DolibarrApiAccess::$user->rights->expensereport->creer) {
 			throw new RestException(401, "Insuffisant rights");
 		}
+
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
 
@@ -427,6 +432,7 @@ class ExpenseReports extends DolibarrApi
 		if (!DolibarrApiAccess::$user->rights->expensereport->supprimer) {
 			throw new RestException(401);
 		}
+
 		$result = $this->expensereport->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'Expense Report not found');
@@ -469,6 +475,7 @@ class ExpenseReports extends DolibarrApi
 		if(! DolibarrApiAccess::$user->rights->expensereport->creer) {
 			throw new RestException(401);
 		}
+
 		$result = $this->expensereport->fetch($id);
 		if( ! $result ) {
 			throw new RestException(404, 'expensereport not found');

@@ -200,13 +200,13 @@ if (GETPOST("orphelins", "alpha")) {
 		$sql .= " AND sc.fk_user = ".$user->id;
 	}
 	if ($socid > 0) {
-		$sql .= " AND f.fk_soc = ".$socid;
+		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
 	if ($userid) {
 		if ($userid == -1) {
 			$sql .= " AND f.fk_user_author IS NULL";
 		} else {
-			$sql .= " AND f.fk_user_author = ".$userid;
+			$sql .= " AND f.fk_user_author = ".((int) $userid);
 		}
 	}
 
@@ -216,7 +216,7 @@ if (GETPOST("orphelins", "alpha")) {
 		$sql .= natural_search('p.ref', $search_ref);
 	}
 	if ($search_account > 0) {
-		$sql .= " AND b.fk_account=".$search_account;
+		$sql .= " AND b.fk_account=".((int) $search_account);
 	}
 	if ($search_paymenttype != '') {
 		$sql .= " AND c.code='".$db->escape($search_paymenttype)."'";
@@ -547,7 +547,7 @@ while ($i < min($num, $limit)) {
 
 	// Amount
 	if (!empty($arrayfields['p.amount']['checked'])) {
-		print '<td class="right">'.price($objp->amount).'</td>';
+		print '<td class="right"><span class="amount">'.price($objp->amount).'</span></td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

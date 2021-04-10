@@ -1113,7 +1113,7 @@ class Commande extends CommonOrder
 						}
 
 						$sqlcontact = "SELECT ctc.code, ctc.source, ec.fk_socpeople FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as ctc";
-						$sqlcontact .= " WHERE element_id = ".$originidforcontact." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$this->db->escape($originforcontact)."'";
+						$sqlcontact .= " WHERE element_id = ".((int) $originidforcontact)." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$this->db->escape($originforcontact)."'";
 
 						$resqlcontact = $this->db->query($sqlcontact);
 						if ($resqlcontact) {
@@ -2300,8 +2300,8 @@ class Commande extends CommonOrder
 		if (count($array_of_product)) {
 			$sql = "SELECT fk_product, sum(ps.reel) as total";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
-			$sql .= " WHERE ps.fk_product IN (".join(',', $array_of_product).")";
-			$sql .= ' GROUP BY fk_product ';
+			$sql .= " WHERE ps.fk_product IN (".$this->db->sanitize(join(',', $array_of_product)).")";
+			$sql .= ' GROUP BY fk_product';
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$num = $this->db->num_rows($resql);
@@ -2331,7 +2331,7 @@ class Commande extends CommonOrder
 
 			$sql = "SELECT fk_product, qty";
 			$sql .= " FROM ".MAIN_DB_PREFIX."commandedet";
-			$sql .= " WHERE rowid = ".$lineid;
+			$sql .= " WHERE rowid = ".((int) $lineid);
 
 			$result = $this->db->query($sql);
 			if ($result) {
@@ -2413,11 +2413,11 @@ class Commande extends CommonOrder
 
 			$this->db->begin();
 
-			$remise = price2num($remise);
+			$remise = price2num($remise, 2);
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
-			$sql .= ' SET remise_percent = '.$remise;
-			$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut = '.self::STATUS_DRAFT.' ;';
+			$sql .= ' SET remise_percent = '.((float) $remise);
+			$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut = '.self::STATUS_DRAFT;
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -2468,18 +2468,20 @@ class Commande extends CommonOrder
 	public function set_remise_absolue($user, $remise, $notrigger = 0)
 	{
 		// phpcs:enable
-		$remise = trim($remise) ?trim($remise) : 0;
+		if (empty($remise)) {
+			$remise = 0;
+		}
+
+		$remise = price2num($remise);
 
 		if ($user->rights->commande->creer) {
 			$error = 0;
 
 			$this->db->begin();
 
-			$remise = price2num($remise);
-
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
-			$sql .= ' SET remise_absolue = '.$remise;
-			$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut = '.self::STATUS_DRAFT.' ;';
+			$sql .= ' SET remise_absolue = '.((float) $remise);
+			$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut = '.self::STATUS_DRAFT;
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -2741,7 +2743,7 @@ class Commande extends CommonOrder
 			$this->db->begin();
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
-			$sql .= ' SET fk_availability = '.$availability_id;
+			$sql .= ' SET fk_availability = '.((int) $availability_id);
 			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
@@ -2805,7 +2807,7 @@ class Commande extends CommonOrder
 			$this->db->begin();
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
-			$sql .= ' SET fk_input_reason = '.$demand_reason_id;
+			$sql .= ' SET fk_input_reason = '.((int) $demand_reason_id);
 			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
@@ -2867,7 +2869,7 @@ class Commande extends CommonOrder
 			$this->db->begin();
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande SET';
-			$sql .= ' ref_client = '.(empty($ref_client) ? 'NULL' : '\''.$this->db->escape($ref_client).'\'');
+			$sql .= ' ref_client = '.(empty($ref_client) ? 'NULL' : "'".$this->db->escape($ref_client)."'");
 			$sql .= ' WHERE rowid = '.$this->id;
 
 			dol_syslog(__METHOD__.' this->id='.$this->id.', ref_client='.$ref_client, LOG_DEBUG);
@@ -4126,7 +4128,7 @@ class OrderLine extends CommonOrderLine
 		$sql .= ' cd.date_start, cd.date_end';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'commandedet as cd';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON cd.fk_product = p.rowid';
-		$sql .= ' WHERE cd.rowid = '.$rowid;
+		$sql .= ' WHERE cd.rowid = '.((int) $rowid);
 		$result = $this->db->query($sql);
 		if ($result) {
 			$objp = $this->db->fetch_object($result);

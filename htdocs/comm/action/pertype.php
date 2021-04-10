@@ -75,7 +75,6 @@ $socid = GETPOST("search_socid", "int") ?GETPOST("search_socid", "int") : GETPOS
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'agenda', 0, '', 'myactions');
 if ($socid < 0) {
 	$socid = '';
 }
@@ -169,6 +168,11 @@ $langs->loadLangs(array('users', 'agenda', 'other', 'commercial'));
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('agenda'));
+
+$result = restrictedArea($user, 'agenda', 0, '', 'myactions');
+if ($user->socid && $socid) {
+	$result = restrictedArea($user, 'societe', $socid);
+}
 
 
 /*
@@ -540,24 +544,24 @@ if (!empty($actioncode)) {
 			$sql .= " AND ca.type = 'systemauto'";
 		} else {
 			if (is_array($actioncode)) {
-				$sql .= " AND ca.code IN ('".implode("','", $actioncode)."')";
+				$sql .= " AND ca.code IN (".$db->sanitize("'".implode("','", $actioncode)."'", 1).")";
 			} else {
-				$sql .= " AND ca.code IN ('".implode("','", explode(',', $actioncode))."')";
+				$sql .= " AND ca.code IN (".$db->sanitize("'".implode("','", explode(',', $actioncode))."'", 1).")";
 			}
 		}
 	}
 }
 if ($resourceid > 0) {
-	$sql .= " AND r.element_type = 'action' AND r.element_id = a.id AND r.resource_id = ".$db->escape($resourceid);
+	$sql .= " AND r.element_type = 'action' AND r.element_id = a.id AND r.resource_id = ".((int) $resourceid);
 }
 if ($pid) {
-	$sql .= " AND a.fk_project=".$db->escape($pid);
+	$sql .= " AND a.fk_project=".((int) $pid);
 }
 if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".$user->id.")";
 }
 if ($socid > 0) {
-	$sql .= ' AND a.fk_soc = '.$socid;
+	$sql .= ' AND a.fk_soc = '.((int) $socid);
 }
 // We must filter on assignement table
 if ($filtert > 0 || $usergroup > 0) {
@@ -738,7 +742,7 @@ $cacheusers = array();
 // Define theme_datacolor array
 $color_file = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/theme_vars.inc.php";
 if (is_readable($color_file)) {
-	include_once $color_file;
+	include $color_file;
 }
 if (!is_array($theme_datacolor)) {
 	$theme_datacolor = array(array(120, 130, 150), array(200, 160, 180), array(190, 190, 220));

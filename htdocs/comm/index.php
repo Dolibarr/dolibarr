@@ -28,11 +28,6 @@
  */
 
 require '../main.inc.php';
-
-if (!$user->rights->societe->lire) {
-	accessforbidden();
-}
-
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
@@ -63,9 +58,20 @@ if (isset($user->socid) && $user->socid > 0) {
 $max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 $now = dol_now();
 
+// Security check
+$socid = GETPOST("socid", 'int');
+if ($user->socid > 0) {
+	$action = '';
+	$id = $user->socid;
+}
+restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid', 0);
+
+
 /*
  * Actions
  */
+
+// None
 
 
 /*
@@ -169,7 +175,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	}
 	if ($socid) {
-		$sql .= " AND s.rowid = ".$socid;
+		$sql .= " AND s.rowid = ".((int) $socid);
 	}
 
 	$resql = $db->query($sql);
@@ -978,6 +984,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 				$orderstatic->id = $obj->commandeid;
 				$orderstatic->ref = $obj->ref;
 				$orderstatic->ref_client = $obj->ref_client;
+				$orderstatic->statut = $obj->fk_statut;
 				$orderstatic->total_ht = $obj->total_ht;
 				$orderstatic->total_tva = $obj->total_tva;
 				$orderstatic->total_ttc = $obj->total_ttc;

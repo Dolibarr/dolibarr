@@ -561,7 +561,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$object->state_id = GETPOST("state_id");
 
 			// We set country_id, country_code and label for the selected country
-			$object->country_id = $_POST["country_id"] ?GETPOST("country_id") : (empty($objsoc->country_id) ? $mysoc->country_id : $objsoc->country_id);
+			$object->country_id = GETPOST("country_id") ? GETPOST("country_id", "int") : (empty($objsoc->country_id) ? $mysoc->country_id : $objsoc->country_id);
 			if ($object->country_id) {
 				$tmparray = getCountry($object->country_id, 'all');
 				$object->country_code = $tmparray['code'];

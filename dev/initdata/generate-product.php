@@ -102,8 +102,8 @@ for ($s = 0; $s < GEN_NUMBER_PRODUIT; $s++) {
 	$produit->ref = ($produit->type?'S':'P').time().$s;
 	$produit->label = 'Label '.time().$s;
 	$produit->description = 'Description '.time().$s;
-	$produit->price = mt_rand(1, 1000);
-	$produit->tva_tx = "19.6";
+	$produit->price = mt_rand(1, 999.99);
+	$produit->tva_tx = "20.0";
 	$ret=$produit->create($user);
 	if ($ret < 0) {
 		print "Error $ret - ".$produit->error."\n";

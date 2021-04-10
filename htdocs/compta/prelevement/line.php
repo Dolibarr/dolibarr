@@ -262,9 +262,9 @@ if ($id) {
 	$sql .= " AND f.fk_soc = s.rowid";
 	$sql .= " AND pf.fk_facture = f.rowid";
 	$sql .= " AND f.entity IN (".getEntity('invoice').")";
-	$sql .= " AND pl.rowid=".$id;
+	$sql .= " AND pl.rowid = ".((int) $id);
 	if ($socid) {
-		$sql .= " AND s.rowid = ".$socid;
+		$sql .= " AND s.rowid = ".((int) $socid);
 	}
 	$sql .= " ORDER BY $sortfield $sortorder ";
 	$sql .= $db->plimit($conf->liste_limit + 1, $offset);
@@ -301,7 +301,7 @@ if ($id) {
 			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">';
 			print img_object($langs->trans("ShowCompany"), "company").' '.$obj->name."</a></td>\n";
 
-			print '<td class="right">'.price($obj->total_ttc)."</td>\n";
+			print '<td class="right"><span class="amount">'.price($obj->total_ttc)."</span></td>\n";
 
 			print '<td class="right">';
 			$invoicestatic->fetch($obj->facid);

@@ -165,6 +165,10 @@ class Invoices extends DolibarrApi
 	{
 		global $db, $conf;
 
+		if (!DolibarrApiAccess::$user->rights->facture->lire) {
+			throw new RestException(401);
+		}
+
 		$obj_ret = array();
 
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
@@ -191,7 +195,7 @@ class Invoices extends DolibarrApi
 			$sql .= " AND t.fk_soc = sc.fk_soc";
 		}
 		if ($socids) {
-			$sql .= " AND t.fk_soc IN (".$socids.")";
+			$sql .= " AND t.fk_soc IN (".$this->db->sanitize($socids).")";
 		}
 
 		if ($search_sale > 0) {
@@ -1142,7 +1146,7 @@ class Invoices extends DolibarrApi
 				$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
 				$sql .= " re.description, re.fk_facture_source";
 				$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as re";
-				$sql .= " WHERE fk_facture = ".$this->invoice->id;
+				$sql .= " WHERE fk_facture = ".((int) $this->invoice->id);
 				$resql = $this->db->query($sql);
 				if (!empty($resql)) {
 					while ($obj = $this->db->fetch_object($resql)) {

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -132,18 +132,41 @@ $permissiontoadd = $user->rights->eventorganization->write;
 $permissiontodelete = $user->rights->eventorganization->delete;
 
 // Security check
-//$socid = 0;
+if (empty($conf->eventorganization->enabled)) {
+	accessforbidden('Module not enabled');
+}
+$socid = 0;
 if ($user->socid > 0) { // Protection if external user
 	//$socid = $user->socid;
 	accessforbidden();
 }
 $result = restrictedArea($user, 'eventorganization');
-
+if (!$permissiontoread) accessforbidden();
 
 /*
  * Actions
  */
+if (preg_match('/^set/', $action) && $projectid > 0) {
+	$project = new Project($db);
+	//If "set" fields keys is in projects fields
+	$project_attr=preg_replace('/^set/', '', $action);
+	if (array_key_exists($project_attr, $project->fields)) {
+		$result = $project->fetch($projectid);
+		if ($result < 0) {
+			setEventMessages(null, $project->errors, 'errors');
+		} else {
+			$project->{$project_attr}=GETPOST($project_attr);
+			$result=$project->update($user);
+			if ($result < 0) {
+				setEventMessages(null, $project->errors, 'errors');
+			}
+		}
+	}
+}
+/*if ($action=='setaccept_conference_suggestions' && !empty(GETPOST('cancel', 'alpha'))) {
 
+}*/
+//setaccept_booth_suggestions
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
 	$massaction = '';
@@ -151,6 +174,9 @@ if (GETPOST('cancel', 'alpha')) {
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
 }
+
+
+
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -265,7 +291,7 @@ if ($projectid > 0) {
 	// Define a complementary filter for search of next/prev ref.
 	if (!$user->rights->project->all->lire) {
 		$objectsListId = $project->getProjectsAuthorizedForUser($user, 0, 0);
-		$project->next_prev_filter = " rowid in (".(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
+		$project->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
 	}
 
 	dol_banner_tab($project, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -362,6 +388,39 @@ if ($projectid > 0) {
 		print "</td></tr>";
 	}
 
+	print '<tr><td>';
+	$typeofdata = 'checkbox:'.($project->accept_conference_suggestions ? ' checked="checked"' : '');
+	$htmltext = $langs->trans("AllowUnknownPeopleSuggestConfHelp");
+	print $form->editfieldkey('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', '', $project, $permissiontoadd, $typeofdata, '', 0, 0, 'projectid', $htmltext);
+	print '</td><td>';
+	print $form->editfieldval('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', '1', $project, $permissiontoadd, $typeofdata, '', 0, 0, '', 0, '', 'projectid');
+	print "</td></tr>";
+
+	print '<tr><td>';
+	$typeofdata = 'checkbox:'.($project->accept_booth_suggestions ? ' checked="checked"' : '');
+	$htmltext = $langs->trans("AllowUnknownPeopleSuggestBoothHelp");
+	print $form->editfieldkey('AllowUnknownPeopleSuggestBooth', 'accept_booth_suggestions', '', $project, $permissiontoadd, $typeofdata, '', 0, 0, 'projectid', $htmltext);
+	print '</td><td>';
+	print $form->editfieldval('AllowUnknownPeopleSuggestBooth', 'accept_booth_suggestions', '1', $project, $permissiontoadd, $typeofdata, '', 0, 0, '', 0, '', 'projectid');
+	print "</td></tr>";
+
+	print '<tr><td>';
+	print $form->editfieldkey('PriceOfRegistration', 'price_registration', '', $project, $permissiontoadd, 'amount', '', 0, 0, 'projectid');
+	print '</td><td>';
+	print $form->editfieldval('PriceOfRegistration', 'price_registration', $project->price_registration, $project, $permissiontoadd, 'amount', '', 0, 0, '', 0, '', 'projectid');
+	print "</td></tr>";
+
+	print '<tr><td>';
+	print $form->editfieldkey('PriceOfBooth', 'price_booth', '', $project, $permissiontoadd, 'amount', '', 0, 0, 'projectid');
+	print '</td><td>';
+	print $form->editfieldval('PriceOfBooth', 'price_booth', $project->price_booth, $project, $permissiontoadd, 'amount', '', 0, 0, '', 0, '', 'projectid');
+	print "</td></tr>";
+
+	print '<tr><td valign="middle">'.$langs->trans("EventOrganizationICSLink").'</td><td>';
+	print '';
+	print "</td></tr>";
+
+
 	print '</table>';
 
 	print '</div>';
@@ -403,10 +462,11 @@ if ($object->ismultientitymanaged == 1) {
 } else {
 	$sql .= " WHERE 1 = 1";
 }
-
+if ($projectid > 0) {
+	$sql .= ' AND t.fk_project='.$project->id;
+}
 foreach ($search as $key => $val) {
 	if (array_key_exists($key, $object->fields)) {
-		//var_dump($key,$object->fields);
 		if ($key == 'status' && $search[$key] == -1) {
 			continue;
 		}
@@ -421,7 +481,6 @@ foreach ($search as $key => $val) {
 			$sql .= natural_search($key, $search[$key], (($key == 'status') ? 2 : $mode_search));
 		}
 	} else {
-		//var_dump($key,$object->fields);
 		if (preg_match('/(_dtstart|_dtend)$/', $key) && $search[$key] != '') {
 			$columnName=preg_replace('/(_dtstart|_dtend)$/', '', $key);
 			if (preg_match('/^(date|timestamp|datetime)/', $object->fields[$columnName]['type'])) {
@@ -446,22 +505,6 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
-
-/* If a group by is required
-$sql.= " GROUP BY ";
-foreach($object->fields as $key => $val) {
-	$sql.='t.'.$key.', ';
-}
-// Add fields from extrafields
-if (! empty($extrafields->attributes[$object->table_element]['label'])) {
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.', ' : '');
-}
-// Add where from hooks
-$parameters=array();
-$reshook=$hookmanager->executeHooks('printFieldListGroupBy',$parameters, $object);    // Note that $action and $object may have been modified by hook
-$sql.=$hookmanager->resPrint;
-$sql=preg_replace('/,\s*$/','', $sql);
-*/
 
 $sql .= $db->order($sortfield, $sortorder);
 
@@ -554,9 +597,9 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', dol_buildpath('/eventorganization/conferenceorbooth_card.php', 1).'?action=create'.(!empty($project->id)?'&fk_project='.$project->id:'').(!empty($project->socid)?'&fk_soc='.$project->socid:'').'&backtopage='.urlencode($_SERVER['PHP_SELF']).(!empty($project->id)?'?projectid='.$project->id:''), '', $permissiontoadd);
+$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/eventorganization/conferenceorbooth_card.php?action=create'.(!empty($project->id)?'&withproject=1&fk_project='.$project->id:'').(!empty($project->socid)?'&fk_soc='.$project->socid:'').'&backtopage='.urlencode($_SERVER['PHP_SELF']).(!empty($project->id)?'?projectid='.$project->id:''), '', $permissiontoadd);
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'object_'.$object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 // Add code for pre mass action (confirmation or email presend form)
 $topicmail = "SendConferenceOrBoothRef";
@@ -725,6 +768,8 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			print '<td'.($cssforfield ? ' class="'.$cssforfield.'"' : '').'>';
 			if ($key == 'status') {
 				print $object->getLibStatut(5);
+			} elseif ($key == 'ref') {
+				print $object->getNomUrl(1, 0, '', (($projectid > 0)?'withproject':''));
 			} else {
 				print $object->showOutputField($val, $key, $object->$key, '');
 			}

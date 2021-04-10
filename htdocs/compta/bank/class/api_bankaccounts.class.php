@@ -425,7 +425,7 @@ class BankAccounts extends DolibarrApi
 		}
 
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."bank ";
-		$sql .= " WHERE fk_account = ".$id;
+		$sql .= " WHERE fk_account = ".((int) $id);
 
 		// Add sql filters
 		if ($sqlfilters) {

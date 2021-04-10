@@ -197,7 +197,7 @@ INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private,
 INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, tms, label, position, active, topic, content, content_lines, enabled, joinfiles) values (0, '', 'eventorganization_send', '', 0, null, null, '2021-02-14 14:42:41', 'EventOrganizationEmailAskBooth', 20, 1, '[__[MAIN_INFO_SOCIETE_NOM]__] __(EventOrganizationEmailAskBooth)__', '__(Hello)__ __THIRDPARTY_NAME__,<br /><br />__(ThisIsContentOfYourOrganizationEventBoothRequestWasReceived)__<br /><br />__ONLINE_PAYMENT_TEXT_AND_URL__<br /><br /><br />__(Sincerely)__<br />__USER_SIGNATURE__', null, '1', null);
 INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, tms, label, position, active, topic, content, content_lines, enabled, joinfiles) values (0, '', 'eventorganization_send', '', 0, null, null, '2021-02-14 14:42:41', 'EventOrganizationEmailSubsBooth', 30, 1, '[__[MAIN_INFO_SOCIETE_NOM]__] __(EventOrganizationEmailSubsBooth)__', '__(Hello)__ __THIRDPARTY_NAME__,<br /><br />__(ThisIsContentOfYourOrganizationEventBoothSubscriptionWasReceived)__<br /><br />__ONLINE_PAYMENT_TEXT_AND_URL__<br /><br /><br />__(Sincerely)__<br />__USER_SIGNATURE__', null, '1', null);
 INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, tms, label, position, active, topic, content, content_lines, enabled, joinfiles) values (0, '', 'eventorganization_send', '', 0, null, null, '2021-02-14 14:42:41', 'EventOrganizationEmailSubsEvent', 40, 1, '[__[MAIN_INFO_SOCIETE_NOM]__] __(EventOrganizationEmailSubsEvent)__', '__(Hello)__ __THIRDPARTY_NAME__,<br /><br />__(ThisIsContentOfYourOrganizationEventEventSubscriptionWasReceived)__<br /><br />__ONLINE_PAYMENT_TEXT_AND_URL__<br /><br /><br />__(Sincerely)__<br />__USER_SIGNATURE__', null, '1', null);
-INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, tms, label, position, active, topic, content, content_lines, enabled, joinfiles) values (0, '', 'eventorganization_send', '', 0, null, null, '2021-02-14 14:42:41', 'EventOrganizationMassEmailAttendes', 50, 1, '[__[MAIN_INFO_SOCIETE_NOM]__] __(EventOrganizationMassEmailAttendes)__', '__(Hello)__ __THIRDPARTY_NAME__,<br /><br />__(ThisIsContentOfYourOrganizationEventBulkMailToAttendees)__<br /><br />__(Sincerely)__<br />__USER_SIGNATURE__', null, '1', null);
+INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, tms, label, position, active, topic, content, content_lines, enabled, joinfiles) values (0, '', 'eventorganization_send', '', 0, null, null, '2021-02-14 14:42:41', 'EventOrganizationMassEmailAttendees', 50, 1, '[__[MAIN_INFO_SOCIETE_NOM]__] __(EventOrganizationMassEmailAttendees)__', '__(Hello)__ __THIRDPARTY_NAME__,<br /><br />__(ThisIsContentOfYourOrganizationEventBulkMailToAttendees)__<br /><br />__(Sincerely)__<br />__USER_SIGNATURE__', null, '1', null);
 INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, tms, label, position, active, topic, content, content_lines, enabled, joinfiles) values (0, '', 'eventorganization_send', '', 0, null, null, '2021-02-14 14:42:41', 'EventOrganizationMassEmailSpeakers', 60, 1, '[__[MAIN_INFO_SOCIETE_NOM]__] __(EventOrganizationMassEmailSpeakers)__', '__(Hello)__ __THIRDPARTY_NAME__,<br /><br />__(ThisIsContentOfYourOrganizationEventBulkMailToSpeakers)__<br /><br />__(Sincerely)__<br />__USER_SIGNATURE__', null, '1', null);
 
 ALTER TABLE llx_projet ADD COLUMN accept_conference_suggestions integer DEFAULT 0;
@@ -226,6 +226,10 @@ ALTER TABLE llx_supplier_proposal CHANGE COLUMN tva total_tva double(24,8) defau
 ALTER TABLE llx_supplier_proposal CHANGE COLUMN total total_ttc double(24,8) default 0;
 ALTER TABLE llx_propal CHANGE COLUMN tva total_tva double(24,8) default 0;
 ALTER TABLE llx_propal CHANGE COLUMN total total_ttc double(24,8) default 0;
+ALTER TABLE llx_facture CHANGE COLUMN tva total_tva double(24,8) default 0;
+ALTER TABLE llx_facture CHANGE COLUMN total total_ht double(24,8) default 0;
+ALTER TABLE llx_facture_rec CHANGE COLUMN tva total_tva double(24,8) default 0;
+ALTER TABLE llx_facture_rec CHANGE COLUMN total total_ht double(24,8) default 0;
 ALTER TABLE llx_commande_fournisseur CHANGE COLUMN tva total_tva double(24,8) default 0;
 
 
@@ -278,3 +282,95 @@ DELETE FROM llx_boxes_def WHERE file IN ('box_graph_ticket_by_severity', 'box_ti
 -- VMYSQL4.1 INSERT INTO llx_boxes_def (file, entity) SELECT  'box_graph_nb_ticket_last_x_days.php', 1 FROM DUAL WHERE NOT EXISTS (SELECT * FROM llx_boxes_def WHERE file = 'box_graph_nb_ticket_last_x_days.php' AND entity = 1);
 -- VMYSQL4.1 INSERT INTO llx_boxes_def (file, entity) SELECT  'box_graph_nb_tickets_type.php', 1 FROM DUAL WHERE NOT EXISTS (SELECT * FROM llx_boxes_def WHERE file = 'box_graph_nb_tickets_type.php' AND entity = 1);
 -- VMYSQL4.1 INSERT INTO llx_boxes_def (file, entity) SELECT  'box_graph_new_vs_close_ticket.php', 1 FROM DUAL WHERE NOT EXISTS (SELECT * FROM llx_boxes_def WHERE file = 'box_graph_new_vs_close_ticket.php' AND entity = 1);
+
+create table llx_product_perentity
+(
+    rowid         				integer AUTO_INCREMENT PRIMARY KEY,
+    fk_product	   				integer,
+    entity             			integer DEFAULT 1 NOT NULL,      	-- multi company id
+    accountancy_code_sell         varchar(32),                        -- Selling accountancy code
+    accountancy_code_sell_intra   varchar(32),                        -- Selling accountancy code for vat intracommunity
+    accountancy_code_sell_export  varchar(32),                        -- Selling accountancy code for vat export
+    accountancy_code_buy          varchar(32),                        -- Buying accountancy code
+    accountancy_code_buy_intra    varchar(32),                        -- Buying accountancy code for vat intracommunity
+    accountancy_code_buy_export   varchar(32)                  		-- Buying accountancy code for vat import
+)ENGINE=innodb;
+
+ALTER TABLE llx_product_perentity ADD INDEX idx_product_perentity_fk_product (fk_product);
+ALTER TABLE llx_product_perentity ADD UNIQUE INDEX uk_product_perentity (fk_product, entity);
+
+create table llx_societe_perentity
+(
+    rowid         			integer AUTO_INCREMENT PRIMARY KEY,
+    fk_soc        			integer,
+    entity             		integer DEFAULT 1 NOT NULL,             -- multi company id
+--  code_compta            	varchar(24),                         	-- code compta client
+--  code_compta_fournisseur varchar(24),                         	-- code compta founisseur
+    accountancy_code_sell		varchar(32),                            -- Selling accountancy code
+    accountancy_code_buy		varchar(32)                             -- Buying accountancy code
+)ENGINE=innodb;
+
+ALTER TABLE llx_societe_perentity ADD INDEX idx_societe_perentity_fk_soc (fk_soc);
+ALTER TABLE llx_societe_perentity ADD UNIQUE INDEX uk_societe_perentity (fk_soc, entity);
+
+CREATE TABLE llx_eventorganization_conferenceorboothattendee(
+    rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    ref varchar(128) NOT NULL,
+    fk_soc integer,
+    fk_actioncomm integer NOT NULL,
+    email varchar(100),
+    date_subscription datetime,
+    amount double DEFAULT NULL,
+    note_public text,
+    note_private text,
+    date_creation datetime NOT NULL,
+    tms timestamp,
+    fk_user_creat integer NOT NULL,
+    fk_user_modif integer,
+    last_main_doc varchar(255),
+    import_key varchar(14),
+    model_pdf varchar(255),
+    status smallint NOT NULL
+) ENGINE=innodb;
+
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_eventorganization_conferenceorboothattendee_rowid (rowid);
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_eventorganization_conferenceorboothattendee_ref (ref);
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_eventorganization_conferenceorboothattendee_fk_soc (fk_soc);
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_eventorganization_conferenceorboothattendee_fk_actioncomm (fk_actioncomm);
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD CONSTRAINT fx_eventorganization_conferenceorboothattendee_fk_actioncomm FOREIGN KEY (fk_actioncomm) REFERENCES llx_actioncomm(id);
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_eventorganization_conferenceorboothattendee_email (email);
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD CONSTRAINT llx_eventorganization_conferenceorboothattendee_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_eventorganization_conferenceorboothattendee_status (status);
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD UNIQUE INDEX uk_eventorganization_conferenceorboothattendee(fk_soc, fk_actioncomm, email);
+
+create table llx_eventorganization_conferenceorboothattendee_extrafields
+(
+    rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+    tms                       timestamp,
+    fk_object                 integer NOT NULL,
+    import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_eventorganization_conferenceorboothattendee_extrafields ADD INDEX idx_conferenceorboothattendee_fk_object(fk_object);
+
+ALTER TABLE llx_c_ticket_category ADD COLUMN public integer DEFAULT 0;
+ALTER TABLE llx_c_ticket_category MODIFY COLUMN pos	integer DEFAULT 0 NOT NULL;
+
+
+ALTER TABLE llx_propal ADD COLUMN date_signature datetime AFTER date_valid;
+ALTER TABLE llx_propal ADD COLUMN fk_user_signature integer AFTER fk_user_valid;
+ALTER TABLE llx_propal ADD CONSTRAINT fk_propal_fk_user_signature FOREIGN KEY (fk_user_signature) REFERENCES llx_user (rowid);
+
+UPDATE llx_propal SET fk_user_signature = fk_user_cloture WHERE fk_user_signature IS NULL AND fk_user_cloture IS NOT NULL;
+UPDATE llx_propal SET date_signature = date_cloture WHERE date_signature IS NULL AND date_cloture IS NOT NULL;
+
+ALTER TABLE llx_product ADD COLUMN batch_mask VARCHAR(32) NULL;
+
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (210, 'conferenceorbooth', 'internal', 'MANAGER',  'Conference or Booth manager', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (211, 'conferenceorbooth', 'external', 'SPEAKER',   'Conference Speaker', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (212, 'conferenceorbooth', 'external', 'RESPONSIBLE',   'Booth responsible', 1);
+
+ALTER TABLE llx_facture_fourn ADD COLUMN date_closing datetime DEFAULT NULL after date_valid;
+ALTER TABLE llx_facture_fourn ADD COLUMN fk_user_closing integer DEFAULT NULL after fk_user_valid;
+
+ALTER TABLE llx_entrepot ADD COLUMN fk_project INTEGER DEFAULT NULL AFTER entity; -- project associated to warehouse if any

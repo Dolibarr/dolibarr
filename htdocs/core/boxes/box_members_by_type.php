@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2020 Frederic France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2021      Waël Almoman         <info@almoman.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,13 +93,15 @@ class box_members_by_type extends ModeleBoxes
 		if ($user->rights->adherent->lire) {
 			$MembersToValidate = array();
 			$MembersValidated = array();
-			$MemberUpToDate = array();
+			$MembersUpToDate = array();
+			$MembersExcluded = array();
 			$MembersResiliated = array();
 
-			$SommeA = 0;
-			$SommeB = 0;
-			$SommeC = 0;
-			$SommeD = 0;
+			$SumToValidate = 0;
+			$SumValidated = 0;
+			$SumUpToDate = 0;
+			$SumResiliated = 0;
+			$SumExcluded = 0;
 
 			$AdherentType = array();
 
@@ -132,6 +135,9 @@ class box_members_by_type extends ModeleBoxes
 					if ($objp->statut == 1) {
 						$MembersValidated[$objp->rowid] = $objp->somme;
 					}
+					if ($objp->statut == -2) {
+						$MembersExcluded[$objp->rowid] = $objp->somme;
+					}
 					if ($objp->statut == 0) {
 						$MembersResiliated[$objp->rowid] = $objp->somme;
 					}
@@ -158,7 +164,7 @@ class box_members_by_type extends ModeleBoxes
 					$i = 0;
 					while ($i < $num2) {
 						$objp = $this->db->fetch_object($result);
-						$MemberUpToDate[$objp->fk_adherent_type] = $objp->somme;
+						$MembersUpToDate[$objp->fk_adherent_type] = $objp->somme;
 						$i++;
 					}
 					$this->db->free($result);
@@ -183,14 +189,20 @@ class box_members_by_type extends ModeleBoxes
 				);
 				$this->info_box_contents[$line][] = array(
 					'td' => 'class="right"',
+					'text' => $langs->trans("MembersStatusExcluded"),
+				);
+				$this->info_box_contents[$line][] = array(
+					'td' => 'class="right"',
 					'text' => $langs->trans("MembersStatusResiliated"),
 				);
 				$line++;
 				foreach ($AdherentType as $key => $adhtype) {
-					$SommeA += isset($MembersToValidate[$key]) ? $MembersToValidate[$key] : 0;
-					$SommeB += isset($MembersValidated[$key]) ? $MembersValidated[$key] - (isset($MemberUpToDate[$key]) ? $MemberUpToDate[$key] : 0) : 0;
-					$SommeC += isset($MemberUpToDate[$key]) ? $MemberUpToDate[$key] : 0;
-					$SommeD += isset($MembersResiliated[$key]) ? $MembersResiliated[$key] : 0;
+					$SumToValidate += isset($MembersToValidate[$key]) ? $MembersToValidate[$key] : 0;
+					$SumValidated += isset($MembersValidated[$key]) ? $MembersValidated[$key] - (isset($MembersUpToDate[$key]) ? $MembersUpToDate[$key] : 0) : 0;
+					$SumUpToDate += isset($MembersUpToDate[$key]) ? $MembersUpToDate[$key] : 0;
+					$SumExcluded += isset($MembersExcluded[$key]) ? $MembersExcluded [$key] : 0;
+					$SumResiliated += isset($MembersResiliated[$key]) ? $MembersResiliated[$key] : 0;
+
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
 						'text' => $adhtype->getNomUrl(1, dol_size(32)),
@@ -203,12 +215,17 @@ class box_members_by_type extends ModeleBoxes
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => (isset($MembersValidated[$key]) && ($MembersValidated[$key] - (isset($MemberUpToDate[$key]) ? $MemberUpToDate[$key] : 0) > 0) ? $MembersValidated[$key] - (isset($MemberUpToDate[$key]) ? $MemberUpToDate[$key] : 0) : '') . ' ' . $staticmember->LibStatut(1, 1, 0, 3),
+						'text' => (isset($MembersValidated[$key]) && ($MembersValidated[$key] - (isset($MembersUpToDate[$key]) ? $MembersUpToDate[$key] : 0) > 0) ? $MembersValidated[$key] - (isset($MembersUpToDate[$key]) ? $MembersUpToDate[$key] : 0) : '') . ' ' . $staticmember->LibStatut(1, 1, 0, 3),
 						'asis' => 1,
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => (isset($MemberUpToDate[$key]) && $MemberUpToDate[$key] > 0 ? $MemberUpToDate[$key] : '') . ' ' . $staticmember->LibStatut(1, 1, $now, 3),
+						'text' => (isset($MembersUpToDate[$key]) && $MembersUpToDate[$key] > 0 ? $MembersUpToDate[$key] : '') . ' ' . $staticmember->LibStatut(1, 1, $now, 3),
+						'asis' => 1,
+					);
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="right"',
+						'text' => (isset($MembersExcluded[$key]) && $MembersExcluded[$key] > 0 ? $MembersExcluded[$key] : '') . ' ' . $staticmember->LibStatut(-2, 1, $now, 3),
 						'asis' => 1,
 					);
 					$this->info_box_contents[$line][] = array(
@@ -232,22 +249,27 @@ class box_members_by_type extends ModeleBoxes
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="liste_total right"',
-						'text' => $SommeA.' '.$staticmember->LibStatut(-1, 1, 0, 3),
+						'text' => $SumToValidate.' '.$staticmember->LibStatut(-1, 1, 0, 3),
 						'asis' => 1
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="liste_total right"',
-						'text' => $SommeB.' '.$staticmember->LibStatut(1, 1, 0, 3),
+						'text' => $SumValidated.' '.$staticmember->LibStatut(1, 1, 0, 3),
 						'asis' => 1
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="liste_total right"',
-						'text' => $SommeC.' '.$staticmember->LibStatut(1, 1, $now, 3),
+						'text' => $SumUpToDate.' '.$staticmember->LibStatut(1, 1, $now, 3),
 						'asis' => 1
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="liste_total right"',
-						'text' => $SommeD.' '.$staticmember->LibStatut(0, 1, 0, 3),
+						'text' => $SumExcluded.' '.$staticmember->LibStatut(-2, 1, 0, 3),
+						'asis' => 1
+					);
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="liste_total right"',
+						'text' => $SumResiliated.' '.$staticmember->LibStatut(0, 1, 0, 3),
 						'asis' => 1
 					);
 				}

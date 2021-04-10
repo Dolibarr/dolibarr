@@ -89,7 +89,7 @@ if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 
 // Define value to know what current user can do on properties of edited user
 if ($id) {
-	// $user est le user qui edite, $id est l'id de l'utilisateur edite
+	// $user is the current logged user, $id is the user we want to edit
 	$caneditfield = ((($user->id == $id) && $user->rights->user->self->creer)
 	|| (($user->id != $id) && $user->rights->user->user->creer));
 	$caneditpassword = ((($user->id == $id) && $user->rights->user->self->password)
@@ -122,6 +122,7 @@ $socialnetworks = getArrayOfSocialNetworks();
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('usercard', 'globalcard'));
 
+$error = 0;
 
 
 /**
@@ -136,11 +137,17 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	if ($action == 'confirm_disable' && $confirm == "yes" && $candisableuser) {
-		if ($id <> $user->id) {
+		if ($id <> $user->id) {		// A user can't disable itself
 			$object->fetch($id);
-			$object->setstatus(0);
-			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
-			exit;
+			if ($object->admin && empty($user->admin)) {
+				// If user to delete is an admin user and if logged user is not admin, we deny the operation.
+				$error++;
+				setEventMessages($langs->trans("OnlyAdminUsersCanDisableAdminUsers"), null, 'errors');
+			} else {
+				$object->setstatus(0);
+				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
+				exit;
+			}
 		}
 	}
 	if ($action == 'confirm_enable' && $confirm == "yes" && $candisableuser) {
@@ -192,12 +199,12 @@ if (empty($reshook)) {
 	if ($action == 'add' && $canadduser) {
 		$error = 0;
 
-		if (!$_POST["lastname"]) {
+		if (!GETPOST("lastname")) {
 			$error++;
 			setEventMessages($langs->trans("NameNotDefined"), null, 'errors');
 			$action = "create"; // Go back to create page
 		}
-		if (!$_POST["login"]) {
+		if (!GETPOST("login")) {
 			$error++;
 			setEventMessages($langs->trans("LoginNotDefined"), null, 'errors');
 			$action = "create"; // Go back to create page
@@ -434,7 +441,7 @@ if (empty($reshook)) {
 				$object->lang = GETPOST('default_lang', 'aZ09');
 
 				if (!empty($conf->multicompany->enabled)) {
-					if (!empty($_POST["superadmin"])) {
+					if (GETPOST("superadmin")) {
 						$object->entity = 0;
 					} elseif (!empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 						$object->entity = 1; // all users in master entity
@@ -1956,7 +1963,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			// Ref/ID
 			if (!empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) {
-				print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td>';
+				print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td>';
 				print '<td>';
 				print $object->id;
 				print '</td>';
@@ -1964,13 +1971,13 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 
 			// Civility
-			print '<tr><td><label for="civility_code">'.$langs->trans("UserTitle").'</label></td><td colspan="3">';
+			print '<tr><td class="titlefieldcreate"><label for="civility_code">'.$langs->trans("UserTitle").'</label></td><td colspan="3">';
 			print $formcompany->select_civility(GETPOSTISSET("civility_code") ? GETPOST("civility_code", 'aZ09') : $object->civility_code, 'civility_code');
 			print '</td></tr>';
 
 			// Lastname
 			print "<tr>";
-			print '<td class="titlefield fieldrequired">'.$langs->trans("Lastname").'</td>';
+			print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("Lastname").'</td>';
 			print '<td>';
 			if ($caneditfield && !$object->ldap_sid) {
 				print '<input class="minwidth100" type="text" class="flat" name="lastname" value="'.$object->lastname.'">';

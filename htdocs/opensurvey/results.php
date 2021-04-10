@@ -53,7 +53,7 @@ $nblines = $object->fetch_lines();
 
 // Return to the results
 if (GETPOST('retoursondage')) {
-	header('Location: results.php?id='.$_GET['id']);
+	header('Location: results.php?id='.GETPOST('id', 'int'));
 	exit;
 }
 
@@ -66,9 +66,9 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x")) {		// bo
 
 		$nouveauchoix = '';
 		for ($i = 0; $i < $nbcolonnes; $i++) {
-			if (isset($_POST["choix$i"]) && $_POST["choix$i"] == '1') {
+			if (GETPOSTISSET("choix$i") && GETPOST("choix$i") == '1') {
 				$nouveauchoix .= "1";
-			} elseif (isset($_POST["choix$i"]) && $_POST["choix$i"] == '2') {
+			} elseif (GETPOSTISSET("choix$i") && GETPOST("choix$i") == '2') {
 				$nouveauchoix .= "2";
 			} else { // sinon c'est 0
 				$nouveauchoix .= "0";
@@ -122,17 +122,16 @@ if ($testmodifier) {
 
 	$nouveauchoix = '';
 	for ($i = 0; $i < $nbcolonnes; $i++) {
-		//var_dump($_POST["choix$i"]);
-		if (isset($_POST["choix$i"]) && $_POST["choix$i"] == '1') {
+		if (GETPOSTISSET("choix$i") && GETPOST("choix$i") == '1') {
 			$nouveauchoix .= "1";
-		} elseif (isset($_POST["choix$i"]) && $_POST["choix$i"] == '2') {
+		} elseif (GETPOSTISSET("choix$i") && GETPOST("choix$i") == '2') {
 			$nouveauchoix .= "2";
 		} else { // sinon c'est 0
 			$nouveauchoix .= "0";
 		}
 	}
 
-	$idtomodify = $_POST["idtomodify".$modifier];
+	$idtomodify = GETPOST("idtomodify".$modifier);
 	$sql = 'UPDATE '.MAIN_DB_PREFIX."opensurvey_user_studs";
 	$sql .= " SET reponses = '".$db->escape($nouveauchoix)."'";
 	$sql .= " WHERE id_users = '".$db->escape($idtomodify)."'";
@@ -169,7 +168,7 @@ if (GETPOST("ajoutercolonne") && GETPOST('nouvellecolonne') && $object->format =
 }
 
 // Add column (with format date)
-if (isset($_POST["ajoutercolonne"]) && $object->format == "D") {
+if (GETPOSTISSET("ajoutercolonne") && $object->format == "D") {
 	// Security check
 	if (!$user->rights->opensurvey->write) {
 		accessforbidden();
@@ -177,27 +176,27 @@ if (isset($_POST["ajoutercolonne"]) && $object->format == "D") {
 
 	$nouveauxsujets = $object->sujet;
 
-	if (isset($_POST["nouveaujour"]) && $_POST["nouveaujour"] != "vide" &&
-		isset($_POST["nouveaumois"]) && $_POST["nouveaumois"] != "vide" &&
-		isset($_POST["nouvelleannee"]) && $_POST["nouvelleannee"] != "vide") {
-		$nouvelledate = dol_mktime(0, 0, 0, $_POST["nouveaumois"], $_POST["nouveaujour"], $_POST["nouvelleannee"]);
+	if (GETPOSTISSET("nouveaujour") && GETPOST("nouveaujour") != "vide" &&
+		GETPOSTISSET("nouveaumois") && GETPOST("nouveaumois") != "vide" &&
+		GETPOSTISSET("nouvelleannee") && GETPOST("nouvelleannee") != "vide") {
+		$nouvelledate = dol_mktime(0, 0, 0, GETPOST("nouveaumois"), GETPOST("nouveaujour"), GETPOST("nouvelleannee"));
 
-		if (isset($_POST["nouvelleheuredebut"]) && $_POST["nouvelleheuredebut"] != "vide") {
+		if (GETPOSTISSET("nouvelleheuredebut") && GETPOST("nouvelleheuredebut") != "vide") {
 			$nouvelledate .= "@";
 			$nouvelledate .= GETPOST("nouvelleheuredebut");
 			$nouvelledate .= "h";
 
-			if ($_POST["nouvelleminutedebut"] != "vide") {
+			if (GETPOST("nouvelleminutedebut") != "vide") {
 				$nouvelledate .= GETPOST("nouvelleminutedebut");
 			}
 		}
 
-		if (isset($_POST["nouvelleheurefin"]) && $_POST["nouvelleheurefin"] != "vide") {
+		if (GETPOSTISSET("nouvelleheurefin") && GETPOST("nouvelleheurefin") != "vide") {
 			$nouvelledate .= "-";
 			$nouvelledate .= GETPOST("nouvelleheurefin");
 			$nouvelledate .= "h";
 
-			if ($_POST["nouvelleminutefin"] != "vide") {
+			if (GETPOST("nouvelleminutefin") != "vide") {
 				$nouvelledate .= GETPOST("nouvelleminutefin");
 			}
 		}
@@ -284,7 +283,7 @@ for ($i = 0; $i < $nblines; $i++) {
 
 			if ($compteur == $i) {
 				$sql2 = 'DELETE FROM '.MAIN_DB_PREFIX.'opensurvey_user_studs';
-				$sql2 .= ' WHERE id_users = '.$db->escape($obj->id_users);
+				$sql2 .= " WHERE id_users = ".((int) $obj->id_users);
 				$resql2 = $db->query($sql2);
 			}
 

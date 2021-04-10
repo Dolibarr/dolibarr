@@ -1057,7 +1057,7 @@ class Contrat extends CommonObject
 					}
 
 					$sqlcontact = "SELECT ctc.code, ctc.source, ec.fk_socpeople FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as ctc";
-					$sqlcontact .= " WHERE element_id = ".$originidforcontact." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$this->db->escape($originforcontact)."'";
+					$sqlcontact .= " WHERE element_id = ".((int) $originidforcontact)." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$this->db->escape($originforcontact)."'";
 
 					$resqlcontact = $this->db->query($sqlcontact);
 					if ($resqlcontact) {
@@ -1172,7 +1172,7 @@ class Contrat extends CommonObject
 				$this->db->free($resql);
 
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."contratdet_log ";
-				$sql .= " WHERE ".MAIN_DB_PREFIX."contratdet_log.rowid IN (".implode(",", $tab_resql).")";
+				$sql .= " WHERE ".MAIN_DB_PREFIX."contratdet_log.rowid IN (".$this->db->sanitize(implode(",", $tab_resql)).")";
 
 				dol_syslog(get_class($this)."::delete contratdet_log", LOG_DEBUG);
 				$resql = $this->db->query($sql);
@@ -1759,7 +1759,7 @@ class Contrat extends CommonObject
 			$sql .= ",date_cloture=null";
 		}
 		$sql .= ", fk_unit=".($fk_unit ? "'".$this->db->escape($fk_unit)."'" : "null");
-		$sql .= " WHERE rowid = ".$rowid;
+		$sql .= " WHERE rowid = ".((int) $rowid);
 
 		dol_syslog(get_class($this)."::updateline", LOG_DEBUG);
 		$result = $this->db->query($sql);

@@ -26,15 +26,6 @@
  */
 
 require '../../main.inc.php';
-
-// Security check
-$socid = GETPOST('socid', 'int');
-if (isset($user->socid) && $user->socid > 0) {
-	$action = '';
-	$socid = $user->socid;
-}
-restrictedArea($user, 'propal');
-
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 
@@ -48,9 +39,19 @@ $langs->loadLangs(array('propal', 'companies'));
 $now = dol_now();
 $max = 5;
 
+// Security check
+$socid = GETPOST('socid', 'int');
+if (isset($user->socid) && $user->socid > 0) {
+	$action = '';
+	$socid = $user->socid;
+}
+restrictedArea($user, 'propal');
+
+
 /*
  * View
  */
+
 $propalstatic = new Propal($db);
 $companystatic = new Societe($db);
 $form = new Form($db);
@@ -106,7 +107,7 @@ if ($user->socid) {
 if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 }
-$sql .= " AND p.fk_statut IN (".implode(" ,", $listofstatus).")";
+$sql .= " AND p.fk_statut IN (".$db->sanitize(implode(" ,", $listofstatus)).")";
 $sql .= " GROUP BY p.fk_statut";
 $resql = $db->query($sql);
 if ($resql) {
@@ -130,7 +131,7 @@ if ($resql) {
 	}
 	$db->free($resql);
 
-	include_once DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder nohover centpercent">';
@@ -372,7 +373,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propale->lire) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	}
 	if ($socid) {
-		$sql .= " AND s.rowid = ".$socid;
+		$sql .= " AND s.rowid = ".((int) $socid);
 	}
 	$sql .= " ORDER BY p.rowid DESC";
 

@@ -4,6 +4,7 @@
  * Copyright (C) 2009-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2016		Charlie Benke			<charlie@patas-monkey.com>
  * Copyright (C) 2018-2019  Thibault Foucart		<support@ptibogxiv.net>
+ * Copyright (C) 2021           Waël Almoman            <info@almoman.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -176,7 +177,7 @@ class AdherentType extends CommonObject
 				$sql = "SELECT rowid";
 				$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type_lang";
 				$sql .= " WHERE fk_type=".$this->id;
-				$sql .= " AND lang='".$key."'";
+				$sql .= " AND lang = '".$this->db->escape($key)."'";
 
 				$result = $this->db->query($sql);
 
@@ -202,7 +203,7 @@ class AdherentType extends CommonObject
 				$sql = "SELECT rowid";
 				$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type_lang";
 				$sql .= " WHERE fk_type=".$this->id;
-				$sql .= " AND lang='".$key."'";
+				$sql .= " AND lang = '".$this->db->escape($key)."'";
 
 				$result = $this->db->query($sql);
 
@@ -424,7 +425,7 @@ class AdherentType extends CommonObject
 		$error = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_type";
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -552,7 +553,7 @@ class AdherentType extends CommonObject
 		$sql = "SELECT a.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
 		$sql .= " WHERE a.entity IN (".getEntity('member').")";
-		$sql .= " AND a.fk_adherent_type = ".$this->id;
+		$sql .= " AND a.fk_adherent_type = ".((int) $this->id);
 		if (!empty($excludefilter)) {
 			$sql .= ' AND ('.$excludefilter.')';
 		}

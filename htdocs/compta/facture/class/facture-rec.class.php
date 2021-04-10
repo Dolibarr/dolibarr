@@ -85,8 +85,18 @@ class FactureRec extends CommonInvoice
 	public $remise;
 	public $remise_absolue;
 	public $remise_percent;
-	public $tva;
+
+	/**
+	 * @deprecated
+	 * @see $total_ht
+	 */
 	public $total;
+
+	/**
+	 * @deprecated
+	 * @see $total_tva
+	 */
+	public $tva;
 
 	public $date_last_gen;
 	public $date_when;
@@ -164,10 +174,10 @@ class FactureRec extends CommonInvoice
 		'remise' =>array('type'=>'double', 'label'=>'Remise', 'enabled'=>1, 'visible'=>-1, 'position'=>40),
 		//'remise_percent' =>array('type'=>'double', 'label'=>'Remise percent', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
 		//'remise_absolue' =>array('type'=>'double', 'label'=>'Remise absolue', 'enabled'=>1, 'visible'=>-1, 'position'=>50),
-		'tva' =>array('type'=>'double(24,8)', 'label'=>'Tva', 'enabled'=>1, 'visible'=>-1, 'position'=>55, 'isameasure'=>1),
+		'total_tva' =>array('type'=>'double(24,8)', 'label'=>'Tva', 'enabled'=>1, 'visible'=>-1, 'position'=>55, 'isameasure'=>1),
 		'localtax1' =>array('type'=>'double(24,8)', 'label'=>'Localtax1', 'enabled'=>1, 'visible'=>-1, 'position'=>60, 'isameasure'=>1),
 		'localtax2' =>array('type'=>'double(24,8)', 'label'=>'Localtax2', 'enabled'=>1, 'visible'=>-1, 'position'=>65, 'isameasure'=>1),
-		'total' =>array('type'=>'double(24,8)', 'label'=>'Total', 'enabled'=>1, 'visible'=>-1, 'position'=>70, 'isameasure'=>1),
+		'total_ht' =>array('type'=>'double(24,8)', 'label'=>'Total', 'enabled'=>1, 'visible'=>-1, 'position'=>70, 'isameasure'=>1),
 		'total_ttc' =>array('type'=>'double(24,8)', 'label'=>'Total ttc', 'enabled'=>1, 'visible'=>-1, 'position'=>75, 'isameasure'=>1),
 		'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk user author', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
 		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Fk projet', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
@@ -502,7 +512,7 @@ class FactureRec extends CommonInvoice
 	 */
 	public function fetch($rowid, $ref = '', $ref_ext = '')
 	{
-		$sql = 'SELECT f.rowid, f.entity, f.titre as title, f.suspended, f.fk_soc, f.tva, f.localtax1, f.localtax2, f.total, f.total_ttc';
+		$sql = 'SELECT f.rowid, f.entity, f.titre as title, f.suspended, f.fk_soc, f.total_tva, f.localtax1, f.localtax2, f.total_ht, f.total_ttc';
 		$sql .= ', f.remise_percent, f.remise_absolue, f.remise';
 		$sql .= ', f.date_lim_reglement as dlr';
 		$sql .= ', f.note_private, f.note_public, f.fk_user_author';
@@ -545,8 +555,8 @@ class FactureRec extends CommonInvoice
 				$this->remise_percent         = $obj->remise_percent;
 				$this->remise_absolue         = $obj->remise_absolue;
 				$this->remise                 = $obj->remise;
-				$this->total_ht               = $obj->total;
-				$this->total_tva              = $obj->tva;
+				$this->total_ht               = $obj->total_ht;
+				$this->total_tva              = $obj->total_tva;
 				$this->total_localtax1        = $obj->localtax1;
 				$this->total_localtax2        = $obj->localtax2;
 				$this->total_ttc              = $obj->total_ttc;
@@ -762,12 +772,12 @@ class FactureRec extends CommonInvoice
 
 		$main = MAIN_DB_PREFIX.'facturedet_rec';
 		$ef = $main."_extrafields";
-		$sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_facture = $rowid)";
+		$sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM ".$main." WHERE fk_facture = ".((int) $rowid);
 		dol_syslog($sqlef);
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet_rec WHERE fk_facture = ".$rowid;
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet_rec WHERE fk_facture = ".((int) $rowid);
 		dol_syslog($sql);
 		if ($this->db->query($sqlef) && $this->db->query($sql)) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."facture_rec WHERE rowid = ".$rowid;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."facture_rec WHERE rowid = ".((int) $rowid);
 			dol_syslog($sql);
 			if ($this->db->query($sql)) {
 				// Delete linked object
@@ -1151,7 +1161,7 @@ class FactureRec extends CommonInvoice
 			$sql .= ', multicurrency_total_ht = '.$multicurrency_total_ht;
 			$sql .= ', multicurrency_total_tva = '.$multicurrency_total_tva;
 			$sql .= ', multicurrency_total_ttc = '.$multicurrency_total_ttc;
-			$sql .= " WHERE rowid = ".$rowid;
+			$sql .= " WHERE rowid = ".((int) $rowid);
 
 			dol_syslog(get_class($this)."::updateline", LOG_DEBUG);
 			if ($this->db->query($sql)) {
@@ -1808,7 +1818,7 @@ class FactureRec extends CommonInvoice
 		}
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-		$sql .= ' SET nb_gen_max = '.$nb;
+		$sql .= ' SET nb_gen_max = '.((int) $nb);
 		$sql .= ' WHERE rowid = '.$this->id;
 
 		dol_syslog(get_class($this)."::setMaxPeriod", LOG_DEBUG);
@@ -1835,7 +1845,7 @@ class FactureRec extends CommonInvoice
 		}
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-		$sql .= ' SET auto_validate = '.$validate;
+		$sql .= ' SET auto_validate = '.((int) $validate);
 		$sql .= ' WHERE rowid = '.$this->id;
 
 		dol_syslog(get_class($this)."::setAutoValidate", LOG_DEBUG);
@@ -1862,7 +1872,7 @@ class FactureRec extends CommonInvoice
 		}
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-		$sql .= ' SET generate_pdf = '.$validate;
+		$sql .= ' SET generate_pdf = '.((int) $validate);
 		$sql .= ' WHERE rowid = '.$this->id;
 
 		dol_syslog(get_class($this)."::setGeneratePdf", LOG_DEBUG);
@@ -2007,7 +2017,7 @@ class FactureLigneRec extends CommonInvoiceLine
 		$sql .= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as product_label, p.description as product_desc';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facturedet_rec as l';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
-		$sql .= ' WHERE l.rowid = '.$rowid;
+		$sql .= ' WHERE l.rowid = '.((int) $rowid);
 		$sql .= ' ORDER BY l.rang';
 
 		dol_syslog('FactureRec::fetch', LOG_DEBUG);

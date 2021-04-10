@@ -303,14 +303,17 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 
 		if ($offsetforchartofaccount > 0) {
 			// Replace lines
-			// 'INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 1401, 'PCG99-ABREGE', 'CAPIT', '1234', 1400, '...', 1);'
+			// 'INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 1401, 'PCG99-ABREGE', 'CAPIT', '1234', 1400,...'
 			// with
-			// 'INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 1401 + 200100000, 'PCG99-ABREGE','CAPIT', '1234', 1400 + 200100000, '...', 1);'
-			// Note: string with 1234 instead of '1234' is also supported
+			// 'INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 1401 + 200100000, 'PCG99-ABREGE','CAPIT', '1234', 1400 + 200100000,...'
+			// Note: string with 'PCG99-ABREGE','CAPIT', 1234  instead of  'PCG99-ABREGE','CAPIT', '1234' is also supported
 			$newsql = preg_replace('/VALUES\s*\(__ENTITY__, \s*(\d+)\s*,(\s*\'[^\',]*\'\s*,\s*\'[^\',]*\'\s*,\s*\'?[^\',]*\'?\s*),\s*\'?([^\',]*)\'?/ims', 'VALUES (__ENTITY__, \1 + '.$offsetforchartofaccount.', \2, \3 + '.$offsetforchartofaccount, $newsql);
 			$newsql = preg_replace('/([,\s])0 \+ '.$offsetforchartofaccount.'/ims', '\1 0', $newsql);
 			//var_dump($newsql);
 			$arraysql[$i] = $newsql;
+
+			// FIXME Because we force the rowid during insert, we must also update the sequence with postgresql by running
+			// SELECT dol_util_rebuild_sequences();
 		}
 	}
 
@@ -531,24 +534,23 @@ function dolibarr_del_const($db, $name, $entity = 1)
 }
 
 /**
- *	Recupere une constante depuis la base de donnees.
+ *	Get the value of a setup constant from database
  *
  *	@param	    DoliDB		$db         Database handler
- *	@param	    string		$name		Nom de la constante
+ *	@param	    string		$name		Name of constant
  *	@param	    int			$entity		Multi company id
- *	@return     string      			Valeur de la constante
+ *	@return     string      			Value of constant
  *
  *	@see		dolibarr_del_const(), dolibarr_set_const(), dol_set_user_param()
  */
 function dolibarr_get_const($db, $name, $entity = 1)
 {
-	global $conf;
 	$value = '';
 
 	$sql = "SELECT ".$db->decrypt('value')." as value";
 	$sql .= " FROM ".MAIN_DB_PREFIX."const";
 	$sql .= " WHERE name = ".$db->encrypt($name, 1);
-	$sql .= " AND entity = ".$entity;
+	$sql .= " AND entity = ".((int) $entity);
 
 	dol_syslog("admin.lib::dolibarr_get_const", LOG_DEBUG);
 	$resql = $db->query($sql);
@@ -568,7 +570,7 @@ function dolibarr_get_const($db, $name, $entity = 1)
  *	@param	    DoliDB		$db         Database handler
  *	@param	    string		$name		Name of constant
  *	@param	    string		$value		Value of constant
- *	@param	    string		$type		Type of constante (chaine par defaut)
+ *	@param	    string		$type		Type of constant. Deprecated, only strings are allowed for $value. Caller must json encode/decode to store other type of data.
  *	@param	    int			$visible	Is constant visible in Setup->Other page (0 by default)
  *	@param	    string		$note		Note on parameter
  *	@param	    int			$entity		Multi company id (0 means all entities)
@@ -596,7 +598,7 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
 	$sql .= " WHERE name = ".$db->encrypt($name, 1);
 	if ($entity >= 0) {
-		$sql .= " AND entity = ".$entity;
+		$sql .= " AND entity = ".((int) $entity);
 	}
 
 	dol_syslog("admin.lib::dolibarr_set_const", LOG_DEBUG);
@@ -607,7 +609,7 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 		$sql .= " VALUES (";
 		$sql .= $db->encrypt($name, 1);
 		$sql .= ", ".$db->encrypt($value, 1);
-		$sql .= ",'".$db->escape($type)."',".$visible.",'".$db->escape($note)."',".$entity.")";
+		$sql .= ",'".$db->escape($type)."',".((int) $visible).",'".$db->escape($note)."',".((int) $entity).")";
 
 		//print "sql".$value."-".pg_escape_string($value)."-".$sql;exit;
 		//print "xx".$db->escape($value);
@@ -632,16 +634,28 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 /**
  * Prepare array with list of tabs
  *
- * @return  array				Array of tabs to show
+ * @param	int		$nbofactivatedmodules	Number f oactivated modules
+ * @param	int		$nboftotalmodules		Nb of total modules
+ * @return  array							Array of tabs to show
  */
-function modules_prepare_head()
+function modules_prepare_head($nbofactivatedmodules, $nboftotalmodules)
 {
-	global $langs, $conf, $user;
+	global $langs, $conf, $user, $form;
+
+	$desc = $langs->trans("ModulesDesc", '{picto}');
+	$desc = str_replace('{picto}', img_picto('', 'switch_off'), $desc);
+
 	$h = 0;
 	$head = array();
 	$mode = empty($conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT) ? 'commonkanban' : 'common';
 	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$mode;
-	$head[$h][1] = $langs->trans("AvailableModules");
+	if ($nbofactivatedmodules <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING) ? 1 : $conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING)) {	// If only minimal initial modules enabled)
+		$head[$h][1] = $form->textwithpicto($langs->trans("AvailableModules"), $desc);
+		$head[$h][1] .= img_warning($langs->trans("YouMustEnableOneModule"));
+	} else {
+		//$head[$h][1] = $langs->trans("AvailableModules").$form->textwithpicto('<span class="badge marginleftonly">'.$nbofactivatedmodules.' / '.$nboftotalmodules.'</span>', $desc, 1, 'help', '', 1, 3);
+		$head[$h][1] = $langs->trans("AvailableModules").'<span class="badge marginleftonly">'.$nbofactivatedmodules.' / '.$nboftotalmodules.'</span>';
+	}
 	$head[$h][2] = 'modules';
 	$h++;
 

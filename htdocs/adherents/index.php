@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2021		Frédéric France			<frederic.france@netlgic.fr>
+ * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -233,7 +234,7 @@ if ($conf->use_javascript_ajax) {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 	$dolgraph = new DolGraph();
 	$dolgraph->SetData($dataseries);
-	$dolgraph->SetDataColor(array($badgeStatus1, $badgeStatus4, $badgeStatus8, $badgeStatus6, '-'.$badgeStatus0));
+	$dolgraph->SetDataColor(array($badgeStatus1, $badgeStatus4, '-'.$badgeStatus8, $badgeStatus6, '-'.$badgeStatus0));
 	$dolgraph->setShowLegend(2);
 	$dolgraph->setShowPercent(1);
 	$dolgraph->SetType(array('pie'));

@@ -273,7 +273,11 @@ class MyObject extends CommonObject
 	 */
 	public function create(User $user, $notrigger = false)
 	{
-		return $this->createCommon($user, $notrigger);
+		$resultcreate = $this->createCommon($user, $notrigger);
+
+		//$resultvalidate = $this->validate($user, $notrigger);
+
+		return $resultcreate;
 	}
 
 	/**
@@ -579,9 +583,9 @@ class MyObject extends CommonObject
 				$sql .= ", date_validation = '".$this->db->idate($now)."'";
 			}
 			if (!empty($this->fields['fk_user_valid'])) {
-				$sql .= ", fk_user_valid = ".$user->id;
+				$sql .= ", fk_user_valid = ".((int) $user->id);
 			}
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::validate()", LOG_DEBUG);
 			$resql = $this->db->query($sql);

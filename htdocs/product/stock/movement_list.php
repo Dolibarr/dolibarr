@@ -247,7 +247,7 @@ if ($action == "correct_stock") {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Product")), null, 'errors');
 		$action = 'correction';
 	}
-	if (!is_numeric($_POST["nbpiece"])) {
+	if (!is_numeric(GETPOST("nbpiece"))) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldMustBeANumeric", $langs->transnoentitiesnoconv("NumberOfUnit")), null, 'errors');
 		$action = 'correction';
@@ -503,7 +503,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON m.fk_user_author = u.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot as pl ON m.batch = pl.batch AND m.fk_product = pl.fk_product";
 $sql .= " WHERE m.fk_product = p.rowid";
 if ($msid > 0) {
-	$sql .= " AND m.rowid = ".$msid;
+	$sql .= " AND m.rowid = ".((int) $msid);
 }
 $sql .= " AND m.fk_entrepot = e.rowid";
 $sql .= " AND e.entity IN (".getEntity('stock').")";
@@ -511,7 +511,7 @@ if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 	$sql .= " AND p.fk_product_type = 0";
 }
 if ($id > 0) {
-	$sql .= " AND e.rowid ='".$id."'";
+	$sql .= " AND e.rowid = ".((int) $id);
 }
 if (!empty($search_date_start)) {
 	$sql .= " AND m.datem >= '" . $db->idate($search_date_start) . "'";
@@ -836,9 +836,9 @@ if ($resql) {
 	}
 
 	if ($id > 0) {
-		print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'stock', 0, '', '', $limit, 0, 0, 1);
+		print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'movement', 0, '', '', $limit, 0, 0, 1);
 	} else {
-		print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'stock', 0, '', '', $limit, 0, 0, 1);
+		print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'movement', 0, '', '', $limit, 0, 0, 1);
 	}
 
 	// Add code for pre mass action (confirmation or email presend form)
@@ -886,6 +886,7 @@ if ($resql) {
 		print '</td>';
 	}
 	if (! empty($arrayfields['m.datem']['checked'])) {
+		// Date
 		print '<td class="liste_titre center">';
 		print '<div class="nowrap">';
 		print $form->selectDate($search_date_start?$search_date_start:-1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'), 'tzuserrel');
@@ -1014,7 +1015,7 @@ if ($resql) {
 		print_liste_field_titre($arrayfields['m.rowid']['label'], $_SERVER["PHP_SELF"], 'm.rowid', '', $param, '', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['m.datem']['checked'])) {
-		print_liste_field_titre($arrayfields['m.datem']['label'], $_SERVER["PHP_SELF"], 'm.datem', '', $param, '', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['m.datem']['label'], $_SERVER["PHP_SELF"], 'm.datem', '', $param, '', $sortfield, $sortorder, 'center ');
 	}
 	if (!empty($arrayfields['p.ref']['checked'])) {
 		print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER["PHP_SELF"], 'p.ref', '', $param, '', $sortfield, $sortorder);
@@ -1125,11 +1126,14 @@ if ($resql) {
 		print '<tr class="oddeven">';
 		// Id movement
 		if (!empty($arrayfields['m.rowid']['checked'])) {
-			print '<td>'.$objp->mid.'</td>'; // This is primary not movement id
+			print '<td>';
+			print img_picto($langs->trans("StockMovement"), 'movement', 'class="pictofixedwidth"');
+			print $objp->mid;
+			print '</td>'; // This is primary not movement id
 		}
 		if (!empty($arrayfields['m.datem']['checked'])) {
 			// Date
-			print '<td class="nowraponall">'.dol_print_date($db->jdate($objp->datem), 'dayhour', 'tzuserrel').'</td>';
+			print '<td class="nowraponall center">'.dol_print_date($db->jdate($objp->datem), 'dayhour', 'tzuserrel').'</td>';
 		}
 		if (!empty($arrayfields['p.ref']['checked'])) {
 			// Product ref

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2016 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2020 Alexandre Spangaro	<aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2021 Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2014-2015 Ari Elbaz (elarifr)	<github@accedinfo.com>
  * Copyright (C) 2014-2016 Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
@@ -129,7 +129,7 @@ if (is_array($changeaccount) && count($changeaccount) > 0 && $user->rights->acco
 
 		$sql1 = "UPDATE ".MAIN_DB_PREFIX."facturedet as l";
 		$sql1 .= " SET l.fk_code_ventilation=".(GETPOST('account_parent', 'int') > 0 ? GETPOST('account_parent', 'int') : '0');
-		$sql1 .= ' WHERE l.rowid IN ('.implode(',', $changeaccount).')';
+		$sql1 .= ' WHERE l.rowid IN ('.$db->sanitize(implode(',', $changeaccount)).')';
 
 		dol_syslog('accountancy/customer/lines.php::changeaccount sql= '.$sql1);
 		$resql1 = $db->query($sql1);
@@ -182,9 +182,13 @@ print '<script type="text/javascript">
 $sql = "SELECT f.rowid as facid, f.ref as ref, f.type, f.datef, f.ref_client,";
 $sql .= " fd.rowid, fd.description, fd.product_type as line_type, fd.total_ht, fd.total_tva, fd.tva_tx, fd.vat_src_code, fd.total_ttc,";
 $sql .= " s.rowid as socid, s.nom as name, s.code_compta, s.code_client,";
-$sql .= " p.rowid as product_id, p.fk_product_type as product_type, p.ref as product_ref, p.label as product_label, p.tobuy, p.tosell,";
-$sql .= " p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export,";
-$sql .= " aa.rowid as fk_compte, aa.account_number, aa.label, aa.labelshort,";
+$sql .= " p.rowid as product_id, p.fk_product_type as product_type, p.ref as product_ref, p.label as product_label,";
+if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+	$sql .= " pa.accountancy_code_sell,";
+} else {
+	$sql .= " p.accountancy_code_sell,";
+}
+$sql .= " aa.rowid as fk_compte, aa.account_number, aa.label as label_account, aa.labelshort as labelshort_account,";
 $sql .= " fd.situation_percent,";
 $sql .= " co.code as country_code, co.label as country,";
 $sql .= " s.rowid as socid, s.nom as name, s.tva_intra, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur";
@@ -193,6 +197,9 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // N
 $sql .= $hookmanager->resPrint;
 $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = fd.fk_product";
+if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as pa ON pa.fk_product = p.rowid AND pa.entity = " . ((int) $conf->entity);
+}
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.rowid = fd.fk_code_ventilation";
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."facture as f ON f.rowid = fd.fk_facture";
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
@@ -246,11 +253,11 @@ if (strlen(trim($search_country))) {
 	if ($search_country == 'special_allnotme') {
 		$sql .= " AND co.code <> '".$db->escape($mysoc->country_code)."'";
 	} elseif ($search_country == 'special_eec') {
-		$sql .= " AND co.code IN (".$country_code_in_EEC.")";
+		$sql .= " AND co.code IN (".$db->sanitize($country_code_in_EEC, 1).")";
 	} elseif ($search_country == 'special_eecnotme') {
-		$sql .= " AND co.code IN (".$country_code_in_EEC_without_me.")";
+		$sql .= " AND co.code IN (".$db->sanitize($country_code_in_EEC_without_me, 1).")";
 	} elseif ($search_country == 'special_noteec') {
-		$sql .= " AND co.code NOT IN (".$country_code_in_EEC.")";
+		$sql .= " AND co.code NOT IN (".$db->sanitize($country_code_in_EEC, 1).")";
 	} else {
 		$sql .= natural_search("co.code", $search_country);
 	}

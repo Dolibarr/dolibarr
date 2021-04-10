@@ -73,7 +73,7 @@ class Setup extends DolibarrApi
 
 		$sql = "SELECT rowid, code, libelle as label, module";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_input_method as t";
-		$sql .= " WHERE t.active = ".$active;
+		$sql .= " WHERE t.active = ".((int) $active);
 		// Add sql filters
 		if ($sqlfilters) {
 			if (!DolibarrApi::_checkFilters($sqlfilters)) {
@@ -136,7 +136,7 @@ class Setup extends DolibarrApi
 
 		$sql = "SELECT rowid, code, label, module";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_input_reason as t";
-		$sql .= " WHERE t.active = ".$active;
+		$sql .= " WHERE t.active = ".((int) $active);
 		// Add sql filters
 		if ($sqlfilters) {
 			if (!DolibarrApi::_checkFilters($sqlfilters)) {
@@ -539,7 +539,7 @@ class Setup extends DolibarrApi
 
 		$sql = "SELECT rowid, code, label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_availability as t";
-		$sql .= " WHERE t.active = ".$active;
+		$sql .= " WHERE t.active = ".((int) $active);
 		// Add sql filters
 		if ($sqlfilters) {
 			if (!DolibarrApi::_checkFilters($sqlfilters)) {
@@ -648,7 +648,7 @@ class Setup extends DolibarrApi
 
 		$sql = "SELECT id, code, type, libelle as label, module";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_actioncomm as t";
-		$sql .= " WHERE t.active = ".$active;
+		$sql .= " WHERE t.active = ".((int) $active);
 		if ($type) {
 			$sql .= " AND t.type LIKE '%".$this->db->escape($type)."%'";
 		}
@@ -714,7 +714,7 @@ class Setup extends DolibarrApi
 
 		$sql = "SELECT id, code, label, accountancy_code, active, module, position";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_type_fees as t";
-		$sql .= " WHERE t.active = ".$active;
+		$sql .= " WHERE t.active = ".((int) $active);
 		if ($module) {
 			$sql .= " AND t.module LIKE '%".$this->db->escape($module)."%'";
 		}
@@ -778,7 +778,7 @@ class Setup extends DolibarrApi
 
 		$sql = "SELECT rowid, code, element as type, libelle as label, source, module, position";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_type_contact as t";
-		$sql .= " WHERE t.active = ".$active;
+		$sql .= " WHERE t.active = ".((int) $active);
 		if ($type) {
 			$sql .= " AND type LIKE '%".$this->db->escape($type)."%'";
 		}
@@ -843,7 +843,7 @@ class Setup extends DolibarrApi
 
 		$sql = "SELECT rowid, code, label, module";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_civility as t";
-		$sql .= " WHERE t.active = ".$active;
+		$sql .= " WHERE t.active = ".((int) $active);
 		if ($module) {
 			$sql .= " AND t.module LIKE '%".$this->db->escape($module)."%'";
 		}
@@ -911,7 +911,7 @@ class Setup extends DolibarrApi
 			$sql .= " JOIN ".MAIN_DB_PREFIX."multicurrency as m ON m.code=t.code_iso";
 			$sql .= " JOIN ".MAIN_DB_PREFIX."multicurrency_rate as cr ON (m.rowid = cr.fk_multicurrency)";
 		}
-		$sql .= " WHERE t.active = ".$active;
+		$sql .= " WHERE t.active = ".((int) $active);
 		if (!empty($multicurrency)) {
 			$sql .= " AND m.entity IN (".getEntity('multicurrency').")";
 			if (!empty($multicurrency) && $multicurrency != 2) {
@@ -1242,7 +1242,7 @@ class Setup extends DolibarrApi
 		//TODO link with multicurrency module
 		$sql = "SELECT t.rowid, t.code, t.label,t.short_label, t.active, t.scale, t.unit_type";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_units as t";
-		$sql .= " WHERE t.active = ".$active;
+		$sql .= " WHERE t.active = ".((int) $active);
 		// Add sql filters
 		if ($sqlfilters) {
 			if (!DolibarrApi::_checkFilters($sqlfilters)) {
@@ -1365,7 +1365,7 @@ class Setup extends DolibarrApi
 
 		$sql = "SELECT rowid, code, pos,  label, use_default, description";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_category as t";
-		$sql .= " WHERE t.active = ".$active;
+		$sql .= " WHERE t.active = ".((int) $active);
 		// Add sql filters
 		if ($sqlfilters) {
 			if (!DolibarrApi::_checkFilters($sqlfilters)) {
@@ -1423,7 +1423,7 @@ class Setup extends DolibarrApi
 
 		$sql = "SELECT rowid, code, pos,  label, use_default, color, description";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_severity as t";
-		$sql .= " WHERE t.active = ".$active;
+		$sql .= " WHERE t.active = ".((int) $active);
 		// Add sql filters
 		if ($sqlfilters) {
 			if (!DolibarrApi::_checkFilters($sqlfilters)) {
@@ -1647,8 +1647,8 @@ class Setup extends DolibarrApi
 		$file_list = array('missing' => array(), 'updated' => array());
 
 		// Local file to compare to
-		$xmlshortfile = GETPOST('xmlshortfile') ?GETPOST('xmlshortfile') : '/install/filelist-'.DOL_VERSION.'.xml';
-		$xmlfile = DOL_DOCUMENT_ROOT.$xmlshortfile;
+		$xmlshortfile = dol_sanitizeFileName(GETPOST('xmlshortfile', 'alpha') ? GETPOST('xmlshortfile', 'alpha') : 'filelist-'.DOL_VERSION.(empty($conf->global->MAIN_FILECHECK_LOCAL_SUFFIX) ? '' : $conf->global->MAIN_FILECHECK_LOCAL_SUFFIX).'.xml'.(empty($conf->global->MAIN_FILECHECK_LOCAL_EXT) ? '' : $conf->global->MAIN_FILECHECK_LOCAL_EXT));
+		$xmlfile = DOL_DOCUMENT_ROOT.'/install/'.$xmlshortfile;
 		// Remote file to compare to
 		$xmlremote = ($target == 'default' ? '' : $target);
 		if (empty($xmlremote) && !empty($conf->global->MAIN_FILECHECK_URL)) {
@@ -1661,6 +1661,10 @@ class Setup extends DolibarrApi
 		if (empty($xmlremote)) {
 			$xmlremote = 'https://www.dolibarr.org/files/stable/signatures/filelist-'.DOL_VERSION.'.xml';
 		}
+		if ($xmlremote && !preg_match('/^https?:\/\//', $xmlremote)) {
+			$langs->load("errors");
+			throw new RestException(500, $langs->trans("ErrorURLMustStartWithHttp", $xmlremote));
+		}
 
 		if ($target == 'local') {
 			if (dol_is_file($xmlfile)) {
@@ -1669,7 +1673,7 @@ class Setup extends DolibarrApi
 				throw new RestException(500, $langs->trans('XmlNotFound').': '.$xmlfile);
 			}
 		} else {
-			$xmlarray = getURLContent($xmlremote);
+			$xmlarray = getURLContent($xmlremote, 'GET', '', 1, array(), array('http', 'https'), 0);	// Accept http or https links on external remote server only
 
 			// Return array('content'=>response,'curl_error_no'=>errno,'curl_error_msg'=>errmsg...)
 			if (!$xmlarray['curl_error_no'] && $xmlarray['http_code'] != '400' && $xmlarray['http_code'] != '404') {

@@ -36,13 +36,21 @@ $hookmanager->initHooks(array('receptionindex'));
 
 $langs->loadLangs(array("orders", "receptions"));
 
+$reception = new Reception($db);
+
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'reception', 0, '');
+
+
 /*
  *	View
  */
 
 $orderstatic = new CommandeFournisseur($db);
 $companystatic = new Societe($db);
-$reception = new Reception($db);
 
 $helpurl = 'EN:Module_Receptions|FR:Module_Receptions|ES:M&oacute;dulo_Receptiones';
 llxHeader('', $langs->trans("Reception"), $helpurl);

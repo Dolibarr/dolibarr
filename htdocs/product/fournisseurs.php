@@ -62,9 +62,9 @@ $extrafields = new ExtraFields($db);
 
 // If socid provided by ajax company selector
 if (!empty($_REQUEST['search_fourn_id'])) {
-	$_GET['id_fourn'] = $_GET['search_fourn_id'];
-	$_POST['id_fourn'] = $_POST['search_fourn_id'];
-	$_REQUEST['id_fourn'] = $_REQUEST['search_fourn_id'];
+	$_GET['id_fourn'] = GETPOST('search_fourn_id', 'int');
+	$_POST['id_fourn'] = GETPOST('search_fourn_id', 'int');
+	$_REQUEST['id_fourn'] = GETPOST('search_fourn_id', 'int');
 }
 
 // Security check
@@ -73,7 +73,6 @@ $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 if (empty($user->rights->fournisseur->lire)) {
 	accessforbidden();
@@ -113,6 +112,8 @@ if (!$sortfield) {
 if (!$sortorder) {
 	$sortorder = "ASC";
 }
+
+$result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 
 /*
@@ -217,7 +218,7 @@ if (empty($reshook)) {
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Supplier")), null, 'errors');
 		}
-		if (price2num($_POST["price"]) < 0 || $_POST["price"] == '') {
+		if (price2num(GETPOST("price")) < 0 || GETPOST("price") == '') {
 			if ($price_expression === '') {	// Return error of missing price only if price_expression not set
 				$error++;
 				$langs->load("errors");
@@ -290,7 +291,7 @@ if (empty($reshook)) {
 						foreach ($extrafield_values as $key => $value) {
 							$sql .= str_replace('options_', '', $key).' = "'.$value.'", ';
 						}
-						$sql = substr($sql, 0, strlen($sql) - 2).' WHERE fk_object = '.$object->product_fourn_price_id;
+						$sql = substr($sql, 0, strlen($sql) - 2).' WHERE fk_object = '.((int) $object->product_fourn_price_id);
 					}
 
 					// Execute the sql command from above
@@ -793,7 +794,7 @@ END;
 							$sql .= ", ".$key;
 						}
 						$sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields";
-						$sql .= " WHERE fk_object = ".$rowid;
+						$sql .= " WHERE fk_object = ".((int) $rowid);
 						$resql = $db->query($sql);
 						if ($resql) {
 							$obj = $db->fetch_object($resql);
@@ -1145,7 +1146,7 @@ END;
 								$sql .= ", ".$key;
 							}
 							$sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields";
-							$sql .= " WHERE fk_object = ".$productfourn->product_fourn_price_id;
+							$sql .= " WHERE fk_object = ".((int) $productfourn->product_fourn_price_id);
 							$resql = $db->query($sql);
 							if ($resql) {
 								if ($db->num_rows($resql) != 1) {

@@ -128,7 +128,6 @@ $socid = GETPOST("search_socid", 'int') ?GETPOST("search_socid", 'int') : GETPOS
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'agenda', 0, '', 'myactions');
 if ($socid < 0) {
 	$socid = '';
 }
@@ -165,7 +164,11 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-//var_dump($_POST);exit;
+$result = restrictedArea($user, 'agenda', 0, '', 'myactions');
+if ($user->socid && $socid) {
+	$result = restrictedArea($user, 'societe', $socid);
+}
+
 
 /*
  *	Actions
@@ -429,31 +432,31 @@ if (!empty($actioncode)) {
 			$sql .= " AND c.type = 'systemauto'";
 		} else {
 			if (is_array($actioncode)) {
-				$sql .= " AND c.code IN ('".implode("','", $actioncode)."')";
+				$sql .= " AND c.code IN (".$db->sanitize("'".implode("','", $actioncode)."'", 1).")";
 			} else {
-				$sql .= " AND c.code IN ('".implode("','", explode(',', $actioncode))."')";
+				$sql .= " AND c.code IN (".$db->sanitize("'".implode("','", explode(',', $actioncode))."'", 1).")";
 			}
 		}
 	}
 }
 if ($resourceid > 0) {
-	$sql .= " AND r.element_type = 'action' AND r.element_id = a.id AND r.resource_id = ".$db->escape($resourceid);
+	$sql .= " AND r.element_type = 'action' AND r.element_id = a.id AND r.resource_id = ".((int) $resourceid);
 }
 if ($pid) {
-	$sql .= " AND a.fk_project=".$db->escape($pid);
+	$sql .= " AND a.fk_project=".((int) $pid);
 }
 if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".$user->id.")";
 }
 if ($socid > 0) {
-	$sql .= " AND s.rowid = ".$socid;
+	$sql .= " AND s.rowid = ".((int) $socid);
 }
 // We must filter on assignement table
 if ($filtert > 0 || $usergroup > 0) {
 	$sql .= " AND ar.fk_actioncomm = a.id AND ar.element_type='user'";
 }
 if ($type) {
-	$sql .= " AND c.id = ".(int) $type;
+	$sql .= " AND c.id = ".((int) $type);
 }
 if ($search_status == '0') {
 	$sql .= " AND a.percent = 0";
@@ -486,10 +489,10 @@ if ($search_note) {
 if ($filtert > 0 || $usergroup > 0) {
 	$sql .= " AND (";
 	if ($filtert > 0) {
-		$sql .= "(ar.fk_element = ".$filtert." OR (ar.fk_element IS NULL AND a.fk_user_action=".$filtert."))"; // The OR is for backward compatibility
+		$sql .= "(ar.fk_element = ".((int) $filtert)." OR (ar.fk_element IS NULL AND a.fk_user_action = ".((int) $filtert)."))"; // The OR is for backward compatibility
 	}
 	if ($usergroup > 0) {
-		$sql .= ($filtert > 0 ? " OR " : "")." ugu.fk_usergroup = ".$usergroup;
+		$sql .= ($filtert > 0 ? " OR " : "")." ugu.fk_usergroup = ".((int) $usergroup);
 	}
 	$sql .= ")";
 }

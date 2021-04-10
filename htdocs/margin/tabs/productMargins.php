@@ -76,18 +76,18 @@ if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref);
 
 	$title = $langs->trans('ProductServiceCard');
-	$helpurl = '';
+	$help_url = '';
 	$shortlabel = dol_trunc($object->label, 16);
 	if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT)) {
 		$title = $langs->trans('Product')." ".$shortlabel." - ".$langs->trans('Card');
-		$helpurl = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+		$help_url = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 	}
 	if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) {
 		$title = $langs->trans('Service')." ".$shortlabel." - ".$langs->trans('Card');
-		$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+		$help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 	}
 
-	llxHeader('', $title, $helpurl);
+	llxHeader('', $title, $help_url);
 
 	/*
 	 *  En mode visu
@@ -137,7 +137,7 @@ if ($id > 0 || !empty($ref)) {
 
 		if ($user->rights->facture->lire) {
 			$sql = "SELECT s.nom as name, s.rowid as socid, s.code_client,";
-			$sql .= " f.rowid as facid, f.ref, f.total as total_ht,";
+			$sql .= " f.rowid as facid, f.ref, f.total_ht,";
 			$sql .= " f.datef, f.paye, f.fk_statut as statut, f.type,";
 			if (!$user->rights->societe->client->voir && !$socid) {
 				$sql .= " sc.fk_soc, sc.fk_user,";
@@ -164,10 +164,12 @@ if ($id > 0 || !empty($ref)) {
 				$sql .= " AND f.fk_soc = $socid";
 			}
 			$sql .= " AND d.buy_price_ht IS NOT NULL";
-			if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1) {
+			// We should not use this here. Option ForceBuyingPriceIfNull should have effect only when inserting data. Once data is recorded, it must be used as it is for report.
+			// We keep it with value ForceBuyingPriceIfNull = 2 for retroactive effect but results are unpredicable.
+			if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 2) {
 				$sql .= " AND d.buy_price_ht <> 0";
 			}
-			$sql .= " GROUP BY s.nom, s.rowid, s.code_client, f.rowid, f.ref, f.total, f.datef, f.paye, f.fk_statut, f.type";
+			$sql .= " GROUP BY s.nom, s.rowid, s.code_client, f.rowid, f.ref, f.total_ht, f.datef, f.paye, f.fk_statut, f.type";
 			if (!$user->rights->societe->client->voir && !$socid) {
 				$sql .= ", sc.fk_soc, sc.fk_user";
 			}

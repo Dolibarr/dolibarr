@@ -88,14 +88,9 @@ if (!empty($conf->notification->enabled)) {
 	$langs->load("mails");
 }
 
-// Security check
-$id = (GETPOST('socid', 'int') ? GETPOST('socid', 'int') : GETPOST('id', 'int'));
-if ($user->socid > 0) {
-	$id = $user->socid;
-}
-$result = restrictedArea($user, 'societe', $id, '&societe');
-
 $action = GETPOST('action', 'aZ09');
+
+$id = (GETPOST('socid', 'int') ? GETPOST('socid', 'int') : GETPOST('id', 'int'));
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -124,15 +119,6 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('thirdpartycomm', 'globalcard'));
 
-// Security check
-$result = restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid', 0);
-
-if ($object->id > 0) {
-	if (!($object->client > 0) || empty($user->rights->societe->lire)) {
-		accessforbidden();
-	}
-}
-
 $now = dol_now();
 
 if ($id > 0 && empty($object->id)) {
@@ -142,6 +128,17 @@ if ($id > 0 && empty($object->id)) {
 		dol_print_error($db, $object->error, $object->errors);
 	}
 }
+if ($object->id > 0) {
+	if (!($object->client > 0) || empty($user->rights->societe->lire)) {
+		accessforbidden();
+	}
+}
+
+// Security check
+if ($user->socid > 0) {
+	$id = $user->socid;
+}
+$result = restrictedArea($user, 'societe', $object->id, '&societe', '', 'fk_soc', 'rowid', 0);
 
 
 /*
@@ -162,7 +159,7 @@ if (empty($reshook)) {
 	// set accountancy code
 	if ($action == 'setcustomeraccountancycode') {
 		$result = $object->fetch($id);
-		$object->code_compta = $_POST["customeraccountancycode"];
+		$object->code_compta = GETPOST("customeraccountancycode");
 		$result = $object->update($object->id, $user, 1, 1, 0);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -1149,8 +1146,8 @@ if ($object->id > 0) {
 	 */
 	if (!empty($conf->facture->enabled) && $user->rights->facture->lire) {
 		$sql = 'SELECT f.rowid as id, f.titre as ref';
-		$sql .= ', f.total as total_ht';
-		$sql .= ', f.tva as total_tva';
+		$sql .= ', f.total_ht';
+		$sql .= ', f.total_tva';
 		$sql .= ', f.total_ttc';
 		$sql .= ', f.datec as dc';
 		$sql .= ', f.date_last_gen, f.date_when';
@@ -1161,7 +1158,7 @@ if ($object->id > 0) {
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_rec as f";
 		$sql .= " WHERE f.fk_soc = s.rowid AND s.rowid = ".$object->id;
 		$sql .= " AND f.entity IN (".getEntity('invoice').")";
-		$sql .= ' GROUP BY f.rowid, f.titre, f.total, f.tva, f.total_ttc,';
+		$sql .= ' GROUP BY f.rowid, f.titre, f.total_ht, f.total_tva, f.total_ttc,';
 		$sql .= ' f.date_last_gen, f.datec, f.frequency, f.unit_frequency,';
 		$sql .= ' f.suspended, f.date_when,';
 		$sql .= ' s.nom, s.rowid';
@@ -1243,8 +1240,8 @@ if ($object->id > 0) {
 	 */
 	if (!empty($conf->facture->enabled) && $user->rights->facture->lire) {
 		$sql = 'SELECT f.rowid as facid, f.ref, f.type';
-		$sql .= ', f.total as total_ht';
-		$sql .= ', f.tva as total_tva';
+		$sql .= ', f.total_ht';
+		$sql .= ', f.total_tva';
 		$sql .= ', f.total_ttc';
 		$sql .= ', f.datef as df, f.datec as dc, f.paye as paye, f.fk_statut as status';
 		$sql .= ', s.nom, s.rowid as socid';
@@ -1253,7 +1250,7 @@ if ($object->id > 0) {
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON f.rowid=pf.fk_facture';
 		$sql .= " WHERE f.fk_soc = s.rowid AND s.rowid = ".$object->id;
 		$sql .= " AND f.entity IN (".getEntity('invoice').")";
-		$sql .= ' GROUP BY f.rowid, f.ref, f.type, f.total, f.tva, f.total_ttc,';
+		$sql .= ' GROUP BY f.rowid, f.ref, f.type, f.total_ht, f.total_tva, f.total_ttc,';
 		$sql .= ' f.datef, f.datec, f.paye, f.fk_statut,';
 		$sql .= ' s.nom, s.rowid';
 		$sql .= " ORDER BY f.datef DESC, f.datec DESC";

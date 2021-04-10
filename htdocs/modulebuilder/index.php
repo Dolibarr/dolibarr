@@ -746,7 +746,7 @@ if ($dirins && $action == 'initobject' && $module && GETPOST('createtablearray',
 		 *  'position' is the sort order of field.
 		 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
 		 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
-		 *  'css' is the CSS style to use on field. For example: 'maxwidth200'
+		 *  'css' and 'cssview' and 'csslist' is the CSS style to use on field. 'css' is used in creation and update. 'cssview' is used in view mode. 'csslist' is used for columns in lists. For example: 'maxwidth200', 'wordbreak', 'tdoverflowmax200'
 		 *  'help' is a string visible as a tooltip on field
 		 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
 		 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
@@ -1212,7 +1212,7 @@ if ($dirins && ($action == 'droptable' || $action == 'droptableextrafields') && 
 	}
 }
 
-if ($dirins && $action == 'addproperty' && !empty($module) && !empty($tabobj)) {
+if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && !empty($tabobj)) {
 	$error = 0;
 
 	$objectname = $tabobj;
@@ -1245,7 +1245,8 @@ if ($dirins && $action == 'addproperty' && !empty($module) && !empty($tabobj)) {
 				'arrayofkeyval'=>GETPOST('proparrayofkeyval', 'restricthtml'), // Example json string '{"0":"Draft","1":"Active","-1":"Cancel"}'
 				'visible'=>GETPOST('propvisible', 'int'), 'enabled'=>GETPOST('propenabled', 'int'),
 				'position'=>GETPOST('propposition', 'int'), 'notnull'=>GETPOST('propnotnull', 'int'), 'index'=>GETPOST('propindex', 'int'), 'searchall'=>GETPOST('propsearchall', 'int'),
-				'isameasure'=>GETPOST('propisameasure', 'int'), 'comment'=>GETPOST('propcomment', 'alpha'), 'help'=>GETPOST('prophelp', 'alpha')
+				'isameasure'=>GETPOST('propisameasure', 'int'), 'comment'=>GETPOST('propcomment', 'alpha'), 'help'=>GETPOST('prophelp', 'alpha'),
+				'css'=>GETPOST('propcss', 'aZ09'), 'cssview'=>GETPOST('propcssview', 'aZ09'), 'csslist'=>GETPOST('propcsslist', 'aZ09')
 			);
 
 			if (!empty($addfieldentry['arrayofkeyval']) && !is_array($addfieldentry['arrayofkeyval'])) {
@@ -1294,6 +1295,9 @@ if ($dirins && $action == 'addproperty' && !empty($module) && !empty($tabobj)) {
 
 if ($dirins && $action == 'confirm_deleteproperty' && $propertykey) {
 	$objectname = $tabobj;
+
+	$dirins = $dirread = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
+	$moduletype = $listofmodules[strtolower($module)]['moduletype'];
 
 	$srcdir = $dirread.'/'.strtolower($module);
 	$destdir = $dirins.'/'.strtolower($module);
@@ -1708,10 +1712,9 @@ $head[$h][2] = 'initmodule';
 $h++;
 
 $linktoenabledisable = '';
-$modulestatusinfo = '';
 
 if (is_array($listofmodules) && count($listofmodules) > 0) {
-	// Define $linktoenabledisable and $modulestatusinfo
+	// Define $linktoenabledisable
 	$modulelowercase = strtolower($module);
 	$const_name = 'MAIN_MODULE_'.strtoupper($module);
 
@@ -1732,6 +1735,8 @@ if (is_array($listofmodules) && count($listofmodules) > 0) {
 		$linktoenabledisable .= img_picto($langs->trans("Activated"), 'switch_on', '', false, 0, 0, '', '', 1);
 		$linktoenabledisable .= '</a>';
 
+		$linktoenabledisable .= $form->textwithpicto('', $langs->trans("Warning").' : '.$langs->trans("ModuleIsLive"), -1, 'warning');
+
 		$objMod = $moduleobj;
 		$backtourlparam = '';
 		$backtourlparam .= ($backtourlparam ? '&' : '?').'module='.$module; // No urlencode here, done later
@@ -1751,26 +1756,22 @@ if (is_array($listofmodules) && count($listofmodules) > 0) {
 				} else {
 					if (preg_match('/^([^@]+)@([^@]+)$/i', $urlpage, $regs)) {
 						$urltouse = dol_buildpath('/'.$regs[2].'/admin/'.$regs[1], 1);
-						$linktoenabledisable .= ' &nbsp; <a href="'.$urltouse.(preg_match('/\?/', $urltouse) ? '&' : '?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"').'</a>';
+						$linktoenabledisable .= ' <a href="'.$urltouse.(preg_match('/\?/', $urltouse) ? '&' : '?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 8px"').'</a>';
 					} else {
 						// Case standard admin page (not a page provided by the
 						// module but a page provided by dolibarr)
 						$urltouse = DOL_URL_ROOT.'/admin/'.$urlpage;
-						$linktoenabledisable .= ' &nbsp; <a href="'.$urltouse.(preg_match('/\?/', $urltouse) ? '&' : '?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"').'</a>';
+						$linktoenabledisable .= ' <a href="'.$urltouse.(preg_match('/\?/', $urltouse) ? '&' : '?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 8px"').'</a>';
 					}
 				}
 			}
 		} elseif (preg_match('/^([^@]+)@([^@]+)$/i', $objMod->config_page_url, $regs)) {
-			$linktoenabledisable .= ' &nbsp; <a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1], 1).'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"').'</a>';
+			$linktoenabledisable .= ' &nbsp; <a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1], 1).'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 8px"').'</a>';
 		}
 	} else {
 		$linktoenabledisable .= '<a class="reposition asetresetmodule valignmiddle" href="'.$_SERVER["PHP_SELF"].'?id='.$moduleobj->numero.'&action=set&token='.newToken().'&value=mod'.$module.$param.'">';
-		$linktoenabledisable .= img_picto($langs->trans("ModuleIsNotActive", $urltomodulesetup), 'switch_off', '', false, 0, 0, '', 'classfortooltip', 1);
+		$linktoenabledisable .= img_picto($langs->trans("ModuleIsNotActive", $urltomodulesetup), 'switch_off', 'style="padding-right: 8px"', false, 0, 0, '', 'classfortooltip', 1);
 		$linktoenabledisable .= "</a>\n";
-	}
-
-	if (!empty($conf->$modulelowercase->enabled)) {
-		$modulestatusinfo = $form->textwithpicto('', $langs->trans("Warning").' : '.$langs->trans("ModuleIsLive"), -1, 'warning');
 	}
 
 	// Loop to show tab of each module
@@ -1779,10 +1780,9 @@ if (is_array($listofmodules) && count($listofmodules) > 0) {
 		$head[$h][1] = $tmpmodulearray['modulenamewithcase'];
 		$head[$h][2] = $tmpmodulearray['modulenamewithcase'];
 
-		/*if ($tmpmodule == $modulelowercase) {
-			$head[$h][1] .= ' '.$modulestatusinfo;
-			$head[$h][1] .= ' '.$linktoenabledisable;
-		}*/
+		if ($tmpmodulearray['modulenamewithcase'] == $module) {
+			$head[$h][4] = '<span class="inline-block">'.$linktoenabledisable.'</span>';
+		}
 
 		$h++;
 	}
@@ -1792,6 +1792,7 @@ $head[$h][0] = $_SERVER["PHP_SELF"].'?module=deletemodule';
 $head[$h][1] = $langs->trans("DangerZone");
 $head[$h][2] = 'deletemodule';
 $h++;
+
 
 print dol_get_fiche_head($head, $module, '', -1, '', 0, $infomodulesfound, '', 8); // Modules
 
@@ -1875,6 +1876,11 @@ if ($module == 'initmodule') {
 		$head2[$h][2] = 'widgets';
 		$h++;
 
+		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=exportimport&module='.$module.($forceddirread ? '@'.$dirread : '');
+		$head2[$h][1] = $langs->trans("Export").'-'.$langs->trans("Import");
+		$head2[$h][2] = 'exportimport';
+		$h++;
+
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=css&module='.$module.($forceddirread ? '@'.$dirread : '');
 		$head2[$h][1] = $langs->trans("CSS");
 		$head2[$h][2] = 'css';
@@ -1905,11 +1911,7 @@ if ($module == 'initmodule') {
 		$head2[$h][2] = 'buildpackage';
 		$h++;
 
-		// Link to enable / disable
-		print '<div class="center">'.$modulestatusinfo;
-		print ' '.$linktoenabledisable.'</div>';
-
-		print '<br>';
+		print '<!-- Section for a given module -->';
 
 		// Note module is inside $dirread
 
@@ -2608,6 +2610,7 @@ if ($module == 'initmodule') {
 							print '<th class="center">'.$form->textwithpicto($langs->trans("IsAMeasure"), $langs->trans("IsAMeasureDesc")).'</th>';
 							print '<th class="center">'.$langs->trans("CSSClass").'</th>';
 							print '<th class="center">'.$langs->trans("CSSViewClass").'</th>';
+							print '<th class="center">'.$langs->trans("CSSListClass").'</th>';
 							print '<th class="center">'.$langs->trans("KeyForTooltip").'</th>';
 							print '<th class="center">'.$langs->trans("ShowOnCombobox").'</th>';
 							//print '<th class="center">'.$langs->trans("Disabled").'</th>';
@@ -2639,6 +2642,7 @@ if ($module == 'initmodule') {
 								print '<td class="center"><input class="text" size="2" name="propisameasure" value="'.dol_escape_htmltag(GETPOST('propisameasure', 'alpha')).'"></td>';
 								print '<td class="center"><input class="text" size="2" name="propcss" value="'.dol_escape_htmltag(GETPOST('propcss', 'alpha')).'"></td>';
 								print '<td class="center"><input class="text" size="2" name="propcssview" value="'.dol_escape_htmltag(GETPOST('propcssview', 'alpha')).'"></td>';
+								print '<td class="center"><input class="text" size="2" name="propcsslist" value="'.dol_escape_htmltag(GETPOST('propcsslist', 'alpha')).'"></td>';
 								print '<td class="center"><input class="text" size="2" name="prophelp" value="'.dol_escape_htmltag(GETPOST('prophelp', 'alpha')).'"></td>';
 								print '<td class="center"><input class="text" size="2" name="propshowoncombobox" value="'.dol_escape_htmltag(GETPOST('propshowoncombobox', 'alpha')).'"></td>';
 								//print '<td class="center"><input class="text" size="2" name="propdisabled" value="'.dol_escape_htmltag(GETPOST('propdisabled', 'alpha')).'"></td>';
@@ -2679,6 +2683,7 @@ if ($module == 'initmodule') {
 									$propisameasure = $propval['isameasure'];
 									$propcss = $propval['css'];
 									$propcssview = $propval['cssview'];
+									$propcsslist = $propval['csslist'];
 									$prophelp = $propval['help'];
 									$propshowoncombobox = $propval['showoncombobox'];
 									//$propdisabled=$propval['disabled'];
@@ -2692,72 +2697,139 @@ if ($module == 'initmodule') {
 									print '<td>';
 									print dol_escape_htmltag($proplabel);
 									print '</td>';
-									print '<td class="tdoverflowmax200">';
-									print '<span title="'.dol_escape_htmltag($proptype).'">'.dol_escape_htmltag($proptype).'</span>';
-									print '</td>';
-									print '<td class="tdoverflowmax200">';
-									if ($proparrayofkeyval) {
-										print '<span title="'.dol_escape_htmltag(json_encode($proparrayofkeyval)).'">';
-										print dol_escape_htmltag(json_encode($proparrayofkeyval));
+									if ($action == 'editproperty' && $propname == $propertykey) {
+										print '<td class="tdoverflowmax200">';
+										print '<input type="hidden" name="propname" value="'.dol_escape_htmltag($propname).'">';
+										print '<input type="hidden" name="proplabel" value="'.dol_escape_htmltag($proplabel).'">';
+										print '<input name="proptype" value="'.dol_escape_htmltag($proptype).'"></input>';
+										print '</td>';
+										print '<td class="tdoverflowmax200">';
+										print '<input name="proparrayofkeyval" value="'.dol_escape_htmltag(json_encode($proparrayofkeyval)).'">';
+										print '</input>';
+										print '</td>';
+										print '<td>';
+										print '<input class="center" name="propnotnull" size="2" value="'.dol_escape_htmltag($propnotnull).'">';
+										print '</td>';
+										print '<td>';
+										print '<input class="center" name="propdefault" value="'.dol_escape_htmltag($propdefault).'">';
+										print '</td>';
+										print '<td>';
+										print '<input class="center" name="propindex" size="2" value="'.dol_escape_htmltag($propindex).'">';
+										print '</td>';
+										print '<td>';
+										print '<input class="center" name="propforeignkey" value="'.dol_escape_htmltag($propforeignkey).'">';
+										print '</td>';
+										print '<td>';
+										print '<input class="right" name="propposition" value="'.dol_escape_htmltag($propposition).'">';
+										print '</td>';
+										print '<td>';
+										print '<input class="center" name="propenabled" size="2" value="'.dol_escape_htmltag($propenabled).'">';
+										print '</td>';
+										print '<td>';
+										print '<input class="center" name="propvisible" size="2" value="'.dol_escape_htmltag($propvisible).'">';
+										print '</td>';
+										print '<td>';
+										print '<input class="center" name="propnotable" size="2" value="'.dol_escape_htmltag($propnotable).'">';
+										print '</td>';
+										print '<td>';
+										print '<input class="center" name="propsearchall" size="2" value="'.dol_escape_htmltag($propsearchall).'">';
+										print '</td>';
+										print '<td>';
+										print '<input class="center" name="propisameasure" size="2" value="'.dol_escape_htmltag($propisameasure).'">';
+										print '</td>';
+										print '<td>';
+										print '<input class="center" name="propcss" value="'.dol_escape_htmltag($propcss).'">';
+										print '</td>';
+										print '<td>';
+										print '<input class="center" name="propcssview" value="'.dol_escape_htmltag($propcssview).'">';
+										print '</td>';
+										print '<td>';
+										print '<input class="center" name="propcsslist" value="'.dol_escape_htmltag($propcsslist).'">';
+										print '</td>';
+										print '<td>';
+										print '<input class="center" name="prophelp" value="'.dol_escape_htmltag($prophelp).'">';
+										print '</td>';
+										print '<td>';
+										print '<input class="center" name="propshowoncombobox" size="2" value="'.dol_escape_htmltag($propshowoncombobox).'">';
+										print '</td>';
+										print '<td>';
+										print '<input name="propcomment" value="'.dol_escape_htmltag($propcomment).'">';
+										print '</td>';
+										print '<td class="center">';
+										print '<input class="button smallpaddingimp" type="submit" name="edit" value="'.$langs->trans("Save").'">';
+										print '<input class="button button-cancel smallpaddingimp" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
+										print '</td>';
+									} else {
+										print '<td class="tdoverflowmax200">';
+										print '<span title="'.dol_escape_htmltag($proptype).'">'.dol_escape_htmltag($proptype).'</span>';
+										print '</td>';
+										print '<td class="tdoverflowmax200">';
+										if ($proparrayofkeyval) {
+											print '<span title="'.dol_escape_htmltag(json_encode($proparrayofkeyval)).'">';
+											print dol_escape_htmltag(json_encode($proparrayofkeyval));
+											print '</span>';
+										}
+										print '</td>';
+										print '<td class="center">';
+										print dol_escape_htmltag($propnotnull);
+										print '</td>';
+										print '<td>';
+										print dol_escape_htmltag($propdefault);
+										print '</td>';
+										print '<td class="center">';
+										print $propindex ? '1' : '';
+										print '</td>';
+										print '<td class="center">';
+										print $propforeignkey ? dol_escape_htmltag($propforeignkey) : '';
+										print '</td>';
+										print '<td class="right">';
+										print dol_escape_htmltag($propposition);
+										print '</td>';
+										print '<td class="center">';
+										print $propenabled ? dol_escape_htmltag($propenabled) : '';
+										print '</td>';
+										print '<td class="center">';
+										print $propvisible ? dol_escape_htmltag($propvisible) : '0';
+										print '</td>';
+										print '<td class="center">';
+										print $propnoteditable ? dol_escape_htmltag($propnoteditable) : '';
+										print '</td>';
+										print '<td class="center">';
+										print $propsearchall ? '1' : '';
+										print '</td>';
+										print '<td class="center">';
+										print $propisameasure ? dol_escape_htmltag($propisameasure) : '';
+										print '</td>';
+										print '<td class="center">';
+										print $propcss ? dol_escape_htmltag($propcss) : '';
+										print '</td>';
+										print '<td class="center">';
+										print $propcssview ? dol_escape_htmltag($propcssview) : '';
+										print '</td>';
+										print '<td class="center">';
+										print $propcsslist ? dol_escape_htmltag($propcsslist) : '';
+										print '</td>';
+										print '<td class="tdoverflowmax200">';
+										print $prophelp ? dol_escape_htmltag($prophelp) : '';
+										print '</td>';
+										print '<td class="center">';
+										print $propshowoncombobox ? dol_escape_htmltag($propshowoncombobox) : '';
+										print '</td>';
+										/*print '<td class="center">';
+										print $propdisabled?$propdisabled:'';
+										print '</td>';*/
+										print '<td class="tdoverflowmax200">';
+										print '<span title="'.dol_escape_htmltag($propcomment).'">';
+										print dol_escape_htmltag($propcomment);
 										print '</span>';
+										print '</td>';
+										print '<td class="center">';
+										if ($propname != 'rowid') {
+											print '<a class="editfielda reposition marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=editproperty&token='.newToken().'&propertykey='.urlencode($propname).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_edit().'</a>';
+											print '<a class="marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=deleteproperty&token='.newToken().'&propertykey='.urlencode($propname).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_delete().'</a>';
+										}
+										print '</td>';
 									}
-									print '</td>';
-									print '<td class="center">';
-									print dol_escape_htmltag($propnotnull);
-									print '</td>';
-									print '<td>';
-									print dol_escape_htmltag($propdefault);
-									print '</td>';
-									print '<td class="center">';
-									print $propindex ? '1' : '';
-									print '</td>';
-									print '<td class="center">';
-									print $propforeignkey ? dol_escape_htmltag($propforeignkey) : '';
-									print '</td>';
-									print '<td class="right">';
-									print dol_escape_htmltag($propposition);
-									print '</td>';
-									print '<td class="center">';
-									print $propenabled ? dol_escape_htmltag($propenabled) : '';
-									print '</td>';
-									print '<td class="center">';
-									print $propvisible ? dol_escape_htmltag($propvisible) : '0';
-									print '</td>';
-									print '<td class="center">';
-									print $propnoteditable ? dol_escape_htmltag($propnoteditable) : '';
-									print '</td>';
-									print '<td class="center">';
-									print $propsearchall ? '1' : '';
-									print '</td>';
-									print '<td class="center">';
-									print $propisameasure ? dol_escape_htmltag($propisameasure) : '';
-									print '</td>';
-									print '<td class="center">';
-									print $propcss ? dol_escape_htmltag($propcss) : '';
-									print '</td>';
-									print '<td class="center">';
-									print $propcssview ? dol_escape_htmltag($propcssview) : '';
-									print '</td>';
-									print '<td class="tdoverflowmax200">';
-									print $prophelp ? dol_escape_htmltag($prophelp) : '';
-									print '</td>';
-									print '<td class="center">';
-									print $propshowoncombobox ? dol_escape_htmltag($propshowoncombobox) : '';
-									print '</td>';
-									/*print '<td class="center">';
-									print $propdisabled?$propdisabled:'';
-									print '</td>';*/
-									print '<td class="tdoverflowmax200">';
-									print '<span title="'.dol_escape_htmltag($propcomment).'">';
-									print dol_escape_htmltag($propcomment);
-									print '</span>';
-									print '</td>';
-									print '<td class="center">';
-									if ($propname != 'rowid') {
-										print '<a href="'.$_SERVER["PHP_SELF"].'?action=deleteproperty&token='.newToken().'&propertykey='.urlencode($propname).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_delete().'</a>';
-									}
-									print '</td>';
-
 									print '</tr>';
 								}
 							} else {
@@ -3310,6 +3382,45 @@ if ($module == 'initmodule') {
 					print '</td></tr>';
 				}
 				print '</table>';
+			} else {
+				$fullpathoffile = dol_buildpath($file, 0);
+
+				$content = file_get_contents($fullpathoffile);
+
+				// New module
+				print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
+				print '<input type="hidden" name="action" value="savefile">';
+				print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'">';
+				print '<input type="hidden" name="tab" value="'.$tab.'">';
+				print '<input type="hidden" name="module" value="'.$module.'">';
+
+				$doleditor = new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
+				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'html'));
+				print '<br>';
+				print '<center>';
+				print '<input type="submit" class="button buttonforacesave button-save" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+				print ' &nbsp; ';
+				print '<input type="submit" class="button button-cancel" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+				print '</center>';
+
+				print '</form>';
+			}
+		}
+
+		if ($tab == 'exportimport') {
+			$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
+
+			$exportlist = $moduleobj->export_label;
+			$importlist = $moduleobj->import_label;
+
+			if ($action != 'editfile' || empty($file)) {
+				print '<span class="opacitymedium">'.$langs->transnoentities('ImportExportProfiles').'</span><br>';
+				print '<br>';
+
+				print '<span class="fa fa-file-o"></span> '.$langs->trans("DescriptorFile").' : <strong>'.$pathtofile.'</strong>';
+				print ' <a class="editfielda paddingleft paddingright" href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=editfile&format=php&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+				print '<br>';
 			} else {
 				$fullpathoffile = dol_buildpath($file, 0);
 

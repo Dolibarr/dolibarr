@@ -10,7 +10,7 @@
  * Copyright (C) 2014-2016	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2015		Bahfir Abbes			<bafbes@gmail.com>
  * Copyright (C) 2015-2019	Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2016		Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2016-2021	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -34,6 +34,8 @@
  *  \brief      File of class to manage suppliers invoices
  */
 
+include_once DOL_DOCUMENT_ROOT.'/core/class/commoninvoice.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commoninvoice.class.php';
 require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -123,6 +125,19 @@ class FactureFournisseur extends CommonInvoice
 	 * @see FactureFournisseur::STATUS_DRAFT, FactureFournisseur::STATUS_VALIDATED, FactureFournisseur::STATUS_PAID, FactureFournisseur::STATUS_ABANDONED
 	 */
 	public $statut;
+
+	/**
+	 * ! Closing after partial payment: discount_vat, badsupplier, abandon
+	 * ! Closing when no payment: replaced, abandoned
+	 * @var string Close code
+	 */
+	public $close_code;
+
+	/**
+	 * ! Comment if paid without full payment
+	 * @var string Close note
+	 */
+	public $close_note;
 
 	/**
 	 * Set to 1 if the invoice is completely paid, otherwise is 0
@@ -311,7 +326,7 @@ class FactureFournisseur extends CommonInvoice
 	 * Classified paid.
 	 * If paid partially, $this->close_code can be:
 	 * - CLOSECODE_DISCOUNTVAT
-	 * - CLOSECODE_BADDEBT
+	 * - CLOSECODE_BADCREDIT
 	 * If paid completelly, this->close_code will be null
 	 */
 	const STATUS_CLOSED = 2;
@@ -319,7 +334,7 @@ class FactureFournisseur extends CommonInvoice
 	/**
 	 * Classified abandoned and no payment done.
 	 * $this->close_code can be:
-	 * - CLOSECODE_BADDEBT
+	 * - CLOSECODE_BADCREDIT
 	 * - CLOSECODE_ABANDONED
 	 * - CLOSECODE_REPLACED
 	 */
@@ -1181,7 +1196,7 @@ class FactureFournisseur extends CommonInvoice
 		if (!$error) {
 			// If invoice was converted into a discount not yet consumed, we remove discount
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'societe_remise_except';
-			$sql .= ' WHERE fk_invoice_supplier_source = '.$rowid;
+			$sql .= ' WHERE fk_invoice_supplier_source = '.((int) $rowid);
 			$sql .= ' AND fk_invoice_supplier_line IS NULL';
 			$resql = $this->db->query($sql);
 
@@ -1196,7 +1211,7 @@ class FactureFournisseur extends CommonInvoice
 			if (count($list_rowid_det)) {
 				$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
 				$sql .= ' SET fk_invoice_supplier = NULL, fk_invoice_supplier_line = NULL';
-				$sql .= ' WHERE fk_invoice_supplier_line IN ('.join(',', $list_rowid_det).')';
+				$sql .= ' WHERE fk_invoice_supplier_line IN ('.$this->db->sanitize(join(',', $list_rowid_det)).')';
 
 				dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 				if (!$this->db->query($sql)) {
@@ -1208,13 +1223,13 @@ class FactureFournisseur extends CommonInvoice
 		if (!$error) {
 			$main = MAIN_DB_PREFIX.'facture_fourn_det';
 			$ef = $main."_extrafields";
-			$sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_facture_fourn = $rowid)";
+			$sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM ".$main." WHERE fk_facture_fourn = ".((int) $rowid).")";
 			$resqlef = $this->db->query($sqlef);
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn_det WHERE fk_facture_fourn = '.$rowid.';';
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn_det WHERE fk_facture_fourn = '.((int) $rowid);
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resqlef && $resql) {
-				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn WHERE rowid = '.$rowid;
+				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn WHERE rowid = '.((int) $rowid);
 				dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 				$resql2 = $this->db->query($sql);
 				if (!$resql2) {
@@ -1318,36 +1333,53 @@ class FactureFournisseur extends CommonInvoice
 	 */
 	public function setPaid($user, $close_code = '', $close_note = '')
 	{
-		global $conf, $langs;
 		$error = 0;
 
-		$this->db->begin();
+		if ($this->paye != 1) {
+			$this->db->begin();
 
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn';
-		$sql .= ' SET paye = 1, fk_statut = '.self::STATUS_CLOSED;
-		$sql .= ' WHERE rowid = '.$this->id;
+			$now = dol_now();
 
-		dol_syslog("FactureFournisseur::set_paid", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			// Call trigger
-			$result = $this->call_trigger('BILL_SUPPLIER_PAYED', $user);
-			if ($result < 0) {
-				$error++;
+			dol_syslog("FactureFournisseur::set_paid", LOG_DEBUG);
+
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn SET';
+			$sql .= ' fk_statut = '.self::STATUS_CLOSED;
+			if (!$close_code) {
+				$sql .= ', paye=1';
 			}
-			// End call triggers
-		} else {
-			$error++;
-			$this->error = $this->db->error();
-			dol_print_error($this->db);
-		}
+			if ($close_code) {
+				$sql .= ", close_code='".$this->db->escape($close_code)."'";
+			}
+			if ($close_note) {
+				$sql .= ", close_note='".$this->db->escape($close_note)."'";
+			}
+			$sql .= ', fk_user_closing = '.$user->id;
+			$sql .= ", date_closing = '".$this->db->idate($now)."'";
+			$sql .= ' WHERE rowid = '.$this->id;
 
-		if (!$error) {
-			$this->db->commit();
-			return 1;
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				// Call trigger
+				$result = $this->call_trigger('BILL_SUPPLIER_PAYED', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
+			} else {
+				$error++;
+				$this->error = $this->db->error();
+				dol_print_error($this->db);
+			}
+
+			if (!$error) {
+				$this->db->commit();
+				return 1;
+			} else {
+				$this->db->rollback();
+				return -1;
+			}
 		} else {
-			$this->db->rollback();
-			return -1;
+			return 0;
 		}
 	}
 
@@ -1385,7 +1417,9 @@ class FactureFournisseur extends CommonInvoice
 		$this->db->begin();
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn';
-		$sql .= ' SET paye=0, fk_statut=1, close_code=null, close_note=null';
+		$sql .= ' SET paye=0, fk_statut='.self::STATUS_VALIDATED.', close_code=null, close_note=null';
+		$sql .= ' date_closing=null,';
+		$sql .= ' fk_user_closing=null';
 		$sql .= ' WHERE rowid = '.$this->id;
 
 		dol_syslog("FactureFournisseur::set_unpaid", LOG_DEBUG);
@@ -1399,8 +1433,8 @@ class FactureFournisseur extends CommonInvoice
 			// End call triggers
 		} else {
 			$error++;
-			$this->error = $this->db->lasterror();
-			dol_syslog("FactureFournisseur::set_unpaid ".$this->error);
+			$this->error = $this->db->error();
+			dol_print_error($this->db);
 		}
 
 		if (!$error) {
@@ -1409,6 +1443,64 @@ class FactureFournisseur extends CommonInvoice
 		} else {
 			$this->db->rollback();
 			return -1;
+		}
+	}
+
+	/**
+	 *	Tag invoice as canceled, with no payment on it (example for replacement invoice or payment never received) + call trigger BILL_CANCEL
+	 *	Warning, if option to decrease stock on invoice was set, this function does not change stock (it might be a cancel because
+	 *  of no payment even if merchandises were sent).
+	 *
+	 *	@param	User	$user        	Object user making change
+	 *	@param	string	$close_code		Code of closing invoice (CLOSECODE_REPLACED, CLOSECODE_...)
+	 *	@param	string	$close_note		Comment
+	 *	@return int         			<0 if KO, >0 if OK
+	 */
+	public function setCanceled($user, $close_code = '', $close_note = '')
+	{
+		dol_syslog(get_class($this)."::setCanceled rowid=".((int) $this->id), LOG_DEBUG);
+
+		$this->db->begin();
+
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn SET';
+		$sql .= ' fk_statut='.self::STATUS_ABANDONED;
+		if ($close_code) {
+			$sql .= ", close_code='".$this->db->escape($close_code)."'";
+		}
+		if ($close_note) {
+			$sql .= ", close_note='".$this->db->escape($close_note)."'";
+		}
+		$sql .= ' WHERE rowid = '.$this->id;
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			// Bound discounts are deducted from the invoice
+			// as they have not been used since the invoice is abandoned.
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
+			$sql .= ' SET fk_invoice_supplier = NULL';
+			$sql .= ' WHERE fk_invoice_supplier = '.$this->id;
+
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				// Call trigger
+				$result = $this->call_trigger('BILL_SUPPLIER_CANCEL', $user);
+				if ($result < 0) {
+					$this->db->rollback();
+					return -1;
+				}
+				// End call triggers
+
+				$this->db->commit();
+				return 1;
+			} else {
+				$this->error = $this->db->error()." sql=".$sql;
+				$this->db->rollback();
+				return -1;
+			}
+		} else {
+			$this->error = $this->db->error()." sql=".$sql;
+			$this->db->rollback();
+			return -2;
 		}
 	}
 
@@ -1465,7 +1557,7 @@ class FactureFournisseur extends CommonInvoice
 		$this->newref = dol_sanitizeFileName($num);
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn";
-		$sql .= " SET ref='".$num."', fk_statut = 1, fk_user_valid = ".$user->id.", date_valid = '".$this->db->idate($now)."'";
+		$sql .= " SET ref='".$this->db->escape($num)."', fk_statut = 1, fk_user_valid = ".((int) $user->id).", date_valid = '".$this->db->idate($now)."'";
 		$sql .= " WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::validate", LOG_DEBUG);
@@ -2092,7 +2184,7 @@ class FactureFournisseur extends CommonInvoice
 		// Libere remise liee a ligne de facture
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
 		$sql .= ' SET fk_invoice_supplier_line = NULL';
-		$sql .= ' WHERE fk_invoice_supplier_line = '.$rowid;
+		$sql .= ' WHERE fk_invoice_supplier_line = '.((int) $rowid);
 
 		dol_syslog(get_class($this)."::deleteline", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -2703,6 +2795,10 @@ class FactureFournisseur extends CommonInvoice
 		$object->ref_client         = '';
 		$object->close_code         = '';
 		$object->close_note         = '';
+		if ($conf->global->MAIN_DONT_KEEP_NOTE_ON_CLONING == 1) {
+			$object->note_private = '';
+			$object->note_public = '';
+		}
 
 		// Loop on each line of new invoice
 		foreach ($object->lines as $i => $line) {
@@ -3093,7 +3189,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$sql .= ', f.multicurrency_subprice, f.multicurrency_total_ht, f.multicurrency_total_tva, multicurrency_total_ttc';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn_det as f';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON f.fk_product = p.rowid';
-		$sql .= ' WHERE f.rowid = '.$rowid;
+		$sql .= ' WHERE f.rowid = '.((int) $rowid);
 		$sql .= ' ORDER BY f.rang, f.rowid';
 
 		$query = $this->db->query($sql);

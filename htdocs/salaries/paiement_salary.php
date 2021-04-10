@@ -18,9 +18,9 @@
  */
 
 /**
- *      \file       htdocs/compta/paiement_charge.php
- *      \ingroup    tax
- *      \brief      Page to add payment of a tax
+ *      \file       htdocs/compta/paiement_salary.php
+ *      \ingroup    salary
+ *      \brief      Page to add payment of a salary
  */
 
 require '../main.inc.php';
@@ -31,15 +31,25 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 // Load translation files required by the page
 $langs->load("bills");
 
-$chid = GETPOST("id", 'int');
 $action = GETPOST('action', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
+
+$id = GETPOSTINT('id');
+$ref = GETPOST('ref', 'alpha');
 $amounts = array();
 
+$object = new Salary($db);
+if ($id > 0 || !empty($ref)) {
+	$object->fetch($id, $ref);
+}
+
 // Security check
-$socid = 0;
+$socid = GETPOST("socid", "int");
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
+restrictedArea($user, 'salaries', $object->id, 'salary', '');
 
 
 /*
@@ -49,8 +59,8 @@ if ($user->socid > 0) {
 if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'yes')) {
 	$error = 0;
 
-	if ($_POST["cancel"]) {
-		$loc = DOL_URL_ROOT.'/salaries/card.php?id='.$chid;
+	if ($cancel) {
+		$loc = DOL_URL_ROOT.'/salaries/card.php?id='.$id;
 		header("Location: ".$loc);
 		exit;
 	}
@@ -73,29 +83,29 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 		$action = 'create';
 	}
 
+	// Read possible payments
+	foreach ($_POST as $key => $value) {
+		if (substr($key, 0, 7) == 'amount_') {
+			$other_chid = substr($key, 7);
+			$amounts[$other_chid] = price2num($_POST[$key]);
+		}
+	}
+
+	if ($amounts[key($amounts)] <= 0) {
+		$error++;
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount")), null, 'errors');
+		$action = 'create';
+	}
+
 	if (!$error) {
 		$paymentid = 0;
-
-		// Read possible payments
-		foreach ($_POST as $key => $value) {
-			if (substr($key, 0, 7) == 'amount_') {
-				$other_chid = substr($key, 7);
-				$amounts[$other_chid] = price2num($_POST[$key]);
-			}
-		}
-
-		if (count($amounts) <= 0) {
-			$error++;
-			setEventMessages($langs->trans("ErrorNoPaymentDefined"), null, 'errors');
-			$action = 'create';
-		}
 
 		if (!$error) {
 			$db->begin();
 
 			// Create a line of payments
 			$paiement = new PaymentSalary($db);
-			$paiement->chid         = $chid;
+			$paiement->chid         = $id;
 			$paiement->datepaye     = $datepaye;
 			$paiement->amounts      = $amounts; // Tableau de montant
 			$paiement->paiementtype = GETPOST("paiementtype", 'alphanohtml');
@@ -123,7 +133,7 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 
 			if (!$error) {
 				$db->commit();
-				$loc = DOL_URL_ROOT.'/salaries/card.php?id='.$chid;
+				$loc = DOL_URL_ROOT.'/salaries/card.php?id='.$id;
 				header('Location: '.$loc);
 				exit;
 			} else {
@@ -138,15 +148,16 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
  * View
  */
 
-llxHeader();
-
 $form = new Form($db);
 
+$help_url = '';
+
+llxHeader('', '', $help_url);
+
+$salary = $object;
 
 // Formulaire de creation d'un paiement de charge
 if ($action == 'create') {
-	$salary = new Salary($db);		// Salary to pay
-	$salary->fetch($chid);
 	$salary->accountid = $salary->fk_account ? $salary->fk_account : $salary->accountid;
 	$salary->paiementtype = $salary->mode_reglement_id ? $salary->mode_reglement_id : $salary->paiementtype;
 
@@ -170,15 +181,15 @@ if ($action == 'create') {
 
 	print '<form name="add_payment" action="'.$_SERVER['PHP_SELF'].'" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="id" value="'.$chid.'">';
-	print '<input type="hidden" name="chid" value="'.$chid.'">';
+	print '<input type="hidden" name="id" value="'.$id.'">';
+	print '<input type="hidden" name="chid" value="'.$id.'">';
 	print '<input type="hidden" name="action" value="add_payment">';
 
-	print dol_get_fiche_end();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 
-	print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td><a href="'.DOL_URL_ROOT.'/salaries/card.php?id='.$chid.'">'.$chid.'</a></td></tr>';
+	print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td><a href="'.DOL_URL_ROOT.'/salaries/card.php?id='.$id.'">'.$id.'</a></td></tr>';
 	print '<tr><td>'.$langs->trans("DateStart")."</td><td>".dol_print_date($salary->datesp, 'day')."</td></tr>\n";
 	print '<tr><td>'.$langs->trans("DateEnd")."</td><td>".dol_print_date($salary->dateep, 'day')."</td></tr>\n";
 	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$salary->label."</td></tr>\n";
@@ -187,32 +198,32 @@ if ($action == 'create') {
 
 	$sql = "SELECT sum(p.amount) as total";
 	$sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as p";
-	$sql .= " WHERE p.fk_salary = ".$chid;
+	$sql .= " WHERE p.fk_salary = ".((int) $id);
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
 		$sumpaid = $obj->total;
-		$db->free();
+		$db->free($resql);
 	}
 	/*print '<tr><td>'.$langs->trans("AlreadyPaid").'</td><td>'.price($sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
 	print '<tr><td class="tdtop">'.$langs->trans("RemainderToPay").'</td><td>'.price($total-$sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';*/
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
-	$datepaye = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
-	$datepayment = empty($conf->global->MAIN_AUTOFILL_DATE) ? (empty($_POST["remonth"]) ?-1 : $datepaye) : '';
+	$datepaye = dol_mktime(12, 0, 0, GETPOST("remonth", 'int'), GETPOST("reday", 'int'), GETPOST("reyear", 'int'));
+	$datepayment = empty($conf->global->MAIN_AUTOFILL_DATE) ? (GETPOST("remonth") ? $datepaye : -1) : '';
 	print $form->selectDate($datepayment, '', '', '', '', "add_payment", 1, 1);
 	print "</td>";
 	print '</tr>';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
-	$form->select_types_paiements(isset($_POST["paiementtype"]) ? $_POST["paiementtype"] : $salary->type_payment, "paiementtype");
+	$form->select_types_paiements(GETPOSTISSET("paiementtype") ? GETPOST("paiementtype") : $salary->type_payment, "paiementtype");
 	print "</td>\n";
 	print '</tr>';
 
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
 	print '<td>';
-	$form->select_comptes(isset($_POST["accountid"]) ? $_POST["accountid"] : $salary->accountid, "accountid", 0, '', 1); // Show opend bank account list
+	$form->select_comptes(GETPOSTISSET("accountid") ? GETPOST("accountid", 'int') : $salary->accountid, "accountid", 0, '', 1); // Show opend bank account list
 	print '</td></tr>';
 
 	// Number
@@ -270,12 +281,13 @@ if ($action == 'create') {
 		if ($sumpaid < $objp->amount) {
 			$namef = "amount_".$objp->id;
 			$nameRemain = "remain_".$objp->id;
+			/* Disabled, we autofil the amount with remain to pay by default
 			if (!empty($conf->use_javascript_ajax)) {
 				print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmount' data-rowid='".$namef."' data-value='".($objp->amount - $sumpaid)."'");
-			}
+			} */
 			$remaintopay = $objp->amount - $sumpaid;
 			print '<input type=hidden class="sum_remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
-			print '<input type="text" size="8" name="'.$namef.'" id="'.$namef.'">';
+			print '<input type="text" size="8" name="'.$namef.'" id="'.$namef.'" value="'.$remaintopay.'">';
 		} else {
 			print '-';
 		}

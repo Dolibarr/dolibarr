@@ -83,7 +83,7 @@ class PaiementFourn extends Paiement
 	 *	Load payment object
 	 *
 	 *	@param	int		$id         Id if payment to get
-	 *  @param	string	$ref		Ref of payment to get (currently ref = id but this may change in future)
+	 *  @param	string	$ref		Ref of payment to get
 	 *  @param	int		$fk_bank	Id of bank line associated to payment
 	 *  @return int		            <0 if KO, -2 if not found, >0 if OK
 	 */
@@ -101,9 +101,9 @@ class PaiementFourn extends Paiement
 		if ($id > 0) {
 			$sql .= ' AND p.rowid = '.((int) $id);
 		} elseif ($ref) {
-			$sql .= ' AND p.rowid = '.$ref;
-		} elseif ($fk_bank) {
-			$sql .= ' AND p.fk_bank = '.$fk_bank;
+			$sql .= " AND p.ref = '".$this->db->escape($ref)."'";
+		} elseif ($fk_bank > 0) {
+			$sql .= ' AND p.fk_bank = '.((int) $fk_bank);
 		}
 		//print $sql;
 
@@ -529,9 +529,10 @@ class PaiementFourn extends Paiement
 	 *	@param		string	$option			Sur quoi pointe le lien
 	 *  @param		string  $mode           'withlistofinvoices'=Include list of invoices into tooltip
 	 *  @param		int  	$notooltip		1=Disable tooltip
+	 *  @param		string	$morecss		Add more CSS
 	 *	@return		string					Chaine avec URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $mode = 'withlistofinvoices', $notooltip = 0)
+	public function getNomUrl($withpicto = 0, $option = '', $mode = 'withlistofinvoices', $notooltip = 0, $morecss = '')
 	{
 		global $langs;
 
@@ -547,13 +548,26 @@ class PaiementFourn extends Paiement
 			$text = $langs->trans($reg[1]);
 		}
 
-		$label = '<u>'.$langs->trans("Payment").'</u><br>';
+		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Payment").'</u><br>';
 		$label .= '<strong>'.$langs->trans("Ref").':</strong> '.$text;
 		if ($this->datepaye ? $this->datepaye : $this->date) {
-			$label .= '<br><strong>'.$langs->trans("Date").':</strong> '.dol_print_date($this->datepaye ? $this->datepaye : $this->date, 'dayhour');
+			$label .= '<br><strong>'.$langs->trans("Date").':</strong> '.dol_print_date($this->datepaye ? $this->datepaye : $this->date, 'dayhour', 'tzuser');
 		}
 
-		$linkstart = '<a href="'.DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkclose = '';
+		if (empty($notooltip)) {
+			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+				$label = $langs->trans("Payment");
+				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+			}
+			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+		} else {
+			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		}
+
+		$linkstart = '<a href="'.DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$this->id.'"';
+		$linkstart .= $linkclose.'>';
 		$linkend = '</a>';
 
 		$result .= $linkstart;

@@ -49,7 +49,11 @@ require '../../main.inc.php';
 
 $htmlname = GETPOST('htmlname', 'aZ09');
 $socid = GETPOST('socid', 'int');
+$mode = GETPOST('mode', 'aZ09');
 $discard_closed = GETPOST('discardclosed', 'int');
+
+// Security check
+restrictedArea($user, 'projet', 0, 'projet&project');
 
 
 /*
@@ -57,7 +61,6 @@ $discard_closed = GETPOST('discardclosed', 'int');
  */
 
 dol_syslog("Call ajax projet/ajax/projects.php");
-//dol_syslog(join(',', $_GET));
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 
@@ -68,7 +71,7 @@ if (empty($htmlname) && !GETPOST('mode', 'aZ09')) {
 }
 
 // Mode to get list of projects
-if (!GETPOST('mode', 'aZ09') || GETPOST('mode', 'aZ09') != 'gettasks') {
+if (empty($mode) || $mode != 'gettasks') {
 	// When used from jQuery, the search term is added as GET param "term".
 	$searchkey = (GETPOSTISSET($htmlname) ? GETPOST($htmlname, 'aZ09') : '');
 
@@ -77,7 +80,7 @@ if (!GETPOST('mode', 'aZ09') || GETPOST('mode', 'aZ09') != 'gettasks') {
 }
 
 // Mode to get list of tasks
-if (GETPOST('mode', 'aZ09') == 'gettasks') {
+if ($mode == 'gettasks') {
 	$formproject = new FormProjets($db);
 	$formproject->selectTasks((!empty($$socid) ? $socid : -1), 0, 'taskid', 24, 1, '1', 1, 0, 0, 'maxwidth500', GETPOST('projectid', 'int'), '');
 	return;

@@ -74,6 +74,7 @@ class Contacts extends DolibarrApi
 		if (!DolibarrApiAccess::$user->rights->societe->contact->lire) {
 			throw new RestException(401, 'No permission to read contacts');
 		}
+
 		if ($id == 0) {
 			$result = $this->contact->initAsSpecimen();
 		} else {
@@ -117,6 +118,7 @@ class Contacts extends DolibarrApi
 		if (!DolibarrApiAccess::$user->rights->societe->contact->lire) {
 			throw new RestException(401, 'No permission to read contacts');
 		}
+
 		if (empty($email)) {
 			$result = $this->contact->initAsSpecimen();
 		} else {
@@ -192,7 +194,7 @@ class Contacts extends DolibarrApi
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON t.fk_soc = s.rowid";
 		$sql .= ' WHERE t.entity IN ('.getEntity('socpeople').')';
 		if ($socids) {
-			$sql .= " AND t.fk_soc IN (".$socids.")";
+			$sql .= " AND t.fk_soc IN (".$this->db->sanitize($socids).")";
 		}
 
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
@@ -203,7 +205,7 @@ class Contacts extends DolibarrApi
 		}
 		// Insert sale filter
 		if ($search_sale > 0) {
-			$sql .= " AND sc.fk_user = ".$search_sale;
+			$sql .= " AND sc.fk_user = ".((int) $search_sale);
 		}
 
 		// Select contacts of given category

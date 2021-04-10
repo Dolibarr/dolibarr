@@ -463,11 +463,13 @@ asort($orders);
 //var_dump($modules);
 
 $nbofactivatedmodules = count($conf->modules);
-$moreinfo = $langs->trans("TitleNumberOfActivatedModules");
+
+//$conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING = 1000;
+/*$moreinfo = $langs->trans("TitleNumberOfActivatedModules");
 $moreinfo2 = '<b class="largenumber">'.($nbofactivatedmodules - 1).'</b> / <b class="largenumber">'.count($modules).'</b>';
-if ($nbofactivatedmodules <= 1) {
+if ($nbofactivatedmodules <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING) ? 1 : $conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING)) {
 	$moreinfo2 .= ' '.img_warning($langs->trans("YouMustEnableOneModule"));
-}
+}*/
 
 print load_fiche_titre($langs->trans("ModulesSetup"), '', 'title_setup');
 
@@ -476,7 +478,9 @@ $deschelp  = '';
 if ($mode == 'common' || $mode == 'commonkanban') {
 	$desc = $langs->trans("ModulesDesc", '{picto}');
 	$desc = str_replace('{picto}', img_picto('', 'switch_off'), $desc);
-	$deschelp = '<div class="info hideonsmartphone">'.$desc."<br></div><br>\n";
+	if (count($conf->modules) <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING) ? 1 : $conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING)) {	// If only minimal initial modules enabled
+		$deschelp = '<div class="info hideonsmartphone">'.$desc."<br></div><br>\n";
+	}
 }
 if ($mode == 'marketplace') {
 	//$deschelp = '<div class="info hideonsmartphone">'.$langs->trans("ModulesMarketPlaceDesc")."<br></div><br>\n";
@@ -488,7 +492,7 @@ if ($mode == 'develop') {
 	$deschelp = '<div class="info hideonsmartphone">'.$langs->trans("ModulesDevelopDesc")."<br></div><br>\n";
 }
 
-$head = modules_prepare_head();
+$head = modules_prepare_head($nbofactivatedmodules, count($modules));
 
 
 if ($mode == 'common' || $mode == 'commonkanban') {
@@ -521,7 +525,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-list-alt imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.$param, '', 1, array('morecss'=>'reposition'.($mode == 'commonkanban' ? '' : ' btnTitleSelected')));
 	$moreforfilter .= '</li></ul></div>';
 
-	$moreforfilter .= '<div class="floatright center marginrightonly hideonsmartphone" style="padding-top: 3px"><span class="paddingright">'.$moreinfo.'</span> '.$moreinfo2.'</div>';
+	//$moreforfilter .= '<div class="floatright center marginrightonly hideonsmartphone" style="padding-top: 3px"><span class="paddingright">'.$moreinfo.'</span> '.$moreinfo2.'</div>';
 
 	$moreforfilter .= '<div class="colorbacktimesheet float valignmiddle">';
 	$moreforfilter .= '<div class="divsearchfield paddingtop">';
@@ -893,7 +897,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			if (!empty($conf->global->CHECKLASTVERSION_EXTERNALMODULE)) {	// This is a bad practice to activate a synch external access during building of a page. 1 external module can hang the application.
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 				if (!empty($objMod->url_last_version)) {
-					$newversion = getURLContent($objMod->url_last_version);
+					$newversion = getURLContent($objMod->url_last_version, 'GET', '', 1, array(), array('http', 'https'), 0);	// Accept http or https links on external remote server only
 					if (isset($newversion['content'])) {
 						if (version_compare($newversion['content'], $versiontrans) > 0) {
 							print "&nbsp;<span class='butAction' title='".$langs->trans('LastStableVersion')."'>".$newversion['content']."</span>";

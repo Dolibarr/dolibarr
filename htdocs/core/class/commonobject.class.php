@@ -7,14 +7,14 @@
  * Copyright (C) 2012-2015 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2012-2015 Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
- * Copyright (C) 2015      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2015-2021 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2016      Bahfir abbes         <dolipar@dolipar.org>
  * Copyright (C) 2017      ATM Consulting       <support@atm-consulting.fr>
  * Copyright (C) 2017-2019 Nicolas ZABOURI      <info@inovea-conseil.com>
- * Copyright (C) 2017      Rui Strecht		    <rui.strecht@aliartalentos.com>
+ * Copyright (C) 2017      Rui Strecht          <rui.strecht@aliartalentos.com>
  * Copyright (C) 2018-2021 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2018      Josep Lluís Amador   <joseplluis@lliuretic.cat>
- * Copyright (C) 2021      Gauthier VERDOL   	<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2021      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -358,7 +358,7 @@ abstract class CommonObject
 	/**
 	 * @var string
 	 * @deprecated
-	 * @see model_pdf
+	 * @see $model_pdf
 	 */
 	public $modelpdf;
 
@@ -1072,9 +1072,9 @@ abstract class CommonObject
 			// Insert into database
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."element_contact";
 			$sql .= " (element_id, fk_socpeople, datecreate, statut, fk_c_type_contact) ";
-			$sql .= " VALUES (".$this->id.", ".$fk_socpeople." , ";
+			$sql .= " VALUES (".$this->id.", ".((int) $fk_socpeople)." , ";
 			$sql .= "'".$this->db->idate($datecreate)."'";
-			$sql .= ", 4, ".$id_type_contact;
+			$sql .= ", 4, ".((int) $id_type_contact);
 			$sql .= ")";
 
 			$resql = $this->db->query($sql);
@@ -1148,7 +1148,7 @@ abstract class CommonObject
 		if ($fk_socpeople) {
 			$sql .= ", fk_socpeople = ".((int) $fk_socpeople);
 		}
-		$sql .= " where rowid = ".$rowid;
+		$sql .= " where rowid = ".((int) $rowid);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			return 0;
@@ -1175,7 +1175,7 @@ abstract class CommonObject
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_contact";
-		$sql .= " WHERE rowid =".$rowid;
+		$sql .= " WHERE rowid = ".((int) $rowid);
 
 		dol_syslog(get_class($this)."::delete_contact", LOG_DEBUG);
 		if ($this->db->query($sql)) {
@@ -1218,7 +1218,7 @@ abstract class CommonObject
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_contact";
 		$sql .= " WHERE element_id = ".$this->id;
 		if ($listId) {
-			$sql .= " AND fk_c_type_contact IN (".$listId.")";
+			$sql .= " AND fk_c_type_contact IN (".$this->db->sanitize($listId).")";
 		}
 
 		dol_syslog(get_class($this)."::delete_linked_contact", LOG_DEBUG);
@@ -1338,7 +1338,7 @@ abstract class CommonObject
 		$sql = "SELECT ec.datecreate, ec.statut, ec.fk_socpeople, ec.fk_c_type_contact,";
 		$sql .= " tc.code, tc.libelle";
 		$sql .= " FROM (".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as tc)";
-		$sql .= " WHERE ec.rowid =".$rowid;
+		$sql .= " WHERE ec.rowid =".((int) $rowid);
 		$sql .= " AND ec.fk_c_type_contact=tc.rowid";
 		$sql .= " AND tc.element = '".$this->db->escape($this->element)."'";
 
@@ -1548,7 +1548,7 @@ abstract class CommonObject
 			$sql .= " ".MAIN_DB_PREFIX."socpeople as c,";
 		}
 		$sql .= " ".MAIN_DB_PREFIX."c_type_contact as tc";
-		$sql .= " WHERE ec.element_id = ".$id;
+		$sql .= " WHERE ec.element_id = ".((int) $id);
 		$sql .= " AND ec.fk_socpeople = c.rowid";
 		if ($source == 'internal') {
 			$sql .= " AND c.entity IN (".getEntity('user').")";
@@ -1564,7 +1564,7 @@ abstract class CommonObject
 		}
 		$sql .= " AND tc.active = 1";
 		if ($status) {
-			$sql .= " AND ec.statut = ".$status;
+			$sql .= " AND ec.statut = ".((int) $status);
 		}
 
 		dol_syslog(get_class($this)."::getIdContact", LOG_DEBUG);
@@ -1706,7 +1706,7 @@ abstract class CommonObject
 			if (empty($this->barcode_type) || empty($this->barcode_type_code) || empty($this->barcode_type_label) || empty($this->barcode_type_coder)) {    // If data not already loaded
 				$sql = "SELECT rowid, code, libelle as label, coder";
 				$sql .= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
-				$sql .= " WHERE rowid = ".$idtype;
+				$sql .= " WHERE rowid = ".((int) $idtype);
 				dol_syslog(get_class($this).'::fetch_barcode', LOG_DEBUG);
 				$resql = $this->db->query($sql);
 				if ($resql) {
@@ -1939,7 +1939,7 @@ abstract class CommonObject
 			}
 		}
 
-		$sql .= " WHERE ".$id_field." = ".$id;
+		$sql .= " WHERE ".$id_field." = ".((int) $id);
 
 		dol_syslog(__METHOD__."", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -2201,22 +2201,22 @@ abstract class CommonObject
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 		if (!empty($this->fields['fk_project'])) {		// Common case
 			if ($projectid) {
-				$sql .= ' SET fk_project = '.$projectid;
+				$sql .= ' SET fk_project = '.((int) $projectid);
 			} else {
 				$sql .= ' SET fk_project = NULL';
 			}
-			$sql .= ' WHERE rowid = '.$this->id;
+			$sql .= ' WHERE rowid = '.((int) $this->id);
 		} elseif ($this->table_element == 'actioncomm') {	// Special case for actioncomm
 			if ($projectid) {
-				$sql .= ' SET fk_project = '.$projectid;
+				$sql .= ' SET fk_project = '.((int) $projectid);
 			} else {
 				$sql .= ' SET fk_project = NULL';
 			}
-			$sql .= ' WHERE id = '.$this->id;
+			$sql .= ' WHERE id = '.((int) $this->id);
 		} else // Special case for old architecture objects
 		{
 			if ($projectid) {
-				$sql .= ' SET fk_projet = '.$projectid;
+				$sql .= ' SET fk_projet = '.((int) $projectid);
 			} else {
 				$sql .= ' SET fk_projet = NULL';
 			}
@@ -2225,7 +2225,7 @@ abstract class CommonObject
 
 		dol_syslog(get_class($this)."::setProject", LOG_DEBUG);
 		if ($this->db->query($sql)) {
-			$this->fk_project = $projectid;
+			$this->fk_project = ((int) $projectid);
 			return 1;
 		} else {
 			dol_print_error($this->db);
@@ -2332,7 +2332,7 @@ abstract class CommonObject
 			$fieldname = 'multicurrency_tx';
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= ' SET '.$fieldname.' = '.$rate;
+			$sql .= ' SET '.$fieldname.' = '.((float) $rate);
 			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			if ($this->db->query($sql)) {
@@ -2617,7 +2617,7 @@ abstract class CommonObject
 			$fieldname = 'retained_warranty_fk_cond_reglement';
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= ' SET '.$fieldname.' = '.$id;
+			$sql .= ' SET '.$fieldname.' = '.((int) $id);
 			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			if ($this->db->query($sql)) {
@@ -2649,7 +2649,7 @@ abstract class CommonObject
 			$fieldname = 'fk_address';
 		}
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET ".$fieldname." = ".$id;
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET ".$fieldname." = ".((int) $id);
 		$sql .= " WHERE rowid = ".$this->id." AND fk_statut = 0";
 
 		if ($this->db->query($sql)) {
@@ -2695,7 +2695,7 @@ abstract class CommonObject
 		dol_syslog(get_class($this).'::setShippingMethod('.$shipping_method_id.')');
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-		$sql .= " SET fk_shipping_method = ".$shipping_method_id;
+		$sql .= " SET fk_shipping_method = ".((int) $shipping_method_id);
 		$sql .= " WHERE rowid=".((int) $this->id);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
@@ -2742,7 +2742,7 @@ abstract class CommonObject
 		dol_syslog(get_class($this).'::setWarehouse('.$warehouse_id.')');
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-		$sql .= " SET fk_warehouse = ".$warehouse_id;
+		$sql .= " SET fk_warehouse = ".((int) $warehouse_id);
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		if ($this->db->query($sql)) {
@@ -2819,7 +2819,7 @@ abstract class CommonObject
 		dol_syslog(get_class($this).'::setBankAccount('.$fk_account.')');
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-		$sql .= " SET fk_account = ".$fk_account;
+		$sql .= " SET fk_account = ".((int) $fk_account);
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$resql = $this->db->query($sql);
@@ -3022,8 +3022,8 @@ abstract class CommonObject
 			$fieldposition = 'position';
 		}
 
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.$rang;
-		$sql .= ' WHERE rowid = '.$rowid;
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.((int) $rang);
+		$sql .= ' WHERE rowid = '.((int) $rowid);
 
 		dol_syslog(get_class($this)."::updateRangOfLine", LOG_DEBUG);
 		if (!$this->db->query($sql)) {
@@ -3062,12 +3062,12 @@ abstract class CommonObject
 				$fieldposition = 'position';
 			}
 
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.$rang;
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.((int) $rang);
 			$sql .= ' WHERE '.$this->fk_element.' = '.$this->id;
 			$sql .= ' AND rang = '.($rang - 1);
 			if ($this->db->query($sql)) {
-				$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.($rang - 1);
-				$sql .= ' WHERE rowid = '.$rowid;
+				$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.((int) ($rang - 1));
+				$sql .= ' WHERE rowid = '.((int) $rowid);
 				if (!$this->db->query($sql)) {
 					dol_print_error($this->db);
 				}
@@ -3093,12 +3093,12 @@ abstract class CommonObject
 				$fieldposition = 'position';
 			}
 
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.$rang;
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.((int) $rang);
 			$sql .= ' WHERE '.$this->fk_element.' = '.$this->id;
-			$sql .= ' AND rang = '.($rang + 1);
+			$sql .= ' AND rang = '.((int) ($rang + 1));
 			if ($this->db->query($sql)) {
-				$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.($rang + 1);
-				$sql .= ' WHERE rowid = '.$rowid;
+				$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.((int) ($rang + 1));
+				$sql .= ' WHERE rowid = '.((int) $rowid);
 				if (!$this->db->query($sql)) {
 					dol_print_error($this->db);
 				}
@@ -3518,7 +3518,7 @@ abstract class CommonObject
 			$fieldttc = 'total_ttc';
 			// Specific code for backward compatibility with old field names
 			if ($this->element == 'facture' || $this->element == 'facturerec') {
-				$fieldht = 'total';
+				$fieldtva = 'total_tva';
 			}
 			if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') {
 				$fieldtva = 'total_tva';
@@ -4047,7 +4047,7 @@ abstract class CommonObject
 
 		global $db;
 
-		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$table_element.' WHERE '.$field_where.' = '.$fk_object_where;
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$table_element.' WHERE '.$field_where.' = '.((int) $fk_object_where);
 		$resql = $db->query($sql);
 
 		if (empty($resql)) {
@@ -4221,7 +4221,7 @@ abstract class CommonObject
 	public function getSpecialCode($lineid)
 	{
 		$sql = 'SELECT special_code FROM '.MAIN_DB_PREFIX.$this->table_element_line;
-		$sql .= ' WHERE rowid = '.$lineid;
+		$sql .= ' WHERE rowid = '.((int) $lineid);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$row = $this->db->fetch_row($resql);
@@ -4263,7 +4263,7 @@ abstract class CommonObject
 			//print $id.'-'.$table.'-'.$elementname.'<br>';
 			// Check if third party can be deleted
 			$sql = "SELECT COUNT(*) as nb from ".MAIN_DB_PREFIX.$table;
-			$sql .= " WHERE ".$this->fk_element." = ".$id;
+			$sql .= " WHERE ".$this->fk_element." = ".((int) $id);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$obj = $this->db->fetch_object($resql);
@@ -7656,7 +7656,7 @@ abstract class CommonObject
 	public static function commonReplaceThirdparty(DoliDB $db, $origin_id, $dest_id, array $tables, $ignoreerrors = 0)
 	{
 		foreach ($tables as $table) {
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.$table.' SET fk_soc = '.$dest_id.' WHERE fk_soc = '.$origin_id;
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.$table.' SET fk_soc = '.((int) $dest_id).' WHERE fk_soc = '.((int) $origin_id);
 
 			if (!$db->query($sql)) {
 				if ($ignoreerrors) {
@@ -7688,7 +7688,8 @@ abstract class CommonObject
 
 		$buyPrice = 0;
 
-		if (($unitPrice > 0) && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1)) { // In most cases, test here is false
+		if (($unitPrice > 0) && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull > 0)) {
+			 // When ForceBuyingPriceIfNull is set
 			$buyPrice = $unitPrice * (1 - $discountPercent / 100);
 		} else {
 			// Get cost price for margin calculation
@@ -8410,7 +8411,7 @@ abstract class CommonObject
 		// If we have a field ref with a default value of (PROV)
 		if (!$error) {
 			if (key_exists('ref', $this->fields) && $this->fields['ref']['notnull'] > 0 && !is_null($this->fields['ref']['default']) && $this->fields['ref']['default'] == '(PROV)') {
-				$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET ref = '(PROV".$this->id.")' WHERE (ref = '(PROV)' OR ref = '') AND rowid = ".$this->id;
+				$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET ref = '(PROV".$this->id.")' WHERE (ref = '(PROV)' OR ref = '') AND rowid = ".((int) $this->id);
 				$resqlupdate = $this->db->query($sql);
 
 				if ($resqlupdate === false) {
@@ -9266,7 +9267,7 @@ abstract class CommonObject
 			}
 
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX."ecm_files";
-			$sql .= " WHERE src_object_type = '".$this->db->escape($this->table_element.(empty($this->module) ? '' : '@'.$this->module))."' AND src_object_id = ".$this->id;
+			$sql .= " WHERE src_object_type = '".$this->db->escape($this->table_element.(empty($this->module) ? '' : '@'.$this->module))."' AND src_object_id = ".((int) $this->id);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$this->error = $this->db->lasterror();

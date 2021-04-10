@@ -37,13 +37,6 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks', 'productbatch'));
 
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'produit|service');
-
-
 $action = GETPOST('action', 'aZ09');
 $sref = GETPOST("sref", 'alpha');
 $snom = GETPOST("snom", 'alpha');
@@ -89,6 +82,11 @@ if (!empty($canvas)) {
 	$objcanvas->getCanvas('product', 'list', $canvas);
 }
 
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'produit|service', 0, 'product&product');
 
 
 /*
@@ -165,19 +163,19 @@ if ($snom) {
 	$sql .= natural_search("p.label", $snom);
 }
 if (!empty($tosell)) {
-	$sql .= " AND p.tosell = ".$tosell;
+	$sql .= " AND p.tosell = ".((int) $tosell);
 }
 if (!empty($tobuy)) {
-	$sql .= " AND p.tobuy = ".$tobuy;
+	$sql .= " AND p.tobuy = ".((int) $tobuy);
 }
 if (!empty($canvas)) {
 	$sql .= " AND p.canvas = '".$db->escape($canvas)."'";
 }
-if ($catid) {
-	$sql .= " AND cp.fk_categorie = ".$catid;
+if ($catid > 0) {
+	$sql .= " AND cp.fk_categorie = ".((int) $catid);
 }
 if ($fourn_id > 0) {
-	$sql .= " AND p.rowid = pf.fk_product AND pf.fk_soc = ".$fourn_id;
+	$sql .= " AND p.rowid = pf.fk_product AND pf.fk_soc = ".((int) $fourn_id);
 }
 // Insert categ filter
 if ($search_categ) {
@@ -309,7 +307,7 @@ if ($resql) {
 	$moreforfilter = '';
 	if (!empty($conf->categorie->enabled)) {
 		$moreforfilter .= '<div class="divsearchfield">';
-		$moreforfilter .= $langs->trans('Categories').': ';
+		$moreforfilter .= img_picto($langs->trans('Categories'), 'category', 'class="pictofixedwidth"');
 		$moreforfilter .= $htmlother->select_categories(Categorie::TYPE_PRODUCT, $search_categ, 'search_categ');
 		$moreforfilter .= '</div>';
 	}
@@ -482,7 +480,10 @@ if ($resql) {
 		//if ($objp->seuil_stock_alerte && ($objp->stock_physique < $objp->seuil_stock_alerte)) print img_warning($langs->trans("StockTooLow")).' ';
 		print $objp->stock_physique;
 		print '</td>';
-		print '<td class="right"><a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?idproduct='.$product_static->id.'&search_warehouse='.$objp->fk_entrepot.'&search_batch='.($objp->batch != 'Undefined' ? $objp->batch : 'Undefined').'">'.$langs->trans("Movements").'</a></td>';
+		print '<td class="right">';
+		print img_picto($langs->trans("StockMovement"), 'movement', 'class="pictofixedwidth"');
+		print '<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?idproduct='.$product_static->id.'&search_warehouse='.$objp->fk_entrepot.'&search_batch='.($objp->batch != 'Undefined' ? $objp->batch : 'Undefined').'">'.$langs->trans("Movements").'</a>';
+		print '</td>';
 		print '<td class="right nowrap">'.$product_static->LibStatut($objp->statut, 5, 0).'</td>';
 		print '<td class="right nowrap">'.$product_static->LibStatut($objp->tobuy, 5, 1).'</td>';
 		print '<td></td>';

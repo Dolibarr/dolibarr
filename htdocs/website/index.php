@@ -34,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/website2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formwebsite.class.php';
@@ -589,6 +590,8 @@ if ($action == 'addsite' && $usercanedit) {
 	if (!$error) {
 		$arrayotherlang = explode(',', GETPOST('WEBSITE_OTHERLANG', 'alphanohtml'));
 		foreach ($arrayotherlang as $key => $val) {
+			// It possible we have empty val here if postparam WEBSITE_OTHERLANG is empty or set like this : 'en,,sv' or 'en,sv,'
+			if (empty(trim($val))) continue;
 			$arrayotherlang[$key] = substr(trim($val), 0, 2); // Kept short language code only
 		}
 
@@ -680,7 +683,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 		}
 
 		if (!$error) {
-			$tmp = getURLContent($urltograb);
+			$tmp = getURLContent($urltograb, 'GET', '', 1, array(), array('http', 'https'), 0);
 			if ($tmp['curl_error_no']) {
 				$error++;
 				setEventMessages('Error getting '.$urltograb.': '.$tmp['curl_error_msg'], null, 'errors');
@@ -795,7 +798,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 					}
 
 					/*
-					$tmpgeturl = getURLContent($urltograbbis);
+					$tmpgeturl = getURLContent($urltograbbis, 'GET', '', 1, array(), array('http', 'https'), 0);
 					if ($tmpgeturl['curl_error_no'])
 					{
 						$error++;
@@ -860,7 +863,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 						continue;
 					}
 
-					$tmpgeturl = getURLContent($urltograbbis);
+					$tmpgeturl = getURLContent($urltograbbis, 'GET', '', 1, array(), array('http', 'https'), 0);
 					if ($tmpgeturl['curl_error_no']) {
 						$errorforsubresource++;
 						setEventMessages('Error getting link tag url '.$urltograbbis.': '.$tmpgeturl['curl_error_msg'], null, 'errors');
@@ -895,6 +898,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 
 						getAllImages($object, $objectpage, $urltograbbis, $tmpgeturl['content'], $action, 1, $grabimages, $grabimagesinto);
 
+						// We try to convert the CSS we got by adding a prefix .bodywebsite with lessc to avoid conflicit with CSS of Dolibarr.
 						include_once DOL_DOCUMENT_ROOT.'/core/class/lessc.class.php';
 						$lesscobj = new Lessc();
 						try {
@@ -1295,6 +1299,8 @@ if ($action == 'updatecss' && $usercanedit) {
 			if (!$error) {
 				$arrayotherlang = explode(',', GETPOST('WEBSITE_OTHERLANG', 'alphanohtml'));
 				foreach ($arrayotherlang as $key => $val) {
+					// It possible we have empty val here if postparam WEBSITE_OTHERLANG is empty or set like this : 'en,,sv' or 'en,sv,'
+					if (empty(trim($val))) continue;
 					$arrayotherlang[$key] = substr(trim($val), 0, 2); // Kept short language code only
 				}
 
@@ -1307,6 +1313,37 @@ if ($action == 'updatecss' && $usercanedit) {
 				if ($result < 0) {
 					$error++;
 					setEventMessages($object->error, $object->errors, 'errors');
+					$action = 'editcss';
+				}
+			}
+		}
+
+		if (!$error) {
+			if (($_FILES['addedfile']["name"] != '')) {
+				$uploadfolder = $conf->website->dir_output.'/'.$websitekey;
+				if ($_FILES['addedfile']['type'] != 'image/png') {
+					$error++;
+					setEventMessages($langs->trans('ErrorFaviconType'), array(), 'errors');
+				}
+				$filetoread = realpath(dol_osencode($_FILES['addedfile']['tmp_name']));
+				$filesize = getimagesize($filetoread);
+				if ($filesize[0] != 32 || $filesize[1] != 32) {
+					$error++;
+					setEventMessages($langs->trans('ErrorFaviconSize'), array(), 'errors');
+				}
+				if (!$error) {
+					dol_add_file_process($uploadfolder, 1, 0, 'addedfile', 'favicon.png');
+				}
+			}
+			if ($error) {
+				if (!GETPOSTISSET('updateandstay')) {	// If we click on "Save And Stay", we don not make the redirect
+					$action = 'preview';
+					if ($backtopage) {
+						$backtopage = preg_replace('/searchstring=[^&]*/', '', $backtopage);	// Clean backtopage url
+						header("Location: ".$backtopage);
+						exit;
+					}
+				} else {
 					$action = 'editcss';
 				}
 			}
@@ -1707,6 +1744,10 @@ if ($action == 'updatemeta' && $usercanedit) {
 				$filename = basename($fileoldalias);
 				$sublangs = explode(',', $object->otherlang);
 				foreach ($sublangs as $sublang) {
+					// Under certain conditions $sublang can be an empty string
+					// ($object->otherlang with empty string or with string like this 'en,,sv')
+					// if is the case we try to re-delete the main alias file. Avoid it.
+					if (empty(trim($sublang))) continue;
 					$fileoldaliassub = $dirname.'/'.$sublang.'/'.$filename;
 					dol_delete_file($fileoldaliassub);
 				}
@@ -1726,6 +1767,10 @@ if ($action == 'updatemeta' && $usercanedit) {
 						$filename = basename($pathofwebsite.'/'.trim($tmpaliasalt).'.php');
 						$sublangs = explode(',', $object->otherlang);
 						foreach ($sublangs as $sublang) {
+							// Under certain conditions $ sublang can be an empty string
+							// ($object->otherlang with empty string or with string like this 'en,,sv')
+							// if is the case we try to re-delete the main alias file. Avoid it.
+							if (empty(trim($sublang))) continue;
 							$fileoldaliassub = $dirname.'/'.$sublang.'/'.$filename;
 							dol_delete_file($fileoldaliassub);
 						}
@@ -1996,7 +2041,7 @@ if ($usercanedit && (($action == 'updatesource' || $action == 'updatecontent' ||
 				}
 
 				// Save page content
-				$result = dolSavePageContent($filetpl, $object, $objectpage);
+				$result = dolSavePageContent($filetpl, $object, $objectpage, 1);
 				if ($result) {
 					setEventMessages($langs->trans("Saved"), null, 'mesgs');
 
@@ -2245,7 +2290,6 @@ if ($action == 'confirmgeneratesitemaps') {
 	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?website='.$website->ref, $langs->trans('ConfirmSitemapsCreation'), $langs->trans('ConfirmGenerateSitemaps', $object->ref), 'generatesitemaps', '', "yes", 1);
 	$action = 'preview';
 }
-
 $helpurl = 'EN:Module_Website|FR:Module_Website_FR|ES:M&oacute;dulo_Website';
 
 $arrayofjs = array(
@@ -2705,6 +2749,7 @@ if (!GETPOST('hide_websitemenu')) {
 							$onlylang[$website->lang] = $website->lang.' ('.$langs->trans("Default").')';
 						}
 						foreach (explode(',', $website->otherlang) as $langkey) {
+							if (empty(trim($langkey))) continue;
 							$onlylang[$langkey] = $langkey;
 						}
 						$textifempty = $langs->trans("Default");
@@ -3116,6 +3161,13 @@ if ($action == 'editcss') {
 	print '<input type="text" class="flat" value="'.(GETPOSTISSET('virtualhost') ? GETPOST('virtualhost', 'alpha') : $virtualurl).'" name="virtualhost">';
 	print '</td>';
 	print '</tr>';
+
+	// Favicon
+	print '<tr><td>';
+	print $form->textwithpicto($langs->trans('ImportFavicon'), $langs->trans('FaviconTooltip'));
+	print '</td><td>';
+	print '<input type="file" class="flat minwidth300" name="addedfile" id="addedfile"/>';
+	print '</tr></td>';
 
 	// CSS file
 	print '<tr><td class="tdtop">';
@@ -3795,7 +3847,7 @@ if ($action == 'preview') {
 	print $formconfirm;
 }
 
-if ($action == 'editfile' || $action == 'file_manager') {
+if ($action == 'editfile' || $action == 'file_manager' || $action == 'convertimgwebp' || $action == 'confirmconvertimgwebp') {
 	print '<!-- Edit Media -->'."\n";
 	print '<div class="fiche"><br>';
 	//print '<div class="center">'.$langs->trans("FeatureNotYetAvailable").'</center>';

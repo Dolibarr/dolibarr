@@ -13,6 +13,7 @@
  * Copyright (C) 2018-2019	Thibault FOUCART		<support@ptibogxiv.net>
  * Copyright (C) 2019		Nicolas ZABOURI 		<info@inovea-conseil.com>
  * Copyright (C) 2020		Josep Lluís Amador 		<joseplluis@lliuretic.cat>
+ * Copyright (C) 2021		Waël Almoman            <info@almoman.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -691,7 +692,7 @@ class Adherent extends CommonObject
 			$sql .= ", datevalid = '".$this->db->idate($this->datevalid)."'"; // Must be modified only when validating a member
 		}
 		$sql .= ", fk_user_mod = ".($user->id > 0 ? $user->id : 'null'); // Can be null because member can be create by a guest
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		// If we change the type of membership, we set also label of new type
 		if (!empty($this->oldcopy) && $this->typeid != $this->oldcopy->typeid) {
@@ -963,7 +964,7 @@ class Adherent extends CommonObject
 		}
 
 		// Remove category
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_member WHERE fk_member = ".$rowid;
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_member WHERE fk_member = ".((int) $rowid);
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
@@ -974,7 +975,7 @@ class Adherent extends CommonObject
 
 		// Remove subscription
 		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."subscription WHERE fk_adherent = ".$rowid;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."subscription WHERE fk_adherent = ".((int) $rowid);
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -1006,7 +1007,7 @@ class Adherent extends CommonObject
 
 		// Remove adherent
 		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent WHERE rowid = ".$rowid;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent WHERE rowid = ".((int) $rowid);
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -1141,7 +1142,7 @@ class Adherent extends CommonObject
 		$this->db->begin();
 
 		// If user is linked to this member, remove old link to this member
-		$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = NULL WHERE fk_member = ".$this->id;
+		$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = NULL WHERE fk_member = ".((int) $this->id);
 		dol_syslog(get_class($this)."::setUserId", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
@@ -1152,8 +1153,8 @@ class Adherent extends CommonObject
 
 		// Set link to user
 		if ($userid > 0) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = ".$this->id;
-			$sql .= " WHERE rowid = ".$userid;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = ".((int) $this->id);
+			$sql .= " WHERE rowid = ".((int) $userid);
 			dol_syslog(get_class($this)."::setUserId", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -1489,9 +1490,10 @@ class Adherent extends CommonObject
 	 *	@param	string		$emetteur_nom		Name of cheque writer
 	 *	@param	string		$emetteur_banque	Name of bank of cheque
 	 *	@param	int     	$datesubend			Date end subscription
+	 *	@param	int     	$fk_type 			Member type id
 	 *	@return int         					rowid of record added, <0 if KO
 	 */
-	public function subscription($date, $amount, $accountid = 0, $operation = '', $label = '', $num_chq = '', $emetteur_nom = '', $emetteur_banque = '', $datesubend = 0)
+	public function subscription($date, $amount, $accountid = 0, $operation = '', $label = '', $num_chq = '', $emetteur_nom = '', $emetteur_banque = '', $datesubend = 0, $fk_type = null)
 	{
 		global $conf, $langs, $user;
 
@@ -1522,6 +1524,7 @@ class Adherent extends CommonObject
 		$subscription->amount = $amount;
 		$subscription->note = $label; // deprecated
 		$subscription->note_public = $label;
+		$subscription->fk_type = $fk_type;
 
 		$rowid = $subscription->create($user);
 		if ($rowid > 0) {
@@ -2279,7 +2282,7 @@ class Adherent extends CommonObject
 			$labelStatus = $langs->trans("MemberStatusResiliated");
 			$labelStatusShort = $langs->trans("MemberStatusResiliatedShort");
 		} elseif ($status == -2) {
-			$statusType = 'status8';
+			$statusType = 'status10';
 			$labelStatus = $langs->trans("MemberStatusExcluded");
 			$labelStatusShort = $langs->trans("MemberStatusExcludedShort");
 		}

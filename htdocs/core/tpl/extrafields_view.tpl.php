@@ -81,7 +81,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 		if ($perms && isset($extrafields->attributes[$object->table_element]['perms'][$tmpkeyextra])) {
 			$perms = dol_eval($extrafields->attributes[$object->table_element]['perms'][$tmpkeyextra], 1);
 		}
-		//print $tmpkeyextra.'-'.$enabled.'-'.$perms.'-'.$tmplabelextra.$_POST["options_" . $tmpkeyextra].'<br>'."\n";
+		//print $tmpkeyextra.'-'.$enabled.'-'.$perms.'<br>'."\n";
 
 		if (empty($enabled)) {
 			continue; // 0 = Never visible field
@@ -181,6 +181,9 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 			}
 			if ($object->element == 'mo') {
 				$permok = $user->rights->mrp->write;
+			}
+			if ($object->element == 'contact') {
+				$permok = $user->rights->societe->contact->creer;
 			}
 
 			$isdraft = ((isset($object->statut) && $object->statut == 0) || (isset($object->status) && $object->status == 0));

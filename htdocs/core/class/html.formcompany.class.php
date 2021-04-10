@@ -696,7 +696,7 @@ class FormCompany extends Form
 
 			print "\n".'<!-- Input text for third party with Ajax.Autocompleter (selectCompaniesForNewContact) -->'."\n";
 			print '<input type="text" size="30" id="search_'.$htmlname.'" name="search_'.$htmlname.'" value="'.$name.'" />';
-			print ajax_autocompleter(($socid ? $socid : -1), $htmlname, DOL_URL_ROOT.'/societe/ajaxcompanies.php', '', $minLength, 0);
+			print ajax_autocompleter(($socid ? $socid : -1), $htmlname, DOL_URL_ROOT.'/societe/ajax/ajaxcompanies.php', '', $minLength, 0);
 			return $socid;
 		} else {
 			// Search to list thirdparties
@@ -705,7 +705,7 @@ class FormCompany extends Form
 			$sql .= " WHERE s.entity IN (".getEntity('societe').")";
 			// For ajax search we limit here. For combo list, we limit later
 			if (is_array($limitto) && count($limitto)) {
-				$sql .= " AND s.rowid IN (".join(',', $limitto).")";
+				$sql .= " AND s.rowid IN (".$this->db->sanitize(join(',', $limitto)).")";
 			}
 			$sql .= " ORDER BY s.nom ASC";
 
@@ -713,7 +713,7 @@ class FormCompany extends Form
 			if ($resql) {
 				print '<select class="flat'.($morecss ? ' '.$morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.'"';
 				if ($conf->use_javascript_ajax) {
-					$javaScript = "window.location='".$_SERVER['PHP_SELF']."?".$var_id."=".($forceid > 0 ? $forceid : $object->id).$moreparam."&".$htmlname."=' + form.".$htmlname.".options[form.".$htmlname.".selectedIndex].value;";
+					$javaScript = "window.location='".dol_escape_js($_SERVER['PHP_SELF'])."?".$var_id."=".($forceid > 0 ? $forceid : $object->id).$moreparam."&".$htmlname."=' + form.".$htmlname.".options[form.".$htmlname.".selectedIndex].value;";
 					print ' onChange="'.$javaScript.'"';
 				}
 				print '>';

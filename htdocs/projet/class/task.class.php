@@ -402,18 +402,20 @@ class Task extends CommonObject
 		if (!$error && !empty($conf->global->PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE)) {
 			// Close the parent project if it is open (validated) and its tasks are 100% completed
 			$project = new Project($this->db);
-			if ($project->fetch($this->fk_project) > 0 && $project->statut == Project::STATUS_VALIDATED) {
-				$project->getLinesArray(null); // this method does not return <= 0 if fails
-				$projectCompleted = array_reduce(
-					$project->lines,
-					function ($allTasksCompleted, $task) {
-						return $allTasksCompleted && $task->progress >= 100;
-					},
+			if ($project->fetch($this->fk_project) > 0) {
+				if ($project->statut == Project::STATUS_VALIDATED) {
+					$project->getLinesArray(null); // this method does not return <= 0 if fails
+					$projectCompleted = array_reduce(
+						$project->lines,
+						function ($allTasksCompleted, $task) {
+							return $allTasksCompleted && $task->progress >= 100;
+						},
 					1
-				);
-				if ($projectCompleted) {
-					if ($project->setClose($user) <= 0) {
-						$error++;
+					);
+					if ($projectCompleted) {
+						if ($project->setClose($user) <= 0) {
+							$error++;
+						}
 					}
 				}
 			} else {
@@ -868,13 +870,13 @@ class Task extends CommonObject
 			$sql .= " AND p.fk_soc = ".$socid;
 		}
 		if ($projectid) {
-			$sql .= " AND p.rowid in (".$projectid.")";
+			$sql .= " AND p.rowid IN (".$this->db->sanitize($projectid).")";
 		}
 		if ($filteronproj) {
 			$sql .= natural_search(array("p.ref", "p.title"), $filteronproj);
 		}
 		if ($filteronprojstatus && $filteronprojstatus != '-1') {
-			$sql .= " AND p.fk_statut IN (".$filteronprojstatus.")";
+			$sql .= " AND p.fk_statut IN (".$this->db->sanitize($filteronprojstatus).")";
 		}
 		if ($morewherefilter) {
 			$sql .= $morewherefilter;
@@ -1062,10 +1064,10 @@ class Task extends CommonObject
 		$sql .= " AND ctc.source = 'internal'";
 		if ($projectid) {
 			if ($userp) {
-				$sql .= " AND pt.rowid in (".$projectid.")";
+				$sql .= " AND pt.rowid IN (".$this->db->sanitize($projectid).")";
 			}
 			if ($usert) {
-				$sql .= " AND pt.fk_projet in (".$projectid.")";
+				$sql .= " AND pt.fk_projet IN (".$this->db->sanitize($projectid).")";
 			}
 		}
 		if ($taskid) {
@@ -1073,7 +1075,7 @@ class Task extends CommonObject
 				$sql .= " ERROR SHOULD NOT HAPPENS";
 			}
 			if ($usert) {
-				$sql .= " AND pt.rowid = ".$taskid;
+				$sql .= " AND pt.rowid = ".((int) $taskid);
 			}
 		}
 		//print $sql;
@@ -1197,11 +1199,11 @@ class Task extends CommonObject
 		if ($ret > 0) {
 			// Recalculate amount of time spent for task and update denormalized field
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
-			$sql .= " SET duration_effective = (SELECT SUM(task_duration) FROM ".MAIN_DB_PREFIX."projet_task_time as ptt where ptt.fk_task = ".$this->id.")";
+			$sql .= " SET duration_effective = (SELECT SUM(task_duration) FROM ".MAIN_DB_PREFIX."projet_task_time as ptt where ptt.fk_task = ".((int) $this->id).")";
 			if (isset($this->progress)) {
-				$sql .= ", progress = ".$this->progress; // Do not overwrite value if not provided
+				$sql .= ", progress = ".((float) $this->progress); // Do not overwrite value if not provided
 			}
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::addTimeSpent", LOG_DEBUG);
 			if (!$this->db->query($sql)) {
@@ -1210,8 +1212,8 @@ class Task extends CommonObject
 			}
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task_time";
-			$sql .= " SET thm = (SELECT thm FROM ".MAIN_DB_PREFIX."user WHERE rowid = ".$this->timespent_fk_user.")"; // set average hour rate of user
-			$sql .= " WHERE rowid = ".$tasktime_id;
+			$sql .= " SET thm = (SELECT thm FROM ".MAIN_DB_PREFIX."user WHERE rowid = ".((int) $this->timespent_fk_user).")"; // set average hour rate of user
+			$sql .= " WHERE rowid = ".((int) $tasktime_id);
 
 			dol_syslog(get_class($this)."::addTimeSpent", LOG_DEBUG);
 			if (!$this->db->query($sql)) {
@@ -1266,10 +1268,10 @@ class Task extends CommonObject
 			$sql .= $morewherefilter;
 		}
 		if ($id > 0) {
-			$sql .= " AND t.fk_task = ".$id;
+			$sql .= " AND t.fk_task = ".((int) $id);
 		}
 		if ($userid > 0) {
-			$sql .= " AND t.fk_user = ".$userid;
+			$sql .= " AND t.fk_user = ".((int) $userid);
 		}
 
 		dol_syslog(get_class($this)."::getSummaryOfTimeSpent", LOG_DEBUG);
@@ -1317,9 +1319,9 @@ class Task extends CommonObject
 		$sql .= " SUM(t.task_duration) as nbseconds,";
 		$sql .= " SUM(t.task_duration / 3600 * ".$this->db->ifsql("t.thm IS NULL", 0, "t.thm").") as amount, SUM(".$this->db->ifsql("t.thm IS NULL", 1, 0).") as nblinesnull";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
-		$sql .= " WHERE t.fk_task = ".$id;
+		$sql .= " WHERE t.fk_task = ".((int) $id);
 		if (is_object($fuser) && $fuser->id > 0) {
-			$sql .= " AND fk_user = ".$fuser->id;
+			$sql .= " AND fk_user = ".((int) $fuser->id);
 		}
 		if ($dates > 0) {
 			$datefieldname = "task_datehour";
@@ -1552,8 +1554,8 @@ class Task extends CommonObject
 			$newDuration = $this->timespent_duration - $this->timespent_old_duration;
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
-			$sql .= " SET duration_effective = (SELECT SUM(task_duration) FROM ".MAIN_DB_PREFIX."projet_task_time as ptt where ptt.fk_task = ".$this->db->escape($this->id).")";
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " SET duration_effective = (SELECT SUM(task_duration) FROM ".MAIN_DB_PREFIX."projet_task_time as ptt where ptt.fk_task = ".((int) $this->id).")";
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::updateTimeSpent", LOG_DEBUG);
 			if (!$this->db->query($sql)) {
@@ -2002,12 +2004,12 @@ class Task extends CommonObject
 		$sql .= " AND t.fk_projet = p.rowid";
 		$sql .= " AND (t.progress IS NULL OR t.progress < 100)"; // tasks to do
 		if (!$user->rights->projet->all->lire) {
-			$sql .= " AND p.rowid IN (".$projectsListId.")";
+			$sql .= " AND p.rowid IN (".$this->db->sanitize($projectsListId).")";
 		}
 		// No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
 		//if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
 		if ($socid) {
-			$sql .= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
+			$sql .= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
 		}
 		// No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
 		// if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id.") OR (s.rowid IS NULL))";
@@ -2076,7 +2078,7 @@ class Task extends CommonObject
 		$sql .= " WHERE p.entity IN (".getEntity('project', 0).')';
 		$sql .= " AND t.fk_projet = p.rowid"; // tasks to do
 		if ($mine || !$user->rights->projet->all->lire) {
-			$sql .= " AND p.rowid IN (".$projectsListId.")";
+			$sql .= " AND p.rowid IN (".$this->db->sanitize($projectsListId).")";
 		}
 		// No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
 		//if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";

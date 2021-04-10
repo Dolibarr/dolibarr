@@ -206,11 +206,29 @@ function project_prepare_head(Project $project)
 
 	if ($conf->eventorganization->enabled) {
 		$langs->load('eventorganization');
-		//TODO : Count
-		$nbConfOrBooth = 1;
 		$head[$h][0] = DOL_URL_ROOT . '/eventorganization/conferenceorbooth_list.php?projectid=' . $project->id;
 		$head[$h][1] = $langs->trans("ConferenceOrBoothTab");
-		if ($nbContact > 0) {
+
+		// Enable caching of conf or booth count
+		$nbConfOrBooth = 0;
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+		$cachekey = 'count_conferenceorbooth_'.$project->id;
+		$dataretrieved = dol_getcache($cachekey);
+		if (!is_null($dataretrieved)) {
+			$nbConfOrBooth = $dataretrieved;
+		} else {
+			require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class.php';
+			$conforbooth=new ConferenceOrBooth($db);
+			$result = $conforbooth->fetchAll('', '', 0, 0, array('t.fk_project'=>$project->id));
+			//,
+			if (!is_array($result) && $result<0) {
+				setEventMessages($conforbooth->error, $conforbooth->errors, 'errors');
+			} else {
+				$nbConfOrBooth = count($result);
+			}
+			dol_setcache($cachekey, $nbConfOrBooth, 120);	// If setting cache fails, this is not a problem, so we do not test result.
+		}
+		if ($nbConfOrBooth > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbConfOrBooth . '</span>';
 		}
 		$head[$h][2] = 'eventorganisation';
@@ -1494,27 +1512,29 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 					print '</td>';
 				}
 
-				// Time spent by everybody
-				print '<td class="right">';
-				// $lines[$i]->duration is a denormalised field = summ of time spent by everybody for task. What we need is time consummed by user
-				if ($lines[$i]->duration) {
-					print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$lines[$i]->id.'">';
-					print convertSecondToTime($lines[$i]->duration, 'allhourmin');
-					print '</a>';
-				} else {
-					print '--:--';
-				}
-				print "</td>\n";
+				if (!empty($arrayfields['timeconsumed']['checked'])) {
+					// Time spent by everybody
+					print '<td class="right">';
+					// $lines[$i]->duration is a denormalised field = summ of time spent by everybody for task. What we need is time consummed by user
+					if ($lines[$i]->duration) {
+						print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$lines[$i]->id.'">';
+						print convertSecondToTime($lines[$i]->duration, 'allhourmin');
+						print '</a>';
+					} else {
+						print '--:--';
+					}
+					print "</td>\n";
 
-				// Time spent by user
-				print '<td class="right">';
-				$tmptimespent = $taskstatic->getSummaryOfTimeSpent($fuser->id);
-				if ($tmptimespent['total_duration']) {
-					print convertSecondToTime($tmptimespent['total_duration'], 'allhourmin');
-				} else {
-					print '--:--';
+					// Time spent by user
+					print '<td class="right">';
+					$tmptimespent = $taskstatic->getSummaryOfTimeSpent($fuser->id);
+					if ($tmptimespent['total_duration']) {
+						print convertSecondToTime($tmptimespent['total_duration'], 'allhourmin');
+					} else {
+						print '--:--';
+					}
+					print "</td>\n";
 				}
-				print "</td>\n";
 
 				$disabledproject = 1;
 				$disabledtask = 1;
@@ -1885,27 +1905,29 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 					print '</td>';
 				}
 
-				// Time spent by everybody
-				print '<td class="right">';
-				// $lines[$i]->duration is a denormalised field = summ of time spent by everybody for task. What we need is time consummed by user
-				if ($lines[$i]->duration) {
-					print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$lines[$i]->id.'">';
-					print convertSecondToTime($lines[$i]->duration, 'allhourmin');
-					print '</a>';
-				} else {
-					print '--:--';
-				}
-				print "</td>\n";
+				if (!empty($arrayfields['timeconsumed']['checked'])) {
+					// Time spent by everybody
+					print '<td class="right">';
+					// $lines[$i]->duration is a denormalised field = summ of time spent by everybody for task. What we need is time consummed by user
+					if ($lines[$i]->duration) {
+						print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$lines[$i]->id.'">';
+						print convertSecondToTime($lines[$i]->duration, 'allhourmin');
+						print '</a>';
+					} else {
+						print '--:--';
+					}
+					print "</td>\n";
 
-				// Time spent by user
-				print '<td class="right">';
-				$tmptimespent = $taskstatic->getSummaryOfTimeSpent($fuser->id);
-				if ($tmptimespent['total_duration']) {
-					print convertSecondToTime($tmptimespent['total_duration'], 'allhourmin');
-				} else {
-					print '--:--';
+					// Time spent by user
+					print '<td class="right">';
+					$tmptimespent = $taskstatic->getSummaryOfTimeSpent($fuser->id);
+					if ($tmptimespent['total_duration']) {
+						print convertSecondToTime($tmptimespent['total_duration'], 'allhourmin');
+					} else {
+						print '--:--';
+					}
+					print "</td>\n";
 				}
-				print "</td>\n";
 
 				$disabledproject = 1;
 				$disabledtask = 1;
@@ -2378,9 +2400,9 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t ON p.rowid = t.fk_projet";
 	}
 	$sql .= " WHERE p.entity IN (".getEntity('project').")";
-	$sql .= " AND p.rowid IN (".$projectsListId.")";
+	$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId).")";
 	if ($socid) {
-		$sql .= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
+		$sql .= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
 	}
 	if ($mytasks) {
 		$sql .= " AND p.rowid = t.fk_projet";
@@ -2436,7 +2458,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 	$sql2 .= " FROM ".MAIN_DB_PREFIX."projet as p";
 	$sql2 .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
 	$sql2 .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t ON p.rowid = t.fk_projet";
-	$sql2 .= " WHERE p.rowid IN (".join(',', $arrayidofprojects).")";
+	$sql2 .= " WHERE p.rowid IN (".$db->sanitize(join(',', $arrayidofprojects)).")";
 	$sql2 .= " GROUP BY p.rowid, p.ref, p.title, p.fk_soc, s.rowid, s.nom, s.name_alias, s.code_client, s.code_compta, s.client, s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur,";
 	$sql2 .= " s.logo, s.email, s.entity, p.fk_user_creat, p.public, p.fk_statut, p.fk_opp_status, p.opp_percent, p.opp_amount, p.dateo, p.datee";
 	$sql2 .= " ORDER BY p.title, p.ref";
@@ -2451,7 +2473,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 		$i = 0;
 
 		print '<tr class="liste_titre">';
-		print_liste_field_titre($title.'<span class="badge marginleftonlyshort">'.$num.'</span>', $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
+		print_liste_field_titre($title.'<a href="'.DOL_URL_ROOT.'/projet/list.php?search_status='.((int) $status).'"><span class="badge marginleftonlyshort">'.$num.'</span></a>', $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
 		print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
 		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 			if (!in_array('prospectionstatus', $hiddenfields)) {
@@ -2554,7 +2576,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 						$ponderated_opp_amount += price2num($opp_weighted_amount);
 					}
 					if ($objp->opp_amount) {
-						print '<span title="'.$alttext.'">'.price($objp->opp_amount, 0, '', 1, -1, 0, $conf->currency).'</span>';
+						print '<span class="amount" title="'.$alttext.'">'.price($objp->opp_amount, 0, '', 1, -1, 0, $conf->currency).'</span>';
 					}
 					print '</td>';
 				}

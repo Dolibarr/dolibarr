@@ -405,8 +405,8 @@ if (empty($reshook)) {
 			if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
 				for ($i = 2; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
 					if (GETPOSTISSET("price_".$i)) {
-						$object->multiprices["$i"] = price2num($_POST["price_".$i], 'MU');
-						$object->multiprices_base_type["$i"] = $_POST["multiprices_base_type_".$i];
+						$object->multiprices["$i"] = price2num(GETPOST("price_".$i), 'MU');
+						$object->multiprices_base_type["$i"] = GETPOST("multiprices_base_type_".$i);
 					} else {
 						$object->multiprices["$i"] = "";
 					}
@@ -940,20 +940,6 @@ if (empty($reshook)) {
  * View
  */
 
-$title = $langs->trans('ProductServiceCard');
-$helpurl = '';
-$shortlabel = dol_trunc($object->label, 16);
-if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT)) {
-	$title = $langs->trans('Product')." ".$shortlabel." - ".$langs->trans('Card');
-	$helpurl = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos|DE:Modul_Produkte';
-}
-if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) {
-	$title = $langs->trans('Service')." ".$shortlabel." - ".$langs->trans('Card');
-	$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios|DE:Modul_Leistungen';
-}
-
-llxHeader('', $title, $helpurl);
-
 $form = new Form($db);
 $formfile = new FormFile($db);
 $formproduct = new FormProduct($db);
@@ -961,6 +947,21 @@ $formcompany = new FormCompany($db);
 if (!empty($conf->accounting->enabled)) {
 	$formaccounting = new FormAccounting($db);
 }
+
+
+$title = $langs->trans('ProductServiceCard');
+$help_url = '';
+$shortlabel = dol_trunc($object->label, 16);
+if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT)) {
+	$title = $langs->trans('Product')." ".$shortlabel." - ".$langs->trans('Card');
+	$help_url = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos|DE:Modul_Produkte';
+}
+if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) {
+	$title = $langs->trans('Service')." ".$shortlabel." - ".$langs->trans('Card');
+	$help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios|DE:Modul_Leistungen';
+}
+
+llxHeader('', $title, $help_url);
 
 // Load object modBarCodeProduct
 $res = 0;
@@ -984,7 +985,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 	// When used with CANVAS
 	// -----------------------------------------
 	if (empty($object->error) && $id) {
-		$object = new Product($db);
 		$result = $object->fetch($id);
 		if ($result <= 0) {
 			dol_print_error('', $object->error);
@@ -1135,6 +1135,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		if ($type != 1 && !empty($conf->stock->enabled)) {
 			// Default warehouse
 			print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
+			print img_picto($langs->trans("DefaultWarehouse"), 'stock', 'pictofixedwidth');
 			print $formproduct->selectWarehouses(GETPOST('fk_default_warehouse'), 'fk_default_warehouse', 'warehouseopen', 1);
 			print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit').'">';
 			print '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddWarehouse").'"></span>';
@@ -1464,6 +1465,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		/*
 		 * Product card
 		 */
+
 		// Fiche en mode edition
 		if ($action == 'edit' && $usercancreate) {
 			//WYSIWYG Editor

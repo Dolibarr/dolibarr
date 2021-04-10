@@ -132,6 +132,10 @@ class Thirdparties extends DolibarrApi
 	{
 		$obj_ret = array();
 
+		if (!DolibarrApiAccess::$user->rights->societe->lire) {
+			throw new RestException(401);
+		}
+
 		// case of external user, we force socids
 		$socids = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
 
@@ -187,14 +191,14 @@ class Thirdparties extends DolibarrApi
 		}
 		//if ($email != NULL) $sql.= " AND s.email = \"".$email."\"";
 		if ($socids) {
-			$sql .= " AND t.rowid IN (".$socids.")";
+			$sql .= " AND t.rowid IN (".$this->db->sanitize($socids).")";
 		}
 		if ($search_sale > 0) {
 			$sql .= " AND t.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
 		}
 		// Insert sale filter
 		if ($search_sale > 0) {
-			$sql .= " AND sc.fk_user = ".$search_sale;
+			$sql .= " AND sc.fk_user = ".((int) $search_sale);
 		}
 		// Add sql filters
 		if ($sqlfilters) {
@@ -575,7 +579,7 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(401, 'Access to thirdparty '.$id.' not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$result = $this->company->set_price_level($priceLevel, DolibarrApiAccess::$user);
+		$result = $this->company->setPriceLevel($priceLevel, DolibarrApiAccess::$user);
 		if ($result <= 0) {
 			throw new RestException(500, 'Error setting new price level for thirdparty '.$id, array($this->company->db->lasterror()));
 		}
@@ -1017,7 +1021,7 @@ class Thirdparties extends DolibarrApi
 
 		$sql = "SELECT f.ref, f.type as factype, re.fk_facture_source, re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc, re.description, re.fk_facture, re.fk_facture_line";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as re, ".MAIN_DB_PREFIX."facture as f";
-		$sql .= " WHERE f.rowid = re.fk_facture_source AND re.fk_soc = ".$id;
+		$sql .= " WHERE f.rowid = re.fk_facture_source AND re.fk_soc = ".((int) $id);
 		if ($filter == "available") {
 			$sql .= " AND re.fk_facture IS NULL AND re.fk_facture_line IS NULL";
 		}
@@ -1155,7 +1159,7 @@ class Thirdparties extends DolibarrApi
 		$sql .= " owner_address, default_rib, label, datec, tms as datem, rum, frstrecur";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib";
 		if ($id) {
-			$sql .= " WHERE fk_soc  = ".$id." ";
+			$sql .= " WHERE fk_soc  = ".((int) $id);
 		}
 
 
@@ -1364,10 +1368,10 @@ class Thirdparties extends DolibarrApi
 		$sql = "SELECT rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib";
 		if ($id) {
-			$sql .= " WHERE fk_soc  = ".$id." ";
+			$sql .= " WHERE fk_soc = ".((int) $id);
 		}
 		if ($companybankid) {
-			$sql .= " AND rowid = ".$companybankid."";
+			$sql .= " AND rowid = ".((int) $companybankid);
 		}
 
 		$i = 0;
@@ -1433,9 +1437,9 @@ class Thirdparties extends DolibarrApi
 		 * We select all the records that match the socid
 		 */
 		$sql = "SELECT rowid, fk_soc, key_account, site, date_creation, tms FROM ".MAIN_DB_PREFIX."societe_account";
-		$sql .= " WHERE fk_soc = $id";
+		$sql .= " WHERE fk_soc = ".((int) $id);
 		if ($site) {
-			$sql .= " AND site ='$site'";
+			$sql .= " AND site ='".$this->db->escape($site)."'";
 		}
 
 		$result = $this->db->query($sql);
@@ -1505,7 +1509,7 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(422, 'Unprocessable Entity: You must pass the site attribute in your request data !');
 		}
 
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc  = ".$id." AND site = '".$this->db->escape($request_data['site'])."'";
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc  = ".((int) $id)." AND site = '".$this->db->escape($request_data['site'])."'";
 		$result = $this->db->query($sql);
 
 		if ($result && $this->db->num_rows($result) == 0) {
@@ -1585,7 +1589,7 @@ class Thirdparties extends DolibarrApi
 			// We found an existing SocieteAccount entity, we are replacing it
 		} else {
 			if (isset($request_data['site']) && $request_data['site'] !== $site) {
-				$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc  = ".$id." AND site = '".$this->db->escape($request_data['site'])."' ";
+				$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc  = ".((int) $id)." AND site = '".$this->db->escape($request_data['site'])."' ";
 				$result = $this->db->query($sql);
 
 				if ($result && $this->db->num_rows($result) !== 0) {
@@ -1649,7 +1653,7 @@ class Thirdparties extends DolibarrApi
 		} else {
 			// If the user tries to edit the site member, we check first if
 			if (isset($request_data['site']) && $request_data['site'] !== $site) {
-				$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc  = ".$id." AND site = '".$this->db->escape($request_data['site'])."' ";
+				$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc  = ".((int) $id)." AND site = '".$this->db->escape($request_data['site'])."' ";
 				$result = $this->db->query($sql);
 
 				if ($result && $this->db->num_rows($result) !== 0) {
@@ -1733,7 +1737,7 @@ class Thirdparties extends DolibarrApi
 		 */
 
 		$sql = "SELECT rowid, fk_soc, key_account, site, date_creation, tms";
-		$sql .= " FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc = ".$id;
+		$sql .= " FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc = ".((int) $id);
 
 		$result = $this->db->query($sql);
 
@@ -1842,9 +1846,11 @@ class Thirdparties extends DolibarrApi
 	private function _fetch($rowid, $ref = '', $ref_ext = '', $barcode = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '')
 	{
 		global $conf;
+
 		if (!DolibarrApiAccess::$user->rights->societe->lire) {
 			throw new RestException(401);
 		}
+
 		if ($rowid === 0) {
 			$result = $this->company->initAsSpecimen();
 		} else {

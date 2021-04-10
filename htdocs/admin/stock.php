@@ -673,6 +673,17 @@ if (!empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) {
 	print "</td>\n";
 	print "</tr>\n";
 }
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("WarehouseAskWarehouseOnThirparty").'</td>';
+print '<td class="right">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('SOCIETE_ASK_FOR_WAREHOUSE');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("SOCIETE_ASK_FOR_WAREHOUSE", $arrval, $conf->global->SOCIETE_ASK_FOR_WAREHOUSE);
+}
+
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("WarehouseAskWarehouseDuringPropal").'</td>';
 print '<td class="right">';

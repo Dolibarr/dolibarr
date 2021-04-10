@@ -231,7 +231,6 @@ if (!$error) {
 					$databasefortest = 'master';
 				}
 			}
-			//print $_POST["db_type"].",".$_POST["db_host"].",$userroot,$passroot,$databasefortest,".$_POST["db_port"];
 
 			$db = getDoliDBInstance($db_type, $db_host, $userroot, $passroot, $databasefortest, $db_port);
 

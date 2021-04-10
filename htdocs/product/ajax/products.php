@@ -62,14 +62,15 @@ $alsoproductwithnosupplierprice = GETPOST('alsoproductwithnosupplierprice', 'int
 $warehouseStatus = GETPOST('warehousestatus', 'alpha');
 $hidepriceinlabel = GETPOST('hidepriceinlabel', 'int');
 
+// Security check
+restrictedArea($user, 'produit|service', 0, 'product&product');
+
 
 /*
  * View
  */
 
 // print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
-
-dol_syslog(join(',', $_GET));
 // print_r($_GET);
 
 if (!empty($action) && $action == 'fetch' && !empty($id)) {
@@ -218,10 +219,13 @@ if (!empty($action) && $action == 'fetch' && !empty($id)) {
 		return;
 	}
 
+	// Filter on the product to search can be:
+	// Into an array with key $htmlname123 (we take first one found). Which page use this ?
+	// Into a var with name $htmlname can be 'prodid', 'productid', ...
 	$match = preg_grep('/('.$htmlname.'[0-9]+)/', array_keys($_GET));
 	sort($match);
 
-	$idprod = (!empty($match[0]) ? $match[0] : '');
+	$idprod = (empty($match[0]) ? '' : $match[0]);		// Take first key found into GET array with matching $htmlname123
 
 	if (GETPOST($htmlname, 'alpha') == '' && (!$idprod || !GETPOST($idprod, 'alpha'))) {
 		print json_encode(array());
@@ -231,7 +235,9 @@ if (!empty($action) && $action == 'fetch' && !empty($id)) {
 	// When used from jQuery, the search term is added as GET param "term".
 	$searchkey = (($idprod && GETPOST($idprod, 'alpha')) ? GETPOST($idprod, 'alpha') : (GETPOST($htmlname, 'alpha') ? GETPOST($htmlname, 'alpha') : ''));
 
-	$form = new Form($db);
+	if (!is_object($form)) {
+		$form = new Form($db);
+	}
 
 	if (empty($mode) || $mode == 1) {  // mode=1: customer
 		$arrayresult = $form->select_produits_list("", $htmlname, $type, 0, $price_level, $searchkey, $status, $finished, $outjson, $socid, '1', 0, '', $hidepriceinlabel, $warehouseStatus);

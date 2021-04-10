@@ -80,16 +80,12 @@ $id = GETPOST('id', 'int');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'agenda', $id, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id');
-if ($user->socid && $socid) {
-	$result = restrictedArea($user, 'societe', $socid);
-}
 
 $error = GETPOST("error");
 $donotclearsession = GETPOST('donotclearsession') ?GETPOST('donotclearsession') : 0;
 
-$cactioncomm = new CActionComm($db);
 $object = new ActionComm($db);
+$cactioncomm = new CActionComm($db);
 $contact = new Contact($db);
 $extrafields = new ExtraFields($db);
 $formfile = new FormFile($db);
@@ -131,6 +127,11 @@ if (!empty($conf->global->AGENDA_REMINDER_EMAIL)) {
 }
 
 $TDurationTypes = array('y'=>$langs->trans('Years'), 'm'=>$langs->trans('Month'), 'w'=>$langs->trans('Weeks'), 'd'=>$langs->trans('Days'), 'h'=>$langs->trans('Hours'), 'i'=>$langs->trans('Minutes'));
+
+$result = restrictedArea($user, 'agenda', $object->id, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id');
+if ($user->socid && $socid) {
+	$result = restrictedArea($user, 'societe', $socid);
+}
 
 
 /*
@@ -1896,7 +1897,8 @@ if ($id > 0) {
 		if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
 			print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td>';
 			print $object->getTypePicto();
-			print $langs->trans($object->type).'</td></tr>';
+			print $langs->trans("Action".$object->type_code);
+			print '</td></tr>';
 		}
 
 		// Full day event

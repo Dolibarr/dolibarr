@@ -85,7 +85,7 @@ class ProductAttribute extends CommonObject
 			return -1;
 		}
 
-		$sql = "SELECT rowid, ref, ref_ext, label, rang FROM ".MAIN_DB_PREFIX."product_attribute WHERE rowid = ".(int) $id." AND entity IN (".getEntity('product').")";
+		$sql = "SELECT rowid, ref, ref_ext, label, rang FROM ".MAIN_DB_PREFIX."product_attribute WHERE rowid = ".((int) $id)." AND entity IN (".getEntity('product').")";
 
 		$query = $this->db->query($sql);
 
@@ -249,7 +249,7 @@ class ProductAttribute extends CommonObject
 	public function countChildProducts()
 	{
 		$sql = "SELECT COUNT(*) count FROM ".MAIN_DB_PREFIX."product_attribute_combination2val pac2v
-		LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination pac ON pac2v.fk_prod_combination = pac.rowid WHERE pac2v.fk_prod_attr = ".(int) $this->id." AND pac.entity IN (".getEntity('product').")";
+		LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination pac ON pac2v.fk_prod_combination = pac.rowid WHERE pac2v.fk_prod_attr = ".((int) $this->id)." AND pac.entity IN (".getEntity('product').")";
 
 		$query = $this->db->query($sql);
 
@@ -319,7 +319,7 @@ class ProductAttribute extends CommonObject
 			$newrang = $this->rang + 1;
 		}
 
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'product_attribute SET rang = '.$this->rang.' WHERE rang = '.$newrang;
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'product_attribute SET rang = '.((int) $this->rang).' WHERE rang = '.((int) $newrang);
 
 		if (!$this->db->query($sql)) {
 			$this->db->rollback();

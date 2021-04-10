@@ -107,7 +107,7 @@ if ($user->rights->banque->consolidate && $action == 'donext') {
 if ($action == 'confirm_delete_categ' && $confirm == "yes" && $user->rights->banque->modifier) {
 	$cat1 = GETPOST("cat1", 'int');
 	if (!empty($rowid) && !empty($cat1)) {
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid = ".$rowid." AND fk_categ = ".$cat1;
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid = ".((int) $rowid)." AND fk_categ = ".((int) $cat1);
 		if (!$db->query($sql)) {
 			dol_print_error($db);
 		}
@@ -140,9 +140,9 @@ if ($user->rights->banque->modifier && $action == "update") {
 	if (!$error) {
 		$db->begin();
 
-		$amount = price2num($_POST['amount']);
-		$dateop = dol_mktime(12, 0, 0, $_POST["dateomonth"], $_POST["dateoday"], $_POST["dateoyear"]);
-		$dateval = dol_mktime(12, 0, 0, $_POST["datevmonth"], $_POST["datevday"], $_POST["datevyear"]);
+		$amount = price2num(GETPOST('amount'));
+		$dateop = dol_mktime(12, 0, 0, GETPOST("dateomonth"), GETPOST("dateoday"), GETPOST("dateoyear"));
+		$dateval = dol_mktime(12, 0, 0, GETPOST("datevmonth"), GETPOST("datevday"), GETPOST("datevyear"));
 		$sql = "UPDATE ".MAIN_DB_PREFIX."bank";
 		$sql .= " SET ";
 		// Always opened
@@ -174,7 +174,7 @@ if ($user->rights->banque->modifier && $action == "update") {
 			}
 		}
 		$sql .= " fk_account = ".$actarget->id;
-		$sql .= " WHERE rowid = ".$acline->id;
+		$sql .= " WHERE rowid = ".((int) $acline->id);
 
 		$result = $db->query($sql);
 		if (!$result) {
@@ -183,14 +183,14 @@ if ($user->rights->banque->modifier && $action == "update") {
 
 		if (!$error) {
 			$arrayofcategs = GETPOST('custcats', 'array');
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid = ".$rowid;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid = ".((int) $rowid);
 			if (!$db->query($sql)) {
 				$error++;
 				dol_print_error($db);
 			}
 			if (count($arrayofcategs)) {
 				foreach ($arrayofcategs as $val) {
-					$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (lineid, fk_categ) VALUES (".$rowid.", ".$val.")";
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (lineid, fk_categ) VALUES (".((int) $rowid).", ".((int) $val).")";
 					if (!$db->query($sql)) {
 						$error++;
 						dol_print_error($db);
@@ -212,8 +212,8 @@ if ($user->rights->banque->modifier && $action == "update") {
 
 // Reconcile
 if ($user->rights->banque->consolidate && ($action == 'num_releve' || $action == 'setreconcile')) {
-	$num_rel = trim($_POST["num_rel"]);
-	$rappro = $_POST['reconciled'] ? 1 : 0;
+	$num_rel = trim(GETPOST("num_rel"));
+	$rappro = GETPOST('reconciled') ? 1 : 0;
 
 	// Check parameters
 	if ($rappro && empty($num_rel)) {
@@ -229,9 +229,9 @@ if ($user->rights->banque->consolidate && ($action == 'num_releve' || $action ==
 		if (empty($num_rel)) {
 			$sql .= ", rappro = 0";
 		} else {
-			$sql .= ", rappro = ".$rappro;
+			$sql .= ", rappro = ".((int) $rappro);
 		}
-		$sql .= " WHERE rowid = ".$rowid;
+		$sql .= " WHERE rowid = ".((int) $rowid);
 
 		dol_syslog("line.php", LOG_DEBUG);
 		$result = $db->query($sql);

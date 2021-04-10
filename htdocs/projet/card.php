@@ -52,7 +52,7 @@ $status = GETPOST('status', 'int');
 $opp_status = GETPOST('opp_status', 'int');
 $opp_percent = price2num(GETPOST('opp_percent', 'alpha'));
 
-if ($id == '' && $ref == '' && ($action != "create" && $action != "add" && $action != "update" && !$_POST["cancel"])) {
+if ($id == '' && $ref == '' && ($action != "create" && $action != "add" && $action != "update" && !GETPOST("cancel"))) {
 	accessforbidden();
 }
 
@@ -78,16 +78,16 @@ if ($id > 0 || !empty($ref)) {
 	}
 }
 
-// Security check
-$socid = GETPOST('socid', 'int');
-//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
-$result = restrictedArea($user, 'projet', $object->id, 'projet&project');
-
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 $date_start = dol_mktime(0, 0, 0, GETPOST('projectstartmonth', 'int'), GETPOST('projectstartday', 'int'), GETPOST('projectstartyear', 'int'));
 $date_end = dol_mktime(0, 0, 0, GETPOST('projectendmonth', 'int'), GETPOST('projectendday', 'int'), GETPOST('projectendyear', 'int'));
+
+// Security check
+$socid = GETPOST('socid', 'int');
+//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+restrictedArea($user, 'projet', $object->id, 'projet&project');
 
 
 /*
@@ -224,12 +224,10 @@ if (empty($reshook)) {
 
 		if (empty($ref)) {
 			$error++;
-			//$_GET["id"]=$_POST["id"]; // We return on the project card
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Ref")), null, 'errors');
 		}
-		if (empty($_POST["title"])) {
+		if (!GETPOST("title")) {
 			$error++;
-			//$_GET["id"]=$_POST["id"]; // We return on the project card
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("ProjectLabel")), null, 'errors');
 		}
 
@@ -512,7 +510,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 	}
 
 	// Ref
-	$suggestedref = ($_POST["ref"] ? $_POST["ref"] : $defaultref);
+	$suggestedref = (GETPOST("ref") ? GETPOST("ref") : $defaultref);
 	print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td><input size="12" type="text" name="ref" value="'.dol_escape_htmltag($suggestedref).'">';
 	print ' '.$form->textwithpicto('', $langs->trans("YouCanCompleteRef", $suggestedref));
 	print '</td></tr>';
@@ -842,7 +840,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 				print '<br>';
 			}
 			if (!empty($conf->eventorganization->enabled)) {
-				print '<input type="checkbox" name="usage_organize_event"'.(GETPOST('usage_organize_event', 'alpha')!=''?' checked="checked"':'').'"> ';
+				print '<input type="checkbox" name="usage_organize_event"'. (GETPOSTISSET('usage_organize_event') ? (GETPOST('usage_organize_event', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_organize_event ? ' checked="checked"' : '')) . '"> ';
 				$htmltext = $langs->trans("EventOrganizationDescriptionLong");
 				print $form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext);
 			}
@@ -978,7 +976,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		// Define a complementary filter for search of next/prev ref.
 		if (!$user->rights->projet->all->lire) {
 			$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-			$object->next_prev_filter = " rowid in (".(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
+			$object->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
 		}
 
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);

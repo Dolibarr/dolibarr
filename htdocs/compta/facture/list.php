@@ -13,7 +13,7 @@
  * Copyright (C) 2015-2016 Ferran Marcet         <fmarcet@2byte.es>
  * Copyright (C) 2017      Josep Lluís Amador    <joseplluis@lliuretic.cat>
  * Copyright (C) 2018      Charlene Benke        <charlie@patas-monkey.com>
- * Copyright (C) 2019	   Alexandre Spangaro	 <aspangaro@open-dsi.fr>
+ * Copyright (C) 2019-2021 Alexandre Spangaro    <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,15 +110,29 @@ $search_country = GETPOST("search_country", 'int');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
 $search_user = GETPOST('search_user', 'int');
 $search_sale = GETPOST('search_sale', 'int');
-$search_date_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'));
-$search_date_end = dol_mktime(23, 59, 59, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'));
-$search_date_valid_start = dol_mktime(0, 0, 0, GETPOST('search_date_valid_startmonth', 'int'), GETPOST('search_date_valid_startday', 'int'), GETPOST('search_date_valid_startyear', 'int'));
-$search_date_valid_end = dol_mktime(23, 59, 59, GETPOST('search_date_valid_endmonth', 'int'), GETPOST('search_date_valid_endday', 'int'), GETPOST('search_date_valid_endyear', 'int'));
+$search_date_startday = GETPOST('search_date_startday', 'int');
+$search_date_startmonth = GETPOST('search_date_startmonth', 'int');
+$search_date_startyear = GETPOST('search_date_startyear', 'int');
+$search_date_endday = GETPOST('search_date_endday', 'int');
+$search_date_endmonth = GETPOST('search_date_endmonth', 'int');
+$search_date_endyear = GETPOST('search_date_endyear', 'int');
+$search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);	// Use tzserver
+$search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
+$search_date_valid_startday = GETPOST('search_date_valid_startday', 'int');
+$search_date_valid_startmonth = GETPOST('search_date_valid_startmonth', 'int');
+$search_date_valid_startyear = GETPOST('search_date_valid_startyear', 'int');
+$search_date_valid_endday = GETPOST('search_date_valid_endday', 'int');
+$search_date_valid_endmonth = GETPOST('search_date_valid_endmonth', 'int');
+$search_date_valid_endyear = GETPOST('search_date_valid_endyear', 'int');
+$search_date_valid_start = dol_mktime(0, 0, 0, $search_date_valid_startmonth, $search_date_valid_startday, $search_date_valid_startyear);	// Use tzserver
+$search_date_valid_end = dol_mktime(23, 59, 59, $search_date_valid_endmonth, $search_date_valid_endday, $search_date_valid_endyear);
 $search_datelimit_start = dol_mktime(0, 0, 0, GETPOST('search_datelimit_startmonth', 'int'), GETPOST('search_datelimit_startday', 'int'), GETPOST('search_datelimit_startyear', 'int'));
 $search_datelimit_end = dol_mktime(23, 59, 59, GETPOST('search_datelimit_endmonth', 'int'), GETPOST('search_datelimit_endday', 'int'), GETPOST('search_datelimit_endyear', 'int'));
 $search_categ_cus = GETPOST("search_categ_cus", 'int');
 $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
+
+
 
 $option = GETPOST('search_option');
 if ($option == 'late') {
@@ -189,33 +203,33 @@ $arrayfields = array(
 	'f.ref'=>array('label'=>"Ref", 'checked'=>1, 'position'=>5),
 	'f.ref_client'=>array('label'=>"RefCustomer", 'checked'=>-1, 'position'=>10),
 	'f.type'=>array('label'=>"Type", 'checked'=>0, 'position'=>15),
-	'f.date'=>array('label'=>"DateInvoice", 'checked'=>1, 'position'=>20),
+	'f.datef'=>array('label'=>"DateInvoice", 'checked'=>1, 'position'=>20),
 	'f.date_valid'=>array('label'=>"DateValidation", 'checked'=>0, 'position'=>22),
 	'f.date_lim_reglement'=>array('label'=>"DateDue", 'checked'=>1, 'position'=>25),
 	'f.date_closing'=>array('label'=>"DateClosing", 'checked'=>0, 'position'=>30),
 	'p.ref'=>array('label'=>"ProjectRef", 'checked'=>1, 'enabled'=>(empty($conf->projet->enabled) ? 0 : 1), 'position'=>40),
-	'p.title'=>array('label'=>"ProjectLabel", 'checked'=>0, 'enabled'=>(empty($conf->projet->enabled) ? 0 : 1), 'position'=>40),
+	'p.title'=>array('label'=>"ProjectLabel", 'checked'=>0, 'enabled'=>(empty($conf->projet->enabled) ? 0 : 1), 'position'=>41),
 	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1, 'position'=>50),
 	's.name_alias'=>array('label'=>"AliasNameShort", 'checked'=>1, 'position'=>51),
-	's.town'=>array('label'=>"Town", 'checked'=>1, 'position'=>55),
+	's.town'=>array('label'=>"Town", 'checked'=>-1, 'position'=>55),
 	's.zip'=>array('label'=>"Zip", 'checked'=>1, 'position'=>60),
 	'state.nom'=>array('label'=>"StateShort", 'checked'=>0, 'position'=>65),
 	'country.code_iso'=>array('label'=>"Country", 'checked'=>0, 'position'=>70),
 	'typent.code'=>array('label'=>"ThirdPartyType", 'checked'=>$checkedtypetiers, 'position'=>75),
 	'f.fk_mode_reglement'=>array('label'=>"PaymentMode", 'checked'=>1, 'position'=>80),
 	'f.fk_cond_reglement'=>array('label'=>"PaymentConditionsShort", 'checked'=>1, 'position'=>85),
-	'f.module_source'=>array('label'=>"Module", 'checked'=>($contextpage == 'poslist' ? 1 : 0), 'enabled'=>((empty($conf->cashdesk->enabled) && empty($conf->takepos->enabled) && empty($conf->global->INVOICE_SHOW_POS)) ? 0 : 1), 'position'=>90),
-	'f.pos_source'=>array('label'=>"Terminal", 'checked'=>($contextpage == 'poslist' ? 1 : 0), 'enabled'=>((empty($conf->cashdesk->enabled) && empty($conf->takepos->enabled) && empty($conf->global->INVOICE_SHOW_POS)) ? 0 : 1), 'position'=>91),
+	'f.module_source'=>array('label'=>"POSModule", 'checked'=>($contextpage == 'poslist' ? 1 : 0), 'enabled'=>((empty($conf->cashdesk->enabled) && empty($conf->takepos->enabled) && empty($conf->global->INVOICE_SHOW_POS)) ? 0 : 1), 'position'=>90),
+	'f.pos_source'=>array('label'=>"POSTerminal", 'checked'=>($contextpage == 'poslist' ? 1 : 0), 'enabled'=>((empty($conf->cashdesk->enabled) && empty($conf->takepos->enabled) && empty($conf->global->INVOICE_SHOW_POS)) ? 0 : 1), 'position'=>91),
 	'f.total_ht'=>array('label'=>"AmountHT", 'checked'=>1, 'position'=>95),
-	'f.total_vat'=>array('label'=>"AmountVAT", 'checked'=>0, 'position'=>100),
+	'f.total_tva'=>array('label'=>"AmountVAT", 'checked'=>0, 'position'=>100),
 	'f.total_localtax1'=>array('label'=>$langs->transcountry("AmountLT1", $mysoc->country_code), 'checked'=>0, 'enabled'=>($mysoc->localtax1_assuj == "1"), 'position'=>110),
 	'f.total_localtax2'=>array('label'=>$langs->transcountry("AmountLT2", $mysoc->country_code), 'checked'=>0, 'enabled'=>($mysoc->localtax2_assuj == "1"), 'position'=>120),
 	'f.total_ttc'=>array('label'=>"AmountTTC", 'checked'=>0, 'position'=>130),
-	'u.login'=>array('label'=>"Author", 'checked'=>1, 'position'=>135),
 	'dynamount_payed'=>array('label'=>"Received", 'checked'=>0, 'position'=>140),
 	'rtp'=>array('label'=>"Rest", 'checked'=>0, 'position'=>150), // Not enabled by default because slow
-	'f.multicurrency_code'=>array('label'=>'Currency', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>160),
-	'f.multicurrency_tx'=>array('label'=>'CurrencyRate', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>170),
+	'u.login'=>array('label'=>"Author", 'checked'=>1, 'position'=>165),
+	'f.multicurrency_code'=>array('label'=>'Currency', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>170),
+	'f.multicurrency_tx'=>array('label'=>'CurrencyRate', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>171),
 	'f.multicurrency_total_ht'=>array('label'=>'MulticurrencyAmountHT', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>180),
 	'f.multicurrency_total_vat'=>array('label'=>'MulticurrencyAmountVAT', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>190),
 	'f.multicurrency_total_ttc'=>array('label'=>'MulticurrencyAmountTTC', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>200),
@@ -235,7 +249,24 @@ $arrayfields = array(
 if ($conf->global->INVOICE_USE_SITUATION && $conf->global->INVOICE_USE_RETAINED_WARRANTY) {
 	$arrayfields['f.retained_warranty'] = array('label'=>$langs->trans("RetainedWarranty"), 'checked'=>0, 'position'=>86);
 }
-
+// Overwrite $arrayfields from columns into ->fields (transition before removal of $arrayoffields)
+foreach ($object->fields as $key => $val) {
+	// If $val['visible']==0, then we never show the field
+	if (!empty($val['visible'])) {
+		$visible = (int) dol_eval($val['visible'], 1);
+		$newkey = '';
+		if (array_key_exists($key, $arrayfields)) { $newkey = $key; } elseif (array_key_exists('t.'.$key, $arrayfields)) { $newkey = 't.'.$key; } elseif (array_key_exists('f.'.$key, $arrayfields)) { $newkey = 'f.'.$key; } elseif (array_key_exists('s.'.$key, $arrayfields)) { $newkey = 's.'.$key; }
+		if ($newkey) {
+			$arrayfields[$newkey] = array(
+				'label'=>$val['label'],
+				'checked'=>(($visible < 0) ? 0 : 1),
+				'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
+				'position'=>$val['position'],
+				'help'=>$val['help']
+			);
+		}
+	}
+}
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
@@ -297,8 +328,20 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_type = '';
 	$search_country = '';
 	$search_type_thirdparty = '';
+	$search_date_startday = '';
+	$search_date_startmonth = '';
+	$search_date_startyear = '';
+	$search_date_endday = '';
+	$search_date_endmonth = '';
+	$search_date_endyear = '';
 	$search_date_start = '';
 	$search_date_end = '';
+	$search_date_valid_startday = '';
+	$search_date_valid_startmonth = '';
+	$search_date_valid_startyear = '';
+	$search_date_valid_endday = '';
+	$search_date_valid_endmonth = '';
+	$search_date_valid_endyear = '';
 	$search_date_valid_start = '';
 	$search_date_valid_end = '';
 	$search_datelimit_start = '';
@@ -365,7 +408,7 @@ if ($massaction == 'makepayment') {
 				$rsql .= " , u.rowid as user_id, u.lastname, u.firstname, u.login";
 				$rsql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 				$rsql .= " , ".MAIN_DB_PREFIX."user as u";
-				$rsql .= " WHERE fk_facture = ".$objecttmp->id;
+				$rsql .= " WHERE fk_facture = ".((int) $objecttmp->id);
 				$rsql .= " AND pfd.fk_user_demande = u.rowid";
 				$rsql .= " AND pfd.traite = 0";
 				$rsql .= " ORDER BY pfd.date_demande DESC";
@@ -430,11 +473,11 @@ $sql = 'SELECT';
 if ($sall || $search_product_category > 0 || $search_user > 0) {
 	$sql = 'SELECT DISTINCT';
 }
-$sql .= ' f.rowid as id, f.ref, f.ref_client, f.type, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.fk_cond_reglement, f.total as total_ht, f.tva as total_vat, f.total_ttc,';
+$sql .= ' f.rowid as id, f.ref, f.ref_client, f.type, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.fk_cond_reglement, f.total_ht, f.total_tva, f.total_ttc,';
 $sql .= ' f.localtax1 as total_localtax1, f.localtax2 as total_localtax2,';
 $sql .= ' f.fk_user_author,';
 $sql .= ' f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva as multicurrency_total_vat, f.multicurrency_total_ttc,';
-$sql .= ' f.datef as df, f.date_valid, f.date_lim_reglement as datelimite, f.module_source, f.pos_source,';
+$sql .= ' f.datef, f.date_valid, f.date_lim_reglement as datelimite, f.module_source, f.pos_source,';
 $sql .= ' f.paye as paye, f.fk_statut, f.close_code,';
 $sql .= ' f.datec as date_creation, f.tms as date_update, f.date_closing as date_closing,';
 $sql .= ' f.retained_warranty, f.retained_warranty_date_limit, f.situation_final, f.situation_cycle_ref, f.situation_counter,';
@@ -513,14 +556,7 @@ if ($userid) {
 	if ($userid == -1) {
 		$sql .= ' AND f.fk_user_author IS NULL';
 	} else {
-		$sql .= ' AND f.fk_user_author = '.$userid;
-	}
-}
-if ($filtre) {
-	$aFilter = explode(',', $filtre);
-	foreach ($aFilter as $filter) {
-		$filt = explode(':', $filter);
-		$sql .= ' AND '.$db->escape(trim($filt[0])).' = '.$db->escape(trim($filt[1]));
+		$sql .= ' AND f.fk_user_author = '.((int) $userid);
 	}
 }
 if ($search_ref) {
@@ -566,10 +602,10 @@ if ($search_company_alias) {
 	$sql .= natural_search('s.name_alias', $search_company_alias);
 }
 if ($search_montant_ht != '') {
-	$sql .= natural_search('f.total', $search_montant_ht, 1);
+	$sql .= natural_search('f.total_ht', $search_montant_ht, 1);
 }
 if ($search_montant_vat != '') {
-	$sql .= natural_search('f.tva', $search_montant_vat, 1);
+	$sql .= natural_search('f.total_tva', $search_montant_vat, 1);
 }
 if ($search_montant_localtax1 != '') {
 	$sql .= natural_search('f.localtax1', $search_montant_localtax1, 1);
@@ -670,7 +706,7 @@ $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // No
 $sql .= $hookmanager->resPrint;
 
 if (!$sall) {
-	$sql .= ' GROUP BY f.rowid, f.ref, ref_client, f.type, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.fk_cond_reglement, f.total, f.tva, f.total_ttc,';
+	$sql .= ' GROUP BY f.rowid, f.ref, ref_client, f.type, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.fk_cond_reglement, f.total_ht, f.total_tva, f.total_ttc,';
 	$sql .= ' f.localtax1, f.localtax2,';
 	$sql .= ' f.datef, f.date_valid, f.date_lim_reglement, f.module_source, f.pos_source,';
 	$sql .= ' f.paye, f.fk_statut, f.close_code,';
@@ -751,7 +787,7 @@ if ($resql) {
 		}
 	}
 
-	$param = '&socid='.$socid;
+	$param = '&socid='.urlencode($socid);
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
@@ -761,17 +797,41 @@ if ($resql) {
 	if ($sall) {
 		$param .= '&sall='.urlencode($sall);
 	}
-	if ($search_date_start) {
-		$param .= '&search_date_start='.urlencode($search_date_start);
+	if ($search_date_startday) {
+		$param .= '&search_date_startday='.urlencode($search_date_startday);
 	}
-	if ($search_date_end) {
-		$param .= '&search_date_end='.urlencode($search_date_end);
+	if ($search_date_startmonth) {
+		$param .= '&search_date_startmonth='.urlencode($search_date_startmonth);
 	}
-	if ($search_date_valid_start) {
-		$param .= '&search_date_valid_start='.urlencode($search_date_valid_start);
+	if ($search_date_startyear) {
+		$param .= '&search_date_startyear='.urlencode($search_date_startyear);
 	}
-	if ($search_date_valid_end) {
-		$param .= '&search_date_valid_end='.urlencode($search_date_valid_end);
+	if ($search_date_endday) {
+		$param .= '&search_date_endday='.urlencode($search_date_endday);
+	}
+	if ($search_date_endmonth) {
+		$param .= '&search_date_endmonth='.urlencode($search_date_endmonth);
+	}
+	if ($search_date_endyear) {
+		$param .= '&search_date_endyear='.urlencode($search_date_endyear);
+	}
+	if ($search_date_valid_startday) {
+		$param .= '&search_date_valid_startday='.urlencode($search_date_valid_startday);
+	}
+	if ($search_date_valid_startmonth) {
+		$param .= '&search_date_valid_startmonth='.urlencode($search_date_valid_startmonth);
+	}
+	if ($search_date_valid_startyear) {
+		$param .= '&search_date_valid_startyear='.urlencode($search_date_valid_startyear);
+	}
+	if ($search_date_valid_endday) {
+		$param .= '&search_date_valid_endday='.urlencode($search_date_valid_endday);
+	}
+	if ($search_date_valid_endmonth) {
+		$param .= '&search_date_valid_endmonth='.urlencode($search_date_valid_endmonth);
+	}
+	if ($search_date_valid_endyear) {
+		$param .= '&search_date_valid_endyear='.urlencode($search_date_valid_endyear);
 	}
 	if ($search_datelimit_start) {
 		$param .= '&search_datelimit_start='.urlencode($search_datelimit_start);
@@ -949,31 +1009,31 @@ if ($resql) {
 	if ($user->rights->societe->client->voir || $socid) {
 		$langs->load("commercial");
 		$moreforfilter .= '<div class="divsearchfield">';
-		$moreforfilter .= $langs->trans('ThirdPartiesOfSaleRepresentative').': ';
-		$moreforfilter .= $formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, 1, 'maxwidth200');
+		$tmptitle = $langs->trans('ThirdPartiesOfSaleRepresentative');
+		$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, $tmptitle, 'maxwidth250');
 		$moreforfilter .= '</div>';
 	}
 	// If the user can view prospects other than his'
 	if ($user->rights->societe->client->voir || $socid) {
 		$moreforfilter .= '<div class="divsearchfield">';
-		$moreforfilter .= $langs->trans('LinkedToSpecificUsers').': ';
-		$moreforfilter .= $form->select_dolusers($search_user, 'search_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth200');
+		$tmptitle = $langs->trans('LinkedToSpecificUsers');
+		$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_user, 'search_user', $tmptitle, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth250');
 		$moreforfilter .= '</div>';
 	}
 	// If the user can view prospects other than his'
 	if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire && ($user->rights->produit->lire || $user->rights->service->lire)) {
 		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
-		$moreforfilter .= $langs->trans('IncludingProductWithTag').': ';
+		$tmptitle = $langs->trans('IncludingProductWithTag');
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
-		$moreforfilter .= $form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, 'maxwidth300', 1);
+		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, 'maxwidth300', 1);
 		$moreforfilter .= '</div>';
 	}
 	if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
-		$moreforfilter .= $langs->trans('CustomersProspectsCategoriesShort').': ';
-		$moreforfilter .= $formother->select_categories('customer', $search_categ_cus, 'search_categ_cus', 1);
+		$tmptitle = $langs->trans('CustomersProspectsCategoriesShort');
+		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$formother->select_categories('customer', $search_categ_cus, 'search_categ_cus', 1, $tmptitle);
 		$moreforfilter .= '</div>';
 	}
 	$parameters = array();
@@ -992,6 +1052,7 @@ if ($resql) {
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+
 	// Show the massaction checkboxes only when this page is not opend from the Extended POS
 	if ($massactionbutton && $contextpage != 'poslist') {
 		$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
@@ -1035,7 +1096,7 @@ if ($resql) {
 		print '</td>';
 	}
 	// Date invoice
-	if (!empty($arrayfields['f.date']['checked'])) {
+	if (!empty($arrayfields['f.datef']['checked'])) {
 		print '<td class="liste_titre center">';
 		print '<div class="nowrap">';
 		print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
@@ -1143,7 +1204,7 @@ if ($resql) {
 		print '<input class="flat" type="text" size="4" name="search_montant_ht" value="'.dol_escape_htmltag($search_montant_ht).'">';
 		print '</td>';
 	}
-	if (!empty($arrayfields['f.total_vat']['checked'])) {
+	if (!empty($arrayfields['f.total_tva']['checked'])) {
 		// Amount
 		print '<td class="liste_titre right">';
 		print '<input class="flat" type="text" size="4" name="search_montant_vat" value="'.dol_escape_htmltag($search_montant_vat).'">';
@@ -1298,8 +1359,8 @@ if ($resql) {
 	if (!empty($arrayfields['f.type']['checked'])) {
 		print_liste_field_titre($arrayfields['f.type']['label'], $_SERVER["PHP_SELF"], 'f.type', '', $param, '', $sortfield, $sortorder);
 	}
-	if (!empty($arrayfields['f.date']['checked'])) {
-		print_liste_field_titre($arrayfields['f.date']['label'], $_SERVER['PHP_SELF'], 'f.datef', '', $param, 'align="center"', $sortfield, $sortorder);
+	if (!empty($arrayfields['f.datef']['checked'])) {
+		print_liste_field_titre($arrayfields['f.datef']['label'], $_SERVER['PHP_SELF'], 'f.datef', '', $param, 'align="center"', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['f.date_valid']['checked'])) {
 		print_liste_field_titre($arrayfields['f.date_valid']['label'], $_SERVER['PHP_SELF'], 'f.date_valid', '', $param, 'align="center"', $sortfield, $sortorder);
@@ -1347,10 +1408,10 @@ if ($resql) {
 		print_liste_field_titre($arrayfields['f.pos_source']['label'], $_SERVER["PHP_SELF"], "f.pos_source", "", $param, "", $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['f.total_ht']['checked'])) {
-		print_liste_field_titre($arrayfields['f.total_ht']['label'], $_SERVER['PHP_SELF'], 'f.total', '', $param, 'class="right"', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['f.total_ht']['label'], $_SERVER['PHP_SELF'], 'f.total_ht', '', $param, 'class="right"', $sortfield, $sortorder);
 	}
-	if (!empty($arrayfields['f.total_vat']['checked'])) {
-		print_liste_field_titre($arrayfields['f.total_vat']['label'], $_SERVER['PHP_SELF'], 'f.tva', '', $param, 'class="right"', $sortfield, $sortorder);
+	if (!empty($arrayfields['f.total_tva']['checked'])) {
+		print_liste_field_titre($arrayfields['f.total_tva']['label'], $_SERVER['PHP_SELF'], 'f.total_tva', '', $param, 'class="right"', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['f.total_localtax1']['checked'])) {
 		print_liste_field_titre($arrayfields['f.total_localtax1']['label'], $_SERVER['PHP_SELF'], 'f.localtax1', '', $param, 'class="right"', $sortfield, $sortorder);
@@ -1450,7 +1511,7 @@ if ($resql) {
 			$facturestatic->ref_client = $obj->ref_client;
 			$facturestatic->type = $obj->type;
 			$facturestatic->total_ht = $obj->total_ht;
-			$facturestatic->total_tva = $obj->total_vat;
+			$facturestatic->total_tva = $obj->total_tva;
 			$facturestatic->total_ttc = $obj->total_ttc;
 			$facturestatic->multicurrency_code = $obj->multicurrency_code;
 			$facturestatic->multicurrency_tx = $obj->multicurrency_tx;
@@ -1463,7 +1524,7 @@ if ($resql) {
 			$facturestatic->paye = $obj->paye;
 			$facturestatic->fk_soc = $obj->fk_soc;
 
-			$facturestatic->date = $db->jdate($obj->df);
+			$facturestatic->date = $db->jdate($obj->datef);
 			$facturestatic->date_valid = $db->jdate($obj->date_valid);
 			$facturestatic->date_lim_reglement = $db->jdate($obj->datelimite);
 
@@ -1583,9 +1644,9 @@ if ($resql) {
 			}
 
 			// Date
-			if (!empty($arrayfields['f.date']['checked'])) {
+			if (!empty($arrayfields['f.datef']['checked'])) {
 				print '<td align="center" class="nowraponall">';
-				print dol_print_date($db->jdate($obj->df), 'day');
+				print dol_print_date($db->jdate($obj->datef), 'day');
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -1762,7 +1823,7 @@ if ($resql) {
 
 			// Amount HT
 			if (!empty($arrayfields['f.total_ht']['checked'])) {
-				  print '<td class="right nowraponall">'.price($obj->total_ht)."</td>\n";
+				  print '<td class="right nowraponall amount">'.price($obj->total_ht)."</td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -1772,19 +1833,19 @@ if ($resql) {
 				  $totalarray['val']['f.total_ht'] += $obj->total_ht;
 			}
 			// Amount VAT
-			if (!empty($arrayfields['f.total_vat']['checked'])) {
-				print '<td class="right nowraponall">'.price($obj->total_vat)."</td>\n";
+			if (!empty($arrayfields['f.total_tva']['checked'])) {
+				print '<td class="right nowraponall amount">'.price($obj->total_vat)."</td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
 				if (!$i) {
-					$totalarray['pos'][$totalarray['nbfield']] = 'f.total_vat';
+					$totalarray['pos'][$totalarray['nbfield']] = 'f.total_tva';
 				}
-				$totalarray['val']['f.total_vat'] += $obj->total_vat;
+				$totalarray['val']['f.total_tva'] += $obj->total_tva;
 			}
 			// Amount LocalTax1
 			if (!empty($arrayfields['f.total_localtax1']['checked'])) {
-				print '<td class="right nowraponall">'.price($obj->total_localtax1)."</td>\n";
+				print '<td class="right nowraponall amount">'.price($obj->total_localtax1)."</td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -1795,7 +1856,7 @@ if ($resql) {
 			}
 			// Amount LocalTax2
 			if (!empty($arrayfields['f.total_localtax2']['checked'])) {
-				print '<td class="right nowraponall">'.price($obj->total_localtax2)."</td>\n";
+				print '<td class="right nowraponall amount">'.price($obj->total_localtax2)."</td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -1806,7 +1867,7 @@ if ($resql) {
 			}
 			// Amount TTC
 			if (!empty($arrayfields['f.total_ttc']['checked'])) {
-				print '<td class="right nowraponall">'.price($obj->total_ttc)."</td>\n";
+				print '<td class="right nowraponall amount">'.price($obj->total_ttc)."</td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -1833,11 +1894,11 @@ if ($resql) {
 			}
 
 			if (!empty($arrayfields['f.retained_warranty']['checked'])) {
-				print '<td align="right">'.(!empty($obj->retained_warranty) ?price($obj->retained_warranty).'%' : '&nbsp;').'</td>';
+				print '<td align="right amount">'.(!empty($obj->retained_warranty) ?price($obj->retained_warranty).'%' : '&nbsp;').'</td>';
 			}
 
 			if (!empty($arrayfields['dynamount_payed']['checked'])) {
-				print '<td class="right nowraponall">'.(!empty($totalpay) ?price($totalpay, 0, $langs) : '&nbsp;').'</td>'; // TODO Use a denormalized field
+				print '<td class="right nowraponall amount">'.(!empty($totalpay) ?price($totalpay, 0, $langs) : '&nbsp;').'</td>'; // TODO Use a denormalized field
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -1849,7 +1910,7 @@ if ($resql) {
 
 			// Pending amount
 			if (!empty($arrayfields['rtp']['checked'])) {
-				print '<td class="right nowraponall">';
+				print '<td class="right nowraponall amount">';
 				print (!empty($remaintopay) ? price($remaintopay, 0, $langs) : '&nbsp;');
 				print '</td>'; // TODO Use a denormalized field
 				if (!$i) {
@@ -1881,27 +1942,27 @@ if ($resql) {
 			}
 			// Amount HT
 			if (!empty($arrayfields['f.multicurrency_total_ht']['checked'])) {
-				  print '<td class="right nowraponall">'.price($obj->multicurrency_total_ht)."</td>\n";
+				  print '<td class="right nowraponall amount">'.price($obj->multicurrency_total_ht)."</td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
 			}
 			// Amount VAT
 			if (!empty($arrayfields['f.multicurrency_total_vat']['checked'])) {
-				print '<td class="right nowraponall">'.price($obj->multicurrency_total_vat)."</td>\n";
+				print '<td class="right nowraponall amount">'.price($obj->multicurrency_total_vat)."</td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
 			}
 			// Amount TTC
 			if (!empty($arrayfields['f.multicurrency_total_ttc']['checked'])) {
-				print '<td class="right nowraponall">'.price($obj->multicurrency_total_ttc)."</td>\n";
+				print '<td class="right nowraponall amount">'.price($obj->multicurrency_total_ttc)."</td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
 			}
 			if (!empty($arrayfields['multicurrency_dynamount_payed']['checked'])) {
-				print '<td class="right nowraponall">'.(!empty($multicurrency_totalpay) ?price($multicurrency_totalpay, 0, $langs) : '&nbsp;').'</td>'; // TODO Use a denormalized field
+				print '<td class="right nowraponall amount">'.(!empty($multicurrency_totalpay) ?price($multicurrency_totalpay, 0, $langs) : '&nbsp;').'</td>'; // TODO Use a denormalized field
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
