@@ -364,6 +364,8 @@ ALTER TABLE llx_propal ADD CONSTRAINT fk_propal_fk_user_signature FOREIGN KEY (f
 UPDATE llx_propal SET fk_user_signature = fk_user_cloture WHERE fk_user_signature IS NULL AND fk_user_cloture IS NOT NULL;
 UPDATE llx_propal SET date_signature = date_cloture WHERE date_signature IS NULL AND date_cloture IS NOT NULL;
 
+INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('MEMBER_EXCLUDE','Member excluded','Executed when a member is excluded','member',27);
+
 ALTER TABLE llx_product ADD COLUMN batch_mask VARCHAR(32) NULL;
 
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (210, 'conferenceorbooth', 'internal', 'MANAGER',  'Conference or Booth manager', 1);
