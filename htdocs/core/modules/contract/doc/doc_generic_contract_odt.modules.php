@@ -291,8 +291,7 @@ class doc_generic_contract_odt extends ModelePDFContract
 				// Recipient name
 				$contactobject = null;
 				if (!empty($usecontact)) {
-					if ($usecontact && ($object->contact->fk_soc != $object->thirdparty->id && (!empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
-						$object->contact->fetch_thirdparty();
+					if ($usecontact && ($object->contact->fk_soc != $object->thirdparty->id && (isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
 						$socobject = $object->contact->thirdparty;
 						$contactobject = $object->contact;
 					} else {

@@ -331,7 +331,7 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 				// Recipient name
 				$contactobject = null;
 				if (!empty($usecontact)) {
-					if ($usecontact && ($object->contact->fk_soc != $object->thirdparty->id && (!empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
+					if ($usecontact && ($object->contact->fk_soc != $object->thirdparty->id && (isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
 						$object->contact->fetch_thirdparty();
 						$socobject = $object->contact->thirdparty;
 						$contactobject = $object->contact;
