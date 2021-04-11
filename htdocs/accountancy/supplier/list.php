@@ -53,8 +53,8 @@ $mesCasesCochees = GETPOST('toselect', 'array');
 // Search Getpost
 $search_societe = GETPOST('search_societe', 'alpha');
 $search_lineid = GETPOST('search_lineid', 'int');
-$search_invoice = GETPOST('search_invoice', 'alpha');
 $search_ref = GETPOST('search_ref', 'alpha');
+$search_invoice = GETPOST('search_invoice', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
 $search_desc = GETPOST('search_desc', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
@@ -156,7 +156,7 @@ if (empty($reshook)) {
 }
 
 
-if ($massaction == 'ventil') {
+if ($massaction == 'ventil' && $user->rights->accounting->bind->write) {
 	$msg = '';
 
 	//print '<div><span style="color:red">' . $langs->trans("Processing") . '...</span></div>';
@@ -183,7 +183,7 @@ if ($massaction == 'ventil') {
 				$accountventilated = new AccountingAccount($db);
 				$accountventilated->fetch($monCompte, '', 1);
 
-				dol_syslog('accountancy/supplier/list.php:: sql='.$sql, LOG_DEBUG);
+				dol_syslog('accountancy/supplier/list.php sql='.$sql, LOG_DEBUG);
 				if ($db->query($sql)) {
 					$msg .= '<div><span style="color:green">'.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("VentilatedinAccount").' : '.length_accountg($accountventilated->account_number).'</span></div>';
 					$ok++;
@@ -249,6 +249,7 @@ if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON co.rowid = s.fk_pays ";
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."facture_fourn_det as l ON f.rowid = l.fk_facture_fourn";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = l.fk_product";
 if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as pa ON pa.fk_product = p.rowid AND pa.entity = " . ((int) $conf->entity);
 }
@@ -274,11 +275,11 @@ if ($search_lineid) {
 if (strlen(trim($search_invoice))) {
 	$sql .= natural_search("f.ref", $search_invoice);
 }
-if (strlen(trim($search_label))) {
-	$sql .= natural_search("f.libelle", $search_label);
-}
 if (strlen(trim($search_ref))) {
 	$sql .= natural_search("p.ref", $search_ref);
+}
+if (strlen(trim($search_label))) {
+	$sql .= natural_search("f.libelle", $search_label);
 }
 if (strlen(trim($search_desc))) {
 	$sql .= natural_search("l.description", $search_desc);
@@ -344,9 +345,14 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 
 $sql .= $db->plimit($limit + 1, $offset);
 
-dol_syslog('accountancy/supplier/list.php');
-$result = $db->query($sql);
+dol_syslog('accountancy/supplier/list.php', LOG_DEBUG);
+// MAX_JOIN_SIZE can be very low (ex: 300000) on some limited configurations (ex: https://www.online.net/fr/hosting/online-perso)
+// This big SELECT command may exceed the MAX_JOIN_SIZE limit => Therefore we use SQL_BIG_SELECTS=1 to disable the MAX_JOIN_SIZE security
+if ($db->type == 'mysqli') {
+	$db->query("SET SQL_BIG_SELECTS=1");
+}
 
+$result = $db->query($sql);
 if ($result) {
 	$num_lines = $db->num_rows($result);
 	$i = 0;
@@ -447,8 +453,8 @@ if ($result) {
 	print '</td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_desc" value="'.dol_escape_htmltag($search_desc).'"></td>';
-	print '<td class="liste_titre right"><input type="text" class="right flat maxwidth50" name="search_amount" value="'.dol_escape_htmltag($search_amount).'"></td>';
-	print '<td class="liste_titre right"><input type="text" class="right flat maxwidth50" name="search_vat" placeholder="%" size="1" value="'.dol_escape_htmltag($search_vat).'"></td>';
+	print '<td class="liste_titre right"><input type="text" class="flat maxwidth50 right" name="search_amount" value="'.dol_escape_htmltag($search_amount).'"></td>';
+	print '<td class="liste_titre right"><input type="text" class="flat maxwidth50 right" name="search_vat" placeholder="%" size="1" value="'.dol_escape_htmltag($search_vat).'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth75imp" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"></td>';
 	print '<td class="liste_titre">';
 	print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth125', 'code2', 1, 0, 1);
@@ -528,7 +534,7 @@ if ($result) {
 
 		$facturefourn_static->ref = $objp->ref;
 		$facturefourn_static->id = $objp->facid;
-		$facturefourn_static->type = $objp->type;
+		$facturefourn_static->type = $objp->ftype;
 		$facturefourn_static->label = $objp->invoice_label;
 
 		$code_buy_p_notset = '';
