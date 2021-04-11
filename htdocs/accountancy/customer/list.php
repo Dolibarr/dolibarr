@@ -87,6 +87,13 @@ if (!$sortorder) {
 	}
 }
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('accountancycustomerlist'));
+
+$formaccounting = new FormAccounting($db);
+
+$chartaccountcode = dol_getIdFromCode($db, $conf->global->CHARTOFACCOUNTS, 'accounting_system', 'rowid', 'pcg_version');
+
 // Security check
 if (empty($conf->accounting->enabled)) {
 	accessforbidden();
@@ -97,13 +104,6 @@ if ($user->socid > 0) {
 if (empty($user->rights->accounting->mouvements->lire)) {
 	accessforbidden();
 }
-
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('accountancycustomerlist'));
-
-$formaccounting = new FormAccounting($db);
-
-$chartaccountcode = dol_getIdFromCode($db, $conf->global->CHARTOFACCOUNTS, 'accounting_system', 'rowid', 'pcg_version');
 
 
 /*
@@ -168,7 +168,7 @@ if ($massaction == 'ventil' && $user->rights->accounting->bind->write) {
 			$monCompte = GETPOST('codeventil'.$monId);
 
 			if ($monCompte <= 0) {
-				$msg .= '<div><span style="color:red">'.$langs->trans("Lineofinvoice", $monId).' - '.$langs->trans("NoAccountSelected").'</span></div>';
+				$msg .= '<div><span style="color:red">'.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("NoAccountSelected").'</span></div>';
 				$ko++;
 			} else {
 				$sql = " UPDATE ".MAIN_DB_PREFIX."facturedet";
@@ -215,7 +215,7 @@ if (empty($chartaccountcode)) {
 }
 
 // Customer Invoice lines
-$sql = "SELECT f.rowid as facid, f.ref as ref, f.datef, f.type as ftype,";
+$sql = "SELECT f.rowid as facid, f.ref, f.datef, f.type as ftype,";
 $sql .= " l.rowid, l.fk_product, l.description, l.total_ht, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line, l.vat_src_code,";
 $sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.tva_tx as tva_tx_prod,";
 if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
@@ -239,7 +239,7 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // N
 $sql .= $hookmanager->resPrint;
 $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
-if (!empty($conf->global->ACCOUNTANCY_COMPANY_SHARED)) {
+if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as sa ON sa.fk_soc = s.rowid AND sa.entity = " . ((int) $conf->entity);
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON co.rowid = s.fk_pays ";
@@ -347,6 +347,7 @@ dol_syslog("accountancy/customer/list.php", LOG_DEBUG);
 if ($db->type == 'mysqli') {
 	$db->query("SET SQL_BIG_SELECTS=1");
 }
+
 $result = $db->query($sql);
 if ($result) {
 	$num_lines = $db->num_rows($result);
@@ -654,6 +655,7 @@ if ($result) {
 		}
 		print '</td>';
 
+		// Description
 		print '<td class="tdoverflowonsmartphone small">';
 		$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->description));
 		$trunclength = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION) ? 32 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION;
@@ -681,6 +683,7 @@ if ($result) {
 		print $labelcountry;
 		print '</td>';
 
+		// VAT Num
 		print '<td>'.$objp->tva_intra.'</td>';
 
 		// Found accounts
