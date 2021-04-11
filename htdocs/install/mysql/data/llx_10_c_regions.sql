@@ -65,12 +65,19 @@
 -- France
 -- Germany -> for Departmements
 -- Greece
+-- Honduras -> for Departmements
+-- India -> for Departmements
+-- Indonesia -> for Departmements
 -- Italy
+-- Mexique -> for Departmements
 -- Netherlands -> for Departmements
+-- Panama -> for Departmements
+-- Romania -> for Departmements
 -- San Salvador
 -- Spain
 -- Switzerland/Suisse -> for Departmements/Cantons
 -- United Kingdom
+-- USA -> for Departmements
 
 
 
@@ -200,6 +207,18 @@ INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values (10
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values (102, 10213, NULL, NULL, 'Δυτική Μακεδονία');
 
 
+-- Honduras Regions (id country=114)
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 114, 11401, '', 0, 'Honduras');
+
+
+-- India Regions (id country=117)
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 117, 11701, '', 0, 'India');
+
+
+-- Indonesia Regions (id country=118)
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 118, 11801, '', 0, 'Indonesia');
+
+
 -- Italy Regions (id country=3)
 insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 3, 301, NULL, 1, 'Abruzzo');
 insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 3, 302, NULL, 1, 'Basilicata');
@@ -223,8 +242,20 @@ insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 3
 insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 3, 320, NULL, 1, 'Veneto');
 
 
+-- Mexique Regions (id country=154)
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 154, 15401, '', 0, 'Mexique');
+
+
 -- Netherlands Regions (id country=17)
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 17, 1701, '', 0,'Provincies van Nederland ');
+
+
+-- Panama Regions (id country=178)
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 178, 17801, '', 0, 'Panama');
+
+
+-- Romania Regions (id country=188) 
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 188, 18801, '', 0, 'Romania');
 
 
 -- San Salvador Regions (id country=86)
@@ -267,6 +298,11 @@ INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 7
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 7, 704, '', 0, 'Northern Ireland');
 
 
+-- USA Region (id country=11)
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 11, 1101, '', 0, 'United-States');
+
+
+
 -- Regions Tunisia (id country=10)
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (10,1001, '',0,'Ariana');
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (10,1002, '',0,'Béja');
@@ -292,22 +328,6 @@ insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (10,102
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (10,1022, '',0,'Tozeur');
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (10,1023, '',0,'Tunis');
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (10,1024, '',0,'Zaghouan');
-
-
--- Region USA (id country=11)
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values ( 11, 1101, '', 0, 'United-States', 1);
-
-
--- Regions Honduras (id country=114)
-insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  114, 11401, '', 0, 'Honduras', 1);
-
-
--- Regions India (id country=117)
-insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  117, 11701, '', 0, 'India', 1);
-
-
--- Regions Indonesia (id country=118)
-insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  118, 11801, '', 0, 'Indonesia', 1);
 
 
 -- Regions Maroc - Moroco (id country=12)
@@ -347,11 +367,6 @@ INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) va
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  152, 15211, '', 0, 'Les îles Agaléga', 1);
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  152, 15212, '', 0, 'Les écueils des Cargados Carajos', 1);
 
--- Regions Mexique (id country=154)
-insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  154, 15401, '', 0, 'Mexique', 1);
-
--- Regions Romania (id country=188) 
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  188, 18801, '', 0, 'Romania', 1);
 
 -- Regions Venezuela (id country=232)
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  232, 23201, '', 0, 'Los Andes', 1);
@@ -392,8 +407,7 @@ INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) va
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18125, '', 0, 'Tumbes', 1);
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18126, '', 0, 'Ucayali', 1);
 
--- Regions Panama (id country=178)
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  178, 17801, '', 0, 'Panama', 1);
+
 
 -- Regions United Arab Emirates (rowid country=227)
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  227, 22701, '', 0, 'United Arab Emirates', 1);
