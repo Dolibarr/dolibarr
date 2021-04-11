@@ -2501,7 +2501,7 @@ if ($action == 'create' && $usercancreate) {
 
 				// Create a purchase order
 				if (!empty($conf->global->WORKFLOW_CAN_CREATE_PURCHASE_ORDER_FROM_SALE_ORDER)) {
-					if (!empty($conf->fournisseur->enabled) && $object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED && $object->getNbOfServicesLines() > 0) {
+					if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled)) && $object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED && $object->getNbOfServicesLines() > 0) {
 						if ($usercancreatepurchaseorder) {
 							print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddPurchaseOrder").'</a>';
 						}

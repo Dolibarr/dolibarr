@@ -167,10 +167,10 @@ if ($conf->ficheinter->enabled && $user->rights->ficheinter->lire) {
 
 if ($object->thirdparty->fournisseur) {
 	$thirdTypeArray['supplier'] = $langs->trans("supplier");
-	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_invoice->enabled)) && $user->rights->fournisseur->facture->lire) {
+	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->facture->lire) || (!empty($conf->supplier_invoice->enabled) && $user->rights->supplier_invoice->lire)) {
 		$elementTypeArray['supplier_invoice'] = $langs->transnoentitiesnoconv('SuppliersInvoices');
 	}
-	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled)) && $user->rights->fournisseur->commande->lire) {
+	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->commande->lire) || (!empty($conf->supplier_order->enabled) && $user->rights->supplier_order->lire)) {
 		$elementTypeArray['supplier_order'] = $langs->transnoentitiesnoconv('SuppliersOrders');
 	}
 
