@@ -68,7 +68,7 @@ if (!empty($conf->adherent->enabled) && empty($conf->global->MAIN_SEARCHFORM_ADH
 	$arrayresult['searchintomember'] = array('position'=>8, 'shortcut'=>'M', 'img'=>'object_member', 'label'=>$langs->trans("SearchIntoMembers", $search_boxvalue), 'text'=>img_picto('', 'object_member').' '.$langs->trans("SearchIntoMembers", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/adherents/list.php'.($search_boxvalue ? '?sall='.urlencode($search_boxvalue) : ''));
 }
 
-if (((!empty($conf->societe->enabled) && (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))) || !empty($conf->fournisseur->enabled)) && empty($conf->global->MAIN_SEARCHFORM_SOCIETE_DISABLED) && $user->rights->societe->lire) {
+if (((!empty($conf->societe->enabled) && (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))) || (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))) && empty($conf->global->MAIN_SEARCHFORM_SOCIETE_DISABLED) && $user->rights->societe->lire) {
 	$arrayresult['searchintothirdparty'] = array('position'=>10, 'shortcut'=>'T', 'img'=>'object_company', 'label'=>$langs->trans("SearchIntoThirdparties", $search_boxvalue), 'text'=>img_picto('', 'object_company').' '.$langs->trans("SearchIntoThirdparties", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/societe/list.php'.($search_boxvalue ? '?sall='.urlencode($search_boxvalue) : ''));
 }
 

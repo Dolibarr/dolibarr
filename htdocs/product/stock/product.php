@@ -701,7 +701,7 @@ if ($id > 0 || $ref) {
 			}
 
 			// Number of supplier order running
-			if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+			if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
 				if ($found) {
 					$helpondiff .= '<br>';
 				} else {
@@ -717,7 +717,7 @@ if ($id > 0 || $ref) {
 			}
 
 			// Number of product from supplier order already received (partial receipt)
-			if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+			if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
 				if ($found) {
 					$helpondiff .= '<br>';
 				} else {

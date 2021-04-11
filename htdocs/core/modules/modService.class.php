@@ -168,7 +168,7 @@ class modService extends DolibarrModules
 		if (is_object($mysoc) && $usenpr) {
 			$this->export_fields_array[$r]['p.recuperableonly'] = 'NPR';
 		}
-		if (!empty($conf->fournisseur->enabled) || !empty($conf->margin->enabled)) {
+		if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled) || !empty($conf->margin->enabled)) {
 			$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('p.cost_price'=>'CostPrice'));
 		}
 		if (!empty($conf->stock->enabled)) {
