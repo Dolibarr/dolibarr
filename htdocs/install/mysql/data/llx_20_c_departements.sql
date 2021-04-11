@@ -50,6 +50,7 @@
 -- France
 -- Germany
 -- Honduras
+-- Hungary
 -- (Italy)
 -- Luxembourg
 -- Netherlands
@@ -504,6 +505,29 @@ INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (11401, 'VL', '', 0, 'VL', 'Valle');
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (11401, 'YO', '', 0, 'YO', 'Yoro');
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (11401, 'DC', '', 0, 'DC', 'Distrito Central');
+
+
+-- Hungary Provinces (rowid country=18)
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (180100, 'HU-BU', 'HU101', NULL, NULL, 'Budapest');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (180100, 'HU-PE', 'HU102', NULL, NULL, 'Pest');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (182100, 'HU-FE', 'HU211', NULL, NULL, 'Fejér');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (182100, 'HU-KE', 'HU212', NULL, NULL, 'Komárom-Esztergom');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (182100, 'HU-VE', 'HU213', NULL, NULL, 'Veszprém');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (182200, 'HU-GS', 'HU221', NULL, NULL, 'Győr-Moson-Sopron');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (182200, 'HU-VA', 'HU222', NULL, NULL, 'Vas');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (182200, 'HU-ZA', 'HU223', NULL, NULL, 'Zala');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (182300, 'HU-BA', 'HU231', NULL, NULL, 'Baranya');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (182300, 'HU-SO', 'HU232', NULL, NULL, 'Somogy');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (182300, 'HU-TO', 'HU233', NULL, NULL, 'Tolna');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (183100, 'HU-BZ', 'HU311', NULL, NULL, 'Borsod-Abaúj-Zemplén');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (183100, 'HU-HE', 'HU312', NULL, NULL, 'Heves');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (183100, 'HU-NO', 'HU313', NULL, NULL, 'Nógrád');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (183200, 'HU-HB', 'HU321', NULL, NULL, 'Hajdú-Bihar');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (183200, 'HU-JN', 'HU322', NULL, NULL, 'Jász-Nagykun-Szolnok');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (183200, 'HU-SZ', 'HU323', NULL, NULL, 'Szabolcs-Szatmár-Bereg');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (183300, 'HU-BK', 'HU331', NULL, NULL, 'Bács-Kiskun');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (183300, 'HU-BE', 'HU332', NULL, NULL, 'Békés');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (183300, 'HU-CS', 'HU333', NULL, NULL, 'Csongrád');
 
 
 -- Provinces Italy (id=3)
@@ -1622,27 +1646,6 @@ INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc
 INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('AE-6', 22701, '', 0, '', 'Sharjah', 1);
 INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('AE-7', 22701, '', 0, '', 'Umm al-Quwain', 1);
 
--- Provinces Hungary (rowid country=18)
-INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('HU-BK', 183300, 'HU331', NULL, NULL, 'Bács-Kiskun');
-INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('HU-BA', 182300, 'HU231', NULL, NULL, 'Baranya');
-INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('HU-BE', 183300, 'HU332', NULL, NULL, 'Békés');
-INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('HU-BZ', 183100, 'HU311', NULL, NULL, 'Borsod-Abaúj-Zemplén');
-INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('HU-BU', 180100, 'HU101', NULL, NULL, 'Budapest');
-INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('HU-CS', 183300, 'HU333', NULL, NULL, 'Csongrád');
-INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('HU-FE', 182100, 'HU211', NULL, NULL, 'Fejér');
-INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('HU-GS', 182200, 'HU221', NULL, NULL, 'Győr-Moson-Sopron');
-INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('HU-HB', 183200, 'HU321', NULL, NULL, 'Hajdú-Bihar');
-INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('HU-HE', 183100, 'HU312', NULL, NULL, 'Heves');
-INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('HU-JN', 183200, 'HU322', NULL, NULL, 'Jász-Nagykun-Szolnok');
-INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('HU-KE', 182100, 'HU212', NULL, NULL, 'Komárom-Esztergom');
-INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('HU-NO', 183100, 'HU313', NULL, NULL, 'Nógrád');
-INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('HU-PE', 180100, 'HU102', NULL, NULL, 'Pest');
-INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('HU-SO', 182300, 'HU232', NULL, NULL, 'Somogy');
-INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('HU-SZ', 183200, 'HU323', NULL, NULL, 'Szabolcs-Szatmár-Bereg');
-INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('HU-TO', 182300, 'HU233', NULL, NULL, 'Tolna');
-INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('HU-VA', 182200, 'HU222', NULL, NULL, 'Vas');
-INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('HU-VE', 182100, 'HU213', NULL, NULL, 'Veszprém');
-INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom) VALUES ('HU-ZA', 182200, 'HU223', NULL, NULL, 'Zala');
 
 -- Provinces (postal districts) Portugal (rowid country=25)
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES ('15001', 'PT-AV', NULL, NULL, 'AVEIRO', 'Aveiro');
