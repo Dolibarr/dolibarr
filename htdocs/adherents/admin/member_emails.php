@@ -52,8 +52,8 @@ $constantes = array(
 	'MEMBER_REMINDER_EMAIL'=>array('type'=>'yesno', 'label'=>$langs->trans('MEMBER_REMINDER_EMAIL', $langs->transnoentities("Module2300Name"))),
 	'ADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION' 	=>'emailtemplate:member',
 	'ADHERENT_EMAIL_TEMPLATE_AUTOREGISTER'			=>'emailtemplate:member',	// until Dolibarr 7 it was ADHERENT_AUTOREGISTER_MAIL
-	'ADHERENT_EMAIL_TEMPLATE_MEMBER_VALIDATION'		=>'emailtemplate:member',	// until Dolibarr 7 it was ADHERENT_MAIL_VALID 
-	'ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION'			=>'emailtemplate:member',	// until Dolibarr 7 it was ADHERENT_MAIL_COTIS 
+	'ADHERENT_EMAIL_TEMPLATE_MEMBER_VALIDATION'		=>'emailtemplate:member',	// until Dolibarr 7 it was ADHERENT_MAIL_VALID
+	'ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION'			=>'emailtemplate:member',	// until Dolibarr 7 it was ADHERENT_MAIL_COTIS
 	'ADHERENT_EMAIL_TEMPLATE_CANCELATION'			=>'emailtemplate:member',	// until Dolibarr 7 it was ADHERENT_MAIL_RESIL
 	'ADHERENT_EMAIL_TEMPLATE_EXCLUSION'				=>'emailtemplate:member',
 	'ADHERENT_MAIL_FROM'							=>'string',
