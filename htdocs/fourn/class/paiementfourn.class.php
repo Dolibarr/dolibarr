@@ -83,7 +83,7 @@ class PaiementFourn extends Paiement
 	 *	Load payment object
 	 *
 	 *	@param	int		$id         Id if payment to get
-	 *  @param	string	$ref		Ref of payment to get (currently ref = id but this may change in future)
+	 *  @param	string	$ref		Ref of payment to get
 	 *  @param	int		$fk_bank	Id of bank line associated to payment
 	 *  @return int		            <0 if KO, -2 if not found, >0 if OK
 	 */
@@ -101,7 +101,7 @@ class PaiementFourn extends Paiement
 		if ($id > 0)
 			$sql .= ' AND p.rowid = '.$id;
 		elseif ($ref)
-			$sql .= ' AND p.rowid = '.$ref;
+			$sql .= ' AND p.ref = '.$ref;
 		elseif ($fk_bank)
 			$sql .= ' AND p.fk_bank = '.$fk_bank;
 		//print $sql;
