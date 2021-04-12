@@ -77,6 +77,7 @@ $action = GETPOST('action', 'aZ09');
 
 $key = 'DV3PH';
 $id = dol_decode(GETPOST('id'), $key);
+$email = GETPOST("email");
 
 // Securekey check
 $securekey = GETPOST('securekey', 'alpha');
@@ -186,21 +187,24 @@ if (empty($reshook) && $action == 'add') {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Email"))."<br>\n";
 	}
-	if (!GETPOST("societe")) {
+	/*if (!GETPOST("societe")) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Societe"))."<br>\n";
-	}
+	}*/
 	if (GETPOST("email") && !isValidEmail(GETPOST("email"))) {
 		$error++;
 		$langs->load("errors");
 		$errmsg .= $langs->trans("ErrorBadEMail", GETPOST("email"))."<br>\n";
 	}
+	if (!GETPOST("country_id")) {
+	    $error++;
+	    $errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Country"))."<br>\n";
+	}
 
 	if (!$error) {
-		// Vérifier si client existe
+		// Vérifier si client existe par l'email
 		$thirdparty = new Societe($db);
-		$nomsociete = GETPOST("societe");
-		$resultfetchthirdparty = $thirdparty->fetch('', $nomsociete);
+		$resultfetchthirdparty = $thirdparty->fetch('','','','','','','','','','',$email);
 
 		if ($resultfetchthirdparty<0) {
 			$error++;
@@ -208,7 +212,7 @@ if (empty($reshook) && $action == 'add') {
 			$readythirdparty = -1;
 		} elseif ($resultfetchthirdparty==0) {
 			// creation of a new thirdparty
-			$thirdparty->name        = $nomsociete;
+		    $thirdparty->name        = GETPOST("societe");
 			$thirdparty->address     = GETPOST("address");
 			$thirdparty->zip         = GETPOST("zipcode");
 			$thirdparty->town        = GETPOST("town");
@@ -216,6 +220,7 @@ if (empty($reshook) && $action == 'add') {
 			$thirdparty->fournisseur = 0;
 			$thirdparty->country_id  = GETPOST("country_id", 'int');
 			$thirdparty->state_id    = GETPOST("state_id", 'int');
+			$thirdparty->email       = $email;
 
 			// Load object modCodeTiers
 			$module = (!empty($conf->global->SOCIETE_CODECLIENT_ADDON) ? $conf->global->SOCIETE_CODECLIENT_ADDON : 'mod_codeclient_leopard');
@@ -331,8 +336,10 @@ jQuery(document).ready(function () {
 
 print '<table class="border" summary="form to subscribe" id="tablesubscribe">'."\n";
 
+// Email
+print '<tr><td>'.$langs->trans("Email").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="email" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
 // Company
-print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="societe" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
+print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company").' </td><td><input type="text" name="societe" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
 // Address
 print '<tr><td>'.$langs->trans("Address").'</td><td>'."\n";
 print '<textarea name="address" id="address" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('address', 'restricthtml'), 0, 1).'</textarea></td></tr>'."\n";
@@ -343,7 +350,7 @@ print ' / ';
 print $formcompany->select_ziptown(GETPOST('town'), 'town', array('zipcode', 'selectcountry_id', 'state_id'), 0, 1);
 print '</td></tr>';
 // Country
-print '<tr><td>'.$langs->trans('Country').'</td><td>';
+print '<tr><td>'.$langs->trans('Country').'<FONT COLOR="red">*</FONT>'.'</td><td>';
 $country_id = GETPOST('country_id');
 if (!$country_id && !empty($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE)) {
 	$country_id = getCountry($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE, 2, $db, $langs);
@@ -372,8 +379,6 @@ if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
 	}
 	print '</td></tr>';
 }
-// Email
-print '<tr><td>'.$langs->trans("Email").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="email" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
 
 print "</table>\n";
 
