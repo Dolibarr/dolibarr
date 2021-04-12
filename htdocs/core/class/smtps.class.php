@@ -392,7 +392,6 @@ class SMTPs
 		} else {
 			if (function_exists('stream_socket_client') && !empty($this->_options)) {
 				$socket_context = stream_context_create($this->_options); // An array of options for stream_context_create()
-				set_error_handler([$this, 'errorHandler']);
 				$this->socket = @stream_socket_client(
 					preg_replace('@tls://@i', '', $this->getHost()).// Host to 'hit', IP or domain
 					':'.$this->getPort(), // which Port number to use

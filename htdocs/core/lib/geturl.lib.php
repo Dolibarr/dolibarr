@@ -152,20 +152,31 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		$hosttocheck = $newUrlArray['host'];
 		$hosttocheck = str_replace(array('[', ']'), '', $hosttocheck); // Remove brackets of IPv6
 
+		// Deny some reserved host names
+		if (in_array($hosttocheck, array('metadata.google.internal'))) {
+			$info['http_code'] = 400;
+			$info['content'] = 'Error bad hostname (Used by Google metadata). This value for hostname is not allowed.';
+			break;
+		}
+
+		// Clean host name $hosttocheck to convert it into an IP $iptocheck
 		if (in_array($hosttocheck, array('localhost', 'localhost.domain'))) {
 			$iptocheck = '127.0.0.1';
+		} elseif (in_array($hosttocheck, array('ip6-localhost', 'ip6-loopback'))) {
+			$iptocheck = '::1';
 		} else {
-			// TODO Resolve $iptocheck to get an IP and set CURLOPT_CONNECT_TO to use this ip
+			// TODO Resolve $hosttocheck to get the IP $iptocheck and set CURLOPT_CONNECT_TO to use this ip
 			$iptocheck = $hosttocheck;
 		}
 
 		if (!filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6)) {	// This is not an IP
-			$iptocheck = 0; //
+			$iptocheck = '0'; //
 		}
 
 		if ($iptocheck) {
 			if ($localurl == 0) {	// Only external url allowed (dangerous, may allow to get malware)
 				if (!filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+					// Deny ips like 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 0.0.0.0/8, 169.254.0.0/16, 127.0.0.0/8 et 240.0.0.0/4, ::1/128, ::/128, ::ffff:0:0/96, fe80::/10...
 					$info['http_code'] = 400;
 					$info['content'] = 'Error bad hostname IP (private or reserved range). Must be an external URL.';
 					break;
@@ -190,6 +201,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 		$info = curl_getinfo($ch); // Reading of request must be done after sending request
 		$http_code = $info['http_code'];
+
 		if ($followlocation && ($http_code == 301 || $http_code == 302 || $http_code == 303 || $http_code == 307)) {
 			$newUrl = $info['redirect_url'];
 			$maxRedirection--;

@@ -535,7 +535,7 @@ foreach ($accounts as $key => $type) {
 
 	// Account type
 	if (!empty($arrayfields['accountype']['checked'])) {
-		print '<td>';
+		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($objecttmp->type_lib[$objecttmp->type]).'">';
 		print $objecttmp->type_lib[$objecttmp->type];
 		print '</td>';
 		if (!$i) {
@@ -553,13 +553,15 @@ foreach ($accounts as $key => $type) {
 
 	// Account number
 	if (!empty($arrayfields['b.account_number']['checked'])) {
-		print '<td>';
+		print '<td class="tdoverflowmax300">';
 		if (!empty($conf->accounting->enabled) && !empty($objecttmp->account_number)) {
 			$accountingaccount = new AccountingAccount($db);
 			$accountingaccount->fetch('', $objecttmp->account_number, 1);
-			print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
+			print '<span title="'.dol_escape_htmltag($accountingaccount->account_number.' - '.$accountingaccount->label).'">';
+			print $accountingaccount->getNomUrl(0, 1, 1, '', 0);
+			print '</span>';
 		} else {
-			print $objecttmp->account_number;
+			print '<span title="'.dol_escape_htmltag($objecttmp->account_number).'">'.$objecttmp->account_number.'</span>';
 		}
 		print '</td>';
 		if (!$i) {

@@ -1072,7 +1072,7 @@ div.div-for-modal {
 
 div.div-for-modal-topright {
 	/* display: none; */
-	position:absolute;
+	position: fixed;
 	top: 0;
 	right: 0;
 	width:50%;  /* adjust as per your needs */
@@ -2284,8 +2284,8 @@ li.tmenu, li.tmenusel {
 li.tmenu:hover {
 	opacity: .50; /* show only a slight shadow */
 }
-li.tmenusel {
-	text-decoration: underline;
+li.tmenusel a.tmenusel {
+    text-decoration: underline !important;
 }
 .tmenuend .tmenuleft { width: 0px; }
 .tmenuend { display: none; }

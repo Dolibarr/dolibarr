@@ -658,20 +658,21 @@ function getGMTEasterDatetime($year)
 }
 
 /**
- *	Return the number of non working days including saturday and sunday (or not) between 2 dates in timestamp.
+ *  Return the number of non working days including Friday, Saturday and Sunday (or not) between 2 dates in timestamp.
  *  Dates must be UTC with hour, min, sec to 0.
- *	Called by function num_open_day()
+ *  Called by function num_open_day()
  *
- *	@param	    int			$timestampStart     Timestamp start (UTC with hour, min, sec = 0)
- *	@param	    int			$timestampEnd       Timestamp end (UTC with hour, min, sec = 0)
- *  @param      string		$country_code       Country code
- *	@param      int			$lastday            Last day is included, 0: no, 1:yes
- *  @param		int			$includesaturday	Include saturday as non working day (-1=use setup, 0=no, 1=yes)
- *  @param		int			$includesunday		Include sunday as non working day (-1=use setup, 0=no, 1=yes)
- *	@return   	int|string						Number of non working days or error message string if error
+ *  @param	int			$timestampStart		Timestamp start (UTC with hour, min, sec = 0)
+ *  @param	int			$timestampEnd		Timestamp end (UTC with hour, min, sec = 0)
+ *  @param	string			$country_code		Country code
+ *  @param	int			$lastday		Last day is included, 0: no, 1:yes
+ *  @param	int			$includesaturday	Include saturday as non working day (-1=use setup, 0=no, 1=yes)
+ *  @param	int			$includesunday		Include sunday as non working day (-1=use setup, 0=no, 1=yes)
+ *  @param	int			$includefriday		Include friday as non working day (-1=use setup, 0=no, 1=yes)
+ *  @return	int|string					Number of non working days or error message string if error
  *  @see num_between_day(), num_open_day()
  */
-function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', $lastday = 0, $includesaturday = -1, $includesunday = -1)
+function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', $lastday = 0, $includesaturday = -1, $includesunday = -1, $includefriday = -1)
 {
 	global $db, $conf, $mysoc;
 
@@ -685,12 +686,14 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 	if (empty($country_code)) {
 		$country_code = $mysoc->country_code;
 	}
-
+	if ($includefriday < 0) {
+		$includefriday = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY : 0);
+	}
 	if ($includesaturday < 0) {
 		$includesaturday = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY : 1);
 	}
 	if ($includesunday < 0) {
-		$includesunday   = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY : 1);
+		$includesunday = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY : 1);
 	}
 
 	$country_id = dol_getIdFromCode($db, $country_code, 'c_country', 'code', 'rowid');
@@ -775,6 +778,21 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 				//print 'annee='.$annee.' $jour='.$jour.' $mois='.$mois.' $jour_lundi_paques='.$jour_lundi_paques.' $mois_lundi_paques='.$mois_lundi_paques."\n";
 			}
 
+			//Good Friday
+			if (in_array('goodfriday', $specialdayrule)) {
+				// Pulls the date of Easter
+				$easter = getGMTEasterDatetime($annee);
+
+				// Calculates the date of Good Friday based on Easter
+				$date_good_friday  = $easter - (2 * 3600 * 24);
+				$dom_good_friday   = gmdate("d", $date_good_friday);
+				$month_good_friday = gmdate("m", $date_good_friday);
+
+				if ($dom_good_friday == $jour && $month_good_friday == $mois) {
+					$ferie = true;
+				}
+			}
+
 			if (in_array('ascension', $specialdayrule)) {
 				// Calcul du jour de l'ascension (39 days after easter day)
 				$date_paques = getGMTEasterDatetime($annee);
@@ -836,17 +854,22 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 		}
 		//print "ferie=".$ferie."\n";
 
-		// If we have to include saturday and sunday
+		// If we have to include Friday, Saturday and Sunday
 		if (!$ferie) {
-			if ($includesaturday || $includesunday) {
+			if ($includefriday || $includesaturday || $includesunday) {
 				$jour_julien = unixtojd($timestampStart);
 				$jour_semaine = jddayofweek($jour_julien, 0);
-				if ($includesaturday) {					//Saturday (6) and Sunday (0)
+				if ($includefriday) {					//Friday (5), Saturday (6) and Sunday (0)
+					if ($jour_semaine == 5) {
+							$ferie = true;
+					}
+				}
+				if ($includesaturday) {					//Friday (5), Saturday (6) and Sunday (0)
 					if ($jour_semaine == 6) {
 						$ferie = true;
 					}
 				}
-				if ($includesunday) {						//Saturday (6) and Sunday (0)
+				if ($includesunday) {					//Friday (5), Saturday (6) and Sunday (0)
 					if ($jour_semaine == 0) {
 						$ferie = true;
 					}

@@ -86,6 +86,9 @@ if ($module == 'ecm') {
 	print '<img id="refreshbutton" class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/view-refresh.png">';
 	print '</a>';
 }
+if ($permtoadd) {
+	print '<a href="'.$_SERVER["PHP_SELF"].'?action=confirmconvertimgwebp&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("GenerateImgWebp")).'"><span class="fa fa-cogs"><span></a>';
+}
 
 // Start "Add new file" area
 $nameforformuserfile = 'formuserfileecm';
@@ -133,6 +136,45 @@ if ($action == 'delete_section') {
 }
 // End confirm
 
+if ($action == 'confirmconvertimgwebp') {
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?website='.$website->ref, $langs->trans('ConfirmImgWebpCreation'), $langs->trans('ConfirmGenerateImgWebp', $object->ref), 'convertimgwebp', '', "yes", 1);
+	$action = 'file_manager';
+}
+
+if ($action == 'convertimgwebp' && $permtoadd) {
+	if ($module == 'medias') {
+		$imagefolder = $conf->website->dir_output.'/'.$websitekey.'/medias/image/'.$websitekey.'/';
+	} else {
+		$imagefolder = $conf->ecm->dir_output;
+	}
+
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+
+	$regeximgext = getListOfPossibleImageExt();
+
+	$filelist = dol_dir_list($imagefolder, "all", 1, $regeximgext);
+
+	foreach ($filelist as $filename) {
+		$filepath = $filename['fullname'];
+		if (!(substr_compare($filepath, 'webp', -strlen('webp')) === 0)) {
+			if (image_format_supported($filepath) == 1) {
+				$filepathnoext = preg_replace("/\..*/", "", $filepath);
+				$result = dol_imageResizeOrCrop($filepath, 0, 0, 0, 0, 0, $filepathnoext.'.webp');
+				if (!dol_is_file($result)) {
+					$error++;
+					setEventMessages($result, null, 'errors');
+				}
+			}
+		}
+		if ($error) {
+			break;
+		}
+	}
+	if (!$error) {
+		setEventMessages($langs->trans('SucessConvertImgWebp'), null);
+	}
+	$action = 'file_manager';
+}
 
 if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg_match('/refresh/i', $action) || $action == 'delete') {
 	$langs->load("ecm");
