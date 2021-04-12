@@ -493,11 +493,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	//$keyforbreak='fieldkeytoswitchonsecondcolumn';	// We change column just before this field
 	//unset($object->fields['fk_project']);				// Hide field already shown in banner
 	//unset($object->fields['fk_soc']);					// Hide field already shown in banner
-	$link_subscription = 'http://localhost/dolibarr/htdocs/public/eventorganization/attendee_subscription.php?id=';
-	//$link_subscription .= base64_encode($id);
+	global $dolibarr_main_url_root;
+	$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_subscription.php?id=';
 	$key = 'DV3PH';
 	$link_subscription .= dol_encode($id, $key);
-	$link_subscription .= '&securekey='.$conf->global->EVENTORGANIZATION_SECUREKEY;
+	$link_subscription .= '&securekey='.urlencode($conf->global->EVENTORGANIZATION_SECUREKEY);
 	$object->fields['pubregister'] = array('type'=>'url', 'label'=>'Lien public d\'enregistrement à une conférence', 'enabled'=>'1', 'position'=>72, 'notnull'=>0, 'visible'=>1);
 	$object->pubregister = $link_subscription;
 	$keyforbreak='pubregister';
