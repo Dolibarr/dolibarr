@@ -81,6 +81,7 @@ PriceOfBoothHelp=Subscription price to stand a booth
 EventOrganizationICSLink=Link ICS for events
 ConferenceOrBoothInformation=Conference Or Booth informations
 Attendees = Attendees
+EVENTORGANIZATION_SECUREKEY = Secure Key of the public registration link to a conference
 #
 # Status
 #
