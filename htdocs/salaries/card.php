@@ -492,7 +492,7 @@ if ($action == 'create') {
 	// Bank
 	if (!empty($conf->banque->enabled)) {
 		print '<tr><td id="label_fk_account">';
-		print $form->editfieldkey('BankAccount', 'selectaccountid', '', $object, 0, 'string', '', 1).'</td><td>';
+		print $form->editfieldkey('DefaultBankAccount', 'selectaccountid', '', $object, 0, 'string', '', 1).'</td><td>';
 		print img_picto('', 'bank_account', 'class="paddingrighonly"');
 		$form->select_comptes($accountid, "accountid", 0, '', 1); // Affiche liste des comptes courant
 		print '</td></tr>';
@@ -500,7 +500,7 @@ if ($action == 'create') {
 
 	// Type payment
 	print '<tr><td id="label_type_payment">';
-	print $form->editfieldkey('PaymentMode', 'selectpaymenttype', '', $object, 0, 'string', '', 1).'</td><td>';
+	print $form->editfieldkey('DefaultPaymentMode', 'selectpaymenttype', '', $object, 0, 'string', '', 1).'</td><td>';
 	$form->select_types_paiements(GETPOST("paymenttype", 'aZ09'), "paymenttype", '');
 	print '</td></tr>';
 
@@ -687,12 +687,12 @@ if ($id) {
 	print '<table class="border centpercent tableforfield">';
 
 	if ($action == 'edit') {
-		print '<tr><td>'.$langs->trans("DateStartPeriod")."</td><td>";
+		print '<tr><td class="titlefield">'.$langs->trans("DateStartPeriod")."</td><td>";
 		print $form->selectDate($object->datesp, 'datesp', 0, 0, 0, 'datesp', 1);
 		print "</td></tr>";
 	} else {
 		print "<tr>";
-		print '<td>' . $langs->trans("DateStartPeriod") . '</td><td>';
+		print '<td class="titlefield">' . $langs->trans("DateStartPeriod") . '</td><td>';
 		print dol_print_date($object->datesp, 'day');
 		print '</td></tr>';
 	}
@@ -723,10 +723,10 @@ if ($id) {
 		print '<tr><td>' . $langs->trans("Amount") . '</td><td>' . price($object->amount, 0, $outputlangs, 1, -1, -1, $conf->currency) . '</td></tr>';
 	}
 
-	// Mode of payment
+	// Default mode of payment
 	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
-	print $langs->trans('PaymentMode');
+	print $langs->trans('DefaultPaymentMode');
 	print '</td>';
 	if ($action != 'editmode')
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
@@ -740,11 +740,11 @@ if ($id) {
 	}
 	print '</td></tr>';
 
-	// Bank Account
+	// Default Bank Account
 	if (!empty($conf->banque->enabled)) {
 		print '<tr><td class="nowrap">';
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
-		print $langs->trans('BankAccount');
+		print $langs->trans('DefaultBankAccount');
 		print '<td>';
 		if ($action != 'editbankaccount' && $user->rights->salaries->write) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';

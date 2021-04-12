@@ -65,6 +65,7 @@ if (!empty($user->socid)) {
 $result = restrictedArea($user, 'commande', $id);
 
 $object = new Commande($db);
+$shipment = new Expedition($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
@@ -77,7 +78,8 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'expedition', $object->id, '');
+
+$result = restrictedArea($user, 'expedition', 0, '');	// We use 0 for id, because there is no particular shipment on this tab, only id of order is known
 
 
 
@@ -94,13 +96,11 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	// Categorisation dans projet
 	if ($action == 'classin') {
-		$object = new Commande($db);
 		$object->fetch($id);
 		$object->setProject(GETPOST('projectid', 'int'));
 	}
 
 	if ($action == 'confirm_cloture' && GETPOST('confirm', 'alpha') == 'yes') {
-		$object = new Commande($db);
 		$object->fetch($id);
 		$result = $object->cloture($user);
 	} elseif ($action == 'setref_client' && $user->rights->commande->creer) {
@@ -132,7 +132,6 @@ if (empty($reshook)) {
 	}
 	*/
 	if ($action == 'setmode' && $user->rights->commande->creer) {
-		$object = new Commande($db);
 		$object->fetch($id);
 		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
 		if ($result < 0) {
@@ -141,7 +140,6 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'setavailability' && $user->rights->commande->creer) {
-		$object = new Commande($db);
 		$object->fetch($id);
 		$result = $object->availability(GETPOST('availability_id'));
 		if ($result < 0) {
@@ -150,7 +148,6 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'setdemandreason' && $user->rights->commande->creer) {
-		$object = new Commande($db);
 		$object->fetch($id);
 		$result = $object->demand_reason(GETPOST('demand_reason_id'));
 		if ($result < 0) {
@@ -159,7 +156,6 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'setconditions' && $user->rights->commande->creer) {
-		$object = new Commande($db);
 		$object->fetch($id);
 		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
 		if ($result < 0) {
@@ -175,7 +171,6 @@ if (empty($reshook)) {
 
 	// shipping method
 	if ($action == 'setshippingmethod' && $user->rights->commande->creer) {
-		$object = new Commande($db);
 		$object->fetch($id);
 		$result = $object->setShippingMethod(GETPOST('shipping_method_id', 'int'));
 		if ($result < 0) {
@@ -185,7 +180,6 @@ if (empty($reshook)) {
 
 	// warehouse
 	if ($action == 'setwarehouse' && $user->rights->commande->creer) {
-		$object = new Commande($db);
 		$object->fetch($id);
 		$result = $object->setWarehouse(GETPOST('warehouse_id', 'int'));
 		if ($result < 0) {

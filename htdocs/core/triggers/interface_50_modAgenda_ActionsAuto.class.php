@@ -942,6 +942,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$societeforaction->fetch($object->socid);
 		} elseif (isset($object->fk_soc) && $object->fk_soc > 0) {
 			$societeforaction->fetch($object->fk_soc);
+		} elseif (isset($object->thirdparty) && isset($object->thirdparty->id) && $object->thirdparty->id > 0) {
+			$societeforaction = $object->thirdparty;
 		}
 
 		$projectid = isset($object->fk_project) ? $object->fk_project : 0;

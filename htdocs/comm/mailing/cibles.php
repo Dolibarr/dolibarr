@@ -104,9 +104,9 @@ if ($action == 'add') {
 	}
 	if ($result > 0) {
 		setEventMessages($langs->trans("XTargetsAdded", $result), null, 'mesgs');
-
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
-		exit;
+		//header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+		//exit;
+		$action = '';
 	}
 	if ($result == 0) {
 		setEventMessages($langs->trans("WarningNoEMailsAdded"), null, 'warnings');
@@ -655,21 +655,21 @@ if ($object->fetch($id) >= 0) {
 				print '</td>';
 
 				// Date last update
-				print '<td class="center">';
+				print '<td class="center nowraponall">';
 				print dol_print_date($obj->tms, 'dayhour');
 				print '</td>';
 
 				// Status of recipient sending email (Warning != status of emailing)
 				if ($obj->statut == 0) {
 					// Date sent
-					print '<td align="center">&nbsp;</td>';
+					print '<td align="center"></td>';
 
 					print '<td class="nowrap right">';
 					print $object::libStatutDest($obj->statut, 2, '');
 					print '</td>';
 				} else {
 					// Date sent
-					print '<td class="center">'.$obj->date_envoi.'</td>';
+					print '<td class="center nowraponall">'.$obj->date_envoi.'</td>';
 
 					print '<td class="nowrap right">';
 					print $object::libStatutDest($obj->statut, 2, $obj->error_text);

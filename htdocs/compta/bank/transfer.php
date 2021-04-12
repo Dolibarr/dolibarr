@@ -46,9 +46,11 @@ $error = 0;
 
 $hookmanager->initHooks(array('banktransfer'));
 
+
 /*
  * Actions
  */
+
 $parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
@@ -95,8 +97,17 @@ if ($action == 'add') {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AmountTo")), null, 'errors');
 			}
 		}
+		if ($amountto < 0) {
+			$error++;
+			setEventMessages($langs->trans("AmountMustBePositive"), null, 'errors');
+		}
 
-		if (($accountto->id != $accountfrom->id) && empty($error)) {
+		if ($accountto->id == $accountfrom->id) {
+			$error++;
+			setEventMessages($langs->trans("ErrorFromToAccountsMustDiffers"), null, 'errors');
+		}
+
+		if (empty($error)) {
 			$db->begin();
 
 			$bank_line_id_from = 0;
@@ -148,9 +159,6 @@ if ($action == 'add') {
 				setEventMessages($accountfrom->error.' '.$accountto->error, null, 'errors');
 				$db->rollback();
 			}
-		} else {
-			$error++;
-			setEventMessages($langs->trans("ErrorFromToAccountsMustDiffers"), null, 'errors');
 		}
 	}
 }
@@ -255,7 +263,8 @@ print '<input type="hidden" name="action" value="add">';
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("TransferFrom").'</td><td>'.$langs->trans("TransferTo").'</td><td>'.$langs->trans("Date").'</td><td>'.$langs->trans("Description").'</td><td>'.$langs->trans("Amount").'</td>';
+print '<td>'.$langs->trans("TransferFrom").'</td><td>'.$langs->trans("TransferTo").'</td><td>'.$langs->trans("Date").'</td><td>'.$langs->trans("Description").'</td>';
+print '<td class="right">'.$langs->trans("Amount").'</td>';
 print '<td style="display:none" class="multicurrency">'.$langs->trans("AmountToOthercurrency").'</td>';
 print '</tr>';
 
@@ -271,13 +280,13 @@ print "<td>";
 print $form->selectDate((!empty($dateo) ? $dateo : ''), '', '', '', '', 'add');
 print "</td>\n";
 print '<td><input name="label" class="flat quatrevingtpercent" type="text" value="'.dol_escape_htmltag($label).'"></td>';
-print '<td><input name="amount" class="flat" type="text" size="6" value="'.dol_escape_htmltag($amount).'"></td>';
+print '<td class="right"><input name="amount" class="flat right" type="text" size="6" value="'.dol_escape_htmltag($amount).'"></td>';
 print '<td style="display:none" class="multicurrency"><input name="amountto" class="flat" type="text" size="6" value="'.dol_escape_htmltag($amountto).'"></td>';
 
 print "</table>";
 print '</div>';
 
-print '<br><div class="center"><input type="submit" class="button" value="'.$langs->trans("Add").'"></div>';
+print '<br><div class="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></div>';
 
 print "</form>";
 
