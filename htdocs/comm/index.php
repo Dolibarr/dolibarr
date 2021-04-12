@@ -100,59 +100,6 @@ print load_fiche_titre($langs->trans("CommercialArea"), '', 'commercial');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-// This is useless due to the global search combo
-if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {
-	// Search proposal
-	if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
-		$listofsearchfields['search_proposal'] = array('text'=>'Proposal');
-	}
-	// Search customer order
-	if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
-		$listofsearchfields['search_customer_order'] = array('text'=>'CustomerOrder');
-	}
-	// Search supplier proposal
-	if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire) {
-		$listofsearchfields['search_supplier_proposal'] = array('text'=>'SupplierProposalShort');
-	}
-	// Search supplier order
-	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->commande->lire) || (!empty($conf->supplier_order->enabled) && $user->rights->supplier_order->lire)) {
-		$listofsearchfields['search_supplier_order'] = array('text'=>'SupplierOrder');
-	}
-	// Search intervention
-	if (!empty($conf->ficheinter->enabled) && $user->rights->ficheinter->lire) {
-		$listofsearchfields['search_intervention'] = array('text'=>'Intervention');
-	}
-	// Search contract
-	if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire) {
-		$listofsearchfields['search_contract'] = array('text'=>'Contract');
-	}
-
-	if (count($listofsearchfields)) {
-		print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
-		print '<input type="hidden" name="token" value="'.newToken().'">';
-		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder nohover centpercent">';
-		$i = 0;
-		foreach ($listofsearchfields as $key => $value) {
-			if ($i == 0) {
-				print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-			}
-			print '<tr '.$bc[false].'>';
-			print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
-			if ($i == 0) {
-				print '<td class="noborderbottom" rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button "></td>';
-			}
-			print '</tr>';
-			$i++;
-		}
-		print '</table>';
-		print '</div>';
-		print '</form>';
-		print '<br>';
-	}
-}
-
-
 /*
  * Draft customer proposals
  */

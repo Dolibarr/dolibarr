@@ -50,6 +50,12 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
+$max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
+
+// Maximum elements of the tables
+$maxDraftCount = empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD;
+$maxLatestEditCount = 5;
+$maxOpenCount = empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD;
 
 
 /*
@@ -69,19 +75,6 @@ print load_fiche_titre($langs->trans("OrdersArea"), '', 'order');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
-
-if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This is useless due to the global search combo
-	// Search customer orders
-	print '<form method="post" action="'.DOL_URL_ROOT.'/commande/list.php">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder nohover centpercent">';
-	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-	print '<tr class="oddeven"><td>';
-	print $langs->trans("CustomerOrder").':</td><td><input type="text" class="flat" name="sall" size=18></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-	print "</table></div></form><br>\n";
-}
-
 
 /*
  * Statistics

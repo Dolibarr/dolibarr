@@ -1751,6 +1751,7 @@ CREATE_NEW_VAT_WITHOUT_AUTO_PAYMENT=Keep the checkbox “Automatically create th
 ##### Agenda #####
 AgendaSetup=Events and agenda module setup
 PasswordTogetVCalExport=Key to authorize export link
+SecurityKey = Security Key
 PastDelayVCalExport=Do not export event older than
 AGENDA_USE_EVENT_TYPE=Use events types (managed in menu Setup -> Dictionaries -> Type of agenda events)
 AGENDA_USE_EVENT_TYPE_DEFAULT=Automatically set this default value for type of event in event create form
