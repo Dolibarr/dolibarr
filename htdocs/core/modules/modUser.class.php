@@ -230,7 +230,8 @@ class modUser extends DolibarrModules
 		    'u.birth'=>'BirthdayDate',
 		    'u.datec'=>"DateCreation", 'u.tms'=>"DateLastModification",
 			'u.admin'=>"Administrator", 'u.statut'=>'Status', 'u.datelastlogin'=>'LastConnexion', 'u.datepreviouslogin'=>'PreviousConnexion',
-			'u.fk_socpeople'=>"IdContact", 'u.fk_soc'=>"IdCompany", 'u.fk_member'=>"MemberId"
+			'u.fk_socpeople'=>"IdContact", 'u.fk_soc'=>"IdCompany", 'u.fk_member'=>"MemberId",
+			'g.nom'=>"Group"
 		);
 		$this->export_TypeFields_array[$r] = array(
 			'u.rowid'=>'Numeric', 'u.login'=>"Text", 'u.lastname'=>"Text", 'u.firstname'=>"Text", 'u.employee'=>'Boolean', 'u.job'=>'Text',
@@ -240,7 +241,8 @@ class modUser extends DolibarrModules
 			'u.email'=>'Text', 'u.datec'=>"Date", 'u.tms'=>"Date", 'u.admin'=>"Boolean", 'u.statut'=>'Status', 'u.note'=>"Text", 'u.datelastlogin'=>'Date',
 		    'u.fk_user'=>"List:user:login",
 		    'u.birth'=>'Date',
-		    'u.datepreviouslogin'=>'Date', 'u.fk_soc'=>"List:societe:nom:rowid", 'u.fk_member'=>"List:adherent:firstname"
+		    'u.datepreviouslogin'=>'Date', 'u.fk_soc'=>"List:societe:nom:rowid", 'u.fk_member'=>"List:adherent:firstname",
+			'g.nom'=>"Text"
 		);
 		$this->export_entities_array[$r] = array(
 			'u.rowid'=>"user", 'u.login'=>"user", 'u.lastname'=>"user", 'u.firstname'=>"user", 'u.employee'=>'user', 'u.job'=>'user', 'u.gender'=>'user',
@@ -253,7 +255,8 @@ class modUser extends DolibarrModules
 		    'u.birth'=>'user',
 		    'u.datec'=>"user", 'u.tms'=>"user",
 		    'u.admin'=>"user", 'u.statut'=>'user', 'u.datelastlogin'=>'user', 'u.datepreviouslogin'=>'user',
-		    'u.fk_socpeople'=>"contact", 'u.fk_soc'=>"company", 'u.fk_member'=>"member"
+		    'u.fk_socpeople'=>"contact", 'u.fk_soc'=>"company", 'u.fk_member'=>"member",
+			'g.nom'=>"user"
 		);
 		$keyforselect = 'user'; $keyforelement = 'user'; $keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
@@ -265,6 +268,8 @@ class modUser extends DolibarrModules
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'user as u';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user_extrafields as extra ON u.rowid = extra.fk_object';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'usergroup_user as ug ON u.rowid = ug.fk_user';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'usergroup as g ON ug.fk_usergroup = g.rowid';
 		$this->export_sql_end[$r] .= ' WHERE u.entity IN ('.getEntity('user').')';
 
 		// Imports
