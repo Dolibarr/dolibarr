@@ -145,7 +145,7 @@ if ($object->id)
 	print dol_get_fiche_end();
 
 	$permission = $user->rights->tax->charges->creer;
-	$permtoedit = $user->rights->fournisseur->facture->creer;
+	$permtoedit = $user->rights->tax->charges->creer;
 	$param = '&id='.$object->id;
 	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {

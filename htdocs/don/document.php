@@ -182,7 +182,7 @@ if ($object->id)
 	print dol_get_fiche_end();
 
 	$modulepart = 'don';
-	$permission = $user->rights->don->lire;
+	$permission = $user->rights->don->creer;
 	$permtoedit = $user->rights->don->creer;
 	$param = '&id='.$object->id;
 	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
