@@ -91,3 +91,10 @@ EvntOrgConfirmed = Confirmed
 EvntOrgNotQualified = Not Qualified
 EvntOrgDone = Done
 EvntOrgCancelled = Cancelled
+#
+# Public page
+#
+MissingOrBadSecureKey = The security key is invalid or missing
+EvntOrgWelcomeMessage = This form allows you to register as a new participant to the conference 
+EvntOrgStartDuration = This conference starts on 
+EvntOrgEndDuration =  and ends on
