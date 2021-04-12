@@ -256,36 +256,6 @@ class MouvementStock extends CommonObject
 				return -2;
 			}
 
-
-			// check unicity for input serial numbered equipments ( different for lots managed products)
-			if ( $product->status_batch == 2 && ($type == 0 || $type == 3) )
-			{
-				if ( $qty > 1 )
-				{
-					$this->errors[] = $langs->trans("TooManyQtyForSerialNumber", $product->ref, $batch);
-					$this->db->rollback();
-					return -2;
-				}
-			}
-
-			// check if batch is in warehouse before removing it
-			if ($type == 1 || $type == 2)
-			{
-				$batchcount = $this->getBatchCount($fk_product, $batch, $entrepot_id);
-				if ( $batchcount <= 0 )
-				{
-					$this->errors[] = $langs->trans("BatchNotFoundInWareHouse", $batch, $product->ref);
-					$this->db->rollback();
-					return -2;
-				}
-				elseif ( $batchcount < $qty )
-				{
-					$this->errors[] = $langs->trans("NotEnoughBatchInWareHouse", $product->ref, $batch);
-					$this->db->rollback();
-					return -2;
-				}
-			}
-
 			// Check table llx_product_lot from batchnumber for same product
 			// If found and eatby/sellby defined into table and provided and differs, return error
 			// If found and eatby/sellby defined into table and not provided, we take value from table
@@ -421,6 +391,17 @@ class MouvementStock extends CommonObject
 		// Define if we must make the stock change (If product type is a service or if stock is used also for services)
 		$movestock = 0;
 		if ($product->type != Product::TYPE_SERVICE || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) $movestock = 1;
+
+		// check unicity for serial numbered equipments ( different for lots managed products)
+		if ( $movestock && $product->status_batch == 2 )
+		{
+			if ( abs($qty) > 1 )
+			{
+				$this->errors[] = $langs->trans("TooManyQtyForSerialNumber", $product->ref, $batch);
+				$this->db->rollback();
+				return -2;
+			}
+		}
 
 		// Check if stock is enough when qty is < 0
 		// Note that qty should be > 0 with type 0 or 3, < 0 with type 1 or 2.

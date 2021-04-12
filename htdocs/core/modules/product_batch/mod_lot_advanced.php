@@ -131,6 +131,8 @@ class mod_lot_advanced extends ModeleNumRefBatch
 		// We get cursor rule
 		$mask = $conf->global->BATCH_ADVANCED_MASK;
 
+		if ( ! empty($object->batch_mask) ) $mask = $object->batch_mask;
+
 		if (!$mask) {
 			$this->error = 'NotConfigured';
 			return 0;

@@ -28,6 +28,4 @@ SerialNumberAlreadyInUse=Serial number %s is already used for product %s
 TooManyQtyForSerialNumber=You can only have one product %s for serial number %s
 BatchLotNumberingModules=Options for automatic generation of batch products managed by lots
 BatchSerialNumberingModules=Options for automatic generation of batch products managed by serial numbers
-BatchNotFoundInWareHouse=Batch %s not found in warehouse for product %s
-NotEnoughBatchInWareHouse=Not enough batch %s found in warehouse for product %s
 QtyToAddAfterBarcodeScan=Qty to add for each barcode/lot/serial scanned
