@@ -222,6 +222,7 @@ if (empty($reshook))
 	    $object->modelpdf = GETPOST('model', 'alpha');
 	    $object->note_private = GETPOST('note_private', 'none');
 	    $object->note_public = GETPOST('note_public', 'none');
+		$selectedLines = GETPOST('toselect', 'array');
 
 		if ($object->socid > 0)
 		{
@@ -289,6 +290,8 @@ if (empty($reshook))
 
 						for ($i = 0; $i < $num; $i++)
 						{
+							if (!in_array($lines[$i]->id, $selectedLines)) continue; // Skip unselected lines
+
 							$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : Product::TYPE_PRODUCT);
 
 							if ($product_type == Product::TYPE_SERVICE || !empty($conf->global->FICHINTER_PRINT_PRODUCTS)) { //only services except if config includes products
@@ -1045,7 +1048,6 @@ if ($action == 'create')
     	print '<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 		print '</div>';
 
-		print '</form>';
 
 		// Show origin lines
 		if (!empty($origin) && !empty($originid) && is_object($objectsrc)) {
@@ -1058,6 +1060,7 @@ if ($action == 'create')
 
 			print '</table>';
 		}
+		print '</form>';
 	}
 	else
 	{
