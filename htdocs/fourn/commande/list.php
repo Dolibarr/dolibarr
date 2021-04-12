@@ -895,7 +895,7 @@ if ($resql) {
 	if (!empty($socid)) {
 		$url .= '&socid='.$socid;
 	}
-	$newcardbutton = dolGetButtonTitle($langs->trans('NewOrder'), '', 'fa fa-plus-circle', $url, '', $user->rights->fournisseur->commande->creer);
+	$newcardbutton = dolGetButtonTitle($langs->trans('NewOrder'), '', 'fa fa-plus-circle', $url, '', ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer));
 
 	// Lines of title fields
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -1594,8 +1594,8 @@ if ($resql) {
 	$urlsource .= str_replace('&amp;', '&', $param);
 
 	$filedir = $diroutputmassaction;
-	$genallowed = $user->rights->fournisseur->commande->lire;
-	$delallowed = $user->rights->fournisseur->commande->creer;
+	$genallowed = ($user->rights->fournisseur->commande->lire || $user->rights->supplier_order->lire);
+	$delallowed = ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer);
 
 	print $formfile->showdocuments('massfilesarea_supplier_order', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 } else {

@@ -112,7 +112,7 @@ $usercansend = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->
 
 // Additional area permissions
 $usercanclose = $user->rights->supplier_proposal->cloturer;
-$usercancreateorder = $user->rights->fournisseur->commande->creer;
+$usercancreateorder = ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer);
 
 // Permissions for includes
 $permissionnote = $usercancreate; // Used by the include of actions_setnotes.inc.php

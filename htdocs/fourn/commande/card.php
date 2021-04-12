@@ -122,24 +122,24 @@ if ($id > 0 || !empty($ref)) {
 }
 
 // Common permissions
-$usercanread = $user->rights->fournisseur->commande->lire;
-$usercancreate			= $user->rights->fournisseur->commande->creer;
-$usercandelete			= $user->rights->fournisseur->commande->supprimer;
+$usercanread	= ($user->rights->fournisseur->commande->lire || $user->rights->supplier_order->lire);
+$usercancreate	= ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer);
+$usercandelete	= ($user->rights->fournisseur->commande->supprimer || $user->rights->supplier_order->supprimer);
 
 // Advanced permissions
-$usercanvalidate		= ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($usercancreate)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->supplier_order_advance->validate)));
+$usercanvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($usercancreate)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->supplier_order_advance->validate)));
 
 // Additional area permissions
 $usercanapprove			= $user->rights->fournisseur->commande->approuver;
-$usercanapprovesecond = $user->rights->fournisseur->commande->approve2;
-$usercanorder = $user->rights->fournisseur->commande->commander;
+$usercanapprovesecond	= $user->rights->fournisseur->commande->approve2;
+$usercanorder			= $user->rights->fournisseur->commande->commander;
 $usercanreceived		= $user->rights->fournisseur->commande->receptionner;
 
 // Permissions for includes
-$permissionnote			= $usercancreate; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $usercancreate; // Used by the include of actions_dellink.inc.php
-$permissiontoedit = $usercancreate; // Used by the include of actions_lineupdown.inc.php
-$permissiontoadd		= $usercancreate; // Used by the include of actions_addupdatedelete.inc.php
+$permissionnote		= $usercancreate; // Used by the include of actions_setnotes.inc.php
+$permissiondellink	= $usercancreate; // Used by the include of actions_dellink.inc.php
+$permissiontoedit	= $usercancreate; // Used by the include of actions_lineupdown.inc.php
+$permissiontoadd	= $usercancreate; // Used by the include of actions_addupdatedelete.inc.php
 
 
 /*

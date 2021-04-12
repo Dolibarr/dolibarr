@@ -129,7 +129,7 @@ if ($object->id > 0) {
 	if (!empty($conf->projet->enabled)) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-		if ($user->rights->fournisseur->commande->creer) {
+		if ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer) {
 			if ($action != 'classify') {
 				//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 				$morehtmlref .= ' : ';
@@ -176,8 +176,8 @@ if ($object->id > 0) {
 
 
 	$modulepart = 'commande_fournisseur';
-	$permission = $user->rights->fournisseur->commande->creer;
-	$permtoedit = $user->rights->fournisseur->commande->creer;
+	$permission = ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer);
+	$permtoedit = ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer);
 	$param = '&id='.$object->id;
 	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {

@@ -425,7 +425,7 @@ $listofreferent = array(
 	'urlnew'=>DOL_URL_ROOT.'/fourn/commande/card.php?action=create&projectid='.$id, // No socid parameter here, the socid is often the customer and we create a supplier object
 	'lang'=>'suppliers',
 	'buttonnew'=>'AddSupplierOrder',
-	'testnew'=>($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->lire),
+	'testnew'=>($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer),
 	'test'=>$conf->supplier_order->enabled && ($user->rights->fournisseur->commande->lire || $user->rights->supplier_order->lire)),
 'invoice_supplier'=>array(
 	'name'=>"BillsSuppliers",
