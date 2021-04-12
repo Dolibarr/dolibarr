@@ -50,7 +50,7 @@ if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
 if (!empty($conf->propal->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
-if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled)) {
+if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
 }
@@ -745,7 +745,7 @@ if ($action == 'create') {
 
 			// Ref
 			print '<tr><td class="titlefieldcreate fieldrequired">';
-			if ($origin == 'supplierorder' && (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled))) {
+			if ($origin == 'supplierorder' && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled))) {
 				print $langs->trans("RefOrder").'</td><td colspan="3"><a href="'.DOL_URL_ROOT.'/fourn/commande/card.php?id='.$object->id.'">'.img_object($langs->trans("ShowOrder"), 'order').' '.$object->ref;
 			}
 			if ($origin == 'propal' && !empty($conf->propal->enabled)) {
@@ -1270,7 +1270,7 @@ if ($action == 'create') {
 			$objectsrc = new Propal($db);
 			$objectsrc->fetch($object->$typeobject->id);
 		}
-		if ($typeobject == 'CommandeFournisseur' && $object->$typeobject->id && (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled))) {
+		if ($typeobject == 'CommandeFournisseur' && $object->$typeobject->id && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled))) {
 			$objectsrc = new CommandeFournisseur($db);
 			$objectsrc->fetch($object->$typeobject->id);
 		}
@@ -1982,7 +1982,7 @@ if ($action == 'create') {
 			}
 
 			// Create bill
-			if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_invoice->enabled)) && ($object->statut == Reception::STATUS_VALIDATED || $object->statut == Reception::STATUS_CLOSED)) {
+			if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_invoice->enabled)) && ($object->statut == Reception::STATUS_VALIDATED || $object->statut == Reception::STATUS_CLOSED)) {
 				if ($user->rights->fournisseur->facture->creer) {
 					// TODO show button only   if (! empty($conf->global->WORKFLOW_BILL_ON_RECEPTION))
 					// If we do that, we must also make this option official.
@@ -1996,7 +1996,7 @@ if ($action == 'create') {
 				if ($user->rights->reception->creer && $object->statut > 0 && !$object->billed) {
 					$label = "Close"; $paramaction = 'classifyclosed'; // = Transferred/Received
 					// Label here should be "Close" or "ClassifyBilled" if we decided to make bill on receptions instead of orders
-					if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled)) && !empty($conf->global->WORKFLOW_BILL_ON_RECEPTION)) {  // Quand l'option est on, il faut avoir le bouton en plus et non en remplacement du Close ?
+					if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled)) && !empty($conf->global->WORKFLOW_BILL_ON_RECEPTION)) {  // Quand l'option est on, il faut avoir le bouton en plus et non en remplacement du Close ?
 						$label = "ClassifyBilled";
 						$paramaction = 'classifybilled';
 					}
