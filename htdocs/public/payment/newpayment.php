@@ -4,6 +4,7 @@
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2018	    Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018-2019	Thibault FOUCART	    <support@ptibogxiv.net>
+ * Copyright (C) 2021		Waël Almoman	    	<info@almoman.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1435,6 +1436,39 @@ if ($source == 'membersubscription') {
 
 		if (empty($amount) && !GETPOST('newamount', 'alpha')) {
 			$_GET['newamount'] = $member->last_subscription_amount;
+		}
+	}
+
+	if ($member->type) {
+		// Last member type
+		print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("LastMemberType");
+		print '</td><td class="CTableRow'.($var ? '1' : '2').'">'.dol_escape_htmltag($member->type);
+		print "</td></tr>\n";
+	}
+
+	if (!empty($conf->global->MEMBER_SUBSCRIPTION_AMOUNT_BY_TYPE)) {
+		// Amount by member type
+		$amountbytype = json_decode($conf->global->MEMBER_SUBSCRIPTION_AMOUNT_BY_TYPE, true);
+				// Set the member type
+		$member->typeid = (int) (GETPOSTISSET("typeid") ? GETPOST("typeid", 'int') : $member->typeid);
+		// If we change the type of membership, we set also label of new type
+		$member->type = dol_getIdFromCode($db, $member->typeid, 'adherent_type', 'rowid', 'libelle');
+		// Set amount for the subscription
+		$amount = $amountbytype[$member->typeid] ? $amountbytype[$member->typeid]  : $member->last_subscription_amount;
+		// list member type
+		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
+		$adht = new AdherentType($db);
+		if ( !$action) {
+			$form = new Form($db); // so we can call method selectarray
+			print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("NewSubscription");
+			print '</td><td class="CTableRow'.($var ? '1' : '2').'">';
+			print $form->selectarray("typeid", $adht->liste_array(1), $member->typeid, 0, 0, 0, 'onchange="window.location.replace(\''.$urlwithroot.'/public/payment/newpayment.php?source='.urlencode($source).'&ref='.urlencode($ref).'&amount='.urlencode($amount).'&typeid=\' + this.value + \'&securekey='.urlencode($SECUREKEY).'\');"', 0, 0, 0, '', '', 1);
+			print "</td></tr>\n";
+		} elseif ($action == dopayment) {
+			print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("NewMemberType");
+			print '</td><td class="CTableRow'.($var ? '1' : '2').'">'.dol_escape_htmltag($member->type);
+			print '<input type="hidden" name="membertypeid" value="'.$member->typeid.'">';
+			print "</td></tr>\n";
 		}
 	}
 

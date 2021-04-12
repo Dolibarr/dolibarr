@@ -116,6 +116,7 @@ body {
 	margin-right: 0;
 	margin-left: 0;
 	font-weight: 400;
+	background-color: var(--colorbackbody);
 	<?php print 'direction: '.$langs->trans("DIRECTION").";\n"; ?>
 }
 
@@ -987,7 +988,7 @@ div.div-for-modal {
 
 div.div-for-modal-topright {
 	/* display: none; */
-	position:absolute;
+	position: fixed;
 	top: 0;
 	right: 0;
 	width:50%;  /* adjust as per your needs */
@@ -1696,6 +1697,11 @@ td.showDragHandle {
 	z-index: 1001;
 }
 <?php } ?>
+<?php if (!empty($conf->global->THEME_DARKMODEENABLED)) {  ?>
+.side-nav-vert {
+	border-bottom: 1px solid #888;
+}
+<?php } ?>
 
 .side-nav {
 	/*display: block;
@@ -2071,7 +2077,7 @@ span.widthpictotitle.pictotitle {
 	opacity: 0.4;
 }
 .pictofixedwidth {
-	text-align: left;
+	text-align: <?php echo $left; ?>;
 	width: 20px;
 	padding-right: 0;
 }
@@ -2810,7 +2816,7 @@ a.help:link, a.help:visited, a.help:hover, a.help:active, span.help { text-align
 .helppresentcircle {
 	color: var(--colorbackhmenu1);
 	filter: invert(0.8);
-	margin-left: -7px;
+	margin-<?php echo $left ?>: -7px;
 	display: inline-block;
 	margin-top: -10px;
 	font-size: x-small;
@@ -5709,7 +5715,7 @@ input.select2-input {
 	-webkit-box-shadow: none !important;
 	box-shadow: none !important;
 	border-radius: 0 !important;
-	color: black;
+	/* color: black; */
 }
 .select2-container-active .select2-choice, .select2-container-active .select2-choices
 {

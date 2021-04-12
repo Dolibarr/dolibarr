@@ -1023,7 +1023,7 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 
 		if (empty($alreadygrabbed[$urltograbbis])) {
 			if ($grabimages) {
-				$tmpgeturl = getURLContent($urltograbbis);
+				$tmpgeturl = getURLContent($urltograbbis, 'GET', '', 1, array(), array('http', 'https'), 0);
 				if ($tmpgeturl['curl_error_no']) {
 					$error++;
 					setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['curl_error_msg'], null, 'errors');
@@ -1094,7 +1094,7 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 
 		if (empty($alreadygrabbed[$urltograbbis])) {
 			if ($grabimages) {
-				$tmpgeturl = getURLContent($urltograbbis);
+				$tmpgeturl = getURLContent($urltograbbis, 'GET', '', 1, array(), array('http', 'https'), 0);
 				if ($tmpgeturl['curl_error_no']) {
 					$error++;
 					setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['curl_error_msg'], null, 'errors');
