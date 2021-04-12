@@ -121,9 +121,9 @@ if ($id > 0 || $ref) {
 	$result = $object->fetch($id, $ref);
 
 	$title = $langs->trans("Agenda");
-	
+
 	$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda';
-	
+
 	if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/productnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 		$title = $object->name." - ".$title;
 	}
