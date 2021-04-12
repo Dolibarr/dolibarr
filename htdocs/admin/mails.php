@@ -48,7 +48,7 @@ $substitutionarrayfortest = array(
 	'__DOL_MAIN_URL_ROOT__'=>DOL_MAIN_URL_ROOT,
 	'__ID__' => 'RecipientIdRecord',
 	//'__EMAIL__' => 'RecipientEMail',				// Done into actions_sendmails
-	'__CHECK_READ__' => (isset($object->thirdparty) && is_object($object) && is_object($object->thirdparty)) ? '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$object->thirdparty->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>' : '',
+	'__CHECK_READ__' => (is_object($object) && !empty($object->thirdparty) && is_object($object->thirdparty)) ? '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$object->thirdparty->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>' : '',
 	'__USER_SIGNATURE__' => (($user->signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? $usersignature : ''), // Done into actions_sendmails
 	'__LOGIN__' => 'RecipientLogin',
 	'__LASTNAME__' => 'RecipientLastname',
@@ -554,7 +554,7 @@ if ($action == 'edit') {
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	// Disable
-	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_ALL_MAILS").'</td><td>'.(isset($conf->global->MAIN_DISABLE_ALL_MAILS) ? yn($conf->global->MAIN_DISABLE_ALL_MAILS) : '');
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_ALL_MAILS").'</td><td>'.yn(!empty($conf->global->MAIN_DISABLE_ALL_MAILS));
 	if (!empty($conf->global->MAIN_DISABLE_ALL_MAILS)) {
 		print img_warning($langs->trans("Disabled"));
 	}
@@ -737,28 +737,26 @@ if ($action == 'edit') {
 
 		print '<tr class="oddeven"><td>'.$langs->trans('MAIN_MAIL_DEFAULT_FROMTYPE').'</td>';
 		print '<td>';
-		if (isset($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE)) {
-			if ($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE === 'robot') {
-				print $langs->trans('RobotEmail');
-			} elseif ($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE === 'user') {
-				print $langs->trans('UserEmail');
-			} elseif ($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE === 'company') {
-				print $langs->trans('CompanyEmail').' '.dol_escape_htmltag('<'.$mysoc->email.'>');
-			} else {
-				$id = preg_replace('/senderprofile_/', '', $conf->global->MAIN_MAIL_DEFAULT_FROMTYPE);
-				if ($id > 0) {
-					include_once DOL_DOCUMENT_ROOT.'/core/class/emailsenderprofile.class.php';
-					$emailsenderprofile = new EmailSenderProfile($db);
-					$emailsenderprofile->fetch($id);
-					print $emailsenderprofile->label.' '.dol_escape_htmltag('<'.$emailsenderprofile->email.'>');
-				}
+		if (!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE) === 'robot') {
+			print $langs->trans('RobotEmail');
+		} elseif (!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE) === 'user') {
+			print $langs->trans('UserEmail');
+		} elseif (!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE) === 'company') {
+			print $langs->trans('CompanyEmail').' '.dol_escape_htmltag('<'.$mysoc->email.'>');
+		} else {
+			$id = preg_replace('/senderprofile_/', '', !empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE) ? $conf->global->MAIN_MAIL_DEFAULT_FROMTYPE : '');
+			if ($id > 0) {
+				include_once DOL_DOCUMENT_ROOT.'/core/class/emailsenderprofile.class.php';
+				$emailsenderprofile = new EmailSenderProfile($db);
+				$emailsenderprofile->fetch($id);
+				print $emailsenderprofile->label.' '.dol_escape_htmltag('<'.$emailsenderprofile->email.'>');
 			}
 		}
 		print '</td></tr>';
 
 		// Errors To
 		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_ERRORS_TO").'</td>';
-		print '<td>'.(isset($conf->global->MAIN_MAIL_ERRORS_TO) ? $conf->global->MAIN_MAIL_ERRORS_TO : '');
+		print '<td>'.(!empty($conf->global->MAIN_MAIL_ERRORS_TO) ? $conf->global->MAIN_MAIL_ERRORS_TO : '');
 		if (!empty($conf->global->MAIN_MAIL_ERRORS_TO) && !isValidEmail($conf->global->MAIN_MAIL_ERRORS_TO)) {
 			print img_warning($langs->trans("ErrorBadEMail"));
 		}
@@ -778,7 +776,7 @@ if ($action == 'edit') {
 		print '</td></tr>';
 
 		//Add user to select destinaries list
-		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_ENABLED_USER_DEST_SELECT").'</td><td>'.(isset($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT) ? yn($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT) : '').'</td></tr>';
+		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_ENABLED_USER_DEST_SELECT").'</td><td>'.yn(!empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT)).'</td></tr>';
 
 		print '</table>';
 		print '</div>';

@@ -666,7 +666,7 @@ print '<td class="titlefield">'.$langs->trans("FiscalYearInformation").'</td><td
 print "</tr>\n";
 
 print '<tr class="oddeven"><td><label for="SOCIETE_FISCAL_MONTH_START">'.$langs->trans("FiscalMonthStart").'</label></td><td>';
-print $formother->select_month(isset($conf->global->SOCIETE_FISCAL_MONTH_START) ? $conf->global->SOCIETE_FISCAL_MONTH_START : '', 'SOCIETE_FISCAL_MONTH_START', 0, 1, 'maxwidth100').'</td></tr>';
+print $formother->select_month(!empty($conf->global->SOCIETE_FISCAL_MONTH_START) ? $conf->global->SOCIETE_FISCAL_MONTH_START : '', 'SOCIETE_FISCAL_MONTH_START', 0, 1, 'maxwidth100').'</td></tr>';
 
 print "</table>";
 print '<br>';

@@ -1885,14 +1885,14 @@ function email_admin_prepare_head()
 		$head[$h][2] = 'common';
 		$h++;
 
-		if (isset($conf->mailing->enabled)) {
+		if (!empty($conf->mailing->enabled)) {
 			$head[$h][0] = DOL_URL_ROOT."/admin/mails_emailing.php";
 			$head[$h][1] = $langs->trans("OutGoingEmailSetupForEmailing", $langs->transnoentitiesnoconv("EMailing"));
 			$head[$h][2] = 'common_emailing';
 			$h++;
 		}
 
-		if (isset($conf->ticket->enabled)) {
+		if (!empty($conf->ticket->enabled)) {
 			$head[$h][0] = DOL_URL_ROOT."/admin/mails_ticket.php";
 			$head[$h][1] = $langs->trans("OutGoingEmailSetupForEmailing", $langs->transnoentitiesnoconv("Ticket"));
 			$head[$h][2] = 'common_ticket';

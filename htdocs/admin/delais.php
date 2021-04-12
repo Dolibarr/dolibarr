@@ -289,7 +289,7 @@ if ($action == 'edit') {
 print '<br>';
 
 
-if (!isset($conf->global->MAIN_DISABLE_METEO) || $conf->global->MAIN_DISABLE_METEO != 1) {
+if (empty($conf->global->MAIN_DISABLE_METEO) || $conf->global->MAIN_DISABLE_METEO != 1) {
 	// Show logo for weather
 	print '<span class="opacitymedium">'.$langs->trans("DescWeather").'</span> ';
 
@@ -302,7 +302,7 @@ if (!isset($conf->global->MAIN_DISABLE_METEO) || $conf->global->MAIN_DISABLE_MET
 			$str_mode_enabled = $str_mode_percentage;
 		}
 		print '<a href="#" onclick="return false;" id="change_mode">'.$str_mode_enabled.'</a>';
-		print '<input type="hidden" id="MAIN_USE_METEO_WITH_PERCENTAGE" name="MAIN_USE_METEO_WITH_PERCENTAGE" value="'.$conf->global->MAIN_USE_METEO_WITH_PERCENTAGE.'" />';
+		print '<input type="hidden" id="MAIN_USE_METEO_WITH_PERCENTAGE" name="MAIN_USE_METEO_WITH_PERCENTAGE" value="'.(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) ? $conf->global->MAIN_USE_METEO_WITH_PERCENTAGE : '').'" />';
 
 		print '<br><br>';
 	} else {

@@ -66,7 +66,7 @@ class box_dolibarr_state_board extends ModeleBoxes
 			$this->enabled = 0; // disabled by this option
 		}
 
-		$this->hidden = !(isset($user->rights->societe->lire) && empty($user->socid));
+		$this->hidden = !(!empty($user->rights->societe->lire) && empty($user->socid));
 	}
 
 	/**
