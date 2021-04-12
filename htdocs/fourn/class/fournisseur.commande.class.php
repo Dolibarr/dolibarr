@@ -571,7 +571,7 @@ class CommandeFournisseur extends CommonOrder
 
 		dol_syslog(get_class($this)."::valid");
 		$result = 0;
-		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && (!empty($user->rights->fournisseur->commande->creer) || !empty($user->rights->supplier_order->creer))
+		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && (!empty($user->rights->fournisseur->commande->creer) || !empty($user->rights->supplier_order->creer)))
 		|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->supplier_order_advance->validate))) {
 			$this->db->begin();
 
