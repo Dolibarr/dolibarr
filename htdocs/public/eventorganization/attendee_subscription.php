@@ -81,8 +81,8 @@ $id = dol_decode(GETPOST('id'), $key);
 // Securekey check
 $securekey = GETPOST('securekey', 'alpha');
 if ($securekey != $conf->global->EVENTORGANIZATION_SECUREKEY) {
-    print $langs->trans('MissingOrBadSecureKey');
-    exit;
+	print $langs->trans('MissingOrBadSecureKey');
+	exit;
 }
 
 // Load translation files
@@ -176,15 +176,15 @@ if (empty($reshook) && $action == 'add') {
 	$error = 0;
 
 
-	
+
 	$urlback = '';
 
 	$db->begin();
 
-    
+
 	if (!GETPOST("email")) {
-	    $error++;
-	    $errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Email"))."<br>\n";
+		$error++;
+		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Email"))."<br>\n";
 	}
 	if (!GETPOST("societe")) {
 		$error++;
@@ -197,67 +197,65 @@ if (empty($reshook) && $action == 'add') {
 	}
 
 	if (!$error) {
-		// Vérifier si client existe 
+		// Vérifier si client existe
 		$thirdparty = new Societe($db);
 		$nomsociete = GETPOST("societe");
 		$resultfetchthirdparty = $thirdparty->fetch('', $nomsociete);
 
-		if($resultfetchthirdparty<0){
-		    $error++;
-		    $errmsg .= $thirdparty->error;
-		    $readythirdparty = -1;
-		 
-		} elseif($resultfetchthirdparty==0){
-		    // creation of a new thirdparty
-		    $thirdparty->name        = $nomsociete;
-		    $thirdparty->address     = GETPOST("address");
-		    $thirdparty->zip         = GETPOST("zipcode");
-		    $thirdparty->town        = GETPOST("town");
-		    $thirdparty->client      = 2;
-		    $thirdparty->fournisseur = 0;
-		    $thirdparty->country_id  = GETPOST("country_id", 'int');
-		    $thirdparty->state_id    = GETPOST("state_id", 'int');
-	
-		    // Load object modCodeTiers
-		    $module = (!empty($conf->global->SOCIETE_CODECLIENT_ADDON) ? $conf->global->SOCIETE_CODECLIENT_ADDON : 'mod_codeclient_leopard');
-		    if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php') {
-		        $module = substr($module, 0, dol_strlen($module) - 4);
-		    }
-		    $dirsociete = array_merge(array('/core/modules/societe/'), $conf->modules_parts['societe']);
-		    foreach ($dirsociete as $dirroot) {
-		        $res = dol_include_once($dirroot.$module.'.php');
-		        if ($res) {
-		            break;
-		        }
-		    }
-		    $modCodeClient = new $module($db);
+		if ($resultfetchthirdparty<0) {
+			$error++;
+			$errmsg .= $thirdparty->error;
+			$readythirdparty = -1;
+		} elseif ($resultfetchthirdparty==0) {
+			// creation of a new thirdparty
+			$thirdparty->name        = $nomsociete;
+			$thirdparty->address     = GETPOST("address");
+			$thirdparty->zip         = GETPOST("zipcode");
+			$thirdparty->town        = GETPOST("town");
+			$thirdparty->client      = 2;
+			$thirdparty->fournisseur = 0;
+			$thirdparty->country_id  = GETPOST("country_id", 'int');
+			$thirdparty->state_id    = GETPOST("state_id", 'int');
 
-		    if (empty($tmpcode) && !empty($modCodeClient->code_auto)) {
-		        $tmpcode = $modCodeClient->getNextValue($thirdparty, 0);
-		    }
-		    $thirdparty->code_client = $tmpcode;
-		    $readythirdparty = $thirdparty->create($user);
-		  
+			// Load object modCodeTiers
+			$module = (!empty($conf->global->SOCIETE_CODECLIENT_ADDON) ? $conf->global->SOCIETE_CODECLIENT_ADDON : 'mod_codeclient_leopard');
+			if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php') {
+				$module = substr($module, 0, dol_strlen($module) - 4);
+			}
+			$dirsociete = array_merge(array('/core/modules/societe/'), $conf->modules_parts['societe']);
+			foreach ($dirsociete as $dirroot) {
+				$res = dol_include_once($dirroot.$module.'.php');
+				if ($res) {
+					break;
+				}
+			}
+			$modCodeClient = new $module($db);
+
+			if (empty($tmpcode) && !empty($modCodeClient->code_auto)) {
+				$tmpcode = $modCodeClient->getNextValue($thirdparty, 0);
+			}
+			$thirdparty->code_client = $tmpcode;
+			$readythirdparty = $thirdparty->create($user);
 		} else {
-		    // We have an existing thirdparty ready to use
-		    $readythirdparty = 1;
+			// We have an existing thirdparty ready to use
+			$readythirdparty = 1;
 		}
-		
-		if ($readythirdparty < 0){
-		    $error++;
-		    $errmsg .= $thirdparty->error;
+
+		if ($readythirdparty < 0) {
+			$error++;
+			$errmsg .= $thirdparty->error;
 		} else {
-		    // creation of an attendee
-		    $confattendee = new ConferenceOrBoothAttendee($db);
-		    $confattendee->fk_soc = $thirdparty->id;
-		    $confattendee->date_subscription = dol_now();
-		    $confattendee->email = GETPOST("email");
-		    $confattendee->fk_actioncomm = $id;
-		    $resultconfattendee = $confattendee->create($user);
-		    if ($resultconfattendee < 0){
-		        $error++;
-		        $errmsg .= $confattendee->error;
-		    }
+			// creation of an attendee
+			$confattendee = new ConferenceOrBoothAttendee($db);
+			$confattendee->fk_soc = $thirdparty->id;
+			$confattendee->date_subscription = dol_now();
+			$confattendee->email = GETPOST("email");
+			$confattendee->fk_actioncomm = $id;
+			$resultconfattendee = $confattendee->create($user);
+			if ($resultconfattendee < 0) {
+				$error++;
+				$errmsg .= $confattendee->error;
+			}
 		}
 	}
 
@@ -293,8 +291,8 @@ $formcompany = new FormCompany($db);
 
 $conference = new ConferenceOrBooth($db);
 $resultconf = $conference->fetch($id);
-if ($resultconf < 0){
-    setEventMessages(null, $object->errors, "errors");
+if ($resultconf < 0) {
+	setEventMessages(null, $object->errors, "errors");
 }
 
 llxHeaderVierge($langs->trans("NewSubscription"));
