@@ -66,6 +66,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class.php';
 require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 // Init vars
@@ -77,6 +79,12 @@ $action = GETPOST('action', 'aZ09');
 
 $key = 'DV3PH';
 $id = dol_decode(GETPOST('id'), $key);
+
+$conference = new ConferenceOrBooth($db);
+$resultconf = $conference->fetch($id);
+if ($resultconf < 0) {
+    setEventMessages(null, $object->errors, "errors");
+}
 
 // Securekey check
 $securekey = GETPOST('securekey', 'alpha');
@@ -258,22 +266,39 @@ if (empty($reshook) && $action == 'add') {
 			}
 		}
 	}
-
 	if (!$error) {
 		$db->commit();
-		
 		$project = new Project($db);
-		$resultproject = $project->fetch($object->fk_project);
-		if ($resultproject < 0){
+		$resultproject = $project->fetch($conference->fk_project);
+		if ($resultproject < 0){	    
 		    $error++;
 		    $errmsg .= $project->error;
 		} else {
-		    if (!empty($project->price_registration)){
-		        // @todo traiter invoice et payment page
+		    var_dump($project->price_registration);
+		    if (!empty(floatval($project->price_registration))){
+		        $facture = new Facture($db);
+		        //$facture->rowid = ;
+		        //$facture->ref = ;
+		        //$facture->entity = ;
+		        $facture->type = 0;
+		        $facture->socid = $thirdparty->id;
+		        $facture->paye = 0;
+		        //$facture->fk_user_modif = ;
+		        //$facture->fk_cond_reglement = ;
+		        //$facture->tms = ;
+		        //$facture->fk_statut = ;
+		        $facture->date = dol_now();
+		        $resultfacture = $facture->create($user);	
+		    } else {
+		        // No price has been set
+		        // Validating the subscription
+		        $confattendee->setStatut(1);
+		        global $dolibarr_main_url_root;
+		        $redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php';
+		        Header("Location: ".$redirection);
+		        exit;
 		    }
 		}
-		
-		// invoice
 		//Header("Location: ".$urlback);
 		//exit;
 	} else {
@@ -288,12 +313,6 @@ if (empty($reshook) && $action == 'add') {
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
-
-$conference = new ConferenceOrBooth($db);
-$resultconf = $conference->fetch($id);
-if ($resultconf < 0) {
-	setEventMessages(null, $object->errors, "errors");
-}
 
 llxHeaderVierge($langs->trans("NewSubscription"));
 
