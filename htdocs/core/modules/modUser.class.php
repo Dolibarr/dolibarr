@@ -256,7 +256,7 @@ class modUser extends DolibarrModules
 		    'u.datec'=>"user", 'u.tms'=>"user",
 		    'u.admin'=>"user", 'u.statut'=>'user', 'u.datelastlogin'=>'user', 'u.datepreviouslogin'=>'user',
 		    'u.fk_socpeople'=>"contact", 'u.fk_soc'=>"company", 'u.fk_member'=>"member",
-			'g.nom'=>"user"
+			'g.nom'=>"Group"
 		);
 		$keyforselect = 'user'; $keyforelement = 'user'; $keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
