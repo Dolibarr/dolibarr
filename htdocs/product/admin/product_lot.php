@@ -72,12 +72,16 @@ if ($action == 'updateMaskLot') {
 	dolibarr_set_const($db, "PRODUCTBATCH_LOT_ADDON", $value, 'chaine', 0, '', $conf->entity);
 } elseif ($action == 'setmodsn') {
 	dolibarr_set_const($db, "PRODUCTBATCH_SN_ADDON", $value, 'chaine', 0, '', $conf->entity);
-}
-if ($action == 'setmaskslot') {
+} elseif ($action == 'setmaskslot') {
 	dolibarr_set_const($db, "PRODUCTBATCH_LOT_USE_PRODUCT_MASKS", $value, 'bool', 0, '', $conf->entity);
-}
-if ($action == 'setmaskssn') {
+	if ($value == '1' && $conf->global->PRODUCTBATCH_LOT_ADDONS !== 'mod_lot_advanced') {
+		dolibarr_set_const($db, "PRODUCTBATCH_LOT_ADDON", 'mod_lot_advanced', 'chaine', 0, '', $conf->entity);
+	}
+} elseif ($action == 'setmaskssn') {
 	dolibarr_set_const($db, "PRODUCTBATCH_SN_USE_PRODUCT_MASKS", $value, 'bool', 0, '', $conf->entity);
+	if ($value == '1' && $conf->global->PRODUCTBATCH_SN_ADDONS !== 'mod_sn_advanced') {
+		dolibarr_set_const($db, "PRODUCTBATCH_SN_ADDON", 'mod_sn_advanced', 'chaine', 0, '', $conf->entity);
+	}
 }
 
 /*
@@ -182,40 +186,6 @@ foreach ($dirmodels as $reldir) {
 				}
 			}
 			closedir($handle);
-			if ($conf->global->PRODUCTBATCH_LOT_ADDON == 'mod_lot_advanced') {
-				print '<tr class="oddeven"><td>Option</td><td>'."\n";
-				print $langs->trans('CustomMasks');
-				print '</td>';
-
-				// Show example of numbering model
-				print '<td class="nowrap">';
-				$tmp = 'NoExample';
-				if (preg_match('/^Error/', $tmp)) print '<div class="error">'.$langs->trans($tmp).'</div>';
-				elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
-				else print $langs->trans($tmp);
-				print '</td>'."\n";
-
-				print '<td class="center">';
-				if ($conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS) {
-					print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmaskslot&amp;value=0">';
-					print img_picto($langs->trans("Activated"), 'switch_on');
-					print '</a>';
-				} else {
-					print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmaskslot&amp;value=1">';
-					print img_picto($langs->trans("Disabled"), 'switch_off');
-					print '</a>';
-				}
-				print '</td>';
-
-				// Info
-				$htmltooltip = $langs->trans("LotProductTooltip");
-
-				print '<td class="center">';
-				print $form->textwithpicto('', $htmltooltip, 1, 0);
-				print '</td>';
-
-				print "</tr>\n";
-			}
 		}
 	}
 }
@@ -308,40 +278,6 @@ foreach ($dirmodels as $reldir) {
 				}
 			}
 			closedir($handle);
-			if ($conf->global->PRODUCTBATCH_SN_ADDON == 'mod_sn_advanced') {
-				print '<tr class="oddeven"><td>Option</td><td>'."\n";
-				print $langs->trans('CustomMasks');
-				print '</td>';
-
-				// Show example of numbering model
-				print '<td class="nowrap">';
-				$tmp = 'NoExample';
-				if (preg_match('/^Error/', $tmp)) print '<div class="error">'.$langs->trans($tmp).'</div>';
-				elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
-				else print $langs->trans($tmp);
-				print '</td>'."\n";
-
-				print '<td class="center">';
-				if ($conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS) {
-					print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmaskssn&amp;value=0">';
-					print img_picto($langs->trans("Activated"), 'switch_on');
-					print '</a>';
-				} else {
-					print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmaskssn&amp;value=1">';
-					print img_picto($langs->trans("Disabled"), 'switch_off');
-					print '</a>';
-				}
-				print '</td>';
-
-				// Info
-				$htmltooltip = $langs->trans("SNProductTooltip");
-
-				print '<td class="center">';
-				print $form->textwithpicto('', $htmltooltip, 1, 0);
-				print '</td>';
-
-				print "</tr>\n";
-			}
 		}
 	}
 }
