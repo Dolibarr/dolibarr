@@ -257,4 +257,38 @@ class ExpeditionLineBatch extends CommonObject
 			}
 	    else return $this->id;
     }
+
+    /**
+     * @param Expedition $exp
+     * @param string $serial
+     * @param int $fk_product
+     * @param int $fk_warehouse
+     * @return int
+     */
+    public function fetchByExpDetSerial($exp, $serial, $fk_product, $fk_warehouse) {
+        if(! empty($exp->lines) && !empty($exp->id)) {
+
+            $sql = 'SELECT * FROM '.MAIN_DB_PREFIX.$this->table_element.' 
+            WHERE fk_expeditiondet IN 
+            (SELECT ed.rowid FROM '.MAIN_DB_PREFIX.$exp->table_element_line.' ed
+            INNER JOIN '.MAIN_DB_PREFIX.'commandedet cd ON (cd.rowid = ed.fk_origin_line)
+            WHERE ed.fk_expedition = '.$exp->id.' AND ed.fk_entrepot='.$fk_warehouse.' AND cd.fk_product='.$fk_product.')';
+            $sql .= ' AND batch = '.$serial;
+            $resql = $this->db->query($sql);
+            if(! $resql) {
+                $this->errors[] = $this->db->lasterror()." - sql=$sql";
+                return -1;
+            } else {
+                if($this->db->num_rows($resql) == 1) {
+                    $obj = $this->db->fetch_object($resql);
+                    foreach($obj as $key => $val) $this->{$key} = $val;
+                    $this->id = $this->rowid;
+                    return $this->id;
+                }
+                else return -2;
+
+
+            }
+        }
+    }
 }

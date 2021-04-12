@@ -68,60 +68,101 @@ if($action == 'add') {
 
                 $lineExp = new ExpeditionLigne($db);
                 $lotStock = new Productbatch($db);
+                $expBatch = new ExpeditionLineBatch($db);
                 $lotStock->fetch($fk_productbatch);
                 foreach($object->lines as $line) {
                     if($line->id == $TExpeditionDetIds[$fk_productbatch]) $lineExp = $line;
                 }
-                //TODO
-//                $lineIdToAddLot = 0;
-//                //Verify if warehouse exists for this line
-//                if($lineExp->entrepot_id > 0) {
-//                    // single warehouse shipment line
-//                    if($lineExp->entrepot_id == $lotStock->warehouseid) {
-//                        $lineIdToAddLot = $lineExp->id;
-//                    }
-//                }
-//                else if(count($lineExp->details_entrepot) > 1) {
-//                    // multi warehouse shipment lines
-//                    foreach($lineExp->details_entrepot as $detail_entrepot) {
-//                        if($detail_entrepot->entrepot_id == $lotStock->warehouseid) {
-//                            $lineIdToAddLot = $detail_entrepot->line_id;
-//                        }
-//                    }
-//                }
-//
-//                if($lineIdToAddLot) {
-//                    // add lot to existing line
-//                    if($lineExp->fetch($lineIdToAddLot) > 0) {
-//                        $lineExp->detail_batch = new stdClass;
-//                        $lineExp->detail_batch->fk_origin_stock = $fk_productbatch;
-//                        $lineExp->detail_batch->batch = $lotStock->batch;
-//                        $lineExp->detail_batch->entrepot_id = $lotStock->warehouseid;
-//                        $lineExp->detail_batch->qty = $qty;
-//                        if($lineExp->update($user) < 0) {
-//                            setEventMessages($lineExp->error, $lineExp->errors, 'errors');
-//                            $error++;
-//                        }
-//                    }
-//                    else {
-//                        setEventMessages($lineExp->error, $lineExp->errors, 'errors');
-//                        $error++;
-//                    }
-//                }
-//                else {
-                    $lineExp->origin_line_id = $lineExp->fk_origin_line;
-                    $lineExp->entrepot_id = $lotStock->warehouseid;
-                    $lineExp->detail_batch[0] = new ExpeditionLineBatch($db);
-                    $lineExp->detail_batch[0]->fk_origin_stock = $fk_productbatch;
-                    $lineExp->detail_batch[0]->batch = $lotStock->batch;
-                    $lineExp->detail_batch[0]->entrepot_id = $lotStock->warehouseid;
-                    $lineExp->detail_batch[0]->qty = $qty;
-                    if($object->create_line_batch($lineExp, $lineExp->array_options) < 0) {
-                        setEventMessages($object->error, $object->errors, 'errors');
+
+                $res = $expBatch->fetchByExpDetSerial($object, $lotStock->batch, $lotStock->fk_product, $lotStock->warehouseid);
+                /**
+                 * CASE LOT ALREADY EXISTS : WE ONLY UPDATE QTY
+                 */
+                if($res > 0) {
+                    $expBatch->qty += $qty;
+                    if($expBatch->updateQty() < 0) {
+                        setEventMessages($expBatch->error, $expBatch->errors, 'errors');
                         $error++;
                     }
-//                }
+                    $lineExp->fetch($expBatch->fk_expeditiondet);
+                    $lineExp->qty += $qty;
+                    $tmpBatch = $lineExp->detail_batch;
+                    unset($lineExp->detail_batch);
+                    if($lineExp->update($user) < 0) {
+                        setEventMessages($lineExp->error, $lineExp->errors, 'errors');
+                        $error++;
+                    }
+                    $lineExp->detail_batch = $tmpBatch;
+                } else {
+                    /**
+                     * Check if line or batch with same warehouse exists
+                     */
+                    $lineIdToAddLot = 0;
+                    if($lineExp->entrepot_id > 0) {
+                        // single warehouse shipment line
+                        if($lineExp->entrepot_id == $lotStock->warehouseid) {
+                            $lineIdToAddLot = $lineExp->id;
+                        }
+                    }
+                    else if(count($lineExp->details_entrepot) > 1) {
+                        // multi warehouse shipment lines
+                        foreach($lineExp->details_entrepot as $detail_entrepot) {
+                            if($detail_entrepot->entrepot_id == $lotStock->warehouseid) {
+                                $lineIdToAddLot = $detail_entrepot->line_id;
+                            }
+                        }
+                    }
 
+                    /**
+                     * CASE NEW SERIAL NUMBER FOR EXISTING SHIPPING LINE
+                     */
+                    if($lineIdToAddLot > 0) {
+                        $lineExp->fetch($lineIdToAddLot);
+                        $lineExp->qty += $qty;
+
+                        $tmpBatch = $lineExp->detail_batch;
+                        unset($lineExp->detail_batch);
+                        /** UPDATE EXP LINE */
+                        if($lineExp->update($user) < 0) {
+                            setEventMessages($lineExp->error, $lineExp->errors, 'errors');
+                            $error++;
+                        }
+                        $lineExp->detail_batch = $tmpBatch;
+                        /** UPDATE EXP BATCH */
+                        $expBatch->sellby = $lotStock->sellby;
+                        $expBatch->eatby = $lotStock->eatby;
+                        $expBatch->batch = $lotStock->batch;
+                        $expBatch->qty = $qty;
+                        $expBatch->fk_origin_stock = $fk_productbatch;
+                        if($expBatch->create($lineIdToAddLot)< 0) {
+                            setEventMessages($lineExp->error, $lineExp->errors, 'errors');
+                            $error++;
+                        }
+
+                    } else {
+                        /**
+                         * CASE NO LINE WITH SAME WAREHOUSE
+                         */
+                        $lineExp->origin_line_id = $lineExp->fk_origin_line;
+                        $lineExp->entrepot_id = $lotStock->warehouseid;
+                        $tmpBatch = $lineExp->detail_batch;
+                        unset($lineExp->detail_batch);
+                        $lineExp->detail_batch[0] = new ExpeditionLineBatch($db);
+                        $lineExp->detail_batch[0]->fk_origin_stock = $fk_productbatch;
+                        $lineExp->detail_batch[0]->batch = $lotStock->batch;
+                        $lineExp->detail_batch[0]->entrepot_id = $lotStock->warehouseid;
+                        $lineExp->detail_batch[0]->qty = $qty;
+                        if($object->create_line_batch($lineExp, $lineExp->array_options) < 0) {
+                            setEventMessages($object->error, $object->errors, 'errors');
+                            $error++;
+                        }
+                        $lineExp->detail_batch = $tmpBatch;
+                    }
+                }
+
+                /**
+                 * HANDLE TO DEFINE LINE
+                 */
                 if(! $error && ! empty($object->lines)) {
                     foreach($object->lines as $line) {
                         if(! empty($line->detail_batch) && $line->product_tobatch) {
@@ -131,7 +172,8 @@ if($action == 'add') {
                                         $tmpLine = new ExpeditionLigne($db);
                                         $tmpLine->fetch($dbatch->fk_expeditiondet);
                                         $tmpLine->qty -= $qty;
-                                        $tmpLine->entrepot_id = 0;
+                                        if(empty($tmpLine->entrepot_id)) $tmpLine->entrepot_id = 0;
+                                        unset($tmpLine->detail_batch);
                                         if($tmpLine->qty > 0) $res = $tmpLine->update($user);
                                         else $res = $tmpLine->delete($user);
                                         if($res < 0) {
@@ -152,7 +194,6 @@ if($action == 'add') {
                             }
                         }
                     }
-                    //TODO Gérer la décrementation + delete de to define si 0 en qté
                 }
             }
         }
