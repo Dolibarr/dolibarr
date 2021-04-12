@@ -185,7 +185,7 @@ if ($object->id)
 	$permission = $user->rights->don->creer;
 	$permtoedit = $user->rights->don->creer;
 	$param = '&id='.$object->id;
-	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {
 	print $langs->trans("ErrorUnknown");
 }
