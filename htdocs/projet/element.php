@@ -437,8 +437,8 @@ $listofreferent = array(
 	'urlnew'=>DOL_URL_ROOT.'/fourn/facture/card.php?action=create&projectid='.$id, // No socid parameter here, the socid is often the customer and we create a supplier object
 	'lang'=>'suppliers',
 	'buttonnew'=>'AddSupplierInvoice',
-	'testnew'=>$user->rights->fournisseur->facture->creer,
-	'test'=>$conf->supplier_invoice->enabled && $user->rights->fournisseur->facture->lire),
+	'testnew'=>($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer),
+	'test'=>$conf->supplier_invoice->enabled && ($user->rights->fournisseur->facture->lire || $user->rights->supplier_invoice->lire),
 'contract'=>array(
 	'name'=>"Contracts",
 	'title'=>"ListContractAssociatedProject",

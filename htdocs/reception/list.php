@@ -384,7 +384,7 @@ if (empty($reshook)) {
 				// Fac builddoc
 				$donotredirect = 1;
 				$upload_dir = $conf->fournisseur->facture->dir_output;
-				$permissiontoadd = $user->rights->fournisseur->facture->creer;
+				$permissiontoadd = ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer);
 				include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 			}
 
@@ -596,7 +596,7 @@ $arrayofmassactions = array(
 	// 'presend'=>$langs->trans("SendByMail"),
 );
 
-if ($user->rights->fournisseur->facture->creer) {
+if ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer) {
 	$arrayofmassactions['createbills'] = $langs->trans("CreateInvoiceForThisSupplier");
 }
 if ($massaction == 'createbills') {

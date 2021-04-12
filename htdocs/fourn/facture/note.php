@@ -48,7 +48,7 @@ $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
 $object = new FactureFournisseur($db);
 $object->fetch($id, $ref);
 
-$permissionnote = $user->rights->fournisseur->facture->creer; // Used by the include of actions_setnotes.inc.php
+$permissionnote = ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer); // Used by the include of actions_setnotes.inc.php
 
 
 /*
@@ -58,7 +58,7 @@ $permissionnote = $user->rights->fournisseur->facture->creer; // Used by the inc
 include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not includ_once
 
 // Set label
-if ($action == 'setlabel' && $user->rights->fournisseur->facture->creer) {
+if ($action == 'setlabel' && ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer)) {
 	$object->label = $_POST['label'];
 	$result = $object->update($user);
 	if ($result < 0) {

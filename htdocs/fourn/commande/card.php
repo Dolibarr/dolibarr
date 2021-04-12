@@ -2465,7 +2465,7 @@ if ($action == 'create') {
 			//if (! empty($conf->facture->enabled))
 			//{
 			if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_invoice->enabled)) && ($object->statut >= 2 && $object->statut != 7 && $object->billed != 1)) {  // statut 2 means approved, 7 means canceled
-				if ($user->rights->fournisseur->facture->creer) {
+				if ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer) {
 					print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
 				}
 			}
@@ -2477,7 +2477,7 @@ if ($action == 'create') {
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
 				} else {
 					if (!empty($object->linkedObjectsIds['invoice_supplier'])) {
-						if ($user->rights->fournisseur->facture->creer) {
+						if ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer) {
 							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
 						}
 					} else {

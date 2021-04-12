@@ -841,7 +841,7 @@ if ($object->id > 0) {
 			}
 		}
 
-		if ($user->rights->fournisseur->facture->creer) {
+		if ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer) {
 			if (!empty($orders2invoice) && $orders2invoice > 0) {
 				if ($object->status == 1) {
 					// Company is open
@@ -854,7 +854,7 @@ if ($object->id > 0) {
 			}
 		}
 
-		if ($user->rights->fournisseur->facture->creer) {
+		if ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer) {
 			$langs->load("bills");
 			if ($object->status == 1) {
 				print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a>';
