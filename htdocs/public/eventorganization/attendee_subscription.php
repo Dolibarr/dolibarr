@@ -274,7 +274,7 @@ if (empty($reshook) && $action == 'add') {
 		    $error++;
 		    $errmsg .= $project->error;
 		} else {
-		    var_dump($project->price_registration);
+		    global $dolibarr_main_url_root;
 		    if (!empty(floatval($project->price_registration))){
 		        $facture = new Facture($db);
 		        //$facture->rowid = ;
@@ -288,12 +288,15 @@ if (empty($reshook) && $action == 'add') {
 		        //$facture->tms = ;
 		        //$facture->fk_statut = ;
 		        $facture->date = dol_now();
-		        $resultfacture = $facture->create($user);	
+		        $resultfacture = $facture->create($user);
+		        //@todo rediriger page paiement
+		        $redirection = $dolibarr_main_url_root.'/public/payment/newpayment.php';
+		        Header("Location: ".$redirection);
+		        exit;
 		    } else {
 		        // No price has been set
 		        // Validating the subscription
 		        $confattendee->setStatut(1);
-		        global $dolibarr_main_url_root;
 		        $redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php';
 		        Header("Location: ".$redirection);
 		        exit;
