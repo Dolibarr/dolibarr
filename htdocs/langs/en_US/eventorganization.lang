@@ -19,7 +19,6 @@
 ModuleEventOrganizationName = Event Organization
 EventOrganizationDescription = Event Organization through Module Project
 EventOrganizationDescriptionLong= Manage Event organization for conference, attendees, speaker, and attendees, with public subcription page
-
 #
 # Menu
 #
@@ -94,6 +93,7 @@ EvntOrgCancelled = Cancelled
 #
 # Public page
 #
+PublicAttendeeSubscriptionPage = Public link of registration to a conference
 MissingOrBadSecureKey = The security key is invalid or missing
 EvntOrgWelcomeMessage = This form allows you to register as a new participant to the conference 
 EvntOrgStartDuration = This conference starts on 

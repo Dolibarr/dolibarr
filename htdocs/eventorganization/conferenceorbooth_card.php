@@ -498,7 +498,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$key = 'DV3PH';
 	$link_subscription .= dol_encode($id, $key);
 	$link_subscription .= '&securekey='.urlencode($conf->global->EVENTORGANIZATION_SECUREKEY);
-	$object->fields['pubregister'] = array('type'=>'url', 'label'=>'Lien public d\'enregistrement à une conférence', 'enabled'=>'1', 'position'=>72, 'notnull'=>0, 'visible'=>1);
+	$object->fields['pubregister'] = array('type'=>'url', 'label'=>$langs->trans("PublicAttendeeSubscriptionPage"), 'enabled'=>'1', 'position'=>72, 'notnull'=>0, 'visible'=>1);
 	$object->pubregister = $link_subscription;
 	$keyforbreak='pubregister';
 
