@@ -79,17 +79,15 @@ $email = GETPOST("email");
 
 // Getting id from Post and decoding it
 $encodedid = GETPOST('id');
-$keyforid = 'DV3PH';
-$id = dol_decode($encodedid, $keyforid);
+$id = dol_decode($encodedid, $dolibarr_main_instance_unique_id);
 
 // Getting 'securekey'.'id' from Post and decoding it
 $encodedsecurekeyandid = GETPOST('securekey', 'alpha');
-$keyforsecurekey = 'CGLOO';
-$securekeyandid = dol_decode($encodedsecurekeyandid, $keyforsecurekey);
+$securekeyandid = dol_decode($encodedsecurekeyandid, $dolibarr_main_instance_unique_id);
 
 // Securekey decomposition into pure securekey and id added at the end
-$securekey = substr($securekeyandid, 0, strlen($securekeyandid)-strlen($id));
-$idgotfromsecurekey = substr($securekeyandid, -strlen($id), strlen($id));
+$securekey = substr($securekeyandid, 0, strlen($securekeyandid)-strlen($encodedid));
+$idgotfromsecurekey = dol_decode(substr($securekeyandid, -strlen($encodedid), strlen($encodedid)),$dolibarr_main_instance_unique_id);
 
 // We check if the securekey collected is OK and if the id collected is the same than the id in the securekey
 if ($securekey != $conf->global->EVENTORGANIZATION_SECUREKEY || $idgotfromsecurekey != $id) {
