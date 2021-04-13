@@ -898,20 +898,20 @@ if ($action == 'create' && $user->rights->projet->creer)
 		if (empty($conf->global->PROJECT_DISABLE_PRIVATE_PROJECT)) $array[0] = $langs->trans("PrivateProject");
 		if (empty($conf->global->PROJECT_DISABLE_PUBLIC_PROJECT)) $array[1] = $langs->trans("SharedProject");
 
-		if (count($array) > 0)
-		{
+		if (count($array) > 0) {
 			print $form->selectarray('public', $array, $object->public, 0, 0, 0, '', 0, 0, 0, '', '', 1);
-		}
-		else {
+		} else {
 			print '<input type="hidden" id="public" name="public" value="'.$object->public.'">';
 
-			if ($object->public==0) print $langs->trans("PrivateProject");
-			else print $langs->trans("SharedProject");
+			if ($object->public == 0) {
+				print $langs->trans("PrivateProject");
+			} else { 
+				print $langs->trans("SharedProject");
+			}
 		}
 		print '</td></tr>';
 
-		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
-		{
+		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 			$classfortr = ($object->usage_opportunity ? '' : ' hideobject');
 			// Opportunity status
 			print '<tr class="classuseopportunity'.$classfortr.'"><td>'.$langs->trans("OpportunityStatus").'</td>';
