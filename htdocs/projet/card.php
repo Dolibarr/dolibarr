@@ -620,7 +620,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 
 		if ( (GETPOSTISSET('public') ? GETPOST('public') : $object->public)==0) {
 			print $langs->trans("PrivateProject");
-		} else { 
+		} else {
 			print $langs->trans("SharedProject");
 		}
 	}
@@ -905,7 +905,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 
 			if ($object->public == 0) {
 				print $langs->trans("PrivateProject");
-			} else { 
+			} else {
 				print $langs->trans("SharedProject");
 			}
 		}
