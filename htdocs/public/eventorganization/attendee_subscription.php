@@ -87,7 +87,7 @@ $securekeyandid = dol_decode($encodedsecurekeyandid, $dolibarr_main_instance_uni
 
 // Securekey decomposition into pure securekey and id added at the end
 $securekey = substr($securekeyandid, 0, strlen($securekeyandid)-strlen($encodedid));
-$idgotfromsecurekey = dol_decode(substr($securekeyandid, -strlen($encodedid), strlen($encodedid)),$dolibarr_main_instance_unique_id);
+$idgotfromsecurekey = dol_decode(substr($securekeyandid, -strlen($encodedid), strlen($encodedid)), $dolibarr_main_instance_unique_id);
 
 // We check if the securekey collected is OK and if the id collected is the same than the id in the securekey
 if ($securekey != $conf->global->EVENTORGANIZATION_SECUREKEY || $idgotfromsecurekey != $id) {
@@ -203,14 +203,14 @@ if (empty($reshook) && $action == 'add') {
 		$errmsg .= $langs->trans("ErrorBadEMail", GETPOST("email"))."<br>\n";
 	}
 	if (!GETPOST("country_id")) {
-	    $error++;
-	    $errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Country"))."<br>\n";
+		$error++;
+		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Country"))."<br>\n";
 	}
 
 	if (!$error) {
 		// Vérifier si client existe par l'email
 		$thirdparty = new Societe($db);
-		$resultfetchthirdparty = $thirdparty->fetch('','','','','','','','','','',$email);
+		$resultfetchthirdparty = $thirdparty->fetch('', '', '', '', '', '', '', '', '', '', $email);
 
 		if ($resultfetchthirdparty<0) {
 			$error++;
@@ -218,12 +218,12 @@ if (empty($reshook) && $action == 'add') {
 			$readythirdparty = -1;
 		} elseif ($resultfetchthirdparty==0) {
 			// creation of a new thirdparty
-		    if(!empty(GETPOST("societe"))){
-		        $thirdparty->name        = GETPOST("societe");
-		    } else {
-		        $thirdparty->name        = $email;
-		    }
-		    
+			if (!empty(GETPOST("societe"))) {
+				$thirdparty->name        = GETPOST("societe");
+			} else {
+				$thirdparty->name        = $email;
+			}
+
 			$thirdparty->address     = GETPOST("address");
 			$thirdparty->zip         = GETPOST("zipcode");
 			$thirdparty->town        = GETPOST("town");
