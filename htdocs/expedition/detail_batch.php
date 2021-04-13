@@ -415,7 +415,7 @@ if($id > 0 || ! empty($ref)) {
                         $result = $productlotObject->fetch(0, $line->expLine->fk_product, $dbatch->batch);
                         if(!empty($TQtyUsed[$productlotObject->id])) $batchqty = $dbatch->qty - $TQtyUsed[$productlotObject->id];
                         else $batchqty = $dbatch->qty;
-                        if($batchqty == 0) continue;
+                        if($batchqty <= 0) continue;
 
                         $batchStock = +$dbatch->qty; // To get a numeric
                         print '<tr class="oddeven">';
