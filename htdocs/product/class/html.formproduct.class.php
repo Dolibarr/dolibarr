@@ -265,7 +265,7 @@ class FormProduct
 
 		$out .= '<select class="flat'.($morecss ? ' '.$morecss : '').'"'.($disabled ? ' disabled' : '').' id="'.$htmlname.'" name="'.($htmlname.($disabled ? '_disabled' : '')).'">';
 		if ($empty) {
-			$out .= '<option value="-1">'.($empty_label ? $empty_label : '&nbsp;').'</option>';
+			$out .= '<option value="'.($empty <= 0 ? $empty : -1).'">'.$empty_label.'</option>'."\n";
 		}
 		foreach ($this->cache_warehouses as $id => $arraytypes) {
 			$label = '';
