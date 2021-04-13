@@ -613,15 +613,16 @@ if ($action == 'create' && $user->rights->projet->creer)
 	if (empty($conf->global->PROJECT_DISABLE_PRIVATE_PROJECT)) $array[0] = $langs->trans("PrivateProject");
 	if (empty($conf->global->PROJECT_DISABLE_PUBLIC_PROJECT)) $array[1] = $langs->trans("SharedProject");
 
-	if (count($array) > 0)
-	{
+	if (count($array) > 0) {
 		print $form->selectarray('public', $array, GETPOSTISSET('public') ? GETPOST('public') : $object->public, 0, 0, 0, '', 0, 0, 0, '', '', 1);
-	}
-	else {
+	} else {
 		print '<input type="hidden" name="public" id="public" value="'.(GETPOSTISSET('public') ? GETPOST('public') : $object->public).'">';
 
-		if ( (GETPOSTISSET('public') ? GETPOST('public') : $object->public)==0) print $langs->trans("PrivateProject");
-		else print $langs->trans("SharedProject");
+		if ( (GETPOSTISSET('public') ? GETPOST('public') : $object->public)==0) {
+			print $langs->trans("PrivateProject");
+		} else { 
+			print $langs->trans("SharedProject");
+		}
 	}
 	print '</td></tr>';
 
