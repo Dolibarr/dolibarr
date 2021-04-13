@@ -111,9 +111,9 @@ $isdraft = (($object->statut == FactureFournisseur::STATUS_DRAFT) ? 1 : 0);
 $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture', 'fk_soc', 'rowid', $isdraft);
 
 // Common permissions
-$usercanread = $user->rights->fournisseur->facture->lire;
-$usercancreate = $user->rights->fournisseur->facture->creer;
-$usercandelete = $user->rights->fournisseur->facture->supprimer;
+$usercanread = ($user->rights->fournisseur->facture->lire || $user->rights->supplier_invoice->lire);
+$usercancreate = ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer);
+$usercandelete = ($user->rights->fournisseur->facture->supprimer || $user->rights->supplier_invoice->supprimer);
 
 // Advanced permissions
 $usercanvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($usercancreate)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->supplier_invoice_advance->validate)));
@@ -395,7 +395,7 @@ if (empty($reshook)) {
 	}
 
 
-	if ($action == 'settransportmode' && $user->rights->fournisseur->facture->creer) {
+	if ($action == 'settransportmode' && ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer)) {
 		// transport mode
 		$result = $object->setTransportMode(GETPOST('transport_mode_id', 'int'));
 	} elseif ($action == 'setlabel' && $usercancreate) {
@@ -2894,7 +2894,7 @@ if ($action == 'create') {
 			print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 			print $langs->trans('IntracommReportTransportMode');
 			print '</td>';
-			if ($action != 'editmode' && $user->rights->fournisseur->facture->creer) {
+			if ($action != 'editmode' && ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer)) {
 				print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
 			}
 			print '</tr></table>';
