@@ -926,7 +926,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 	<div class="modal-content">
 		<div class="modal-header">
 		<span class="close" href="#" onclick="document.getElementById('ModalNote').style.display = 'none';">&times;</span>
-		<h3><?php print $langs->trans("invoiceAvoirWithLines"); ?></h3>
+		<h3><?php print $langs->trans("Note"); ?></h3>
 	</div>
 	<div class="modal-body">
 		<input type="text" class="block" id="textinput">
