@@ -14,6 +14,7 @@
  * Copyright (C) 2017-2018 Charlene Benke			<charlie@patas-monkey.com>
  * Copyright (C) 2018	   Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2019	   Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2021	   Anthony Berton			<bertonanthony@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
