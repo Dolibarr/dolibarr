@@ -11,6 +11,7 @@
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018       Charlene Benke	        <charlie@patas-monkey.com>
+ * Copyright (C) 2021	   	Anthony Berton			<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -279,15 +280,83 @@ if (empty($reshook)) {
 	if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)){
 		$permissiontovalidate = $user->rights->commande->order_advance->validate;
 		$permissiontoclose = $user->rights->commande->order_advance->close;
+		$permissiontocancel = $user->rights->commande->order_advance->annuler;
+		$permissiontosendbymail = $user->rights->commande->order_advance->send;
 	}else{
 		$permissiontovalidate = $user->rights->commande->creer;
 		$permissiontoclose = $user->rights->commande->creer;
+		$permissiontocancel = $user->rights->commande->creer;
+		$permissiontosendbymail = $user->rights->commande->creer;
 	}
 	$uploaddir = $conf->commande->multidir_output[$conf->entity];
 	$triggersendname = 'ORDER_SENTBYMAIL';
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
+if ($action == 'validate' && $permissiontoadd) {
+	if (GETPOST('confirm') == 'yes') {
+		$objecttmp = new $objectclass($db);
+		$db->begin();
+		$error = 0;
+		foreach ($toselect as $checked) {
+			if ($objecttmp->fetch($checked)) {
+				if ($objecttmp->statut == 0) {
+					if ($objecttmp->valid($user)) {
+						setEventMessage($objecttmp->ref." ".$langs->trans('PassedInOpenStatus'), 'mesgs');
+					} else {
+						setEventMessage($langs->trans('CantBeValidated'), 'errors');
+						$error++;
+					}
+				} else {
+					setEventMessage($objecttmp->ref." ".$langs->trans('IsNotADraft'), 'errors');
+					$error++;
+				}
+			}else{
+				dol_print_error($db);
+				$error++;
+			}
+		}
+		if ($error) {
+			$db->rollback();
+		} else {
+			$db->commit();
+		}
+	}
+}
+// Closed records
+if (!$error && $massaction === 'setbilled' && $permissiontoclose) {
+	$db->begin();
 
+	$objecttmp = new $objectclass($db);
+	$nbok = 0;
+	foreach ($toselect as $toselectid) {
+		$result = $objecttmp->fetch($toselectid);
+		if ($result > 0) {
+			$result = $objecttmp->classifyBilled($user, 0);
+			if ($result <= 0) {
+				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+				$error++;
+				break;
+			} else {
+				$nbok++;
+			}
+		} else {
+			setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+			$error++;
+			break;
+		}
+	}
+
+	if (!$error) {
+		if ($nbok > 1) {
+			setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+		} else {
+			setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+		}
+		$db->commit();
+	} else {
+		$db->rollback();
+	}
+}
 
 /*
  * View
@@ -710,9 +779,18 @@ if ($resql) {
 	$arrayofmassactions = array(
 		'generate_doc'=>img_picto('', 'pdf').'&ensp;'.$langs->trans("ReGeneratePDF"),
 		'builddoc'=>img_picto('', 'pdf').'&ensp;'.$langs->trans("PDFMerge"),
-		'cancelorders'=>img_picto('', 'close_title').'&ensp;'.$langs->trans("Cancel"),
-		'presend'=>img_picto('', 'email').'&ensp;'.$langs->trans("SendByMail"),
 	);
+	if ($conf->global->MAIN_FEATURES_LEVEL == '2'){ //BB2A
+		if ($permissiontovalidate) {
+			$arrayofmassactions['prevalidate'] = img_picto('', 'check').'&ensp;'.$langs->trans("Validate");
+		}
+	}
+	if ($permissiontosendbymail) {
+		$arrayofmassactions['presend'] = img_picto('', 'email').'&ensp;'.$langs->trans("SendByMail");
+	}
+	if ($permissiontocancel) {
+		$arrayofmassactions['cancelorders'] = img_picto('', 'close_title').'&ensp;'.$langs->trans("Cancel");
+	}
 	if ($user->rights->facture->creer) {
 		$arrayofmassactions['createbills'] = img_picto('', 'bill').'&ensp;'.$langs->trans("CreateInvoiceForThisCustomer");
 	}
@@ -756,6 +834,10 @@ if ($resql) {
 	$objecttmp = new Commande($db);
 	$trackid = 'ord'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
+
+	if ($massaction == 'prevalidate') {
+		print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassValidation"), $langs->trans("ConfirmMassValidationQuestion"), "validate", null, '', 0, 200, 500, 1);
+	}
 
 	if ($massaction == 'createbills') {
 		//var_dump($_REQUEST);
