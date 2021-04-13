@@ -98,7 +98,8 @@ $next_month = $next['month'];
 $next_day   = $next['day'];
 
 // Define firstdaytoshow and lastdaytoshow (warning: lastdaytoshow is last second to show + 1)
-$firstdaytoshow = dol_mktime(0, 0, 0, $first_month, $first_day, $first_year, true);
+$firstdaytoshow = dol_mktime(0, 0, 0, $first_month, $first_day, $first_year);
+$utcOffset = $firstdaytoshow - dol_mktime(0, 0, 0, $first_month, $first_day, $first_year, true);
 $lastdaytoshow = dol_time_plus_duree($firstdaytoshow, 7, 'd');
 
 if (empty($search_usertoprocessid) || $search_usertoprocessid == $user->id) {
@@ -530,7 +531,7 @@ for ($idw = 0; $idw < 7; $idw++) {
 	$isavailablefordayanduser = $holiday->verifDateHolidayForTimestamp($usertoprocess->id, $dayinloopfromfirstdaytoshow, $statusofholidaytocheck);
 	$isavailable[$dayinloopfromfirstdaytoshow] = $isavailablefordayanduser; // in projectLinesPerWeek later, we are using $firstdaytoshow and dol_time_plus_duree to loop on each day
 
-	$test = num_public_holiday($dayinloopfromfirstdaytoshow, $dayinloopfromfirstdaytoshow + 86400, $mysoc->country_code);
+	$test = num_public_holiday($dayinloopfromfirstdaytoshow - $utcOffset, $dayinloopfromfirstdaytoshow - $utcOffset + 86400, $mysoc->country_code);
 	if ($test) {
 		$isavailable[$dayinloopfromfirstdaytoshow] = array('morning'=>false, 'afternoon'=>false, 'morning_reason'=>'public_holiday', 'afternoon_reason'=>'public_holiday');
 	}
