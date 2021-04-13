@@ -274,7 +274,15 @@ if (empty($reshook)) {
 	$objectclass = 'Commande';
 	$objectlabel = 'Orders';
 	$permissiontoread = $user->rights->commande->lire;
+	$permissiontoadd = $user->rights->commande->creer;
 	$permissiontodelete = $user->rights->commande->supprimer;
+	if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)){
+		$permissiontovalidate = $user->rights->commande->order_advance->validate;
+		$permissiontoclose = $user->rights->commande->order_advance->close;
+	}else{
+		$permissiontovalidate = $user->rights->commande->creer;
+		$permissiontoclose = $user->rights->commande->creer;
+	}
 	$uploaddir = $conf->commande->multidir_output[$conf->entity];
 	$triggersendname = 'ORDER_SENTBYMAIL';
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
@@ -700,16 +708,21 @@ if ($resql) {
 
 	// List of mass actions available
 	$arrayofmassactions = array(
-		'generate_doc'=>$langs->trans("ReGeneratePDF"),
-		'builddoc'=>$langs->trans("PDFMerge"),
-		'cancelorders'=>$langs->trans("Cancel"),
-		'presend'=>$langs->trans("SendByMail"),
+		'generate_doc'=>img_picto('', 'pdf').'&ensp;'.$langs->trans("ReGeneratePDF"),
+		'builddoc'=>img_picto('', 'pdf').'&ensp;'.$langs->trans("PDFMerge"),
+		'cancelorders'=>img_picto('', 'close_title').'&ensp;'.$langs->trans("Cancel"),
+		'presend'=>img_picto('', 'email').'&ensp;'.$langs->trans("SendByMail"),
 	);
 	if ($user->rights->facture->creer) {
-		$arrayofmassactions['createbills'] = $langs->trans("CreateInvoiceForThisCustomer");
+		$arrayofmassactions['createbills'] = img_picto('', 'bill').'&ensp;'.$langs->trans("CreateInvoiceForThisCustomer");
 	}
-	if ($user->rights->commande->supprimer) {
-		$arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+	if ($conf->global->MAIN_FEATURES_LEVEL == '2'){ //BB2A
+		if ($permissiontoclose) {
+			$arrayofmassactions['setbilled'] = img_picto('', 'bill').'&ensp;'.$langs->trans("ClassifyBilled");
+		}
+	}
+	if ($permissiontodelete) {
+		$arrayofmassactions['predelete'] = img_picto('', 'delete').'&ensp;'.$langs->trans("Delete");
 	}
 	if (in_array($massaction, array('presend', 'predelete', 'createbills'))) {
 		$arrayofmassactions = array();
@@ -720,7 +733,7 @@ if ($resql) {
 	if (!empty($socid)) {
 		$url .= '&socid='.$socid;
 	}
-	$newcardbutton = dolGetButtonTitle($langs->trans('NewOrder'), '', 'fa fa-plus-circle', $url, '', $contextpage == 'orderlist' && $user->rights->commande->creer);
+	$newcardbutton = dolGetButtonTitle($langs->trans('NewOrder'), '', 'fa fa-plus-circle', $url, '', $contextpage == 'orderlist' && $permissiontoadd);
 
 	// Lines of title fields
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -1740,8 +1753,8 @@ if ($resql) {
 	$urlsource .= str_replace('&amp;', '&', $param);
 
 	$filedir = $diroutputmassaction;
-	$genallowed = $user->rights->commande->lire;
-	$delallowed = $user->rights->commande->creer;
+	$genallowed = $permissiontoread;
+	$delallowed = $permissiontoadd;
 
 	print $formfile->showdocuments('massfilesarea_orders', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 } else {
