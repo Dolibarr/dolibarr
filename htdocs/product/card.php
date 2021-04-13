@@ -1123,10 +1123,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 								})
 							</script>';
 				} else {
-					print '<td colspan="2"></td>';
+					print '<td></td>';
 				}
+			} else {
+				print '<td colspan="2"></td>';
 			}
-
 			print '</tr>';
 		}
 
