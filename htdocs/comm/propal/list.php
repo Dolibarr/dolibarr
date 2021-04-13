@@ -217,10 +217,10 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $permissiontoread = $user->rights->propal->lire;
 $permissiontoadd = $user->rights->propal->write;
 $permissiontodelete = $user->rights->propal->supprimer;
-if (!empty(MAIN_USE_ADVANCED_PERMS)){
+if (!empty(MAIN_USE_ADVANCED_PERMS)) {
 	$permissiontovalidate = $user->rights->propale->propal_advance->validate;
 	$permissiontoclose = $user->rights->propale->propal_advance->close;
-}else{
+} else {
 	$permissiontovalidate = $user->rights->propal->write;
 	$permissiontoclose = $user->rights->propal->write;
 }
@@ -323,7 +323,7 @@ if ($action == 'validate' && $permissiontovalidate) {
 					setEventMessage($tmpproposal->ref." ".$langs->trans('IsNotADraft'), 'errors');
 					$error++;
 				}
-			}else{
+			} else {
 				dol_print_error($db);
 				$error++;
 			}
