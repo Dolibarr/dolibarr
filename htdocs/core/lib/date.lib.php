@@ -680,7 +680,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 	/**
 	 * This bit checks that the date we received is actually a GMT date. It doesn't
 	 * matter what date we're checking against, since the UTC clock does not have
-	 * daylight savings, but it's important that the timestamp represents a UTC 
+	 * daylight savings, but it's important that the timestamp represents a UTC
 	 * midnight time.
 	 */
 	if (((dol_mktime(0, 0, 0, 10, 10, 2020, true) - $timestampStart) % 86400) != 0) {
