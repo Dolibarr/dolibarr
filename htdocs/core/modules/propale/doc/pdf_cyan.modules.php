@@ -337,10 +337,10 @@ class pdf_cyan extends ModelePDFPropales
 				$pdf->SetFont(pdf_getPDFFont($outputlangs));
 				// Set path to the background PDF File
 				if (!empty($conf->global->MAIN_ADD_PDF_BACKGROUND)) {
-                    $logodir = $conf->mycompany->dir_output;
-                    if (!empty($conf->mycompany->multidir_output[$object->entity])) {
-                        $logodir = $conf->mycompany->multidir_output[$object->entity];
-                    }
+					$logodir = $conf->mycompany->dir_output;
+					if (!empty($conf->mycompany->multidir_output[$object->entity])) {
+						$logodir = $conf->mycompany->multidir_output[$object->entity];
+					}
 					$pagecount = $pdf->setSourceFile($logodir.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
 					$tplidx = $pdf->importPage(1);
 				}
