@@ -125,11 +125,6 @@ if (!$sortorder) {
 	$sortorder = 'DESC';
 }
 
-$permissiontoread = $user->rights->propal->lire;
-$permissiontoadd = $user->rights->propal->write;
-$permissiontodelete = $user->rights->propal->supprimer;
-$permissiontoclose = $user->rights->propal->cloturer;
-
 // Security check
 $module = 'propal';
 $dbtable = '';
@@ -218,6 +213,12 @@ $arrayfields = array(
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
+$permissiontoread = $user->rights->propal->lire;
+$permissiontoadd = $user->rights->propal->write;
+$permissiontodelete = $user->rights->propal->supprimer;
+$permissiontoclose = $user->rights->propal->cloturer;
+
+
 
 /*
  * Actions
@@ -295,7 +296,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
-if ($action == 'validate') {
+if ($action == 'validate' && $permissiontoadd) {
 	if (GETPOST('confirm') == 'yes') {
 		$tmpproposal = new Propal($db);
 		$db->begin();
@@ -325,16 +326,16 @@ if ($action == 'validate') {
 	}
 }
 
-if ($action == "sign") {
+if ($action == "sign" && $permissiontoclose) {
 	if (GETPOST('confirm') == 'yes') {
 		$tmpproposal = new Propal($db);
 		$db->begin();
 		$error = 0;
 		foreach ($toselect as $checked) {
 			if ($tmpproposal->fetch($checked)) {
-				if ($tmpproposal->statut == 1) {
-					$tmpproposal->statut = 2;
-					if ($tmpproposal->update($user)) {
+				if ($tmpproposal->statut == $tmpproposal::STATUS_VALIDATED) {
+					$tmpproposal->statut = $tmpproposal::STATUS_SIGNED;;
+					if ($tmpproposal->closeProposal($user, $tmpproposal::STATUS_SIGNED)) {
 						setEventMessage($tmpproposal->ref." ".$langs->trans('Signed'), 'mesgs');
 					} else {
 						dol_print_error($db);
@@ -356,16 +357,16 @@ if ($action == "sign") {
 		}
 	}
 }
-if ($action == "nosign") {
+if ($action == "nosign" && $permissiontoclose) {
 	if (GETPOST('confirm') == 'yes') {
 		$tmpproposal = new Propal($db);
 		$db->begin();
 		$error = 0;
 		foreach ($toselect as $checked) {
 			if ($tmpproposal->fetch($checked)) {
-				if ($tmpproposal->statut == 1) {
-					$tmpproposal->statut = 3;
-					if ($tmpproposal->update($user)) {
+				if ($tmpproposal->statut == $tmpproposal::STATUS_VALIDATED) {
+					$tmpproposal->statut = $tmpproposal::STATUS_NOTSIGNED;
+					if ($tmpproposal->closeProposal($user, $tmpproposal::STATUS_NOTSIGNED)) {
 						setEventMessage($tmpproposal->ref." ".$langs->trans('NoSigned'), 'mesgs');
 					} else {
 						dol_print_error($db);
@@ -387,6 +388,43 @@ if ($action == "nosign") {
 		}
 	}
 }
+
+// Closed records
+if (!$error && $massaction === 'setbilled' && $permissiontoclose) {
+	$db->begin();
+
+	$objecttmp = new $objectclass($db);
+	$nbok = 0;
+	foreach ($toselect as $toselectid) {
+		$result = $objecttmp->fetch($toselectid);
+		if ($result > 0) {
+			$result = $objecttmp->classifyBilled($user, 0);
+			if ($result <= 0) {
+				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+				$error++;
+				break;
+			} else {
+				$nbok++;
+			}
+		} else {
+			setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+			$error++;
+			break;
+		}
+	}
+
+	if (!$error) {
+		if ($nbok > 1) {
+			setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+		} else {
+			setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+		}
+		$db->commit();
+	} else {
+		$db->rollback();
+	}
+}
+
 
 
 /*
@@ -776,15 +814,16 @@ if ($resql) {
 		'builddoc'=>$langs->trans("PDFMerge"),
 		'presend'=>$langs->trans("SendByMail"),
 		'prevalidate'=>$langs->trans("Validate"),
-		'presign'=>$langs->trans("Sign"),
-		'nopresign'=>$langs->trans("NoSign"),
 	);
+	if ($user->rights->propal->cloturer) {
+		$arrayofmassactions['presign']=$langs->trans("Sign");
+		$arrayofmassactions['nopresign']=$langs->trans("NoSign");
+		$arrayofmassactions['setbilled'] = $langs->trans("ClassifyBilled");
+	}
 	if ($user->rights->propal->supprimer) {
 		$arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 	}
-	if ($user->rights->propal->cloturer) {
-		$arrayofmassactions['closed'] = $langs->trans("Close");
-	}
+
 	if (in_array($massaction, array('presend', 'predelete', 'closed'))) {
 		$arrayofmassactions = array();
 	}
