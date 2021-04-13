@@ -84,6 +84,16 @@ class mod_sn_advanced extends ModeleNumRefBatch
 
 		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
+		// Option to enable custom masks per product
+		$texte .= '<td class="right">';
+		if ($conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS) {
+			$texte .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmaskssn&amp;value=0">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+		} else {
+			$texte .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmaskssn&amp;value=1">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+		}
+		$texte .= ' '.$langs->trans('CustomMasks')."\n";
+		$texte .= '</td>';
+
 		$texte .= '</tr>';
 
 		$texte .= '</table>';
