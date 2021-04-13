@@ -284,7 +284,7 @@ if (empty($reshook) && $action == 'add') {
 	}
 
 	if (!$error) {
-		$db->commit();
+		$db->commit();	
 		$project = new Project($db);
 		$resultproject = $project->fetch($conference->fk_project);
 		if ($resultproject < 0){	    
@@ -294,22 +294,22 @@ if (empty($reshook) && $action == 'add') {
 		    global $dolibarr_main_url_root;
 		    if (!empty(floatval($project->price_registration))){
 		        $facture = new Facture($db);
-		        //$facture->rowid = ;
-		        //$facture->ref = ;
-		        //$facture->entity = ;
 		        $facture->type = 0;
 		        $facture->socid = $thirdparty->id;
 		        $facture->paye = 0;
-		        //$facture->fk_user_modif = ;
-		        //$facture->fk_cond_reglement = ;
-		        //$facture->tms = ;
-		        //$facture->fk_statut = ;
+		        //@todo price and taxes to add
+		        $tva = get_default_tva($mysoc, $thirdparty);
+		        
 		        $facture->date = dol_now();
 		        $resultfacture = $facture->create($user);
-		        //@todo rediriger page paiement
-		        $redirection = $dolibarr_main_url_root.'/public/payment/newpayment.php';
-		        Header("Location: ".$redirection);
-		        exit;
+		        if ($resultfacture < 0){
+		            $error++;
+		            $errmsg .= $facture->error;
+		        } else {
+		            $redirection = $dolibarr_main_url_root.'/public/payment/newpayment.php';
+		            Header("Location: ".$redirection);
+		            exit;
+		        }
 		    } else {
 		        // No price has been set
 		        // Validating the subscription
