@@ -25,7 +25,7 @@
  *	\brief      Module to manage third parties (customers, prospects)
  *	\file       htdocs/core/modules/modSociete.class.php
  *	\ingroup    societe
- *	\brief      Fichier de description et activation du module Societe
+ *	\brief      Description and activation file for the module societe (thirdparty)
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -70,7 +70,7 @@ class modSociete extends DolibarrModules
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array("modExpedition", "modFacture", "modFournisseur", "modFicheinter", "modPropale", "modContrat", "modCommande"); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 		$this->langfiles = array("companies", 'bills', "compta", "admin", "banks");
 
 		// Constants
@@ -122,20 +122,14 @@ class modSociete extends DolibarrModules
 		$r++;
 
 		// Boxes
-		$this->boxes = array();
-		$r = 0;
-		$this->boxes[$r][1] = "box_clients.php";
-		$r++;
-		$this->boxes[$r][1] = "box_prospect.php";
-		$r++;
-		$this->boxes[$r][1] = "box_contacts.php";
-		$r++;
-		$this->boxes[$r][1] = "box_activity.php";
-		$this->boxes[$r][2] = '(WarningUsingThisBoxSlowDown)';
-		$r++;
-		$this->boxes[$r][1] = "box_goodcustomers.php";
-		$this->boxes[$r][2] = '(WarningUsingThisBoxSlowDown)';
-		$r++;
+		$this->boxes = array(
+			0=>array('file'=>'box_clients.php', 'enabledbydefaulton'=>'Home'),
+			1=>array('file'=>'box_prospect.php', 'enabledbydefaulton'=>'Home'),
+			2=>array('file'=>'box_contacts.php', 'enabledbydefaulton'=>'Home'),
+			3=>array('file'=>'box_activity.php', 'enabledbydefaulton'=>'Home', 'note'=>'(WarningUsingThisBoxSlowDown)'),
+			4=>array('file'=>'box_goodcustomers.php', 'enabledbydefaulton'=>'Home', 'note'=>'(WarningUsingThisBoxSlowDown)'),
+		);
+
 		// Permissions
 		$this->rights = array();
 		$this->rights_class = 'societe';
@@ -163,7 +157,7 @@ class modSociete extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'thirdparty_supplier_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
 		$this->rights[$r][5] = 'read';
-        */
+		*/
 
 		$r++;
 		$this->rights[$r][0] = 122; // id de la permission
@@ -187,7 +181,7 @@ class modSociete extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'thirdparty_supplier_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
 		$this->rights[$r][5] = 'read';
-        */
+		*/
 
 		$r++;
 		$this->rights[$r][0] = 125; // id de la permission
@@ -203,14 +197,24 @@ class modSociete extends DolibarrModules
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'export';
 
-		// 262 : Resteindre l'acces des commerciaux
+		// 262 : Restrict access to sales representative
 		$r++;
 		$this->rights[$r][0] = 262;
-		$this->rights[$r][1] = 'Read all third parties by internal users (otherwise only if commercial contact). Not effective for external users (limited to themselves).';
+		$this->rights[$r][1] = 'Read all third parties (and their objects) by internal users (otherwise only if commercial contact). Not effective for external users (limited to themselves).';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'client';
 		$this->rights[$r][5] = 'voir';
+
+		/*
+		$r++;
+		$this->rights[$r][0] = 263;
+		$this->rights[$r][1] = 'Read all third parties (without their objects) by internal users (otherwise only if commercial contact). Not effective for external users (limited to themselves).';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'client';
+		$this->rights[$r][5] = 'readallthirdparties_advance';
+		*/
 
 		$r++;
 		$this->rights[$r][0] = 281; // id de la permission
@@ -271,15 +275,22 @@ class modSociete extends DolibarrModules
 			'st.code'=>'ProspectStatus', 'payterm.libelle'=>'PaymentConditions', 'paymode.libelle'=>'PaymentMode',
 			's.outstanding_limit'=>'OutstandingBill', 'pbacc.ref'=>'PaymentBankAccount', 'incoterm.code'=>'IncotermLabel'
 		);
-		if (!empty($conf->global->SOCIETE_USEPREFIX)) $this->export_fields_array[$r]['s.prefix'] = 'Prefix';
-		if (!empty($conf->global->PRODUIT_MULTIPRICES)) $this->export_fields_array[$r]['s.price_level'] = 'PriceLevel';
-		// Add multicompany field
-		if (!empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED))
-		{
-			$nbofallowedentities = count(explode(',', getEntity('societe'))); // If project are shared, nb will be > 1
-			if (!empty($conf->multicompany->enabled) && $nbofallowedentities > 1) $this->export_fields_array[$r] += array('s.entity'=>'Entity');
+		if (!empty($conf->global->SOCIETE_USEPREFIX)) {
+			$this->export_fields_array[$r]['s.prefix'] = 'Prefix';
 		}
-		$keyforselect = 'societe'; $keyforelement = 'company'; $keyforaliasextra = 'extra';
+		if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+			$this->export_fields_array[$r]['s.price_level'] = 'PriceLevel';
+		}
+		// Add multicompany field
+		if (!empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED)) {
+			$nbofallowedentities = count(explode(',', getEntity('societe'))); // If project are shared, nb will be > 1
+			if (!empty($conf->multicompany->enabled) && $nbofallowedentities > 1) {
+				$this->export_fields_array[$r] += array('s.entity'=>'Entity');
+			}
+		}
+		$keyforselect = 'societe';
+		$keyforelement = 'company';
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		$this->export_fields_array[$r] += array('u.login'=>'SaleRepresentativeLogin', 'u.firstname'=>'SaleRepresentativeFirstname', 'u.lastname'=>'SaleRepresentativeLastname');
 
@@ -295,7 +306,7 @@ class modSociete extends DolibarrModules
 			's.rowid'=>"Numeric", 's.nom'=>"Text", 's.name_alias'=>"Text", 'ps.nom'=>"Text",
 			's.status'=>"Numeric", 's.client'=>"Numeric", 's.fournisseur'=>"Boolean", 's.datec'=>"Date", 's.tms'=>"Date",
 			's.code_client'=>"Text", 's.code_fournisseur'=>"Text", 's.code_compta'=>"Text", 's.code_compta_fournisseur'=>"Text",
-			's.address'=>"Text", 's.zip'=>"Text",'s.town'=>"Text",
+			's.address'=>"Text", 's.zip'=>"Text", 's.town'=>"Text",
 			'd.nom'=>'Text', 'r.nom'=>'Text', 'c.label'=>"List:c_country:label:label", 'c.code'=>"Text",
 			's.phone'=>"Text", 's.fax'=>"Text",
 			's.url'=>"Text", 's.email'=>"Text", 's.default_lang'=>"Text", 's.canvas' => "Canvas",
@@ -332,7 +343,7 @@ class modSociete extends DolibarrModules
 			$this->export_sql_end[$r] .= ' AND (sc.fk_user = '.$user->id.' ';
 			if (!empty($conf->global->SOCIETE_EXPORT_SUBORDINATES_CHILDS)) {
 				$subordinatesids = $user->getAllChildIds();
-				$this->export_sql_end[$r] .= count($subordinatesids) > 0 ? ' OR (sc.fk_user IN ('.implode(',', $subordinatesids).')' : '';
+				$this->export_sql_end[$r] .= count($subordinatesids) > 0 ? ' OR (sc.fk_user IN ('.$this->db->sanitize(implode(',', $subordinatesids)).')' : '';
 			}
 			$this->export_sql_end[$r] .= ')';
 		}
@@ -373,20 +384,25 @@ class modSociete extends DolibarrModules
 			's.address'=>"company", 's.zip'=>"company", 's.town'=>"company", 's.phone'=>"company", 's.email'=>"company",
 			't.libelle'=>"company"
 		); // We define here only fields that use another picto
-		if (empty($conf->fournisseur->enabled))
-		{
+		if (empty($conf->fournisseur->enabled)) {
 			unset($this->export_fields_array[$r]['s.code_fournisseur']);
 			unset($this->export_entities_array[$r]['s.code_fournisseur']);
 		}
-		$keyforselect = 'socpeople'; $keyforelement = 'contact'; $keyforaliasextra = 'extra';
+		$keyforselect = 'socpeople';
+		$keyforelement = 'contact';
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		$keyforselect = 'societe'; $keyforelement = 'company'; $keyforaliasextra = 'extrasoc';
+		$keyforselect = 'societe';
+		$keyforelement = 'company';
+		$keyforaliasextra = 'extrasoc';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'socpeople as c';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON c.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_extrafields as extrasoc ON s.rowid = extrasoc.fk_object';
-		if (is_object($user) && empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
+		if (is_object($user) && empty($user->rights->societe->client->voir)) {
+			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
+		}
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON c.fk_departement = d.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_regions as r ON r.code_region = d.fk_region AND r.fk_pays = c.fk_pays';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co ON c.fk_pays = co.rowid';
@@ -397,7 +413,7 @@ class modSociete extends DolibarrModules
 			$this->export_sql_end[$r] .= ' AND (sc.fk_user = '.$user->id.' ';
 			if (!empty($conf->global->SOCIETE_EXPORT_SUBORDINATES_CHILDS)) {
 				$subordinatesids = $user->getAllChildIds();
-				$this->export_sql_end[$r] .= count($subordinatesids) > 0 ? ' OR (sc.fk_user IN ('.implode(',', $subordinatesids).')' : '';
+				$this->export_sql_end[$r] .= count($subordinatesids) > 0 ? ' OR (sc.fk_user IN ('.$this->db->sanitize(implode(',', $subordinatesids)).')' : '';
 			}
 			$this->export_sql_end[$r] .= ')';
 		}
@@ -469,12 +485,13 @@ class modSociete extends DolibarrModules
 			's.fk_multicurrency' => 'MulticurrencyUsed',
 			's.multicurrency_code' => 'MulticurrencyCurrency'
 		);
-		if (!empty($conf->global->PRODUIT_MULTIPRICES)) $this->import_fields_array[$r]['s.price_level'] = 'PriceLevel';
+		if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+			$this->import_fields_array[$r]['s.price_level'] = 'PriceLevel';
+		}
 		// Add extra fields
 		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'societe' AND entity IN (0, ".$conf->entity.")";
 		$resql = $this->db->query($sql);
-		if ($resql)    // This can fail when class is used on old database (during migration for example)
-		{
+		if ($resql) {    // This can fail when class is used on old database (during migration for example)
 			while ($obj = $this->db->fetch_object($resql)) {
 				$fieldname = 'extra.'.$obj->name;
 				$fieldlabel = ucfirst($obj->label);
@@ -496,7 +513,7 @@ class modSociete extends DolibarrModules
 				'classfile' => '/core/class/cstate.class.php',
 				'class' => 'Cstate',
 				'method' => 'fetch',
-				'dict' => 'DictionaryState'
+				'dict' => 'DictionaryStateCode'
 			),
 			's.fk_pays' => array(
 				'rule' => 'fetchidfromcodeid',
@@ -650,8 +667,7 @@ class modSociete extends DolibarrModules
 		// Add extra fields
 		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'socpeople' AND entity IN (0, ".$conf->entity.")";
 		$resql = $this->db->query($sql);
-		if ($resql)    // This can fail when class is used on an old database (during a migration for example)
-		{
+		if ($resql) {    // This can fail when class is used on an old database (during a migration for example)
 			while ($obj = $this->db->fetch_object($resql)) {
 				$fieldname = 'extra.'.$obj->name;
 				$fieldlabel = ucfirst($obj->label);
@@ -676,7 +692,7 @@ class modSociete extends DolibarrModules
 				'classfile' => '/core/class/cstate.class.php',
 				'class' => 'Cstate',
 				'method' => 'fetch',
-				'dict' => 'DictionaryState'
+				'dict' => 'DictionaryStateCode'
 			),
 			's.fk_pays' => array(
 				'rule' => 'fetchidfromcodeid',
@@ -756,8 +772,10 @@ class modSociete extends DolibarrModules
 		$this->import_examplevalues_array[$r] = array(//field order as per structure of table llx_societe_rib
 			'sr.label' => 'eg. "account1"',
 			'sr.fk_soc' => 'eg. "TPBigCompany"',
-			'sr.datec' => 'date used for creating direct debit UMR formatted as '.dol_print_date(dol_now(),
-					'%Y-%m-%d'),
+			'sr.datec' => 'date used for creating direct debit UMR formatted as '.dol_print_date(
+				dol_now(),
+				'%Y-%m-%d'
+			),
 			'sr.bank' => 'bank name eg: "ING-Direct"',
 			'sr.code_banque' => 'account sort code (GB)/Routing number (US) eg. "8456"',
 			'sr.code_guichet' => "bank code for office/branch",
@@ -810,13 +828,11 @@ class modSociete extends DolibarrModules
 		$dirodt = DOL_DATA_ROOT.'/doctemplates/thirdparties';
 		$dest = $dirodt.'/template_thirdparty.odt';
 
-		if (file_exists($src) && !file_exists($dest))
-		{
+		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
 			$result = dol_copy($src, $dest, 0, 0);
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
 				return 0;

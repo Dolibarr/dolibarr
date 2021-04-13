@@ -76,21 +76,20 @@ class FormOther
 		$sql = "SELECT rowid, label, fk_user";
 		$sql .= " FROM ".MAIN_DB_PREFIX."export_model";
 		$sql .= " WHERE type = '".$this->db->escape($type)."'";
-		if (!empty($fk_user)) $sql .= " AND fk_user IN (0, ".$fk_user.")"; // An export model
+		if (!empty($fk_user)) {
+			$sql .= " AND fk_user IN (0, ".$fk_user.")"; // An export model
+		}
 		$sql .= " ORDER BY label";
 		$result = $this->db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			print '<select class="flat minwidth200" name="'.$htmlname.'" id="'.$htmlname.'">';
-			if ($useempty)
-			{
+			if ($useempty) {
 				print '<option value="-1">&nbsp;</option>';
 			}
 
 			$num = $this->db->num_rows($result);
 			$i = 0;
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$obj = $this->db->fetch_object($result);
 
 				$label = $obj->label;
@@ -102,8 +101,7 @@ class FormOther
 					$label .= ' <span class="opacitymedium">('.$tmpuser->getFullName($langs).')</span>';
 				}
 
-				if ($selected == $obj->rowid)
-				{
+				if ($selected == $obj->rowid) {
 					print '<option value="'.$obj->rowid.'" selected data-html="'.dol_escape_htmltag($label).'">';
 				} else {
 					print '<option value="'.$obj->rowid.'" data-html="'.dol_escape_htmltag($label).'">';
@@ -139,21 +137,20 @@ class FormOther
 		$sql = "SELECT rowid, label, fk_user";
 		$sql .= " FROM ".MAIN_DB_PREFIX."import_model";
 		$sql .= " WHERE type = '".$this->db->escape($type)."'";
-		if (!empty($fk_user)) $sql .= " AND fk_user IN (0, ".$fk_user.")"; // An export model
+		if (!empty($fk_user)) {
+			$sql .= " AND fk_user IN (0, ".$fk_user.")"; // An export model
+		}
 		$sql .= " ORDER BY rowid";
 		$result = $this->db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			print '<select class="flat minwidth200" name="'.$htmlname.'" id="'.$htmlname.'">';
-			if ($useempty)
-			{
+			if ($useempty) {
 				print '<option value="-1">&nbsp;</option>';
 			}
 
 			$num = $this->db->num_rows($result);
 			$i = 0;
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$obj = $this->db->fetch_object($result);
 
 				$label = $obj->label;
@@ -165,8 +162,7 @@ class FormOther
 					$label .= ' <span class="opacitymedium">('.$tmpuser->getFullName($langs).')</span>';
 				}
 
-				if ($selected == $obj->rowid)
-				{
+				if ($selected == $obj->rowid) {
 					print '<option value="'.$obj->rowid.'" selected data-html="'.dol_escape_htmltag($label).'">';
 				} else {
 					print '<option value="'.$obj->rowid.'" data-html="'.dol_escape_htmltag($label).'">';
@@ -204,19 +200,15 @@ class FormOther
 
 		dol_syslog(get_class($this).'::select_ecotaxes', LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			print '<select class="flat" name="'.$htmlname.'">';
 			$num = $this->db->num_rows($resql);
 			$i = 0;
 			print '<option value="-1">&nbsp;</option>'."\n";
-			if ($num)
-			{
-				while ($i < $num)
-				{
+			if ($num) {
+				while ($i < $num) {
 					$obj = $this->db->fetch_object($resql);
-					if ($selected && $selected == $obj->rowid)
-					{
+					if ($selected && $selected == $obj->rowid) {
 						print '<option value="'.$obj->rowid.'" selected>';
 					} else {
 						print '<option value="'.$obj->rowid.'">';
@@ -260,19 +252,15 @@ class FormOther
 
 		dol_syslog(get_class($this).'::select_revenue_stamp', LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$out .= '<select class="flat" name="'.$htmlname.'">';
 			$num = $this->db->num_rows($resql);
 			$i = 0;
 			$out .= '<option value="0">&nbsp;</option>'."\n";
-			if ($num)
-			{
-				while ($i < $num)
-				{
+			if ($num) {
+				while ($i < $num) {
 					$obj = $this->db->fetch_object($resql);
-					if (($selected && $selected == $obj->taux) || $num == 1)
-					{
+					if (($selected && $selected == $obj->taux) || $num == 1) {
 						$out .= '<option value="'.$obj->taux.($obj->revenuestamp_type == 'percent' ? '%' : '').'"'.($obj->revenuestamp_type == 'percent' ? ' data-type="percent"' : '').' selected>';
 					} else {
 						$out .= '<option value="'.$obj->taux.($obj->revenuestamp_type == 'percent' ? '%' : '').'"'.($obj->revenuestamp_type == 'percent' ? ' data-type="percent"' : '').'>';
@@ -309,12 +297,12 @@ class FormOther
 	{
 		// phpcs:enable
 		$return = '<select class="flat" name="'.$htmlname.'" '.($disabled ? 'disabled' : '').'>';
-		if ($showempty) $return .= '<option value="-1"'.(($selected == -1 || $selected == '') ? ' selected' : '').'>&nbsp;</option>';
+		if ($showempty) {
+			$return .= '<option value="-1"'.(($selected == -1 || $selected == '') ? ' selected' : '').'>&nbsp;</option>';
+		}
 
-		for ($i = $start; $i <= $end; $i += $increment)
-		{
-			if ($selected != '' && (int) $selected == $i)
-			{
+		for ($i = $start; $i <= $end; $i += $increment) {
+			if ($selected != '' && (int) $selected == $i) {
 				$return .= '<option value="'.$i.'" selected>';
 			} else {
 				$return .= '<option value="'.$i.'">';
@@ -332,13 +320,13 @@ class FormOther
 	/**
 	 * Return select list for categories (to use in form search selectors)
 	 *
-	 * @param	int		$type			Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
-	 * @param   integer	$selected     	Preselected value
-	 * @param   string	$htmlname      	Name of combo list
-	 * @param	int		$nocateg		Show also an entry "Not categorized"
-	 * @param   int     $showempty      Add also an empty line
-	 * @param   string  $morecss        More CSS
-	 * @return  string		        	Html combo list code
+	 * @param	int			$type			Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
+	 * @param   integer		$selected     	Preselected value
+	 * @param   string		$htmlname      	Name of combo list
+	 * @param	int			$nocateg		Show also an entry "Not categorized"
+	 * @param   int|string  $showempty      Add also an empty line
+	 * @param   string  	$morecss        More CSS
+	 * @return  string			        	Html combo list code
 	 * @see	select_all_categories()
 	 */
 	public function select_categories($type, $selected = 0, $htmlname = 'search_categ', $nocateg = 0, $showempty = 1, $morecss = '')
@@ -348,8 +336,7 @@ class FormOther
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 		// For backward compatibility
-		if (is_numeric($type))
-		{
+		if (is_numeric($type)) {
 			dol_syslog(__METHOD__.': using numeric value for parameter type is deprecated. Use string code instead.', LOG_WARNING);
 		}
 
@@ -359,8 +346,7 @@ class FormOther
 
 		$moreforfilter = '';
 		// Enhance with select2
-		if ($conf->use_javascript_ajax)
-		{
+		if ($conf->use_javascript_ajax) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 			$comboenhancement = ajax_combobox('select_categ_'.$htmlname);
 			$moreforfilter .= $comboenhancement;
@@ -368,19 +354,28 @@ class FormOther
 
 		// Print a select with each of them
 		$moreforfilter .= '<select class="flat minwidth100'.($morecss ? ' '.$morecss : '').'" id="select_categ_'.$htmlname.'" name="'.$htmlname.'">';
-		if ($showempty) $moreforfilter .= '<option value="0">&nbsp;</option>'; // Should use -1 to say nothing
+		if ($showempty) {
+			$textforempty = ' ';
+			if (!empty($conf->use_javascript_ajax)) {
+				$textforempty = '&nbsp;'; // If we use ajaxcombo, we need &nbsp; here to avoid to have an empty element that is too small.
+			}
+			if (!is_numeric($showempty)) {
+				$textforempty = $showempty;
+			}
+			$moreforfilter .= '<option class="optiongrey" value="'.($showempty < 0 ? $showempty : -1).'"'.($selected == $showempty ? ' selected' : '').'>'.$textforempty.'</option>'."\n";
+			//$moreforfilter .= '<option value="0" '.($moreparamonempty ? $moreparamonempty.' ' : '').' class="optiongrey">'.(is_numeric($showempty) ? '&nbsp;' : $showempty).'</option>'; // Should use -1 to say nothing
+		}
 
-		if (is_array($tab_categs))
-		{
-			foreach ($tab_categs as $categ)
-			{
+		if (is_array($tab_categs)) {
+			foreach ($tab_categs as $categ) {
 				$moreforfilter .= '<option value="'.$categ['id'].'"';
-				if ($categ['id'] == $selected) $moreforfilter .= ' selected';
+				if ($categ['id'] == $selected) {
+					$moreforfilter .= ' selected';
+				}
 				$moreforfilter .= '>'.dol_trunc($categ['fulllabel'], 50, 'middle').'</option>';
 			}
 		}
-		if ($nocateg)
-		{
+		if ($nocateg) {
 			$langs->load("categories");
 			$moreforfilter .= '<option value="-2"'.($selected == -2 ? ' selected' : '').'>- '.$langs->trans("NotCategorized").' -</option>';
 		}
@@ -394,14 +389,14 @@ class FormOther
 	/**
 	 *  Return select list for categories (to use in form search selectors)
 	 *
-	 *  @param	string	$selected     		Preselected value
-	 *  @param  string	$htmlname      		Name of combo list (example: 'search_sale')
-	 *  @param  User	$user           	Object user
-	 *  @param	int		$showstatus			0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
-	 *  @param	int		$showempty			1=show also an empty value
-	 *  @param	string	$morecss			More CSS
-	 *  @param	int		$norepresentative	Show also an entry "Not categorized"
-	 *  @return string						Html combo list code
+	 *  @param	string		$selected     		Preselected value
+	 *  @param  string		$htmlname      		Name of combo list (example: 'search_sale')
+	 *  @param  User		$user           	Object user
+	 *  @param	int			$showstatus			0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
+	 *  @param	int|string	$showempty			1=show also an empty value
+	 *  @param	string		$morecss			More CSS
+	 *  @param	int			$norepresentative	Show also an entry "Not categorized"
+	 *  @return string							Html combo list code
 	 */
 	public function select_salesrepresentatives($selected, $htmlname, $user, $showstatus = 0, $showempty = 1, $morecss = '', $norepresentative = 0)
 	{
@@ -412,13 +407,11 @@ class FormOther
 
 		$out = '';
 		// Enhance with select2
-		if ($conf->use_javascript_ajax)
-		{
+		if ($conf->use_javascript_ajax) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 
 			$comboenhancement = ajax_combobox($htmlname);
-			if ($comboenhancement)
-			{
+			if ($comboenhancement) {
 				$out .= $comboenhancement;
 			}
 		}
@@ -427,14 +420,22 @@ class FormOther
 
 		// Select each sales and print them in a select input
 		$out .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.'">';
-		if ($showempty) $out .= '<option value="0">&nbsp;</option>';
+		if ($showempty) {
+			$textforempty = ' ';
+			if (!empty($conf->use_javascript_ajax)) {
+				$textforempty = '&nbsp;'; // If we use ajaxcombo, we need &nbsp; here to avoid to have an empty element that is too small.
+			}
+			if (!is_numeric($showempty)) {
+				$textforempty = $showempty;
+			}
+			$out .= '<option class="optiongrey" value="'.($showempty < 0 ? $showempty : -1).'"'.($selected == $showempty ? ' selected' : '').'>'.$textforempty.'</option>'."\n";
+		}
 
 		// Get list of users allowed to be viewed
-		$sql_usr = "SELECT u.rowid, u.lastname, u.firstname, u.statut, u.login";
+		$sql_usr = "SELECT u.rowid, u.lastname, u.firstname, u.statut as status, u.login, u.photo, u.gender, u.entity, u.admin";
 		$sql_usr .= " FROM ".MAIN_DB_PREFIX."user as u";
 
-		if (!empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
-		{
+		if (!empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 			if (!empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
 				$sql_usr .= " WHERE u.entity IS NOT NULL"; // Show all users
 			} else {
@@ -445,21 +446,25 @@ class FormOther
 			$sql_usr .= " WHERE u.entity IN (".getEntity('user').")";
 		}
 
-		if (empty($user->rights->user->user->lire)) $sql_usr .= " AND u.rowid = ".$user->id;
-		if (!empty($user->socid)) $sql_usr .= " AND u.fk_soc = ".$user->socid;
+		if (empty($user->rights->user->user->lire)) {
+			$sql_usr .= " AND u.rowid = ".$user->id;
+		}
+		if (!empty($user->socid)) {
+			$sql_usr .= " AND u.fk_soc = ".$user->socid;
+		}
 
 		//Add hook to filter on user (for exemple on usergroup define in custom modules)
-		if (!empty($reshook)) $sql_usr .= $hookmanager->resArray[0];
+		if (!empty($reshook)) {
+			$sql_usr .= $hookmanager->resArray[0];
+		}
 
 		// Add existing sales representatives of thirdparty of external user
-		if (empty($user->rights->user->user->lire) && $user->socid)
-		{
+		if (empty($user->rights->user->user->lire) && $user->socid) {
 			$sql_usr .= " UNION ";
-			$sql_usr .= "SELECT u2.rowid, u2.lastname, u2.firstname, u2.statut, u2.login";
+			$sql_usr .= "SELECT u2.rowid, u2.lastname, u2.firstname, u2.statut as status, u2.login, u2.photo, u2.gender, u2.entity, u2.admin";
 			$sql_usr .= " FROM ".MAIN_DB_PREFIX."user as u2, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 
-			if (!empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
-			{
+			if (!empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 				if (!empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
 					$sql_usr .= " WHERE u2.entity IS NOT NULL"; // Show all users
 				} else {
@@ -472,38 +477,66 @@ class FormOther
 			$sql_usr .= " AND u2.rowid = sc.fk_user AND sc.fk_soc=".$user->socid;
 
 			//Add hook to filter on user (for exemple on usergroup define in custom modules)
-			if (!empty($reshook)) $sql_usr .= $hookmanager->resArray[1];
+			if (!empty($reshook)) {
+				$sql_usr .= $hookmanager->resArray[1];
+			}
 		}
-		$sql_usr .= " ORDER BY statut DESC, lastname ASC"; // Do not use 'ORDER BY u.statut' here, not compatible with the UNION.
+
+		if (empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)) {	// MAIN_FIRSTNAME_NAME_POSITION is 0 means firstname+lastname
+			$sql_usr .= " ORDER BY status DESC, firstname ASC, lastname ASC";
+		} else {
+			$sql_usr .= " ORDER BY status DESC, lastname ASC, firstname ASC";
+		}
 		//print $sql_usr;exit;
 
 		$resql_usr = $this->db->query($sql_usr);
-		if ($resql_usr)
-		{
-			while ($obj_usr = $this->db->fetch_object($resql_usr))
-			{
+		if ($resql_usr) {
+			$userstatic = new User($this->db);
+			$showstatus = 1;
+
+			while ($obj_usr = $this->db->fetch_object($resql_usr)) {
+				$userstatic->id = $obj_usr->rowid;
+				$userstatic->lastname = $obj_usr->lastname;
+				$userstatic->firstname = $obj_usr->firstname;
+				$userstatic->photo = $obj_usr->photo;
+				$userstatic->statut = $obj_usr->status;
+				$userstatic->entity = $obj_usr->entity;
+				$userstatic->admin = $obj_usr->admin;
+
+				$labeltoshow = dolGetFirstLastname($obj_usr->firstname, $obj_usr->lastname);
+				if (empty($obj_usr->firstname) && empty($obj_usr->lastname)) {
+					$labeltoshow = $obj_usr->login;
+				}
+
 				$out .= '<option value="'.$obj_usr->rowid.'"';
+				if ($obj_usr->rowid == $selected) {
+					$out .= ' selected';
+				}
+				$out .= ' data-html="';
+				$outhtml = $userstatic->getNomUrl(-3, '', 0, 1, 24, 1, 'login', '', 1).' ';
+				if ($showstatus >= 0 && $obj_usr->status == 0) {
+					$outhtml .= '<strike class="opacitymediumxxx">';
+				}
+				$outhtml .= $labeltoshow;
+				if ($showstatus >= 0 && $obj_usr->status == 0) {
+					$outhtml .= '</strike>';
+				}
+				$out .= dol_escape_htmltag($outhtml);
+				$out .= '">';
 
-				if ($obj_usr->rowid == $selected) $out .= ' selected';
-
-				$out .= '>';
-				$out .= dolGetFirstLastname($obj_usr->firstname, $obj_usr->lastname);
+				$out .= $labeltoshow;
 				// Complete name with more info
 				$moreinfo = 0;
-				if (!empty($conf->global->MAIN_SHOW_LOGIN))
-				{
+				if (!empty($conf->global->MAIN_SHOW_LOGIN)) {
 					$out .= ($moreinfo ? ' - ' : ' (').$obj_usr->login;
 					$moreinfo++;
 				}
-				if ($showstatus >= 0)
-				{
-					if ($obj_usr->statut == 1 && $showstatus == 1)
-					{
+				if ($showstatus >= 0) {
+					if ($obj_usr->status == 1 && $showstatus == 1) {
 						$out .= ($moreinfo ? ' - ' : ' (').$langs->trans('Enabled');
 						$moreinfo++;
 					}
-					if ($obj_usr->statut == 0)
-					{
+					if ($obj_usr->status == 0) {
 						$out .= ($moreinfo ? ' - ' : ' (').$langs->trans('Disabled');
 						$moreinfo++;
 					}
@@ -516,8 +549,7 @@ class FormOther
 			dol_print_error($this->db);
 		}
 
-		if ($norepresentative)
-		{
+		if ($norepresentative) {
 			$langs->load("companies");
 			$out .= '<option value="-2"'.($selected == -2 ? ' selected' : '').'>- '.$langs->trans("NoSalesRepresentativeAffected").' -</option>';
 		}
@@ -551,10 +583,11 @@ class FormOther
 		//print $modeproject.'-'.$modetask;
 		$task = new Task($this->db);
 		$tasksarray = $task->getTasksArray($modetask ? $user : 0, $modeproject ? $user : 0, $projectid, 0, $mode, '', $filteronprojstatus);
-		if ($tasksarray)
-		{
+		if ($tasksarray) {
 			print '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'" id="'.$htmlname.'">';
-			if ($useempty) print '<option value="0">&nbsp;</option>';
+			if ($useempty) {
+				print '<option value="0">&nbsp;</option>';
+			}
 			$j = 0;
 			$level = 0;
 			$this->_pLineSelect($j, 0, $tasksarray, $level, $selectedtask, $projectid, $disablechildoftaskid);
@@ -590,22 +623,26 @@ class FormOther
 				//var_dump($selectedproject."--".$selectedtask."--".$lines[$i]->fk_project."_".$lines[$i]->id);		// $lines[$i]->id may be empty if project has no lines
 
 				// Break on a new project
-				if ($parent == 0)	// We are on a task at first level
-				{
-					if ($lines[$i]->fk_project != $lastprojectid)	// Break found on project
-					{
-						if ($i > 0) print '<option value="0" disabled>----------</option>';
-						print '<option value="'.$lines[$i]->fk_project.'_0"';
-						if ($selectedproject == $lines[$i]->fk_project) print ' selected';
-						print '>'; // Project -> Task
-						print $langs->trans("Project").' '.$lines[$i]->projectref;
-						if (empty($lines[$i]->public))
-						{
-							print ' ('.$langs->trans("Visibility").': '.$langs->trans("PrivateProject").')';
-						} else {
-							print ' ('.$langs->trans("Visibility").': '.$langs->trans("SharedProject").')';
+				if ($parent == 0) {	// We are on a task at first level
+					if ($lines[$i]->fk_project != $lastprojectid) {	// Break found on project
+						if ($i > 0) {
+							print '<option value="0" disabled>----------</option>';
 						}
-						//print '-'.$parent.'-'.$lines[$i]->fk_project.'-'.$lastprojectid;
+						print '<option value="'.$lines[$i]->fk_project.'_0"';
+						if ($selectedproject == $lines[$i]->fk_project) {
+							print ' selected';
+						}
+
+						$labeltoshow = $langs->trans("Project").' '.$lines[$i]->projectref;
+						if (empty($lines[$i]->public)) {
+							$labeltoshow .= ' <span class="opacitymedium">('.$langs->trans("Visibility").': '.$langs->trans("PrivateProject").')</span>';
+						} else {
+							$labeltoshow .= ' <span class="opacitymedium">('.$langs->trans("Visibility").': '.$langs->trans("SharedProject").')</span>';
+						}
+
+						print ' data-html="'.dol_escape_htmltag($labeltoshow).'"';
+						print '>'; // Project -> Task
+						print $labeltoshow;
 						print "</option>\n";
 
 						$lastprojectid = $lines[$i]->fk_project;
@@ -616,39 +653,50 @@ class FormOther
 				$newdisablechildoftaskid = $disablechildoftaskid;
 
 				// Print task
-				if (isset($lines[$i]->id))		// We use isset because $lines[$i]->id may be null if project has no task and are on root project (tasks may be caught by a left join). We enter here only if '0' or >0
-				{
+				if (isset($lines[$i]->id)) {		// We use isset because $lines[$i]->id may be null if project has no task and are on root project (tasks may be caught by a left join). We enter here only if '0' or >0
 					// Check if we must disable entry
 					$disabled = 0;
-					if ($disablechildoftaskid && (($lines[$i]->id == $disablechildoftaskid || $lines[$i]->fk_parent == $disablechildoftaskid)))
-					{
-			   			$disabled++;
-			   			if ($lines[$i]->fk_parent == $disablechildoftaskid) $newdisablechildoftaskid = $lines[$i]->id; // If task is child of a disabled parent, we will propagate id to disable next child too
+					if ($disablechildoftaskid && (($lines[$i]->id == $disablechildoftaskid || $lines[$i]->fk_parent == $disablechildoftaskid))) {
+						$disabled++;
+						if ($lines[$i]->fk_parent == $disablechildoftaskid) {
+							$newdisablechildoftaskid = $lines[$i]->id; // If task is child of a disabled parent, we will propagate id to disable next child too
+						}
 					}
 
 					print '<option value="'.$lines[$i]->fk_project.'_'.$lines[$i]->id.'"';
-					if (($lines[$i]->id == $selectedtask) || ($lines[$i]->fk_project.'_'.$lines[$i]->id == $selectedtask)) print ' selected';
-					if ($disabled) print ' disabled';
-					print '>';
-					print $langs->trans("Project").' '.$lines[$i]->projectref;
-					print ' '.$lines[$i]->projectlabel;
-					if (empty($lines[$i]->public))
-					{
-						print ' ('.$langs->trans("Visibility").': '.$langs->trans("PrivateProject").')';
+					if (($lines[$i]->id == $selectedtask) || ($lines[$i]->fk_project.'_'.$lines[$i]->id == $selectedtask)) {
+						print ' selected';
+					}
+					if ($disabled) {
+						print ' disabled';
+					}
+
+					$labeltoshow = $langs->trans("Project").' '.$lines[$i]->projectref;
+					$labeltoshow .= ' '.$lines[$i]->projectlabel;
+					if (empty($lines[$i]->public)) {
+						$labeltoshow .= ' <span class="opacitymedium">('.$langs->trans("Visibility").': '.$langs->trans("PrivateProject").')</span>';
 					} else {
-						print ' ('.$langs->trans("Visibility").': '.$langs->trans("SharedProject").')';
+						$labeltoshow .= ' <span class="opacitymedium">('.$langs->trans("Visibility").': '.$langs->trans("SharedProject").')</span>';
 					}
-					if ($lines[$i]->id) print ' > ';
-					for ($k = 0; $k < $level; $k++)
-					{
-						print "&nbsp;&nbsp;&nbsp;";
+					if ($lines[$i]->id) {
+						$labeltoshow .= ' > ';
 					}
-					print $lines[$i]->ref.' '.$lines[$i]->label."</option>\n";
+					for ($k = 0; $k < $level; $k++) {
+						$labeltoshow .= "&nbsp;&nbsp;&nbsp;";
+					}
+					$labeltoshow .= $lines[$i]->ref.' '.$lines[$i]->label;
+
+					print ' data-html="'.dol_escape_htmltag($labeltoshow).'"';
+					print '>';
+					print $labeltoshow;
+					print "</option>\n";
 					$inc++;
 				}
 
 				$level++;
-				if ($lines[$i]->id) $this->_pLineSelect($inc, $lines[$i]->id, $lines, $level, $selectedtask, $selectedproject, $newdisablechildoftaskid);
+				if ($lines[$i]->id) {
+					$this->_pLineSelect($inc, $lines[$i]->id, $lines, $level, $selectedtask, $selectedproject, $newdisablechildoftaskid);
+				}
 				$level--;
 			}
 		}
@@ -667,12 +715,17 @@ class FormOther
 	{
 		$textcolor = 'FFF';
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		if (colorIsLight($color)) $textcolor = '000';
+		if (colorIsLight($color)) {
+			$textcolor = '000';
+		}
 
 		$color = colorArrayToHex(colorStringToArray($color, array()), '');
 
-		if ($color) print '<input type="text" class="colorthumb" disabled style="padding: 1px; margin-top: 0; margin-bottom: 0; color: #'.$textcolor.'; background-color: #'.$color.'" value="'.$color.'">';
-		else print $textifnotdefined;
+		if ($color) {
+			print '<input type="text" class="colorthumb" disabled style="padding: 1px; margin-top: 0; margin-bottom: 0; color: #'.$textcolor.'; background-color: #'.$color.'" value="'.$color.'">';
+		} else {
+			print $textifnotdefined;
+		}
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -703,10 +756,11 @@ class FormOther
 	 *  @param	int			$showcolorbox	1=Show color code and color box, 0=Show only color code
 	 *  @param 	array		$arrayofcolors	Array of colors. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
 	 *  @param	string		$morecss		Add css style into input field
+	 *  @param	string		$setpropertyonselect	Set this property after selecting a color
 	 *  @return	string
 	 *  @see showColor()
 	 */
-	public static function selectColor($set_color = '', $prefix = 'f_color', $form_name = '', $showcolorbox = 1, $arrayofcolors = '', $morecss = '')
+	public static function selectColor($set_color = '', $prefix = 'f_color', $form_name = '', $showcolorbox = 1, $arrayofcolors = '', $morecss = '', $setpropertyonselect = '')
 	{
 		// Deprecation warning
 		if ($form_name) {
@@ -717,56 +771,62 @@ class FormOther
 
 		$out = '';
 
-		if (!is_array($arrayofcolors) || count($arrayofcolors) < 1)
-		{
+		if (!is_array($arrayofcolors) || count($arrayofcolors) < 1) {
 			$langs->load("other");
-			if (empty($conf->dol_use_jmobile) && !empty($conf->use_javascript_ajax))
-			{
+			if (empty($conf->dol_use_jmobile) && !empty($conf->use_javascript_ajax)) {
 				$out .= '<link rel="stylesheet" media="screen" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/css/jPicker-1.1.6.css" />';
 				$out .= '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/jpicker-1.1.6.js"></script>';
 				$out .= '<script type="text/javascript">
 	             jQuery(document).ready(function(){
 	                $(\'#colorpicker'.$prefix.'\').jPicker( {
-	                window: {
-	                  title: \''.dol_escape_js($langs->trans("SelectAColor")).'\', /* any title for the jPicker window itself - displays "Drag Markers To Pick A Color" if left null */
-	                  effects:
-	                    {
-	                    type: \'show\', /* effect used to show/hide an expandable picker. Acceptable values "slide", "show", "fade" */
-	                    speed:
-	                    {
-	                      show: \'fast\', /* duration of "show" effect. Acceptable values are "fast", "slow", or time in ms */
-	                      hide: \'fast\' /* duration of "hide" effect. Acceptable values are "fast", "slow", or time in ms */
-	                    }
-	                    },
-	                  position:
-	                    {
-	                    x: \'screenCenter\', /* acceptable values "left", "center", "right", "screenCenter", or relative px value */
-	                    y: \'center\' /* acceptable values "top", "bottom", "center", or relative px value */
-	                    },
-	                },
-	                images: {
-	                    clientPath: \''.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/images/\',
-	                    picker: { file: \'../../../../../theme/common/colorpicker.png\', width: 14, height: 14 }
-	          		},
-	                localization: // alter these to change the text presented by the picker (e.g. different language)
-	                  {
-	                    text:
-	                    {
-	                      title: \''.dol_escape_js($langs->trans("SelectAColor")).'\',
-	                      newColor: \''.dol_escape_js($langs->trans("New")).'\',
-	                      currentColor: \''.dol_escape_js($langs->trans("Current")).'\',
-	                      ok: \''.dol_escape_js($langs->trans("Save")).'\',
-	                      cancel: \''.dol_escape_js($langs->trans("Cancel")).'\'
-	                    }
-	                  }
-			        } ); });
+		                window: {
+		                  title: \''.dol_escape_js($langs->trans("SelectAColor")).'\', /* any title for the jPicker window itself - displays "Drag Markers To Pick A Color" if left null */
+		                  effects:
+		                    {
+		                    type: \'show\', /* effect used to show/hide an expandable picker. Acceptable values "slide", "show", "fade" */
+		                    speed:
+		                    {
+		                      show: \'fast\', /* duration of "show" effect. Acceptable values are "fast", "slow", or time in ms */
+		                      hide: \'fast\' /* duration of "hide" effect. Acceptable values are "fast", "slow", or time in ms */
+		                    }
+		                    },
+		                  position:
+		                    {
+		                    x: \'screenCenter\', /* acceptable values "left", "center", "right", "screenCenter", or relative px value */
+		                    y: \'center\' /* acceptable values "top", "bottom", "center", or relative px value */
+		                    },
+		                },
+		                images: {
+		                    clientPath: \''.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/images/\',
+		                    picker: { file: \'../../../../../theme/common/colorpicker.png\', width: 14, height: 14 }
+		          		},
+		                localization: // alter these to change the text presented by the picker (e.g. different language)
+		                  {
+		                    text:
+		                    {
+		                      title: \''.dol_escape_js($langs->trans("SelectAColor")).'\',
+		                      newColor: \''.dol_escape_js($langs->trans("New")).'\',
+		                      currentColor: \''.dol_escape_js($langs->trans("Current")).'\',
+		                      ok: \''.dol_escape_js($langs->trans("Save")).'\',
+		                      cancel: \''.dol_escape_js($langs->trans("Cancel")).'\'
+		                    }
+		                  }
+				        },
+						function(color, context) { console.log("close"); },
+						function(color, context) { var hex = color.val(\'hex\'); console.log("new color selected in jpicker "+hex);';
+				if ($setpropertyonselect) {
+					$out .= ' if (hex != null) document.documentElement.style.setProperty(\'--'.$setpropertyonselect.'\', \'#\'+hex);';
+				}
+						$out .= '},
+						function(color, context) { console.log("cancel"); }
+					);
+				 });
 	             </script>';
 			}
 			$out .= '<input id="colorpicker'.$prefix.'" name="'.$prefix.'" size="6" maxlength="7" class="flat'.($morecss ? ' '.$morecss : '').'" type="text" value="'.dol_escape_htmltag($set_color).'" />';
 		} else // In most cases, this is not used. We used instead function with no specific list of colors
 		{
-			if (empty($conf->dol_use_jmobile) && !empty($conf->use_javascript_ajax))
-			{
+			if (empty($conf->dol_use_jmobile) && !empty($conf->use_javascript_ajax)) {
 				$out .= '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/colorpicker/jquery.colorpicker.css" type="text/css" media="screen" />';
 				$out .= '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/colorpicker/jquery.colorpicker.js" type="text/javascript"></script>';
 				$out .= '<script type="text/javascript">
@@ -781,10 +841,11 @@ class FormOther
 			}
 			$out .= '<select id="colorpicker'.$prefix.'" class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$prefix.'">';
 			//print '<option value="-1">&nbsp;</option>';
-			foreach ($arrayofcolors as $val)
-			{
+			foreach ($arrayofcolors as $val) {
 				$out .= '<option value="'.$val.'"';
-				if ($set_color == $val) $out .= ' selected';
+				if ($set_color == $val) {
+					$out .= ' selected';
+				}
 				$out .= '>'.$val.'</option>';
 			}
 			$out .= '</select>';
@@ -812,8 +873,7 @@ class FormOther
 		$file = $conf->$module->dir_temp.'/'.$name.'.png';
 
 		// On cree le repertoire contenant les icones
-		if (!file_exists($conf->$module->dir_temp))
-		{
+		if (!file_exists($conf->$module->dir_temp)) {
 			dol_mkdir($conf->$module->dir_temp);
 		}
 
@@ -859,14 +919,11 @@ class FormOther
 		);
 
 		$select_week = '<select class="flat" name="'.$htmlname.'">';
-		if ($useempty)
-		{
+		if ($useempty) {
 			$select_week .= '<option value="-1">&nbsp;</option>';
 		}
-		foreach ($week as $key => $val)
-		{
-			if ($selected == $key)
-			{
+		foreach ($week as $key => $val) {
+			if ($selected == $key) {
 				$select_week .= '<option value="'.$key.'" selected>';
 			} else {
 				$select_week .= '<option value="'.$key.'">';
@@ -887,27 +944,28 @@ class FormOther
 	 *      @param  int         $useempty          	Show empty in list
 	 *      @param  int         $longlabel         	Show long label
 	 *      @param	string		$morecss			More Css
+	 *  	@param  bool		$addjscombo			Add js combo
 	 *      @return string
 	 */
-	public function select_month($selected = '', $htmlname = 'monthid', $useempty = 0, $longlabel = 0, $morecss = 'maxwidth50imp valignmiddle')
+	public function select_month($selected = '', $htmlname = 'monthid', $useempty = 0, $longlabel = 0, $morecss = 'minwidth50 maxwidth75imp valignmiddle', $addjscombo = false)
 	{
 		// phpcs:enable
 		global $langs;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-		if ($longlabel) $montharray = monthArray($langs, 0); // Get array
-		else $montharray = monthArray($langs, 1);
+		if ($longlabel) {
+			$montharray = monthArray($langs, 0); // Get array
+		} else {
+			$montharray = monthArray($langs, 1);
+		}
 
 		$select_month = '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'" id="'.$htmlname.'">';
-		if ($useempty)
-		{
+		if ($useempty) {
 			$select_month .= '<option value="0">&nbsp;</option>';
 		}
-		foreach ($montharray as $key => $val)
-		{
-			if ($selected == $key)
-			{
+		foreach ($montharray as $key => $val) {
+			if ($selected == $key) {
 				$select_month .= '<option value="'.$key.'" selected>';
 			} else {
 				$select_month .= '<option value="'.$key.'">';
@@ -916,6 +974,14 @@ class FormOther
 			$select_month .= '</option>';
 		}
 		$select_month .= '</select>';
+
+		// Add code for jquery to use multiselect
+		if ($addjscombo) {
+			// Enhance with select2
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+			$select_month .= ajax_combobox($htmlname);
+		}
+
 		return $select_month;
 	}
 
@@ -955,47 +1021,50 @@ class FormOther
 	 *  @param  bool	$addjscombo		Add js combo
 	 *  @return	string
 	 */
-	public function selectyear($selected = '', $htmlname = 'yearid', $useempty = 0, $min_year = 10, $max_year = 5, $offset = 0, $invert = 0, $option = '', $morecss = 'valignmiddle maxwidth75imp', $addjscombo = false)
+	public function selectyear($selected = '', $htmlname = 'yearid', $useempty = 0, $min_year = 10, $max_year = 5, $offset = 0, $invert = 0, $option = '', $morecss = 'valignmiddle width75', $addjscombo = false)
 	{
 		$out = '';
-
-		// Add code for jquery to use multiselect
-		if ($addjscombo)
-		{
-			// Enhance with select2
-			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-			$out .= ajax_combobox($htmlname);
-		}
 
 		$currentyear = date("Y") + $offset;
 		$max_year = $currentyear + $max_year;
 		$min_year = $currentyear - $min_year;
-		if (empty($selected) && empty($useempty)) $selected = $currentyear;
+		if (empty($selected) && empty($useempty)) {
+			$selected = $currentyear;
+		}
 
 		$out .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.'"'.$option.' >';
-		if ($useempty)
-		{
+		if ($useempty) {
 			$selected_html = '';
-			if ($selected == '') $selected_html = ' selected';
+			if ($selected == '') {
+				$selected_html = ' selected';
+			}
 			$out .= '<option value=""'.$selected_html.'>&nbsp;</option>';
 		}
-		if (!$invert)
-		{
-			for ($y = $max_year; $y >= $min_year; $y--)
-			{
+		if (!$invert) {
+			for ($y = $max_year; $y >= $min_year; $y--) {
 				$selected_html = '';
-				if ($selected > 0 && $y == $selected) $selected_html = ' selected';
+				if ($selected > 0 && $y == $selected) {
+					$selected_html = ' selected';
+				}
 				$out .= '<option value="'.$y.'"'.$selected_html.' >'.$y.'</option>';
 			}
 		} else {
-			for ($y = $min_year; $y <= $max_year; $y++)
-			{
+			for ($y = $min_year; $y <= $max_year; $y++) {
 				$selected_html = '';
-				if ($selected > 0 && $y == $selected) $selected_html = ' selected';
+				if ($selected > 0 && $y == $selected) {
+					$selected_html = ' selected';
+				}
 				$out .= '<option value="'.$y.'"'.$selected_html.' >'.$y.'</option>';
 			}
 		}
 		$out .= "</select>\n";
+
+		// Add code for jquery to use multiselect
+		if ($addjscombo) {
+			// Enhance with select2
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+			$out .= ajax_combobox($htmlname);
+		}
 
 		return $out;
 	}
@@ -1024,32 +1093,33 @@ class FormOther
 		$boxactivated = InfoBox::listBoxes($db, 'activated', $areacode, (empty($user->conf->$confuserzone) ?null:$user), array(), 0); // Search boxes of common+user (or common only if user has no specific setup)
 
 		$boxidactivatedforuser = array();
-		foreach ($boxactivated as $box)
-		{
-			if (empty($user->conf->$confuserzone) || $box->fk_user == $user->id) $boxidactivatedforuser[$box->id] = $box->id; // We keep only boxes to show for user
+		foreach ($boxactivated as $box) {
+			if (empty($user->conf->$confuserzone) || $box->fk_user == $user->id) {
+				$boxidactivatedforuser[$box->id] = $box->id; // We keep only boxes to show for user
+			}
 		}
 
 		// Define selectboxlist
 		$arrayboxtoactivatelabel = array();
-		if (!empty($user->conf->$confuserzone))
-		{
+		if (!empty($user->conf->$confuserzone)) {
 			$boxorder = '';
 			$langs->load("boxes"); // Load label of boxes
-			foreach ($boxactivated as $box)
-			{
-				if (!empty($boxidactivatedforuser[$box->id])) continue; // Already visible for user
+			foreach ($boxactivated as $box) {
+				if (!empty($boxidactivatedforuser[$box->id])) {
+					continue; // Already visible for user
+				}
 				$label = $langs->transnoentitiesnoconv($box->boxlabel);
 				//if (preg_match('/graph/',$box->class)) $label.=' ('.$langs->trans("Graph").')';
-				if (preg_match('/graph/', $box->class) && $conf->browser->layout != 'phone')
-				{
+				if (preg_match('/graph/', $box->class) && $conf->browser->layout != 'phone') {
 					$label = $label.' <span class="fa fa-bar-chart"></span>';
 				}
 				$arrayboxtoactivatelabel[$box->id] = $label; // We keep only boxes not shown for user, to show into combo list
 			}
-			foreach ($boxidactivatedforuser as $boxid)
-			{
-	   			if (empty($boxorder)) $boxorder .= 'A:';
-  				$boxorder .= $boxid.',';
+			foreach ($boxidactivatedforuser as $boxid) {
+				if (empty($boxorder)) {
+					$boxorder .= 'A:';
+				}
+				$boxorder .= $boxid.',';
 			}
 
 			//var_dump($boxidactivatedforuser);
@@ -1063,18 +1133,18 @@ class FormOther
 			$selectboxlist .= '<input type="hidden" name="areacode" value="'.$areacode.'">';
 			$selectboxlist .= '<input type="hidden" name="boxorder" value="'.$boxorder.'">';
 			$selectboxlist .= Form::selectarray('boxcombo', $arrayboxtoactivatelabel, -1, $langs->trans("ChooseBoxToAdd").'...', 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth150onsmartphone', 0, 'hidden selected', 0, 1);
-			if (empty($conf->use_javascript_ajax)) $selectboxlist .= ' <input type="submit" class="button" value="'.$langs->trans("AddBox").'">';
+			if (empty($conf->use_javascript_ajax)) {
+				$selectboxlist .= ' <input type="submit" class="button" value="'.$langs->trans("AddBox").'">';
+			}
 			$selectboxlist .= '</form>';
-			if (!empty($conf->use_javascript_ajax))
-			{
+			if (!empty($conf->use_javascript_ajax)) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 				$selectboxlist .= ajax_combobox("boxcombo");
 			}
 		}
 
 		// Javascript code for dynamic actions
-		if (!empty($conf->use_javascript_ajax))
-		{
+		if (!empty($conf->use_javascript_ajax)) {
 			$selectboxlist .= '<script type="text/javascript" language="javascript">
 
 	        // To update list of activated boxes
@@ -1085,7 +1155,7 @@ class FormOther
 	        	if (boxorder==\'A:A-B:B\' && closing == 1)	// There is no more boxes on screen, and we are after a delete of a box so we must hide title
 	        	{
 	        		jQuery.ajax({
-	        			url: \''.DOL_URL_ROOT.'/core/ajax/box.php?closing=0&boxorder=\'+boxorder+\'&zone='.$areacode.'&userid=\'+'.$user->id.',
+	        			url: \''.DOL_URL_ROOT.'/core/ajax/box.php?closing=1&boxorder=\'+boxorder+\'&zone='.$areacode.'&userid=\'+'.$user->id.',
 	        			async: false
 	        		});
 	        		// We force reload to be sure to get all boxes into list
@@ -1114,7 +1184,9 @@ class FormOther
 	        			window.location.search=\'mainmenu='.GETPOST("mainmenu", "aZ09").'&leftmenu='.GETPOST('leftmenu', "aZ09").'&action=addbox&boxid=\'+boxid;
 	                }
 	        	});';
-				if (!count($arrayboxtoactivatelabel)) $selectboxlist .= 'jQuery("#boxcombo").hide();';
+			if (!count($arrayboxtoactivatelabel)) {
+				$selectboxlist .= 'jQuery("#boxcombo").hide();';
+			}
 				$selectboxlist .= '
 
 	        	jQuery("#boxhalfleft, #boxhalfright").sortable({
@@ -1144,10 +1216,11 @@ class FormOther
 		}
 
 		// Define boxlista and boxlistb
+		$boxlista = '';
+		$boxlistb = '';
 		$nbboxactivated = count($boxidactivatedforuser);
 
-		if ($nbboxactivated)
-		{
+		if ($nbboxactivated) {
 			// Load translation files required by the page
 			$langs->loadLangs(array("boxes", "projects"));
 
@@ -1157,15 +1230,19 @@ class FormOther
 
 			// Define $box_max_lines
 			$box_max_lines = 5;
-			if (!empty($conf->global->MAIN_BOXES_MAXLINES)) $box_max_lines = $conf->global->MAIN_BOXES_MAXLINES;
+			if (!empty($conf->global->MAIN_BOXES_MAXLINES)) {
+				$box_max_lines = $conf->global->MAIN_BOXES_MAXLINES;
+			}
 
 			$ii = 0;
-			foreach ($boxactivated as $key => $box)
-			{
-				if ((!empty($user->conf->$confuserzone) && $box->fk_user == 0) || (empty($user->conf->$confuserzone) && $box->fk_user != 0)) continue;
-				if (empty($box->box_order) && $ii < ($nbboxactivated / 2)) $box->box_order = 'A'.sprintf("%02d", ($ii + 1)); // When box_order was not yet set to Axx or Bxx and is still 0
-				if (preg_match('/^A/i', $box->box_order)) // column A
-				{
+			foreach ($boxactivated as $key => $box) {
+				if ((!empty($user->conf->$confuserzone) && $box->fk_user == 0) || (empty($user->conf->$confuserzone) && $box->fk_user != 0)) {
+					continue;
+				}
+				if (empty($box->box_order) && $ii < ($nbboxactivated / 2)) {
+					$box->box_order = 'A'.sprintf("%02d", ($ii + 1)); // When box_order was not yet set to Axx or Bxx and is still 0
+				}
+				if (preg_match('/^A/i', $box->box_order)) { // column A
 					$ii++;
 					//print 'box_id '.$boxactivated[$ii]->box_id.' ';
 					//print 'box_order '.$boxactivated[$ii]->box_order.'<br>';
@@ -1175,8 +1252,7 @@ class FormOther
 				}
 			}
 
-			if ($conf->browser->layout != 'phone')
-			{
+			if ($conf->browser->layout != 'phone') {
 				$emptybox->box_id = 'A';
 				$emptybox->info_box_head = array();
 				$emptybox->info_box_contents = array();
@@ -1187,12 +1263,14 @@ class FormOther
 			$boxlistb .= "\n<!-- Box right container -->\n";
 
 			$ii = 0;
-			foreach ($boxactivated as $key => $box)
-			{
-				if ((!empty($user->conf->$confuserzone) && $box->fk_user == 0) || (empty($user->conf->$confuserzone) && $box->fk_user != 0)) continue;
-				if (empty($box->box_order) && $ii < ($nbboxactivated / 2)) $box->box_order = 'B'.sprintf("%02d", ($ii + 1)); // When box_order was not yet set to Axx or Bxx and is still 0
-				if (preg_match('/^B/i', $box->box_order)) // colonne B
-				{
+			foreach ($boxactivated as $key => $box) {
+				if ((!empty($user->conf->$confuserzone) && $box->fk_user == 0) || (empty($user->conf->$confuserzone) && $box->fk_user != 0)) {
+					continue;
+				}
+				if (empty($box->box_order) && $ii < ($nbboxactivated / 2)) {
+					$box->box_order = 'B'.sprintf("%02d", ($ii + 1)); // When box_order was not yet set to Axx or Bxx and is still 0
+				}
+				if (preg_match('/^B/i', $box->box_order)) { // colonne B
 					$ii++;
 					//print 'box_id '.$boxactivated[$ii]->box_id.' ';
 					//print 'box_order '.$boxactivated[$ii]->box_order.'<br>';
@@ -1202,8 +1280,7 @@ class FormOther
 				}
 			}
 
-			if ($conf->browser->layout != 'phone')
-			{
+			if ($conf->browser->layout != 'phone') {
 				$emptybox->box_id = 'B';
 				$emptybox->info_box_head = array();
 				$emptybox->info_box_contents = array();
@@ -1243,23 +1320,18 @@ class FormOther
 
 		dol_syslog(get_class($this)."::select_dictionary", LOG_DEBUG);
 		$result = $this->db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			$num = $this->db->num_rows($result);
 			$i = 0;
-			if ($num)
-			{
+			if ($num) {
 				print '<select id="select'.$htmlname.'" class="flat selectdictionary" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
-				if ($useempty == 1 || ($useempty == 2 && $num > 1))
-				{
+				if ($useempty == 1 || ($useempty == 2 && $num > 1)) {
 					print '<option value="-1">&nbsp;</option>';
 				}
 
-				while ($i < $num)
-				{
+				while ($i < $num) {
 					$obj = $this->db->fetch_object($result);
-					if ($selected == $obj->rowid || $selected == $obj->$keyfield)
-					{
+					if ($selected == $obj->rowid || $selected == $obj->$keyfield) {
 						print '<option value="'.$obj->$keyfield.'" selected>';
 					} else {
 						print '<option value="'.$obj->$keyfield.'">';
@@ -1291,9 +1363,9 @@ class FormOther
 	{
 		global $langs;
 
-		$automatic = "automatic"; $manual = "manual";
-		if ($option)
-		{
+		$automatic = "automatic";
+		$manual = "manual";
+		if ($option) {
 			$automatic = "1";
 			$manual = "0";
 		}
@@ -1301,13 +1373,14 @@ class FormOther
 		$disabled = ($disabled ? ' disabled' : '');
 
 		$resultautomanual = '<select class="flat width100" id="'.$htmlname.'" name="'.$htmlname.'"'.$disabled.'>'."\n";
-		if ($useempty) $resultautomanual .= '<option value="-1"'.(($value < 0) ? ' selected' : '').'>&nbsp;</option>'."\n";
-		if (("$value" == 'automatic') || ($value == 1))
-		{
+		if ($useempty) {
+			$resultautomanual .= '<option value="-1"'.(($value < 0) ? ' selected' : '').'>&nbsp;</option>'."\n";
+		}
+		if (("$value" == 'automatic') || ($value == 1)) {
 			$resultautomanual .= '<option value="'.$automatic.'" selected>'.$langs->trans("Automatic").'</option>'."\n";
 			$resultautomanual .= '<option value="'.$manual.'">'.$langs->trans("Manual").'</option>'."\n";
 		} else {
-	   		$selected = (($useempty && $value != '0' && $value != 'manual') ? '' : ' selected');
+			$selected = (($useempty && $value != '0' && $value != 'manual') ? '' : ' selected');
 			$resultautomanual .= '<option value="'.$automatic.'">'.$langs->trans("Automatic").'</option>'."\n";
 			$resultautomanual .= '<option value="'.$manual.'"'.$selected.'>'.$langs->trans("Manual").'</option>'."\n";
 		}
@@ -1322,9 +1395,10 @@ class FormOther
 	 * @param 	mixed	$object				Object analyzed
 	 * @param	array	$search_groupby		Array of preselected fields
 	 * @param	array	$arrayofgroupby		Array of groupby to fill
+	 * @param	string	$morecss			More CSS
 	 * @return string						HTML string component
 	 */
-	public function selectGroupByField($object, $search_groupby, &$arrayofgroupby)
+	public function selectGroupByField($object, $search_groupby, &$arrayofgroupby, $morecss = 'minwidth200 maxwidth250')
 	{
 		global $langs, $extrafields, $form;
 
@@ -1339,16 +1413,28 @@ class FormOther
 			if (!$val['measure']) {
 				if (in_array($key, array(
 					'id', 'ref_int', 'ref_ext', 'rowid', 'entity', 'last_main_doc', 'logo', 'logo_squarred', 'extraparams',
-					'parent', 'photo', 'socialnetworks', 'webservices_url', 'webservices_key'))) continue;
-				if (isset($val['enabled']) && !dol_eval($val['enabled'], 1)) continue;
-				if (isset($val['visible']) && !dol_eval($val['visible'], 1)) continue;
-				if (preg_match('/^fk_/', $key) && !preg_match('/^fk_statu/', $key)) continue;
-				if (preg_match('/^pass/', $key)) continue;
-				if (in_array($val['type'], array('html', 'text'))) continue;
+					'parent', 'photo', 'socialnetworks', 'webservices_url', 'webservices_key'))) {
+					continue;
+				}
+				if (isset($val['enabled']) && !dol_eval($val['enabled'], 1)) {
+					continue;
+				}
+				if (isset($val['visible']) && !dol_eval($val['visible'], 1)) {
+					continue;
+				}
+				if (preg_match('/^fk_/', $key) && !preg_match('/^fk_statu/', $key)) {
+					continue;
+				}
+				if (preg_match('/^pass/', $key)) {
+					continue;
+				}
+				if (in_array($val['type'], array('html', 'text'))) {
+					continue;
+				}
 				if (in_array($val['type'], array('timestamp', 'date', 'datetime'))) {
-					$arrayofgroupby['t.'.$key.'-year'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.')', 'position' => $val['position'].'-y');
-					$arrayofgroupby['t.'.$key.'-month'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.'-'.$MM.')', 'position' => $val['position'].'-m');
-					$arrayofgroupby['t.'.$key.'-day'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.'-'.$MM.'-'.$DD.')', 'position' => $val['position'].'-d');
+					$arrayofgroupby['t.'.$key.'-year'] = array('label' => $langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.')</span>', 'position' => $val['position'].'-y');
+					$arrayofgroupby['t.'.$key.'-month'] = array('label' => $langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.'-'.$MM.')</span>', 'position' => $val['position'].'-m');
+					$arrayofgroupby['t.'.$key.'-day'] = array('label' => $langs->trans($val['label']).' <span class="opacitymedium">('.$YYYY.'-'.$MM.'-'.$DD.')</span>', 'position' => $val['position'].'-d');
 				} else {
 					$arrayofgroupby['t.'.$key] = array('label' => $langs->trans($val['label']), 'position' => (int) $val['position']);
 				}
@@ -1357,8 +1443,12 @@ class FormOther
 		// Add extrafields to Group by
 		if ($object->isextrafieldmanaged) {
 			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-				if ($extrafields->attributes[$object->table_element]['type'][$key] == 'separate') continue;
-				if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key])) continue;
+				if ($extrafields->attributes[$object->table_element]['type'][$key] == 'separate') {
+					continue;
+				}
+				if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key])) {
+					continue;
+				}
 				$arrayofgroupby['te.'.$key] = array('label' => $langs->trans($extrafields->attributes[$object->table_element]['label'][$key]), 'position' => 1000 + (int) $extrafields->attributes[$object->table_element]['pos'][$key]);
 			}
 		}
@@ -1368,7 +1458,7 @@ class FormOther
 		foreach ($arrayofgroupby as $key => $val) {
 			$arrayofgroupbylabel[$key] = $val['label'];
 		}
-		$result = $form->selectarray('search_groupby', $arrayofgroupbylabel, $search_groupby, 1, 0, 0, '', 0, 0, 0, '', 'minwidth250', 1);
+		$result = $form->selectarray('search_groupby', $arrayofgroupbylabel, $search_groupby, 1, 0, 0, '', 0, 0, 0, '', $morecss, 1);
 
 		return $result;
 	}
@@ -1397,12 +1487,24 @@ class FormOther
 			if (!$val['measure']) {
 				if (in_array($key, array(
 					'id', 'ref_int', 'ref_ext', 'rowid', 'entity', 'last_main_doc', 'logo', 'logo_squarred', 'extraparams',
-					'parent', 'photo', 'socialnetworks', 'webservices_url', 'webservices_key'))) continue;
-				if (isset($val['enabled']) && !dol_eval($val['enabled'], 1)) continue;
-				if (isset($val['visible']) && !dol_eval($val['visible'], 1)) continue;
-				if (preg_match('/^fk_/', $key) && !preg_match('/^fk_statu/', $key)) continue;
-				if (preg_match('/^pass/', $key)) continue;
-				if (in_array($val['type'], array('html', 'text'))) continue;
+					'parent', 'photo', 'socialnetworks', 'webservices_url', 'webservices_key'))) {
+					continue;
+				}
+				if (isset($val['enabled']) && !dol_eval($val['enabled'], 1)) {
+					continue;
+				}
+				if (isset($val['visible']) && !dol_eval($val['visible'], 1)) {
+					continue;
+				}
+				if (preg_match('/^fk_/', $key) && !preg_match('/^fk_statu/', $key)) {
+					continue;
+				}
+				if (preg_match('/^pass/', $key)) {
+					continue;
+				}
+				if (in_array($val['type'], array('html', 'text'))) {
+					continue;
+				}
 				if (in_array($val['type'], array('timestamp', 'date', 'datetime'))) {
 					$arrayofxaxis['t.'.$key.'-year'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.')', 'position' => $val['position'].'-y');
 					$arrayofxaxis['t.'.$key.'-month'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.'-'.$MM.')', 'position' => $val['position'].'-m');
@@ -1416,8 +1518,12 @@ class FormOther
 		// Add extrafields to X-Axis
 		if ($object->isextrafieldmanaged) {
 			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-				if ($extrafields->attributes[$object->table_element]['type'][$key] == 'separate') continue;
-				if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key])) continue;
+				if ($extrafields->attributes[$object->table_element]['type'][$key] == 'separate') {
+					continue;
+				}
+				if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key])) {
+					continue;
+				}
 				$arrayofxaxis['te.'.$key] = array('label' => $langs->trans($extrafields->attributes[$object->table_element]['label'][$key]), 'position' => 1000 + (int) $extrafields->attributes[$object->table_element]['pos'][$key]);
 			}
 		}

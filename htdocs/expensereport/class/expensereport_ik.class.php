@@ -40,7 +40,7 @@ class ExpenseReportIk extends CoreObject
 	public $table_element = 'expensereport_ik';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_expense_ik';
 
@@ -68,28 +68,28 @@ class ExpenseReportIk extends CoreObject
 	 */
 	public $ikoffset;
 
-    /**
-     * Attribute object linked with database
-     * @var array
-     */
+	/**
+	 * Attribute object linked with database
+	 * @var array
+	 */
 	public $fields = array(
 		'rowid'=>array('type'=>'integer', 'index'=>true)
 		,'fk_c_exp_tax_cat'=>array('type'=>'integer', 'index'=>true)
-	    ,'fk_range'=>array('type'=>'integer', 'index'=>true)
+		,'fk_range'=>array('type'=>'integer', 'index'=>true)
 		,'coef'=>array('type'=>'double')
 		,'ikoffset'=>array('type'=>'double')
 	);
 
-    /**
-     *  Constructor
-     *
-     *  @param      DoliDB		$db      Database handler
-     */
+	/**
+	 *  Constructor
+	 *
+	 *  @param      DoliDB		$db      Database handler
+	 */
 	public function __construct(DoliDB &$db)
 	{
 		global $conf;
 
-        parent::__construct($db);
+		parent::__construct($db);
 		parent::init();
 
 		$this->errors = array();
@@ -111,15 +111,16 @@ class ExpenseReportIk extends CoreObject
 		$sql = 'SELECT rowid, label, entity, active';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'c_exp_tax_cat';
 		$sql .= ' WHERE entity IN ('.getEntity('c_exp_tax_cat').')';
-		if ($mode == 1) $sql .= ' AND active = 1';
-		elseif ($mode == 2) $sql .= 'AND active = 0';
+		if ($mode == 1) {
+			$sql .= ' AND active = 1';
+		} elseif ($mode == 2) {
+			$sql .= 'AND active = 0';
+		}
 
 		dol_syslog(get_called_class().'::getTaxCategories sql='.$sql, LOG_DEBUG);
 		$resql = $db->query($sql);
-		if ($resql)
-		{
-			while ($obj = $db->fetch_object($resql))
-			{
+		if ($resql) {
+			while ($obj = $db->fetch_object($resql)) {
 				$categories[$obj->rowid] = $obj;
 			}
 		} else {
@@ -129,21 +130,24 @@ class ExpenseReportIk extends CoreObject
 		return $categories;
 	}
 
-    /**
-     * Return an array of ranges for a user
-     *
-     * @param User  $userauthor         user author id
-     * @param int   $fk_c_exp_tax_cat   category
-     * @return boolean|array
-     */
-    public static function getRangeByUser(User $userauthor, $fk_c_exp_tax_cat)
-    {
+	/**
+	 * Return an array of ranges for a user
+	 *
+	 * @param User  $userauthor         user author id
+	 * @param int   $fk_c_exp_tax_cat   category
+	 * @return boolean|array
+	 */
+	public static function getRangeByUser(User $userauthor, int $fk_c_exp_tax_cat)
+	{
 		$default_range = (int) $userauthor->default_range; // if not defined, then 0
 		$ranges = self::getRangesByCategory($fk_c_exp_tax_cat);
 
 		// substract 1 because array start from 0
-		if (empty($ranges) || !isset($ranges[$default_range - 1])) return false;
-		else return $ranges[$default_range - 1];
+		if (empty($ranges) || !isset($ranges[$default_range - 1])) {
+			return false;
+		} else {
+			return $ranges[$default_range - 1];
+		}
 	}
 
 	/**
@@ -153,27 +157,29 @@ class ExpenseReportIk extends CoreObject
 	 * @param int	$active				active
 	 * @return array
 	 */
-	public static function getRangesByCategory($fk_c_exp_tax_cat, $active = 1)
+	public static function getRangesByCategory(int $fk_c_exp_tax_cat, $active = 1)
 	{
 		global $db;
 
 		$ranges = array();
 
+		dol_syslog(get_called_class().'::getRangesByCategory for fk_c_exp_tax_cat='.$fk_c_exp_tax_cat, LOG_DEBUG);
+
 		$sql = 'SELECT r.rowid FROM '.MAIN_DB_PREFIX.'c_exp_tax_range r';
-		if ($active) $sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'c_exp_tax_cat c ON (r.fk_c_exp_tax_cat = c.rowid)';
-		$sql .= ' WHERE r.fk_c_exp_tax_cat = '.$fk_c_exp_tax_cat;
-		if ($active) $sql .= ' AND r.active = 1 AND c.active = 1';
+		if ($active) {
+			$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'c_exp_tax_cat c ON (r.fk_c_exp_tax_cat = c.rowid)';
+		}
+		$sql .= ' WHERE r.fk_c_exp_tax_cat = '.((int) $fk_c_exp_tax_cat);
+		if ($active) {
+			$sql .= ' AND r.active = 1 AND c.active = 1';
+		}
 		$sql .= ' ORDER BY r.range_ik';
 
-		dol_syslog(get_called_class().'::getRangesByCategory sql='.$sql, LOG_DEBUG);
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $db->num_rows($resql);
-			if ($num > 0)
-			{
-				while ($obj = $db->fetch_object($resql))
-				{
+			if ($num > 0) {
+				while ($obj = $db->fetch_object($resql)) {
 					$object = new ExpenseReportIk($db);
 					$object->fetch($obj->rowid);
 
@@ -207,15 +213,17 @@ class ExpenseReportIk extends CoreObject
 
 		dol_syslog(get_called_class().'::getAllRanges sql='.$sql, LOG_DEBUG);
 		$resql = $db->query($sql);
-		if ($resql)
-		{
-			while ($obj = $db->fetch_object($resql))
-			{
+		if ($resql) {
+			while ($obj = $db->fetch_object($resql)) {
 				$ik = new ExpenseReportIk($db);
-				if ($obj->fk_expense_ik > 0) $ik->fetch($obj->fk_expense_ik);
+				if ($obj->fk_expense_ik > 0) {
+					$ik->fetch($obj->fk_expense_ik);
+				}
 				$obj->ik = $ik;
 
-				if (!isset($ranges[$obj->fk_c_exp_tax_cat])) $ranges[$obj->fk_c_exp_tax_cat] = array('label' => $obj->label, 'active' => $obj->cat_active, 'ranges' => array());
+				if (!isset($ranges[$obj->fk_c_exp_tax_cat])) {
+					$ranges[$obj->fk_c_exp_tax_cat] = array('label' => $obj->label, 'active' => $obj->cat_active, 'ranges' => array());
+				}
 				$ranges[$obj->fk_c_exp_tax_cat]['ranges'][] = $obj;
 			}
 		} else {
@@ -239,14 +247,15 @@ class ExpenseReportIk extends CoreObject
 		$sql .= ' SELECT COUNT(*) as counted';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'c_exp_tax_range r';
 		$sql .= ' WHERE r.entity IN (0, '.$conf->entity.')';
-		if ($default_c_exp_tax_cat > 0) $sql .= ' AND r.fk_c_exp_tax_cat = '.$default_c_exp_tax_cat;
+		if ($default_c_exp_tax_cat > 0) {
+			$sql .= ' AND r.fk_c_exp_tax_cat = '.$default_c_exp_tax_cat;
+		}
 		$sql .= ' GROUP BY r.fk_c_exp_tax_cat';
 		$sql .= ') as counts';
 
 		dol_syslog(get_called_class().'::getMaxRangeNumber sql='.$sql, LOG_DEBUG);
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$obj = $db->fetch_object($resql);
 			return $obj->nbRange;
 		} else {

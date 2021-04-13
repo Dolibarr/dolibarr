@@ -1,0 +1,25 @@
+# Dolibarr language file - Source file is en_US - companies
+State=Province
+Zip=Boîte Postale
+OverAllProposals=Devis
+ProfId1=N° Statistique
+ProfId2=CNSS
+ProfId3=CNAMGS
+ProfId4=RCCM
+ProfId5=NIM
+ProfId6=NIF
+Contact=Contact / Adresse
+Contacts=Contacts / Adresses
+ContactsAddresses=Contacts / Adresses
+NewContactAddress=Nouveau Contact / Adresse
+NorProspectNorCustomer=Ni prospect, ni client
+Staff=Employés
+ProspectStatus=Statut du prospect
+StatusProspect3=Contacté
+ChangeDoNotContact=Changer le statut en "Ne pas contacter"
+ChangeNeverContacted=Changer le statut en "Jamais contacté"
+ChangeToContact=Changer le statut en "À contacter"
+ChangeContactInProcess=Changer le statut en "Contact en cours"
+ChangeContactDone=Changer le statut en "Contacté"
+ProspectsByStatus=Prospects par statut
+AddAddress=Ajoutez l'adresse

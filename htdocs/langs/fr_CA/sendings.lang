@@ -19,6 +19,7 @@ OtherSendingsForSameOrder=Autres envois pour cette commande
 SendingsAndReceivingForSameOrder=Livraisons et recettes pour cet ordre
 SendingsToValidate=Livraisons à valider
 StatusSendingCanceled=Annulé
+StatusSendingCanceledShort=Annulé
 StatusSendingValidated=Validé (produits à expédier ou déjà expédiés)
 StatusSendingProcessed=Traité
 StatusSendingProcessedShort=Traité

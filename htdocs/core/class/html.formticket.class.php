@@ -2,6 +2,7 @@
 /* Copyright (C) 2013-2015  Jean-François FERRY     <hello@librethic.io>
  * Copyright (C) 2016       Christophe Battarel     <christophe@altairis.fr>
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2021       Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -123,11 +124,12 @@ class FormTicket
 	/**
 	 * Show the form to input ticket
 	 *
-	 * @param  	int	 		$withdolfichehead		With dol_fiche_head
+	 * @param  	int	 		$withdolfichehead		With dol_get_fiche_head() and dol_get_fiche_end()
 	 * @param	string		$mode					Mode ('create' or 'edit')
+	 * @param	int			$public					1=If we show the form for the public interface
 	 * @return 	void
 	 */
-	public function showForm($withdolfichehead = 0, $mode = 'edit')
+	public function showForm($withdolfichehead = 0, $mode = 'edit', $public = 0)
 	{
 		global $conf, $langs, $user, $hookmanager;
 
@@ -150,7 +152,9 @@ class FormTicket
 
 		print "\n<!-- Begin form TICKET -->\n";
 
-		if ($withdolfichehead) dol_fiche_head(null, 'card', '', 0, '');
+		if ($withdolfichehead) {
+			print dol_get_fiche_head(null, 'card', '', 0, '');
+		}
 
 		print '<form method="POST" '.($withdolfichehead ? '' : 'style="margin-bottom: 30px;" ').'name="ticket" id="form_create_ticket" enctype="multipart/form-data" action="'.$this->param["returnurl"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -179,6 +183,7 @@ class FormTicket
 		if (isset($this->param['origin']) && $this->param['originid'] > 0) {
 			// Parse element/subelement (ex: project_task)
 			$element = $subelement = $this->param['origin'];
+			$regs = array();
 			if (preg_match('/^([^_]+)_([^_]+)/i', $this->param['origin'], $regs)) {
 				$element = $regs[1];
 				$subelement = $regs[2];
@@ -205,7 +210,11 @@ class FormTicket
 
 		// Group
 		print '<tr><td><span class="fieldrequired"><label for="selectcategory_code">'.$langs->trans("TicketCategory").'</span></label></td><td>';
-		$this->selectGroupTickets((GETPOST('category_code') ? GETPOST('category_code') : $this->category_code), 'category_code', '', 2, 0, 0, 0, 'minwidth200');
+		$filter = '';
+		if ($public) {
+			$filter = 'public=1';
+		}
+		$this->selectGroupTickets((GETPOST('category_code') ? GETPOST('category_code') : $this->category_code), 'category_code', $filter, 2, 0, 0, 0, 'minwidth200');
 		print '</td></tr>';
 
 		// Severity
@@ -236,8 +245,7 @@ class FormTicket
 
 		// If public form, display more information
 		$toolbarname = 'dolibarr_notes';
-		if ($this->ispublic)
-		{
+		if ($this->ispublic) {
 			$toolbarname = 'dolibarr_details';
 			print '<div class="warning">'.($conf->global->TICKET_PUBLIC_TEXT_HELP_MESSAGE ? $conf->global->TICKET_PUBLIC_TEXT_HELP_MESSAGE : $langs->trans('TicketPublicPleaseBeAccuratelyDescribe')).'</div>';
 		}
@@ -247,6 +255,18 @@ class FormTicket
 		$doleditor->Create();
 		print '</td></tr>';
 
+		if (!empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+			print '<tr><td class="titlefield"><label for="email"><span class="fieldrequired">'.$langs->trans("SecurityCode").'</span></label></td><td>';
+			print '<span class="span-icon-security inline-block">';
+			print '<input id="securitycode" placeholder="'.$langs->trans("SecurityCode").'" class="flat input-icon-security width150" type="text" maxlength="5" name="code" tabindex="3" />';
+			print '</span>';
+			print '<span class="nowrap inline-block">';
+			print '<img class="inline-block valignmiddle" src="'.DOL_URL_ROOT.'/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" />';
+			print '<a class="inline-block valignmiddle" href="'.$php_self.'" tabindex="4" data-role="button">'.img_picto($langs->trans("Refresh"), 'refresh', 'id="captcha_refresh_img"').'</a>';
+			print '</span>';
+			print '</td></tr>';
+		}
 
 		// Attached files
 		if (!empty($this->withfile)) {
@@ -293,7 +313,7 @@ class FormTicket
 			if ($this->withfile == 2) { // Can add other files
 				$out .= '<input type="file" class="flat" id="addedfile" name="addedfile" value="'.$langs->trans("Upload").'" />';
 				$out .= ' ';
-				$out .= '<input type="submit" class="button" id="addfile" name="addfile" value="'.$langs->trans("MailingAddFile").'" />';
+				$out .= '<input type="submit" class="button smallpaddingimp" id="addfile" name="addfile" value="'.$langs->trans("MailingAddFile").'" />';
 			}
 			$out .= "</td></tr>\n";
 
@@ -368,7 +388,9 @@ class FormTicket
                                         if (response.num) {
                                             var selecthtml_str = response.value;
                                             var selecthtml_dom=$.parseHTML(selecthtml_str);
-                                            $("#inputautocomplete"+htmlname).val(selecthtml_dom[0][0].innerHTML);
+											if (typeof(selecthtml_dom[0][0]) !== \'undefined\') {
+                                            	$("#inputautocomplete"+htmlname).val(selecthtml_dom[0][0].innerHTML);
+											}
                                         } else {
                                             $("#inputautocomplete"+htmlname).val("");
                                         }
@@ -385,7 +407,7 @@ class FormTicket
 				// If no socid, set to -1 to avoid full contacts list
 				$selectedCompany = ($this->withfromsocid > 0) ? $this->withfromsocid : -1;
 				print img_picto('', 'contact', 'class="paddingright"');
-				$nbofcontacts = $form->select_contacts($selectedCompany, $this->withfromcontactid, 'contactid', 3, '', '', 0, 'minwidth200');
+				print $form->selectcontacts($selectedCompany, $this->withfromcontactid, 'contactid', 3, '', '', 0, 'minwidth200');
 				print ' ';
 				$formcompany->selectTypeContact($ticketstatic, '', 'type', 'external', '', 0, 'maginleftonly');
 				print '</td></tr>';
@@ -396,39 +418,38 @@ class FormTicket
 			}
 
 			// Notify thirdparty at creation
-			if (empty($this->ispublic))
-			{
+			if (empty($this->ispublic)) {
 				print '<tr><td><label for="notify_tiers_at_create">'.$langs->trans("TicketNotifyTiersAtCreation").'</label></td><td>';
 				print '<input type="checkbox" id="notify_tiers_at_create" name="notify_tiers_at_create"'.($this->withnotifytiersatcreate ? ' checked="checked"' : '').'>';
 				print '</td></tr>';
 			}
 		}
 
-		if (!empty($conf->projet->enabled) && !$this->ispublic)
-		{
+		if (!empty($conf->projet->enabled) && !$this->ispublic) {
 			$formproject = new FormProjets($this->db);
 			print '<tr><td><label for="project"><span class="">'.$langs->trans("Project").'</span></label></td><td>';
-			print $formproject->select_projects(-1, GETPOST('projectid', 'int'), 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth500');
+			print img_picto('', 'project').$formproject->select_projects(-1, GETPOST('projectid', 'int'), 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
 			print '</td></tr>';
 		}
 
 		// Other attributes
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $ticketstat, $this->action); // Note that $action and $object may have been modified by hook
-		if (empty($reshook))
-		{
+		if (empty($reshook)) {
 			print $ticketstat->showOptionals($extrafields, 'create');
 		}
 
 		print '</table>';
 
-		if ($withdolfichehead) dol_fiche_end();
+		if ($withdolfichehead) {
+			print dol_get_fiche_end();
+		}
 
-		print '<div class="center">';
-		print '<input class="button" type="submit" name="add" value="'.$langs->trans(($this->withthreadid > 0 ? "SendResponse" : "NewTicket")).'" />';
+		print '<br><div class="center">';
+		print '<input class="button" type="submit" name="add" value="'.$langs->trans(($this->withthreadid > 0 ? "SendResponse" : "CreateTicket")).'" />';
 		if ($this->withcancel) {
 			print " &nbsp; &nbsp; &nbsp;";
-			print "<input class=\"button\" type=\"submit\" name=\"cancel\" value=\"".$langs->trans("Cancel")."\">";
+			print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 		}
 		print '</div>';
 
@@ -503,7 +524,7 @@ class FormTicket
 					print ' selected="selected"';
 				} elseif ($selected == $id) {
 					print ' selected="selected"';
-				} elseif ($arraytypes['use_default'] == "1" && !$empty) {
+				} elseif ($arraytypes['use_default'] == "1" && !$selected && !$empty) {
 					print ' selected="selected"';
 				}
 
@@ -536,7 +557,7 @@ class FormTicket
 	 *
 	 *      @param  string $selected    Id categorie pre-selectionnée
 	 *      @param  string $htmlname    Nom de la zone select
-	 *      @param  string $filtertype  To filter on field type in llx_c_ticket_category (array('code'=>xx,'label'=>zz))
+	 *      @param  string $filtertype  To filter on some properties in llx_c_ticket_category ('public = 1'). This parameter must not come from input of users.
 	 *      @param  int    $format      0=id+libelle, 1=code+code, 2=code+libelle, 3=id+code
 	 *      @param  int    $empty       1=peut etre vide, 0 sinon
 	 *      @param  int    $noadmininfo 0=Add admin info, 1=Disable admin info
@@ -552,12 +573,6 @@ class FormTicket
 
 		dol_syslog(get_class($this)."::selectCategoryTickets ".$selected.", ".$htmlname.", ".$filtertype.", ".$format, LOG_DEBUG);
 
-		$filterarray = array();
-
-		if ($filtertype != '' && $filtertype != '-1') {
-			$filterarray = explode(',', $filtertype);
-		}
-
 		$ticketstat->loadCacheCategoriesTickets();
 
 		print '<select id="select'.$htmlname.'" class="flat minwidth100'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">';
@@ -567,9 +582,11 @@ class FormTicket
 
 		if (is_array($ticketstat->cache_category_tickets) && count($ticketstat->cache_category_tickets)) {
 			foreach ($ticketstat->cache_category_tickets as $id => $arraycategories) {
-				// On passe si on a demande de filtrer sur des modes de paiments particuliers
-				if (count($filterarray) && !in_array($arraycategories['type'], $filterarray)) {
-					continue;
+				// Exclude some record
+				if ($filtertype == 'public=1') {
+					if (empty($arraycategories['public'])) {
+						continue;
+					}
 				}
 
 				// We discard empty line if showempty is on because an empty line has already been output.
@@ -598,7 +615,7 @@ class FormTicket
 					print ' selected="selected"';
 				} elseif ($selected == $id) {
 					print ' selected="selected"';
-				} elseif ($arraycategories['use_default'] == "1" && !$empty) {
+				} elseif ($arraycategories['use_default'] == "1" && !$selected && !$empty) {
 					print ' selected="selected"';
 				}
 
@@ -699,7 +716,7 @@ class FormTicket
 					print ' selected="selected"';
 				} elseif ($selected == $id) {
 					print ' selected="selected"';
-				} elseif ($arrayseverities['use_default'] == "1" && !$empty) {
+				} elseif ($arrayseverities['use_default'] == "1" && !$selected && !$empty) {
 					print ' selected="selected"';
 				}
 
@@ -747,7 +764,9 @@ class FormTicket
 		// Set tmp user directory
 		$vardir = $conf->user->dir_output."/".$user->id;
 		$upload_dir = $vardir.'/temp/'; // TODO Add $keytoavoidconflict in upload_dir path
-		if (is_dir($upload_dir)) dol_delete_dir_recursive($upload_dir);
+		if (is_dir($upload_dir)) {
+			dol_delete_dir_recursive($upload_dir);
+		}
 
 		$keytoavoidconflict = empty($this->trackid) ? '' : '-'.$this->trackid; // this->trackid must be defined
 		unset($_SESSION["listofpaths".$keytoavoidconflict]);
@@ -768,23 +787,25 @@ class FormTicket
 		$formmail = new FormMail($this->db);
 		$addfileaction = 'addfile';
 
-		if (!is_object($form)) $form = new Form($this->db);
+		if (!is_object($form)) {
+			$form = new Form($this->db);
+		}
 
 		// Load translation files required by the page
 		$langs->loadLangs(array('other', 'mails'));
 
 		// Clear temp files. Must be done at beginning, before call of triggers
-		if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1'))
-		{
+		if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1')) {
 			$this->clear_attached_files();
 		}
 
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $this->param['langsmodels'];
-		if (!empty($newlang))
-		{
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+			$newlang = $this->param['langsmodels'];
+		}
+		if (!empty($newlang)) {
 			$outputlangs = new Translate("", $conf);
 			$outputlangs->setDefaultLang($newlang);
 			$outputlangs->load('other');
@@ -792,11 +813,9 @@ class FormTicket
 
 		// Get message template for $this->param["models"] into c_email_templates
 		$arraydefaultmessage = -1;
-		if ($this->param['models'] != 'none')
-		{
+		if ($this->param['models'] != 'none') {
 			$model_id = 0;
-			if (array_key_exists('models_id', $this->param))
-			{
+			if (array_key_exists('models_id', $this->param)) {
 				$model_id = $this->param["models_id"];
 			}
 
@@ -809,20 +828,23 @@ class FormTicket
 		$listofmimes = array();
 		$keytoavoidconflict = empty($this->trackid) ? '' : '-'.$this->trackid; // this->trackid must be defined
 
-		if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1'))
-		{
-			if (!empty($arraydefaultmessage->joinfiles) && is_array($this->param['fileinit']))
-			{
-				foreach ($this->param['fileinit'] as $file)
-				{
+		if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1')) {
+			if (!empty($arraydefaultmessage->joinfiles) && is_array($this->param['fileinit'])) {
+				foreach ($this->param['fileinit'] as $file) {
 					$this->add_attached_files($file, basename($file), dol_mimetype($file));
 				}
 			}
 		}
 
-		if (!empty($_SESSION["listofpaths".$keytoavoidconflict])) $listofpaths = explode(';', $_SESSION["listofpaths".$keytoavoidconflict]);
-		if (!empty($_SESSION["listofnames".$keytoavoidconflict])) $listofnames = explode(';', $_SESSION["listofnames".$keytoavoidconflict]);
-		if (!empty($_SESSION["listofmimes".$keytoavoidconflict])) $listofmimes = explode(';', $_SESSION["listofmimes".$keytoavoidconflict]);
+		if (!empty($_SESSION["listofpaths".$keytoavoidconflict])) {
+			$listofpaths = explode(';', $_SESSION["listofpaths".$keytoavoidconflict]);
+		}
+		if (!empty($_SESSION["listofnames".$keytoavoidconflict])) {
+			$listofnames = explode(';', $_SESSION["listofnames".$keytoavoidconflict]);
+		}
+		if (!empty($_SESSION["listofmimes".$keytoavoidconflict])) {
+			$listofmimes = explode(';', $_SESSION["listofmimes".$keytoavoidconflict]);
+		}
 
 		// Define output language
 		$outputlangs = $langs;
@@ -888,8 +910,7 @@ class FormTicket
 		print '<table class="border" width="'.$width.'">';
 
 		// External users can't send message email
-		if ($user->rights->ticket->write && !$user->socid)
-		{
+		if ($user->rights->ticket->write && !$user->socid) {
 			print '<tr><td></td><td>';
 			$checkbox_selected = (GETPOST('send_email') == "1" ? ' checked' : '');
 			print '<input type="checkbox" name="send_email" value="1" id="send_msg_email" '.$checkbox_selected.'/> ';
@@ -999,8 +1020,8 @@ class FormTicket
 		} elseif (!dol_textishtml($defaultmessage) && dol_textishtml($this->substit['__USER_SIGNATURE__'])) {
 			$defaultmessage = dol_nl2br($defaultmessage);
 		}
-		if (isset($_POST["message"]) && !$_POST['modelselected']) {
-			$defaultmessage = GETPOST('message');
+		if (GETPOSTISSET("message") && !$_POST['modelselected']) {
+			$defaultmessage = GETPOST('message', 'restricthtml');
 		} else {
 			$defaultmessage = make_substitutions($defaultmessage, $this->substit);
 			// Clean first \n and br (to avoid empty line when CONTACTCIVNAME is empty)
@@ -1062,7 +1083,7 @@ class FormTicket
 			if ($this->withfile == 2) { // Can add other files
 				$out .= '<input type="file" class="flat" id="addedfile" name="addedfile" value="'.$langs->trans("Upload").'" />';
 				$out .= ' ';
-				$out .= '<input type="submit" class="button" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
+				$out .= '<input type="submit" class="button smallpaddingimp" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
 			}
 			$out .= "</td></tr>\n";
 
@@ -1075,7 +1096,7 @@ class FormTicket
 		print '<input class="button" type="submit" name="btn_add_message" value="'.$langs->trans("AddMessage").'" />';
 		if ($this->withcancel) {
 			print " &nbsp; &nbsp; ";
-			print "<input class=\"button\" type=\"submit\" name=\"cancel\" value=\"".$langs->trans("Cancel")."\">";
+			print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 		}
 		print "</center>\n";
 

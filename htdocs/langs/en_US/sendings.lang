@@ -30,6 +30,7 @@ OtherSendingsForSameOrder=Other shipments for this order
 SendingsAndReceivingForSameOrder=Shipments and receipts for this order
 SendingsToValidate=Shipments to validate
 StatusSendingCanceled=Canceled
+StatusSendingCanceledShort=Canceled
 StatusSendingDraft=Draft
 StatusSendingValidated=Validated (products to ship or already shipped)
 StatusSendingProcessed=Processed

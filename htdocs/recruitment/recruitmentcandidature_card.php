@@ -44,26 +44,44 @@
 // Load Dolibarr environment
 $res = 0;
 // Try main.inc.php into web root known defined into CONTEXT_DOCUMENT_ROOT (not always defined)
-if (!$res && !empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) $res = @include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
+if (!$res && !empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) {
+	$res = @include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
+}
 // Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
 $tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME']; $tmp2 = realpath(__FILE__); $i = strlen($tmp) - 1; $j = strlen($tmp2) - 1;
-while ($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i] == $tmp2[$j]) { $i--; $j--; }
-if (!$res && $i > 0 && file_exists(substr($tmp, 0, ($i + 1))."/main.inc.php")) $res = @include substr($tmp, 0, ($i + 1))."/main.inc.php";
-if (!$res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i + 1)))."/main.inc.php")) $res = @include dirname(substr($tmp, 0, ($i + 1)))."/main.inc.php";
+while ($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i] == $tmp2[$j]) {
+	$i--; $j--;
+}
+if (!$res && $i > 0 && file_exists(substr($tmp, 0, ($i + 1))."/main.inc.php")) {
+	$res = @include substr($tmp, 0, ($i + 1))."/main.inc.php";
+}
+if (!$res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i + 1)))."/main.inc.php")) {
+	$res = @include dirname(substr($tmp, 0, ($i + 1)))."/main.inc.php";
+}
 // Try main.inc.php using relative path
-if (!$res && file_exists("../main.inc.php")) $res = @include "../main.inc.php";
-if (!$res && file_exists("../../main.inc.php")) $res = @include "../../main.inc.php";
-if (!$res && file_exists("../../../main.inc.php")) $res = @include "../../../main.inc.php";
-if (!$res) die("Include of main fails");
+if (!$res && file_exists("../main.inc.php")) {
+	$res = @include "../main.inc.php";
+}
+if (!$res && file_exists("../../main.inc.php")) {
+	$res = @include "../../main.inc.php";
+}
+if (!$res && file_exists("../../../main.inc.php")) {
+	$res = @include "../../../main.inc.php";
+}
+if (!$res) {
+	die("Include of main fails");
+}
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
-dol_include_once('/recruitment/class/recruitmentcandidature.class.php');
-dol_include_once('/recruitment/lib/recruitment_recruitmentcandidature.lib.php');
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentjobposition.class.php';
+require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentcandidature.class.php';
+require_once DOL_DOCUMENT_ROOT.'/recruitment/lib/recruitment_recruitmentcandidature.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("recruitment", "other"));
+$langs->loadLangs(array("recruitment", "other", "users"));
 
 // Get parameters
 $id = GETPOST('id', 'int');
@@ -90,12 +108,15 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 // Initialize array of search criterias
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
-foreach ($object->fields as $key => $val)
-{
-	if (GETPOST('search_'.$key, 'alpha')) $search[$key] = GETPOST('search_'.$key, 'alpha');
+foreach ($object->fields as $key => $val) {
+	if (GETPOST('search_'.$key, 'alpha')) {
+		$search[$key] = GETPOST('search_'.$key, 'alpha');
+	}
 }
 
-if (empty($action) && empty($id) && empty($ref)) $action = 'view';
+if (empty($action) && empty($id) && empty($ref)) {
+	$action = 'view';
+}
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
@@ -111,10 +132,8 @@ $upload_dir = $conf->recruitment->multidir_output[isset($object->entity) ? $obje
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
-//$isdraft = (($object->statut == $object::STATUS_DRAFT) ? 1 : 0);
-//$result = restrictedArea($user, 'recruitment', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
-
-//if (!$permissiontoread) accessforbidden();
+$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
+$result = restrictedArea($user, 'recruitment', $object->id, 'recruitment_recruitmentcandidature', 'recruitmentjobposition', '', 'rowid', $isdraft);
 
 
 /*
@@ -123,18 +142,22 @@ $upload_dir = $conf->recruitment->multidir_output[isset($object->entity) ? $obje
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
-if (empty($reshook))
-{
+if (empty($reshook)) {
 	$error = 0;
 
 	$backurlforlist = dol_buildpath('/recruitment/recruitmentcandidature_list.php', 1);
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
-			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) $backtopage = $backurlforlist;
-			else $backtopage = dol_buildpath('/recruitment/recruitmentcandidature_card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
+			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
+				$backtopage = $backurlforlist;
+			} else {
+				$backtopage = dol_buildpath('/recruitment/recruitmentcandidature_card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
+			}
 		}
 	}
 	$triggermodname = 'RECRUITMENTCANDIDATURE_MODIFY'; // Name of trigger action code to execute when we modify record
@@ -154,14 +177,107 @@ if (empty($reshook))
 	// Action to build doc
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
-	if ($action == 'classin' && $permissiontoadd)
-	{
+	if ($action == 'classin' && $permissiontoadd) {
 		$object->setProject(GETPOST('projectid', 'int'));
 	}
 	if ($action == 'confirm_decline' && $confirm == 'yes' && $permissiontoadd) {
 		$result = $object->setStatut($object::STATUS_REFUSED, null, '', $triggermodname);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
+
+	if ($action == 'confirm_makeofferordecline' && $permissiontoadd && !GETPOST('cancel', 'alpha')) {
+		if (!(GETPOST('status', 'int') > 0)) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CloseAs")), null, 'errors');
+			$action = 'makeofferordecline';
+		} else {
+			// prevent browser refresh from closing proposal several times
+			if ($object->status == $object::STATUS_VALIDATED) {
+				$db->begin();
+
+				if (GETPOST('status', 'int') == $object::STATUS_REFUSED) {
+					$result = $object->setStatut($object::STATUS_REFUSED, null, '', $triggermodname);
+					if ($result < 0) {
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
+				} else {
+					$result = $object->setStatut($object::STATUS_CONTRACT_PROPOSED, null, '', $triggermodname);
+					if ($result < 0) {
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
+				}
+
+				if (!$error) {
+					$db->commit();
+				} else {
+					$db->rollback();
+				}
+			}
+		}
+	}
+
+	if ($action == 'confirm_closeas' && $permissiontoadd && !GETPOST('cancel', 'alpha')) {
+		if (!(GETPOST('status', 'int') > 0)) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CloseAs")), null, 'errors');
+			$action = 'makeofferordecline';
+		} else {
+			// prevent browser refresh from closing proposal several times
+			if ($object->status == $object::STATUS_CONTRACT_PROPOSED) {
+				$db->begin();
+
+				if (GETPOST('status', 'int') == $object::STATUS_CONTRACT_REFUSED) {
+					$result = $object->setStatut($object::STATUS_CONTRACT_REFUSED, null, '', $triggermodname);
+					if ($result < 0) {
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
+				} else {
+					$result = $object->setStatut($object::STATUS_CONTRACT_SIGNED, null, '', $triggermodname);
+					if ($result < 0) {
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
+				}
+
+				if (!$error) {
+					$db->commit();
+				} else {
+					$db->rollback();
+				}
+			}
+		}
+	}
+
+	// Create user from a member
+	if ($action == 'confirm_create_user' && $confirm == 'yes' && $user->rights->user->user->creer) {
+		if ($result > 0) {
+			$jobposition = new RecruitmentJobPosition($db);
+			$jobposition->fetch($object->fk_recruitmentjobposition);
+
+			// Creation user
+			$nuser = new User($db);
+			$nuser->login = GETPOST('login', 'alphanohtml');
+			$nuser->fk_soc = 0;
+			$nuser->employee = 1;
+			$nuser->firstname = $object->firstname;
+			$nuser->lastname = $object->lastname;
+			$nuser->personal_mobile = $object->phone;
+			$nuser->birth = $object->date_birth;
+			$nuser->salary = $object->remuneration_proposed;
+			$nuser->fk_user = $jobposition->fk_user_supervisor; // Supervisor
+
+			$result = $nuser->create($user);
+
+			if ($result < 0) {
+				$langs->load("errors");
+				setEventMessages($langs->trans($nuser->error), null, 'errors');
+				$action = 'create_user';
+			} else {
+				setEventMessages($langs->trans("NewUserCreated", $nuser->login), null, 'mesgs');
+				$action = '';
+			}
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = 'create_user';
 		}
 	}
 
@@ -206,17 +322,20 @@ jQuery(document).ready(function() {
 
 
 // Part to create
-if ($action == 'create')
-{
+if ($action == 'create') {
 	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("RecruitmentCandidature")), '', 'object_'.$object->picto);
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
-	if ($backtopage) print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-	if ($backtopageforcancel) print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
+	if ($backtopage) {
+		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	}
+	if ($backtopageforcancel) {
+		print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
+	}
 
-	dol_fiche_head(array(), '');
+	print dol_get_fiche_head(array(), '');
 
 	// Set some default values
 	//if (! GETPOSTISSET('fieldname')) $_POST['fieldname'] = 'myvalue';
@@ -231,12 +350,12 @@ if ($action == 'create')
 
 	print '</table>'."\n";
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
 	print '&nbsp; ';
-	print '<input type="'.($backtopage ? "submit" : "button").'" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"'.($backtopage ? '' : ' onclick="javascript:history.go(-1)"').'>'; // Cancel for create does not post form if we don't know the backtopage
+	print '<input type="'.($backtopage ? "submit" : "button").'" class="button button-cancel" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"'.($backtopage ? '' : ' onclick="javascript:history.go(-1)"').'>'; // Cancel for create does not post form if we don't know the backtopage
 	print '</div>';
 
 	print '</form>';
@@ -245,18 +364,21 @@ if ($action == 'create')
 }
 
 // Part to edit record
-if (($id || $ref) && $action == 'edit')
-{
+if (($id || $ref) && $action == 'edit') {
 	print load_fiche_titre($langs->trans("RecruitmentCandidature"), '', 'object_'.$object->picto);
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
-	if ($backtopage) print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-	if ($backtopageforcancel) print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
+	if ($backtopage) {
+		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	}
+	if ($backtopageforcancel) {
+		print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
+	}
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent tableforfieldedit">'."\n";
 
@@ -268,22 +390,21 @@ if (($id || $ref) && $action == 'edit')
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
-	print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-	print ' &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '<div class="center"><input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
+	print ' &nbsp; <input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 
 	print '</form>';
 }
 
 // Part to show record
-if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create')))
-{
+if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
 	$res = $object->fetch_optionals();
 
 	$head = recruitmentcandidaturePrepareHead($object);
-	dol_fiche_head($head, 'card', $langs->trans("RecruitmentCandidature"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'card', $langs->trans("RecruitmentCandidature"), -1, $object->picto);
 
 	$formconfirm = '';
 
@@ -302,28 +423,62 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
 
-	// Confirmation of action xxxx
-	if ($action == 'xxx')
-	{
-		$formquestion = array();
-		/*
-		$forcecombo=0;
-		if ($conf->browser->name == 'ie') $forcecombo = 1;	// There is a bug in IE10 that make combo inside popup crazy
+	if ($action == 'makeofferordecline') {
+		$langs->load("propal");
+
+		//Form to close proposal (signed or not)
 		$formquestion = array(
-			// 'text' => $langs->trans("ConfirmClone"),
-			// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
-			// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
-			// array('type' => 'other',    'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
+			array('type' => 'select', 'name' => 'status', 'label' => '<span class="fieldrequired">'.$langs->trans("CloseAs").'</span>', 'values' => array($object::STATUS_CONTRACT_PROPOSED => $object->LibStatut($object::STATUS_CONTRACT_PROPOSED), $object::STATUS_REFUSED => $object->LibStatut($object::STATUS_REFUSED))),
+			array('type' => 'text', 'name' => 'note_private', 'label' => $langs->trans("Note"), 'value' => '')				// Field to complete private note (not replace)
 		);
-		*/
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('XXX'), $text, 'confirm_xxx', $formquestion, 0, 1, 220);
+
+		$text = '';
+
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('SetAcceptedRefused'), $text, 'confirm_makeofferordecline', $formquestion, '', 1, 250);
+	}
+
+	if ($action == 'closeas') {
+		$langs->load("propal");
+
+		//Form to close proposal (signed or not)
+		$formquestion = array(
+			array('type' => 'select', 'name' => 'status', 'label' => '<span class="fieldrequired">'.$langs->trans("CloseAs").'</span>', 'values' => array($object::STATUS_CONTRACT_SIGNED => $object->LibStatut($object::STATUS_CONTRACT_SIGNED), $object::STATUS_CONTRACT_REFUSED => $object->LibStatut($object::STATUS_CONTRACT_REFUSED))),
+			array('type' => 'text', 'name' => 'note_private', 'label' => $langs->trans("Note"), 'value' => '')				// Field to complete private note (not replace)
+		);
+
+		$text = '';
+
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('SetAcceptedRefused'), $text, 'confirm_closeas', $formquestion, '', 1, 250);
+	}
+
+	// Confirm create user
+	if ($action == 'create_user') {
+		$login = (GETPOSTISSET('login') ? GETPOST('login', 'alphanohtml') : $object->login);
+		if (empty($login)) {
+			// Full firstname and name separated with a dot : firstname.name
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+			$login = dol_buildlogin($object->lastname, $object->firstname);
+		}
+		if (empty($login)) {
+			$login = strtolower(substr($object->firstname, 0, 4)).strtolower(substr($object->lastname, 0, 4));
+		}
+
+		// Create a form array
+		$formquestion = array(
+			array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login)
+		);
+		$text .= $langs->trans("ConfirmCreateLogin");
+		print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("CreateDolibarrLogin"), $text, "confirm_create_user", $formquestion, 'yes');
 	}
 
 	// Call Hook formConfirm
 	$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	if (empty($reshook)) $formconfirm .= $hookmanager->resPrint;
-	elseif ($reshook > 0) $formconfirm = $hookmanager->resPrint;
+	if (empty($reshook)) {
+		$formconfirm .= $hookmanager->resPrint;
+	} elseif ($reshook > 0) {
+		$formconfirm = $hookmanager->resPrint;
+	}
 
 	// Print form confirm
 	print $formconfirm;
@@ -396,62 +551,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	print '<div class="clearboth"></div>';
 
-	dol_fiche_end();
-
-
-	/*
-	 * Lines
-	 */
-
-	if (!empty($object->table_element_line))
-	{
-		// Show object lines
-		$result = $object->getLinesArray();
-
-		print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#addline' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">
-		<input type="hidden" name="token" value="' . newToken().'">
-		<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
-		<input type="hidden" name="mode" value="">
-		<input type="hidden" name="id" value="' . $object->id.'">
-		';
-
-		if (!empty($conf->use_javascript_ajax) && $object->status == 0) {
-			include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
-		}
-
-		print '<div class="div-table-responsive-no-min">';
-		if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline'))
-		{
-			print '<table id="tablelines" class="noborder noshadow" width="100%">';
-		}
-
-		if (!empty($object->lines))
-		{
-			$object->printObjectLines($action, $mysoc, null, GETPOST('lineid', 'int'), 1);
-		}
-
-		// Form to add new line
-		if ($object->status == 0 && $permissiontoadd && $action != 'selectlines')
-		{
-			if ($action != 'editline')
-			{
-				// Add products/services form
-				$object->formAddObjectLine(1, $mysoc, $soc);
-
-				$parameters = array();
-				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-			}
-		}
-
-		if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline'))
-		{
-			print '</table>';
-		}
-		print '</div>';
-
-		print "</form>\n";
-	}
-
+	print dol_get_fiche_end();
 
 	// Buttons for actions
 
@@ -459,39 +559,34 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<div class="tabsAction">'."\n";
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		if ($reshook < 0) {
+			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		}
 
-		if (empty($reshook))
-		{
+		if (empty($reshook)) {
 			// Send
 			if (empty($user->socid)) {
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init&sendto='.urlencode($object->email).'#formmailbeforetitle">'.$langs->trans('SendMail').'</a>'."\n";
 			}
 
 			// Back to draft
-			if ($object->status == $object::STATUS_VALIDATED)
-			{
-				if ($permissiontoadd)
-				{
+			if ($object->status == $object::STATUS_VALIDATED) {
+				if ($permissiontoadd) {
 					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_setdraft&confirm=yes">'.$langs->trans("SetToDraft").'</a>';
 				}
 			}
 
 			// Modify
-			if ($permissiontoadd)
-			{
+			if ($permissiontoadd) {
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit">'.$langs->trans("Modify").'</a>'."\n";
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Modify').'</a>'."\n";
 			}
 
 			// Validate
-			if ($object->status == $object::STATUS_DRAFT)
-			{
-				if ($permissiontoadd)
-				{
-					if (empty($object->table_element_line) || (is_array($object->lines) && count($object->lines) > 0))
-					{
+			if ($object->status == $object::STATUS_DRAFT) {
+				if ($permissiontoadd) {
+					if (empty($object->table_element_line) || (is_array($object->lines) && count($object->lines) > 0)) {
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_validate&confirm=yes">'.$langs->trans("Validate").'</a>';
 					} else {
 						$langs->load("errors");
@@ -500,49 +595,51 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				}
 			}
 
-			// Refuse - Decline
-			if ($object->status >= $object::STATUS_VALIDATED && $object->status < $object::STATUS_REFUSED)
-			{
-				if ($permissiontoadd)
-				{
-					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_decline&confirm=yes">'.$langs->trans("Decline").'</a>';
+			// Make offer - Refuse - Decline
+			if ($object->status >= $object::STATUS_VALIDATED && $object->status < $object::STATUS_CONTRACT_PROPOSED) {
+				if ($permissiontoadd) {
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=makeofferordecline">'.$langs->trans("MakeOffer").' / '.$langs->trans("Decline").'</a>';
+				}
+			}
+
+			// Contract refused / accepted
+			if ($object->status == $object::STATUS_CONTRACT_PROPOSED) {
+				if ($permissiontoadd) {
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=closeas">'.$langs->trans("Accept").' / '.$langs->trans("Decline").'</a>';
 				}
 			}
 
 			// Clone
-			if ($permissiontoadd)
-			{
+			if ($permissiontoadd) {
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&object=recruitmentcandidature">'.$langs->trans("ToClone").'</a>'."\n";
 			}
 
-			/*
-			if ($permissiontoadd)
-			{
-				if ($object->status == $object::STATUS_ENABLED)
-				{
-					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=disable">'.$langs->trans("Disable").'</a>'."\n";
-				}
-				else
-				{
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=enable">'.$langs->trans("Enable").'</a>'."\n";
+			// Button to convert into a user
+			if ($object->status == $object::STATUS_CONTRACT_SIGNED) {
+				if ($user->rights->user->user->creer) {
+					// TODO Check if a user already exists
+					$useralreadyexists = 0;
+					if (empty($useralreadyexists)) {
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a></div>';
+					} else {
+						print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">'.$langs->trans("CreateDolibarrLogin").'</a></div>';
+					}
+				} else {
+					print '<div class="inline-block divButAction"><font class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("CreateDolibarrLogin")."</font></div>";
 				}
 			}
-			if ($permissiontoadd)
-			{
-				if ($object->status == $object::STATUS_VALIDATED)
-				{
+
+			// Cancel
+			if ($permissiontoadd) {
+				if ($object->status == $object::STATUS_VALIDATED) {
 					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=close">'.$langs->trans("Cancel").'</a>'."\n";
-				}
-				else
-				{
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen">'.$langs->trans("Re-Open").'</a>'."\n";
+				} elseif ($object->status == $object::STATUS_REFUSED || $object->status == $object::STATUS_CANCELED || $object->status == $object::STATUS_CONTRACT_REFUSED) {
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_reopen&confirm=yes&token='.newToken().'">'.$langs->trans("Re-Open").'</a>'."\n";
 				}
 			}
-			*/
 
 			// Delete (need delete permission, or if draft, just need create/modify permission)
-			if ($permissiontodelete || ($object->status == $object::STATUS_DRAFT && $permissiontoadd))
-			{
+			if ($permissiontodelete || ($object->status == $object::STATUS_DRAFT && $permissiontoadd)) {
 				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans('Delete').'</a>'."\n";
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Delete').'</a>'."\n";
@@ -557,8 +654,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$action = 'presend';
 	}
 
-	if ($action != 'presend')
-	{
+	if ($action != 'presend') {
 		print '<div class="fichecenter"><div class="fichehalfleft">';
 		print '<a name="builddoc"></a>'; // ancre
 
@@ -597,7 +693,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 	//Select mail models is same action as presend
-	if (GETPOST('modelselected')) $action = 'presend';
+	if (GETPOST('modelselected')) {
+		$action = 'presend';
+	}
 
 	// Presend form
 	$modelmail = 'recruitmentcandidature_send';

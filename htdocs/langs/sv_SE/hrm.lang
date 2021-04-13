@@ -16,3 +16,4 @@ DictionaryFunction=HRM - Job positions
 Employees=anställda
 Employee=Anställd
 NewEmployee=Ny anställd
+ListOfEmployees=List of employees

@@ -2,6 +2,7 @@
 /* Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2020      Josep Lluís Amador   <joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,13 +23,27 @@
  * \brief 	File to return Ajax response on product list request.
  */
 
-if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
-if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
-if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
-if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (!defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
-if (!defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
-if (empty($_GET['keysearch']) && !defined('NOREQUIREHTML')) define('NOREQUIREHTML', '1');
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', 1); // Disables token renewal
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1');
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1');
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
+if (!defined('NOREQUIRESOC')) {
+	define('NOREQUIRESOC', '1');
+}
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', '1');
+}
+if (empty($_GET['keysearch']) && !defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1');
+}
 
 require '../../main.inc.php';
 
@@ -47,18 +62,18 @@ $alsoproductwithnosupplierprice = GETPOST('alsoproductwithnosupplierprice', 'int
 $warehouseStatus = GETPOST('warehousestatus', 'alpha');
 $hidepriceinlabel = GETPOST('hidepriceinlabel', 'int');
 
+// Security check
+restrictedArea($user, 'produit|service', 0, 'product&product');
+
 
 /*
  * View
  */
 
 // print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
-
-dol_syslog(join(',', $_GET));
 // print_r($_GET);
 
-if (!empty($action) && $action == 'fetch' && !empty($id))
-{
+if (!empty($action) && $action == 'fetch' && !empty($id)) {
 	// action='fetch' is used to get product information on a product. So when action='fetch', id must be the product id.
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -67,11 +82,12 @@ if (!empty($action) && $action == 'fetch' && !empty($id))
 
 	$object = new Product($db);
 	$ret = $object->fetch($id);
-	if ($ret > 0)
-	{
+	if ($ret > 0) {
 		$outref = $object->ref;
 		$outlabel = $object->label;
+		$outlabel_trans ='';
 		$outdesc = $object->description;
+		$outdesc_trans ='';
 		$outtype = $object->type;
 		$outqty = 1;
 		$outdiscount = 0;
@@ -79,15 +95,32 @@ if (!empty($action) && $action == 'fetch' && !empty($id))
 		$found = false;
 
 		$price_level = 1;
-		if ($socid > 0 && !empty($conf->global->PRODUIT_MULTIPRICES)) {
+		if ($socid > 0) {
 			$thirdpartytemp = new Societe($db);
 			$thirdpartytemp->fetch($socid);
-			$price_level = $thirdpartytemp->price_level;
+
+			//Load translation description and label
+			if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+				$newlang = $thirdpartytemp->default_lang;
+
+				if (!empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+					$outdesc_trans = (!empty($object->multilangs[$outputlangs->defaultlang]["description"])) ? $object->multilangs[$outputlangs->defaultlang]["description"] : $object->description;
+					$outlabel_trans = (!empty($object->multilangs[$outputlangs->defaultlang]["label"])) ? $object->multilangs[$outputlangs->defaultlang]["label"] : $object->label;
+				} else {
+					$outdesc_trans = $object->description;
+					$outlabel_trans = $object->label;
+				}
+			}
+
+			if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
+				$price_level = $thirdpartytemp->price_level;
+			}
 		}
 
 		// Price by qty
-		if (!empty($price_by_qty_rowid) && $price_by_qty_rowid >= 1 && (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))) 		// If we need a particular price related to qty
-		{
+		if (!empty($price_by_qty_rowid) && $price_by_qty_rowid >= 1 && (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))) { // If we need a particular price related to qty
 			$sql = "SELECT price, unitprice, quantity, remise_percent";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_price_by_qty ";
 			$sql .= " WHERE rowid=".$price_by_qty_rowid."";
@@ -108,8 +141,7 @@ if (!empty($action) && $action == 'fetch' && !empty($id))
 		}
 
 		// Multiprice
-		if (!$found && isset($price_level) && $price_level >= 1 && (!empty($conf->global->PRODUIT_MULTIPRICES))) // If we need a particular price level (from 1 to 6)
-		{
+		if (!$found && isset($price_level) && $price_level >= 1 && (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))) { // If we need a particular price level (from 1 to 6)
 			$sql = "SELECT price, price_ttc, price_base_type, tva_tx";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_price ";
 			$sql .= " WHERE fk_product = '".$id."'";
@@ -158,7 +190,20 @@ if (!empty($action) && $action == 'fetch' && !empty($id))
 			$outtva_tx = $object->tva_tx;
 		}
 
-		$outjson = array('ref' => $outref, 'label' => $outlabel, 'desc' => $outdesc, 'type' => $outtype, 'price_ht' => $outprice_ht, 'price_ttc' => $outprice_ttc, 'pricebasetype' => $outpricebasetype, 'tva_tx' => $outtva_tx, 'qty' => $outqty, 'discount' => $outdiscount);
+		$outjson = array(
+			'ref' => $outref,
+			'label' => $outlabel,
+			'label_trans' => $outlabel_trans,
+			'desc' => $outdesc,
+			'desc_trans' => $outdesc_trans,
+			'type' => $outtype,
+			'price_ht' => $outprice_ht,
+			'price_ttc' => $outprice_ttc,
+			'pricebasetype' => $outpricebasetype,
+			'tva_tx' => $outtva_tx,
+			'qty' => $outqty,
+			'discount' => $outdiscount,
+			'array_options'=>$object->array_options);
 	}
 
 	echo json_encode($outjson);
@@ -169,27 +214,30 @@ if (!empty($action) && $action == 'fetch' && !empty($id))
 
 	top_httphead();
 
-	if (empty($htmlname))
-	{
+	if (empty($htmlname)) {
 		print json_encode(array());
-	    return;
+		return;
 	}
 
+	// Filter on the product to search can be:
+	// Into an array with key $htmlname123 (we take first one found). Which page use this ?
+	// Into a var with name $htmlname can be 'prodid', 'productid', ...
 	$match = preg_grep('/('.$htmlname.'[0-9]+)/', array_keys($_GET));
 	sort($match);
 
-	$idprod = (!empty($match[0]) ? $match[0] : '');
+	$idprod = (empty($match[0]) ? '' : $match[0]);		// Take first key found into GET array with matching $htmlname123
 
-	if (GETPOST($htmlname, 'alpha') == '' && (!$idprod || !GETPOST($idprod, 'alpha')))
-	{
+	if (GETPOST($htmlname, 'alpha') == '' && (!$idprod || !GETPOST($idprod, 'alpha'))) {
 		print json_encode(array());
-	    return;
+		return;
 	}
 
 	// When used from jQuery, the search term is added as GET param "term".
 	$searchkey = (($idprod && GETPOST($idprod, 'alpha')) ? GETPOST($idprod, 'alpha') : (GETPOST($htmlname, 'alpha') ? GETPOST($htmlname, 'alpha') : ''));
 
-	$form = new Form($db);
+	if (!is_object($form)) {
+		$form = new Form($db);
+	}
 
 	if (empty($mode) || $mode == 1) {  // mode=1: customer
 		$arrayresult = $form->select_produits_list("", $htmlname, $type, 0, $price_level, $searchkey, $status, $finished, $outjson, $socid, '1', 0, '', $hidepriceinlabel, $warehouseStatus);
@@ -199,6 +247,7 @@ if (!empty($action) && $action == 'fetch' && !empty($id))
 
 	$db->close();
 
-	if ($outjson)
+	if ($outjson) {
 		print json_encode($arrayresult);
+	}
 }

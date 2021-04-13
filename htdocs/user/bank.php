@@ -6,6 +6,7 @@
  * Copyright (C) 2013      Peter Fontaine       <contact@peterfontaine.fr>
  * Copyright (C) 2015-2016 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015	   Alexandre Spangaro	<aspangaro@open-dsi.fr>
+ * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,57 +33,74 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/userbankaccount.class.php';
-if (!empty($conf->holiday->enabled)) require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
-if (!empty($conf->expensereport->enabled)) require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
-if (!empty($conf->salaries->enabled)) require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
+if (!empty($conf->holiday->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+}
+if (!empty($conf->expensereport->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
+}
+if (!empty($conf->salaries->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
+}
 
 // Load translation files required by page
 $langs->loadLangs(array('companies', 'commercial', 'banks', 'bills', 'trips', 'holiday', 'salaries'));
 
 $id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alphanohtml');
 $bankid = GETPOST('bankid', 'int');
 $action = GETPOST("action", 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 
 // Security check
 $socid = 0;
-if ($user->socid > 0) $socid = $user->socid;
+if ($user->socid > 0) {
+	$socid = $user->socid;
+}
 $feature2 = (($socid && $user->rights->user->self->creer) ? '' : 'user');
 // Ok if user->rights->salaries->read or user->rights->hrm->read
 //$result = restrictedArea($user, 'salaries|hrm', $id, 'user&user', $feature2);
 $ok = false;
-if ($user->id == $id) $ok = true; // A user can always read its own card
-if (!empty($user->rights->salaries->read)) $ok = true;
-if (!empty($user->rights->hrm->read)) $ok = true;
-if (!empty($user->rights->expensereport->lire) && ($user->id == $object->id || $user->rights->expensereport->readall)) $ok = true;
-if (!$ok)
-{
+if ($user->id == $id) {
+	$ok = true; // A user can always read its own card
+}
+if (!empty($user->rights->salaries->read)) {
+	$ok = true;
+}
+if (!empty($user->rights->hrm->read)) {
+	$ok = true;
+}
+if (!empty($user->rights->expensereport->lire) && ($user->id == $object->id || $user->rights->expensereport->readall)) {
+	$ok = true;
+}
+if (!$ok) {
 	accessforbidden();
 }
 
 $object = new User($db);
-if ($id > 0 || !empty($ref))
-{
+if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref, '', 1);
 	$object->getrights();
 }
 
 $account = new UserBankAccount($db);
-if (!$bankid)
-{
+if (!$bankid) {
 	$account->fetch(0, '', $id);
 } else {
 	$account->fetch($bankid);
 }
-if (empty($account->userid)) $account->userid = $object->id;
+if (empty($account->userid)) {
+	$account->userid = $object->id;
+}
+
+$permissiontoaddbankaccount = (!empty($user->rights->salaries->write) || !empty($user->rights->hrm->employee->write) || !empty($user->rights->user->creer));
 
 
 /*
  *	Actions
  */
 
-if ($action == 'add' && !$cancel)
-{
+if ($action == 'add' && !$cancel) {
 	$account->userid          = $object->id;
 
 	$account->bank            = GETPOST('bank', 'alpha');
@@ -100,62 +118,60 @@ if ($action == 'add' && !$cancel)
 
 	$result = $account->create($user);
 
-	if (!$result)
-	{
+	if (!$result) {
 		setEventMessages($account->error, $account->errors, 'errors');
 		$action = 'edit'; // Force chargement page edition
 	} else {
-        setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
-        $action = '';
+		setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+		$action = '';
 	}
 }
 
-if ($action == 'update' && !$cancel)
-{
-    $account->userid = $object->id;
+if ($action == 'update' && !$cancel) {
+	$account->userid = $object->id;
 
-    /*
-    if ($action == 'update' && !$cancel)
-    {
-    	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	/*
+	if ($action == 'update' && !$cancel)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-    	if ($canedituser)    // Case we can edit all field
-    	{
-    		$error = 0;
+		if ($canedituser)    // Case we can edit all field
+		{
+			$error = 0;
 
-    		if (!$error)
-    		{
-    			$objectuser->fetch($id);
+			if (!$error)
+			{
+				$objectuser->fetch($id);
 
-    			$objectuser->oldcopy = clone $objectuser;
+				$objectuser->oldcopy = clone $objectuser;
 
-    			$db->begin();
+				$db->begin();
 
-    			$objectuser->default_range = GETPOST('default_range');
-    			$objectuser->default_c_exp_tax_cat = GETPOST('default_c_exp_tax_cat');
+				$objectuser->default_range = GETPOST('default_range');
+				$objectuser->default_c_exp_tax_cat = GETPOST('default_c_exp_tax_cat');
 
-    			if (!$error) {
-    				$ret = $objectuser->update($user);
-    				if ($ret < 0) {
-    					$error++;
-    					if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-    						$langs->load("errors");
-    						setEventMessages($langs->trans("ErrorLoginAlreadyExists", $objectuser->login), null, 'errors');
-    					} else {
-    						setEventMessages($objectuser->error, $objectuser->errors, 'errors');
-    					}
-    				}
-    			}
+				if (!$error) {
+					$ret = $objectuser->update($user);
+					if ($ret < 0) {
+						$error++;
+						if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+							$langs->load("errors");
+							setEventMessages($langs->trans("ErrorLoginAlreadyExists", $objectuser->login), null, 'errors');
+						} else {
+							setEventMessages($objectuser->error, $objectuser->errors, 'errors');
+						}
+					}
+				}
 
-    			if (!$error && !count($objectuser->errors)) {
-    				setEventMessages($langs->trans("UserModified"), null, 'mesgs');
-    				$db->commit();
-    			} else {
-    				$db->rollback();
-    			}
-    		}
-    	}
-    }*/
+				if (!$error && !count($objectuser->errors)) {
+					setEventMessages($langs->trans("UserModified"), null, 'mesgs');
+					$db->commit();
+				} else {
+					$db->rollback();
+				}
+			}
+		}
+	}*/
 
 	$account->bank            = GETPOST('bank', 'alpha');
 	$account->label           = GETPOST('label', 'alpha');
@@ -172,46 +188,49 @@ if ($action == 'update' && !$cancel)
 
 	$result = $account->update($user);
 
-    if (!$result)
-	{
+	if (!$result) {
 		setEventMessages($account->error, $account->errors, 'errors');
 		$action = 'edit'; // Force chargement page edition
 	} else {
-        setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
-        $action = '';
-    }
+		setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+		$action = '';
+	}
 }
 
 // update personal email
-if ($action == 'setpersonal_email')
-{
-	$object->personal_email = GETPOST('personal_email');
+if ($action == 'setpersonal_email') {
+	$object->personal_email = (string) GETPOST('personal_email', 'alphanohtml');
 	$result = $object->update($user);
-	if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+	if ($result < 0) {
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
 }
 
 // update personal mobile
-if ($action == 'setpersonal_mobile')
-{
-	$object->personal_mobile = GETPOST('personal_mobile');
+if ($action == 'setpersonal_mobile') {
+	$object->personal_mobile = (string) GETPOST('personal_mobile', 'alphanohtml');
 	$result = $object->update($user);
-	if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+	if ($result < 0) {
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
 }
 
 // update default_c_exp_tax_cat
-if ($action == 'setdefault_c_exp_tax_cat')
-{
+if ($action == 'setdefault_c_exp_tax_cat') {
 	$object->default_c_exp_tax_cat = GETPOST('default_c_exp_tax_cat', 'int');
 	$result = $object->update($user);
-	if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+	if ($result < 0) {
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
 }
 
 // update default range
-if ($action == 'setdefault_range')
-{
+if ($action == 'setdefault_range') {
 	$object->default_range = GETPOST('default_range', 'int');
 	$result = $object->update($user);
-	if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+	if ($result < 0) {
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
 }
 
 
@@ -220,34 +239,33 @@ if ($action == 'setdefault_range')
  *	View
  */
 
+$form = new Form($db);
+
 $childids = $user->getAllChildIds(1);
 
 llxHeader(null, $langs->trans("BankAccounts"));
 
 $head = user_prepare_head($object);
 
-if ($id && $bankid && $action == 'edit' && $user->rights->user->user->creer)
-{
-    print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
-    print '<input type="hidden" name="token" value="'.newToken().'">';
-    print '<input type="hidden" name="action" value="update">';
-    print '<input type="hidden" name="id" value="'.GETPOST("id", 'int').'">';
-    print '<input type="hidden" name="bankid" value="'.$bankid.'">';
+if ($id && $bankid && $action == 'edit' && $user->rights->user->user->creer) {
+	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="update">';
+	print '<input type="hidden" name="id" value="'.GETPOST("id", 'int').'">';
+	print '<input type="hidden" name="bankid" value="'.$bankid.'">';
 }
-if ($id && $action == 'create' && $user->rights->user->user->creer)
-{
-    print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
-    print '<input type="hidden" name="token" value="'.newToken().'">';
-    print '<input type="hidden" name="action" value="add">';
-    print '<input type="hidden" name="bankid" value="'.$bankid.'">';
+if ($id && $action == 'create' && $user->rights->user->user->creer) {
+	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="add">';
+	print '<input type="hidden" name="bankid" value="'.$bankid.'">';
 }
 
 
 // View
-if ($action != 'edit' && $action != 'create')		// If not bank account yet, $account may be empty
-{
+if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $account may be empty
 	$title = $langs->trans("User");
-	dol_fiche_head($head, 'bank', $title, -1, 'user');
+	print dol_get_fiche_head($head, 'bank', $title, -1, 'user');
 
 	$linkback = '';
 
@@ -255,17 +273,17 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	}
 
-    dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
+	dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
 
-    print '<div class="fichecenter"><div class="fichehalfleft">';
+	print '<div class="fichecenter"><div class="fichehalfleft">';
 
-    print '<div class="underbanner clearboth"></div>';
+	print '<div class="underbanner clearboth"></div>';
 
-    print '<table class="border centpercent tableforfield">';
+	print '<table class="border centpercent tableforfield">';
 
-    print '<tr><td class="titlefield">'.$langs->trans("Login").'</td>';
-    print '<td>'.$object->login.'</td>';
-    print '</tr>';
+	print '<tr><td class="titlefield">'.$langs->trans("Login").'</td>';
+	print '<td>'.$object->login.'</td>';
+	print '</tr>';
 
 	print '<tr class="nowrap">';
 	print '<td>';
@@ -283,8 +301,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 	print '</td>';
 	print '</tr>';
 
-	if (!empty($conf->global->MAIN_USE_EXPENSE_IK))
-	{
+	if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
 		print '<tr class="nowrap">';
 		print '<td>';
 		print $form->editfieldkey("DefaultCategoryCar", 'default_c_exp_tax_cat', $object->default_c_exp_tax_cat, $object, $user->rights->user->user->creer);
@@ -296,7 +313,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 			$ret .= '<input type="hidden" name="id" value="'.$object->id.'">';
 			$ret .= $form->selectExpenseCategories($object->default_c_exp_tax_cat, 'default_c_exp_tax_cat', 1);
 			$ret .= '<input type="submit" class="button" name="modify" value="'.$langs->trans("Modify").'"> ';
-			$ret .= '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+			$ret .= '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 			$ret .= '</form>';
 			print $ret;
 		} else {
@@ -318,7 +335,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 			$maxRangeNum = ExpenseReportIk::getMaxRangeNumber($object->default_c_exp_tax_cat);
 			$ret .= $form->selectarray('default_range', range(0, $maxRangeNum), $object->default_range);
 			$ret .= '<input type="submit" class="button" name="modify" value="'.$langs->trans("Modify").'"> ';
-			$ret .= '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+			$ret .= '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 			$ret .= '</form>';
 			print $ret;
 		} else {
@@ -328,59 +345,60 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 		print '</tr>';
 	}
 
-    print '</table>';
+	print '</table>';
 
 	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 	// Nbre max d'elements des petites listes
 	$MAXLIST = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
-	/*
-	 * Latest salary payments
-	 */
+	// Latest payments of salaries
 	if (!empty($conf->salaries->enabled) &&
 		$user->rights->salaries->read && (in_array($object->id, $childids) || $object->id == $user->id)
-		)
-	{
-		$salary = new PaymentSalary($db);
+		) {
+		$payment_salary = new PaymentSalary($db);
 
-		$sql = "SELECT ps.rowid, ps.datesp, ps.dateep, ps.amount";
+		$sql = "SELECT ps.rowid, s.datesp, s.dateep, ps.amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as ps";
-		$sql .= " WHERE ps.fk_user = ".$object->id;
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."salary as s ON (s.rowid = ps.fk_salary)";
+		$sql .= " WHERE s.fk_user = ".$object->id;
 		$sql .= " AND ps.entity = ".$conf->entity;
-		$sql .= " ORDER BY ps.datesp DESC";
+		$sql .= " ORDER BY ps.rowid DESC";
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $db->num_rows($resql);
 
-	        print '<table class="noborder centpercent">';
+			print '<table class="noborder centpercent">';
 
-            print '<tr class="liste_titre">';
-   			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastSalaries", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/salaries/list.php?search_user='.$object->login.'">'.$langs->trans("AllSalaries").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
-   			print '</tr></table></td>';
-   			print '</tr>';
+			print '<tr class="liste_titre">';
+			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastSalaries", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/salaries/payments.php?search_user='.$object->login.'">'.$langs->trans("AllSalaries").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
+			print '</tr></table></td>';
+			print '</tr>';
 
 			$i = 0;
-			while ($i < $num && $i < $MAXLIST)
-			{
+			while ($i < $num && $i < $MAXLIST) {
 				$objp = $db->fetch_object($resql);
 
 				print '<tr class="oddeven">';
-                print '<td class="nowrap">';
-                $salary->id = $objp->rowid;
-				$salary->ref = $objp->rowid;
+				print '<td class="nowraponall">';
+				$payment_salary->id = $objp->rowid;
+				$payment_salary->ref = $objp->rowid;
+				print $payment_salary->getNomUrl(1);
+				print '</td>';
 
-                print $salary->getNomUrl(1);
-				print '</td><td class="right" width="80px">'.dol_print_date($db->jdate($objp->datesp), 'day')."</td>\n";
+				print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->datesp), 'day')."</td>\n";
 				print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->dateep), 'day')."</td>\n";
-				print '<td class="right" style="min-width: 60px">'.price($objp->amount).'</td></tr>';
+				print '<td class="right" style="min-width: 60px">'.price($objp->amount).'</td>';
+
+				print '</tr>';
 				$i++;
 			}
 			$db->free($resql);
 
-			if ($num <= 0) print '<td colspan="4" class="opacitymedium">'.$langs->trans("None").'</a>';
+			if ($num <= 0) {
+				print '<td colspan="4" class="opacitymedium">'.$langs->trans("None").'</a>';
+			}
 			print "</table>";
 		} else {
 			dol_print_error($db);
@@ -391,50 +409,50 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 	 * Last holidays
 	 */
 	if (!empty($conf->holiday->enabled) &&
-		($user->rights->holiday->read_all || ($user->rights->holiday->read && $object->id == $user->id))
-		)
-	{
+		($user->rights->holiday->readall || ($user->rights->holiday->read && $object->id == $user->id))
+		) {
 		$holiday = new Holiday($db);
 
-		$sql = "SELECT h.rowid, h.statut, h.fk_type, h.date_debut, h.date_fin, h.halfday";
+		$sql = "SELECT h.rowid, h.statut as status, h.fk_type, h.date_debut, h.date_fin, h.halfday";
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as h";
 		$sql .= " WHERE h.fk_user = ".$object->id;
-		$sql .= " AND h.entity = ".$conf->entity;
+		$sql .= " AND h.entity IN (".getEntity('holiday').")";
 		$sql .= " ORDER BY h.date_debut DESC";
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $db->num_rows($resql);
 
-	        print '<table class="noborder centpercent">';
+			print '<table class="noborder centpercent">';
 
-            print '<tr class="liste_titre">';
-  			print '<td colspan="4"><table class="nobordernopadding centpercent"><tr><td>'.$langs->trans("LastHolidays", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/holiday/list.php?id='.$object->id.'">'.$langs->trans("AllHolidays").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
-   			print '</tr></table></td>';
-   			print '</tr>';
+			print '<tr class="liste_titre">';
+			print '<td colspan="4"><table class="nobordernopadding centpercent"><tr><td>'.$langs->trans("LastHolidays", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/holiday/list.php?id='.$object->id.'">'.$langs->trans("AllHolidays").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
+			print '</tr></table></td>';
+			print '</tr>';
 
 			$i = 0;
-			while ($i < $num && $i < $MAXLIST)
-			{
+			while ($i < $num && $i < $MAXLIST) {
 				$objp = $db->fetch_object($resql);
 
-				print '<tr class="oddeven">';
-                print '<td class="nowrap">';
-                $holiday->id = $objp->rowid;
+				$holiday->id = $objp->rowid;
 				$holiday->ref = $objp->rowid;
-                $holiday->fk_type = $objp->fk_type;
+				$holiday->fk_type = $objp->fk_type;
+				$holiday->statut = $objp->status;
 				$nbopenedday = num_open_day($db->jdate($objp->date_debut), $db->jdate($objp->date_fin), 0, 1, $objp->halfday);
 
-                print $holiday->getNomUrl(1);
+				print '<tr class="oddeven">';
+				print '<td class="nowrap">';
+				print $holiday->getNomUrl(1);
 				print '</td><td class="right" width="80px">'.dol_print_date($db->jdate($objp->date_debut), 'day')."</td>\n";
 				print '<td class="right" style="min-width: 60px">'.$nbopenedday.' '.$langs->trans('DurationDays').'</td>';
-				print '<td class="right" style="min-width: 60px" class="nowrap">'.$holiday->LibStatut($objp->statut, 5).'</td></tr>';
+				print '<td class="right" style="min-width: 60px" class="nowrap">'.$holiday->LibStatut($objp->status, 5).'</td></tr>';
 				$i++;
 			}
 			$db->free($resql);
 
-			if ($num <= 0) print '<td colspan="4" class="opacitymedium">'.$langs->trans("None").'</a>';
+			if ($num <= 0) {
+				print '<td colspan="4" class="opacitymedium">'.$langs->trans("None").'</a>';
+			}
 			print "</table>";
 		} else {
 			dol_print_error($db);
@@ -446,64 +464,70 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 	 */
 	if (!empty($conf->expensereport->enabled) &&
 		($user->rights->expensereport->readall || ($user->rights->expensereport->lire && $object->id == $user->id))
-		)
-	{
+		) {
 		$exp = new ExpenseReport($db);
 
-		$sql = "SELECT e.rowid, e.ref, e.fk_statut, e.date_debut, e.total_ttc";
+		$sql = "SELECT e.rowid, e.ref, e.fk_statut as status, e.date_debut, e.total_ttc";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as e";
 		$sql .= " WHERE e.fk_user_author = ".$object->id;
 		$sql .= " AND e.entity = ".$conf->entity;
 		$sql .= " ORDER BY e.date_debut DESC";
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $db->num_rows($resql);
 
-	        print '<table class="noborder centpercent">';
+			print '<table class="noborder centpercent">';
 
-            print '<tr class="liste_titre">';
-   			print '<td colspan="4"><table class="nobordernopadding centpercent"><tr><td>'.$langs->trans("LastExpenseReports", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/expensereport/list.php?id='.$object->id.'">'.$langs->trans("AllExpenseReports").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
-   			print '</tr></table></td>';
-   			print '</tr>';
+			print '<tr class="liste_titre">';
+			print '<td colspan="4"><table class="nobordernopadding centpercent"><tr><td>'.$langs->trans("LastExpenseReports", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/expensereport/list.php?id='.$object->id.'">'.$langs->trans("AllExpenseReports").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
+			print '</tr></table></td>';
+			print '</tr>';
 
 			$i = 0;
-			while ($i < $num && $i < $MAXLIST)
-			{
+			while ($i < $num && $i < $MAXLIST) {
 				$objp = $db->fetch_object($resql);
 
-				print '<tr class="oddeven">';
-                print '<td class="nowrap">';
-                $exp->id = $objp->rowid;
+				$exp->id = $objp->rowid;
 				$exp->ref = $objp->ref;
-                $exp->fk_type = $objp->fk_type;
+				$exp->fk_type = $objp->fk_type;
+				$exp->status = $objp->status;
 
-                print $exp->getNomUrl(1);
+				print '<tr class="oddeven">';
+				print '<td class="nowrap">';
+				print $exp->getNomUrl(1);
 				print '</td><td class="right" width="80px">'.dol_print_date($db->jdate($objp->date_debut), 'day')."</td>\n";
 				print '<td class="right" style="min-width: 60px">'.price($objp->total_ttc).'</td>';
-				print '<td class="right nowrap" style="min-width: 60px">'.$exp->LibStatut($objp->fk_statut, 5).'</td></tr>';
+				print '<td class="right nowrap" style="min-width: 60px">'.$exp->LibStatut($objp->status, 5).'</td></tr>';
 				$i++;
 			}
 			$db->free($resql);
 
-			if ($num <= 0) print '<td colspan="4" class="opacitymedium">'.$langs->trans("None").'</a>';
+			if ($num <= 0) {
+				print '<td colspan="4" class="opacitymedium">'.$langs->trans("None").'</a>';
+			}
 			print "</table>";
 		} else {
 			dol_print_error($db);
 		}
 	}
 
-    print '</div></div></div>';
+	print '</div></div></div>';
 	print '<div style="clear:both"></div>';
 
-    dol_fiche_end();
+	print dol_get_fiche_end();
 
 	// List of bank accounts (Currently only one bank account possible for each employee)
 
 	$morehtmlright = '';
 	if ($account->id == 0) {
-		$morehtmlright = dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=create');
+		if ($permissiontoaddbankaccount) {
+			$morehtmlright = dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=create');
+		} else {
+			$morehtmlright = dolGetButtonTitle($langs->trans('Add'), 'NotEnoughPermission', 'fa fa-plus-circle', '', '', -2);
+		}
+	} else {
+		$morehtmlright = dolGetButtonTitle($langs->trans('Add'), 'AlreadyOneBankAccount', 'fa fa-plus-circle', '', '', -2);
 	}
 
 	print load_fiche_titre($langs->trans("BankAccounts"), $morehtmlright, 'bank_account');
@@ -569,8 +593,8 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 
 		// Edit/Delete
 		print '<td class="right nowraponall">';
-		if ($user->rights->hrm->employee->write || $user->rights->user->creer) {
-			print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&bankid='.$account->id.'&action=edit">';
+		if ($permissiontoaddbankaccount) {
+			print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&bankid='.$account->id.'&action=edit">';
 			print img_picto($langs->trans("Modify"), 'edit');
 			print '</a>';
 		}
@@ -580,8 +604,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 	}
 
 
-	if ($account->id == 0)
-	{
+	if ($account->id == 0) {
 		$colspan = 6;
 		print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoBANRecord").'</td></tr>';
 	}
@@ -591,25 +614,24 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 }
 
 // Edit
-if ($id && ($action == 'edit' || $action == 'create') && $user->rights->user->user->creer)
-{
+if ($id && ($action == 'edit' || $action == 'create') && $user->rights->user->user->creer) {
 	$title = $langs->trans("User");
-	dol_fiche_head($head, 'bank', $title, 0, 'user');
+	print dol_get_fiche_head($head, 'bank', $title, 0, 'user');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-    dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
+	dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
 
-    //print '<div class="fichecenter">';
+	//print '<div class="fichecenter">';
 
-    print '<div class="underbanner clearboth"></div>';
+	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent">';
 
-    print '<tr><td class="titlefield fieldrequired">'.$langs->trans("LabelRIB").'</td>';
-    print '<td colspan="4"><input size="30" type="text" name="label" value="'.$account->label.'"></td></tr>';
+	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("LabelRIB").'</td>';
+	print '<td colspan="4"><input size="30" type="text" name="label" value="'.$account->label.'"></td></tr>';
 
-    print '<tr><td class="fieldrequired">'.$langs->trans("BankName").'</td>';
-    print '<td><input size="30" type="text" name="bank" value="'.$account->bank.'"></td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("BankName").'</td>';
+	print '<td><input size="30" type="text" name="bank" value="'.$account->bank.'"></td></tr>';
 
 	// Show fields of bank account
 	foreach ($account->getFieldsToShow() as $val) {
@@ -636,43 +658,47 @@ if ($id && ($action == 'edit' || $action == 'create') && $user->rights->user->us
 		print '</tr>';
 	}
 
-    // IBAN
-    print '<tr><td class="fieldrequired">'.$langs->trans("IBAN").'</td>';
-    print '<td colspan="4"><input size="30" type="text" name="iban" value="'.$account->iban.'"></td></tr>';
+	// IBAN
+	print '<tr><td class="fieldrequired">'.$langs->trans("IBAN").'</td>';
+	print '<td colspan="4"><input size="30" type="text" name="iban" value="'.$account->iban.'"></td></tr>';
 
-    print '<tr><td class="fieldrequired">'.$langs->trans("BIC").'</td>';
-    print '<td colspan="4"><input size="12" type="text" name="bic" value="'.$account->bic.'"></td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("BIC").'</td>';
+	print '<td colspan="4"><input size="12" type="text" name="bic" value="'.$account->bic.'"></td></tr>';
 
-    print '<tr><td class="tdtop">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="4">';
-    print '<textarea name="domiciliation" rows="4" class="quatrevingtpercent">';
-    print $account->domiciliation;
-    print "</textarea></td></tr>";
+	print '<tr><td class="tdtop">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="4">';
+	print '<textarea name="domiciliation" rows="4" class="quatrevingtpercent">';
+	print $account->domiciliation;
+	print "</textarea></td></tr>";
 
-    print '<tr><td>'.$langs->trans("BankAccountOwner").'</td>';
-    print '<td colspan="4"><input size="30" type="text" name="proprio" value="'.$account->proprio.'"></td></tr>';
-    print "</td></tr>\n";
+	print '<tr><td>'.$langs->trans("BankAccountOwner").'</td>';
+	print '<td colspan="4"><input size="30" type="text" name="proprio" value="'.$account->proprio.'"></td></tr>';
+	print "</td></tr>\n";
 
-    print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="4">';
-    print '<textarea name="owner_address" rows="4" class="quatrevingtpercent">';
-    print $account->owner_address;
-    print "</textarea></td></tr>";
+	print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="4">';
+	print '<textarea name="owner_address" rows="4" class="quatrevingtpercent">';
+	print $account->owner_address;
+	print "</textarea></td></tr>";
 
-    print '</table>';
+	print '</table>';
 
-    //print '</div>';
+	//print '</div>';
 
-    dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input class="button" value="'.$langs->trans("Modify").'" type="submit">';
-    print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input class="button" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
-    print '</div>';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
+	print '</div>';
 }
 
-if ($id && $action == 'edit' && $user->rights->user->user->creer) print '</form>';
+if ($id && $action == 'edit' && $user->rights->user->user->creer) {
+	print '</form>';
+}
 
-if ($id && $action == 'create' && $user->rights->user->user->creer) print '</form>';
+if ($id && $action == 'create' && $user->rights->user->user->creer) {
+	print '</form>';
+}
 
 // End of page
 llxFooter();

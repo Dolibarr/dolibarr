@@ -35,7 +35,9 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'di
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'prelevement', '', '', 'bons');
 
 $type = GETPOST('type', 'aZ09');
@@ -44,12 +46,18 @@ $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder) $sortorder = "DESC";
-if (!$sortfield) $sortfield = "p.datec";
+if (!$sortorder) {
+	$sortorder = "DESC";
+}
+if (!$sortfield) {
+	$sortfield = "p.datec";
+}
 
 // Get supervariables
 $statut = GETPOST('statut', 'int');
@@ -69,10 +77,9 @@ if ($type == 'bank-transfer') {
  * Actions
  */
 
-if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
-{
-    $search_ref = "";
-    $search_amount = "";
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
+	$search_ref = "";
+	$search_amount = "";
 }
 
 
@@ -90,132 +97,137 @@ if ($type == 'bank-transfer') {
 } else {
 	$sql .= " AND p.type = 'debit-order'";
 }
-if ($search_ref) $sql .= natural_search("p.ref", $search_ref);
-if ($search_amount) $sql .= natural_search("p.amount", $search_amount, 1);
+if ($search_ref) {
+	$sql .= natural_search("p.ref", $search_ref);
+}
+if ($search_amount) {
+	$sql .= natural_search("p.amount", $search_amount, 1);
+}
 
 $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
-{
-    $result = $db->query($sql);
-    $nbtotalofrecords = $db->num_rows($result);
-    if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
-    {
-        $page = 0;
-        $offset = 0;
-    }
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+	$result = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($result);
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+		$page = 0;
+		$offset = 0;
+	}
 }
 
 $sql .= $db->plimit($limit + 1, $offset);
 
 $result = $db->query($sql);
-if ($result)
-{
-    $num = $db->num_rows($result);
-    $i = 0;
+if ($result) {
+	$num = $db->num_rows($result);
+	$i = 0;
 
-    $param = '';
-    if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
-    if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
-    $param .= "&statut=".urlencode($statut);
+	$param = '';
+	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+		$param .= '&contextpage='.urlencode($contextpage);
+	}
+	if ($limit > 0 && $limit != $conf->liste_limit) {
+		$param .= '&limit='.urlencode($limit);
+	}
+	$param .= "&statut=".urlencode($statut);
 
-    $selectedfields = '';
+	$selectedfields = '';
 
-    $newcardbutton = '';
-    if ($usercancreate)
-    {
-        $newcardbutton .= dolGetButtonTitle($langs->trans('NewStandingOrder'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/prelevement/create.php');
-    }
+	$newcardbutton = '';
+	if ($usercancreate) {
+		$newcardbutton .= dolGetButtonTitle($langs->trans('NewStandingOrder'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/prelevement/create.php');
+	}
 
-    // Lines of title fields
-    print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
-    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-    print '<input type="hidden" name="token" value="'.newToken().'">';
-    print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
-    print '<input type="hidden" name="action" value="list">';
-    print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
-    print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-    print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+	// Lines of title fields
+	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+	if ($optioncss != '') {
+		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	}
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+	print '<input type="hidden" name="action" value="list">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-    $titlekey = "WithdrawalsReceipts";
-    $title = $langs->trans("WithdrawalsReceipts");
-    if ($type == 'bank-transfer') {
-    	$titlekey = "BankTransferReceipts";
-    	$title = $langs->trans("BankTransferReceipts");
-    }
+	$titlekey = "WithdrawalsReceipts";
+	$title = $langs->trans("WithdrawalsReceipts");
+	if ($type == 'bank-transfer') {
+		$titlekey = "BankTransferReceipts";
+		$title = $langs->trans("BankTransferReceipts");
+	}
 
-    print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit, 0, 0, 1);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
-    $moreforfilter = '';
+	$moreforfilter = '';
 
-    print '<div class="div-table-responsive">';
-    print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+	print '<div class="div-table-responsive">';
+	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
-    print '<tr class="liste_titre">';
-    print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
-    print '<td class="liste_titre">&nbsp;</td>';
-    print '<td class="liste_titre right"><input type="text" class="flat maxwidth100" name="search_amount" value="'.dol_escape_htmltag($search_amount).'"></td>';
-    print '<td class="liste_titre">&nbsp;</td>';
-    print '<td class="liste_titre maxwidthsearch">';
-    $searchpicto = $form->showFilterButtons();
-    print $searchpicto;
-    print '</td>';
-    print '</tr>';
+	print '<tr class="liste_titre">';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
+	print '<td class="liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre right"><input type="text" class="flat maxwidth100" name="search_amount" value="'.dol_escape_htmltag($search_amount).'"></td>';
+	print '<td class="liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre maxwidthsearch">';
+	$searchpicto = $form->showFilterButtons();
+	print $searchpicto;
+	print '</td>';
+	print '</tr>';
 
-    print '<tr class="liste_titre">';
-    print_liste_field_titre($titlekey, $_SERVER["PHP_SELF"], "p.ref", '', $param, '', $sortfield, $sortorder);
-    print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "p.datec", "", $param, '', $sortfield, $sortorder, 'center ');
-    print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "p.amount", "", $param, '', $sortfield, $sortorder, 'right ');
-    print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
-    print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ')."\n";
-    print "</tr>\n";
+	print '<tr class="liste_titre">';
+	print_liste_field_titre($titlekey, $_SERVER["PHP_SELF"], "p.ref", '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "p.datec", "", $param, '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "p.amount", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
+	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ')."\n";
+	print "</tr>\n";
 
-    $directdebitorder = new BonPrelevement($db);
+	$directdebitorder = new BonPrelevement($db);
 
-    if ($num) {
-	    while ($i < min($num, $limit))
-	    {
-	        $obj = $db->fetch_object($result);
+	if ($num) {
+		while ($i < min($num, $limit)) {
+			$obj = $db->fetch_object($result);
 
-	        $directdebitorder->id = $obj->rowid;
-	        $directdebitorder->ref = $obj->ref;
-	        $directdebitorder->datec = $obj->datec;
-	        $directdebitorder->amount = $obj->amount;
-	        $directdebitorder->statut = $obj->statut;
+			$directdebitorder->id = $obj->rowid;
+			$directdebitorder->ref = $obj->ref;
+			$directdebitorder->datec = $obj->datec;
+			$directdebitorder->amount = $obj->amount;
+			$directdebitorder->statut = $obj->statut;
 
-	        print '<tr class="oddeven">';
+			print '<tr class="oddeven">';
 
-	        print '<td>';
-	        print $directdebitorder->getNomUrl(1);
-	        print "</td>\n";
+			print '<td>';
+			print $directdebitorder->getNomUrl(1);
+			print "</td>\n";
 
-	        print '<td class="center">'.dol_print_date($db->jdate($obj->datec), 'day')."</td>\n";
+			print '<td class="center">'.dol_print_date($db->jdate($obj->datec), 'day')."</td>\n";
 
-	        print '<td class="right">'.price($obj->amount)."</td>\n";
+			print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>\n";
 
-	        print '<td class="right">';
-	        print $bon->LibStatut($obj->statut, 3);
-	        print '</td>';
+			print '<td class="right">';
+			print $bon->LibStatut($obj->statut, 3);
+			print '</td>';
 
-	        print '<td class="right"></td>'."\n";
+			print '<td class="right"></td>'."\n";
 
-	        print "</tr>\n";
-	        $i++;
-	    }
-    } else {
-    	print '<tr><td class="opacitymedium" colspan="5">'.$langs->trans("None").'</td></tr>';
-    }
+			print "</tr>\n";
+			$i++;
+		}
+	} else {
+		print '<tr><td class="opacitymedium" colspan="5">'.$langs->trans("None").'</td></tr>';
+	}
 
-    print "</table>";
-    print '</div>';
+	print "</table>";
+	print '</div>';
 
-    print '</form>';
+	print '</form>';
 
-    $db->free($result);
+	$db->free($result);
 } else {
-    dol_print_error($db);
+	dol_print_error($db);
 }
 
 // End of page

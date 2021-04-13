@@ -33,28 +33,45 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($object) || !is_object($object))
-{
+if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
 
 
 $usemargins = 0;
-if (!empty($conf->margin->enabled) && !empty($object->element) && in_array($object->element, array('facture', 'facturerec', 'propal', 'commande'))) $usemargins = 1;
+if (!empty($conf->margin->enabled) && !empty($object->element) && in_array($object->element, array('facture', 'facturerec', 'propal', 'commande'))) {
+	$usemargins = 1;
+}
 
 global $forceall, $senderissupplier, $inputalsopricewithtax, $canchangeproduct;
-if (empty($dateSelector)) $dateSelector = 0;
-if (empty($forceall)) $forceall = 0;
-if (empty($senderissupplier)) $senderissupplier = 0;
-if (empty($inputalsopricewithtax)) $inputalsopricewithtax = 0;
-if (empty($canchangeproduct)) $canchangeproduct = 0;
+if (empty($dateSelector)) {
+	$dateSelector = 0;
+}
+if (empty($forceall)) {
+	$forceall = 0;
+}
+if (empty($senderissupplier)) {
+	$senderissupplier = 0;
+}
+if (empty($inputalsopricewithtax)) {
+	$inputalsopricewithtax = 0;
+}
+if (empty($canchangeproduct)) {
+	$canchangeproduct = 0;
+}
 
 // Define colspan for the button 'Add'
 $colspan = 3; // Col total ht + col edit + col delete
-if (!empty($inputalsopricewithtax)) $colspan++; // We add 1 if col total ttc
-if (in_array($object->element, array('propal', 'supplier_proposal', 'facture', 'facturerec', 'invoice', 'commande', 'order', 'order_supplier', 'invoice_supplier'))) $colspan++; // With this, there is a column move button
-if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) $colspan += 2;
+if (!empty($inputalsopricewithtax)) {
+	$colspan++; // We add 1 if col total ttc
+}
+if (in_array($object->element, array('propal', 'supplier_proposal', 'facture', 'facturerec', 'invoice', 'commande', 'order', 'order_supplier', 'invoice_supplier'))) {
+	$colspan++; // With this, there is a column move button
+}
+if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) {
+	$colspan += 2;
+}
 
 print "<!-- BEGIN PHP TEMPLATE objectline_edit.tpl.php -->\n";
 
@@ -78,12 +95,17 @@ $coldisplay++;
 	<?php if ($line->fk_product > 0) { ?>
 		<?php
 		if (empty($canchangeproduct)) {
-			if ($line->fk_parent_line > 0) echo img_picto('', 'rightarrow');
+			if ($line->fk_parent_line > 0) {
+				echo img_picto('', 'rightarrow');
+			}
 			?>
 			<a href="<?php echo DOL_URL_ROOT.'/product/card.php?id='.$line->fk_product; ?>">
 			<?php
-			if ($line->product_type == 1) echo img_object($langs->trans('ShowService'), 'service');
-			else print img_object($langs->trans('ShowProduct'), 'product');
+			if ($line->product_type == 1) {
+				echo img_object($langs->trans('ShowService'), 'service');
+			} else {
+				print img_object($langs->trans('ShowProduct'), 'product');
+			}
 			echo ' '.$line->ref;
 			?>
 			</a>
@@ -102,32 +124,43 @@ $coldisplay++;
 	<?php }	?>
 
 	<?php
-	if (is_object($hookmanager))
-	{
+	if (is_object($hookmanager)) {
 		$fk_parent_line = (GETPOST('fk_parent_line') ? GETPOST('fk_parent_line') : $line->fk_parent_line);
-	    $parameters = array('line'=>$line, 'fk_parent_line'=>$fk_parent_line, 'var'=>$var, 'dateSelector'=>$dateSelector, 'seller'=>$seller, 'buyer'=>$buyer);
-	    $reshook = $hookmanager->executeHooks('formEditProductOptions', $parameters, $this, $action);
+		$parameters = array('line'=>$line, 'fk_parent_line'=>$fk_parent_line, 'var'=>$var, 'dateSelector'=>$dateSelector, 'seller'=>$seller, 'buyer'=>$buyer);
+		$reshook = $hookmanager->executeHooks('formEditProductOptions', $parameters, $this, $action);
 	}
 
 	// Do not allow editing during a situation cycle
-	if ($line->fk_prev_id == null)
-	{
+	if ($line->fk_prev_id == null) {
 		// editor wysiwyg
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$nbrows = ROWS_2;
-		if (!empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows = $conf->global->MAIN_INPUT_DESC_HEIGHT;
+		if (!empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) {
+			$nbrows = $conf->global->MAIN_INPUT_DESC_HEIGHT;
+		}
 		$enable = (isset($conf->global->FCKEDITOR_ENABLE_DETAILS) ? $conf->global->FCKEDITOR_ENABLE_DETAILS : 0);
 		$toolbarname = 'dolibarr_details';
-		if (!empty($conf->global->FCKEDITOR_ENABLE_DETAILS_FULL)) $toolbarname = 'dolibarr_notes';
+		if (!empty($conf->global->FCKEDITOR_ENABLE_DETAILS_FULL)) {
+			$toolbarname = 'dolibarr_notes';
+		}
 		$doleditor = new DolEditor('product_desc', $line->description, '', (empty($conf->global->MAIN_DOLEDITOR_HEIGHT) ? 164 : $conf->global->MAIN_DOLEDITOR_HEIGHT), $toolbarname, '', false, true, $enable, $nbrows, '98%');
 		$doleditor->Create();
 	} else {
 		print '<textarea id="product_desc" class="flat" name="product_desc" readonly style="width: 200px; height:80px;">'.$line->description.'</textarea>';
 	}
 
+	//Line extrafield
+	if (!empty($extrafields)) {
+		$temps = $line->showOptionals($extrafields, 'edit', array('class'=>'tredited'), '', '', 1, 'line');
+		if (!empty($temps)) {
+			print '<div style="padding-top: 10px" id="extrafield_lines_area_edit" name="extrafield_lines_area_edit">';
+			print $temps;
+			print '</div>';
+		}
+	}
+
 	// Show autofill date for recuring invoices
-	if (!empty($conf->service->enabled) && $line->product_type == 1 && $line->element == 'facturedetrec')
-	{
+	if (!empty($conf->service->enabled) && $line->product_type == 1 && $line->element == 'facturedetrec') {
 		echo '<br>';
 		echo $langs->trans('AutoFillDateFrom').' ';
 		echo $form->selectyesno('date_start_fill', $line->date_start_fill, 1);
@@ -140,9 +173,8 @@ $coldisplay++;
 	</td>
 
 	<?php
-	if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier')	// We must have same test in printObjectLines
-	{
-	    $coldisplay++;
+	if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier') {	// We must have same test in printObjectLines
+		$coldisplay++;
 		?>
 		<td class="right"><input id="fourn_ref" name="fourn_ref" class="flat minwidth50 maxwidth150" value="<?php echo ($line->ref_supplier ? $line->ref_supplier : $line->ref_fourn); ?>"></td>
 		<?php
@@ -157,19 +189,22 @@ $coldisplay++;
 
 	$coldisplay++;
 	print '<td class="right"><input type="text" class="flat right" size="5" id="price_ht" name="price_ht" value="'.(isset($line->pu_ht) ?price($line->pu_ht, 0, '', 0) : price($line->subprice, 0, '', 0)).'"';
-	if ($line->fk_prev_id != null) print ' readonly';
+	if ($line->fk_prev_id != null) {
+		print ' readonly';
+	}
 	print '></td>';
 
 	if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) {
-	    $coldisplay++;
+		$coldisplay++;
 		print '<td class="right"><input rel="'.$object->multicurrency_tx.'" type="text" class="flat right" size="5" id="multicurrency_subprice" name="multicurrency_subprice" value="'.price($line->multicurrency_subprice).'" /></td>';
 	}
 
-	if ($inputalsopricewithtax)
-	{
+	if ($inputalsopricewithtax) {
 		$coldisplay++;
 		print '<td class="right"><input type="text" class="flat right" size="5" id="price_ttc" name="price_ttc" value="'.(isset($line->pu_ttc) ?price($line->pu_ttc, 0, '', 0) : '').'"';
-		if ($line->fk_prev_id != null) print ' readonly';
+		if ($line->fk_prev_id != null) {
+			print ' readonly';
+		}
 		print '></td>';
 	}
 	?>
@@ -181,7 +216,9 @@ $coldisplay++;
 		// must also not be output for most entities (proposal, intervention, ...)
 		//if($line->qty > $line->stock) print img_picto($langs->trans("StockTooLow"),"warning", 'style="vertical-align: bottom;"')." ";
 		print '<input size="3" type="text" class="flat right" name="qty" id="qty" value="'.$line->qty.'"';
-		if ($line->fk_prev_id != null) print ' readonly';
+		if ($line->fk_prev_id != null) {
+			print ' readonly';
+		}
 		print '>';
 	} else { ?>
 		&nbsp;
@@ -189,11 +226,21 @@ $coldisplay++;
 	</td>
 
 	<?php
-	if ($conf->global->PRODUCT_USE_UNITS)
-	{
-	    $coldisplay++;
+	if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		$unit_type = false;
+		// limit unit select to unit type
+		if (!empty($line->fk_unit) && empty($conf->global->MAIN_EDIT_LINE_ALLOW_ALL_UNIT_TYPE)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
+			$cUnit = new CUnits($line->db);
+			if ($cUnit->fetch($line->fk_unit) > 0) {
+				if (!empty($cUnit->unit_type)) {
+					$unit_type = $cUnit->unit_type;
+				}
+			}
+		}
+		$coldisplay++;
 		print '<td class="left">';
-		print $form->selectUnits($line->fk_unit, "units");
+		print $form->selectUnits($line->fk_unit, "units", 0, $unit_type);
 		print '</td>';
 	}
 	?>
@@ -202,7 +249,9 @@ $coldisplay++;
 	<?php $coldisplay++;
 	if (($line->info_bits & 2) != 2) {
 		print '<input size="1" type="text" class="flat right" name="remise_percent" id="remise_percent" value="'.$line->remise_percent.'"';
-		if ($line->fk_prev_id != null) print ' readonly';
+		if ($line->fk_prev_id != null) {
+			print ' readonly';
+		}
 		print '>%';
 	} else { ?>
 		&nbsp;
@@ -215,13 +264,11 @@ $coldisplay++;
 		$coldisplay++;
 		print '<td></td>';
 	}
-	if (!empty($usemargins))
-	{
-        if (!empty($user->rights->margins->creer))
-        {
-            $coldisplay++;
-        	?>
-        <td class="margininfos right">
+	if (!empty($usemargins)) {
+		if (!empty($user->rights->margins->creer)) {
+			$coldisplay++;
+			?>
+		<td class="margininfos right">
 			<!-- For predef product -->
 			<?php if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) { ?>
 			<select id="fournprice_predef" name="fournprice_predef" class="flat minwidth75imp right" style="display: none;"></select>
@@ -231,22 +278,24 @@ $coldisplay++;
 		</td>
 		<?php }
 
-        if ($user->rights->margins->creer) {
-			if (!empty($conf->global->DISPLAY_MARGIN_RATES))
-			{
-				$margin_rate = (isset($_POST["np_marginRate"]) ?GETPOST("np_marginRate", "alpha", 2) : (($line->pa_ht == 0) ? '' : price($line->marge_tx)));
+		if ($user->rights->margins->creer) {
+			if (!empty($conf->global->DISPLAY_MARGIN_RATES)) {
+				$margin_rate = (GETPOSTISSET("np_marginRate") ? GETPOST("np_marginRate", "alpha", 2) : (($line->pa_ht == 0) ? '' : price($line->marge_tx)));
 				// if credit note, dont allow to modify margin
-				if ($line->subprice < 0)
+				if ($line->subprice < 0) {
 					echo '<td class="right nowrap margininfos">'.$margin_rate.'<span class="hideonsmartphone">%</span></td>';
-				else echo '<td class="right nowrap margininfos"><input class="right maxwidth75" type="text" name="np_marginRate" value="'.$margin_rate.'"><span class="hideonsmartphone">%</span></td>';
+				} else {
+					echo '<td class="right nowrap margininfos"><input class="right maxwidth75" type="text" name="np_marginRate" value="'.$margin_rate.'"><span class="hideonsmartphone">%</span></td>';
+				}
 				$coldisplay++;
-			} elseif (!empty($conf->global->DISPLAY_MARK_RATES))
-			{
-				$mark_rate = (isset($_POST["np_markRate"]) ?GETPOST("np_markRate", 'alpha', 2) : price($line->marque_tx));
+			} elseif (!empty($conf->global->DISPLAY_MARK_RATES)) {
+				$mark_rate = (GETPOSTISSET("np_markRate") ? GETPOST("np_markRate", 'alpha', 2) : price($line->marque_tx));
 				// if credit note, dont allow to modify margin
-				if ($line->subprice < 0)
+				if ($line->subprice < 0) {
 					echo '<td class="right nowrap margininfos">'.$mark_rate.'<span class="hideonsmartphone">%</span></td>';
-				else echo '<td class="right nowrap margininfos"><input class="right maxwidth75" type="text" name="np_markRate" value="'.$mark_rate.'"><span class="hideonsmartphone">%</span></td>';
+				} else {
+					echo '<td class="right nowrap margininfos"><input class="right maxwidth75" type="text" name="np_markRate" value="'.$mark_rate.'"><span class="hideonsmartphone">%</span></td>';
+				}
 				$coldisplay++;
 			}
 		}
@@ -255,18 +304,10 @@ $coldisplay++;
 
 	<!-- colspan for this td because it replace total_ht+3 td for buttons+... -->
 	<td class="center valignmiddle" colspan="<?php echo $colspan; ?>"><?php $coldisplay += $colspan; ?>
-		<input type="submit" class="button buttongen marginbottomonly" id="savelinebutton marginbottomonly" name="save" value="<?php echo $langs->trans("Save"); ?>"><br>
-		<input type="submit" class="button buttongen marginbottomonly" id="cancellinebutton" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>">
+		<input type="submit" class="button buttongen marginbottomonly button-save" id="savelinebutton marginbottomonly" name="save" value="<?php echo $langs->trans("Save"); ?>"><br>
+		<input type="submit" class="button buttongen marginbottomonly button-cancel" id="cancellinebutton" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>">
 	</td>
 </tr>
-
-<?php
-//Line extrafield
-if (!empty($extrafields))
-{
-	print $line->showOptionals($extrafields, 'edit', array('class'=>'tredited', 'colspan'=>$coldisplay), '', '', 1);
-}
-?>
 
 <?php if (!empty($conf->service->enabled) && $line->product_type == 1 && $dateSelector) { ?>
 <tr id="service_duration_area" class="treditedlinefordate">
@@ -307,20 +348,19 @@ if (!empty($extrafields))
 <script>
 
 <?php
-if (! empty($usemargins) && $user->rights->margins->creer)
-{
+if (!empty($usemargins) && $user->rights->margins->creer) {
 	?>
 	/* Some js test when we click on button "Add" */
 	jQuery(document).ready(function() {
 	<?php
-	if (! empty($conf->global->DISPLAY_MARGIN_RATES)) {
+	if (!empty($conf->global->DISPLAY_MARGIN_RATES)) {
 		?>
 			$("input[name='np_marginRate']:first").blur(function(e) {
 				return checkFreeLine(e, "np_marginRate");
 			});
 		<?php
 	}
-	if (! empty($conf->global->DISPLAY_MARK_RATES)) {
+	if (!empty($conf->global->DISPLAY_MARK_RATES)) {
 		?>
 			$("input[name='np_markRate']:first").blur(function(e) {
 				return checkFreeLine(e, "np_markRate");
@@ -403,10 +443,9 @@ jQuery(document).ready(function()
 		}
 	});
 
-    <?php
-    if (!empty($conf->margin->enabled))
-    {
-        ?>
+	<?php
+	if (!empty($conf->margin->enabled)) {
+		?>
 		/* Add rule to clear margin when we change some data, so when we change sell or buy price, margin will be recalculated after submitting form */
 		jQuery("#tva_tx").click(function() {						/* somtimes field is a text, sometimes a combo */
 			jQuery("input[name='np_marginRate']:first").val('');
@@ -434,8 +473,9 @@ jQuery(document).ready(function()
 		});
 
 		/* Init field buying_price and fournprice */
-		$.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', {'idprod': <?php echo $line->fk_product ? $line->fk_product : 0; ?>}, function(data) {
-          if (data && data.length > 0) {
+		var token = '<?php echo currentToken(); ?>';		// For AJAX Call we use old 'token' and not 'newtoken'
+		$.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', {'idprod': <?php echo $line->fk_product ? $line->fk_product : 0; ?>, 'token': token }, function(data) {
+		  if (data && data.length > 0) {
 			var options = '';
 			var trouve=false;
 			$(data).each(function() {
@@ -469,9 +509,9 @@ jQuery(document).ready(function()
 			$('#buying_price').show();
 		}
 		}, 'json');
-        <?php
-    }
-    ?>
+		<?php
+	}
+	?>
 });
 
 </script>

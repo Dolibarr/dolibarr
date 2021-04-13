@@ -63,7 +63,7 @@ create table llx_societe
   whatsapp                 varchar(255),                        		-- deprecated
 
   fk_effectif              integer        DEFAULT 0,            		--
-  fk_typent                integer        DEFAULT 0,            		--
+  fk_typent                integer        DEFAULT NULL,                 -- type ent
   fk_forme_juridique       integer        DEFAULT 0,            		-- juridical status
   fk_currency			   varchar(3),									-- default currency
   siren	                   varchar(128),                         		-- IDProf1: depends on country (example: siren or RCS for france, ...)
@@ -112,9 +112,12 @@ create table llx_societe
   logo                     varchar(255)   DEFAULT NULL,
   logo_squarred            varchar(255)   DEFAULT NULL,
   canvas				   varchar(32)    DEFAULT NULL,	                -- type of canvas if used (null by default)
-  fk_entrepot 			   integer DEFAULT 0,							-- if we need a link between third party and warehouse
+  fk_entrepot 			   integer DEFAULT NULL,						-- if we need a link between third party and warehouse
   webservices_url          varchar(255),                            	-- supplier webservice url
   webservices_key          varchar(128),                            	-- supplier webservice key
+
+  accountancy_code_sell         varchar(32),                            -- Selling accountancy code
+  accountancy_code_buy          varchar(32),                            -- Buying accountancy code
 
   tms                      timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,									-- last modification date
   datec	                   datetime,                            		-- creation date

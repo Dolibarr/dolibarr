@@ -136,13 +136,13 @@ class Odf
 		// instead of {aaa} so we should enhance this function.
 		//print $key.'-'.$value.'-'.strpos($this->contentXml, $this->config['DELIMITER_LEFT'] . $key . $this->config['DELIMITER_RIGHT']).'<br>';
 		if (strpos($this->contentXml, $tag) === false && strpos($this->stylesXml, $tag) === false) {
-			//if (strpos($this->contentXml, '">'. $key . '</text;span>') === false) {
-			throw new OdfException("var $key not found in the document");
-			//}
+			// Add the throw only for development. In most cases, it is normal to not having the key into the document (only few keys are presents).
+			//throw new OdfException("var $key not found in the document");
+			return $this;
 		}
 
 		$this->vars[$tag] = $this->convertVarToOdf($value, $encode, $charset);
-		
+
 		return $this;
 	}
 
@@ -171,9 +171,9 @@ class Odf
 				'<style:style style:name="subText" style:family="text"><style:text-properties style:text-position="sub 58%" /></style:style>',
 				'<style:style style:name="supText" style:family="text"><style:text-properties style:text-position="super 58%" /></style:style>'
 			);
-	
+
 			$convertedValue = $this->_replaceHtmlWithOdtTag($this->_getDataFromHtml($value), $customStyles, $fontDeclarations);
-	
+
 			foreach ($customStyles as $key => $val) {
 				array_push($automaticStyles, '<style:style style:name="customStyle' . $key . '" style:family="text">' . $val . '</style:style>');
 			}
@@ -400,7 +400,7 @@ class Odf
 	public function htmlToUTFAndPreOdf($value)
 	{
 		// We decode into utf8, entities
-		$value=dol_html_entity_decode($value, ENT_QUOTES);
+		$value=dol_html_entity_decode($value, ENT_QUOTES|ENT_HTML5);
 
 		// We convert html tags
 		$ishtml=dol_textishtml($value);
@@ -820,10 +820,17 @@ IMG;
 		// Export to PDF using LibreOffice
 		if ($conf->global->MAIN_ODT_AS_PDF == 'libreoffice')
 		{
+			dol_mkdir($conf->user->dir_temp);	// We must be sure the directory exists and is writable
+
+			// We delete and recreate a subdir because the soffice may have change pemrissions on it
+			dol_delete_dir_recursive($conf->user->dir_temp.'/odtaspdf');
+			dol_mkdir($conf->user->dir_temp.'/odtaspdf');
+
+			// Install prerequisites: apt install soffice libreoffice-common libreoffice-writer
 			// using windows libreoffice that must be in path
 			// using linux/mac libreoffice that must be in path
 			// Note PHP Config "fastcgi.impersonate=0" must set to 0 - Default is 1
-			$command ='soffice --headless -env:UserInstallation=file:"//'.$conf->user->dir_temp.'" --convert-to pdf --outdir '. escapeshellarg(dirname($name)). " ".escapeshellarg($name);
+			$command ='soffice --headless -env:UserInstallation=file:\''.$conf->user->dir_temp.'/odtaspdf\' --convert-to pdf --outdir '. escapeshellarg(dirname($name)). " ".escapeshellarg($name);
 		}
 		elseif (preg_match('/unoconv/', $conf->global->MAIN_ODT_AS_PDF))
 		{
@@ -856,7 +863,7 @@ IMG;
 		}
 		else
 		{
-			// deprecated old method
+			// deprecated old method using odt2pdf.sh (native, jodconverter, ...)
 			$tmpname=preg_replace('/\.odt/i', '', $name);
 
 			if (!empty($conf->global->MAIN_DOL_SCRIPTS_ROOT))
@@ -906,16 +913,20 @@ IMG;
 		{
 			dol_syslog(get_class($this).'::exportAsAttachedPDF $ret_val='.$retval, LOG_DEBUG);
 			$filename=''; $linenum=0;
-			if (headers_sent($filename, $linenum)) {
-				throw new OdfException("headers already sent ($filename at $linenum)");
+
+			if (php_sapi_name() != 'cli') {	// If we are in a web context (not into CLI context)
+				if (headers_sent($filename, $linenum)) {
+					throw new OdfException("headers already sent ($filename at $linenum)");
+				}
+
+				if (!empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+					$name=preg_replace('/\.od(x|t)/i', '', $name);
+					header('Content-type: application/pdf');
+					header('Content-Disposition: attachment; filename="'.$name.'.pdf"');
+					readfile($name.".pdf");
+				}
 			}
 
-			if (!empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-				$name=preg_replace('/\.od(x|t)/i', '', $name);
-				header('Content-type: application/pdf');
-				header('Content-Disposition: attachment; filename="'.$name.'.pdf"');
-				readfile($name.".pdf");
-			}
 			if (!empty($conf->global->MAIN_ODT_AS_PDF_DEL_SOURCE))
 			{
 				unlink($name);
@@ -924,7 +935,7 @@ IMG;
 			dol_syslog(get_class($this).'::exportAsAttachedPDF $ret_val='.$retval, LOG_DEBUG);
 			dol_syslog(get_class($this).'::exportAsAttachedPDF $output_arr='.var_export($output_arr, true), LOG_DEBUG);
 
-			if ($retval==126) {
+			if ($retval == 126) {
 				throw new OdfException('Permission execute convert script : ' . $command);
 			}
 			else {

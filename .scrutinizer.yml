@@ -17,8 +17,10 @@ filter:
         - build/*
         - dev/*
         - doc/*
-        - test/*
+        - documents/*
         - htdocs/includes/*
+        - node_modules/*
+        - test/*
     paths: 
         - htdocs/*
         - scripts/*

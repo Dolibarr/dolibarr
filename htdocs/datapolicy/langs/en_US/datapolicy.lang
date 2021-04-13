@@ -19,7 +19,7 @@ Module4100Name = Data Privacy Policy
 Module4100Desc = Module to manage Data Privacy (Conformity with the GDPR)
 
 #
-# Page d'administration
+# Administration page
 #
 datapolicySetup = Module Data Privacy Policy Setup
 Deletion = Deletion of data
@@ -39,21 +39,21 @@ DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Nor prospect/Nor customer
 DATAPOLICY_CONTACT_FOURNISSEUR = Supplier
 DATAPOLICY_ADHERENT = Member
 DATAPOLICY_Tooltip_SETUP = Type of contact - Indicate your choices for each type.
-DATAPOLICYMail=Emails Setup
-DATAPOLICYSUBJECTMAIL=Subject of email
-DATAPOLICYCONTENTMAIL=Content of the email
-DATAPOLICYSUBSITUTION=You can use the following variables in your email (LINKACCEPT allows to create a link recording the agreement of the person, LINKREFUSED makes it possible to record the refusal of the person):
-DATAPOLICYACCEPT=Message after agreement
-DATAPOLICYREFUSE=Message after desagreement
-SendAgreementText=You can send a GDPR email to all your relevant contacts (who have not yet received an email and for which you have not registered anything about their GDPR agreement). To do this, use the following button.
-SendAgreement=Send emails
+DATAPOLICYMail = Emails Setup
+DATAPOLICYSUBJECTMAIL = Subject of email
+DATAPOLICYCONTENTMAIL = Content of the email
+DATAPOLICYSUBSITUTION = You can use the following variables in your email (LINKACCEPT allows to create a link recording the agreement of the person, LINKREFUSED makes it possible to record the refusal of the person):
+DATAPOLICYACCEPT = Message after agreement
+DATAPOLICYREFUSE = Message after desagreement
+SendAgreementText = You can send a GDPR email to all your relevant contacts (who have not yet received an email and for which you have not registered anything about their GDPR agreement). To do this, use the following button.
+SendAgreement = Send emails
 AllAgreementSend = All emails have been sent
-TXTLINKDATAPOLICYACCEPT= Text for the link "agreement" 
-TXTLINKDATAPOLICYREFUSE= Text for the link "desagreement" 
+TXTLINKDATAPOLICYACCEPT = Text for the link "agreement" 
+TXTLINKDATAPOLICYREFUSE = Text for the link "desagreement" 
 
 
 #
-# Extrafield
+# Extrafields
 #
 DATAPOLICY_BLOCKCHECKBOX = GDPR : Processing of personal data
 DATAPOLICY_consentement = Consent obtained for the processing of personal data 
@@ -67,26 +67,26 @@ DATAPOLICY_POPUP_ANONYME_TITLE = Anonymize a thirdparty
 DATAPOLICY_POPUP_ANONYME_TEXTE = You can not delete this contact from Dolibarr because there are related items. In accordance with the GDPR, you will make all this data anonymous to respect your obligations. Would you like to continue ?
 
 #
-# Bouton portabilité
+# Button for portability
 # 
 DATAPOLICY_PORTABILITE = Portability GDPR
 DATAPOLICY_PORTABILITE_TITLE = Export of personal data
 DATAPOLICY_PORTABILITE_CONFIRMATION = You want to export the personal data of this contact. Are you sure ?
 
 #
-# Note ajoutés lors d'une anonymisation
+# Notes added during an anonymization
 #
 ANONYMISER_AT = Anonymised the %s
 
-#V2
-DATAPOLICYReturn=GDPR Validation
+# V2
+DATAPOLICYReturn = GDPR Validation
 DATAPOLICY_date = Date of agreement/desagreement GDPR
 DATAPOLICY_send = Date sending agreement email
 DATAPOLICYReturn = GDPR Return
 DATAPOLICY_SEND = Send GDPR email
 MailSent = Email has been sent
 
-#ERROR
-ErrorSubjectIsRequired= Error : The subject of email is required. Indicate it in the module setup
+# ERROR
+ErrorSubjectIsRequired = Error : The subject of email is required. Indicate it in the module setup
 =Due to a technical problem, we were unable to register your choice. We apologize for that. Contact us to send us your choice.
 NUMBER_MONTH_BEFORE_DELETION = Number of month before deletion

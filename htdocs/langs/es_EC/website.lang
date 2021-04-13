@@ -14,7 +14,6 @@ EditCss=Editar propiedades web
 EditMenu=Editar menú
 EditPageMeta=Editar propiedades
 Webpage=Página web/contenedor
-HomePage=Página Principal
 PreviewOfSiteNotYetAvailable=Vista previa de su sitio web <strong>%s</strong> aún no disponible. Primero debe '<strong>Importar una plantilla de sitio web completa</strong>' o simplemente '<strong>Agregar una página / contenedor</strong>'.
 RequestedPageHasNoContentYet=La página solicitada con id %s todavía no tiene contenido o el archivo de caché .tpl.php fue eliminado. Editar el contenido de la página para resolver esto.
 PageContent=Página/Contenair

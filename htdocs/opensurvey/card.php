@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,9 @@ require_once DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php";
 
 
 // Security check
-if (!$user->rights->opensurvey->read) accessforbidden();
+if (empty($user->rights->opensurvey->read)) {
+	accessforbidden();
+}
 
 // Initialisation des variables
 $action = GETPOST('action', 'aZ09');
@@ -41,14 +43,13 @@ $cancel = GETPOST('cancel', 'alpha');
 $numsondage = '';
 
 if (GETPOST('id')) {
-	$numsondage = GETPOST('id', 'alpha');
+	$numsondage = (string) GETPOST('id', 'alpha');
 }
 
 $object = new Opensurveysondage($db);
 
 $result = $object->fetch(0, $numsondage);
-if ($result <= 0)
-{
+if ($result <= 0) {
 	dol_print_error($db, $object->error);
 	exit;
 }
@@ -63,17 +64,21 @@ $expiredate = dol_mktime(0, 0, 0, GETPOST('expiremonth'), GETPOST('expireday'), 
 
 $parameters = array('id' => $numsondage);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
-if (empty($reshook))
-{
-	if ($cancel) $action = '';
+if (empty($reshook)) {
+	if ($cancel) {
+		$action = '';
+	}
 
 	// Delete
-	if ($action == 'delete_confirm')
-	{
+	if ($action == 'delete_confirm') {
 		// Security check
-		if (!$user->rights->opensurvey->write) accessforbidden();
+		if (!$user->rights->opensurvey->write) {
+			accessforbidden();
+		}
 
 		$result = $object->delete($user, '', $numsondage);
 
@@ -82,47 +87,43 @@ if (empty($reshook))
 	}
 
 	// Close
-	if ($action == 'close')
-	{
+	if ($action == 'close') {
 		$object->status = Opensurveysondage::STATUS_CLOSED;
 		$object->update($user);
 	}
 
 	// Reopend
-	if ($action == 'reopen')
-	{
+	if ($action == 'reopen') {
 		$object->status = Opensurveysondage::STATUS_VALIDATED;
 		$object->update($user);
 	}
 
 	// Update
-	if ($action == 'update')
-	{
+	if ($action == 'update') {
 		// Security check
-		if (!$user->rights->opensurvey->write) accessforbidden();
+		if (!$user->rights->opensurvey->write) {
+			accessforbidden();
+		}
 
 		$error = 0;
 
-		if (!GETPOST('nouveautitre'))
-		{
+		if (!GETPOST('nouveautitre')) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Title")), null, 'errors');
 			$error++;
 			$action = 'edit';
 		}
 
-		if (!$error)
-		{
-			$object->title = GETPOST('nouveautitre', 'nohtml');
-			$object->description = GETPOST('nouveauxcommentaires', 'restricthtml');
-			$object->mail_admin = GETPOST('nouvelleadresse', 'alpha');
+		if (!$error) {
+			$object->title = (string) GETPOST('nouveautitre', 'alphanohtml');
+			$object->description = (string) GETPOST('nouveauxcommentaires', 'restricthtml');
+			$object->mail_admin = (string) GETPOST('nouvelleadresse', 'alpha');
 			$object->date_fin = $expiredate;
-			$object->allow_comments = GETPOST('cancomment', 'alpha') == 'on' ? 1 : 0;
-			$object->allow_spy = GETPOST('canseeothersvote', 'alpha') == 'on' ? 1 : 0;
-			$object->mailsonde = GETPOST('mailsonde', 'alpha') == 'on' ? true : false;
+			$object->allow_comments = GETPOST('cancomment', 'aZ09') == 'on' ? 1 : 0;
+			$object->allow_spy = GETPOST('canseeothersvote', 'aZ09') == 'on' ? 1 : 0;
+			$object->mailsonde = GETPOST('mailsonde', 'aZ09') == 'on' ? 1 : 0;
 
 			$res = $object->update($user);
-			if ($res < 0)
-			{
+			if ($res < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$action = 'edit';
 			}
@@ -130,30 +131,25 @@ if (empty($reshook))
 	}
 
 	// Add comment
-	if (GETPOST('ajoutcomment'))
-	{
+	if (GETPOST('ajoutcomment')) {
 		$error = 0;
 
-		if (!GETPOST('comment'))
-		{
+		if (!GETPOST('comment')) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Comment")), null, 'errors');
 		}
-		if (!GETPOST('commentuser'))
-		{
+		if (!GETPOST('commentuser')) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("User")), null, 'errors');
 		}
 
-		if (!$error)
-		{
-			$comment = GETPOST("comment");
-			$comment_user = GETPOST('commentuser');
+		if (!$error) {
+			$comment = (string) GETPOST("comment", "restricthtml");
+			$comment_user = (string) GETPOST('commentuser', "restricthtml");
 
 			$resql = $object->addComment($comment, $comment_user);
 
-			if (!$resql)
-			{
+			if (!$resql) {
 				setEventMessages($langs->trans('ErrorInsertingComment'), null, 'errors');
 			}
 		}
@@ -161,17 +157,20 @@ if (empty($reshook))
 
 	// Delete comment
 	$idcomment = GETPOST('deletecomment', 'int');
-	if ($idcomment)
-	{
+	if ($idcomment) {
 		// Security check
-		if (!$user->rights->opensurvey->write) accessforbidden();
+		if (!$user->rights->opensurvey->write) {
+			accessforbidden();
+		}
 
 		$resql = $object->deleteComment($idcomment);
 	}
 
 	if ($action == 'edit') {
 		// Security check
-		if (!$user->rights->opensurvey->write) accessforbidden();
+		if (!$user->rights->opensurvey->write) {
+			accessforbidden();
+		}
 	}
 }
 
@@ -182,8 +181,7 @@ if (empty($reshook))
 
 $form = new Form($db);
 
-if ($object->fk_user_creat)
-{
+if ($object->fk_user_creat) {
 	$userstatic = new User($db);
 	$userstatic->fetch($object->fk_user_creat);
 }
@@ -198,8 +196,7 @@ llxHeader('', $title, $helpurl, 0, 0, 0, $arrayofjs, $arrayofcss);
 // Define format of choices
 $toutsujet = explode(",", $object->sujet);
 $listofanswers = array();
-foreach ($toutsujet as $value)
-{
+foreach ($toutsujet as $value) {
 	$tmp = explode('@', $value);
 	$listofanswers[] = array('label'=>$tmp[0], 'format'=>($tmp[1] ? $tmp[1] : 'checkbox'));
 }
@@ -213,7 +210,7 @@ print '<input type="hidden" name="action" value="update">';
 $head = opensurvey_prepare_head($object);
 
 
-dol_fiche_head($head, 'general', $langs->trans("Survey"), -1, 'poll');
+print dol_get_fiche_head($head, 'general', $langs->trans("Survey"), -1, 'poll');
 
 $morehtmlref = '';
 
@@ -237,16 +234,16 @@ print ' '.$langs->trans($type == 'classic' ? "TypeClassic" : "TypeDate").'</td><
 print '<tr><td>';
 $adresseadmin = $object->mail_admin;
 print $langs->trans("Title").'</td><td colspan="2">';
-if ($action == 'edit')
-{
+if ($action == 'edit') {
 	print '<input type="text" name="nouveautitre" style="width: 95%" value="'.dol_escape_htmltag(dol_htmlentities($object->title)).'">';
-} else print dol_htmlentities($object->title);
+} else {
+	print dol_htmlentities($object->title);
+}
 print '</td></tr>';
 
 // Description
 print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td colspan="2">';
-if ($action == 'edit')
-{
+if ($action == 'edit') {
 	$doleditor = new DolEditor('nouveauxcommentaires', $object->description, '', 120, 'dolibarr_notes', 'In', 1, 1, 1, ROWS_7, '90%');
 	$doleditor->Create(0, '');
 } else {
@@ -258,17 +255,17 @@ print '</td></tr>';
 //If linked user, then emails are going to be sent to users' email
 if (!$object->fk_user_creat) {
 	print '<tr><td>'.$langs->trans("EMail").'</td><td colspan="2">';
-	if ($action == 'edit')
-	{
+	if ($action == 'edit') {
 		print '<input type="text" name="nouvelleadresse" class="minwith200" value="'.$object->mail_admin.'">';
-	} else print dol_print_email($object->mail_admin, 0, 0, 1);
+	} else {
+		print dol_print_email($object->mail_admin, 0, 0, 1);
+	}
 	print '</td></tr>';
 }
 
 // Receive an email with each vote
 print '<tr><td>'.$langs->trans('ToReceiveEMailForEachVote').'</td><td colspan="2">';
-if ($action == 'edit')
-{
+if ($action == 'edit') {
 	print '<input type="checkbox" name="mailsonde" '.($object->mailsonde ? 'checked="checked"' : '').'">';
 } else {
 	print yn($object->mailsonde);
@@ -284,26 +281,31 @@ print '</td></tr>';
 
 // Users can comment
 print '<tr><td>'.$langs->trans('CanComment').'</td><td colspan="2">';
-if ($action == 'edit')
-{
+if ($action == 'edit') {
 	print '<input type="checkbox" name="cancomment" '.($object->allow_comments ? 'checked="checked"' : '').'">';
-} else print yn($object->allow_comments);
+} else {
+	print yn($object->allow_comments);
+}
 print '</td></tr>';
 
 // Users can see others vote
 print '<tr><td>'.$langs->trans('CanSeeOthersVote').'</td><td colspan="2">';
-if ($action == 'edit')
-{
+if ($action == 'edit') {
 	print '<input type="checkbox" name="canseeothersvote" '.($object->allow_spy ? 'checked="checked"' : '').'">';
-} else print yn($object->allow_spy);
+} else {
+	print yn($object->allow_spy);
+}
 print '</td></tr>';
 
 // Expire date
 print '<tr><td>'.$langs->trans('ExpireDate').'</td><td colspan="2">';
-if ($action == 'edit') print $form->selectDate($expiredate ? $expiredate : $object->date_fin, 'expire', 0, 0, 0, '', 1, 0);
-else {
+if ($action == 'edit') {
+	print $form->selectDate($expiredate ? $expiredate : $object->date_fin, 'expire', 0, 0, 0, '', 1, 0);
+} else {
 	print dol_print_date($object->date_fin, 'day');
-	if ($object->date_fin && $object->date_fin < dol_now() && $object->status == Opensurveysondage::STATUS_VALIDATED) print img_warning($langs->trans("Expired"));
+	if ($object->date_fin && $object->date_fin < dol_now() && $object->status == Opensurveysondage::STATUS_VALIDATED) {
+		print img_warning($langs->trans("Expired"));
+	}
 }
 print '</td></tr>';
 
@@ -327,7 +329,9 @@ $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domai
 
 $url = $urlwithroot.'/public/opensurvey/studs.php?sondage='.$object->id_sondage;
 print '<input type="text" style="width: 60%" '.($action == 'edit' ? 'disabled' : '').' id="opensurveyurl" name="opensurveyurl" value="'.$url.'">';
-if ($action != 'edit') print ajax_autoselect("opensurveyurl", $url);
+if ($action != 'edit') {
+	print ajax_autoselect("opensurveyurl", $url);
+}
 
 print '</td></tr>';
 
@@ -335,14 +339,13 @@ print '</table>';
 
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
-if ($action == 'edit')
-{
+if ($action == 'edit') {
 	print '<div class="center">';
-	print '<input type="submit" class="button" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+	print '<input type="submit" class="button button-save" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
 	print ' &nbsp; ';
-	print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+	print '<input type="submit" class="button button-cancel" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 	print '</div>';
 }
 
@@ -351,7 +354,7 @@ print '</form>'."\n";
 
 
 /*
- * Barre d'actions
+ * Action bar
  */
 print '<div class="tabsAction">';
 
@@ -359,13 +362,11 @@ if ($action != 'edit' && $user->rights->opensurvey->write) {
 	//Modify button
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$numsondage.'">'.$langs->trans("Modify").'</a>';
 
-	if ($object->status == Opensurveysondage::STATUS_VALIDATED)
-	{
+	if ($object->status == Opensurveysondage::STATUS_VALIDATED) {
 		//Close button
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=close&id='.$numsondage.'">'.$langs->trans("Close").'</a>';
 	}
-	if ($object->status == Opensurveysondage::STATUS_CLOSED)
-	{
+	if ($object->status == Opensurveysondage::STATUS_CLOSED) {
 		//Opened button
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=reopen&id='.$numsondage.'">'.$langs->trans("ReOpen").'</a>';
 	}
@@ -376,8 +377,7 @@ if ($action != 'edit' && $user->rights->opensurvey->write) {
 
 print '</div>';
 
-if ($action == 'delete')
-{
+if ($action == 'delete') {
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?&id='.$numsondage, $langs->trans("RemovePoll"), $langs->trans("ConfirmRemovalOfPoll", $id), 'delete_confirm', '', '', 1);
 }
 

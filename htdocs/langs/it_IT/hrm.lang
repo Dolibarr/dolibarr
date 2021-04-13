@@ -16,3 +16,4 @@ DictionaryFunction=HRM - Posizioni di lavoro
 Employees=Dipendenti
 Employee=Dipendente
 NewEmployee=Nuovo dipendente
+ListOfEmployees=Lista dei dipendenti

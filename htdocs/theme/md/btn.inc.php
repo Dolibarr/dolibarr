@@ -1,17 +1,19 @@
 <?php
-if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
+if (!defined('ISLOADEDBYSTEELSHEET')) {
+	die('Must be call by steelsheet');
+} ?>
 /* <style type="text/css" > */
 
 :root {
-            --btncolortext:rgb(<?php print $colortextlink; ?>);
-            --btncolorbg: #fbfbfb;
-            --btncolorborderhover: none;
-            --btncolorborder: #FFF;
-            --butactiondeletebg: rgb(234,228,225);
-            /* tertiary color */
-            /* --butactionbg:rgb(218, 235, 225); */
-            /* --butactionbg:rgb(228, 218, 235); */
-            --butactionbg:rgb(118, 145, 225);
+			--btncolortext:rgb(<?php print $colortextlink; ?>);
+			--btncolorbg: #fbfbfb;
+			--btncolorborderhover: none;
+			--btncolorborder: #FFF;
+			--butactiondeletebg: rgb(234,228,225);
+			/* tertiary color */
+			/* --butactionbg:rgb(218, 235, 225); */
+			/* --butactionbg:rgb(228, 218, 235); */
+			--butactionbg:rgb(118, 145, 225);
 }
 
 <?php
@@ -50,7 +52,7 @@ div.tabsAction > span.butAction, div.tabsAction > span.butActionRefused, div.tab
 	margin-bottom: 1.4em !important;
 }
 div.tabsActionNoBottom > a.butAction, div.tabsActionNoBottom > a.butActionRefused {
-    margin-bottom: 0 !important;
+	margin-bottom: 0 !important;
 }
 
 span.butAction, span.butActionDelete {
@@ -58,44 +60,49 @@ span.butAction, span.butActionDelete {
 }
 
 .butAction {
-    background: var(--butactionbg);
-    color: #FFF !important;
-    border-radius: 3px;
-    /* background: rgb(230, 232, 239); */
+	background: var(--butactionbg);
+	color: #FFF !important;
+	/* background: rgb(230, 232, 239); */
+}
+.butActionRefused, .butAction, .butActionDelete {
+	border-radius: 3px;
+}
+.butActionRefused:last-child, .butAction:last-child, .butActionDelete:last-child {
+	margin-right: 0px !important;
 }
 .butActionRefused, .butAction, .butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
-    text-decoration: none;
-    text-transform: uppercase;
-    font-weight: bold;
+	text-decoration: none;
+	text-transform: uppercase;
+	font-weight: bold;
 
-    margin: 0em <?php echo ($dol_optimize_smallscreen ? '0.6' : '0.9'); ?>em;
-    padding: 0.6em <?php echo ($dol_optimize_smallscreen ? '0.6' : '0.7'); ?>em;
-    font-family: <?php print $fontlist ?>;
-    display: inline-block;
-    text-align: center;
-    cursor: pointer;
-    /* color: #fff; */
-    /* background: rgb(<?php echo $colorbackhmenu1 ?>); */
-    color: #444;
-    /* border: 1px solid #aaa; */
-    /* border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25); */
+	margin: 0em <?php echo ($dol_optimize_smallscreen ? '0.6' : '0.9'); ?>em;
+	padding: 0.6em <?php echo ($dol_optimize_smallscreen ? '0.6' : '0.7'); ?>em;
+	font-family: <?php print $fontlist ?>;
+	display: inline-block;
+	text-align: center;
+	cursor: pointer;
+	/* color: #fff; */
+	/* background: rgb(<?php echo $colorbackhmenu1 ?>); */
+	color: #444;
+	/* border: 1px solid #aaa; */
+	/* border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25); */
 
-    /*border-top-right-radius: 0 !important;
-    border-bottom-right-radius: 0 !important;
-    border-top-left-radius: 0 !important;
-    border-bottom-left-radius: 0 !important;*/
+	/*border-top-right-radius: 0 !important;
+	border-bottom-right-radius: 0 !important;
+	border-top-left-radius: 0 !important;
+	border-bottom-left-radius: 0 !important;*/
 }
 .butActionNew, .butActionNewRefused, .butActionNew:link, .butActionNew:visited, .butActionNew:hover, .butActionNew:active {
-    text-decoration: none;
-    text-transform: uppercase;
-    font-weight: normal;
+	text-decoration: none;
+	text-transform: uppercase;
+	font-weight: normal;
 
-    margin: 0em 0.3em 0 0.3em !important;
-    padding: 0.2em <?php echo ($dol_optimize_smallscreen ? '0.4' : '0.7'); ?>em 0.3em;
-    font-family: <?php print $fontlist ?>;
-    display: inline-block;
-    /* text-align: center; New button are on right of screen */
-    cursor: pointer;
+	margin: 0em 0.3em 0 0.3em !important;
+	padding: 0.2em <?php echo ($dol_optimize_smallscreen ? '0.4' : '0.7'); ?>em 0.3em;
+	font-family: <?php print $fontlist ?>;
+	display: inline-block;
+	/* text-align: center; New button are on right of screen */
+	cursor: pointer;
 }
 
 .button {
@@ -211,61 +218,61 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 }
 
 .butAction:hover   {
-    -webkit-box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
-    box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
+	-webkit-box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
+	box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
 }
 .butActionNew:hover   {
-    text-decoration: underline;
-    box-shadow: unset !important;
+	text-decoration: underline;
+	box-shadow: unset !important;
 }
 
 .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active, .buttonDelete {
-    background: var(--butactiondeletebg);
-    /* border: 1px solid #633; */
-    color: #633;
+	background: var(--butactiondeletebg);
+	/* border: 1px solid #633; */
+	color: #633;
 }
 
 .butActionDelete:hover {
-    -webkit-box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
-    box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
+	-webkit-box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
+	box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
 }
 
 .butActionRefused {
-    text-decoration: none !important;
-    text-transform: uppercase;
-    font-weight: bold !important;
+	text-decoration: none !important;
+	text-transform: uppercase;
+	font-weight: bold !important;
 
-    white-space: nowrap !important;
-    cursor: not-allowed !important;
-    margin: 0em <?php echo ($dol_optimize_smallscreen ? '0.6' : '0.9'); ?>em;
-    padding: 0.6em <?php echo ($dol_optimize_smallscreen ? '0.6' : '0.7'); ?>em;
-    font-family: <?php print $fontlist ?> !important;
-    display: inline-block;
-    text-align: center;
-    cursor: pointer;
-    color: #999 !important;
-    border: 1px solid #ccc;
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
+	white-space: nowrap !important;
+	cursor: not-allowed !important;
+	margin: 0em <?php echo ($dol_optimize_smallscreen ? '0.6' : '0.9'); ?>em;
+	padding: 0.6em <?php echo ($dol_optimize_smallscreen ? '0.6' : '0.7'); ?>em;
+	font-family: <?php print $fontlist ?> !important;
+	display: inline-block;
+	text-align: center;
+	cursor: pointer;
+	color: #999 !important;
+	border: 1px solid #ccc;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
 }
 .butActionNewRefused, .butActionNewRefused:link, .butActionNewRefused:visited, .butActionNewRefused:hover, .butActionNewRefused:active {
-    text-decoration: none !important;
-    text-transform: uppercase;
-    font-weight: normal !important;
+	text-decoration: none !important;
+	text-transform: uppercase;
+	font-weight: normal !important;
 
-    white-space: nowrap !important;
-    cursor: not-allowed !important;
-    margin: 0em <?php echo ($dol_optimize_smallscreen ? '0.7' : '0.9'); ?>em;
-    padding: 0.2em <?php echo ($dol_optimize_smallscreen ? '0.4' : '0.7'); ?>em;
-    font-family: <?php print $fontlist ?> !important;
-    display: inline-block;
-    /* text-align: center;  New button are on right of screen */
-    cursor: pointer;
-    color: #999 !important;
-    padding-top: 0.2em;
-    box-shadow: none !important;
-    -webkit-box-shadow: none !important;
+	white-space: nowrap !important;
+	cursor: not-allowed !important;
+	margin: 0em <?php echo ($dol_optimize_smallscreen ? '0.7' : '0.9'); ?>em;
+	padding: 0.2em <?php echo ($dol_optimize_smallscreen ? '0.4' : '0.7'); ?>em;
+	font-family: <?php print $fontlist ?> !important;
+	display: inline-block;
+	/* text-align: center;  New button are on right of screen */
+	cursor: pointer;
+	color: #999 !important;
+	padding-top: 0.2em;
+	box-shadow: none !important;
+	-webkit-box-shadow: none !important;
 }
 
 .butActionTransparent {
@@ -279,41 +286,41 @@ TITLE BUTTON
  */
 
 div.pagination li:first-child a.btnTitle {
-    margin-left: 10px;
+	margin-left: 10px;
 }
 
 .btnTitle, a.btnTitle {
-    display: inline-block;
-    padding: 6px 12px;
-    font-size: 14px
-    font-weight: 400;
-    line-height: 1.4;
-    text-align: center;
-    white-space: nowrap;
-    vertical-align: middle;
-    -ms-touch-action: manipulation;
-    touch-action: manipulation;
-    cursor: pointer;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    box-shadow: none;
-    text-decoration: none;
-    position: relative;
-    margin: 0 0 0 10px;
-    min-width: 80px;
-    text-align: center;
-    color: rgb(<?php print $colortextlink; ?>);
-    border: none;
-    font-size: 12px;
-    font-weight: 300;
-    background-color: #fbfbfb;
+	display: inline-block;
+	padding: 6px 12px;
+	font-size: 14px
+	font-weight: 400;
+	line-height: 1.4;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: middle;
+	-ms-touch-action: manipulation;
+	touch-action: manipulation;
+	cursor: pointer;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	box-shadow: none;
+	text-decoration: none;
+	position: relative;
+	margin: 0 0 0 10px;
+	min-width: 80px;
+	text-align: center;
+	color: rgb(<?php print $colortextlink; ?>);
+	border: none;
+	font-size: 12px;
+	font-weight: 300;
+	background-color: #fbfbfb;
 }
 
 a.btnTitle.btnTitleSelected {
-    border: 1px solid #ccc;
-    border-radius: 3px;
+	border: 1px solid #ccc;
+	border-radius: 3px;
 }
 
 .btnTitle > .btnTitle-icon{
@@ -321,50 +328,79 @@ a.btnTitle.btnTitleSelected {
 }
 
 .btnTitle > .btnTitle-label{
-    color: #666666;
+	color: #666666;
 }
 
 .btnTitle:hover, a.btnTitle:hover {
-    border-radius: 3px;
-    position: relative;
-    margin: 0 0 0 10px;
-    text-align: center;
-    color: #ffffff;
-    background-color: rgb(<?php print $colortextlink; ?>);
-    font-size: 12px;
-    text-decoration: none;
-    box-shadow: none;
+	border-radius: 3px;
+	position: relative;
+	margin: 0 0 0 10px;
+	text-align: center;
+	color: #ffffff;
+	background-color: rgb(<?php print $colortextlink; ?>);
+	font-size: 12px;
+	text-decoration: none;
+	box-shadow: none;
 }
 
 .btnTitle.refused, a.btnTitle.refused, .btnTitle.refused:hover, a.btnTitle.refused:hover {
-        color: #8a8a8a;
-        cursor: not-allowed;
-        background-color: #fbfbfb;
-        background: repeating-linear-gradient( 45deg, #ffffff, #f1f1f1 4px, #f1f1f1 4px, #f1f1f1 4px );
+		color: #8a8a8a;
+		cursor: not-allowed;
+		background-color: #fbfbfb;
+		background: repeating-linear-gradient( 45deg, #ffffff, #f1f1f1 4px, #f1f1f1 4px, #f1f1f1 4px );
 }
 
 .btnTitle:hover .btnTitle-label{
-    color: #ffffff;
+	color: #ffffff;
 }
 div.pagination .btnTitle:hover .btnTitle-label{
 	color: rgb(<?php print $colortextlink; ?>);
 }
 
 .btnTitle.refused .btnTitle-label, .btnTitle.refused:hover .btnTitle-label{
-    color: #8a8a8a;
+	color: #8a8a8a;
 }
 
 .btnTitle>.fa {
-    font-size: 20px;
-    display: block;
+	font-size: 20px;
+	display: block;
 }
 
-
-
-
+/* rule to reduce top menu - 2nd reduction: Reduce width of top menu icons again */
+@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2) ? round($nbtopmenuentries * 69, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2; ?>px)	/* reduction 2 */
+{
+	.butAction, .butActionRefused, .butActionDelete {
+		font-size: 0.95em;
+	}
+	.btnTitle, a.btnTitle {
+		display: inline-block;
+		padding: 4px 4px 4px 4px;
+		min-width: unset;
+	}
+}
 
 <?php if (!empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED) && (!$user->admin)) { ?>
 .butActionRefused, .butActionNewRefused, .btnTitle.refused {
-    display: none !important;
+	display: none !important;
 }
-<?php }
+<?php } ?>
+
+
+/*
+ * BTN LINK
+ */
+
+.btn-link{
+	margin-right: 5px;
+	border: 1px solid #ddd;
+	color: #333;
+	padding: 5px 10px;
+	border-radius:1em;
+	text-decoration: none !important;
+}
+
+.btn-link:hover{
+	background-color: #ddd;
+	border: 1px solid #ddd;
+}
+

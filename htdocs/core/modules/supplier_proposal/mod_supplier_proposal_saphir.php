@@ -34,15 +34,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_proposal/modules_supplier
 class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 {
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
 	/**
-     * @var string Error code (or message)
-     */
-    public $error = '';
+	 * @var string Error code (or message)
+	 */
+	public $error = '';
 
 	/**
 	 * @var string Nom du modele
@@ -57,14 +57,14 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 	public $name = 'Saphir';
 
 
-    /**
-     *  Return description of module
-     *
-     *  @return     string      Texte descripif
-     */
-    public function info()
-    {
-    	global $conf, $langs, $db;
+	/**
+	 *  Return description of module
+	 *
+	 *  @return     string      Texte descripif
+	 */
+	public function info()
+	{
+		global $conf, $langs, $db;
 
 		$langs->load("bills");
 
@@ -95,28 +95,27 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 		$texte .= '</form>';
 
 		return $texte;
-    }
+	}
 
-    /**
-     *  Return an example of numbering
-     *
-     *  @return     string      Example
-     */
-    public function getExample()
-    {
-     	global $conf, $langs, $mysoc;
+	/**
+	 *  Return an example of numbering
+	 *
+	 *  @return     string      Example
+	 */
+	public function getExample()
+	{
+		global $conf, $langs, $mysoc;
 
-    	$old_code_client = $mysoc->code_client;
-    	$mysoc->code_client = 'CCCCCCCCCC';
-     	$numExample = $this->getNextValue($mysoc, '');
+		$old_code_client = $mysoc->code_client;
+		$mysoc->code_client = 'CCCCCCCCCC';
+		$numExample = $this->getNextValue($mysoc, '');
 		$mysoc->code_client = $old_code_client;
 
-		if (!$numExample)
-		{
+		if (!$numExample) {
 			$numExample = 'NotConfigured';
 		}
 		return $numExample;
-    }
+	}
 
 	/**
 	 *  Return next value
@@ -134,8 +133,7 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 		// On defini critere recherche compteur
 		$mask = $conf->global->SUPPLIER_PROPOSAL_SAPHIR_MASK;
 
-		if (!$mask)
-		{
+		if (!$mask) {
 			$this->error = 'NotConfigured';
 			return 0;
 		}

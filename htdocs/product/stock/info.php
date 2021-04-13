@@ -50,7 +50,7 @@ $object->info($object->id);
 
 $head = stock_prepare_head($object);
 
-dol_fiche_head($head, 'info', $langs->trans("Warehouse"), -1, 'stock');
+print dol_get_fiche_head($head, 'info', $langs->trans("Warehouse"), -1, 'stock');
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
@@ -60,7 +60,9 @@ $morehtmlref .= $langs->trans("LocationSummary").' : '.$object->lieu;
 $morehtmlref .= '</div>';
 
 $shownav = 1;
-if ($user->socid && !in_array('stock', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
+if ($user->socid && !in_array('stock', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+	$shownav = 0;
+}
 
 dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', 'ref', $morehtmlref);
 

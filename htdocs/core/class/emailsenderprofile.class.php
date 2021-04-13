@@ -54,7 +54,7 @@ class EmailSenderProfile extends CommonObject
 	/**
 	 * @var string String with name of icon for emailsenderprofile
 	 */
-	public $picto = 'emailsenderprofile@monmodule';
+	public $picto = 'emailsenderprofile';
 
 
 	const STATUS_DISABLED = 0;
@@ -114,51 +114,23 @@ class EmailSenderProfile extends CommonObject
 	public $entity;
 
 	/**
-     * @var string Email Sender Profile label
-     */
-    public $label;
+	 * @var string Email Sender Profile label
+	 */
+	public $label;
 
 	public $email;
 
 	/**
-     * @var integer|string date_creation
-     */
+	 * @var integer|string date_creation
+	 */
 	public $date_creation;
 
-
 	public $tms;
-	//public $fk_user_creat;
-	//public $fk_user_modif;
+	public $private;
 	public $signature;
 	public $position;
 	public $active;
 	// END MODULEBUILDER PROPERTIES
-
-
-
-	// If this object has a subtable with lines
-
-	/**
-	 * @var int    Name of subtable line
-	 */
-	//public $table_element_line = 'emailsenderprofiledet';
-	/**
-	 * @var int    Field with ID of parent key if this field has a parent
-	 */
-	//public $fk_element = 'fk_emailsenderprofile';
-	/**
-	 * @var int    Name of subtable class that manage subtable lines
-	 */
-	//public $class_element_line = 'EmailSenderProfileline';
-	/**
-	 * @var array	List of child tables. To test if we can delete object.
-	 */
-	//protected $childtables=array();
-	/**
-	 * @var EmailSenderProfileLine[]     Array of subtable lines
-	 */
-	//public $lines = array();
-
 
 
 	/**
@@ -172,8 +144,12 @@ class EmailSenderProfile extends CommonObject
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) $this->fields['rowid']['visible'] = 0;
-		if (empty($conf->multicompany->enabled)) $this->fields['entity']['enabled'] = 0;
+		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) {
+			$this->fields['rowid']['visible'] = 0;
+		}
+		if (empty($conf->multicompany->enabled)) {
+			$this->fields['entity']['enabled'] = 0;
+		}
 	}
 
 	/**
@@ -249,7 +225,9 @@ class EmailSenderProfile extends CommonObject
 	public function fetch($id, $ref = null)
 	{
 		$result = $this->fetchCommon($id, $ref);
-		if ($result > 0 && !empty($this->table_element_line)) $this->fetchLines();
+		if ($result > 0 && !empty($this->table_element_line)) {
+			$this->fetchLines();
+		}
 		return $result;
 	}
 
@@ -306,9 +284,9 @@ class EmailSenderProfile extends CommonObject
 		$result = '';
 		$companylink = '';
 
-        $label = $this->label;
+		$label = $this->label;
 
-        $url = '';
+		$url = '';
 		//$url = dol_buildpath('/monmodule/emailsenderprofile_card.php',1).'?id='.$this->id;
 
 		$linkstart = '';
@@ -316,7 +294,9 @@ class EmailSenderProfile extends CommonObject
 
 		if ($withpicto) {
 			$result .= ($linkstart.img_object($label, 'label', 'class="classfortooltip"').$linkend);
-			if ($withpicto != 2) $result .= ' ';
+			if ($withpicto != 2) {
+				$result .= ' ';
+			}
 		}
 		$result .= $linkstart.$this->label.$linkend;
 		return $result;
@@ -333,7 +313,7 @@ class EmailSenderProfile extends CommonObject
 		return $this->LibStatut($this->active, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return the status
 	 *
@@ -352,13 +332,15 @@ class EmailSenderProfile extends CommonObject
 		}
 
 		$statusType = 'status'.$status;
-		if ($status == self::STATUS_ENABLED) $statusType = 'status4';
+		if ($status == self::STATUS_ENABLED) {
+			$statusType = 'status4';
+		}
 
 		return dolGetStatus($label, $labelshort, '', $statusType, $mode);
 	}
 
-    /**
-     *  Charge les informations d'ordre info dans l'objet commande
+	/**
+	 *  Charge les informations d'ordre info dans l'objet commande
 	 *
 	 *  @param  int     $id       Id of order
 	 *  @return	void
@@ -368,30 +350,25 @@ class EmailSenderProfile extends CommonObject
 		$sql = 'SELECT rowid, date_creation as datec, tms as datem,';
 		$sql .= ' fk_user_creat, fk_user_modif';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		$sql .= ' WHERE t.rowid = '.$id;
+		$sql .= ' WHERE t.rowid = '.((int) $id);
 		$result = $this->db->query($sql);
-		if ($result)
-		{
-			if ($this->db->num_rows($result))
-			{
+		if ($result) {
+			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
-				if ($obj->fk_user_author)
-				{
+				if ($obj->fk_user_author) {
 					$cuser = new User($this->db);
 					$cuser->fetch($obj->fk_user_author);
 					$this->user_creation = $cuser;
 				}
 
-				if ($obj->fk_user_valid)
-				{
+				if ($obj->fk_user_valid) {
 					$vuser = new User($this->db);
 					$vuser->fetch($obj->fk_user_valid);
 					$this->user_validation = $vuser;
 				}
 
-				if ($obj->fk_user_cloture)
-				{
+				if ($obj->fk_user_cloture) {
 					$cluser = new User($this->db);
 					$cluser->fetch($obj->fk_user_cloture);
 					$this->user_cloture = $cluser;

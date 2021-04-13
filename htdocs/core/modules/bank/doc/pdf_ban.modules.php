@@ -78,7 +78,9 @@ class pdf_ban extends ModeleBankAccountDoc
 
 		// Retrieves transmitter
 		$this->emetteur = $mysoc;
-		if (!$this->emetteur->country_code) $this->emetteur->country_code = substr($langs->defaultlang, -2); // By default if not defined
+		if (!$this->emetteur->country_code) {
+			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default if not defined
+		}
 
 		// Define column position
 		$this->posxref = $this->marge_gauche + 1;
@@ -93,7 +95,7 @@ class pdf_ban extends ModeleBankAccountDoc
 	/**
 	 *	Fonction generant le projet sur le disque
 	 *
-	 *	@param	Project		$object   		Object project a generer
+	 *	@param	Account		$object   		Object Account to generate
 	 *	@param	Translate	$outputlangs	Lang output object
 	 *	@return	int         				1 if OK, <=0 if KO
 	 */
@@ -102,20 +104,22 @@ class pdf_ban extends ModeleBankAccountDoc
 		// phpcs:enable
 		global $conf, $hookmanager, $langs, $user;
 
-		if (!is_object($outputlangs)) $outputlangs = $langs;
+		if (!is_object($outputlangs)) {
+			$outputlangs = $langs;
+		}
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (!empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output = 'ISO-8859-1';
+		if (!empty($conf->global->MAIN_USE_FPDF)) {
+			$outputlangs->charset_output = 'ISO-8859-1';
+		}
 
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "projects"));
 
-		if ($conf->bank->dir_output)
-		{
+		if ($conf->bank->dir_output) {
 			//$nblines = count($object->lines);  // This is set later with array of tasks
 
 			// Definition of $dir and $file
-			if ($object->specimen)
-			{
+			if ($object->specimen) {
 				$dir = $conf->bank->dir_output;
 				$file = $dir."/SPECIMEN.pdf";
 			} else {
@@ -124,20 +128,16 @@ class pdf_ban extends ModeleBankAccountDoc
 				$file = $dir."/".$objectref.".pdf";
 			}
 
-			if (!file_exists($dir))
-			{
-				if (dol_mkdir($dir) < 0)
-				{
+			if (!file_exists($dir)) {
+				if (dol_mkdir($dir) < 0) {
 					$this->error = $langs->transnoentities("ErrorCanNotCreateDir", $dir);
 					return 0;
 				}
 			}
 
-			if (file_exists($dir))
-			{
+			if (file_exists($dir)) {
 				// Add pdfgeneration hook
-				if (!is_object($hookmanager))
-				{
+				if (!is_object($hookmanager)) {
 					include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 					$hookmanager = new HookManager($this->db);
 				}
@@ -151,11 +151,12 @@ class pdf_ban extends ModeleBankAccountDoc
 				$heightforinfotot = 50; // Height reserved to output the info and total part
 				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
-				if ($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS > 0) $heightforfooter += 6;
+				if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS)) {
+					$heightforfooter += 6;
+				}
 				$pdf->SetAutoPageBreak(1, 0);
 
-				if (class_exists('TCPDF'))
-				{
+				if (class_exists('TCPDF')) {
 					$pdf->setPrintHeader(false);
 					$pdf->setPrintFooter(false);
 				}
@@ -170,7 +171,9 @@ class pdf_ban extends ModeleBankAccountDoc
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("BAN"));
-				if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
+				if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) {
+					$pdf->SetCompression(false);
+				}
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
@@ -188,8 +191,7 @@ class pdf_ban extends ModeleBankAccountDoc
 				$tab_height_newpage = 210;
 
 				// Affiche notes
-				if (!empty($object->note_public))
-				{
+				if (!empty($object->note_public)) {
 					$pdf->SetFont('', '', $default_font_size - 1);
 					$pdf->writeHTMLCell(190, 3, $this->posxref - 1, $tab_top - 2, dol_htmlentitiesbr($object->note_public), 0, 1);
 					$nexY = $pdf->GetY();
@@ -215,8 +217,7 @@ class pdf_ban extends ModeleBankAccountDoc
 
 
 				// Show square
-				if ($pagenb == 1)
-				{
+				if ($pagenb == 1) {
 					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 0, 0);
 					$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 				} else {
@@ -228,15 +229,16 @@ class pdf_ban extends ModeleBankAccountDoc
 				 * Footer of the page
 				 */
 				$this->_pagefoot($pdf, $object, $outputlangs);
-				if (method_exists($pdf, 'AliasNbPages')) $pdf->AliasNbPages();
+				if (method_exists($pdf, 'AliasNbPages')) {
+					$pdf->AliasNbPages();
+				}
 
 				$pdf->Close();
 
 				$pdf->Output($file, 'F');
 
 				// Add pdfgeneration hook
-				if (!is_object($hookmanager))
-				{
+				if (!is_object($hookmanager)) {
 					include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 					$hookmanager = new HookManager($this->db);
 				}
@@ -244,14 +246,14 @@ class pdf_ban extends ModeleBankAccountDoc
 				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-				if ($reshook < 0)
-				{
+				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
 				}
 
-				if (!empty($conf->global->MAIN_UMASK))
-				@chmod($file, octdec($conf->global->MAIN_UMASK));
+				if (!empty($conf->global->MAIN_UMASK)) {
+					@chmod($file, octdec($conf->global->MAIN_UMASK));
+				}
 
 				$this->result = array('fullpath'=>$file);
 
@@ -262,7 +264,7 @@ class pdf_ban extends ModeleBankAccountDoc
 			}
 		}
 
-		$this->error = $langs->transnoentities("ErrorConstantNotDefined", "LIVRAISON_OUTPUTDIR");
+		$this->error = $langs->transnoentities("ErrorConstantNotDefined", "DELIVERY_OUTPUTDIR");
 		return 0;
 	}
 
@@ -293,7 +295,7 @@ class pdf_ban extends ModeleBankAccountDoc
 	 *  Show top header of page.
 	 *
 	 *  @param	TCPDF		$pdf     		Object PDF
-	 *  @param  Project		$object     	Object to show
+	 *  @param  Account		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @return	void
@@ -317,10 +319,8 @@ class pdf_ban extends ModeleBankAccountDoc
 
 		// Logo
 		$logo = $conf->mycompany->dir_output.'/logos/'.$mysoc->logo;
-		if ($mysoc->logo)
-		{
-			if (is_readable($logo))
-			{
+		if ($mysoc->logo) {
+			if (is_readable($logo)) {
 				$height = pdf_getHeightForLogo($logo);
 				$pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
 			} else {
@@ -329,7 +329,9 @@ class pdf_ban extends ModeleBankAccountDoc
 				$pdf->MultiCell(100, 3, $langs->transnoentities("ErrorLogoFileNotFound", $logo), 0, 'L');
 				$pdf->MultiCell(100, 3, $langs->transnoentities("ErrorGoToModuleSetup"), 0, 'L');
 			}
-		} else $pdf->MultiCell(100, 4, $outputlangs->transnoentities($this->emetteur->name), 0, 'L');
+		} else {
+			$pdf->MultiCell(100, 4, $outputlangs->transnoentities($this->emetteur->name), 0, 'L');
+		}
 
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 		$pdf->SetXY($posx, $posy);
@@ -352,25 +354,25 @@ class pdf_ban extends ModeleBankAccountDoc
 		/* Removed: A project can have more than thousands linked objects (orders, invoices, proposals, etc....
 		$object->fetchObjectLinked();
 
-	    foreach($object->linkedObjects as $objecttype => $objects)
-	    {
-	        var_dump($objects);exit;
-	    	if ($objecttype == 'commande')
-	    	{
-	    		$outputlangs->load('orders');
-	    		$num=count($objects);
-	    		for ($i=0;$i<$num;$i++)
-	    		{
-	    			$posy+=4;
-	    			$pdf->SetXY($posx,$posy);
-	    			$pdf->SetFont('','', $default_font_size - 1);
-	    			$text=$objects[$i]->ref;
-	    			if ($objects[$i]->ref_client) $text.=' ('.$objects[$i]->ref_client.')';
-	    			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities($text), '', 'R');
-	    		}
-	    	}
-	    }
-        */
+		foreach($object->linkedObjects as $objecttype => $objects)
+		{
+			var_dump($objects);exit;
+			if ($objecttype == 'commande')
+			{
+				$outputlangs->load('orders');
+				$num=count($objects);
+				for ($i=0;$i<$num;$i++)
+				{
+					$posy+=4;
+					$pdf->SetXY($posx,$posy);
+					$pdf->SetFont('','', $default_font_size - 1);
+					$text=$objects[$i]->ref;
+					if ($objects[$i]->ref_client) $text.=' ('.$objects[$i]->ref_client.')';
+					$pdf->MultiCell(100, 4, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities($text), '', 'R');
+				}
+			}
+		}
+		*/
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
@@ -378,7 +380,7 @@ class pdf_ban extends ModeleBankAccountDoc
 	 *   	Show footer of page. Need this->emetteur object
 	 *
 	 *   	@param	TCPDF		$pdf     			PDF
-	 * 		@param	Project		$object				Object to show
+	 * 		@param	Account		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	integer
@@ -388,7 +390,7 @@ class pdf_ban extends ModeleBankAccountDoc
 		// phpcs:enable
 		global $conf;
 
-		$showdetails = $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
+		$showdetails = empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? 0 : $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		//return pdf_pagefoot($pdf,$outputlangs,'BANK_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
 }

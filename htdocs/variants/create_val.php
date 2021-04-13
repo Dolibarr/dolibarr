@@ -36,13 +36,24 @@ if ($object->fetch($id) < 1) {
 	exit();
 }
 
+$permissiontoread = $user->rights->produit->lire || $user->rights->service->lire;
+
+// Security check
+if (empty($conf->variants->enabled)) {
+	accessforbidden('Module not enabled');
+}
+if ($user->socid > 0) { // Protection if external user
+	accessforbidden();
+}
+//$result = restrictedArea($user, 'variant');
+if (!$permissiontoread) accessforbidden();
+
 
 /*
  * Actions
  */
 
-if ($cancel)
-{
+if ($cancel) {
 	$action = '';
 	header('Location: '.DOL_URL_ROOT.'/variants/card.php?id='.$object->id);
 	exit();
@@ -56,8 +67,7 @@ if ($cancel)
  * View
  */
 
-if ($action == 'add')
-{
+if ($action == 'add') {
 	if (empty($ref) || empty($value)) {
 		setEventMessages($langs->trans('ErrorFieldsRequired'), null, 'errors');
 	} else {
@@ -77,9 +87,11 @@ if ($action == 'add')
 
 $langs->load('products');
 
+$help_url = 'EN:Module_Products#Variants';
+
 $title = $langs->trans('ProductAttributeName', dol_htmlentities($object->label));
 
-llxHeader('', $title);
+llxHeader('', $title, $help_url);
 
 $h = 0;
 $head[$h][0] = DOL_URL_ROOT.'/variants/card.php?id='.$object->id;
@@ -87,7 +99,7 @@ $head[$h][1] = $langs->trans("ProductAttributeName");
 $head[$h][2] = 'variant';
 $h++;
 
-dol_fiche_head($head, 'variant', $langs->trans('ProductAttributeName'), -1, 'generic');
+print dol_get_fiche_head($head, 'variant', $langs->trans('ProductAttributeName'), -1, 'generic');
 
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
@@ -106,7 +118,7 @@ print '<div class="underbanner clearboth"></div>';
 <?php
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<br>';
 
@@ -119,7 +131,7 @@ print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 print load_fiche_titre($langs->trans('NewProductAttributeValue'));
 
-dol_fiche_head();
+print dol_get_fiche_head();
 
 ?>
 	<table class="border" style="width: 100%">
@@ -134,12 +146,12 @@ dol_fiche_head();
 	</table>
 <?php
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="center">';
 print '<input type="submit" class="button" name="create" value="'.$langs->trans("Create").'">';
 print ' &nbsp; ';
-print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 print '</div>';
 
 print '</form>';

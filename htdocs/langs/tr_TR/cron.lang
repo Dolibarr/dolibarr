@@ -7,13 +7,14 @@ Permission23103 = Planlı iş sil
 Permission23104 = Planlı iş yürüt
 # Admin
 CronSetup=Planlı iş yönetimi ayarları
-URLToLaunchCronJobs=Nitelikli cron işlerini kontrol etmek ve başlatmak için URL
-OrToLaunchASpecificJob=Ya da özel bir işi denetlemek ve başlatmak için
+URLToLaunchCronJobs=URL to check and launch qualified cron jobs from a browser
+OrToLaunchASpecificJob=Or to check and launch a specific job from a browser
 KeyForCronAccess=Cron işlerini başlatacak URL için güvenlik anahtarı
 FileToLaunchCronJobs=Nitelikli cron işlerini kontrol etmek ve başlatmak için komut satırı
 CronExplainHowToRunUnix=Unix ortamında komut satırını her 5 dakikada bir çalıştırmak için kron sekmesi girişini kullanmalısınız
 CronExplainHowToRunWin=On Microsoft(tm) Windows environment you can use Scheduled Task tools to run the command line each 5 minutes
 CronMethodDoesNotExists=Sınıf %s hiçbir %s yöntemi içermiyor
+CronMethodNotAllowed=Method %s of class %s is in blacklist of forbidden methods
 CronJobDefDesc=Cron job profiles are defined into the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
 CronJobProfiles=Önceden tanımlanmış cron görevi profillerinin listesi
 # Menu
@@ -46,6 +47,7 @@ CronNbRun=Number of launches
 CronMaxRun=Maximum number of launches
 CronEach=Her
 JobFinished=İş başlatıldı ve bitirildi
+Scheduled=Scheduled
 #Page card
 CronAdd= İş ekle
 CronEvery=İş yürütme zamanı
@@ -56,7 +58,7 @@ CronNote=Yorum
 CronFieldMandatory=%s alanı zorunludur
 CronErrEndDateStartDt=Bitiş tarihi başlama tarihinden önce olamaz
 StatusAtInstall=Status at module installation
-CronStatusActiveBtn=Etkin
+CronStatusActiveBtn=Schedule
 CronStatusInactiveBtn=Engelle
 CronTaskInactive=Bu iş devre dışı
 CronId=Kimlik
@@ -76,8 +78,14 @@ CronType_method=Call method of a PHP Class
 CronType_command=Kabuk komutu
 CronCannotLoadClass=Cannot load class file %s (to use class %s)
 CronCannotLoadObject=Class file %s was loaded, but object %s was not found into it
-UseMenuModuleToolsToAddCronJobs=Planlı işleri görmek ve düzenlemek için "Giriş - Yönetici Araçları - Planlı İşler" menüsüne git.
+UseMenuModuleToolsToAddCronJobs=Go into menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
 JobDisabled=İş engellendi
 MakeLocalDatabaseDumpShort=Yerel veritabanı yedeklemesi
 MakeLocalDatabaseDump=Create a local database dump. Parameters are: compression ('gz' or 'bz' or 'none'), backup type ('mysql', 'pgsql', 'auto'), 1, 'auto' or filename to build, number of backup files to keep
 WarningCronDelayed=Dikkat: Performans amaçlı olarak etkinleştirilmiş işlerin bir sonraki yürütme tarihi ne olursa olsun, işleriniz çalıştırılmadan önce maksimum %s saat ertelenebilir.
+DATAPOLICYJob=Data cleaner and anonymizer
+JobXMustBeEnabled=Job %s must be enabled
+# Cron Boxes
+LastExecutedScheduledJob=Last executed scheduled job
+NextScheduledJobExecute=Next scheduled job to execute
+NumberScheduledJobError=Number of scheduled jobs in error

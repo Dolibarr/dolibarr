@@ -37,7 +37,9 @@ $cancel = GETPOST('cancel', 'alpha');
 $selection = GETPOST('selection', 'int');
 
 // Security check
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 //Objects
 $price_globals = new PriceGlobalVariable($db);
@@ -157,8 +159,7 @@ print '<span class="opacitymedium">'.$langs->trans("DynamicPriceDesc").'</span><
 print '<br>';
 
 //Global variables table
-if ($action != 'create_updater' && $action != 'edit_updater')
-{
+if ($action != 'create_updater' && $action != 'edit_updater') {
 	print load_fiche_titre($langs->trans("GlobalVariables"), '', '');
 
 	print '<table summary="listofattributes" class="noborder centpercent">';
@@ -170,15 +171,13 @@ if ($action != 'create_updater' && $action != 'edit_updater')
 	print '</tr>';
 
 	$arrayglobalvars = $price_globals->listGlobalVariables();
-	if (!empty($arrayglobalvars))
-	{
-		foreach ($arrayglobalvars as $i=>$entry) {
-			$var = !$var;
+	if (!empty($arrayglobalvars)) {
+		foreach ($arrayglobalvars as $i => $entry) {
 			print '<tr class="oddeven">';
 			print '<td>'.$entry->code.'</td>';
 			print '<td>'.$entry->description.'</td>';
 			print '<td>'.price($entry->value).'</td>';
-			print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit_variable&token='.newToken().'&selection='.$entry->id.'">'.img_edit().'</a> &nbsp;';
+			print '<td class="right"><a class="editfielda paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?action=edit_variable&token='.newToken().'&selection='.$entry->id.'">'.img_edit().'</a> &nbsp;';
 			print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete_variable&token='.newToken().'&selection='.$entry->id.'">'.img_delete().'</a></td>';
 			print '</tr>';
 		}
@@ -189,9 +188,10 @@ if ($action != 'create_updater' && $action != 'edit_updater')
 	}
 	print '</table>';
 
-	if (empty($action))
-	{
-		//Action Buttons
+	if (empty($action)) {
+		/*
+		 * Action bar
+		 */
 		print '<div class="tabsAction">';
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=create_variable">'.$langs->trans("AddVariable").'</a>';
 		print '</div>';
@@ -229,15 +229,14 @@ if ($action == 'create_variable' || $action == 'edit_variable') {
 
 	//Form Buttons
 	print '<br><div class="center">';
-	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'"> &nbsp;';
-	print '<input type="submit" class="button" name="cancel" id="cancel" value="'.$langs->trans("Cancel").'">';
+	print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'"> &nbsp;';
+	print '<input type="submit" class="button button-cancel" name="cancel" id="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 	print '</form>';
 }
 
 // Updaters table
-if ($action != 'create_variable' && $action != 'edit_variable')
-{
+if ($action != 'create_variable' && $action != 'edit_variable') {
 	print load_fiche_titre($langs->trans("GlobalVariableUpdaters"), '', '');
 
 	print '<table summary="listofattributes" class="noborder centpercent">';
@@ -252,9 +251,8 @@ if ($action != 'create_variable' && $action != 'edit_variable')
 	print '</tr>';
 
 	$arraypriceupdaters = $price_updaters->listUpdaters();
-	if (!empty($arraypriceupdaters))
-	{
-		foreach ($arraypriceupdaters as $i=>$entry) {
+	if (!empty($arraypriceupdaters)) {
+		foreach ($arraypriceupdaters as $i => $entry) {
 			$code = "";
 			if ($entry->fk_variable > 0) {
 				$res = $price_globals->fetch($entry->fk_variable);
@@ -269,7 +267,7 @@ if ($action != 'create_variable' && $action != 'edit_variable')
 			print '<td style="max-width: 250px; word-wrap: break-word; white-space: pre-wrap;">'.$entry->parameters.'</td>';
 			print '<td>'.$entry->update_interval.'</td>';
 			print '<td>'.$entry->getLastUpdated().'</td>';
-			print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit_updater&selection='.$entry->id.'">'.img_edit().'</a> &nbsp;';
+			print '<td class="right"><a class="editfielda paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?action=edit_updater&selection='.$entry->id.'">'.img_edit().'</a> &nbsp;';
 			print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete_updater&token='.newToken().'&selection='.$entry->id.'">'.img_delete().'</a></td>';
 			print '</tr>';
 		}
@@ -280,9 +278,10 @@ if ($action != 'create_variable' && $action != 'edit_variable')
 	}
 	print '</table>';
 
-	if (empty($action))
-	{
-		//Action Buttons
+	if (empty($action)) {
+		/*
+		 * Action bar
+		 */
 		print '<div class="tabsAction">';
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=create_updater&token='.newToken().'">'.$langs->trans("AddUpdater").'</a>';
 		print '</div>';
@@ -351,8 +350,8 @@ if ($action == 'create_updater' || $action == 'edit_updater') {
 
 	//Form Buttons
 	print '<br><div class="center">';
-	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'"> &nbsp;';
-	print '<input type="submit" class="button" name="cancel" id="cancel" value="'.$langs->trans("Cancel").'">';
+	print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'"> &nbsp;';
+	print '<input type="submit" class="button button-cancel" name="cancel" id="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 	print '</form>';
 }

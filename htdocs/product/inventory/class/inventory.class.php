@@ -52,12 +52,12 @@ class Inventory extends CommonObject
 	/**
 	 * @var int  Does object support extrafields ? 0=No, 1=Yes
 	 */
-	public $isextrafieldmanaged = 1;
+	public $isextrafieldmanaged = 0;
 
 	/**
 	 * @var string String with name of icon for inventory
 	 */
-	public $picto = 'stock';
+	public $picto = 'inventory';
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
@@ -170,6 +170,9 @@ class Inventory extends CommonObject
 	 */
 	public $fk_user_valid;
 
+	/**
+	 * @var string import key
+	 */
 	public $import_key;
 	// END MODULEBUILDER PROPERTIES
 
@@ -178,17 +181,17 @@ class Inventory extends CommonObject
 	// If this object has a subtable with lines
 
 	/**
-	 * @var int    Name of subtable line
+	 * @var string    Name of subtable line
 	 */
 	public $table_element_line = 'inventorydet';
 
 	/**
-	 * @var int    Field with ID of parent key if this field has a parent
+	 * @var string    Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_inventory';
 
 	/**
-	 * @var int    Name of subtable class that manage subtable lines
+	 * @var string    Name of subtable class that manage subtable lines
 	 */
 	public $class_element_line = 'Inventoryline';
 
@@ -219,8 +222,12 @@ class Inventory extends CommonObject
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) $this->fields['rowid']['visible'] = 0;
-		if (empty($conf->multicompany->enabled)) $this->fields['entity']['enabled'] = 0;
+		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) {
+			$this->fields['rowid']['visible'] = 0;
+		}
+		if (empty($conf->multicompany->enabled)) {
+			$this->fields['entity']['enabled'] = 0;
+		}
 	}
 
 
@@ -247,6 +254,7 @@ class Inventory extends CommonObject
 	 */
 	public function validate(User $user, $notrigger = false)
 	{
+		global $conf;
 		$this->db->begin();
 
 		$result = 0;
@@ -269,20 +277,24 @@ class Inventory extends CommonObject
 			$sql .= ' '.MAIN_DB_PREFIX.'product as p, '.MAIN_DB_PREFIX.'entrepot as e';
 			$sql .= ' WHERE p.entity IN ('.getEntity('product').')';
 			$sql .= ' AND ps.fk_product = p.rowid AND ps.fk_entrepot = e.rowid';
-			if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) $sql .= " AND p.fk_product_type = 0";
-			if ($this->fk_product > 0) $sql .= ' AND ps.fk_product = '.$this->fk_product;
-			if ($this->fk_warehouse > 0) $sql .= ' AND ps.fk_entrepot = '.$this->fk_warehouse;
+			if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+				$sql .= " AND p.fk_product_type = 0";
+			}
+			if ($this->fk_product > 0) {
+				$sql .= ' AND ps.fk_product = '.$this->fk_product;
+			}
+			if ($this->fk_warehouse > 0) {
+				$sql .= ' AND ps.fk_entrepot = '.$this->fk_warehouse;
+			}
 
 			$inventoryline = new InventoryLine($this->db);
 
 			$resql = $this->db->query($sql);
-			if ($resql)
-			{
+			if ($resql) {
 				$num = $this->db->num_rows($resql);
 
 				$i = 0;
-				while ($i < $num)
-				{
+				while ($i < $num) {
 					$obj = $this->db->fetch_object($resql);
 
 					$inventoryline->fk_inventory = $this->id;
@@ -317,6 +329,7 @@ class Inventory extends CommonObject
 		} else {
 			$this->db->rollback();
 		}
+		return $result;
 	}
 
 	/**
@@ -346,6 +359,51 @@ class Inventory extends CommonObject
 		} else {
 			$this->db->rollback();
 		}
+		return $result;
+	}
+
+	/**
+	 * Set to Recorded
+	 *
+	 * @param  User $user      User that creates
+	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @return int             <0 if KO, Id of created object if OK
+	 */
+	public function setRecorded(User $user, $notrigger = false)
+	{
+		$this->db->begin();
+
+		$result = $this->setStatut($this::STATUS_RECORDED, null, '', 'INVENTORY_RECORDED');
+
+		if ($result > 0) {
+			$this->db->commit();
+		} else {
+			$this->db->rollback();
+			return -1;
+		}
+		return $result;
+	}
+
+	/**
+	 * Set to Canceled
+	 *
+	 * @param  User $user      User that creates
+	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @return int             <0 if KO, Id of created object if OK
+	 */
+	public function setCanceled(User $user, $notrigger = false)
+	{
+		$this->db->begin();
+
+		$result = $this->setStatut($this::STATUS_CANCELED, null, '', 'INVENTORY_CANCELED');
+
+		if ($result > 0) {
+			$this->db->commit();
+		} else {
+			$this->db->rollback();
+			return -1;
+		}
+		return $result;
 	}
 
 	/**
@@ -461,8 +519,7 @@ class Inventory extends CommonObject
 	 */
 	public function deleteLine(User $user, $idline, $notrigger = false)
 	{
-		if ($this->status < 0)
-		{
+		if ($this->status < 0) {
 			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
 			return -2;
 		}
@@ -486,7 +543,9 @@ class Inventory extends CommonObject
 		global $dolibarr_main_authentication, $dolibarr_main_demo;
 		global $menumanager;
 
-		if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
+		if (!empty($conf->dol_no_mouse_hover)) {
+			$notooltip = 1; // Force disable tooltips
+		}
 
 		$result = '';
 		$companylink = '';
@@ -498,24 +557,28 @@ class Inventory extends CommonObject
 		$url = dol_buildpath('/product/inventory/card.php', 1).'?id='.$this->id;
 
 		$linkclose = '';
-		if (empty($notooltip))
-		{
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-			{
+		if (empty($notooltip)) {
+			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$label = $langs->trans("ShowInventory");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-		} else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		} else {
+			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		}
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';
 		$linkend = '</a>';
 
 		$result .= $linkstart;
-		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
-		if ($withpicto != 2) $result .= $this->ref;
+		if ($withpicto) {
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+		}
+		if ($withpicto != 2) {
+			$result .= $this->ref;
+		}
 		$result .= $linkend;
 		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
 
@@ -550,9 +613,11 @@ class Inventory extends CommonObject
 		$labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
 		$labelStatus[self::STATUS_VALIDATED] = $langs->trans('Validated').' ('.$langs->trans('Started').')';
 		$labelStatus[self::STATUS_CANCELED] = $langs->trans('Canceled');
+		$labelStatus[self::STATUS_RECORDED] = $langs->trans('Closed');
 		$labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Draft');
 		$labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Started');
 		$labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Canceled');
+		$labelStatusShort[self::STATUS_RECORDED] = $langs->trans('Closed');
 
 		return dolGetStatus($labelStatus[$status], $labelStatusShort[$status], '', 'status'.$status, $mode);
 	}
@@ -568,30 +633,25 @@ class Inventory extends CommonObject
 		$sql = 'SELECT rowid, date_creation as datec, tms as datem,';
 		$sql .= ' fk_user_creat, fk_user_modif';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		$sql .= ' WHERE t.rowid = '.$id;
+		$sql .= ' WHERE t.rowid = '.((int) $id);
 		$result = $this->db->query($sql);
-		if ($result)
-		{
-			if ($this->db->num_rows($result))
-			{
+		if ($result) {
+			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
-				if ($obj->fk_user_author)
-				{
+				if ($obj->fk_user_author) {
 					$cuser = new User($this->db);
 					$cuser->fetch($obj->fk_user_author);
 					$this->user_creation = $cuser;
 				}
 
-				if ($obj->fk_user_valid)
-				{
+				if ($obj->fk_user_valid) {
 					$vuser = new User($this->db);
 					$vuser->fetch($obj->fk_user_valid);
 					$this->user_validation = $vuser;
 				}
 
-				if ($obj->fk_user_cloture)
-				{
+				if ($obj->fk_user_cloture) {
 					$cluser = new User($this->db);
 					$cluser->fetch($obj->fk_user_cloture);
 					$this->user_cloture = $cluser;
@@ -617,6 +677,7 @@ class Inventory extends CommonObject
 	public function initAsSpecimen()
 	{
 		$this->initAsSpecimenCommon();
+		$this->title = '';
 	}
 }
 

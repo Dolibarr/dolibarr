@@ -22,15 +22,21 @@
  */
 
 if (!defined('NOCSRFCHECK')) {
-    define('NOCSRFCHECK', '1');
+	define('NOCSRFCHECK', '1');
 }
 // Do not check anti CSRF attack test
 if (!defined('NOREQUIREMENU')) {
-    define('NOREQUIREMENU', '1');
+	define('NOREQUIREMENU', '1');
 }
 // If there is no need to load and show top and left menu
 if (!defined("NOLOGIN")) {
-    define("NOLOGIN", '1');
+	define("NOLOGIN", '1');
+}
+if (!defined('NOIPCHECK')) {
+	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+}
+if (!defined('NOBROWSERNOTIF')) {
+	define('NOBROWSERNOTIF', '1');
 }
 // If this page is public (can be called outside logged session)
 
@@ -69,7 +75,8 @@ $user_assign = new User($db);
 $user_create = new User($db);
 
 if (!$conf->global->RECRUITMENT_ENABLE_PUBLIC_INTERFACE) {
-	print '<div class="error">'.$langs->trans('PublicInterfaceForbidden').'</div>';
+	$langs->load("errors");
+	print '<div class="error">'.$langs->trans('ErrorPublicInterfaceNotEnabled').'</div>';
 	$db->close();
 	exit();
 }
@@ -203,7 +210,9 @@ if ($display_ticket_list) {
 	$limit = $conf->liste_limit;
 
 	$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-	if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+	if (empty($page) || $page == -1) {
+		$page = 0;
+	}     // If $page is not defined, or '' or -1
 	$offset = $limit * $page;
 	$pageprev = $page - 1;
 	$pagenext = $page + 1;
@@ -234,8 +243,9 @@ if ($display_ticket_list) {
 	$sql .= " type.label as type_label, category.label as category_label, severity.label as severity_label";
 	// Add fields for extrafields
 	if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
-		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
+		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 			$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+		}
 	}
 	$sql .= " FROM ".MAIN_DB_PREFIX."recruitment_recruitmentjobposition as t";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid=t.fk_soc";
@@ -251,7 +261,7 @@ if ($display_ticket_list) {
 				$sql .= ' AND '.$key.' = \''.$value.'\'';
 			} elseif ($key == 't.fk_statut') {
 				if (is_array($value) && count($value) > 0) {
-					$sql .= 'AND '.$key.' IN ('.implode(',', $value).')';
+					$sql .= 'AND '.$key.' IN ('.$db->sanitize(implode(',', $value)).')';
 				} else {
 					$sql .= ' AND '.$key.' = '.$db->escape($value);
 				}
@@ -357,8 +367,7 @@ if ($display_ticket_list) {
 			print_liste_field_titre($selectedfields, $url_page_current, "", '', '', 'align="right"', $sortfield, $sortorder, 'center maxwidthsearch ');
 			print '</tr>';
 
-			while ($obj = $db->fetch_object($resql))
-			{
+			while ($obj = $db->fetch_object($resql)) {
 				print '<tr class="oddeven">';
 
 				// Date ticket

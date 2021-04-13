@@ -16,3 +16,4 @@ DictionaryFunction=HRM - darba vietas
 Employees=Darbinieki
 Employee=Darbinieks
 NewEmployee=Jauns darbinieks
+ListOfEmployees=Darbinieku saraksts

@@ -115,9 +115,9 @@ class mod_ticket_simple extends ModeleNumRefTicket
 	/**
 	 *  Return next value
 	 *
-	 *  @param  Societe $objsoc    Object third party
-	 *  @param  Project $ticket Object ticket
-	 *  @return string                Value if OK, 0 if KO
+	 *  @param  Societe $objsoc    	Object third party
+	 *  @param  Ticket 	$ticket 	Object ticket
+	 *  @return string              Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $ticket)
 	{
@@ -151,8 +151,8 @@ class mod_ticket_simple extends ModeleNumRefTicket
 
 		if ($max >= (pow(10, 4) - 1)) {
 			$num = $max + 1;
-		} // If counter > 9999, we do not format on 4 chars, we take number as it is
-		else {
+		} else {
+			// If counter > 9999, we do not format on 4 chars, we take number as it is
 			$num = sprintf("%04s", $max + 1);
 		}
 

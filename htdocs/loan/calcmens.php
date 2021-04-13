@@ -24,18 +24,24 @@
  *  \brief File to calculate loan monthly payments
  */
 
-if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
-if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
-if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1'); // Disables token renewal
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1');
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
 
 require '../main.inc.php';
 require DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
 
-$mens = GETPOST('mens');
-$capital = GETPOST('capital');
-$rate = GETPOST('rate');
-$echance = GETPOST('echeance');
-$nbterm = GETPOST('nbterm');
+$mens = price2num(GETPOST('mens'));
+$capital = price2num(GETPOST('capital'));
+$rate = price2num(GETPOST('rate'));
+$echance = GETPOST('echeance', 'int');
+$nbterm = GETPOST('nbterm', 'int');
 
 top_httphead();
 
