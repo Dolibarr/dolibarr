@@ -48,6 +48,14 @@ UPDATE llx_c_country SET eec = 1 WHERE code IN ('AT','BE','BG','CY','CZ','DE','D
 
 -- For v14
 
+create table llx_accounting_groups_account
+(
+  rowid            integer AUTO_INCREMENT PRIMARY KEY,
+  fk_accounting_account		INTEGER NOT NULL,
+  fk_c_accounting_category	INTEGER NOT NULL
+)ENGINE=innodb;
+
+
 ALTER TABLE llx_oauth_token ADD COLUMN restricted_ips varchar(200);
 ALTER TABLE llx_oauth_token ADD COLUMN datec datetime DEFAULT NULL;
 ALTER TABLE llx_oauth_token ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
