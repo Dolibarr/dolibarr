@@ -217,7 +217,8 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $permissiontoread = $user->rights->propal->lire;
 $permissiontoadd = $user->rights->propal->write;
 $permissiontodelete = $user->rights->propal->supprimer;
-$permissiontoclose = $user->rights->propal->cloturer;
+$permissiontovalidate = $user->rights->propale->propal_advance->validate;
+$permissiontoclose = $user->rights->propale->propal_advance->close;
 
 
 
@@ -298,7 +299,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
-if ($action == 'validate' && $permissiontoadd) {
+if ($action == 'validate' && $permissiontovalidate) {
 	if (GETPOST('confirm') == 'yes') {
 		$tmpproposal = new Propal($db);
 		$db->begin();
@@ -316,9 +317,10 @@ if ($action == 'validate' && $permissiontoadd) {
 					setEventMessage($tmpproposal->ref." ".$langs->trans('IsNotADraft'), 'errors');
 					$error++;
 				}
+			}else{
+				dol_print_error($db);
+				$error++;
 			}
-			dol_print_error($db);
-			$error++;
 		}
 		if ($error) {
 			$db->rollback();
@@ -815,18 +817,20 @@ if ($resql) {
 
 	// List of mass actions available
 	$arrayofmassactions = array(
-		'generate_doc'=>$langs->trans("ReGeneratePDF"),
-		'builddoc'=>$langs->trans("PDFMerge"),
-		'presend'=>$langs->trans("SendByMail"),
-		'prevalidate'=>$langs->trans("Validate"),
+		'generate_doc'=>img_picto('', 'pdf').'&ensp;'.$langs->trans("ReGeneratePDF"),
+		'builddoc'=>img_picto('', 'pdf').'&ensp;'.$langs->trans("PDFMerge"),
+		'presend'=>img_picto('', 'email').'&ensp;'.$langs->trans("SendByMail"),
 	);
-	if ($user->rights->propal->cloturer) {
-		$arrayofmassactions['presign']=$langs->trans("Sign");
-		$arrayofmassactions['nopresign']=$langs->trans("NoSign");
-		$arrayofmassactions['setbilled'] = $langs->trans("ClassifyBilled");
+	if ($permissiontovalidate) {
+		$arrayofmassactions['prevalidate']=img_picto('', 'check').'&ensp;'.$langs->trans("Validate");
 	}
-	if ($user->rights->propal->supprimer) {
-		$arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+	if ($permissiontoclose) {
+		$arrayofmassactions['presign']=img_picto('', 'propal').'&ensp;'.$langs->trans("Sign");
+		$arrayofmassactions['nopresign']=img_picto('', 'propal').'&ensp;'.$langs->trans("NoSign");
+		$arrayofmassactions['setbilled'] =img_picto('', 'bill').'&ensp;'.$langs->trans("ClassifyBilled");
+	}
+	if ($permissiontodelete) {
+		$arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.img_picto('', 'fa-trash').$langs->trans("Delete");
 	}
 
 	if (in_array($massaction, array('presend', 'predelete', 'closed'))) {
