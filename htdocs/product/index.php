@@ -88,8 +88,7 @@ print load_fiche_titre($transAreaType, $linkback, 'product');
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This may be
-	is useless due to the global search combo
+if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This may be is useless due to the global search combo
 	// Search contract
 	if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($user->rights->produit->lire || $user->rights->service->lire)) {
 		$listofsearchfields['search_product'] = array('text'=>'ProductOrService');
