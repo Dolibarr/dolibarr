@@ -2126,7 +2126,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					|| ($object->status_batch == '2' && $conf->global->PRODUCTBATCH_SN_ADDON == 'mod_sn_advanced' && $conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS))) {
 						print '<tr><td>'.$langs->trans("ManageLotMask").'</td><td colspan="2">';
 						print $object->batch_mask;
-						print '</td></tr>';	
+						print '</td></tr>';
 					}
 				}
 			}
