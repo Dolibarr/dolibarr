@@ -728,7 +728,7 @@ class ConferenceOrBooth extends ActionComm
 	 *
 	 * 	@return array|int		array of lines if OK, <0 if KO
 	 */
-	public function getLinesArray()
+	/*public function getLinesArray()
 	{
 		$this->lines = array();
 
@@ -743,7 +743,7 @@ class ConferenceOrBooth extends ActionComm
 			$this->lines = $result;
 			return $this->lines;
 		}
-	}
+	}*/
 
 	/**
 	 *  Create a document onto disk according to template module.

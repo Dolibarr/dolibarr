@@ -60,7 +60,7 @@ $arrayofparameters = array(
 	'EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT'=>array('type'=>'emailtemplate:eventorganization_send', 'enabled'=>1),
 	'EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER'=>array('type'=>'emailtemplate:eventorganization_send', 'enabled'=>1),
 	'EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES'=>array('type'=>'emailtemplate:eventorganization_send', 'enabled'=>1),
-    'EVENTORGANIZATION_SECUREKEY'=>array('type'=>'securekey', 'enabled'=>1),
+		'EVENTORGANIZATION_SECUREKEY'=>array('type'=>'securekey', 'enabled'=>1),
 );
 
 $error = 0;
@@ -74,7 +74,6 @@ $setupnotempty = 0;
 if ((float) DOL_VERSION >= 6) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 }
-
 
 if ($action == 'updateMask') {
 	$maskconstorder = GETPOST('maskconstorder', 'alpha');
@@ -197,6 +196,7 @@ print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, 'even
 
 // Setup page goes here
 echo '<span class="opacitymedium">'.$langs->trans("EventOrganizationSetupPage").'</span><br><br>';
+
 
 if ($action == 'edit') {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';

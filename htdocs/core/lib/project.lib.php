@@ -204,7 +204,7 @@ function project_prepare_head(Project $project)
 		$h++;
 	}
 
-	if ($conf->eventorganization->enabled) {
+	if ($conf->eventorganization->enabled && !empty($project->usage_organize_event)) {
 		$langs->load('eventorganization');
 		$head[$h][0] = DOL_URL_ROOT . '/eventorganization/conferenceorbooth_list.php?projectid=' . $project->id;
 		$head[$h][1] = $langs->trans("ConferenceOrBoothTab");
