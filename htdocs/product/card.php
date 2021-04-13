@@ -307,9 +307,7 @@ if (empty($reshook)) {
 			$object->status             	 = GETPOST('statut');
 			$object->status_buy            = GETPOST('statut_buy');
 			$object->status_batch = GETPOST('status_batch');
-			if ($object->status_batch !== 0) {
-				$object->batch_mask = GETPOST('batch_mask');
-			} else $object->batch_mask = '';
+			$object->batch_mask = GETPOST('batch_mask');
 
 			$object->barcode_type          = GETPOST('fk_barcode_type');
 			$object->barcode = GETPOST('barcode');
@@ -478,9 +476,7 @@ if (empty($reshook)) {
 				$object->status                 = GETPOST('statut', 'int');
 				$object->status_buy             = GETPOST('statut_buy', 'int');
 				$object->status_batch = GETPOST('status_batch', 'aZ09');
-				if ($object->status_batch !== 0) {
-					$object->batch_mask = GETPOST('batch_mask', 'alpha');
-				} else $object->batch_mask = '';
+				$object->batch_mask = GETPOST('batch_mask', 'alpha');
 				$object->fk_default_warehouse   = GETPOST('fk_default_warehouse');
 				// removed from update view so GETPOST always empty
 				/*
@@ -1108,25 +1104,27 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '<td id="field_mask">';
 					print $form->textwithpicto('<input type="text" class="flat" size="24" name="batch_mask" id="batch_mask_input">', $tooltip, 1, 1);
 					print '</td>';
-				}
-				print '<script type="text/javascript">
-							$(document).ready(function() {
-								$("#field_mask, #mask_option").addClass("hideobject");
-								$("#status_batch").on("change", function () {
-									var optionSelected = $("option:selected", this);
-									var valueSelected = this.value;
+					print '<script type="text/javascript">
+								$(document).ready(function() {
 									$("#field_mask, #mask_option").addClass("hideobject");
-									if (this.value == 1) {
-										$("#field_mask, #mask_option").toggleClass("hideobject");
-										$("#batch_mask_input").val("'.$inherited_mask_lot.'");
-									}
-									if (this.value == 2) {
-										$("#field_mask, #mask_option").toggleClass("hideobject");
-										$("#batch_mask_input").val("'.$inherited_mask_sn.'");
-									}
+									$("#status_batch").on("change", function () {
+										var optionSelected = $("option:selected", this);
+										var valueSelected = this.value;
+										$("#field_mask, #mask_option").addClass("hideobject");
+										if (this.value == 1) {
+											$("#field_mask, #mask_option").toggleClass("hideobject");
+											$("#batch_mask_input").val("'.$inherited_mask_lot.'");
+										}
+										if (this.value == 2) {
+											$("#field_mask, #mask_option").toggleClass("hideobject");
+											$("#batch_mask_input").val("'.$inherited_mask_sn.'");
+										}
+									})
 								})
-							})
-						</script>';
+							</script>';
+				} else {
+					print '<td colspan="2"></td>';
+				}
 			}
 
 			print '</tr>';
@@ -1633,6 +1631,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 							})
 						})
 					</script>';
+					} else {
+						print '<td colspan="2"></td>';
 					}
 					print '</tr>';
 				}
