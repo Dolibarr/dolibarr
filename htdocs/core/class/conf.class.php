@@ -432,7 +432,7 @@ class Conf
 			$this->fournisseur->payment->dir_temp = $rootfortemp."/fournisseur/payment/temp"; // For backward compatibility
 
 			// To prepare split of module fournisseur into module 'fournisseur' + supplier_order + supplier_invoice
-			if (!empty($this->fournisseur->enabled) && empty($this->global->MAIN_USE_NEW_SUPPLIERMOD)) {  // By default, if module supplier is on, and we don't use yet the new modules, we set artificialy the module properties
+			if (!empty($this->fournisseur->enabled) && empty($this->global->MAIN_USE_NEW_SUPPLIERMOD)) {  // By default, if module supplier is on, and we don't use yet the new modules, we set artificially the module properties
 				$this->supplier_order = new stdClass();
 				$this->supplier_order->enabled = 1;
 				$this->supplier_order->multidir_output = array($this->entity => $rootfordata."/fournisseur/commande");

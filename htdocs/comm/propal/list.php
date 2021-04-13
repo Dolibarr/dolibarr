@@ -73,6 +73,7 @@ $search_societe_alias = GETPOST('search_societe_alias', 'alpha');
 $search_montant_ht = GETPOST('search_montant_ht', 'alpha');
 $search_montant_vat = GETPOST('search_montant_vat', 'alpha');
 $search_montant_ttc = GETPOST('search_montant_ttc', 'alpha');
+$search_warehouse = GETPOST('search_warehouse', 'alpha');
 $search_multicurrency_code = GETPOST('search_multicurrency_code', 'alpha');
 $search_multicurrency_tx = GETPOST('search_multicurrency_tx', 'alpha');
 $search_multicurrency_montant_ht = GETPOST('search_multicurrency_montant_ht', 'alpha');
@@ -254,6 +255,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_montant_ht = '';
 	$search_montant_vat = '';
 	$search_montant_ttc = '';
+	$search_warehouse = '';
 	$search_multicurrency_code = '';
 	$search_multicurrency_tx = '';
 	$search_multicurrency_montant_ht = '';
@@ -557,6 +559,9 @@ if ($search_montant_vat != '') {
 }
 if ($search_montant_ttc != '') {
 	$sql .= natural_search("p.total_ttc", $search_montant_ttc, 1);
+}
+if ($search_warehouse != '' && $search_warehouse > 0) {
+	$sql .= natural_search("p.fk_warehouse", $search_warehouse, 1);
 }
 if ($search_multicurrency_code != '') {
 	$sql .= ' AND p.multicurrency_code = "'.$db->escape($search_multicurrency_code).'"';
@@ -907,6 +912,14 @@ if ($resql) {
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('CustomersProspectsCategoriesShort');
 		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$formother->select_categories('customer', $search_categ_cus, 'search_categ_cus', 1, $tmptitle);
+		$moreforfilter .= '</div>';
+	}
+	if (!empty($conf->expedition->enabled) && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_PROPAL)) {
+		require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+		$formproduct = new FormProduct($db);
+		$moreforfilter .= '<div class="divsearchfield">';
+		$tmptitle = $langs->trans('Warehouse');
+		$moreforfilter .= img_picto($tmptitle, 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($search_warehouse, 'search_warehouse', '', $tmptitle, 0, 0, $tmptitle);
 		$moreforfilter .= '</div>';
 	}
 	$parameters = array();

@@ -111,7 +111,7 @@ $workflowcodes = array(
 	'WORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL'=>array(
 		'family'=>'classify_supplier_proposal',
 		'position'=>60,
-		'enabled'=>(!empty($conf->supplier_proposal->enabled) && (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))),
+		'enabled'=>(!empty($conf->supplier_proposal->enabled) && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))),
 		'picto'=>'propal',
 		'warning'=>''
 	),
@@ -120,7 +120,7 @@ $workflowcodes = array(
 	'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER'=>array(
 		'family'=>'classify_supplier_order',
 		'position'=>62,
-		'enabled'=>(!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)),
+		'enabled'=>((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)),
 		'picto'=>'order',
 		'warning'=>''
 	),
@@ -129,7 +129,7 @@ $workflowcodes = array(
 	'WORKFLOW_BILL_ON_RECEPTION'=>array(
 		'family'=>'classify_reception',
 		'position'=>64,
-		'enabled'=>(!empty($conf->reception->enabled) && (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))),
+		'enabled'=>(!empty($conf->reception->enabled) && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))),
 		'picto'=>'bill'
 	),
 

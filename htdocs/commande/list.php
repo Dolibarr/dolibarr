@@ -452,7 +452,7 @@ if ($search_total_vat != '') {
 if ($search_total_ttc != '') {
 	$sql .= natural_search('c.total_ttc', $search_total_ttc, 1);
 }
-if ($search_warehouse != '' && $search_warehouse != '-1') {
+if ($search_warehouse != '' && $search_warehouse > 0) {
 	$sql .= natural_search('c.fk_warehouse', $search_warehouse, 1);
 }
 if ($search_multicurrency_code != '') {
@@ -838,7 +838,7 @@ if ($resql) {
 		$formproduct = new FormProduct($db);
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('Warehouse');
-		$moreforfilter .= img_picto($tmptitle, 'warehouse', 'class="pictofixedwidth"').$formproduct->selectWarehouses($search_warehouse, 'search_warehouse', '', 1, 0, 0, $tmptitle);
+		$moreforfilter .= img_picto($tmptitle, 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($search_warehouse, 'search_warehouse', '', 1, 0, 0, $tmptitle);
 		$moreforfilter .= '</div>';
 	}
 	$parameters = array();
@@ -1631,7 +1631,7 @@ if ($resql) {
 										}
 										$stock_order = $generic_product->stats_commande['qty'];
 									}
-									if (!empty($conf->fournisseur->enabled)) {
+									if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled)) {
 										if (empty($productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_supplier'])) {
 											$generic_product->load_stats_commande_fournisseur(0, '3');
 											$productstat_cache[$generic_commande->lines[$lig]->fk_product]['stats_order_supplier'] = $generic_product->stats_commande_fournisseur['qty'];
@@ -1653,7 +1653,7 @@ if ($resql) {
 								} else {
 									$text_info .= '<span class="ok">'.$langs->trans('Available').'&nbsp;:&nbsp;'.$text_stock_reel.'</span>';
 								}
-								if (!empty($conf->fournisseur->enabled)) {
+								if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled)) {
 									$text_info .= '&nbsp;'.$langs->trans('SupplierOrder').'&nbsp;:&nbsp;'.$stock_order_supplier.'<br>';
 								} else {
 									$text_info .= '<br>';
