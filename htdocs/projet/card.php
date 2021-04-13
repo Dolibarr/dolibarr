@@ -617,8 +617,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 	{
 		print $form->selectarray('public', $array, GETPOSTISSET('public') ? GETPOST('public') : $object->public, 0, 0, 0, '', 0, 0, 0, '', '', 1);
 	}
-	else 
-	{
+	else {
 		print '<input type="hidden" name="public" id="public" value="'.(GETPOSTISSET('public') ? GETPOST('public') : $object->public).'">';
 
 		if ( (GETPOSTISSET('public') ? GETPOST('public') : $object->public)==0) print $langs->trans("PrivateProject");
@@ -902,8 +901,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 		{
 			print $form->selectarray('public', $array, $object->public, 0, 0, 0, '', 0, 0, 0, '', '', 1);
 		}
-		else 
-		{
+		else {
 			print '<input type="hidden" id="public" name="public" value="'.$object->public.'">';
 
 			if ($object->public==0) print $langs->trans("PrivateProject");
