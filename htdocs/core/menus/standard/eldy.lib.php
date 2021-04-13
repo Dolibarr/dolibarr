@@ -590,24 +590,29 @@ function print_start_menu_entry($idsel, $classname, $showmode)
  */
 function print_text_menu_entry($text, $showmode, $url, $id, $idsel, $classname, $atarget)
 {
-	global $langs;
+	global $conf, $langs;
 
+	//$conf->global->THEME_TOPMENU_DISABLE_TEXT=1;
 	if ($showmode == 1) {
 		print '<a class="tmenuimage" tabindex="-1" href="'.$url.'"'.($atarget ? ' target="'.$atarget.'"' : '').' title="'.dol_escape_htmltag($text).'">';
 		print '<div class="'.$id.' '.$idsel.' topmenuimage"><span class="'.$id.' tmenuimage" id="mainmenuspan_'.$idsel.'"></span></div>';
 		print '</a>';
-		print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($atarget ? ' target="'.$atarget.'"' : '').' title="'.dol_escape_htmltag($text).'">';
-		print '<span class="mainmenuaspan">';
-		print $text;
-		print '</span>';
-		print '</a>';
+		if (empty($conf->global->THEME_TOPMENU_DISABLE_TEXT)) {
+			print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($atarget ? ' target="'.$atarget.'"' : '').' title="'.dol_escape_htmltag($text).'">';
+			print '<span class="mainmenuaspan">';
+			print $text;
+			print '</span>';
+			print '</a>';
+		}
 	} elseif ($showmode == 2) {
 		print '<div class="'.$id.' '.$idsel.' topmenuimage tmenudisabled"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-		print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
-		print '<span class="mainmenuaspan">';
-		print $text;
-		print '</span>';
-		print '</a>';
+		if (empty($conf->global->THEME_TOPMENU_DISABLE_TEXT)) {
+			print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
+			print '<span class="mainmenuaspan">';
+			print $text;
+			print '</span>';
+			print '</a>';
+		}
 	}
 }
 

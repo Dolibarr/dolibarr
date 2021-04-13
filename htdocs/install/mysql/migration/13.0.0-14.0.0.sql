@@ -325,7 +325,7 @@ CREATE TABLE llx_eventorganization_conferenceorboothattendee(
     note_private text,
     date_creation datetime NOT NULL,
     tms timestamp,
-    fk_user_creat integer NOT NULL,
+    fk_user_creat integer,
     fk_user_modif integer,
     last_main_doc varchar(255),
     import_key varchar(14),
@@ -339,7 +339,6 @@ ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_evento
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_eventorganization_conferenceorboothattendee_fk_actioncomm (fk_actioncomm);
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD CONSTRAINT fx_eventorganization_conferenceorboothattendee_fk_actioncomm FOREIGN KEY (fk_actioncomm) REFERENCES llx_actioncomm(id);
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_eventorganization_conferenceorboothattendee_email (email);
-ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD CONSTRAINT llx_eventorganization_conferenceorboothattendee_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_eventorganization_conferenceorboothattendee_status (status);
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD UNIQUE INDEX uk_eventorganization_conferenceorboothattendee(fk_soc, fk_actioncomm, email);
 

@@ -108,40 +108,8 @@ print_barre_liste($form->textwithpicto($title, $tooltiphelp), 0, $_SERVER["PHP_S
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
+/* Show list of project today */
 
-if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This is useless due to the global search combo
-	// Search project
-	if (!empty($conf->projet->enabled) && $user->rights->projet->lire) {
-		$listofsearchfields['search_task'] = array('text'=>'Task');
-	}
-
-	if (count($listofsearchfields)) {
-		print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
-		print '<input type="hidden" name="token" value="'.newToken().'">';
-		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder nohover centpercent">';
-		$i = 0;
-		foreach ($listofsearchfields as $key => $value) {
-			if ($i == 0) {
-				print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-			}
-			print '<tr '.$bc[false].'>';
-			print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
-			if ($i == 0) {
-				print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
-			}
-			print '</tr>';
-			$i++;
-		}
-		print '</table>';
-		print '</div>';
-		print '</form>';
-		print '<br>';
-	}
-}
-
-
-/* Affichage de la liste des projets d'aujourd'hui */
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
