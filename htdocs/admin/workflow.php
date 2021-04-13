@@ -112,7 +112,7 @@ $workflowcodes = array(
 		'family'=>'classify_supplier_proposal',
 		'position'=>60,
 		'enabled'=>(!empty($conf->supplier_proposal->enabled) && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))),
-		'picto'=>'propal',
+		'picto'=>'supplier_proposal',
 		'warning'=>''
 	),
 
@@ -121,7 +121,7 @@ $workflowcodes = array(
 		'family'=>'classify_supplier_order',
 		'position'=>62,
 		'enabled'=>((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)),
-		'picto'=>'order',
+		'picto'=>'supplier_order',
 		'warning'=>''
 	),
 
@@ -130,7 +130,7 @@ $workflowcodes = array(
 		'family'=>'classify_reception',
 		'position'=>64,
 		'enabled'=>(!empty($conf->reception->enabled) && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))),
-		'picto'=>'bill'
+		'picto'=>'reception'
 	),
 
 	// Automatic classification shipping
@@ -229,7 +229,7 @@ foreach ($workflowcodes as $key => $params) {
 
 	print '<tr class="oddeven">';
 	print '<td>';
-	print img_object('', $params['picto']);
+	print img_object('', $params['picto'], 'class="pictofixedwidth"');
 	print ' '.$langs->trans('desc'.$key);
 
 	if (!empty($params['warning'])) {
