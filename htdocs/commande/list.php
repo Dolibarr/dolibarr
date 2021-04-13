@@ -452,7 +452,7 @@ if ($search_total_vat != '') {
 if ($search_total_ttc != '') {
 	$sql .= natural_search('c.total_ttc', $search_total_ttc, 1);
 }
-if ($search_warehouse != '' && $search_warehouse != '-1') {
+if ($search_warehouse != '' && $search_warehouse > 0) {
 	$sql .= natural_search('c.fk_warehouse', $search_warehouse, 1);
 }
 if ($search_multicurrency_code != '') {
@@ -838,7 +838,7 @@ if ($resql) {
 		$formproduct = new FormProduct($db);
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('Warehouse');
-		$moreforfilter .= img_picto($tmptitle, 'warehouse', 'class="pictofixedwidth"').$formproduct->selectWarehouses($search_warehouse, 'search_warehouse', '', $tmptitle);
+		$moreforfilter .= img_picto($tmptitle, 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($search_warehouse, 'search_warehouse', '', $tmptitle);
 		$moreforfilter .= '</div>';
 	}
 	$parameters = array();
