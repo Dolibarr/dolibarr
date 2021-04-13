@@ -836,7 +836,7 @@ if ($resql) {
 		$arrayofmassactions['setbilled'] =img_picto('', 'bill').'&ensp;'.$langs->trans("ClassifyBilled");
 	}
 	if ($permissiontodelete) {
-		$arrayofmassactions['predelete'] = img_picto('', 'delete').'&ensp;'.img_picto('', 'fa-trash').$langs->trans("Delete");
+		$arrayofmassactions['predelete'] = img_picto('', 'delete').'&ensp;'$langs->trans("Delete");
 	}
 
 	if (in_array($massaction, array('presend', 'predelete', 'closed'))) {
