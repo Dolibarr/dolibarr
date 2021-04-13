@@ -75,13 +75,24 @@ $error = 0;
 $backtopage = GETPOST('backtopage', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
-$key = 'DV3PH';
-$id = dol_decode(GETPOST('id'), $key);
 $email = GETPOST("email");
 
-// Securekey check
-$securekey = GETPOST('securekey', 'alpha');
-if ($securekey != $conf->global->EVENTORGANIZATION_SECUREKEY) {
+// Getting id from Post and decoding it
+$encodedid = GETPOST('id');
+$keyforid = 'DV3PH';
+$id = dol_decode($encodedid, $keyforid);
+
+// Getting 'securekey'.'id' from Post and decoding it
+$encodedsecurekeyandid = GETPOST('securekey', 'alpha');
+$keyforsecurekey = 'CGLOO';
+$securekeyandid = dol_decode($encodedsecurekeyandid, $keyforsecurekey);
+
+// Securekey decomposition into pure securekey and id added at the end
+$securekey = substr($securekeyandid, 0, strlen($securekeyandid)-strlen($id));
+$idgotfromsecurekey = substr($securekeyandid, -strlen($id), strlen($id));
+
+// We check if the securekey collected is OK and if the id collected is the same than the id in the securekey
+if ($securekey != $conf->global->EVENTORGANIZATION_SECUREKEY || $idgotfromsecurekey != $id) {
 	print $langs->trans('MissingOrBadSecureKey');
 	exit;
 }

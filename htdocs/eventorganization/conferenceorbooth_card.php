@@ -494,10 +494,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	//unset($object->fields['fk_project']);				// Hide field already shown in banner
 	//unset($object->fields['fk_soc']);					// Hide field already shown in banner
 	global $dolibarr_main_url_root;
-	$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_subscription.php?id=';
-	$key = 'DV3PH';
-	$link_subscription .= dol_encode($id, $key);
-	$link_subscription .= '&securekey='.urlencode($conf->global->EVENTORGANIZATION_SECUREKEY);
+	
+	$keyforid = 'DV3PH';
+	$encodedid = dol_encode($id, $keyforid);
+	$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_subscription.php?id='.$encodedid;
+	
+	$keyforsecurekey = 'CGLOO';
+	$encodedsecurekey = dol_encode($conf->global->EVENTORGANIZATION_SECUREKEY.$id, $keyforsecurekey);
+	$link_subscription .= '&securekey='.urlencode($encodedsecurekey);
+	
 	$object->fields['pubregister'] = array('type'=>'url', 'label'=>$langs->trans("PublicAttendeeSubscriptionPage"), 'enabled'=>'1', 'position'=>72, 'notnull'=>0, 'visible'=>1);
 	$object->pubregister = $link_subscription;
 	$keyforbreak='pubregister';
