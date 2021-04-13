@@ -51,6 +51,7 @@ $confirm = GETPOST('confirm', 'alpha');
 
 $chartofaccounts = GETPOST('chartofaccounts', 'int');
 
+$permissiontoadd = $user->rights->accounting->chartofaccount;
 $permissiontodelete = $user->rights->accounting->chartofaccount;
 
 // Security check
@@ -118,9 +119,11 @@ if (empty($reshook)) {
 	if (!empty($cancel)) {
 		$action = '';
 	}
+
 	$objectclass = 'AccountingAccount';
 	$uploaddir = $conf->accounting->multidir_output[$conf->entity];
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+
 	if ($action == "delete") {
 		$action = "";
 	}
@@ -136,7 +139,7 @@ if (empty($reshook)) {
 	}
 	if ((GETPOST('valid_change_chart', 'alpha') && GETPOST('chartofaccounts', 'int') > 0)	// explicit click on button 'Change and load' with js on
 		|| (GETPOST('chartofaccounts', 'int') > 0 && GETPOST('chartofaccounts', 'int') != $conf->global->CHARTOFACCOUNTS)) {	// a submit of form is done and chartofaccounts combo has been modified
-		if ($chartofaccounts > 0) {
+		if ($chartofaccounts > 0 && $permissiontoadd) {
 			// Get language code for this $chartofaccounts
 			$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'c_country as c, '.MAIN_DB_PREFIX.'accounting_system as a';
 			$sql .= ' WHERE c.rowid = a.fk_country AND a.rowid = '.(int) $chartofaccounts;
@@ -180,7 +183,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'disable') {
+	if ($action == 'disable' && $permissiontoadd) {
 		if ($accounting->fetch($id)) {
 			$mode = GETPOST('mode', 'int');
 			$result = $accounting->accountDeactivate($id, $mode);
@@ -190,7 +193,7 @@ if (empty($reshook)) {
 		if ($result < 0) {
 			setEventMessages($accounting->error, $accounting->errors, 'errors');
 		}
-	} elseif ($action == 'enable') {
+	} elseif ($action == 'enable' && $permissiontoadd) {
 		if ($accounting->fetch($id)) {
 			$mode = GETPOST('mode', 'int');
 			$result = $accounting->account_activate($id, $mode);
@@ -277,6 +280,7 @@ if (strlen(trim($search_pcgtype))) {
 	$sql .= natural_search("aa.pcg_type", $search_pcgtype);
 }
 $sql .= $db->order($sortfield, $sortorder);
+//print $sql;
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -454,7 +458,7 @@ if ($resql) {
 		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['aa.pcg_type']['checked'])) {
-		print_liste_field_titre($arrayfields['aa.pcg_type']['label'], $_SERVER["PHP_SELF"], 'aa.pcg_type', '', $param, '', $sortfield, $sortorder, '', $arrayfields['aa.pcg_type']['help'], 1);
+		print_liste_field_titre($arrayfields['aa.pcg_type']['label'], $_SERVER["PHP_SELF"], 'aa.pcg_type,aa.account_number', '', $param, '', $sortfield, $sortorder, '', $arrayfields['aa.pcg_type']['help'], 1);
 		$totalarray['nbfield']++;
 	}
 	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
