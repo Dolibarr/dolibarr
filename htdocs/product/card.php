@@ -309,8 +309,7 @@ if (empty($reshook)) {
 			$object->status_batch = GETPOST('status_batch');
 			if ($object->status_batch !== 0) {
 				$object->batch_mask = GETPOST('batch_mask');
-			}
-			else $object->batch_mask = '';
+			} else $object->batch_mask = '';
 
 			$object->barcode_type          = GETPOST('fk_barcode_type');
 			$object->barcode = GETPOST('barcode');
@@ -481,8 +480,7 @@ if (empty($reshook)) {
 				$object->status_batch = GETPOST('status_batch', 'aZ09');
 				if ($object->status_batch !== 0) {
 					$object->batch_mask = GETPOST('batch_mask', 'alpha');
-				}
-				else $object->batch_mask = '';
+				} else $object->batch_mask = '';
 				$object->fk_default_warehouse   = GETPOST('fk_default_warehouse');
 				// removed from update view so GETPOST always empty
 				/*
@@ -1132,7 +1130,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			print '</tr>';
-
 		}
 
 		$showbarcode = empty($conf->barcode->enabled) ? 0 : 1;
@@ -1609,11 +1606,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 							$mask = !is_empty($object->batch_mask) ? $object->batch_mask : $conf->global->SN_ADVANCED_MASK;
 						}
 						$inherited_mask_lot = $conf->global->LOT_ADVANCED_MASK;
-						$inherited_mask_sn = $conf->global->SN_ADVANCED_MASK;	
+						$inherited_mask_sn = $conf->global->SN_ADVANCED_MASK;
 						print '<td id="field_mask">';
 						print $form->textwithpicto('<input type="text" class="flat" size="24" name="batch_mask" id="batch_mask_input" value="'.$mask.'">', $tooltip, 1, 1);
 						print '</td>';
-					
+
 						print '<script type="text/javascript">
 						$(document).ready(function() {
 							$("#field_mask, #mask_option").addClass("hideobject");
@@ -2125,12 +2122,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td colspan="2">';
 					print $object->getLibStatut(0, 2);
 					print '</td></tr>';
-					if ((($object->status_batch == '1' && $conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_LOT_ADDON == 'mod_lot_advanced') 
+					if ((($object->status_batch == '1' &&$conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_LOT_ADDON == 'mod_lot_advanced')
 					|| ($object->status_batch == '2' && $conf->global->PRODUCTBATCH_SN_ADDON == 'mod_sn_advanced' && $conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS))) {
 						print '<tr><td>'.$langs->trans("ManageLotMask").'</td><td colspan="2">';
 						print $object->batch_mask;
-						print '</td></tr>';
-	
+						print '</td></tr>';	
 					}
 				}
 			}
