@@ -234,18 +234,19 @@ if($action == 'deleteline') {
             setEventMessage($expLine->errors, 'errors');
         }
     } else {
-        //TODO //Créer s'il existe pas
-//        $expLine->origin_line_id = $expLine->fk_origin_line;
-//        $expLine->entrepot_id = 0;
-//        $expLine->detail_batch[0] = new ExpeditionLineBatch($db);
-//        $expLine->detail_batch[0]->fk_origin_stock = 0;
-//        $expLine->detail_batch[0]->batch = '';
-//        $expLine->detail_batch[0]->entrepot_id = 0;
-//        $expLine->detail_batch[0]->qty = $expBatch->qty;
-//        if($object->create_line_batch($lineExp, $lineExp->array_options) < 0) {
-//            setEventMessages($object->error, $object->errors, 'errors');
-//            $error++;
-//        }
+        $expLine->fetch($expBatch->fk_expeditiondet);
+        //Create to define if not exists
+        $expLine->origin_line_id = $expLine->fk_origin_line;
+        $expLine->entrepot_id = 0;
+        $expLine->detail_batch[0] = new ExpeditionLineBatch($db);
+        $expLine->detail_batch[0]->fk_origin_stock = 0;
+        $expLine->detail_batch[0]->batch = '';
+        $expLine->detail_batch[0]->entrepot_id = 0;
+        $expLine->detail_batch[0]->qty = $expBatch->qty;
+        if($object->create_line_batch($expLine, $expLine->array_options) < 0) {
+            setEventMessages($object->error, $object->errors, 'errors');
+            $error++;
+        }
 
     }
 
