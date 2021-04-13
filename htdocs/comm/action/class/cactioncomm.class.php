@@ -201,10 +201,10 @@ class CActionComm
 						if ($obj->module == 'propal' && empty($conf->propal->enabled)  && empty($user->propale->lire)) {
 							$qualified = 0;
 						}
-						if ($obj->module == 'invoice_supplier' && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || empty($conf->supplier_invoice->enabled)) && empty($user->fournisseur->facture->lire)) {
+						if ($obj->module == 'invoice_supplier' && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && empty($user->fournisseur->facture->lire)) || (!empty($conf->supplier_invoice->enabled) && empty($user->supplier_invoice->lire)))) {
 							$qualified = 0;
 						}
-						if ($obj->module == 'order_supplier' && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || empty($conf->supplier_order->enabled)) && empty($user->fournisseur->commande->lire)) {
+						if ($obj->module == 'order_supplier' && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && empty($user->fournisseur->commande->lire)) || (empty($conf->supplier_order->enabled) && empty($user->supplier_order->lire)))) {
 							$qualified = 0;
 						}
 						if ($obj->module == 'shipping' && empty($conf->expedition->enabled) && empty($user->expedition->lire)) {

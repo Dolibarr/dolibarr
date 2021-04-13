@@ -1265,42 +1265,6 @@ if (!$error && $massaction == 'validate' && $permissiontoadd) {
 	}
 }
 
-// Closed records
-if (!$error && $massaction == 'closed' && $objectclass == "Propal" && $permissiontoclose) {
-	$db->begin();
-
-	$objecttmp = new $objectclass($db);
-	$nbok = 0;
-	foreach ($toselect as $toselectid) {
-		$result = $objecttmp->fetch($toselectid);
-		if ($result > 0) {
-			$result = $objecttmp->cloture($user, 3);
-			if ($result <= 0) {
-				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
-				$error++;
-				break;
-			} else {
-				$nbok++;
-			}
-		} else {
-			setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
-			$error++;
-			break;
-		}
-	}
-
-	if (!$error) {
-		if ($nbok > 1) {
-			setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
-		} else {
-			setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
-		}
-		$db->commit();
-	} else {
-		$db->rollback();
-	}
-}
-
 //var_dump($_POST);var_dump($massaction);exit;
 
 // Delete record from mass action (massaction = 'delete' for direct delete, action/confirm='delete'/'yes' with a confirmation step before)

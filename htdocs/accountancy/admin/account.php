@@ -97,7 +97,6 @@ if ($conf->global->MAIN_FEATURES_LEVEL < 2) {
 $accounting = new AccountingAccount($db);
 
 
-
 /*
  * Actions
  */

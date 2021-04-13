@@ -879,7 +879,7 @@ class pdf_squille extends ModelePdfReception
 		$origin_id = $object->origin_id;
 
 		// TODO move to external function
-		if (!empty($conf->fournisseur->enabled)) {     // commonly $origin='commande'
+		if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled)) {     // commonly $origin='commande'
 			$outputlangs->load('orders');
 
 			$classname = 'CommandeFournisseur';

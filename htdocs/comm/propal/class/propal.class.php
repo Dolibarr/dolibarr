@@ -119,6 +119,13 @@ class Propal extends CommonObject
 	public $statut;
 
 	/**
+	 * Status of the quote
+	 * @var int
+	 * @see Propal::STATUS_DRAFT, Propal::STATUS_VALIDATED, Propal::STATUS_SIGNED, Propal::STATUS_NOTSIGNED, Propal::STATUS_BILLED
+	 */
+	public $status;
+
+	/**
 	 * @deprecated
 	 * @see $date_creation
 	 */
@@ -2502,15 +2509,15 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *	Sign the commercial proposal
+	 *	Close/set the commercial proposal to status signed or refused (fill also date signature)
 	 *
 	 *	@param      User	$user		Object user that close
-	 *	@param      int		$statut		Status
+	 *	@param      int		$status		Status (self::STATUS_BILLED or self::STATUS_REFUSED)
 	 *	@param      string	$note		Complete private note with this note
 	 *  @param		int		$notrigger	1=Does not execute triggers, 0=Execute triggers
 	 *	@return     int         		<0 if KO, >0 if OK
 	 */
-	public function signature($user, $statut, $note = '', $notrigger = 0)
+	public function closeProposal($user, $status, $note = '', $notrigger = 0)
 	{
 		global $langs,$conf;
 
@@ -2522,15 +2529,16 @@ class Propal extends CommonObject
 		$newprivatenote = dol_concatdesc($this->note_private, $note);
 
 		$sql  = "UPDATE ".MAIN_DB_PREFIX."propal";
-		$sql .= " SET fk_statut = ".$statut.", note_private = '".$this->db->escape($newprivatenote)."', date_signature='".$this->db->idate($now)."', fk_user_signature=".$user->id;
+		$sql .= " SET fk_statut = ".((int) $status).", note_private = '".$this->db->escape($newprivatenote)."', date_signature='".$this->db->idate($now)."', fk_user_signature=".$user->id;
 		$sql .= " WHERE rowid = ".$this->id;
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
+			// Status self::STATUS_REFUSED by default
 			$modelpdf = $conf->global->PROPALE_ADDON_PDF_ODT_CLOSED ? $conf->global->PROPALE_ADDON_PDF_ODT_CLOSED : $this->model_pdf;
 			$trigger_name = 'PROPAL_CLOSE_REFUSED';
 
-			if ($statut == self::STATUS_SIGNED) {
+			if ($status == self::STATUS_SIGNED) {	// Status self::STATUS_SIGNED
 				$trigger_name = 'PROPAL_CLOSE_SIGNED';
 				$modelpdf = $conf->global->PROPALE_ADDON_PDF_ODT_TOBILL ? $conf->global->PROPALE_ADDON_PDF_ODT_TOBILL:$this->model_pdf;
 
@@ -2561,7 +2569,8 @@ class Propal extends CommonObject
 
 			if (!$error) {
 				$this->oldcopy= clone $this;
-				$this->statut = $statut;
+				$this->statut = $status;
+				$this->status = $status;
 				$this->date_signature = $now;
 				$this->note_private = $newprivatenote;
 			}
@@ -2580,101 +2589,8 @@ class Propal extends CommonObject
 				return 1;
 			} else {
 				$this->statut = $this->oldcopy->statut;
+				$this->status = $this->oldcopy->statut;
 				$this->date_signature = $this->oldcopy->date_signature;
-				$this->note_private = $this->oldcopy->note_private;
-
-				$this->db->rollback();
-				return -1;
-			}
-		} else {
-			$this->error=$this->db->lasterror();
-			$this->db->rollback();
-			return -1;
-		}
-	}
-
-	/**
-	 *	Close the commercial proposal
-	 *
-	 *	@param      User	$user		Object user that close
-	 *	@param      int		$status		Status
-	 *	@param      string	$note		Complete private note with this note
-	 *  @param		int		$notrigger	1=Does not execute triggers, 0=Execute triggers
-	 *	@return     int         		<0 if KO, >0 if OK
-	 */
-	public function cloture($user, $status, $note = "", $notrigger = 0)
-	{
-		global $langs, $conf;
-
-		$error = 0;
-		$now = dol_now();
-
-		$this->db->begin();
-
-		$newprivatenote = dol_concatdesc($this->note_private, $note);
-
-		$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
-		$sql .= " SET fk_statut = ".((int) $status).", note_private = '".$this->db->escape($newprivatenote)."', date_cloture='".$this->db->idate($now)."', fk_user_cloture=".$user->id;
-		$sql .= " WHERE rowid = ".$this->id;
-
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$modelpdf = $conf->global->PROPALE_ADDON_PDF_ODT_CLOSED ? $conf->global->PROPALE_ADDON_PDF_ODT_CLOSED : $this->model_pdf;
-			$triggerName = 'PROPAL_CLOSE_REFUSED';
-
-			if ($status == self::STATUS_SIGNED) {
-				$triggerName = 'PROPAL_CLOSE_SIGNED';
-				$modelpdf = $conf->global->PROPALE_ADDON_PDF_ODT_TOBILL ? $conf->global->PROPALE_ADDON_PDF_ODT_TOBILL : $this->model_pdf;
-
-				// The connected company is classified as a client
-				$soc = new Societe($this->db);
-				$soc->id = $this->socid;
-				$result = $soc->set_as_client();
-
-				if ($result < 0) {
-					$this->error = $this->db->lasterror();
-					$this->db->rollback();
-					return -2;
-				}
-			}
-			if ($status == self::STATUS_BILLED) {	// ->cloture() can also be called when we set it to billed, after setting it to signed
-				$triggerName = 'PROPAL_CLASSIFY_BILLED';
-			}
-
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-				// Define output language
-				$outputlangs = $langs;
-				if (!empty($conf->global->MAIN_MULTILANGS)) {
-					$outputlangs = new Translate("", $conf);
-					$newlang = (GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $this->thirdparty->default_lang);
-					$outputlangs->setDefaultLang($newlang);
-				}
-				//$ret=$object->fetch($id);    // Reload to get new records
-				$this->generateDocument($modelpdf, $outputlangs);
-			}
-
-			if (!$error) {
-				$this->oldcopy = clone $this;
-				$this->statut = $status;
-				$this->date_cloture = $now;
-				$this->note_private = $newprivatenote;
-			}
-
-			if (!$notrigger && empty($error)) {
-				// Call trigger
-				$result = $this->call_trigger($triggerName, $user);
-				if ($result < 0) {
-					$error++;
-				}
-				// End call triggers
-			}
-
-			if (!$error) {
-				$this->db->commit();
-				return 1;
-			} else {
-				$this->statut = $this->oldcopy->statut;
-				$this->date_cloture = $this->oldcopy->date_cloture;
 				$this->note_private = $this->oldcopy->note_private;
 
 				$this->db->rollback();
@@ -2688,36 +2604,66 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *	Class invoiced the Propal
+	 *	Classify the proposal to status Billed
 	 *
 	 *	@param  	User	$user    	Object user
 	 *  @param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *	@return     int     			<0 si ko, >0 si ok
+	 *	@param      string	$note		Complete private note with this note
+	 *	@return     int     			<0 if KO, 0 = nothing done, >0 if OK
 	 */
-	public function classifyBilled(User $user, $notrigger = 0)
+	public function classifyBilled(User $user, $notrigger = 0, $note = '')
 	{
+		global $conf, $langs;
+
 		$error = 0;
+
+		$now = dol_now();
+		$num = 0;
+
+		$triggerName = 'PROPAL_CLASSIFY_BILLED';
 
 		$this->db->begin();
 
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'propal SET fk_statut = '.self::STATUS_BILLED;
-		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > '.self::STATUS_DRAFT;
+		$newprivatenote = dol_concatdesc($this->note_private, $note);
+
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'propal SET fk_statut = '.self::STATUS_BILLED.", ";
+		$sql .= " note_private = '".$this->db->escape($newprivatenote)."', date_cloture='".$this->db->idate($now)."', fk_user_cloture=".$user->id;
+		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut = '.self::STATUS_SIGNED;
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$this->errors[] = $this->db->error();
 			$error++;
+		} else {
+			$num = $this->db->affected_rows($resql);
 		}
 
 		if (!$error) {
+			$modelpdf = $conf->global->PROPALE_ADDON_PDF_ODT_CLOSED ? $conf->global->PROPALE_ADDON_PDF_ODT_CLOSED : $this->model_pdf;
+
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+				// Define output language
+				$outputlangs = $langs;
+				if (!empty($conf->global->MAIN_MULTILANGS)) {
+					$outputlangs = new Translate("", $conf);
+					$newlang = (GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $this->thirdparty->default_lang);
+					$outputlangs->setDefaultLang($newlang);
+				}
+
+				//$ret=$object->fetch($id);    // Reload to get new records
+				$this->generateDocument($modelpdf, $outputlangs);
+			}
+
 			$this->oldcopy = clone $this;
 			$this->statut = self::STATUS_BILLED;
+			$this->date_cloture = $now;
+			$this->note_private = $newprivatenote;
 		}
 
 		if (!$notrigger && empty($error)) {
 			// Call trigger
-			$result = $this->call_trigger('PROPAL_MODIFY', $user);
+			$result = $this->call_trigger($triggerName, $user);
 			if ($result < 0) {
 				$error++;
 			}
@@ -2726,7 +2672,7 @@ class Propal extends CommonObject
 
 		if (!$error) {
 			$this->db->commit();
-			return 1;
+			return $num;
 		} else {
 			foreach ($this->errors as $errmsg) {
 				dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
@@ -2922,7 +2868,7 @@ class Propal extends CommonObject
 		}
 
 		if (count($linkedInvoices) > 0) {
-			$sql = "SELECT rowid as facid, ref, total, datef as df, fk_user_author, fk_statut, paye";
+			$sql = "SELECT rowid as facid, ref, total_ht as total, datef as df, fk_user_author, fk_statut, paye";
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture";
 			$sql .= " WHERE rowid IN (".$this->db->sanitize(implode(',', $linkedInvoices)).")";
 
