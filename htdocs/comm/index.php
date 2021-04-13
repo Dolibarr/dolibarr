@@ -984,6 +984,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 				$orderstatic->id = $obj->commandeid;
 				$orderstatic->ref = $obj->ref;
 				$orderstatic->ref_client = $obj->ref_client;
+				$orderstatic->statut = $obj->fk_statut;
 				$orderstatic->total_ht = $obj->total_ht;
 				$orderstatic->total_tva = $obj->total_tva;
 				$orderstatic->total_ttc = $obj->total_ttc;

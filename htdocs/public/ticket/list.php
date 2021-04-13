@@ -55,7 +55,7 @@ $langs->loadLangs(array("companies", "other", "ticket"));
 // Get parameters
 $track_id = GETPOST('track_id', 'alpha');
 $action = GETPOST('action', 'aZ09');
-$email = GETPOST('email', 'alpha');
+$email = strtolower(GETPOST('email', 'alpha'));
 
 if (GETPOST('btn_view_ticket_list')) {
 	unset($_SESSION['track_id_customer']);
@@ -65,7 +65,7 @@ if (isset($_SESSION['track_id_customer'])) {
 	$track_id = $_SESSION['track_id_customer'];
 }
 if (isset($_SESSION['email_customer'])) {
-	$email = $_SESSION['email_customer'];
+	$email = strtolower($_SESSION['email_customer']);
 }
 
 $object = new Ticket($db);
@@ -105,7 +105,7 @@ if ($action == "view_ticketlist") {
 			// vérifie si l'adresse email est bien dans les contacts du ticket
 			$contacts = $object->liste_contact(-1, 'external');
 			foreach ($contacts as $contact) {
-				if ($contact['email'] == $email) {
+				if (strtolower($contact['email']) == $email) {
 					$display_ticket_list = true;
 					$_SESSION['email_customer'] = $email;
 					$_SESSION['track_id_customer'] = $track_id;
@@ -116,7 +116,7 @@ if ($action == "view_ticketlist") {
 			}
 			if ($object->fk_soc > 0) {
 				$object->fetch_thirdparty();
-				if ($email == $object->thirdparty->email) {
+				if ($email == strtolower($object->thirdparty->email)) {
 					$display_ticket_list = true;
 					$_SESSION['email_customer'] = $email;
 					$_SESSION['track_id_customer'] = $track_id;
@@ -125,14 +125,14 @@ if ($action == "view_ticketlist") {
 			if ($object->fk_user_create > 0) {
 				$tmpuser = new User($db);
 				$tmpuser->fetch($object->fk_user_create);
-				if ($email == $tmpuser->email) {
+				if ($email == strtolower($tmpuser->email)) {
 					$display_ticket_list = true;
 					$_SESSION['email_customer'] = $email;
 					$_SESSION['track_id_customer'] = $track_id;
 				}
 			}
 
-			$emailorigin = CMailFile::getValidAddress($object->origin_email, 2);
+			$emailorigin = strtolower(CMailFile::getValidAddress($object->origin_email, 2));
 			if ($email == $emailorigin) {
 				$display_ticket_list = true;
 				$_SESSION['email_customer'] = $email;

@@ -448,10 +448,26 @@ if ($object->id > 0) {
 			 print '<a href="#" class="butAction">'.$langs->trans('UpdateByScaningLot').'</a>';
 			 }*/
 			if (!empty($conf->barcode->enabled) || !empty($conf->productbatch->enabled)) {
-				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=updatebyscaning" class="">'.$langs->trans("UpdateByScaning").'</a>';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=updatebyscaning" class="">'.img_picto('', 'barcode', 'class="paddingrightonly"').$langs->trans("UpdateByScaning").'</a>';
 			}
 		} else {
-			print '<a class="classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Save").'</a>'."\n";
+			print '<a class="classfortooltip marginrightonly paddingright marginleftonly paddingleft" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Save").'</a>'."\n";
+		}
+		if ($permissiontoadd && $conf->use_javascript_ajax) {
+			print '<a id="fillwithexpected" class="marginrightonly paddingright marginleftonly paddingleft" href="#">'.img_picto('', 'autofill', 'class="paddingrightonly"').$langs->trans('AutofillWithExpected').'</a>';
+
+			print '<script>';
+			print '$( document ).ready(function() {';
+			print ' $("#fillwithexpected").on("click",function fillWithExpected(){
+					  $(".expectedqty").each(function(){
+						var object = $(this)[0];
+						var objecttofill = $("#"+object.id+"_input")[0];
+						objecttofill.value = object.innerText;
+						})
+						console.log("Values filled");
+			         });';
+			print '});';
+			print '</script>';
 		}
 		print '<br>';
 		print '<br>';
@@ -601,13 +617,13 @@ if ($object->id > 0) {
 				print '</td>';
 			}
 
-			print '<td class="right">';
+			print '<td class="right expectedqty" id="id_'.$obj->rowid.'">';
 			print $obj->qty_stock;
 			print '</td>';
 			print '<td class="center">';
 			if ($object->status == $object::STATUS_VALIDATED) {
 				$qty_view = GETPOST("id_".$obj->rowid) ? GETPOST("id_".$obj->rowid) : $obj->qty_view;
-				print '<input type="text" class="maxwidth75 right" name="id_'.$obj->rowid.'" value="'.$qty_view.'">';
+				print '<input type="text" class="maxwidth75 right" name="id_'.$obj->rowid.'" id="id_'.$obj->rowid.'_input" value="'.$qty_view.'">';
 				print '</td>';
 				print '<td class="right">';
 				print '<a class="reposition" href="'.DOL_URL_ROOT.'/product/inventory/inventory.php?id='.$object->id.'&lineid='.$obj->rowid.'&action=deleteline&token='.newToken().'">'.img_delete().'</a>';

@@ -372,3 +372,5 @@ insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) v
 
 ALTER TABLE llx_facture_fourn ADD COLUMN date_closing datetime DEFAULT NULL after date_valid;
 ALTER TABLE llx_facture_fourn ADD COLUMN fk_user_closing integer DEFAULT NULL after fk_user_valid;
+
+ALTER TABLE llx_entrepot ADD COLUMN fk_project INTEGER DEFAULT NULL AFTER entity; -- project associated to warehouse if any
