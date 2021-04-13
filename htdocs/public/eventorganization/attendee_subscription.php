@@ -361,7 +361,7 @@ print ' / ';
 print $formcompany->select_ziptown(GETPOST('town'), 'town', array('zipcode', 'selectcountry_id', 'state_id'), 0, 1);
 print '</td></tr>';
 // Country
-print '<tr><td>'.$langs->trans('Country').'<FONT COLOR="red">*</FONT>'.'</td><td>';
+print '<tr><td>'.$langs->trans('Country').'<FONT COLOR="red">*</FONT></td><td>';
 $country_id = GETPOST('country_id');
 if (!$country_id && !empty($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE)) {
 	$country_id = getCountry($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE, 2, $db, $langs);
