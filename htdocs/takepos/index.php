@@ -486,7 +486,8 @@ function FreeZone() {
 
 function TakeposOrderNotes() {
 	console.log("Open box to order notes");
-	$.colorbox({href:"freezone.php?action=addnote&place="+place+"&idline="+selectedline, onClosed: function () { Refresh(); },width:"80%", height:"250px", transition:"none", iframe:"true", title:"<?php echo $langs->trans("OrderNotes"); ?>"});
+	ModalBox('ModalNote');
+	$("#textinput").focus();
 }
 
 function Refresh() {
@@ -920,6 +921,20 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 </div>
 </div>
 
+<!-- Modal Note -->
+<div id="ModalNote" class="modal">
+	<div class="modal-content">
+		<div class="modal-header">
+		<span class="close" href="#" onclick="document.getElementById('ModalNote').style.display = 'none';">&times;</span>
+		<h3><?php print $langs->trans("invoiceAvoirWithLines"); ?></h3>
+	</div>
+	<div class="modal-body">
+		<input type="text" class="block" id="textinput">
+		<button type="button" class="block" onclick="SetNote(); document.getElementById('ModalNote').style.display = 'none';">OK</button>
+	</div>
+</div>
+</div>
+
 	<div class="row1<?php if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 		print 'withhead';
 					} ?>">
@@ -1031,7 +1046,7 @@ if ($conf->global->TAKEPOS_BAR_RESTAURANT) {
 		}
 	}
 	if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector" && $conf->global->TAKEPOS_ORDER_NOTES == 1) {
-		$menus[$r++] = array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("OrderNotes").'</div>', 'action'=>'TakeposOrderNotes();');
+		$menus[$r++] = array('title'=>'<span class="fa fa-sticky-note paddingrightonly"></span><div class="trunc">'.$langs->trans("OrderNotes").'</div>', 'action'=>'TakeposOrderNotes();');
 	}
 	if ($conf->global->TAKEPOS_SUPPLEMENTS) {
 		$menus[$r++] = array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("ProductSupplements").'</div>', 'action'=>'LoadProducts(\'supplements\');');
