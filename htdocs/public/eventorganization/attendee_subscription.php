@@ -187,12 +187,9 @@ if ($reshook < 0) {
 if (empty($reshook) && $action == 'add') {
 	$error = 0;
 
-
-
 	$urlback = '';
 
 	$db->begin();
-
 
 	if (!GETPOST("email")) {
 		$error++;
@@ -223,7 +220,12 @@ if (empty($reshook) && $action == 'add') {
 			$readythirdparty = -1;
 		} elseif ($resultfetchthirdparty==0) {
 			// creation of a new thirdparty
-		    $thirdparty->name        = GETPOST("societe");
+		    if(!empty(GETPOST("societe"))){
+		        $thirdparty->name        = GETPOST("societe");
+		    } else {
+		        $thirdparty->name        = $email;
+		    }
+		    
 			$thirdparty->address     = GETPOST("address");
 			$thirdparty->zip         = GETPOST("zipcode");
 			$thirdparty->town        = GETPOST("town");
@@ -324,8 +326,8 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="newmember">'.
 print '<input type="hidden" name="token" value="'.newToken().'" / >';
 print '<input type="hidden" name="entity" value="'.$entity.'" />';
 print '<input type="hidden" name="action" value="add" />';
-print '<input type="hidden" name="id" value="'.dol_encode($id, $key).'" />';
-print '<input type="hidden" name="securekey" value="'.$securekey.'" />';
+print '<input type="hidden" name="id" value="'.$encodedid.'" />';
+print '<input type="hidden" name="securekey" value="'.$encodedsecurekeyandid.'" />';
 
 print '<br>';
 
