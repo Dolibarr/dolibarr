@@ -118,21 +118,21 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $arrayfields = array();
 /*$arrayfields=array(
-	// Project
-	'p.opp_amount'=>array('label'=>$langs->trans("OpportunityAmountShort"), 'checked'=>0, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES?1:0), 'position'=>103),
-	'p.fk_opp_status'=>array('label'=>$langs->trans("OpportunityStatusShort"), 'checked'=>0, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES?1:0), 'position'=>104),
-	'p.opp_percent'=>array('label'=>$langs->trans("OpportunityProbabilityShort"), 'checked'=>0, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES?1:0), 'position'=>105),
-	'p.budget_amount'=>array('label'=>$langs->trans("Budget"), 'checked'=>0, 'position'=>110),
-	'p.usage_bill_time'=>array('label'=>$langs->trans("BillTimeShort"), 'checked'=>0, 'position'=>115),
-);*/
+ // Project
+ 'p.opp_amount'=>array('label'=>$langs->trans("OpportunityAmountShort"), 'checked'=>0, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES?1:0), 'position'=>103),
+ 'p.fk_opp_status'=>array('label'=>$langs->trans("OpportunityStatusShort"), 'checked'=>0, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES?1:0), 'position'=>104),
+ 'p.opp_percent'=>array('label'=>$langs->trans("OpportunityProbabilityShort"), 'checked'=>0, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES?1:0), 'position'=>105),
+ 'p.budget_amount'=>array('label'=>$langs->trans("Budget"), 'checked'=>0, 'position'=>110),
+ 'p.usage_bill_time'=>array('label'=>$langs->trans("BillTimeShort"), 'checked'=>0, 'position'=>115),
+ );*/
 $arrayfields['t.planned_workload'] = array('label'=>'PlannedWorkload', 'checked'=>1, 'enabled'=>1, 'position'=>5);
 $arrayfields['t.progress'] = array('label'=>'ProgressDeclared', 'checked'=>1, 'enabled'=>1, 'position'=>10);
 $arrayfields['timeconsumed'] = array('label'=>'TimeConsumed', 'checked'=>1, 'enabled'=>1, 'position'=>15);
 /*foreach($object->fields as $key => $val)
-{
-	// If $val['visible']==0, then we never show the field
-	if (! empty($val['visible'])) $arrayfields['t.'.$key]=array('label'=>$val['label'], 'checked'=>(($val['visible']<0)?0:1), 'enabled'=>$val['enabled'], 'position'=>$val['position']);
-}*/
+ {
+ // If $val['visible']==0, then we never show the field
+ if (! empty($val['visible'])) $arrayfields['t.'.$key]=array('label'=>$val['label'], 'checked'=>(($val['visible']<0)?0:1), 'enabled'=>$val['enabled'], 'position'=>$val['position']);
+ }*/
 // Definition of fields for list
 // Extra fields
 if (is_array($extrafields->attributes['projet_task']['label']) && count($extrafields->attributes['projet_task']['label']) > 0) {
@@ -333,9 +333,9 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('formfilterac
 			$param .= ($search_task_label ? '&search_task_label='.urlencode($search_task_label) : '');
 
 			/*$search_array_options=$search_array_options_project;
-			$search_options_pattern='search_options_';
-			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
-			*/
+			 $search_options_pattern='search_options_';
+			 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+			 */
 
 			$search_array_options = $search_array_options_task;
 			$search_options_pattern = 'search_task_options_';
@@ -394,11 +394,11 @@ if ($search_declared_progress) {
 $sql = &$morewherefilter;
 
 /*$search_array_options = $search_array_options_project;
-$extrafieldsobjectprefix='efp.';
-$search_options_pattern='search_options_';
-$extrafieldsobjectkey='projet';
-include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
-*/
+ $extrafieldsobjectprefix='efp.';
+ $search_options_pattern='search_options_';
+ $extrafieldsobjectkey='projet';
+ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
+ */
 $search_array_options = $search_array_options_task;
 $extrafieldsobjectprefix = 'efpt.';
 $search_options_pattern = 'search_task_options_';
@@ -540,14 +540,14 @@ $moreforfilter = '';
 
 // Filter on categories
 /*
-if (! empty($conf->categorie->enabled))
-{
-	require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
-	$moreforfilter.='<div class="divsearchfield">';
-	$moreforfilter.=$langs->trans('ProjectCategories'). ': ';
-	$moreforfilter.=$formother->select_categories('project', $search_categ, 'search_categ', 1, 1, 'maxwidth300');
-	$moreforfilter.='</div>';
-}*/
+ if (! empty($conf->categorie->enabled))
+ {
+ require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+ $moreforfilter.='<div class="divsearchfield">';
+ $moreforfilter.=$langs->trans('ProjectCategories'). ': ';
+ $moreforfilter.=$formother->select_categories('project', $search_categ, 'search_categ', 1, 1, 'maxwidth300');
+ $moreforfilter.='</div>';
+ }*/
 
 // If the user can view user other than himself
 $moreforfilter .= '<div class="divsearchfield">';
@@ -806,7 +806,7 @@ if (count($tasksarray) > 0) {
 
 	if ($conf->use_javascript_ajax) {
 		print '<tr class="liste_total">';
-        print '<td class="liste_total" colspan="'.($colspan + $addcolspan).'">';
+		print '<td class="liste_total" colspan="'.($colspan + $addcolspan).'">';
 		print $langs->trans("Total");
 		print '<span class="opacitymediumbycolor">  - '.$langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0).'</strong></span>';
 		print '</td>';
@@ -835,7 +835,7 @@ if (count($tasksarray) > 0) {
 			print '<td class="liste_total hide'.$idw.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').'" align="center"><div class="totalDay'.$idw.'">&nbsp;</div></td>';
 		}
 		print '<td class="liste_total center"><div class="totalDayAll">&nbsp;</div></td>';
-    	print '</tr>';
+		print '</tr>';
 	}
 } else {
 	print '<tr><td colspan="15"><span class="opacitymedium">'.$langs->trans("NoAssignedTasks").'</span></td></tr>';
