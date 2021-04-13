@@ -4718,11 +4718,20 @@ class Form
 						if (empty($morecss)) {
 							$morecss = 'minwidth100';
 						}
+
+						$show_empty = isset($input['select_show_empty']) ? $input['select_show_empty'] : 1;
+						$key_in_label = isset($input['select_key_in_label']) ? $input['select_key_in_label'] : 0;
+						$value_as_key = isset($input['select_value_as_key']) ? $input['select_value_as_key'] : 0;
+						$translate = isset($input['select_translate']) ? $input['select_translate'] : 0;
+						$maxlen = isset($input['select_maxlen']) ? $input['select_maxlen'] : 0;
+						$disabled = isset($input['select_disabled']) ? $input['select_disabled'] : 0;
+						$sort = isset($input['select_sort']) ? $input['select_sort'] : '';
+
 						$more .= '<div class="tagtr"><div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">';
 						if (!empty($input['label'])) {
 							$more .= $input['label'].'</div><div class="tagtd left">';
 						}
-						$more .= $this->selectarray($input['name'], $input['values'], $input['default'], 1, 0, 0, $moreattr, 0, 0, 0, '', $morecss);
+						$more .= $this->selectarray($input['name'], $input['values'], $input['default'], $show_empty, $key_in_label, $value_as_key, $moreattr, $translate, $maxlen, $disabled, $sort, $morecss);
 						$more .= '</div></div>'."\n";
 					} elseif ($input['type'] == 'checkbox') {
 						$more .= '<div class="tagtr">';

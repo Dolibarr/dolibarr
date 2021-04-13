@@ -179,7 +179,7 @@ if ($object->id > 0) {
 	$permission = ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer);
 	$permtoedit = ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer);
 	$param = '&id='.$object->id;
-	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {
 	header('Location: index.php');
 	exit;
