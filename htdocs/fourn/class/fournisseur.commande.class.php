@@ -1556,7 +1556,7 @@ class CommandeFournisseur extends CommonOrder
 	 *
 	 *  @param	    User	$user		User making the clone
 	 *	@param		int		$socid		Id of thirdparty
- 	 *  @param 		int		$notrigger  Disable all triggers
+	 *  @param 		int		$notrigger  Disable all triggers
 	 *	@return		int					New id of clone
 	 */
 	public function createFromClone(User $user, $socid = 0, $notrigger = 0)
