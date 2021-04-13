@@ -28,9 +28,6 @@
  */
 
 require '../main.inc.php';
-
-if (!$user->rights->societe->lire) accessforbidden();
-
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
@@ -60,6 +57,11 @@ if (isset($user->socid) && $user->socid > 0) {
 
 $max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 $now = dol_now();
+
+if (empty($user->rights->societe->lire)) {
+	accessforbidden();
+}
+
 
 /*
  * Actions
@@ -852,6 +854,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 				$orderstatic->id = $obj->commandeid;
 				$orderstatic->ref = $obj->ref;
 				$orderstatic->ref_client = $obj->ref_client;
+				$orderstatic->statut = $obj->fk_statut;
 				$orderstatic->total_ht = $obj->total_ht;
 				$orderstatic->total_tva = $obj->total_tva;
 				$orderstatic->total_ttc = $obj->total_ttc;
