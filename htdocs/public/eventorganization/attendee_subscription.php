@@ -306,7 +306,8 @@ if (empty($reshook) && $action == 'add') {
 		            $error++;
 		            $errmsg .= $facture->error;
 		        } else {
-		            $redirection = $dolibarr_main_url_root.'/public/payment/newpayment.php?amount='.$project->price_registration.'&source=conferenceattendeesubscription';
+		            $thirdparty->fetch('', '', '', '', '', '', '', '', '', '', $email);
+		            $redirection = $dolibarr_main_url_root.'/public/payment/newpayment.php?amount='.$project->price_registration.'&source=conferenceattendeesubscription&ref='.$thirdparty->ref;
 		            Header("Location: ".$redirection);
 		            exit;
 		        }
