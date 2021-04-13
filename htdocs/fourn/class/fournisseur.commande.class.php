@@ -1556,9 +1556,10 @@ class CommandeFournisseur extends CommonOrder
 	 *
 	 *  @param	    User	$user		User making the clone
 	 *	@param		int		$socid		Id of thirdparty
+ 	 *  @param 		int		$notrigger  Disable all triggers
 	 *	@return		int					New id of clone
 	 */
-	public function createFromClone(User $user, $socid = 0)
+	public function createFromClone(User $user, $socid = 0, $notrigger = 0)
 	{
 		global $conf, $user, $hookmanager;
 
@@ -1605,7 +1606,7 @@ class CommandeFournisseur extends CommonOrder
 
 		// Create clone
 		$this->context['createfromclone'] = 'createfromclone';
-		$result = $this->create($user);
+		$result = $this->create($user, $notrigger);
 		if ($result < 0) {
 			$error++;
 		}
