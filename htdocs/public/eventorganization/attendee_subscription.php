@@ -293,6 +293,33 @@ if (empty($reshook) && $action == 'add') {
 
 	if (!$error) {
 		$db->commit();
+	    global $dolibarr_main_url_root;
+	    if (!empty(floatval($project->price_registration))){
+	        $facture = new Facture($db);
+	        $facture->type = 0;
+	        $facture->socid = $thirdparty->id;
+	        $facture->paye = 0;
+	        //@todo price and taxes to add
+	        $tva = get_default_tva($mysoc, $thirdparty);
+	        $facture->date = dol_now();
+	        $resultfacture = $facture->create($user); 
+	        if ($resultfacture < 0){
+                $error++;
+	            $errmsg .= $facture->error;
+	        } else {
+	            $redirection = $dolibarr_main_url_root.'/public/payment/newpayment.php';
+	            Header("Location: ".$redirection);
+	            exit;
+	        }
+
+	    } else {
+	        // No price has been set
+	        // Validating the subscription
+	        $confattendee->setStatut(1);
+	        $redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php';
+	        Header("Location: ".$redirection);
+	        exit;
+		}
 		//Header("Location: ".$urlback);
 		//exit;
 	} else {
