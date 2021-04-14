@@ -2120,3 +2120,5 @@ AGENDA_EVENT_DEFAULT_STATUS=Default event status when creating a event from the 
 YouShouldDisablePHPFunctions=You should disable PHP functions
 IfCLINotRequiredYouShouldDisablePHPFunctions=Except if you need to run system commands (for the module Scheduled job, or to run the external command line Anti-virus for example), you shoud disable PHP functions
 NoWritableFilesFoundIntoRootDir=No writable files or directories of the common programs were found into your root directory (Good)
+RecommendedValueIs=Recommended: %s
+ARestrictedPath=A restricted path
