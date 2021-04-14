@@ -661,7 +661,7 @@ class Expedition extends CommonObject
 		global $langs;
 		if (! empty($this->lines)) {
 			foreach ($this->lines as $line) {
-				if (empty($line->entrepot_id > 0)) {
+				if (empty($line->entrepot_id > 0) && count($line->details_entrepot) <= 1) {
 					$this->error = $langs->trans('DefineBatch');
 					return true;
 				}
