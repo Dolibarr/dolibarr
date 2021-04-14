@@ -108,7 +108,7 @@ class Entrepot extends CommonObject
 	 */
 	public $fk_parent;
 
-	/** 
+	/**
 	 * @var int ID of project
 	 */
 	public $fk_project;

@@ -289,7 +289,7 @@ if ($action == 'create') {
 		print ' <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id.($fac_rec ? '&fac_rec='.$fac_rec : '')).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
 		print '</td></tr>';
 	}
-	
+
 	// Description
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 	// Editeur wysiwyg
@@ -771,7 +771,7 @@ if ($action == 'create') {
 				print ' <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id.($fac_rec ? '&fac_rec='.$fac_rec : '')).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
 				print '</td></tr>';
 			}
-	
+
 			// Description
 			print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 			// Editeur wysiwyg
