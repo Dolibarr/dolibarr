@@ -606,7 +606,7 @@ complete_dictionary_with_modules($taborder, $tabname, $tablib, $tabsql, $tabsqls
 
 // Defaut sortorder
 if (empty($sortfield)) {
-	$tmp1 = explode(',', $tabsqlsort[$id]);
+	$tmp1 = explode(',', empty($tabsqlsort[$id]) ? '' : $tabsqlsort[$id]);
 	$tmp2 = explode(' ', $tmp1[0]);
 	$sortfield = preg_replace('/^.*\./', '', $tmp2[0]);
 }
@@ -1778,7 +1778,7 @@ if ($id) {
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
 				//print_r($obj);
-				print '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';
+				print '<tr class="oddeven" id="rowid-'.(empty($obj->rowid) ? '' : $obj->rowid).'">';
 				if ($action == 'edit' && ($rowid == (!empty($obj->rowid) ? $obj->rowid : $obj->code))) {
 					$tmpaction = 'edit';
 					$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
@@ -2024,7 +2024,7 @@ if ($id) {
 					if (isset($obj->type) && in_array($obj->type, array('system', 'systemauto'))) {
 						$iserasable = 0;
 					}
-					if (in_array($obj->code, array('AC_OTH', 'AC_OTH_AUTO')) || in_array($obj->type, array('systemauto'))) {
+					if (in_array($obj->code, array('AC_OTH', 'AC_OTH_AUTO')) || in_array(empty($obj->type) ? '' : $obj->type, array('systemauto'))) {
 						$canbedisabled = 0; $canbedisabled = 0;
 					}
 					$canbemodified = $iserasable;
@@ -2042,7 +2042,7 @@ if ($id) {
 					if (empty($rowidcol) || in_array($id, array(6, 7, 8, 13, 17, 19, 27, 32))) {
 						$rowidcol = 'rowid';
 					}
-					$url = $_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.((!empty($obj->{$rowidcol}) || $obj->{$rowidcol} == '0') ? $obj->{$rowidcol}:(!empty($obj->code) ?urlencode($obj->code) : '')).'&code='.(!empty($obj->code) ?urlencode($obj->code) : '');
+					$url = $_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.((!empty($obj->{$rowidcol}) || $obj->{$rowidcol} == '0') ? $obj->{$rowidcol} : (!empty($obj->code) ? urlencode($obj->code) : '')).'&code='.(!empty($obj->code) ?urlencode($obj->code) : '');
 					if (!empty($param)) {
 						$url .= '&'.$param;
 					}
