@@ -510,10 +510,10 @@ if ($resql) {
 	$arrayofmassactions = array(
 		'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
 		'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
-		//'presend'=>img_picto('', 'email').$langs->trans("SendByMail"),
+		//'presend'=>img_picto('', 'email',, 'class="pictofixedwidth"').'&ensp;'.$langs->trans("SendByMail"),
 	);
 	if ($user->rights->supplier_proposal->supprimer) {
-		$arrayofmassactions['predelete'] = img_picto('', 'delete').$langs->trans("Delete");
+		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').'&ensp;'.$langs->trans("Delete");
 	}
 	if (in_array($massaction, array('presend', 'predelete'))) {
 		$arrayofmassactions = array();
