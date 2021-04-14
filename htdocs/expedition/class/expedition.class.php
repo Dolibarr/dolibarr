@@ -653,29 +653,30 @@ class Expedition extends CommonObject
 		}
 	}
 
-    /**
-     * @return boolean
-     */
-	public function hasToDefineBatchLine() {
-        global $langs;
-        if(! empty($this->lines)) {
-            foreach($this->lines as $line) {
-                if(empty($line->entrepot_id > 0)) {
-                    $this->error = $langs->trans('DefineBatch');
-                    return true;
-                }
-                if(count($line->details_entrepot) > 1) {
-                    foreach($line->details_entrepot as $detail_entrepot) {
-                        if(empty($detail_entrepot->entrepot_id)) {
-                            $this->error = $langs->trans('DefineBatch');
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-	    return false;
-    }
+	/**
+	 * @return boolean
+	 */
+	public function hasToDefineBatchLine()
+	{
+		global $langs;
+		if (! empty($this->lines)) {
+			foreach ($this->lines as $line) {
+				if (empty($line->entrepot_id > 0)) {
+					$this->error = $langs->trans('DefineBatch');
+					return true;
+				}
+				if (count($line->details_entrepot) > 1) {
+					foreach ($line->details_entrepot as $detail_entrepot) {
+						if (empty($detail_entrepot->entrepot_id)) {
+							$this->error = $langs->trans('DefineBatch');
+							return true;
+						}
+					}
+				}
+			}
+		}
+		return false;
+	}
 
 	/**
 	 *  Validate object and update stock if option enabled
@@ -2524,23 +2525,24 @@ class Expedition extends CommonObject
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
-    /**
-     * @param int fk_product
-     * @return ExpeditionLineBatch
-     */
-    public function getBatchToDefineLine($fk_product) {
-        foreach($this->lines as $line) {
-            if(! empty($line->detail_batch) && $line->product_tobatch) {
-                if(is_array($line->detail_batch)) {
-                    foreach($line->detail_batch as $dbatch) {
-                        if(empty($dbatch->fk_origin_stock) && $fk_product == $line->fk_product) {
-                            return $dbatch;
-                        }
-                    }
-                }
-            }
-        }
-    }
+	/**
+	 * @param int fk_product
+	 * @return ExpeditionLineBatch
+	 */
+	public function getBatchToDefineLine($fk_product)
+	{
+		foreach ($this->lines as $line) {
+			if (! empty($line->detail_batch) && $line->product_tobatch) {
+				if (is_array($line->detail_batch)) {
+					foreach ($line->detail_batch as $dbatch) {
+						if (empty($dbatch->fk_origin_stock) && $fk_product == $line->fk_product) {
+							return $dbatch;
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 

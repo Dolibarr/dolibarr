@@ -48,14 +48,14 @@ class ExpeditionLineBatch extends CommonObject
 	/**
 	 * @var array fields of object product
 	 */
-    public $fields = array(
-        'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
-        'batch' => array('type' => 'varchar(128)', 'enabled' => 1, 'position' => 10),
-        'fk_origin_stock' => array('type' => 'integer', 'enabled' => 1, 'visible' => 0, 'default' => 1, 'notnull' => 1, 'position' => 20),
-        'eatby' => array('type' => 'date', 'enabled' => 1, 'position' => 500),
-        'sellby' => array('type' => 'date', 'enabled' => 1, 'position' => 501),
-        'qty' => array('type' => 'double', 'enabled' => 1,  'position' => 502, 'notnull' => 1),
-        'fk_expeditiondet' => array('type' => 'integer', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 510, 'foreignkey' => 'llx_expeditiondet.rowid'),
+	public $fields = array(
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
+		'batch' => array('type' => 'varchar(128)', 'enabled' => 1, 'position' => 10),
+		'fk_origin_stock' => array('type' => 'integer', 'enabled' => 1, 'visible' => 0, 'default' => 1, 'notnull' => 1, 'position' => 20),
+		'eatby' => array('type' => 'date', 'enabled' => 1, 'position' => 500),
+		'sellby' => array('type' => 'date', 'enabled' => 1, 'position' => 501),
+		'qty' => array('type' => 'double', 'enabled' => 1,  'position' => 502, 'notnull' => 1),
+		'fk_expeditiondet' => array('type' => 'integer', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 510, 'foreignkey' => 'llx_expeditiondet.rowid'),
 	);
 
 	/**
@@ -237,51 +237,47 @@ class ExpeditionLineBatch extends CommonObject
 		}
 	}
 
-    /**
-     * @return int $id or -1 if KO
-     */
-	public function updateQty() {
-	    $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET qty = '.floatval($this->qty).' WHERE rowid='.$this->id;
+	/**
+	 * @return int $id or -1 if KO
+	 */
+	public function updateQty()
+	{
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET qty = '.floatval($this->qty).' WHERE rowid='.$this->id;
 
-	    if (!$this->db->query($sql))
-			{
+		if (!$this->db->query($sql)) {
 				$this->errors[] = $this->db->lasterror()." - sql=$sql";
 				return -1;
-			}
-	    else return $this->id;
-    }
+		} else return $this->id;
+	}
 
-    /**
-     * @param Expedition $exp
-     * @param string $serial
-     * @param int $fk_product
-     * @param int $fk_warehouse
-     * @return int
-     */
-    public function fetchByExpDetSerial($exp, $serial, $fk_product, $fk_warehouse) {
-        if(! empty($exp->lines) && !empty($exp->id)) {
-
-            $sql = 'SELECT * FROM '.MAIN_DB_PREFIX.$this->table_element.' 
+	/**
+	 * @param Expedition $exp
+	 * @param string $serial
+	 * @param int $fk_product
+	 * @param int $fk_warehouse
+	 * @return int
+	 */
+	public function fetchByExpDetSerial($exp, $serial, $fk_product, $fk_warehouse)
+	{
+		if (! empty($exp->lines) && !empty($exp->id)) {
+			$sql = 'SELECT * FROM '.MAIN_DB_PREFIX.$this->table_element.' 
             WHERE fk_expeditiondet IN 
             (SELECT ed.rowid FROM '.MAIN_DB_PREFIX.$exp->table_element_line.' ed
             INNER JOIN '.MAIN_DB_PREFIX.'commandedet cd ON (cd.rowid = ed.fk_origin_line)
             WHERE ed.fk_expedition = '.$exp->id.' AND ed.fk_entrepot='.$fk_warehouse.' AND cd.fk_product='.$fk_product.')';
-            $sql .= ' AND batch = '.$serial;
-            $resql = $this->db->query($sql);
-            if(! $resql) {
-                $this->errors[] = $this->db->lasterror()." - sql=$sql";
-                return -1;
-            } else {
-                if($this->db->num_rows($resql) == 1) {
-                    $obj = $this->db->fetch_object($resql);
-                    foreach($obj as $key => $val) $this->{$key} = $val;
-                    $this->id = $this->rowid;
-                    return $this->id;
-                }
-                else return -2;
-
-
-            }
-        }
-    }
+			$sql .= ' AND batch = '.$serial;
+			$resql = $this->db->query($sql);
+			if (! $resql) {
+				$this->errors[] = $this->db->lasterror()." - sql=$sql";
+				return -1;
+			} else {
+				if ($this->db->num_rows($resql) == 1) {
+					$obj = $this->db->fetch_object($resql);
+					foreach ($obj as $key => $val) $this->{$key} = $val;
+					$this->id = $this->rowid;
+					return $this->id;
+				} else return -2;
+			}
+		}
+	}
 }

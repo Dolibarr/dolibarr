@@ -415,10 +415,10 @@ if (empty($reshook)) {
 		|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->shipping_advance->validate)))
 	) {
 		$object->fetch_thirdparty();
-        if(!empty($conf->productbatch->enabled)) $needToDefineBatch = $object->hasToDefineBatchLine();
+		if (!empty($conf->productbatch->enabled)) $needToDefineBatch = $object->hasToDefineBatchLine();
 
-		if(!$needToDefineBatch) $result = $object->valid($user);
-        else $result = -1;
+		if (!$needToDefineBatch) $result = $object->valid($user);
+		else $result = -1;
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		} else {
@@ -660,7 +660,7 @@ if (empty($reshook)) {
 							if ($lineIdToAddLot) {
 								// add lot to existing line
 								if ($line->fetch($lineIdToAddLot) > 0) {
-									$line->detail_batch = new stdClass;					
+									$line->detail_batch = new stdClass;
 									$line->detail_batch->fk_origin_stock = $batch_id;
 									$line->detail_batch->batch = $lotStock->batch;
 									$line->detail_batch->entrepot_id = $lotStock->warehouseid;
@@ -1247,14 +1247,14 @@ if ($action == 'create') {
 								}
 							}
 							 //Handle serial number later
-                            print '<!-- subj='.$subj.'/'.$nbofsuggested.' --><tr '.((($subj + 1) == $nbofsuggested) ? $bc[$var] : '').'><td colspan="3"></td><td class="center">';
-                            print '<input class="qtyl" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="0">';
-                            print '<input name="batchl'.$indiceAsked.'_'.$subj.'" type="hidden" value="0">';
-                            print '</td>';
-                            print '<td class="left">';
-                            print $langs->trans('AllWarehouses').' ('.$product->stock_reel.')';
-                            $subj++;
-                            print '</td></tr>';
+							print '<!-- subj='.$subj.'/'.$nbofsuggested.' --><tr '.((($subj + 1) == $nbofsuggested) ? $bc[$var] : '').'><td colspan="3"></td><td class="center">';
+							print '<input class="qtyl" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="0">';
+							print '<input name="batchl'.$indiceAsked.'_'.$subj.'" type="hidden" value="0">';
+							print '</td>';
+							print '<td class="left">';
+							print $langs->trans('AllWarehouses').' ('.$product->stock_reel.')';
+							$subj++;
+							print '</td></tr>';
 							print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
 							if (is_object($product->stock_warehouse[$warehouse_id]) && count($product->stock_warehouse[$warehouse_id]->detail_batch)) {
 								foreach ($product->stock_warehouse[$warehouse_id]->detail_batch as $dbatch) {	// $dbatch is instance of Productbatch
@@ -1395,15 +1395,15 @@ if ($action == 'create') {
 									}
 								}
 							}
-                            //Handle serial number later
-                            print '<!-- subj='.$subj.'/'.$nbofsuggested.' --><tr '.((($subj + 1) == $nbofsuggested) ? $bc[$var] : '').'><td colspan="3"></td><td class="center">';
-                            print '<input class="qtyl" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="0">';
-                            print '<input name="batchl'.$indiceAsked.'_'.$subj.'" type="hidden" value="0">';
-                            print '</td>';
-                            print '<td class="left">';
-                            print $langs->trans('AllWarehouses').' ('.$product->stock_reel.')';
-                            $subj++;
-                            print '</td></tr>';
+							//Handle serial number later
+							print '<!-- subj='.$subj.'/'.$nbofsuggested.' --><tr '.((($subj + 1) == $nbofsuggested) ? $bc[$var] : '').'><td colspan="3"></td><td class="center">';
+							print '<input class="qtyl" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="0">';
+							print '<input name="batchl'.$indiceAsked.'_'.$subj.'" type="hidden" value="0">';
+							print '</td>';
+							print '<td class="left">';
+							print $langs->trans('AllWarehouses').' ('.$product->stock_reel.')';
+							$subj++;
+							print '</td></tr>';
 							foreach ($product->stock_warehouse as $warehouse_id => $stock_warehouse) {
 								$tmpwarehouseObject->fetch($warehouse_id);
 								if (($stock_warehouse->real > 0) && (count($stock_warehouse->detail_batch))) {
@@ -2159,7 +2159,7 @@ if ($action == 'create') {
 						print '<!-- case edit 1 -->';
 						$line = new ExpeditionLigne($db);
 						foreach ($lines[$i]->detail_batch as $detail_batch) {
-							if($detail_batch->fk_origin_stock == 0) continue;
+							if ($detail_batch->fk_origin_stock == 0) continue;
 							print '<tr>';
 							// Qty to ship or shipped
 							print '<td><input class="qtyl" name="qtyl'.$detail_batch->fk_expeditiondet.'_'.$detail_batch->id.'" id="qtyl'.$line_id.'_'.$detail_batch->id.'" type="text" size="4" value="'.$detail_batch->qty.'"></td>';
@@ -2234,22 +2234,20 @@ if ($action == 'create') {
 						} elseif (count($lines[$i]->details_entrepot) > 1|| empty($lines[$i]->entrepot_id > 0)) {
 							$detail = '';
 							$qtyShippedNoWarehouse = $lines[$i]->qty_shipped;
-                            foreach ($lines[$i]->details_entrepot as $detail_entrepot)
-                            {
-                                if ($detail_entrepot->entrepot_id > 0)
-                                {
-                                    $entrepot = new Entrepot($db);
-                                    $entrepot->fetch($detail_entrepot->entrepot_id);
-                                    $detail .= $langs->trans("DetailWarehouseFormat", $entrepot->libelle, $detail_entrepot->qty_shipped).'<br/>';
-                                    $qtyShippedNoWarehouse -= $detail_entrepot->qty_shipped;
-                                }
-                            }
-                            if(!empty($qtyShippedNoWarehouse)){
-                                $needToDefineBatch = true;
-                                $detail .= $langs->trans("DetailWarehouseFormat", $langs->trans('ToDefine'), $qtyShippedNoWarehouse).'<br/>';
-                            }
-                            print $form->textwithtooltip(img_picto('', 'object_stock').' '.$langs->trans("DetailWarehouseNumber"), $detail);
-                        }
+							foreach ($lines[$i]->details_entrepot as $detail_entrepot) {
+								if ($detail_entrepot->entrepot_id > 0) {
+									$entrepot = new Entrepot($db);
+									$entrepot->fetch($detail_entrepot->entrepot_id);
+									$detail .= $langs->trans("DetailWarehouseFormat", $entrepot->libelle, $detail_entrepot->qty_shipped).'<br/>';
+									$qtyShippedNoWarehouse -= $detail_entrepot->qty_shipped;
+								}
+							}
+							if (!empty($qtyShippedNoWarehouse)) {
+								$needToDefineBatch = true;
+								$detail .= $langs->trans("DetailWarehouseFormat", $langs->trans('ToDefine'), $qtyShippedNoWarehouse).'<br/>';
+							}
+							print $form->textwithtooltip(img_picto('', 'object_stock').' '.$langs->trans("DetailWarehouseNumber"), $detail);
+						}
 						print '</td>';
 					}
 
@@ -2261,7 +2259,7 @@ if ($action == 'create') {
 							if ($lines[$i]->product_tobatch) {
 								$detail = '';
 								foreach ($lines[$i]->detail_batch as $dbatch) {	// $dbatch is instance of ExpeditionLineBatch
-									if(empty($dbatch->batch)) $dbatch->batch = $langs->trans('ToDefine');
+									if (empty($dbatch->batch)) $dbatch->batch = $langs->trans('ToDefine');
 									$detail .= $langs->trans("Batch").': '.$dbatch->batch;
 									if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 										$detail .= ' - '.$langs->trans("SellByDate").': '.dol_print_date($dbatch->sellby, "day");
@@ -2379,11 +2377,11 @@ if ($action == 'create') {
 		if (empty($reshook)) {
 			if ($object->statut == Expedition::STATUS_DRAFT && $num_prod > 0) {
 				if (!$needToDefineBatch && ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->creer))
-	  			 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->shipping_advance->validate)))) {
+				 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->shipping_advance->validate)))) {
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
 				} else {
-				    if($needToDefineBatch) $msg = 'DefineBatch';
-				    else $msg = 'NotAllowed';
+					if ($needToDefineBatch) $msg = 'DefineBatch';
+					else $msg = 'NotAllowed';
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans($msg).'">'.$langs->trans("Validate").'</a>';
 				}
 			}
