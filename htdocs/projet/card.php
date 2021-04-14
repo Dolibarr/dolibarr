@@ -605,7 +605,18 @@ if ($action == 'create' && $user->rights->projet->creer) {
 	if (empty($conf->global->PROJECT_DISABLE_PUBLIC_PROJECT)) {
 		$array[1] = $langs->trans("SharedProject");
 	}
-	print $form->selectarray('public', $array, GETPOST('public') ?GETPOST('public') : $object->public, 0, 0, 0, '', 0, 0, 0, '', '', 1);
+
+	if (count($array) > 0) {
+		print $form->selectarray('public', $array, GETPOSTISSET('public') ? GETPOST('public') : $object->public, 0, 0, 0, '', 0, 0, 0, '', '', 1);
+	} else {
+		print '<input type="hidden" name="public" id="public" value="'.(GETPOSTISSET('public') ? GETPOST('public') : $object->public).'">';
+
+		if ( (GETPOSTISSET('public') ? GETPOST('public') : $object->public)==0) {
+			print $langs->trans("PrivateProject");
+		} else {
+			print $langs->trans("SharedProject");
+		}
+	}
 	print '</td></tr>';
 
 	// Date start
@@ -878,7 +889,18 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		if (empty($conf->global->PROJECT_DISABLE_PUBLIC_PROJECT)) {
 			$array[1] = $langs->trans("SharedProject");
 		}
-		print $form->selectarray('public', $array, $object->public, 0, 0, 0, '', 0, 0, 0, '', '', 1);
+
+		if (count($array) > 0) {
+			print $form->selectarray('public', $array, $object->public, 0, 0, 0, '', 0, 0, 0, '', '', 1);
+		} else {
+			print '<input type="hidden" id="public" name="public" value="'.$object->public.'">';
+
+			if ($object->public == 0) {
+				print $langs->trans("PrivateProject");
+			} else {
+				print $langs->trans("SharedProject");
+			}
+		}
 		print '</td></tr>';
 
 		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
@@ -1270,11 +1292,11 @@ if ($action == 'create' && $user->rights->projet->creer) {
 					$langs->load("supplier_proposal");
 					print '<a class="butAction" href="'.DOL_URL_ROOT.'/supplier_proposal/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddSupplierProposal").'</a>';
 				}
-				if (!empty($conf->supplier_order->enabled) && $user->rights->fournisseur->commande->creer) {
+				if (!empty($conf->supplier_order->enabled) && ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer)) {
 					$langs->load("suppliers");
 					print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddSupplierOrder").'</a>';
 				}
-				if (!empty($conf->supplier_invoice->enabled) && $user->rights->fournisseur->facture->creer) {
+				if (!empty($conf->supplier_invoice->enabled) && ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer)) {
 					$langs->load("suppliers");
 					print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddSupplierInvoice").'</a>';
 				}

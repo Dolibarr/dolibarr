@@ -209,7 +209,7 @@ Codejournal=Journal
 JournalLabel=Journal label
 NumPiece=Piece number
 TransactionNumShort=Num. transaction
-AccountingCategory=Personalized groups
+AccountingCategory=Custom group
 GroupByAccountAccounting=Group by general ledger account
 GroupBySubAccountAccounting=Group by subledger account
 AccountingAccountGroupsDesc=You can define here some groups of accounting account. They will be used for personalized accounting reports.
@@ -426,3 +426,5 @@ DateExport=Date export
 WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contains transaction modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
 ExpenseReportJournal=Expense Report Journal
 InventoryJournal=Inventory Journal
+
+NAccounts=%s accounts

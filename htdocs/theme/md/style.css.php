@@ -2285,7 +2285,7 @@ li.tmenu:hover {
 	opacity: .50; /* show only a slight shadow */
 }
 li.tmenusel a.tmenusel {
-    text-decoration: underline !important;
+	text-decoration: underline !important;
 }
 .tmenuend .tmenuleft { width: 0px; }
 .tmenuend { display: none; }

@@ -274,9 +274,9 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'FactureFournisseur';
 	$objectlabel = 'SupplierInvoices';
-	$permissiontoread = $user->rights->fournisseur->facture->lire;
-	$permissiontoadd = $user->rights->fournisseur->facture->creer;
-	$permissiontodelete = $user->rights->fournisseur->facture->supprimer;
+	$permissiontoread = ($user->rights->fournisseur->facture->lire || $user->rights->supplier_invoice->lire);
+	$permissiontoadd = ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer);
+	$permissiontodelete = ($user->rights->fournisseur->facture->supprimer || $user->rights->supplier_invoice->supprimer);
 	$uploaddir = $conf->fournisseur->facture->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
@@ -878,7 +878,7 @@ if ($resql) {
 	if (!empty($socid)) {
 		$url .= '&socid='.$socid;
 	}
-	$newcardbutton = dolGetButtonTitle($langs->trans('NewBill'), '', 'fa fa-plus-circle', $url, '', $user->rights->fournisseur->facture->creer);
+	$newcardbutton = dolGetButtonTitle($langs->trans('NewBill'), '', 'fa fa-plus-circle', $url, '', ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer));
 
 	$i = 0;
 	print '<form method="POST" name="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";

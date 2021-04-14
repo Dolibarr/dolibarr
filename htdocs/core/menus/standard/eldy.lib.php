@@ -122,9 +122,9 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'enabled'=> ((!empty($conf->societe->enabled) &&
 			(empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))
 			)
-			|| (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))
+			|| ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))
 			),
-		'perms'=> (!empty($user->rights->societe->lire) || !empty($user->rights->fournisseur->lire)),
+		'perms'=> (!empty($user->rights->societe->lire) || !empty($user->rights->fournisseur->lire) || !empty($user->rights->supplier_order->lire) || !empty($user->rights->supplier_invoice->lire) || !empty($user->rights->supplier_proposal->lire)),
 		'module'=>'societe|fournisseur'
 	);
 	$menu_arr[] = array(
@@ -852,10 +852,10 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 			}
 
 			// Suppliers
-			if (!empty($conf->societe->enabled) && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) || !empty($conf->supplier_proposal->enabled))) {
+			if (!empty($conf->societe->enabled) && (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) || !empty($conf->supplier_proposal->enabled))) {
 				$langs->load("suppliers");
-				$newmenu->add("/societe/list.php?type=f&amp;leftmenu=suppliers", $langs->trans("ListSuppliersShort"), 2, ($user->rights->fournisseur->lire), '', $mainmenu, 'suppliers');
-				$newmenu->add("/societe/card.php?leftmenu=suppliers&amp;action=create&amp;type=f", $langs->trans("MenuNewSupplier"), 3, $user->rights->societe->creer && ($user->rights->fournisseur->lire));
+				$newmenu->add("/societe/list.php?type=f&amp;leftmenu=suppliers", $langs->trans("ListSuppliersShort"), 2, ($user->rights->fournisseur->lire || $user->rights->supplier_order->lire || $user->rights->supplier_invoice->lire || $user->rights->supplier_proposal->lire), '', $mainmenu, 'suppliers');
+				$newmenu->add("/societe/card.php?leftmenu=suppliers&amp;action=create&amp;type=f", $langs->trans("MenuNewSupplier"), 3, $user->rights->societe->creer && ($user->rights->fournisseur->lire || $user->rights->supplier_order->lire || $user->rights->supplier_invoice->lire || $user->rights->supplier_proposal->lire));
 			}
 
 			// Categories
@@ -873,7 +873,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 					$newmenu->add("/categories/index.php?leftmenu=cat&amp;type=2", $menutoshow, 1, $user->rights->categorie->lire, '', $mainmenu, 'cat');
 				}
 				// Categories suppliers
-				if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+				if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
 					$newmenu->add("/categories/index.php?leftmenu=catfournish&amp;type=1", $langs->trans("SuppliersCategoriesShort"), 1, $user->rights->categorie->lire);
 				}
 			}
@@ -889,7 +889,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 			if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) {
 				$newmenu->add("/contact/list.php?leftmenu=contacts&type=c", $langs->trans("Customers"), 2, $user->rights->societe->contact->lire);
 			}
-			if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+			if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
 				$newmenu->add("/contact/list.php?leftmenu=contacts&type=f", $langs->trans("Suppliers"), 2, $user->rights->societe->contact->lire);
 			}
 			$newmenu->add("/contact/list.php?leftmenu=contacts&type=o", $langs->trans("ContactOthers"), 2, $user->rights->societe->contact->lire);
@@ -1043,7 +1043,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 			if (!empty($conf->societe->enabled) && !empty($conf->supplier_invoice->enabled)) {
 				$langs->load("bills");
 				$newmenu->add("/fourn/facture/index.php?leftmenu=suppliers_bills", $langs->trans("BillsSuppliers"), 0, $user->rights->fournisseur->facture->lire, '', $mainmenu, 'suppliers_bills', 0, '', '', '', img_picto('', 'supplier_invoice', 'class="paddingright pictofixedwidth"'));
-				$newmenu->add("/fourn/facture/card.php?leftmenu=suppliers_bills&amp;action=create", $langs->trans("NewBill"), 1, $user->rights->fournisseur->facture->creer, '', $mainmenu, 'suppliers_bills_create');
+				$newmenu->add("/fourn/facture/card.php?leftmenu=suppliers_bills&amp;action=create", $langs->trans("NewBill"), 1, ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer), '', $mainmenu, 'suppliers_bills_create');
 				$newmenu->add("/fourn/facture/list.php?leftmenu=suppliers_bills", $langs->trans("List"), 1, $user->rights->fournisseur->facture->lire, '', $mainmenu, 'suppliers_bills_list');
 
 				if ($usemenuhider || empty($leftmenu) || preg_match('/suppliers_bills/', $leftmenu)) {
@@ -1201,7 +1201,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 					if (!empty($conf->banque->enabled)) {
 						$newmenu->add("/compta/bank/list.php?mainmenu=accountancy&leftmenu=accountancy_admin&search_status=-1", $langs->trans("MenuBankAccounts"), 1, $user->rights->accounting->chartofaccount, '', $mainmenu, 'accountancy_admin_bank', 70);
 					}
-					if (!empty($conf->facture->enabled) || (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_invoice->enabled))) {
+					if (!empty($conf->facture->enabled) || ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_invoice->enabled))) {
 						$newmenu->add("/admin/dict.php?id=10&from=accountancy&search_country_id=".$mysoc->country_id."&mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("MenuVatAccounts"), 1, $user->rights->accounting->chartofaccount, '', $mainmenu, 'accountancy_admin_default', 80);
 					}
 					if (!empty($conf->tax->enabled)) {
@@ -1271,7 +1271,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 									$nature = "sells";
 								}
 								if ($objp->nature == 3
-									&& (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_invoice->enabled))
+									&& ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_invoice->enabled))
 									&& empty($conf->global->ACCOUNTING_DISABLE_BINDING_ON_PURCHASES)) {
 									$nature = "purchases";
 								}
@@ -1374,7 +1374,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				if (!empty($conf->accounting->enabled) && !empty($user->rights->accounting->comptarapport->lire) && $mainmenu == 'accountancy') {
 					$modecompta = 'BOOKKEEPING'; // Not yet implemented. Should be BOOKKEEPINGCOLLECTED
 				}
-				if ($modecompta && $conf->fournisseur->enabled) {
+				if ($modecompta && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_invoice->enabled))) {
 					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/', $leftmenu)) {
 						$newmenu->add("/compta/stats/supplier_turnover.php?leftmenu=accountancy_report&modecompta=".$modecompta, $langs->trans("ReportPurchaseTurnover"), 2, $user->rights->accounting->comptarapport->lire);
 						$newmenu->add("/compta/stats/supplier_turnover_by_thirdparty.php?leftmenu=accountancy_report&modecompta=".$modecompta, $langs->trans("ByCompanies"), 3, $user->rights->accounting->comptarapport->lire);
@@ -1384,7 +1384,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 
 				$modecompta = 'RECETTES-DEPENSES';
 				//if (! empty($conf->accounting->enabled) && ! empty($user->rights->accounting->comptarapport->lire) && $mainmenu == 'accountancy') $modecompta='';	// Not yet implemented. Should be BOOKKEEPINGCOLLECTED
-				if ($modecompta && $conf->fournisseur->enabled) {
+				if ($modecompta && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_invoice->enabled))) {
 					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/', $leftmenu)) {
 						$newmenu->add("/compta/stats/supplier_turnover.php?leftmenu=accountancy_report&modecompta=".$modecompta, $langs->trans("ReportPurchaseTurnoverCollected"), 2, $user->rights->accounting->comptarapport->lire);
 						$newmenu->add("/compta/stats/supplier_turnover_by_thirdparty.php?leftmenu=accountancy_report&modecompta=".$modecompta, $langs->trans("ByCompanies"), 3, $user->rights->accounting->comptarapport->lire);
@@ -1548,7 +1548,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				if (!empty($conf->variants->enabled)) {
 					$newmenu->add("/variants/list.php", $langs->trans("VariantAttributes"), 1, $user->rights->produit->lire);
 				}
-				if (!empty($conf->propal->enabled) || !empty($conf->commande->enabled) || !empty($conf->facture->enabled) || !empty($conf->fournisseur->enabled) || !empty($conf->supplier_proposal->enabled)) {
+				if (!empty($conf->propal->enabled) || (!empty($conf->commande->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->facture->enabled) || !empty($conf->fournisseur->enabled) || !empty($conf->supplier_proposal->enabled) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
 					$newmenu->add("/product/stats/card.php?id=all&leftmenu=stats&type=0", $langs->trans("Statistics"), 1, $user->rights->produit->lire && $user->rights->propale->lire);
 				}
 
@@ -1565,7 +1565,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				$newmenu->add("/product/index.php?leftmenu=service&amp;type=1", $langs->trans("Services"), 0, $user->rights->service->lire, '', $mainmenu, 'service', 0, '', '', '', img_picto('', 'service', 'class="pictofixedwidth"'));
 				$newmenu->add("/product/card.php?leftmenu=service&amp;action=create&amp;type=1", $langs->trans("NewService"), 1, $user->rights->service->creer);
 				$newmenu->add("/product/list.php?leftmenu=service&amp;type=1", $langs->trans("List"), 1, $user->rights->service->lire);
-				if (!empty($conf->propal->enabled) || !empty($conf->commande->enabled) || !empty($conf->facture->enabled) || !empty($conf->fournisseur->enabled) || !empty($conf->supplier_proposal->enabled)) {
+				if (!empty($conf->propal->enabled) || !empty($conf->commande->enabled) || !empty($conf->facture->enabled) || (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_proposal->enabled) || !empty($conf->supplier_oder->enabled) || !empty($conf->supplier_invoice->enabled)) {
 					$newmenu->add("/product/stats/card.php?id=all&leftmenu=stats&type=1", $langs->trans("Statistics"), 1, $user->rights->service->lire && $user->rights->propale->lire);
 				}
 				// Categories

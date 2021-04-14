@@ -883,7 +883,7 @@ class Form
 		$label = array();
 		$atleastonefavorite = 0;
 
-		$sql = "SELECT rowid, code as code_iso, code_iso as code_iso3, label, favorite";
+		$sql = "SELECT rowid, code as code_iso, code_iso as code_iso3, label, favorite, eec";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_country";
 		$sql .= " WHERE active > 0";
 		//$sql.= " ORDER BY code ASC";
@@ -902,7 +902,8 @@ class Form
 					$countryArray[$i]['code_iso'] = $obj->code_iso;
 					$countryArray[$i]['code_iso3'] 	= $obj->code_iso3;
 					$countryArray[$i]['label'] = ($obj->code_iso && $langs->transnoentitiesnoconv("Country".$obj->code_iso) != "Country".$obj->code_iso ? $langs->transnoentitiesnoconv("Country".$obj->code_iso) : ($obj->label != '-' ? $obj->label : ''));
-					$countryArray[$i]['favorite']   = $obj->favorite;
+					$countryArray[$i]['favorite'] = $obj->favorite;
+					$countryArray[$i]['eec'] = $obj->eec;
 					$favorite[$i] = $obj->favorite;
 					$label[$i] = dol_string_unaccent($countryArray[$i]['label']);
 					$i++;
@@ -959,9 +960,9 @@ class Form
 					}
 
 					if ($selected && $selected != '-1' && ($selected == $row['rowid'] || $selected == $row['code_iso'] || $selected == $row['code_iso3'] || $selected == $row['label'])) {
-						$out .= '<option value="'.($usecodeaskey ? ($usecodeaskey == 'code2' ? $row['code_iso'] : $row['code_iso3']) : $row['rowid']).'" selected data-html="'.dol_escape_htmltag($labeltoshow).'">';
+						$out .= '<option value="'.($usecodeaskey ? ($usecodeaskey == 'code2' ? $row['code_iso'] : $row['code_iso3']) : $row['rowid']).'" selected data-html="'.dol_escape_htmltag($labeltoshow).'" data-eec="'.((int) $row['eec']).'">';
 					} else {
-						$out .= '<option value="'.($usecodeaskey ? ($usecodeaskey == 'code2' ? $row['code_iso'] : $row['code_iso3']) : $row['rowid']).'" data-html="'.dol_escape_htmltag($labeltoshow).'">';
+						$out .= '<option value="'.($usecodeaskey ? ($usecodeaskey == 'code2' ? $row['code_iso'] : $row['code_iso3']) : $row['rowid']).'" data-html="'.dol_escape_htmltag($labeltoshow).'" data-eec="'.((int) $row['eec']).'">';
 					}
 					$out .= $labeltoshow;
 					$out .= '</option>';
@@ -4718,11 +4719,20 @@ class Form
 						if (empty($morecss)) {
 							$morecss = 'minwidth100';
 						}
+
+						$show_empty = isset($input['select_show_empty']) ? $input['select_show_empty'] : 1;
+						$key_in_label = isset($input['select_key_in_label']) ? $input['select_key_in_label'] : 0;
+						$value_as_key = isset($input['select_value_as_key']) ? $input['select_value_as_key'] : 0;
+						$translate = isset($input['select_translate']) ? $input['select_translate'] : 0;
+						$maxlen = isset($input['select_maxlen']) ? $input['select_maxlen'] : 0;
+						$disabled = isset($input['select_disabled']) ? $input['select_disabled'] : 0;
+						$sort = isset($input['select_sort']) ? $input['select_sort'] : '';
+
 						$more .= '<div class="tagtr"><div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">';
 						if (!empty($input['label'])) {
 							$more .= $input['label'].'</div><div class="tagtd left">';
 						}
-						$more .= $this->selectarray($input['name'], $input['values'], $input['default'], 1, 0, 0, $moreattr, 0, 0, 0, '', $morecss);
+						$more .= $this->selectarray($input['name'], $input['values'], $input['default'], $show_empty, $key_in_label, $value_as_key, $moreattr, $translate, $maxlen, $disabled, $sort, $morecss);
 						$more .= '</div></div>'."\n";
 					} elseif ($input['type'] == 'checkbox') {
 						$more .= '<div class="tagtr">';

@@ -112,7 +112,7 @@ create table llx_societe
   logo                     varchar(255)   DEFAULT NULL,
   logo_squarred            varchar(255)   DEFAULT NULL,
   canvas				   varchar(32)    DEFAULT NULL,	                -- type of canvas if used (null by default)
-  fk_entrepot 			   integer DEFAULT NULL,						-- if we need a link between third party and warehouse
+  fk_warehouse			   integer 		  DEFAULT NULL,					-- if we need a link between third party and warehouse
   webservices_url          varchar(255),                            	-- supplier webservice url
   webservices_key          varchar(128),                            	-- supplier webservice key
 

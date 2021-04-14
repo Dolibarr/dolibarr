@@ -48,6 +48,14 @@ UPDATE llx_c_country SET eec = 1 WHERE code IN ('AT','BE','BG','CY','CZ','DE','D
 
 -- For v14
 
+create table llx_accounting_groups_account
+(
+  rowid            integer AUTO_INCREMENT PRIMARY KEY,
+  fk_accounting_account		INTEGER NOT NULL,
+  fk_c_accounting_category	INTEGER NOT NULL
+)ENGINE=innodb;
+
+
 ALTER TABLE llx_oauth_token ADD COLUMN restricted_ips varchar(200);
 ALTER TABLE llx_oauth_token ADD COLUMN datec datetime DEFAULT NULL;
 ALTER TABLE llx_oauth_token ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
@@ -269,8 +277,8 @@ ALTER TABLE llx_payment_salary CHANGE COLUMN fk_user fk_user integer NULL;
 ALTER TABLE llx_payment_salary ADD COLUMN fk_salary integer;
 
 INSERT INTO llx_salary (rowid, ref, fk_user, amount, fk_projet, fk_typepayment, label, datesp, dateep, entity, note, fk_bank, paye) SELECT ps.rowid, ps.rowid, ps.fk_user, ps.amount, ps.fk_projet, ps.fk_typepayment, ps.label, ps.datesp, ps.dateep, ps.entity, ps.note, ps.fk_bank, 1 FROM llx_payment_salary ps WHERE ps.fk_salary IS NULL;
-UPDATE llx_payment_salary as ps SET ps.fk_salary = ps.rowid WHERE ps.fk_salary IS NULL;
-UPDATE llx_payment_salary as ps SET ps.ref = ps.rowid WHERE ps.ref IS NULL;
+UPDATE llx_payment_salary SET fk_salary = rowid WHERE fk_salary IS NULL;
+UPDATE llx_payment_salary SET ref = rowid WHERE ref IS NULL;
 
 ALTER TABLE llx_salary CHANGE paye paye smallint default 0 NOT NULL;
 
@@ -363,13 +371,56 @@ ALTER TABLE llx_propal ADD CONSTRAINT fk_propal_fk_user_signature FOREIGN KEY (f
 UPDATE llx_propal SET fk_user_signature = fk_user_cloture WHERE fk_user_signature IS NULL AND fk_user_cloture IS NOT NULL;
 UPDATE llx_propal SET date_signature = date_cloture WHERE date_signature IS NULL AND date_cloture IS NOT NULL;
 
+
 ALTER TABLE llx_product ADD COLUMN batch_mask VARCHAR(32) NULL;
 
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (210, 'conferenceorbooth', 'internal', 'MANAGER',  'Conference or Booth manager', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (211, 'conferenceorbooth', 'external', 'SPEAKER',   'Conference Speaker', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (212, 'conferenceorbooth', 'external', 'RESPONSIBLE',   'Booth responsible', 1);
 
+
+CREATE TABLE llx_partnership(
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
+	ref varchar(128) DEFAULT '(PROV)' NOT NULL, 
+	status smallint NOT NULL DEFAULT '0', 
+	fk_soc integer, 
+	fk_member integer, 
+	date_partnership_start date NOT NULL, 
+	date_partnership_end date NOT NULL, 
+	entity integer	DEFAULT 1 NOT NULL,	-- multi company id, 0 = all
+	reason_decline_or_cancel text NULL,
+	date_creation datetime NOT NULL, 
+	fk_user_creat integer NOT NULL, 
+	tms timestamp, 
+	fk_user_modif integer, 
+	note_private text, 
+	note_public text, 
+	last_main_doc varchar(255), 
+	count_last_url_check_error integer DEFAULT '0', 
+	import_key varchar(14), 
+	model_pdf varchar(255)
+) ENGINE=innodb;
+
+ALTER TABLE llx_partnership ADD INDEX idx_partnership_rowid (rowid);
+ALTER TABLE llx_partnership ADD INDEX idx_partnership_ref (ref);
+ALTER TABLE llx_partnership ADD INDEX idx_partnership_fk_soc (fk_soc);
+ALTER TABLE llx_partnership ADD CONSTRAINT llx_partnership_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
+ALTER TABLE llx_partnership ADD INDEX idx_partnership_status (status);
+ALTER TABLE llx_partnership ADD INDEX idx_partnership_fk_member (fk_member);
+
+create table llx_partnership_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_partnership_extrafields ADD INDEX idx_partnership_fk_object(fk_object);
+
+INSERT INTO llx_c_email_templates (entity,module,type_template,label,lang,position,topic,joinfiles,content) VALUES (0, 'partnership', 'member', '(AlertStatusPartnershipExpiration)', NULL, 100, '[__[MAIN_INFO_SOCIETE_NOM]__] - __(YourMembershipWillSoonExpireTopic)__', 0, '<body>\n <p>Dear __MEMBER_FULLNAME__,<br><br>\n__(YourMembershipWillSoonExpireContent)__</p>\n<br />\n\n            __(Sincerely)__ <br />\n            __[PARTNERSHIP_SOCIETE_NOM]__ <br />\n </body>\n');
 ALTER TABLE llx_facture_fourn ADD COLUMN date_closing datetime DEFAULT NULL after date_valid;
+
 ALTER TABLE llx_facture_fourn ADD COLUMN fk_user_closing integer DEFAULT NULL after fk_user_valid;
 
 ALTER TABLE llx_entrepot ADD COLUMN fk_project INTEGER DEFAULT NULL AFTER entity; -- project associated to warehouse if any
