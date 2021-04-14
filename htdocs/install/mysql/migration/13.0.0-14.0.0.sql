@@ -273,15 +273,15 @@ create table llx_salary
   fk_user_modif   integer                     -- user making last change
 ) ENGINE=innodb;
 
-ALTER TABLE llx_payment_salary CHANGE COLUMN fk_user fk_user integer NULL;
+-- VMYSQL4.1 ALTER TABLE llx_payment_salary CHANGE COLUMN fk_user fk_user integer NULL;
+-- VPGSQL8.2 ALTER TABLE llx_payment_salary ALTER COLUMN fk_user DROP NOT NULL;
 ALTER TABLE llx_payment_salary ADD COLUMN fk_salary integer;
 
 INSERT INTO llx_salary (rowid, ref, fk_user, amount, fk_projet, fk_typepayment, label, datesp, dateep, entity, note, fk_bank, paye) SELECT ps.rowid, ps.rowid, ps.fk_user, ps.amount, ps.fk_projet, ps.fk_typepayment, ps.label, ps.datesp, ps.dateep, ps.entity, ps.note, ps.fk_bank, 1 FROM llx_payment_salary ps WHERE ps.fk_salary IS NULL;
 UPDATE llx_payment_salary SET fk_salary = rowid WHERE fk_salary IS NULL;
 UPDATE llx_payment_salary SET ref = rowid WHERE ref IS NULL;
 
-ALTER TABLE llx_salary CHANGE paye paye smallint default 0 NOT NULL;
-
+ALTER TABLE llx_salary ALTER COLUMN paye set default 0;
 
 DELETE FROM llx_boxes WHERE box_id IN (SELECT rowid FROM llx_boxes_def WHERE file IN ('box_graph_ticket_by_severity', 'box_ticket_by_severity.php', 'box_nb_ticket_last_x_days.php', 'box_nb_tickets_type.php', 'box_new_vs_close_ticket.php'));
 DELETE FROM llx_boxes_def WHERE file IN ('box_graph_ticket_by_severity', 'box_ticket_by_severity.php', 'box_nb_ticket_last_x_days.php', 'box_nb_tickets_type.php', 'box_new_vs_close_ticket.php');
