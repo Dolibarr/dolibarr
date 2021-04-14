@@ -75,27 +75,7 @@ llxHeader();
 print load_fiche_titre($langs->trans("ContractsArea"), '', 'contract');
 
 
-//print '<table border="0" width="100%" class="notopnoleftnoright">';
-//print '<tr><td valign="top" width="30%" class="notopnoleft">';
 print '<div class="fichecenter"><div class="fichethirdleft">';
-
-
-if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This is useless due to the global search combo
-	// Search contract
-	if (!empty($conf->contrat->enabled)) {
-		print '<form method="post" action="'.DOL_URL_ROOT.'/contrat/list.php">';
-		print '<input type="hidden" name="token" value="'.newToken().'">';
-
-		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder nohover centpercent">';
-		print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-		print '<tr class="oddeven">';
-		print '<td class="nowrap">'.$langs->trans("Contract").':</td><td><input type="text" class="flat" name="sall" size="18"></td>';
-		print '<td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-		print "</table></div></form>\n";
-		print "<br>";
-	}
-}
 
 
 /*
@@ -250,8 +230,6 @@ foreach ($listofstatus as $status) {
 		print "</tr>\n";
 	}
 }
-//if ($totalinprocess != $total)
-//print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("ServicesRunning").')</td><td class="right">'.$totalinprocess.'</td></tr>';
 print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">'.$total.'</td></tr>';
 print "</table></div><br>";
 
@@ -320,7 +298,6 @@ if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire) {
 }
 
 
-//print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
@@ -645,7 +622,6 @@ if ($resql) {
 }
 
 
-//print '</td></tr></table>';
 print '</div></div></div>';
 
 $parameters = array('user' => $user);

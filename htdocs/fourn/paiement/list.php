@@ -112,10 +112,10 @@ if ($user->socid) {
 // require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 // $object = new PaiementFourn($db);
 // restrictedArea($user, $object->element);
-if (empty($conf->fournisseur->enabled)) {
+if ((empty($conf->fournisseur->enabled) && !empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || empty($conf->supplier_invoice->enabled)) {
 	accessforbidden();
 }
-if (!$user->rights->fournisseur->facture->lire) {
+if (!$user->rights->fournisseur->facture->lire || !$user->rights->supplier_invoice->lire) {
 	accessforbidden();
 }
 

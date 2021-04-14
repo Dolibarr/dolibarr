@@ -122,7 +122,7 @@ function project_prepare_head(Project $project)
 		$h++;
 	}
 
-	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))
+	if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))
 		|| !empty($conf->propal->enabled) || !empty($conf->commande->enabled)
 		|| !empty($conf->facture->enabled) || !empty($conf->contrat->enabled)
 		|| !empty($conf->ficheinter->enabled) || !empty($conf->agenda->enabled) || !empty($conf->deplacement->enabled)) {
@@ -204,7 +204,7 @@ function project_prepare_head(Project $project)
 		$h++;
 	}
 
-	if ($conf->eventorganization->enabled) {
+	if ($conf->eventorganization->enabled && !empty($project->usage_organize_event)) {
 		$langs->load('eventorganization');
 		$head[$h][0] = DOL_URL_ROOT . '/eventorganization/conferenceorbooth_list.php?projectid=' . $project->id;
 		$head[$h][1] = $langs->trans("ConferenceOrBoothTab");

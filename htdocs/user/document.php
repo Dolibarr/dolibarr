@@ -179,7 +179,7 @@ if ($object->id) {
 	$permission = $user->rights->user->user->creer;
 	$permtoedit = $user->rights->user->user->creer;
 	$param = '&id='.$object->id;
-	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {
 	accessforbidden('', 0, 1);
 }

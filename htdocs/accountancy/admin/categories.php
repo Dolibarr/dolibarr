@@ -55,7 +55,7 @@ $accountingcategory = new AccountancyCategory($db);
  * Actions
  */
 
-// si ajout de comptes
+// If we add account
 if (!empty($selectcpt)) {
 	$cpts = array();
 	foreach ($selectcpt as $selectedoption) {
@@ -72,6 +72,7 @@ if (!empty($selectcpt)) {
 		setEventMessages($langs->trans('RecordModifiedSuccessfully'), null, 'mesgs');
 	}
 }
+
 if ($action == 'delete') {
 	if ($cpt_id) {
 		if ($accountingcategory->deleteCptCat($cpt_id)) {
@@ -93,8 +94,9 @@ $formaccounting = new FormAccounting($db);
 llxheader('', $langs->trans('AccountingCategory'));
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/accountancy/admin/categories_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+$titlepicto = 'setup';
 
-print load_fiche_titre($langs->trans('AccountingCategory'), $linkback);
+print load_fiche_titre($langs->trans('AccountingCategory'), $linkback, $titlepicto);
 
 print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
 print '<input type="hidden" name="token" value="'.newToken().'">';

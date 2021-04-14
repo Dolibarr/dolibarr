@@ -251,8 +251,8 @@ if ($object->id > 0) {
 
 
 	$modulepart = 'facture_fournisseur';
-	$permission = $user->rights->fournisseur->facture->creer;
-	$permtoedit = $user->rights->fournisseur->facture->creer;
+	$permission = ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer);
+	$permtoedit = ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer);
 	$param = '&facid='.$object->id;
 
 	$defaulttpldir = '/core/tpl';

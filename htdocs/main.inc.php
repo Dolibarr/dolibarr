@@ -2286,7 +2286,7 @@ function top_menu_quickadd()
                 ';
 	}
 
-	if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande->creer) {
+	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->commande->creer) || (!empty($conf->supplier_order->enabled) && $user->rights->supplier_order->creer)) {
 		$langs->load("orders");
 		$dropDownQuickAddHtml .= '
                 <!-- Supplier order link -->
@@ -2299,7 +2299,7 @@ function top_menu_quickadd()
                 ';
 	}
 
-	if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->creer) {
+	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->facture->creer) || (!empty($conf->supplier_invoice->enabled) && $user->rights->supplier_invoice->creer)) {
 		$langs->load("bills");
 		$dropDownQuickAddHtml .= '
                 <!-- Supplier invoice link -->
