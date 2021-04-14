@@ -91,10 +91,10 @@ if ($action == 'setting') {
 
 	$partnership->tabs = array();
 	if ($modulemenu == 'member') {
-		$partnership->tabs[] = array('data'=>'member:+partnership:Partnership:partnership@partnership:$user->rights->partnership->read:/partnership/partnership.php?socid=__ID__');
+		$partnership->tabs[] = array('data'=>'member:+partnership:Partnership:partnership@partnership:$user->rights->partnership->read:/adherents/partnership.php?socid=__ID__');
 		$fk_mainmenu = "members";
 	} else {
-		$partnership->tabs[] = array('data'=>'thirdparty:+partnership:Partnership:partnership@partnership:$user->rights->partnership->read:/partnership/partnership.php?socid=__ID__');
+		$partnership->tabs[] = array('data'=>'thirdparty:+partnership:Partnership:partnership@partnership:$user->rights->partnership->read:/societe/partnership.php?socid=__ID__');
 		$fk_mainmenu = "companies";
 	}
 

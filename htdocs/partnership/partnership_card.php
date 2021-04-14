@@ -108,9 +108,7 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 // Initialize array of search criterias
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
-if ($conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member')
-	unset($object->fields['fk_soc']);
-else unset($object->fields['fk_member']);
+
 foreach ($object->fields as $key => $val) {
 	if (GETPOST('search_'.$key, 'alpha')) {
 		$search[$key] = GETPOST('search_'.$key, 'alpha');
@@ -581,7 +579,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 
 			// Back to draft
-			if ($object->status == $object::STATUS_ACCEPTED) {
+			if ($object->status != $object::STATUS_DRAFT) {
 				print dolGetButtonAction($langs->trans('SetToDraft'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_setdraft&confirm=yes', '', $permissiontoadd);
 			}
 
@@ -598,23 +596,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				}
 			}
 
-			// Clone
-			// print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&object=scrumsprint', '', $permissiontoadd);
-
-
-			// if ($permissiontoadd) {
-			// 	if ($object->status == $object::STATUS_ENABLED) {
-			// 		print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=disable&token='.newToken().'">'.$langs->trans("Disable").'</a>'."\n";
-			// 	} else {
-			// 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=enable&token='.newToken().'">'.$langs->trans("Enable").'</a>'."\n";
-			// 	}
-			// }
-
 			// Cancel
 			if ($permissiontoadd) {
 				if ($object->status == $object::STATUS_ACCEPTED) {
 					print dolGetButtonAction($langs->trans('Cancel'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_close&confirm=yes&token='.newToken(), '', $permissiontoadd);
-				} elseif ($object->status == $object::STATUS_CANCELED) {
+				} elseif ($object->status > $object::STATUS_ACCEPTED) {
 					// print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken().'">'.$langs->trans("Re-Open").'</a>'."\n";
 					print dolGetButtonAction($langs->trans('Re-Open'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_reopen&confirm=yes&token='.newToken(), '', $permissiontoadd);
 				}
@@ -622,7 +608,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Refuse
 			if ($permissiontoadd) {
-				if ($object->status != $object::STATUS_CANCELED) {
+				if ($object->status != $object::STATUS_CANCELED && $object->status != $object::STATUS_REFUSED) {
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=refuse&token='.newToken().'">'.$langs->trans("Refuse").'</a>'."\n";
 				}
 			}

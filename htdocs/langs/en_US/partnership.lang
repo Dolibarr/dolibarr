@@ -37,6 +37,7 @@ PartnershipAboutPage = Partnership about page
 #
 # Object
 #
+PartnershipDedicatedToThisThirdParty=Partnership dedicated to this third party	
 DatePartnershipStart=Start date
 DatePartnershipEnd=End date
 
