@@ -81,8 +81,18 @@ $email = GETPOST("email");
 $encodedid = GETPOST('id');
 $id = dol_decode($encodedid, $dolibarr_main_instance_unique_id);
 
-$project = new Project($db);
+$conference = new ConferenceOrBooth($db);
+$resultconf = $conference->fetch($id);
+if ($resultconf < 0) {
+    setEventMessages(null, $object->errors, "errors");
+}
 
+$project = new Project($db);
+$resultproject = $project->fetch($conference->fk_project);
+if ($resultproject < 0){
+    $error++;
+    $errmsg .= $project->error;
+}
 
 // Getting 'securekey'.'id' from Post and decoding it
 $encodedsecurekeyandid = GETPOST('securekey', 'alpha');
