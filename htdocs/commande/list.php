@@ -277,12 +277,12 @@ if (empty($reshook)) {
 	$permissiontoread = $user->rights->commande->lire;
 	$permissiontoadd = $user->rights->commande->creer;
 	$permissiontodelete = $user->rights->commande->supprimer;
-	if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)){
+	if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 		$permissiontovalidate = $user->rights->commande->order_advance->validate;
 		$permissiontoclose = $user->rights->commande->order_advance->close;
 		$permissiontocancel = $user->rights->commande->order_advance->annuler;
 		$permissiontosendbymail = $user->rights->commande->order_advance->send;
-	}else{
+	} else {
 		$permissiontovalidate = $user->rights->commande->creer;
 		$permissiontoclose = $user->rights->commande->creer;
 		$permissiontocancel = $user->rights->commande->creer;
@@ -300,9 +300,9 @@ if ($action == 'validate' && $permissiontoadd) {
 		foreach ($toselect as $checked) {
 			if ($objecttmp->fetch($checked)) {
 				if ($objecttmp->statut == 0) {
-					if (!empty($objecttmp->fk_warehouse)){
+					if (!empty($objecttmp->fk_warehouse)) {
 						$idwarehouse = $objecttmp->fk_warehouse;
-					}else{
+					} else {
 						$idwarehouse = 0;
 					}
 					if ($objecttmp->valid($user, $idwarehouse)) {
@@ -315,7 +315,7 @@ if ($action == 'validate' && $permissiontoadd) {
 					setEventMessage($objecttmp->ref." ".$langs->trans('IsNotADraft'), 'errors');
 					$error++;
 				}
-			}else{
+			} else {
 				dol_print_error($db);
 				$error++;
 			}
@@ -345,7 +345,7 @@ if ($action == 'shipped' && $permissiontoadd) {
 					setEventMessage($objecttmp->ref." ".$langs->trans('IsNotADraft'), 'errors');
 					$error++;
 				}
-			}else{
+			} else {
 				dol_print_error($db);
 				$error++;
 			}
