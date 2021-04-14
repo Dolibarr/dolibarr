@@ -4,6 +4,7 @@
  * Copyright (C) 2005		Simon Tosser			<simon@kornog-computing.com>
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2016	    Francis Appels       	<francis.appels@yahoo.com>
+ * Copyright (C) 2021		Noé Cendrier			<noe.cendrier@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +36,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+if (!empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+}
+
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks', 'companies', 'categories'));
 
@@ -238,6 +244,9 @@ $form = new Form($db);
 $formproduct = new FormProduct($db);
 $formcompany = new FormCompany($db);
 $formfile = new FormFile($db);
+if (!empty($conf->projet->enabled)) {
+	$formproject = new FormProjets($db);
+}
 
 $help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 llxHeader("", $langs->trans("WarehouseCard"), $help_url);
@@ -267,6 +276,15 @@ if ($action == 'create') {
 	print img_picto('', 'stock').$formproduct->selectWarehouses((GETPOSTISSET('fk_parent') ? GETPOST('fk_parent', 'int') : 'ifone'), 'fk_parent', '', 1);
 	print '</td></tr>';
 
+	// Project
+	if (!empty($conf->projet->enabled)) {
+		$langs->load('projects');
+		print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
+		print img_picto('', 'project').$formproject->select_projects(($socid > 0 ? $socid : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
+		print ' <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id.($fac_rec ? '&fac_rec='.$fac_rec : '')).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
+		print '</td></tr>';
+	}
+	
 	// Description
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 	// Editeur wysiwyg
@@ -382,6 +400,11 @@ if ($action == 'create') {
 			$morehtmlref = '<div class="refidno">';
 			$morehtmlref .= $langs->trans("LocationSummary").' : '.$object->lieu;
 			$morehtmlref .= '</div>';
+			if ($object->project) {
+				$morehtmlref .= '<div class="refidno">';
+				$morehtmlref .= $langs->trans("LocationSummary").' : '.$object->lieu;
+				$morehtmlref .= '</div>';
+			}
 
 			$shownav = 1;
 			if ($user->socid && !in_array('stock', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
@@ -707,6 +730,15 @@ if ($action == 'create') {
 			print $formproduct->selectWarehouses($object->fk_parent, 'fk_parent', '', 1);
 			print '</td></tr>';
 
+			// Project
+			if (!empty($conf->projet->enabled)) {
+				$langs->load('projects');
+				print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
+				print img_picto('', 'project').$formproject->select_projects(($socid > 0 ? $socid : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
+				print ' <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id.($fac_rec ? '&fac_rec='.$fac_rec : '')).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
+				print '</td></tr>';
+			}
+	
 			// Description
 			print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 			// Editeur wysiwyg
