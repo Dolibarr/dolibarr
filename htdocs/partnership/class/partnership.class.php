@@ -374,13 +374,12 @@ class Partnership extends CommonObject
 		if ($ref) {
 			$sql .= " AND p.ref='".$this->db->escape($ref)."'";
 		}
-		
-		if($fk_soc_or_member){
+
+		if ($fk_soc_or_member) {
 			$sql .= ' AND';
-			if($conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member')
+			if ($conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member')
 				$sql .= ' p.fk_member = ';
-			else
-				$sql .= ' p.fk_soc = ';
+			else $sql .= ' p.fk_soc = ';
 			$sql .= $fk_soc_or_member;
 			$sql .= ' ORDER BY p.date_partnership_end DESC';
 		}

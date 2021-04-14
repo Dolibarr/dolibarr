@@ -144,12 +144,12 @@ if (empty($permissiontoread)) accessforbidden();
 if ($action == 'edit' && empty($permissiontoadd)) accessforbidden();
 
 $partnershipid = $object->fetch(0, "", $socid);
-if(empty($action) && empty($partnershipid)){
+if (empty($action) && empty($partnershipid)) {
 	$action = 'create';
 }
 if (($action == 'update' || $action == 'edit') && $object->status != $object::STATUS_DRAFT && !empty($user->socid)) accessforbidden();
 
-if(empty($socid) && $object){
+if (empty($socid) && $object) {
 	$socid = $object->fk_soc;
 }
 /*
@@ -262,7 +262,7 @@ if (empty($reshook)) {
 		header("Location: ".$_SERVER['PHP_SELF']."?socid=".$socid);
 		exit;
 	}
-	
+
 	// Actions when linking object each other
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';
 
@@ -352,7 +352,6 @@ if ($socid) {
 	$newcardbutton .= dolGetButtonTitle($langs->trans("NewProject"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/card.php?action=create&socid='.$societe->id.'&amp;backtopage='.urlencode($backtopage), '', 1, $params);
 
 	print '<br>';
-	
 } else {
 	dol_print_error('', 'Parameter socid not defined');
 }
@@ -442,8 +441,6 @@ if (($partnershipid || $ref) && $action == 'edit') {
 
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
-
-
 	print load_fiche_titre($langs->trans("PartnershipDedicatedToThisThirdParty", $langs->transnoentitiesnoconv("Partnership")), '', '');
 
 	$res = $object->fetch_optionals();
@@ -536,7 +533,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 
 		if (empty($reshook)) {
-
 			if ($object->status == $object::STATUS_DRAFT) {
 				print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER["PHP_SELF"].'?socid='.$socid.'&action=edit', '', $permissiontoadd);
 			}
