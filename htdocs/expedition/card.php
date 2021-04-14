@@ -414,9 +414,10 @@ if (empty($reshook))
 	)
 	{
 		$object->fetch_thirdparty();
+        if(!empty($conf->productbatch->enabled)) $needToDefineBatch = $object->hasToDefineBatchLine();
 
-		$result = $object->valid($user);
-
+		if(!$needToDefineBatch) $result = $object->valid($user);
+        else $result = -1;
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		} else {

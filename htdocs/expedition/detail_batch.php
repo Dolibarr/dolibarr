@@ -380,14 +380,19 @@ if($id > 0 || ! empty($ref)) {
 
         foreach($TDetailBatch as $k => $line) {
             $productLot = new Productlot($db);
+            $expLine = new ExpeditionLigne($db);
+            $warehouse = new Entrepot($db);
             $productLot->fetch(0, $line->expLine->fk_product, $line->batch);
-
+            $expLine->fetch($line->fk_expeditiondet);
+            $warehouse->fetch($expLine->entrepot_id);
             print '<tr class="oddeven">';
             print '<td>'.$productLot->showOutputField($productLot->fields['fk_product'], 'fk_product', $productLot->fk_product).'</td>';
-            print '<td>'.$productLot->getNomUrl(1).'</td>';
+            print '<td>'.$productLot->getNomUrl(1).' / '.$warehouse->getNomUrl(1).'</td>';
             print '<td>'.$line->qty.'</td>';
             $TQtyUsed[$productLot->id] += $line->qty;
-            if($canEdit) echo '<td align="right"><a href="?action=deleteline&id='.$object->id.'&fk_exp_batch='.$line->id.'&fk_product='.$productLot->fk_product.'">'.img_delete().'</a></td>';
+            print '<td align="right">';
+            if($canEdit) echo '<a href="?action=deleteline&id='.$object->id.'&fk_exp_batch='.$line->id.'&fk_product='.$productLot->fk_product.'">'.img_delete().'</a>';
+            print '</td>';
             print '</tr>';
         }
     }

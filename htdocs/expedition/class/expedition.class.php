@@ -648,6 +648,30 @@ class Expedition extends CommonObject
 		}
 	}
 
+    /**
+     * @return boolean
+     */
+	public function hasToDefineBatchLine() {
+        global $langs;
+        if(! empty($this->lines)) {
+            foreach($this->lines as $line) {
+                if(empty($line->entrepot_id > 0)) {
+                    $this->error = $langs->trans('DefineBatch');
+                    return true;
+                }
+                if(count($line->details_entrepot) > 1) {
+                    foreach($line->details_entrepot as $detail_entrepot) {
+                        if(empty($detail_entrepot->entrepot_id)) {
+                            $this->error = $langs->trans('DefineBatch');
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+	    return false;
+    }
+
 	/**
 	 *  Validate object and update stock if option enabled
 	 *
