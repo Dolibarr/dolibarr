@@ -665,7 +665,6 @@ class Translate
 				}else{
 					$str = img_picto('', $picto).'&ensp;'.$str;
 				}
-			}
 			return $str;
 		} else { // Translation is not available
 			//if ($key[0] == '$') { return dol_eval($key,1); }
