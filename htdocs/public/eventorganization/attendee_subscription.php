@@ -299,14 +299,14 @@ if (empty($reshook) && $action == 'add') {
 		        $facture->paye = 0;
 		        //@todo price and taxes to add
 		        $tva = get_default_tva($mysoc, $thirdparty);
-		        
 		        $facture->date = dol_now();
+		        
 		        $resultfacture = $facture->create($user);
 		        if ($resultfacture < 0){
 		            $error++;
 		            $errmsg .= $facture->error;
 		        } else {
-		            $thirdparty->fetch('', '', '', '', '', '', '', '', '', '', $email);
+		            // @todo corriger la réf qui est surement celle de la facture au lieu du client
 		            $redirection = $dolibarr_main_url_root.'/public/payment/newpayment.php?amount='.$project->price_registration.'&source=conferenceattendeesubscription&ref='.$thirdparty->ref;
 		            Header("Location: ".$redirection);
 		            exit;

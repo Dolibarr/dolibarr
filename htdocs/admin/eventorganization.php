@@ -61,6 +61,8 @@ $arrayofparameters = array(
 	'EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER'=>array('type'=>'emailtemplate:eventorganization_send', 'enabled'=>1),
 	'EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES'=>array('type'=>'emailtemplate:eventorganization_send', 'enabled'=>1),
 	'EVENTORGANIZATION_SECUREKEY'=>array('type'=>'securekey', 'enabled'=>1),
+    'SERVICE_BOOTH_LOCATION'=>array('type'=>'product', 'enabled'=>1),
+    'SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION'=>array('type'=>'product', 'enabled'=>1),
 );
 
 $error = 0;
@@ -276,6 +278,23 @@ if ($action == 'edit') {
                     });';
     			    print '</script>';
     			}
+			} elseif ($var['type'] == 'product') {
+			    if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+			        print '<tr class="oddeven"><td>'.$langs->trans("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS").'</td>';
+			        print '<td>';
+			        $selected = (empty($conf->global->$constname) ? '' : $conf->global->$constname);
+			        $form->select_produits($selected, $constname, '', 0);
+			        print '</td>';
+			        print "</tr>\n";
+			    }
+			    if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+			            print '<tr class="oddeven"><td>'.$langs->trans("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS").'</td>';
+			            print '<td>';
+			            $selected = (empty($conf->global->$constname) ? '' : $conf->global->$constname);
+			            $form->select_produits($selected, $constname, '', 0);
+			            print '</td>';
+			    }
+			    print "</tr>\n";
 			} else {
 				print '<input name="'.$constname.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.$conf->global->{$constname}.'">';
 			}

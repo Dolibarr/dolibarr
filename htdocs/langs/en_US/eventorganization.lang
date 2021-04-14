@@ -82,6 +82,8 @@ EventOrganizationICSLink=Link ICS for events
 ConferenceOrBoothInformation=Conference Or Booth informations
 Attendees = Attendees
 EVENTORGANIZATION_SECUREKEY = Secure Key of the public registration link to a conference
+SERVICE_BOOTH_LOCATION = Service used for the invoice row about a booth location
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service used for the invoice row about an attendee subscription to a conference
 #
 # Status
 #

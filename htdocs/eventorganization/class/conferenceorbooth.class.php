@@ -237,7 +237,19 @@ class ConferenceOrBooth extends ActionComm
 	 */
 	public function fetch($id, $ref = null, $ref_ext = '', $email_msgid = '')
 	{
+	    global $dolibarr_main_url_root, $dolibarr_main_instance_unique_id, $conf, $langs;
+	    
 		$result = parent::fetch($id, $ref, $ref_ext, $email_msgid);
+		
+		$encodedid = dol_encode($id, $dolibarr_main_instance_unique_id);
+		$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_subscription.php?id='.$encodedid;
+		
+		$encodedsecurekey = dol_encode($conf->global->EVENTORGANIZATION_SECUREKEY.$encodedid, $dolibarr_main_instance_unique_id);
+		$link_subscription .= '&securekey='.urlencode($encodedsecurekey);
+		
+		$this->fields['pubregister'] = array('type'=>'url', 'label'=>$langs->trans("PublicAttendeeSubscriptionPage"), 'enabled'=>'1', 'position'=>72, 'notnull'=>0, 'visible'=>1);
+		$this->pubregister = $link_subscription;
+		
 		$this->getActionCommFields();
 		return $result;
 	}
