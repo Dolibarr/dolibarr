@@ -28,7 +28,6 @@
  */
 function payment_prepare_head(Paiement $object)
 {
-
 	global $langs, $conf;
 
 	$h = 0;
@@ -287,6 +286,7 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag
 			}
 		}
 	} elseif ($type == 'member' || $type == 'membersubscription') {
+		$newtype = 'member';
 		$out = $urltouse.'/public/payment/newpayment.php?source=membersubscription&ref='.($mode ? '<font color="#666666">' : '');
 		if ($mode == 1) {
 			$out .= 'member_ref';
@@ -301,10 +301,10 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag
 			} else {
 				$out .= '&securekey='.($mode ? '<font color="#666666">' : '');
 				if ($mode == 1) {
-					$out .= "hash('".$conf->global->PAYMENT_SECURITY_TOKEN."' + '".$type."' + member_ref)";
+					$out .= "hash('".$conf->global->PAYMENT_SECURITY_TOKEN."' + '".$newtype."' + member_ref)";
 				}
 				if ($mode == 0) {
-					$out .= dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.$type.$ref, 2);
+					$out .= dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.$newtype.$ref, 2);
 				}
 				$out .= ($mode ? '</font>' : '');
 			}

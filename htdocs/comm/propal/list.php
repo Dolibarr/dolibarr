@@ -73,6 +73,7 @@ $search_societe_alias = GETPOST('search_societe_alias', 'alpha');
 $search_montant_ht = GETPOST('search_montant_ht', 'alpha');
 $search_montant_vat = GETPOST('search_montant_vat', 'alpha');
 $search_montant_ttc = GETPOST('search_montant_ttc', 'alpha');
+$search_warehouse = GETPOST('search_warehouse', 'alpha');
 $search_multicurrency_code = GETPOST('search_multicurrency_code', 'alpha');
 $search_multicurrency_tx = GETPOST('search_multicurrency_tx', 'alpha');
 $search_multicurrency_montant_ht = GETPOST('search_multicurrency_montant_ht', 'alpha');
@@ -124,11 +125,6 @@ if (!$sortfield) {
 if (!$sortorder) {
 	$sortorder = 'DESC';
 }
-
-$permissiontoread = $user->rights->propal->lire;
-$permissiontoadd = $user->rights->propal->write;
-$permissiontodelete = $user->rights->propal->supprimer;
-$permissiontoclose = $user->rights->propal->cloturer;
 
 // Security check
 $module = 'propal';
@@ -218,6 +214,12 @@ $arrayfields = array(
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
+$permissiontoread = $user->rights->propal->lire;
+$permissiontoadd = $user->rights->propal->write;
+$permissiontodelete = $user->rights->propal->supprimer;
+$permissiontoclose = $user->rights->propal->cloturer;
+
+
 
 /*
  * Actions
@@ -253,6 +255,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_montant_ht = '';
 	$search_montant_vat = '';
 	$search_montant_ttc = '';
+	$search_warehouse = '';
 	$search_multicurrency_code = '';
 	$search_multicurrency_tx = '';
 	$search_multicurrency_montant_ht = '';
@@ -295,7 +298,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
-if ($action == 'validate') {
+if ($action == 'validate' && $permissiontoadd) {
 	if (GETPOST('confirm') == 'yes') {
 		$tmpproposal = new Propal($db);
 		$db->begin();
@@ -325,16 +328,16 @@ if ($action == 'validate') {
 	}
 }
 
-if ($action == "sign") {
+if ($action == "sign" && $permissiontoclose) {
 	if (GETPOST('confirm') == 'yes') {
 		$tmpproposal = new Propal($db);
 		$db->begin();
 		$error = 0;
 		foreach ($toselect as $checked) {
 			if ($tmpproposal->fetch($checked)) {
-				if ($tmpproposal->statut == 1) {
-					$tmpproposal->statut = 2;
-					if ($tmpproposal->update($user)) {
+				if ($tmpproposal->statut == $tmpproposal::STATUS_VALIDATED) {
+					$tmpproposal->statut = $tmpproposal::STATUS_SIGNED;;
+					if ($tmpproposal->closeProposal($user, $tmpproposal::STATUS_SIGNED)) {
 						setEventMessage($tmpproposal->ref." ".$langs->trans('Signed'), 'mesgs');
 					} else {
 						dol_print_error($db);
@@ -356,16 +359,16 @@ if ($action == "sign") {
 		}
 	}
 }
-if ($action == "nosign") {
+if ($action == "nosign" && $permissiontoclose) {
 	if (GETPOST('confirm') == 'yes') {
 		$tmpproposal = new Propal($db);
 		$db->begin();
 		$error = 0;
 		foreach ($toselect as $checked) {
 			if ($tmpproposal->fetch($checked)) {
-				if ($tmpproposal->statut == 1) {
-					$tmpproposal->statut = 3;
-					if ($tmpproposal->update($user)) {
+				if ($tmpproposal->statut == $tmpproposal::STATUS_VALIDATED) {
+					$tmpproposal->statut = $tmpproposal::STATUS_NOTSIGNED;
+					if ($tmpproposal->closeProposal($user, $tmpproposal::STATUS_NOTSIGNED)) {
 						setEventMessage($tmpproposal->ref." ".$langs->trans('NoSigned'), 'mesgs');
 					} else {
 						dol_print_error($db);
@@ -387,6 +390,43 @@ if ($action == "nosign") {
 		}
 	}
 }
+
+// Closed records
+if (!$error && $massaction === 'setbilled' && $permissiontoclose) {
+	$db->begin();
+
+	$objecttmp = new $objectclass($db);
+	$nbok = 0;
+	foreach ($toselect as $toselectid) {
+		$result = $objecttmp->fetch($toselectid);
+		if ($result > 0) {
+			$result = $objecttmp->classifyBilled($user, 0);
+			if ($result <= 0) {
+				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+				$error++;
+				break;
+			} else {
+				$nbok++;
+			}
+		} else {
+			setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+			$error++;
+			break;
+		}
+	}
+
+	if (!$error) {
+		if ($nbok > 1) {
+			setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+		} else {
+			setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+		}
+		$db->commit();
+	} else {
+		$db->rollback();
+	}
+}
+
 
 
 /*
@@ -519,6 +559,9 @@ if ($search_montant_vat != '') {
 }
 if ($search_montant_ttc != '') {
 	$sql .= natural_search("p.total_ttc", $search_montant_ttc, 1);
+}
+if ($search_warehouse != '' && $search_warehouse > 0) {
+	$sql .= natural_search("p.fk_warehouse", $search_warehouse, 1);
 }
 if ($search_multicurrency_code != '') {
 	$sql .= ' AND p.multicurrency_code = "'.$db->escape($search_multicurrency_code).'"';
@@ -776,15 +819,16 @@ if ($resql) {
 		'builddoc'=>$langs->trans("PDFMerge"),
 		'presend'=>$langs->trans("SendByMail"),
 		'prevalidate'=>$langs->trans("Validate"),
-		'presign'=>$langs->trans("Sign"),
-		'nopresign'=>$langs->trans("NoSign"),
 	);
+	if ($user->rights->propal->cloturer) {
+		$arrayofmassactions['presign']=$langs->trans("Sign");
+		$arrayofmassactions['nopresign']=$langs->trans("NoSign");
+		$arrayofmassactions['setbilled'] = $langs->trans("ClassifyBilled");
+	}
 	if ($user->rights->propal->supprimer) {
 		$arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 	}
-	if ($user->rights->propal->cloturer) {
-		$arrayofmassactions['closed'] = $langs->trans("Close");
-	}
+
 	if (in_array($massaction, array('presend', 'predelete', 'closed'))) {
 		$arrayofmassactions = array();
 	}
@@ -868,6 +912,14 @@ if ($resql) {
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('CustomersProspectsCategoriesShort');
 		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$formother->select_categories('customer', $search_categ_cus, 'search_categ_cus', 1, $tmptitle);
+		$moreforfilter .= '</div>';
+	}
+	if (!empty($conf->expedition->enabled) && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_PROPAL)) {
+		require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+		$formproduct = new FormProduct($db);
+		$moreforfilter .= '<div class="divsearchfield">';
+		$tmptitle = $langs->trans('Warehouse');
+		$moreforfilter .= img_picto($tmptitle, 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($search_warehouse, 'search_warehouse', '', $tmptitle, 0, 0, $tmptitle);
 		$moreforfilter .= '</div>';
 	}
 	$parameters = array();

@@ -1351,7 +1351,7 @@ if ($source == 'contractline') {
 }
 
 // Payment on member subscription
-if ($source == 'membersubscription') {
+if ($source == 'member' || $source == 'membersubscription') {
 	$found = true;
 	$langs->load("members");
 

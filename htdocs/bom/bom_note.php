@@ -79,9 +79,11 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, 
 
 $form = new Form($db);
 
+$title = $langs->trans('BillOfMaterials');
+
 $help_url = 'EN:Module_BOM';
 
-llxHeader('', $langs->trans('BillOfMaterials'), $help_url);
+llxHeader('', $title, $help_url);
 
 if ($id > 0 || !empty($ref)) {
 	$object->fetch_thirdparty();
