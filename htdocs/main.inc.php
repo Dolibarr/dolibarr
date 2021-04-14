@@ -2743,9 +2743,7 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 		if (!empty($conf->global->MAIN_BUGTRACK_ENABLELINK)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-			if (!empty($conf->global->MAIN_BUGTRACK_URL)) {
-				$bugbaseurl = $conf->global->MAIN_BUGTRACK_URL;
-			} else {
+			if ($conf->global->MAIN_BUGTRACK_ENABLELINK == 'github') {
 				$bugbaseurl = 'https://github.com/Dolibarr/dolibarr/issues/new?labels=Bug';
 				$bugbaseurl .= '&title=';
 				$bugbaseurl .= urlencode("Bug: ");
@@ -2777,10 +2775,17 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 				$bugbaseurl .= urlencode("## [Attached files](https://help.github.com/articles/issue-attachments) (Screenshots, screencasts, dolibarr.log, debugging informations…)\n");
 				$bugbaseurl .= urlencode("[*Files*]\n");
 				$bugbaseurl .= urlencode("\n");
+
+				$bugbaseurl .= urlencode("\n");
+				$bugbaseurl .= urlencode("## Report\n");
+			} elseif (!empty($conf->global->MAIN_BUGTRACK_ENABLELINK)) {
+				$bugbaseurl = $conf->global->MAIN_BUGTRACK_ENABLELINK;
+			} else {
+				$bugbaseurl = "";
 			}
 
 			// Execute hook printBugtrackInfo
-			$parameters = array('bugbaseurl'=>$bugbaseurl);
+			$parameters = array('bugbaseurl' => $bugbaseurl);
 			$reshook = $hookmanager->executeHooks('printBugtrackInfo', $parameters); // Note that $action and $object may have been modified by some hooks
 			if (empty($reshook)) {
 				$bugbaseurl .= $hookmanager->resPrint;
@@ -2788,8 +2793,6 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 				$bugbaseurl = $hookmanager->resPrint;
 			}
 
-			$bugbaseurl .= urlencode("\n");
-			$bugbaseurl .= urlencode("## Report\n");
 			print '<div id="blockvmenuhelpbugreport" class="blockvmenuhelp">';
 			print '<a class="help" target="_blank" rel="noopener" href="'.$bugbaseurl.'">'.$langs->trans("FindBug").'</a>';
 			print '</div>';
