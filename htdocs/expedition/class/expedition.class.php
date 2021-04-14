@@ -2525,8 +2525,8 @@ class Expedition extends CommonObject
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
     /**
-     * @param int fk_product
-     * @return ExpeditionLineBatch
+     * @param int $fk_product product id
+     * @return ExpeditionLineBatch $dbatch
      */
     public function getBatchToDefineLine($fk_product) {
         foreach($this->lines as $line) {

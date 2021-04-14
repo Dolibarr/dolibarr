@@ -252,11 +252,12 @@ class ExpeditionLineBatch extends CommonObject
     }
 
     /**
-     * @param Expedition $exp
-     * @param string $serial
-     * @param int $fk_product
-     * @param int $fk_warehouse
-     * @return int
+     * fetch by batch product warehouse exp id
+     * @param Expedition $exp exp obj
+     * @param string $serial batch
+     * @param int $fk_product product id
+     * @param int $fk_warehouse warehouse id
+     * @return int > 0 if OK < 0 if KO
      */
     public function fetchByExpDetSerial($exp, $serial, $fk_product, $fk_warehouse) {
         if(! empty($exp->lines) && !empty($exp->id)) {
