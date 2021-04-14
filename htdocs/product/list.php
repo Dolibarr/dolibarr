@@ -681,16 +681,16 @@ if ($resql) {
 
 	// List of mass actions available
 	$arrayofmassactions = array(
-		'generate_doc'=>img_picto('', 'pdf').'&ensp;'.$langs->trans("ReGeneratePDF"),
-		//'builddoc'=>img_picto('', 'pdf').'&ensp;'.$langs->trans("PDFMerge"),
-		//'presend'=>img_picto('', 'email').'&ensp;'.$langs->trans("SendByMail"),
+		'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
+		//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
+		//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 	);
 
 	if ($user->rights->{$rightskey}->supprimer) {
-		$arrayofmassactions['predelete'] = img_picto('', 'delete').'&ensp;'.$langs->trans("Delete");
+		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	}
 	if ($user->rights->{$rightskey}->creer) {
-		$arrayofmassactions['preaffecttag'] = img_picto('', 'label').'&ensp;'.$langs->trans("AffectTag");
+		$arrayofmassactions['preaffecttag'] = img_picto('', 'label', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 	}
 	if (in_array($massaction, array('presend', 'predelete','preaffecttag'))) {
 		$arrayofmassactions = array();

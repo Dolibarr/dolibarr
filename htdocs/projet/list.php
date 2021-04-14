@@ -611,19 +611,19 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 // List of mass actions available
 $arrayofmassactions = array(
-	'generate_doc'=>img_picto('', 'pdf').'&ensp;'.$langs->trans("ReGeneratePDF"),
-	//'builddoc'=>img_picto('', 'pdf').'&ensp;'.$langs->trans("PDFMerge"),
-	//'presend'=>img_picto('', 'email').'&ensp;'.$langs->trans("SendByMail"),
+	'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
+	//'builddoc'=>img_picto('', 'pdf').$langs->trans("PDFMerge"),
+	//'presend'=>img_picto('', 'email').$langs->trans("SendByMail"),
 );
 //if($user->rights->societe->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
 if ($user->rights->projet->creer) {
-	$arrayofmassactions['close'] = img_picto('', 'close_title').'&ensp;'.$langs->trans("Close");
+	$arrayofmassactions['close'] = img_picto('', 'close_title', 'class="pictofixedwidth"').$langs->trans("Close");
 }
 if ($user->rights->projet->supprimer) {
-	$arrayofmassactions['predelete'] = img_picto('', 'delete').'&ensp;'.$langs->trans("Delete");
+	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
 if ($user->rights->projet->creer) {
-	$arrayofmassactions['preaffecttag'] = img_picto('', 'label').'&ensp;'.$langs->trans("AffectTag");
+	$arrayofmassactions['preaffecttag'] = img_picto('', 'label', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
 if (in_array($massaction, array('presend', 'predelete', 'preaffecttag'))) {
 	$arrayofmassactions = array();

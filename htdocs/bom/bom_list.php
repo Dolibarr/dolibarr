@@ -421,12 +421,12 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 // List of mass actions available
 $arrayofmassactions = array(
-	//'presend'=>img_picto('', 'email').'&ensp;'.$langs->trans("SendByMail"),
-	'enable'=>img_picto('', 'check').'&ensp;'.$langs->trans("Enable"),
-	'disable'=>img_picto('', 'close_title').'&ensp;'.$langs->trans("Disable"),
+	//'presend'=>img_picto('', 'email').$langs->trans("SendByMail"),
+	'enable'=>img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Enable"),
+	'disable'=>img_picto('', 'close_title', 'class="pictofixedwidth"').$langs->trans("Disable"),
 );
 if ($permissiontodelete) {
-	$arrayofmassactions['predelete'] = img_picto('', 'delete').'&ensp;'.$langs->trans("Delete");
+	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) {
 	$arrayofmassactions = array();

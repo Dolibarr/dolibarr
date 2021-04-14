@@ -525,15 +525,15 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // List of mass actions available
 $arrayofmassactions = array();
 if ($permissiontoadd) {
-	$arrayofmassactions['disable'] = img_picto('', 'close_title').'&ensp;'.$langs->trans("DisableUser");
+	$arrayofmassactions['disable'] = img_picto('', 'close_title', 'class="pictofixedwidth"').$langs->trans("DisableUser");
 }
 if ($permissiontoadd) {
-	$arrayofmassactions['reactivate'] = img_picto('', 'check').'&ensp;'.$langs->trans("Reactivate");
+	$arrayofmassactions['reactivate'] = img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Reactivate");
 }
 if ($permissiontoadd) {
-	$arrayofmassactions['preaffecttag'] = img_picto('', 'label').'&ensp;'.$langs->trans("AffectTag");
+	$arrayofmassactions['preaffecttag'] = img_picto('', 'label', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
-//if ($permissiontodelete) $arrayofmassactions['predelete'] = img_picto('', 'delete').'&ensp;'.$langs->trans("Delete");
+//if ($permissiontodelete) $arrayofmassactions['predelete'] = img_picto('', 'delete').$langs->trans("Delete");
 
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete', 'preaffecttag'))) {
 	$arrayofmassactions = array();

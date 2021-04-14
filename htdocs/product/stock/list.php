@@ -356,15 +356,15 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 // List of mass actions available
 $arrayofmassactions = array(
-	//'presend'=>img_picto('', 'email').'&ensp;'.$langs->trans("SendByMail"),
-	//'builddoc'=>img_picto('', 'pdf').'&ensp;'.$langs->trans("PDFMerge"),
+	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
+	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 );
-//if ($user->rights->stock->supprimer) $arrayofmassactions['predelete']=img_picto('', 'delete').'&ensp;'.$langs->trans("Delete");
+//if ($user->rights->stock->supprimer) $arrayofmassactions['predelete']=img_picto('', 'delete').$langs->trans("Delete");
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete','preaffecttag'))) {
 	$arrayofmassactions = array();
 }
 if ($user->rights->stock->creer) {
-	$arrayofmassactions['preaffecttag'] = img_picto('', 'label').'&ensp;'.$langs->trans("AffectTag");
+	$arrayofmassactions['preaffecttag'] = img_picto('', 'label', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
