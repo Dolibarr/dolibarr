@@ -737,11 +737,11 @@ if ($action == 'edit') {
 
 		print '<tr class="oddeven"><td>'.$langs->trans('MAIN_MAIL_DEFAULT_FROMTYPE').'</td>';
 		print '<td>';
-		if (!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE) === 'robot') {
+		if (!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE) && $conf->global->MAIN_MAIL_DEFAULT_FROMTYPE === 'robot') {
 			print $langs->trans('RobotEmail');
-		} elseif (!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE) === 'user') {
+		} elseif (!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE) && $conf->global->MAIN_MAIL_DEFAULT_FROMTYPE === 'user') {
 			print $langs->trans('UserEmail');
-		} elseif (!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE) === 'company') {
+		} elseif (!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE) && $conf->global->MAIN_MAIL_DEFAULT_FROMTYPE === 'company') {
 			print $langs->trans('CompanyEmail').' '.dol_escape_htmltag('<'.$mysoc->email.'>');
 		} else {
 			$id = preg_replace('/senderprofile_/', '', !empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE) ? $conf->global->MAIN_MAIL_DEFAULT_FROMTYPE : '');
