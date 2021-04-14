@@ -415,11 +415,6 @@ if ($action == 'create') {
 
 	print '<table class="border centpercent">';
 
-	print '<tr class="hide_if_no_auto_create_payment">';
-	print '<td class="fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
-	print $form->selectDate($datep, "datep", '', '', '', 'add', 1, 1);
-	print '</td></tr>';
-
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo")).'</td><td>';
 	print $form->selectDate((GETPOST("datevmonth", 'int') ? $datev : -1), "datev", '', '', '', 'add', 1, 1);
 	print '</td></tr>';
@@ -435,6 +430,17 @@ if ($action == 'create') {
 	// Amount
 	print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.GETPOST("amount", "alpha").'"></td></tr>';
 
+	print '<tr><td colspan="2"><hr></td></tr>';
+
+	// Auto create payment
+	print '<tr><td>'.$langs->trans('AutomaticCreationPayment').'</td>';
+	print '<td><input id="auto_create_paiement" name="auto_create_paiement" type="checkbox" ' . (empty($auto_create_payment) ? '' : 'checked="checked"') . ' value="1"></td></tr>'."\n";
+
+	print '<tr class="hide_if_no_auto_create_payment">';
+	print '<td class="fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
+	print $form->selectDate($datep, "datep", '', '', '', 'add', 1, 1);
+	print '</td></tr>';
+
 	// Type payment
 	print '<tr><td class="fieldrequired" id="label_type_payment">'.$langs->trans("PaymentMode").'</td><td>';
 	$form->select_types_paiements(GETPOST("type_payment"), "type_payment");
@@ -447,10 +453,6 @@ if ($action == 'create') {
 		$form->select_comptes(GETPOST("accountid", 'int'), "accountid", 0, "courant=1", 1); // List of bank account available
 		print '</td></tr>';
 	}
-
-	// Auto create payment
-	print '<tr><td>'.$langs->trans('AutomaticCreationPayment').'</td>';
-	print '<td><input id="auto_create_paiement" name="auto_create_paiement" type="checkbox" ' . (empty($auto_create_payment) ? '' : 'checked="checked"') . ' value="1"></td></tr>'."\n";
 
 	// Number
 	print '<tr class="hide_if_no_auto_create_payment"><td>'.$langs->trans('Numero');
@@ -473,9 +475,11 @@ if ($action == 'create') {
 	print dol_get_fiche_end();
 
 	print '<div class="center">';
-	print '<span class="hide_if_no_auto_create_payment">';
+	print '<div class="hide_if_no_auto_create_payment paddingbottom">';
 	print '<input type="checkbox" checked value="1" name="closepaidtva"> <span class="">'.$langs->trans("ClosePaidVATAutomatically").'</span>';
-	print '</span><br>';
+	print '<br>';
+	print '</div>';
+
 	print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
