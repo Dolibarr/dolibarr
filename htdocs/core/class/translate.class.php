@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2001      Eric Seigne         <erics@rycks.com>
- * Copyright (C) 2004-2015 Destailleur Laurent <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin       <regis.houssin@inodbox.com>
+/* Copyright (C) 2001      	Eric Seigne         <erics@rycks.com>
+ * Copyright (C) 2004-2015 	Destailleur Laurent <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010 	Regis Houssin       <regis.houssin@inodbox.com>
+ * Copyright (C) 2021 		BERTON Anthony 		<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -609,9 +610,12 @@ class Translate
 	 *  @param  string	$param3     param3 string
 	 *  @param  string	$param4     param4 string
 	 *	@param	int		$maxsize	Max length of text. Warning: Will not work if paramX has HTML content. deprecated.
+	 *	@param	string	$picto		Picto name
+	 *	@param	string	$picto_pos	Picto position
+	 
 	 *  @return string      		Translated string (encoded into HTML entities and UTF8)
 	 */
-	public function trans($key, $param1 = '', $param2 = '', $param3 = '', $param4 = '', $maxsize = 0, $picto = '')
+	public function trans($key, $param1 = '', $param2 = '', $param3 = '', $param4 = '', $maxsize = 0, $picto = '', $picto_pos = '')
 	{
 		global $conf;
 
@@ -654,7 +658,13 @@ class Translate
 				$str = dol_trunc($str, $maxsize);
 			}
 			if (!empty($picto)){
-				$str = img_picto('', $picto).'&ensp;'.$str;
+				if ($picto_pos == 'after'){
+					$str = $str.'&ensp;'.img_picto('', $picto);
+				}elseif ($picto_pos == 'between'){
+					$str = img_picto('', $picto).'&ensp;'.$str.'&ensp;'.img_picto('', $picto);
+				}else{
+					$str = img_picto('', $picto).'&ensp;'.$str;
+				}
 			}
 			return $str;
 		} else { // Translation is not available
