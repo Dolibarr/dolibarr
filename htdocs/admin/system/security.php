@@ -156,7 +156,7 @@ print '<br>';
 print load_fiche_titre($langs->trans("PermissionsOnFiles"), '', 'folder');
 
 print '<strong>'.$langs->trans("PermissionsOnFilesInWebRoot").'</strong>: ';
-$arrayoffilesinroot = dol_dir_list(DOL_DOCUMENT_ROOT, 'all', 1, '', array('custom\/'), 'name', SORT_ASC, 4, 1, '', 1);
+$arrayoffilesinroot = dol_dir_list(DOL_DOCUMENT_ROOT, 'all', 1, '', array('\/custom'), 'name', SORT_ASC, 4, 1, '', 1);
 $fileswithwritepermission = array();
 foreach ($arrayoffilesinroot as $fileinroot) {
 	// Test permission on file
