@@ -424,3 +424,6 @@ ALTER TABLE llx_facture_fourn ADD COLUMN date_closing datetime DEFAULT NULL afte
 ALTER TABLE llx_facture_fourn ADD COLUMN fk_user_closing integer DEFAULT NULL after fk_user_valid;
 
 ALTER TABLE llx_entrepot ADD COLUMN fk_project INTEGER DEFAULT NULL AFTER entity; -- project associated to warehouse if any
+
+-- Rebuild sequence for postgres only after query "INSERT INTO llx_salary(rowid, ..."
+-- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
