@@ -300,7 +300,42 @@ if ($action == 'validate' && $permissiontoadd) {
 		foreach ($toselect as $checked) {
 			if ($objecttmp->fetch($checked)) {
 				if ($objecttmp->statut == 0) {
-					if ($objecttmp->valid($user)) {
+					if (!empty($objecttmp->fk_warehouse)){
+						$idwarehouse = $objecttmp->fk_warehouse;
+					}else{
+						$idwarehouse = 0;
+					}
+					if ($objecttmp->valid($user, $idwarehouse)) {
+						setEventMessage($objecttmp->ref." ".$langs->trans('PassedInOpenStatus'), 'mesgs');
+					} else {
+						setEventMessage($langs->trans('CantBeValidated'), 'errors');
+						$error++;
+					}
+				} else {
+					setEventMessage($objecttmp->ref." ".$langs->trans('IsNotADraft'), 'errors');
+					$error++;
+				}
+			}else{
+				dol_print_error($db);
+				$error++;
+			}
+		}
+		if ($error) {
+			$db->rollback();
+		} else {
+			$db->commit();
+		}
+	}
+}
+if ($action == 'shipped' && $permissiontoadd) {
+	if (GETPOST('confirm') == 'yes') {
+		$objecttmp = new $objectclass($db);
+		$db->begin();
+		$error = 0;
+		foreach ($toselect as $checked) {
+			if ($objecttmp->fetch($checked)) {
+				if ($objecttmp->statut == 1) {
+					if ($objecttmp->cloture($user)) {
 						setEventMessage($objecttmp->ref." ".$langs->trans('PassedInOpenStatus'), 'mesgs');
 					} else {
 						setEventMessage($langs->trans('CantBeValidated'), 'errors');
@@ -780,13 +815,14 @@ if ($resql) {
 		'generate_doc'=>img_picto('', 'pdf').'&ensp;'.$langs->trans("ReGeneratePDF"),
 		'builddoc'=>img_picto('', 'pdf').'&ensp;'.$langs->trans("PDFMerge"),
 	);
-	if ($conf->global->MAIN_FEATURES_LEVEL == '2'){ //BB2A
-		if ($permissiontovalidate) {
-			$arrayofmassactions['prevalidate'] = img_picto('', 'check').'&ensp;'.$langs->trans("Validate");
-		}
+	if ($permissiontovalidate) {
+		$arrayofmassactions['prevalidate'] = img_picto('', 'check').'&ensp;'.$langs->trans("Validate");
 	}
 	if ($permissiontosendbymail) {
 		$arrayofmassactions['presend'] = img_picto('', 'email').'&ensp;'.$langs->trans("SendByMail");
+	}
+	if ($permissiontoclose) {
+		$arrayofmassactions['preshipped'] = img_picto('', 'dollyrevert').'&ensp;'.$langs->trans("ClassifyShipped");
 	}
 	if ($permissiontocancel) {
 		$arrayofmassactions['cancelorders'] = img_picto('', 'close_title').'&ensp;'.$langs->trans("Cancel");
@@ -794,10 +830,8 @@ if ($resql) {
 	if ($user->rights->facture->creer) {
 		$arrayofmassactions['createbills'] = img_picto('', 'bill').'&ensp;'.$langs->trans("CreateInvoiceForThisCustomer");
 	}
-	if ($conf->global->MAIN_FEATURES_LEVEL == '2'){ //BB2A
-		if ($permissiontoclose) {
-			$arrayofmassactions['setbilled'] = img_picto('', 'bill').'&ensp;'.$langs->trans("ClassifyBilled");
-		}
+	if ($permissiontoclose) {
+		$arrayofmassactions['setbilled'] = img_picto('', 'bill').'&ensp;'.$langs->trans("ClassifyBilled");
 	}
 	if ($permissiontodelete) {
 		$arrayofmassactions['predelete'] = img_picto('', 'delete').'&ensp;'.$langs->trans("Delete");
@@ -837,6 +871,9 @@ if ($resql) {
 
 	if ($massaction == 'prevalidate') {
 		print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassValidation"), $langs->trans("ConfirmMassValidationQuestion"), "validate", null, '', 0, 200, 500, 1);
+	}
+	if ($massaction == 'preshipped') {
+		print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("CloseOrder"), $langs->trans("ConfirmCloseOrder"), "shipped", null, '', 0, 200, 500, 1);
 	}
 
 	if ($massaction == 'createbills') {
