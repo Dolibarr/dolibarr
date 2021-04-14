@@ -464,9 +464,9 @@ if ($optioncss != '') {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 $arrayofmassactions = array(
-	'builddoc' => $langs->trans("PDFMerge"),
+	'builddoc' => img_picto('', 'pdf').'&ensp;'.$langs->trans("PDFMerge"),
 	//'classifyclose'=>$langs->trans("Close"), TODO massive close shipment ie: when truck is charged
-	'presend'  => $langs->trans("SendByMail"),
+	'presend'  => img_picto('', 'email').'&ensp;'.$langs->trans("SendByMail"),
 );
 if (in_array($massaction, array('presend'))) {
 	$arrayofmassactions = array();

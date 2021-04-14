@@ -944,10 +944,10 @@ if ($resql) {
 	$param .= $hookmanager->resPrint;
 
 	$arrayofmassactions = array(
-		'validate'=>$langs->trans("Validate"),
-		'generate_doc'=>$langs->trans("ReGeneratePDF"),
-		'builddoc'=>$langs->trans("PDFMerge"),
-		'presend'=>$langs->trans("SendByMail"),
+		'validate'=>img_picto('', 'check').'&ensp;'.$langs->trans("Validate"),
+		'generate_doc'=>img_picto('', 'pdf').'&ensp;'.$langs->trans("ReGeneratePDF"),
+		'builddoc'=>img_picto('', 'pdf').'&ensp;'.$langs->trans("PDFMerge"),
+		'presend'=>img_picto('', 'email').'&ensp;'.$langs->trans("SendByMail"),
 		//'makepayment'=>$langs->trans("InvoicePaymentsLimits"),   TODO Blank page when using this
 	);
 	if ($conf->prelevement->enabled && !empty($user->rights->prelevement->bons->creer)) {
@@ -956,9 +956,9 @@ if ($resql) {
 	}
 	if ($user->rights->facture->supprimer) {
 		if (!empty($conf->global->INVOICE_CAN_REMOVE_DRAFT_ONLY)) {
-			$arrayofmassactions['predeletedraft'] = $langs->trans("Deletedraft");
+			$arrayofmassactions['predeletedraft'] = img_picto('', 'delete').'&ensp;'.$langs->trans("Deletedraft");
 		} elseif (!empty($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED)) {	// mass deletion never possible on invoices on such situation
-			$arrayofmassactions['predelete'] = $langs->trans("Delete");
+			$arrayofmassactions['predelete'] = img_picto('', 'delete').'&ensp;'.$langs->trans("Delete");
 		}
 	}
 	if (in_array($massaction, array('presend', 'predelete'))) {
