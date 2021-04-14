@@ -593,7 +593,7 @@ foreach ($search_array_options as $key => $val) {
 
 
 $arrayofmassactions = array(
-	// 'presend'=>$langs->trans("SendByMail"),
+	// 'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
 
 if ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer) {
