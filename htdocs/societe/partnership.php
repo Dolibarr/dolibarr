@@ -139,6 +139,7 @@ $usercanclose 			= $user->rights->partnership->write; // Used by the include of 
 $upload_dir 			= $conf->partnership->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 
+if ($conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') accessforbidden();
 if (empty($conf->partnership->enabled)) accessforbidden();
 if (empty($permissiontoread)) accessforbidden();
 if ($action == 'edit' && empty($permissiontoadd)) accessforbidden();
@@ -283,7 +284,6 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 $formfile = new FormFile($db);
-$formproject = new FormProjets($db);
 
 $title = $langs->trans("Partnership");
 llxHeader('', $title);
@@ -348,8 +348,6 @@ if ($socid) {
 	print dol_get_fiche_end();
 
 	$params = '';
-
-	$newcardbutton .= dolGetButtonTitle($langs->trans("NewProject"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/card.php?action=create&socid='.$societe->id.'&amp;backtopage='.urlencode($backtopage), '', 1, $params);
 
 	print '<br>';
 } else {
