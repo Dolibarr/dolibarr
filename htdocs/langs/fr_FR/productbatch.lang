@@ -31,3 +31,7 @@ BatchSerialNumberingModules=Modèle de génération et contrôle des numéros de
 CustomMasks=Ajoute une option pour définir le masque dans la fiche produit
 LotProductTooltip=Crée un champ dans la fiche produit pour définir un modèle spécifique de numéro de lot
 SNProductTooltip=Crée un champ dans la fiche produit pour définir un modèle spécifique de numéro de série
+ToDefine=À définir
+DefineBatch=Veuillez définir les lots ou numéros de série
+NewBatch=Nouveau Lot/Série
+NoBatch=Aucun Lot/Série
