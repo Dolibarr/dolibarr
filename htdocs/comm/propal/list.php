@@ -827,7 +827,7 @@ if ($resql) {
 	$arrayofmassactions = array(
 		'generate_doc'=>img_picto('', 'pdf').'&ensp;'.$langs->trans("ReGeneratePDF"),
 		'builddoc'=>img_picto('', 'pdf').'&ensp;'.$langs->trans("PDFMerge"),
-		
+
 	);
 	if ($permissiontosendbymail) {
 		$arrayofmassactions['presend']=img_picto('', 'email').'&ensp;'.$langs->trans("SendByMail");
