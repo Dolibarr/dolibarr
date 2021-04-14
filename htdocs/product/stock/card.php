@@ -105,6 +105,7 @@ if (empty($reshook)) {
 	if ($action == 'add' && $user->rights->stock->creer) {
 		$object->ref = (string) GETPOST("ref", "alpha");
 		$object->fk_parent = (int) GETPOST("fk_parent", "int");
+		$object->fk_project = GETPOST('projectid', 'int');
 		$object->label = (string) GETPOST("libelle", "alpha");
 		$object->description = (string) GETPOST("desc", "alpha");
 		$object->statut      = GETPOST("statut");
@@ -168,6 +169,7 @@ if (empty($reshook)) {
 		if ($object->fetch($id)) {
 			$object->label = GETPOST("libelle");
 			$object->fk_parent   = GETPOST("fk_parent");
+			$object->fk_project = GETPOST('projectid');
 			$object->description = GETPOST("desc");
 			$object->statut      = GETPOST("statut");
 			$object->lieu        = GETPOST("lieu");
@@ -221,6 +223,9 @@ if (empty($reshook)) {
 		if ($error) {
 			$action = 'edit_extras';
 		}
+	} elseif ($action == 'classin' && $usercancreate) {
+		// Link to a project
+		$object->setProject(GETPOST('projectid', 'int'));
 	}
 
 	if ($cancel == $langs->trans("Cancel")) {
@@ -399,12 +404,39 @@ if ($action == 'create') {
 
 			$morehtmlref = '<div class="refidno">';
 			$morehtmlref .= $langs->trans("LocationSummary").' : '.$object->lieu;
-			$morehtmlref .= '</div>';
-			if ($object->project) {
-				$morehtmlref .= '<div class="refidno">';
-				$morehtmlref .= $langs->trans("LocationSummary").' : '.$object->lieu;
-				$morehtmlref .= '</div>';
+
+			// Project
+			if (!empty($conf->projet->enabled)) {
+				$langs->load("projects");
+				$morehtmlref .= '<br>'.img_picto('', 'project').' '.$langs->trans('Project').' ';
+				if ($usercancreate) {
+					if ($action != 'classify') {
+						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+					}
+					if ($action == 'classify') {
+						$projectid = $object->fk_project;
+						$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+						$morehtmlref .= '<input type="hidden" name="action" value="classin">';
+						$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
+						$morehtmlref .= $formproject->select_projects(($socid > 0 ? $socid : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
+						$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+						$morehtmlref .= '</form>';
+					} else {
+						$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+					}
+				} else {
+					if (!empty($object->fk_project)) {
+						$proj = new Project($db);
+						$proj->fetch($object->fk_project);
+						$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
+						$morehtmlref .= $proj->ref;
+						$morehtmlref .= '</a>';
+					} else {
+						$morehtmlref .= '';
+					}
+				}
 			}
+			$morehtmlref .= '</div>';
 
 			$shownav = 1;
 			if ($user->socid && !in_array('stock', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
@@ -511,7 +543,7 @@ if ($action == 'create') {
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			if (empty($reshook)) {
-				if (empty($action)) {
+				if (empty($action) || $action == 'classin') {
 					if ($user->rights->stock->creer) {
 						print '<a class="butAction" href="card.php?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Modify").'</a>';
 					} else {
@@ -732,6 +764,7 @@ if ($action == 'create') {
 
 			// Project
 			if (!empty($conf->projet->enabled)) {
+				$projectid = $object->fk_project;
 				$langs->load('projects');
 				print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
 				print img_picto('', 'project').$formproject->select_projects(($socid > 0 ? $socid : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
