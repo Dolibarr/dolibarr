@@ -191,7 +191,7 @@ if (empty($conf->global->PRODUIT_MULTIPRICES)) {
 
 $isInEEC = isInEEC($mysoc);
 
-$alias_product_perentity = empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "p" : "pa";
+$alias_product_perentity = empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "p" : "ppe";
 
 // Definition of fields for lists
 $arrayfields = array(
@@ -364,7 +364,7 @@ $sql .= ' p.tobatch,';
 if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 	$sql .= " p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export, p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export,";
 } else {
-	$sql .= " pa.accountancy_code_sell, pa.accountancy_code_sell_intra, pa.accountancy_code_sell_export, pa.accountancy_code_buy, pa.accountancy_code_buy_intra, pa.accountancy_code_buy_export,";
+	$sql .= " ppe.accountancy_code_sell, ppe.accountancy_code_sell_intra, ppe.accountancy_code_sell_export, ppe.accountancy_code_buy, ppe.accountancy_code_buy_intra, ppe.accountancy_code_buy_export,";
 }
 $sql .= ' p.datec as date_creation, p.tms as date_update, p.pmp, p.stock, p.cost_price,';
 $sql .= ' p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units, fk_country, fk_state,';
@@ -387,7 +387,7 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // N
 $sql .= $hookmanager->resPrint;
 $sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
 if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
-	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as pa ON pa.fk_product = p.rowid AND pa.entity = " . ((int) $conf->entity);
+	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);
 }
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_extrafields as ef on (p.rowid = ef.fk_object)";
@@ -523,7 +523,7 @@ $sql .= ' p.datec, p.tms, p.entity, p.tobatch, p.pmp, p.cost_price, p.stock,';
 if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 	$sql .= " p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export, p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export,";
 } else {
-	$sql .= " pa.accountancy_code_sell, pa.accountancy_code_sell_intra, pa.accountancy_code_sell_export, pa.accountancy_code_buy, pa.accountancy_code_buy_intra, pa.accountancy_code_buy_export,";
+    $sql .= " ppe.accountancy_code_sell, ppe.accountancy_code_sell_intra, ppe.accountancy_code_sell_export, ppe.accountancy_code_buy, ppe.accountancy_code_buy_intra, ppe.accountancy_code_buy_export,";
 }
 $sql .= ' p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units, p.fk_country, p.fk_state';
 if (!empty($conf->global->PRODUCT_USE_UNITS)) {

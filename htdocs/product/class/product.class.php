@@ -725,6 +725,8 @@ class Product extends CommonObject
 
 							// update accountancy for this entity
 							if (!$error && !empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+								$this->db->query("DELETE FROM " . MAIN_DB_PREFIX . "product_perentity WHERE fk_product = " . $this->id . " AND entity = " . $conf->entity);
+
 								$sql = "INSERT INTO " . MAIN_DB_PREFIX . "product_perentity (";
 								$sql .= " fk_product";
 								$sql .= ", entity";
@@ -2168,13 +2170,13 @@ class Product extends CommonObject
 		if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 			$sql .= " p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export, p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export,";
 		} else {
-			$sql .= " pa.accountancy_code_buy, pa.accountancy_code_buy_intra, pa.accountancy_code_buy_export, pa.accountancy_code_sell, pa.accountancy_code_sell_intra, pa.accountancy_code_sell_export,";
+			$sql .= " ppe.accountancy_code_buy, ppe.accountancy_code_buy_intra, ppe.accountancy_code_buy_export, ppe.accountancy_code_sell, ppe.accountancy_code_sell_intra, ppe.accountancy_code_sell_export,";
 		}
 		$sql .= " p.stock,p.pmp, p.datec, p.tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.fk_unit,";
 		$sql .= " p.fk_price_expression, p.price_autogen, p.model_pdf";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
 		if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
-			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as pa ON pa.fk_product = p.rowid AND pa.entity = " . ((int) $conf->entity);
+			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);
 		}
 		if ($id) {
 			$sql .= " WHERE p.rowid = ".((int) $id);
@@ -2256,7 +2258,7 @@ class Product extends CommonObject
 				$this->barcode_type                    = $obj->fk_barcode_type;
 
 				$this->accountancy_code_buy				= $obj->accountancy_code_buy;
-				$this->accountancy_code_buy_intra = $obj->accountancy_code_buy_intra;
+				$this->accountancy_code_buy_intra		= $obj->accountancy_code_buy_intra;
 				$this->accountancy_code_buy_export		= $obj->accountancy_code_buy_export;
 				$this->accountancy_code_sell			= $obj->accountancy_code_sell;
 				$this->accountancy_code_sell_intra		= $obj->accountancy_code_sell_intra;

@@ -113,7 +113,7 @@ $sql .= " fd.product_type, fd.total_ht, fd.total_tva, fd.tva_tx, fd.total_ttc, f
 $sql .= " s.rowid as socid, s.nom as name, s.code_compta, s.client,";
 $sql .= " p.rowid as pid, p.ref as pref,";
 if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
-	$sql .= " pa.accountancy_code_sell,";
+	$sql .= " ppe.accountancy_code_sell,";
 } else {
 	$sql .= " p.accountancy_code_sell,";
 }
@@ -121,7 +121,7 @@ $sql .= " ct.accountancy_code_sell as account_tva, ct.recuperableonly";
 $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = fd.fk_product";
 if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
-	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as pa ON pa.fk_product = p.rowid AND pa.entity = " . ((int) $conf->entity);
+	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);
 }
 $sql .= " JOIN ".MAIN_DB_PREFIX."facture as f ON f.rowid = fd.fk_facture";
 $sql .= " JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
