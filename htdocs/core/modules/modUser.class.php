@@ -231,7 +231,8 @@ class modUser extends DolibarrModules
 			'u.birth'=>'DateOfBirth',
 			'u.datec'=>"DateCreation", 'u.tms'=>"DateLastModification",
 			'u.admin'=>"Administrator", 'u.statut'=>'Status', 'u.datelastlogin'=>'LastConnexion', 'u.datepreviouslogin'=>'PreviousConnexion',
-			'u.fk_socpeople'=>"IdContact", 'u.fk_soc'=>"IdCompany", 'u.fk_member'=>"MemberId"
+			'u.fk_socpeople'=>"IdContact", 'u.fk_soc'=>"IdCompany", 'u.fk_member'=>"MemberId",
+			'g.nom'=>"Group"
 		);
 		$this->export_TypeFields_array[$r] = array(
 			'u.rowid'=>'Numeric', 'u.login'=>"Text", 'u.lastname'=>"Text", 'u.firstname'=>"Text", 'u.employee'=>'Boolean', 'u.job'=>'Text',
@@ -239,22 +240,24 @@ class modUser extends DolibarrModules
 			'u.address'=>"Text", 'u.zip'=>"Text", 'u.town'=>"Text",
 			'u.office_phone'=>'Text', 'u.user_mobile'=>'Text', 'u.office_fax'=>'Text',
 			'u.email'=>'Text', 'u.datec'=>"Date", 'u.tms'=>"Date", 'u.admin'=>"Boolean", 'u.statut'=>'Status', 'u.note'=>"Text", 'u.datelastlogin'=>'Date',
-			'u.fk_user'=>"List:user:login",
-			'u.birth'=>'Date',
-			'u.datepreviouslogin'=>'Date', 'u.fk_soc'=>"List:societe:nom:rowid", 'u.fk_member'=>"List:adherent:firstname"
+		    'u.fk_user'=>"List:user:login",
+		    'u.birth'=>'Date',
+		    'u.datepreviouslogin'=>'Date', 'u.fk_soc'=>"List:societe:nom:rowid", 'u.fk_member'=>"List:adherent:firstname",
+			'g.nom'=>"Text"
 		);
 		$this->export_entities_array[$r] = array(
 			'u.rowid'=>"user", 'u.login'=>"user", 'u.lastname'=>"user", 'u.firstname'=>"user", 'u.employee'=>'user', 'u.job'=>'user', 'u.gender'=>'user',
-			'u.accountancy_code'=>'user',
-			'u.address'=>"user", 'u.zip'=>"user", 'u.town'=>"user",
-			'u.office_phone'=>'user', 'u.user_mobile'=>'user', 'u.office_fax'=>'user',
-			'u.email'=>'user', 'u.note'=>"user", 'u.signature'=>'user',
-			'u.fk_user'=>'user', 'u.thm'=>'user', 'u.tjm'=>'user', 'u.weeklyhours'=>'user',
-			'u.dateemployment'=>'user', 'u.salary'=>'user', 'u.color'=>'user', 'u.api_key'=>'user',
-			'u.birth'=>'user',
-			'u.datec'=>"user", 'u.tms'=>"user",
-			'u.admin'=>"user", 'u.statut'=>'user', 'u.datelastlogin'=>'user', 'u.datepreviouslogin'=>'user',
-			'u.fk_socpeople'=>"contact", 'u.fk_soc'=>"company", 'u.fk_member'=>"member"
+		    'u.accountancy_code'=>'user',
+		    'u.address'=>"user", 'u.zip'=>"user", 'u.town'=>"user",
+		    'u.office_phone'=>'user', 'u.user_mobile'=>'user', 'u.office_fax'=>'user',
+		    'u.email'=>'user', 'u.note'=>"user", 'u.signature'=>'user',
+		    'u.fk_user'=>'user', 'u.thm'=>'user', 'u.tjm'=>'user', 'u.weeklyhours'=>'user',
+		    'u.dateemployment'=>'user', 'u.salary'=>'user', 'u.color'=>'user', 'u.api_key'=>'user',
+		    'u.birth'=>'user',
+		    'u.datec'=>"user", 'u.tms'=>"user",
+		    'u.admin'=>"user", 'u.statut'=>'user', 'u.datelastlogin'=>'user', 'u.datepreviouslogin'=>'user',
+		    'u.fk_socpeople'=>"contact", 'u.fk_soc'=>"company", 'u.fk_member'=>"member",
+			'g.nom'=>"Group"
 		);
 		$keyforselect = 'user';
 		$keyforelement = 'user';
@@ -267,6 +270,8 @@ class modUser extends DolibarrModules
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'user as u';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user_extrafields as extra ON u.rowid = extra.fk_object';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'usergroup_user as ug ON u.rowid = ug.fk_user';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'usergroup as g ON ug.fk_usergroup = g.rowid';
 		$this->export_sql_end[$r] .= ' WHERE u.entity IN ('.getEntity('user').')';
 
 		// Imports
