@@ -29,8 +29,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 
 
-if (!$user->admin)
-    accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "other", "agenda"));
@@ -39,25 +40,23 @@ $def = array();
 $actionsave = GETPOST('save', 'alpha');
 
 // Sauvegardes parametres
-if ($actionsave)
-{
-    $i = 0;
+if ($actionsave) {
+	$i = 0;
 
-    $db->begin();
+	$db->begin();
 
-    $i += dolibarr_set_const($db, 'MAIN_AGENDA_XCAL_EXPORTKEY', trim(GETPOST('MAIN_AGENDA_XCAL_EXPORTKEY', 'alpha')), 'chaine', 0, '', $conf->entity);
-    $i += dolibarr_set_const($db, 'MAIN_AGENDA_EXPORT_PAST_DELAY', trim(GETPOST('MAIN_AGENDA_EXPORT_PAST_DELAY', 'alpha')), 'chaine', 0, '', $conf->entity);
-    $i += dolibarr_set_const($db, 'MAIN_AGENDA_EXPORT_CACHE', trim(GETPOST('MAIN_AGENDA_EXPORT_CACHE', 'alpha')), 'chaine', 0, '', $conf->entity);
-    $i += dolibarr_set_const($db, 'AGENDA_EXPORT_FIX_TZ', trim(GETPOST('AGENDA_EXPORT_FIX_TZ', 'alpha')), 'chaine', 0, '', $conf->entity);
+	$i += dolibarr_set_const($db, 'MAIN_AGENDA_XCAL_EXPORTKEY', trim(GETPOST('MAIN_AGENDA_XCAL_EXPORTKEY', 'alpha')), 'chaine', 0, '', $conf->entity);
+	$i += dolibarr_set_const($db, 'MAIN_AGENDA_EXPORT_PAST_DELAY', trim(GETPOST('MAIN_AGENDA_EXPORT_PAST_DELAY', 'alpha')), 'chaine', 0, '', $conf->entity);
+	$i += dolibarr_set_const($db, 'MAIN_AGENDA_EXPORT_CACHE', trim(GETPOST('MAIN_AGENDA_EXPORT_CACHE', 'alpha')), 'chaine', 0, '', $conf->entity);
+	$i += dolibarr_set_const($db, 'AGENDA_EXPORT_FIX_TZ', trim(GETPOST('AGENDA_EXPORT_FIX_TZ', 'alpha')), 'chaine', 0, '', $conf->entity);
 
-    if ($i >= 4)
-    {
-        $db->commit();
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    } else {
-        $db->rollback();
-        setEventMessages($langs->trans("SaveFailed"), null, 'errors');
-    }
+	if ($i >= 4) {
+		$db->commit();
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		$db->rollback();
+		setEventMessages($langs->trans("SaveFailed"), null, 'errors');
+	}
 }
 
 
@@ -66,7 +65,9 @@ if ($actionsave)
  * View
  */
 
-if (!isset($conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY)) $conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY = 100;
+if (!isset($conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY)) {
+	$conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY = 100;
+}
 
 $wikihelp = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda';
 llxHeader('', $langs->trans("AgendaSetup"), $wikihelp);
@@ -80,7 +81,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 
 $head = agenda_prepare_head();
 
-dol_fiche_head($head, 'xcal', $langs->trans("Agenda"), -1, 'action');
+print dol_get_fiche_head($head, 'xcal', $langs->trans("Agenda"), -1, 'action');
 
 print '<span class="opacitymedium">'.$langs->trans("AgendaSetupOtherDesc")."</span><br>\n";
 print "<br>\n";
@@ -97,8 +98,9 @@ print "</tr>";
 print '<tr class="oddeven">';
 print '<td class="fieldrequired">'.$langs->trans("PasswordTogetVCalExport")."</td>";
 print '<td><input required="required" type="text" class="flat" id="MAIN_AGENDA_XCAL_EXPORTKEY" name="MAIN_AGENDA_XCAL_EXPORTKEY" value="'.(GETPOST('MAIN_AGENDA_XCAL_EXPORTKEY', 'alpha') ?GETPOST('MAIN_AGENDA_XCAL_EXPORTKEY', 'alpha') : $conf->global->MAIN_AGENDA_XCAL_EXPORTKEY).'" size="40">';
-if (!empty($conf->use_javascript_ajax))
+if (!empty($conf->use_javascript_ajax)) {
 	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
+}
 print '</td>';
 print "<td>&nbsp;</td>";
 print "</tr>";
@@ -135,10 +137,10 @@ print "</tr>";
 
 print '</table>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="center">';
-print "<input type=\"submit\" name=\"save\" class=\"button\" value=\"".$langs->trans("Save")."\">";
+print '<input type="submit" name="save" class="button button-save" value="'.$langs->trans("Save").'">';
 print "</div>";
 
 print "</form>\n";
@@ -163,7 +165,7 @@ $urlvcal .= $urlwithroot.'/public/agenda/agendaexport.php?format=vcal'.$getentit
 $message .= img_picto('', 'globe').' '.$langs->trans("WebCalUrlForVCalExport", 'vcal', $urlvcal);
 $message .= '<br>';
 $urlical = '<a href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical&type=event'.$getentity.'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...').'" target="_blank">';
-$urlical .=$urlwithroot.'/public/agenda/agendaexport.php?format=ical&type=event'.$getentity.'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : 'KEYNOTDEFINED').'</a>';
+$urlical .= $urlwithroot.'/public/agenda/agendaexport.php?format=ical&type=event'.$getentity.'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : 'KEYNOTDEFINED').'</a>';
 $message .= img_picto('', 'globe').' '.$langs->trans("WebCalUrlForVCalExport", 'ical/ics', $urlical);
 $message .= '<br>';
 $urlrss = '<a href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=rss'.$getentity.'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...').'" target="_blank">';
@@ -183,8 +185,7 @@ $message .= $langs->trans("AgendaUrlOptionsIncludeHolidays", '1', '1').'<br>';
 
 print info_admin($message);
 
-if (!empty($conf->use_javascript_ajax))
-{
+if (!empty($conf->use_javascript_ajax)) {
 	print "\n".'<script type="text/javascript">';
 	print '$(document).ready(function () {
             $("#generate_token").click(function() {

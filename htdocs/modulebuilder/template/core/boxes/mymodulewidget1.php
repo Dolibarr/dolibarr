@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2017  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2020  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software: you can redistribute it and/or modify
@@ -25,8 +25,8 @@
  * Put detailed description here.
  */
 
-/** Includes */
 include_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
+
 
 /**
  * Class to manage the box
@@ -76,6 +76,12 @@ class mymodulewidget1 extends ModeleBoxes
 	 * @var array Contents informations. Usually created at runtime by loadBox().
 	 */
 	public $info_box_contents = array();
+
+	/**
+	 * @var string 	Widget type ('graph' means the widget is a graph widget)
+	 */
+	public $widgettype = 'graph';
+
 
 	/**
 	 * Constructor
@@ -200,12 +206,12 @@ class mymodulewidget1 extends ModeleBoxes
 	 * @param array $head       Array with properties of box title
 	 * @param array $contents   Array with properties of box lines
 	 * @param int   $nooutput   No print, only return string
-	 * @return void
+	 * @return string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)
 	{
 		// You may make your own code here…
 		// … or use the parent's class function using the provided head and contents templates
-		parent::showBox($this->info_box_head, $this->info_box_contents);
+		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 }

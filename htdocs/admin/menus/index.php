@@ -31,15 +31,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("other", "admin"));
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 $dirstandard = array();
 $dirsmartphone = array();
 $dirmenus = array_merge(array("/core/menus/"), (array) $conf->modules_parts['menus']);
-foreach ($dirmenus as $dirmenu)
-{
-    $dirstandard[] = $dirmenu.'standard';
-    $dirsmartphone[] = $dirmenu.'smartphone';
+foreach ($dirmenus as $dirmenu) {
+	$dirstandard[] = $dirmenu.'standard';
+	$dirsmartphone[] = $dirmenu.'smartphone';
 }
 
 $action = GETPOST('action', 'aZ09');
@@ -54,8 +55,12 @@ $menu_handler_smartphone = preg_replace('/(_frontoffice\.php|_menu\.php)/i', '',
 
 $menu_handler = $menu_handler_top;
 
-if (GETPOST("handler_origine")) $menu_handler = GETPOST("handler_origine");
-if (GETPOST("menu_handler"))    $menu_handler = GETPOST("menu_handler");
+if (GETPOST("handler_origine")) {
+	$menu_handler = GETPOST("handler_origine");
+}
+if (GETPOST("menu_handler")) {
+	$menu_handler = GETPOST("menu_handler");
+}
 
 $menu_handler_to_search = preg_replace('/(_backoffice|_frontoffice|_menu)?(\.php)?/i', '', $menu_handler);
 
@@ -64,8 +69,7 @@ $menu_handler_to_search = preg_replace('/(_backoffice|_frontoffice|_menu)?(\.php
  * Actions
  */
 
-if ($action == 'up')
-{
+if ($action == 'up') {
 	$current = array();
 	$previous = array();
 
@@ -77,8 +81,7 @@ if ($action == 'up')
 	$result = $db->query($sql);
 	$num = $db->num_rows($result);
 	$i = 0;
-	while ($i < $num)
-	{
+	while ($i < $num) {
 		$obj = $db->fetch_object($result);
 		$current['rowid'] = $obj->rowid;
 		$current['order'] = $obj->position;
@@ -100,8 +103,7 @@ if ($action == 'up')
 	$result = $db->query($sql);
 	$num = $db->num_rows($result);
 	$i = 0;
-	while ($i < $num)
-	{
+	while ($i < $num) {
 		$obj = $db->fetch_object($result);
 		$previous['rowid'] = $obj->rowid;
 		$previous['order'] = $obj->position;
@@ -109,17 +111,16 @@ if ($action == 'up')
 	}
 
 	$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m";
-	$sql .= " SET m.position = ".$previous['order'];
-	$sql .= " WHERE m.rowid = ".$current['rowid']; // Up the selected entry
+	$sql .= " SET m.position = ".((int) $previous['order']);
+	$sql .= " WHERE m.rowid = ".((int) $current['rowid']); // Up the selected entry
 	dol_syslog("admin/menus/index.php ".$sql);
 	$db->query($sql);
 	$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m";
-	$sql .= " SET m.position = ".($current['order'] != $previous['order'] ? $current['order'] : $current['order'] + 1);
-	$sql .= " WHERE m.rowid = ".$previous['rowid']; // Descend celui du dessus
+	$sql .= " SET m.position = ".((int) ($current['order'] != $previous['order'] ? $current['order'] : $current['order'] + 1));
+	$sql .= " WHERE m.rowid = ".((int) $previous['rowid']); // Descend celui du dessus
 	dol_syslog("admin/menus/index.php ".$sql);
 	$db->query($sql);
-} elseif ($action == 'down')
-{
+} elseif ($action == 'down') {
 	$current = array();
 	$next = array();
 
@@ -131,8 +132,7 @@ if ($action == 'up')
 	$result = $db->query($sql);
 	$num = $db->num_rows($result);
 	$i = 0;
-	while ($i < $num)
-	{
+	while ($i < $num) {
 		$obj = $db->fetch_object($result);
 		$current['rowid'] = $obj->rowid;
 		$current['order'] = $obj->position;
@@ -154,8 +154,7 @@ if ($action == 'up')
 	$result = $db->query($sql);
 	$num = $db->num_rows($result);
 	$i = 0;
-	while ($i < $num)
-	{
+	while ($i < $num) {
 		$obj = $db->fetch_object($result);
 		$next['rowid'] = $obj->rowid;
 		$next['order'] = $obj->position;
@@ -163,24 +162,22 @@ if ($action == 'up')
 	}
 
 	$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m";
-	$sql .= " SET m.position = ".($current['order'] != $next['order'] ? $next['order'] : $current['order'] + 1); // Down the selected entry
-	$sql .= " WHERE m.rowid = ".$current['rowid'];
+	$sql .= " SET m.position = ".((int) ($current['order'] != $next['order'] ? $next['order'] : $current['order'] + 1)); // Down the selected entry
+	$sql .= " WHERE m.rowid = ".((int) $current['rowid']);
 	dol_syslog("admin/menus/index.php ".$sql);
 	$db->query($sql);
 	$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m"; // Up the next entry
-	$sql .= " SET m.position = ".$current['order'];
-	$sql .= " WHERE m.rowid = ".$next['rowid'];
+	$sql .= " SET m.position = ".((int) $current['order']);
+	$sql .= " WHERE m.rowid = ".((int) $next['rowid']);
 	dol_syslog("admin/menus/index.php ".$sql);
 	$db->query($sql);
-} elseif ($action == 'confirm_delete' && $confirm == 'yes')
-{
+} elseif ($action == 'confirm_delete' && $confirm == 'yes') {
 	$db->begin();
 
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
 	$sql .= " WHERE rowid = ".GETPOST('menuId', 'int');
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		$db->commit();
 
 		setEventMessages($langs->trans("MenuDeleted"), null, 'mesgs');
@@ -224,33 +221,26 @@ $head[$h][1] = $langs->trans("MenuAdmin");
 $head[$h][2] = 'editor';
 $h++;
 
-$head[$h][0] = DOL_URL_ROOT."/admin/menus/other.php";
-$head[$h][1] = $langs->trans("Miscellaneous");
-$head[$h][2] = 'misc';
-$h++;
-
-dol_fiche_head($head, 'editor', '', -1);
+print dol_get_fiche_head($head, 'editor', '', -1);
 
 print '<span class="opacitymedium">'.$langs->trans("MenusEditorDesc")."</span><br>\n";
 print "<br>\n";
 
 
 // Confirmation for remove menu entry
-if ($action == 'delete')
-{
+if ($action == 'delete') {
 	$sql = "SELECT m.titre as title";
 	$sql .= " FROM ".MAIN_DB_PREFIX."menu as m";
 	$sql .= " WHERE m.rowid = ".GETPOST('menuId', 'int');
 	$result = $db->query($sql);
 	$obj = $db->fetch_object($result);
 
-    print $form->formconfirm("index.php?menu_handler=".$menu_handler."&menuId=".GETPOST('menuId', 'int'), $langs->trans("DeleteMenu"), $langs->trans("ConfirmDeleteMenu", $obj->title), "confirm_delete");
+	print $form->formconfirm("index.php?menu_handler=".$menu_handler."&menuId=".GETPOST('menuId', 'int'), $langs->trans("DeleteMenu"), $langs->trans("ConfirmDeleteMenu", $obj->title), "confirm_delete");
 }
 
 $newcardbutton = '';
-if ($user->admin)
-{
-    $newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/admin/menus/edit.php?menuId=0&action=create&menu_handler='.urlencode($menu_handler).'&backtopage='.urlencode($_SERVER['PHP_SELF']));
+if ($user->admin) {
+	$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/admin/menus/edit.php?menuId=0&action=create&menu_handler='.urlencode($menu_handler).'&backtopage='.urlencode($_SERVER['PHP_SELF']));
 }
 
 print '<form name="newmenu" class="nocellnopadd" action="'.$_SERVER["PHP_SELF"].'">';
@@ -282,8 +272,7 @@ print '<td colspan="2">';
 
 $rangLast = 0;
 $idLast = -1;
-if ($conf->use_javascript_ajax)
-{
+if ($conf->use_javascript_ajax) {
 	/*-------------------- MAIN -----------------------
 	tableau des elements de l'arbre:
 	c'est un tableau a 2 dimensions.
@@ -297,7 +286,7 @@ if ($conf->use_javascript_ajax)
 
 	//il faut d'abord declarer un element racine de l'arbre
 
-    $data[] = array('rowid'=>0, 'fk_menu'=>-1, 'title'=>"racine", 'mainmenu'=>'', 'leftmenu'=>'', 'fk_mainmenu'=>'', 'fk_leftmenu'=>'');
+	$data[] = array('rowid'=>0, 'fk_menu'=>-1, 'title'=>"racine", 'mainmenu'=>'', 'leftmenu'=>'', 'fk_mainmenu'=>'', 'fk_leftmenu'=>'');
 
 	//puis tous les elements enfants
 
@@ -309,14 +298,14 @@ if ($conf->use_javascript_ajax)
 	$sql .= " ORDER BY m.position, m.rowid"; // Order is position then rowid (because we need a sort criteria when position is same)
 
 	$res  = $db->query($sql);
-	if ($res)
-	{
+	if ($res) {
 		$num = $db->num_rows($res);
 
 		$i = 1;
-		while ($menu = $db->fetch_array($res))
-		{
-			if (!empty($menu['langs'])) $langs->load($menu['langs']);
+		while ($menu = $db->fetch_array($res)) {
+			if (!empty($menu['langs'])) {
+				$langs->load($menu['langs']);
+			}
 			$titre = $langs->trans($menu['titre']);
 
 			$entry = '<table class="nobordernopadding centpercent"><tr><td>';
@@ -337,16 +326,16 @@ if ($conf->use_javascript_ajax)
 
 			$data[] = array(
 				'rowid'=>$menu['rowid'],
-			    'module'=>$menu['module'],
+				'module'=>$menu['module'],
 				'fk_menu'=>$menu['fk_menu'],
 				'title'=>$titre,
-			    'mainmenu'=>$menu['mainmenu'],
+				'mainmenu'=>$menu['mainmenu'],
 				'leftmenu'=>$menu['leftmenu'],
 				'fk_mainmenu'=>$menu['fk_mainmenu'],
 				'fk_leftmenu'=>$menu['fk_leftmenu'],
-			    'position'=>$menu['position'],
+				'position'=>$menu['position'],
 				'entry'=>$entry,
-			    'buttons'=>$buttons
+				'buttons'=>$buttons
 			);
 			$i++;
 		}
@@ -369,36 +358,35 @@ if ($conf->use_javascript_ajax)
 
 
 	// Process remaining records (records that are not linked to root by any path)
-    $remainingdata = array();
-	foreach ($data as $datar)
-	{
-	    if (empty($datar['rowid']) || $tree_recur_alreadyadded[$datar['rowid']]) continue;
-	    $remainingdata[] = $datar;
+	$remainingdata = array();
+	foreach ($data as $datar) {
+		if (empty($datar['rowid']) || !empty($tree_recur_alreadyadded[$datar['rowid']])) {
+			continue;
+		}
+		$remainingdata[] = $datar;
 	}
 
-	if (count($remainingdata))
-	{
-    	print '<table class="noborder centpercent">';
+	if (count($remainingdata)) {
+		print '<table class="noborder centpercent">';
 
-    	print '<tr class="liste_titre">';
-    	print '<td>'.$langs->trans("NotTopTreeMenuPersonalized").'</td>';
-    	print '<td class="right"></td>';
-    	print '</tr>';
+		print '<tr class="liste_titre">';
+		print '<td>'.$langs->trans("NotTopTreeMenuPersonalized").'</td>';
+		print '<td class="right"></td>';
+		print '</tr>';
 
-    	print '<tr>';
-    	print '<td colspan="2">';
-    	foreach ($remainingdata as $datar)
-    	{
-            $father = array('rowid'=>$datar['rowid'], 'title'=>"???", 'mainmenu'=>$datar['fk_mainmenu'], 'leftmenu'=>$datar['fk_leftmenu'], 'fk_mainmenu'=>'', 'fk_leftmenu'=>'');
-    	    //print 'Start with rowid='.$datar['rowid'].' mainmenu='.$father ['mainmenu'].' leftmenu='.$father ['leftmenu'].'<br>'."\n";
-    	    tree_recur($data, $father, 0, 'iddivjstree'.$datar['rowid'], 1, 1);
-    	}
+		print '<tr>';
+		print '<td colspan="2">';
+		foreach ($remainingdata as $datar) {
+			$father = array('rowid'=>$datar['rowid'], 'title'=>"???", 'mainmenu'=>$datar['fk_mainmenu'], 'leftmenu'=>$datar['fk_leftmenu'], 'fk_mainmenu'=>'', 'fk_leftmenu'=>'');
+			//print 'Start with rowid='.$datar['rowid'].' mainmenu='.$father ['mainmenu'].' leftmenu='.$father ['leftmenu'].'<br>'."\n";
+			tree_recur($data, $father, 0, 'iddivjstree'.$datar['rowid'], 1, 1);
+		}
 
-    	print '</td>';
+		print '</td>';
 
-    	print '</tr>';
+		print '</tr>';
 
-    	print '</table>';
+		print '</table>';
 	}
 
 	print '</div>';

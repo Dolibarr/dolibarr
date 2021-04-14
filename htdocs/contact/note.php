@@ -36,14 +36,20 @@ $langs->load("companies");
 
 // Security check
 $id = GETPOST('id', 'int');
-if ($user->socid) $id = $user->socid;
+if ($user->socid) {
+	$id = $user->socid;
+}
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 
 $object = new Contact($db);
-if ($id > 0) $object->fetch($id);
+if ($id > 0) {
+	$object->fetch($id);
+}
 
 $permissionnote = $user->rights->societe->creer; // Used by the include of actions_setnotes.inc.php
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('contactcard'));
 
 /*
  * Actions
@@ -65,48 +71,51 @@ $form = new Form($db);
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('', $title, $help_url);
 
-if ($id > 0)
-{
-    /*
-     * Affichage onglets
-     */
-    if (!empty($conf->notification->enabled)) $langs->load("mails");
+if ($id > 0) {
+	/*
+	 * Affichage onglets
+	 */
+	if (!empty($conf->notification->enabled)) {
+		$langs->load("mails");
+	}
 
-    $head = contact_prepare_head($object);
+	$head = contact_prepare_head($object);
 
-    dol_fiche_head($head, 'note', $title, -1, 'contact');
+	print dol_get_fiche_head($head, 'note', $title, -1, 'contact');
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-    $morehtmlref = '<div class="refidno">';
-    if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
-    {
-        $objsoc = new Societe($db);
-        $objsoc->fetch($object->socid);
-        // Thirdparty
-        $morehtmlref .= $langs->trans('ThirdParty').' : ';
-        if ($objsoc->id > 0) $morehtmlref .= $objsoc->getNomUrl(1);
-        else $morehtmlref .= $langs->trans("ContactNotLinkedToCompany");
-    }
-    $morehtmlref .= '</div>';
+	$morehtmlref = '<div class="refidno">';
+	if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
+		$objsoc = new Societe($db);
+		$objsoc->fetch($object->socid);
+		// Thirdparty
+		$morehtmlref .= $langs->trans('ThirdParty').' : ';
+		if ($objsoc->id > 0) {
+			$morehtmlref .= $objsoc->getNomUrl(1);
+		} else {
+			$morehtmlref .= $langs->trans("ContactNotLinkedToCompany");
+		}
+	}
+	$morehtmlref .= '</div>';
 
-    dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref);
+	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref);
 
-    $cssclass = 'titlefield';
-    //if ($action == 'editnote_public') $cssclass='titlefieldcreate';
-    //if ($action == 'editnote_private') $cssclass='titlefieldcreate';
+	$cssclass = 'titlefield';
+	//if ($action == 'editnote_public') $cssclass='titlefieldcreate';
+	//if ($action == 'editnote_private') $cssclass='titlefieldcreate';
 
-    print '<div class="fichecenter">';
-    print '<div class="underbanner clearboth"></div>';
+	print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';
 
 	print '<table class="border centpercent tableforfield">';
 
-    // Civility
-    print '<tr><td class="'.$cssclass.'">'.$langs->trans("UserTitle").'</td><td>';
-    print $object->getCivilityLabel();
-    print '</td></tr>';
+	// Civility
+	print '<tr><td class="'.$cssclass.'">'.$langs->trans("UserTitle").'</td><td>';
+	print $object->getCivilityLabel();
+	print '</td></tr>';
 
-    print "</table>";
+	print "</table>";
 
 
 	$cssclass = "titlefield";
@@ -114,7 +123,7 @@ if ($id > 0)
 
 	print '</div>';
 
-    dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 llxFooter();

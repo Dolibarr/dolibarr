@@ -29,7 +29,7 @@ create table llx_reception
   fk_projet  		integer  DEFAULT NULL,
   
   ref_ext               varchar(30),					-- reference into an external system (not used by dolibarr)
-  ref_int				varchar(30),					-- reference into an internal system (used by dolibarr to store extern id like paypal info)
+  ref_int				        varchar(30),					-- reference into an internal system (deprecated)
   ref_supplier          varchar(30),					-- customer number
   
   date_creation         datetime,						-- date de creation

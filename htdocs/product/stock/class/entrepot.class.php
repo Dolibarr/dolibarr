@@ -119,24 +119,24 @@ class Entrepot extends CommonObject
 	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'ID', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>10),
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'default'=>1, 'notnull'=>1, 'index'=>1, 'position'=>15),
-		'ref' =>array('type'=>'varchar(255)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'showoncombobox'=>1, 'position'=>25),
+		'ref' =>array('type'=>'varchar(255)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'showoncombobox'=>1, 'position'=>25, 'searchall'=>1),
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>30),
-		'description' =>array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>-2, 'position'=>35),
-		'lieu' =>array('type'=>'varchar(64)', 'label'=>'LocationSummary', 'enabled'=>1, 'visible'=>1, 'position'=>40, 'showoncombobox'=>1),
+		'description' =>array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>-2, 'position'=>35, 'searchall'=>1),
+		'lieu' =>array('type'=>'varchar(64)', 'label'=>'LocationSummary', 'enabled'=>1, 'visible'=>1, 'position'=>40, 'showoncombobox'=>1, 'searchall'=>1),
 		'fk_parent' =>array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php:1:statut=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'ParentWarehouse', 'enabled'=>1, 'visible'=>-2, 'position'=>41),
-		'address' =>array('type'=>'varchar(255)', 'label'=>'Address', 'enabled'=>1, 'visible'=>-2, 'position'=>45),
-		'zip' =>array('type'=>'varchar(10)', 'label'=>'Zip', 'enabled'=>1, 'visible'=>-2, 'position'=>50),
-		'town' =>array('type'=>'varchar(50)', 'label'=>'Town', 'enabled'=>1, 'visible'=>-2, 'position'=>55),
+		'address' =>array('type'=>'varchar(255)', 'label'=>'Address', 'enabled'=>1, 'visible'=>-2, 'position'=>45, 'searchall'=>1),
+		'zip' =>array('type'=>'varchar(10)', 'label'=>'Zip', 'enabled'=>1, 'visible'=>-2, 'position'=>50, 'searchall'=>1),
+		'town' =>array('type'=>'varchar(50)', 'label'=>'Town', 'enabled'=>1, 'visible'=>-2, 'position'=>55, 'searchall'=>1),
 		'fk_departement' =>array('type'=>'sellist:c_departements:label:rowid::active=1', 'label'=>'State', 'enabled'=>1, 'visible'=>0, 'position'=>60),
 		'fk_pays' =>array('type'=>'sellist:c_country:label:rowid::active=1', 'label'=>'Country', 'enabled'=>1, 'visible'=>-2, 'position'=>65),
-		'phone' =>array('type'=>'varchar(20)', 'label'=>'Phone', 'enabled'=>1, 'visible'=>-2, 'position'=>70),
-		'fax' =>array('type'=>'varchar(20)', 'label'=>'Fax', 'enabled'=>1, 'visible'=>-2, 'position'=>75),
+		'phone' =>array('type'=>'varchar(20)', 'label'=>'Phone', 'enabled'=>1, 'visible'=>-2, 'position'=>70, 'searchall'=>1),
+		'fax' =>array('type'=>'varchar(20)', 'label'=>'Fax', 'enabled'=>1, 'visible'=>-2, 'position'=>75, 'searchall'=>1),
 		//'fk_user_author' =>array('type'=>'integer', 'label'=>'Fk user author', 'enabled'=>1, 'visible'=>-2, 'position'=>82),
-		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'position'=>500),
-		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>501),
+		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'position'=>300),
+		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>301),
 		//'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000),
 		//'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'ModelPDF', 'enabled'=>1, 'visible'=>0, 'position'=>1010),
-		'statut' =>array('type'=>'tinyint(4)', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'position'=>200),
+		'statut' =>array('type'=>'tinyint(4)', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'position'=>500),
 	);
 
 	/**
@@ -166,8 +166,7 @@ class Entrepot extends CommonObject
 		$this->db = $db;
 
 		$this->statuts[self::STATUS_CLOSED] = 'Closed2';
-		if ($conf->global->ENTREPOT_EXTRA_STATUS)
-		{
+		if (!empty($conf->global->ENTREPOT_EXTRA_STATUS)) {
 			$this->statuts[self::STATUS_OPEN_ALL] = 'OpenAll';
 			$this->statuts[self::STATUS_OPEN_INTERNAL] = 'OpenInternal';
 		} else {
@@ -204,37 +203,29 @@ class Entrepot extends CommonObject
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$result = $this->db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			$id = $this->db->last_insert_id(MAIN_DB_PREFIX."entrepot");
-			if ($id > 0)
-			{
+			if ($id > 0) {
 				$this->id = $id;
 
-				if (!$error)
-				{
+				if (!$error) {
 					$result = $this->update($id, $user);
-					if ($result <= 0)
-					{
+					if ($result <= 0) {
 						$error++;
 					}
 				}
 
 				// Actions on extra fields
-				if (!$error)
-				{
-					if (!$error)
-					{
+				if (!$error) {
+					if (!$error) {
 						$result = $this->insertExtraFields();
-						if ($result < 0)
-						{
+						if ($result < 0) {
 							$error++;
 						}
 					}
 				}
 
-				if (!$error)
-				{
+				if (!$error) {
 					$this->db->commit();
 					return $id;
 				} else {
@@ -268,16 +259,18 @@ class Entrepot extends CommonObject
 
 		$error = 0;
 
-		if (empty($id)) $id = $this->id;
-		if (empty($this->label)) $this->label = $this->libelle; // For backward compatibility
+		if (empty($id)) {
+			$id = $this->id;
+		}
+		if (empty($this->label)) {
+			$this->label = $this->libelle; // For backward compatibility
+		}
 
 		// Check if new parent is already a child of current warehouse
-		if (!empty($this->fk_parent))
-		{
+		if (!empty($this->fk_parent)) {
 			$TChildWarehouses = array($id);
 			$TChildWarehouses = $this->get_children_warehouses($this->id, $TChildWarehouses);
-			if (in_array($this->fk_parent, $TChildWarehouses))
-			{
+			if (in_array($this->fk_parent, $TChildWarehouses)) {
 				$this->error = 'ErrorCannotAddThisParentWarehouse';
 				return -2;
 			}
@@ -306,7 +299,7 @@ class Entrepot extends CommonObject
 		$sql .= ", fk_pays = ".$this->country_id;
 		$sql .= ", phone = '".$this->db->escape($this->phone)."'";
 		$sql .= ", fax = '".$this->db->escape($this->fax)."'";
-		$sql .= " WHERE rowid = ".$id;
+		$sql .= " WHERE rowid = ".((int) $id);
 
 		$this->db->begin();
 
@@ -320,8 +313,7 @@ class Entrepot extends CommonObject
 
 		if (!$error) {
 			$result = $this->insertExtraFields();
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				$error++;
 			}
 		}
@@ -354,25 +346,23 @@ class Entrepot extends CommonObject
 
 		$this->db->begin();
 
-		if (!$error && empty($notrigger))
-		{
+		if (!$error && empty($notrigger)) {
 			// Call trigger
 			$result = $this->call_trigger('WAREHOUSE_DELETE', $user);
-			if ($result < 0) { $error++; }
+			if ($result < 0) {
+				$error++;
+			}
 			// End call triggers
 		}
 
 		$elements = array('stock_mouvement', 'product_stock', 'product_warehouse_properties');
-		foreach ($elements as $table)
-		{
-			if (!$error)
-			{
+		foreach ($elements as $table) {
+			if (!$error) {
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX.$table;
 				$sql .= " WHERE fk_entrepot = ".$this->id;
 
 				$result = $this->db->query($sql);
-				if (!$result)
-				{
+				if (!$result) {
 					$error++;
 					$this->errors[] = $this->db->lasterror();
 				}
@@ -380,47 +370,39 @@ class Entrepot extends CommonObject
 		}
 
 		// Removed extrafields
-		if (!$error)
-		{
-			if (!$error)
-			{
+		if (!$error) {
+			if (!$error) {
 				$result = $this->deleteExtraFields();
-				if ($result < 0)
-				{
+				if ($result < 0) {
 					$error++;
 					dol_syslog(get_class($this)."::delete Error ".$this->error, LOG_ERR);
 				}
 			}
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."entrepot";
 			$sql .= " WHERE rowid = ".$this->id;
 			$resql1 = $this->db->query($sql);
-			if (!$resql1)
-			{
+			if (!$resql1) {
 				$error++;
 				$this->errors[] = $this->db->lasterror();
 				dol_syslog(get_class($this)."::delete Error ".$this->db->lasterror(), LOG_ERR);
 			}
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			// Update denormalized fields because we change content of produt_stock. Warning: Do not use "SET p.stock", does not works with pgsql
 			$sql = "UPDATE ".MAIN_DB_PREFIX."product as p SET stock = (SELECT SUM(ps.reel) FROM ".MAIN_DB_PREFIX."product_stock as ps WHERE ps.fk_product = p.rowid)";
 			$resql2 = $this->db->query($sql);
-			if (!$resql2)
-			{
+			if (!$resql2) {
 				$error++;
 				$this->errors[] = $this->db->lasterror();
 				dol_syslog(get_class($this)."::delete Error ".$this->db->lasterror(), LOG_ERR);
 			}
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$this->db->commit();
 			return 1;
 		} else {
@@ -444,8 +426,7 @@ class Entrepot extends CommonObject
 		dol_syslog(get_class($this)."::fetch id=".$id." ref=".$ref);
 
 		// Check parameters
-		if (!$id && !$ref)
-		{
+		if (!$id && !$ref) {
 			$this->error = 'ErrorWrongParameters';
 			dol_syslog(get_class($this)."::fetch ".$this->error);
 			return -1;
@@ -454,19 +435,18 @@ class Entrepot extends CommonObject
 		$sql  = "SELECT rowid, entity, fk_parent, ref as label, description, statut, lieu, address, zip, town, fk_pays as country_id, phone, fax,";
 		$sql .= " model_pdf, import_key";
 		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot";
-		if ($id)
-		{
-			$sql .= " WHERE rowid = '".$id."'";
+		if ($id) {
+			$sql .= " WHERE rowid = ".((int) $id);
 		} else {
 			$sql .= " WHERE entity = ".$conf->entity;
-			if ($ref) $sql .= " AND ref = '".$this->db->escape($ref)."'";
+			if ($ref) {
+				$sql .= " AND ref = '".$this->db->escape($ref)."'";
+			}
 		}
 
 		$result = $this->db->query($sql);
-		if ($result)
-		{
-			if ($this->db->num_rows($result) > 0)
-			{
+		if ($result) {
+			if ($this->db->num_rows($result) > 0) {
 				$obj = $this->db->fetch_object($result);
 
 				$this->id             = $obj->rowid;
@@ -488,7 +468,7 @@ class Entrepot extends CommonObject
 				$this->model_pdf      = $obj->model_pdf;
 				$this->import_key     = $obj->import_key;
 
-				// Retreive all extrafield
+				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 
@@ -519,14 +499,12 @@ class Entrepot extends CommonObject
 	{
 		$sql = "SELECT e.rowid, e.datec, e.tms as datem, e.fk_user_author";
 		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e";
-		$sql .= " WHERE e.rowid = ".$id;
+		$sql .= " WHERE e.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::info", LOG_DEBUG);
 		$result = $this->db->query($sql);
-		if ($result)
-		{
-			if ($this->db->num_rows($result))
-			{
+		if ($result) {
+			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 
 				$this->id = $obj->rowid;
@@ -569,15 +547,13 @@ class Entrepot extends CommonObject
 		$sql = "SELECT rowid, ref as label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot";
 		$sql .= " WHERE entity IN (".getEntity('stock').")";
-		$sql .= " AND statut = ".$status;
+		$sql .= " AND statut = ".((int) $status);
 
 		$result = $this->db->query($sql);
 		$i = 0;
 		$num = $this->db->num_rows($result);
-		if ($result)
-		{
-			while ($i < $num)
-			{
+		if ($result) {
+			while ($i < $num) {
 				$row = $this->db->fetch_row($result);
 				$liste[$row[0]] = $row[1];
 				$i++;
@@ -606,8 +582,7 @@ class Entrepot extends CommonObject
 
 		//print $sql;
 		$result = $this->db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			$obj = $this->db->fetch_object($result);
 			$ret['nb'] = $obj->nb;
 			$this->db->free($result);
@@ -638,8 +613,7 @@ class Entrepot extends CommonObject
 
 		//print $sql;
 		$result = $this->db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			$obj = $this->db->fetch_object($result);
 			$ret['nb'] = $obj->nb;
 			$ret['value'] = $obj->value;
@@ -677,7 +651,9 @@ class Entrepot extends CommonObject
 		global $langs;
 
 		$statusType = 'status5';
-		if ($status > 0) $statusType = 'status4';
+		if ($status > 0) {
+			$statusType = 'status4';
+		}
 
 		$langs->load('stocks');
 		$label = $langs->trans($this->statuts[$status]);
@@ -701,28 +677,30 @@ class Entrepot extends CommonObject
 		global $conf, $langs, $hookmanager;
 		$langs->load("stocks");
 
-		if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
+		if (!empty($conf->dol_no_mouse_hover)) {
+			$notooltip = 1; // Force disable tooltips
+		}
 
-		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $withpicto) $withpicto = 0;
+		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $withpicto) {
+			$withpicto = 0;
+		}
 
 		$result = '';
 
-		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Warehouse").'</u>';
+		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Warehouse").'</u>';
+		if (isset($this->statut)) {
+			$label .= ' '.$this->getLibStatut(5);
+		}
 		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.(empty($this->ref) ? (empty($this->label) ? $this->libelle : $this->label) : $this->ref);
 		if (!empty($this->lieu)) {
 			$label .= '<br><b>'.$langs->trans('LocationSummary').':</b> '.$this->lieu;
-		}
-		if (isset($this->statut)) {
-			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
 		}
 
 		$url = DOL_URL_ROOT.'/product/stock/card.php?id='.$this->id;
 
 		$linkclose = '';
-		if (empty($notooltip))
-		{
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-			{
+		if (empty($notooltip)) {
+			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$label = $langs->trans("Warehouse");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -735,8 +713,12 @@ class Entrepot extends CommonObject
 		$linkend = '</a>';
 
 		$result .= $linkstart;
-		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
-		if ($withpicto != 2) $result .= (($showfullpath || !empty($conf->global->STOCK_ALWAYS_SHOW_FULL_ARBO)) ? $this->get_full_arbo() : (empty($this->label) ? $this->libelle : $this->label));
+		if ($withpicto) {
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+		}
+		if ($withpicto != 2) {
+			$result .= (($showfullpath || !empty($conf->global->STOCK_ALWAYS_SHOW_FULL_ARBO)) ? $this->get_full_arbo() : (empty($this->label) ? $this->libelle : $this->label));
+		}
 		$result .= $linkend;
 
 		global $action;
@@ -799,20 +781,21 @@ class Entrepot extends CommonObject
 
 		$parentid = $this->fk_parent; // If parent_id not defined on current object, we do not start consecutive searches of parents
 		$i = 0;
-		while ($parentid > 0 && $i < $protection)
-		{
-			$sql = 'SELECT fk_parent FROM '.MAIN_DB_PREFIX.'entrepot WHERE rowid = '.$parentid;
+		while ($parentid > 0 && $i < $protection) {
+			$sql = 'SELECT fk_parent FROM '.MAIN_DB_PREFIX.'entrepot WHERE rowid = '.((int) $parentid);
 			$resql = $this->db->query($sql);
-			if ($resql)
-			{
+			if ($resql) {
 				$objarbo = $this->db->fetch_object($resql);
-				if ($objarbo)
-				{
+				if ($objarbo) {
 					$warehousetmp->fetch($parentid);
 					$TArbo[] = $warehousetmp->label;
-				 	$parentid = $objarbo->fk_parent;
-				} else break;
-			} else dol_print_error($this->db);
+					$parentid = $objarbo->fk_parent;
+				} else {
+					break;
+				}
+			} else {
+				dol_print_error($this->db);
+			}
 
 			$i++;
 		}
@@ -834,7 +817,7 @@ class Entrepot extends CommonObject
 
 		$sql = 'SELECT rowid
 				FROM '.MAIN_DB_PREFIX.'entrepot
-				WHERE fk_parent = '.$id;
+				WHERE fk_parent = '.((int) $id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -891,39 +874,7 @@ class Entrepot extends CommonObject
 	 */
 	public function setCategories($categories)
 	{
-		$type_categ = Categorie::TYPE_WAREHOUSE;
-
-		// Handle single category
-		if (!is_array($categories)) {
-			$categories = array($categories);
-		}
-
-		// Get current categories
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-		$c = new Categorie($this->db);
-		$existing = $c->containing($this->id, $type_categ, 'id');
-
-		// Diff
-		if (is_array($existing)) {
-			$to_del = array_diff($existing, $categories);
-			$to_add = array_diff($categories, $existing);
-		} else {
-			$to_del = array(); // Nothing to delete
-			$to_add = $categories;
-		}
-
-		// Process
-		foreach ($to_del as $del) {
-			if ($c->fetch($del) > 0) {
-				$c->del_type($this, $type_categ);
-			}
-		}
-		foreach ($to_add as $add) {
-			if ($c->fetch($add) > 0) {
-				$c->add_type($this, $type_categ);
-			}
-		}
-
-		return;
+		return parent::setCategoriesCommon($categories, Categorie::TYPE_WAREHOUSE);
 	}
 }

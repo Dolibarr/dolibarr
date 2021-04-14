@@ -18,7 +18,7 @@
 /**
  * \file    htdocs/core/modules/modHRM.class.php
  * \ingroup HRM
- * \brief   Description and activation file for module HRM
+ * \brief   Description and activation file for the module HRM
  */
 include_once DOL_DOCUMENT_ROOT."/core/modules/DolibarrModules.class.php";
 
@@ -49,7 +49,7 @@ class modHRM extends DolibarrModules
 		$this->description = "Management of employees carrier and feelings (department, employment contract)";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'development';
+		$this->version = 'experimental';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Name of image file used for this module.
@@ -71,7 +71,7 @@ class modHRM extends DolibarrModules
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(/*"modSalaries, modExpenseReport, modHoliday"*/); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(3, 9); // Minimum version of Dolibarr required by module
 		$this->langfiles = array("hrm");
 
@@ -89,6 +89,7 @@ class modHRM extends DolibarrModules
 		$this->rights = array(); // Permission array used by this module
 		$r = 0;
 
+		/*
 		$this->rights[$r][0] = 4001;
 		$this->rights[$r][1] = 'See employees';
 		$this->rights[$r][3] = 0;
@@ -116,7 +117,7 @@ class modHRM extends DolibarrModules
 		$this->rights[$r][4] = 'employee';
 		$this->rights[$r][5] = 'export';
 		$r++;
-
+		*/
 
 		// Menus
 		//-------

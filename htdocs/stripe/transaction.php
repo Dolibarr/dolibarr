@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2018-2019  Thibault FOUCART        <support@ptibogxiv.net>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,14 +26,18 @@ require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-if (!empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+if (!empty($conf->accounting->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'salaries', 'bills', 'hrm', 'stripe'));
 
 // Security check
 $socid = GETPOST("socid", "int");
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 //$result = restrictedArea($user, 'salaries', '', '', '');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
@@ -41,11 +45,15 @@ $rowid = GETPOST("rowid", 'alpha');
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
+$optioncss = GETPOST('optioncss', 'alpha');
 
+$result = restrictedArea($user, 'banque');
 
 
 /*
@@ -60,8 +68,7 @@ $stripe = new Stripe($db);
 
 llxHeader('', $langs->trans("StripeTransactionList"));
 
-if (!empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha')))
-{
+if (!empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
 	$service = 'StripeTest';
 	$servicestatus = '0';
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
@@ -77,8 +84,9 @@ $stripeacc = $stripe->getStripeAccount($service);
 
 if (!$rowid) {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	if ($optioncss != '')
+	if ($optioncss != '') {
 		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	}
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="list">';
@@ -106,18 +114,14 @@ if (!$rowid) {
 	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", "", '', '', '', 'right ');
 	print "</tr>\n";
 
-	print "</tr>\n";
-
 	try {
-		if ($stripeacc)
-		{
+		if ($stripeacc) {
 			$txn = \Stripe\BalanceTransaction::all(array("limit" => $limit), array("stripe_account" => $stripeacc));
 		} else {
 			$txn = \Stripe\BalanceTransaction::all(array("limit" => $limit));
 		}
 
-		foreach ($txn->data as $txn)
-		{
+		foreach ($txn->data as $txn) {
 			//$charge = $txn;
 			//var_dump($txn);
 
@@ -156,37 +160,37 @@ if (!$rowid) {
 			print '<tr class="oddeven">';
 
 			// Ref
-	        if (!empty($stripeacc)) $connect = $stripeacc.'/';
+			if (!empty($stripeacc)) {
+				$connect = $stripeacc.'/';
+			}
 
 			// Ref
-	        if (preg_match('/po_/i', $txn->source)) {
-	            $origin = "payouts";
-	        } elseif (preg_match('/fee_/i', $txn->source)) {
-	            $origin = "connect/application_fees";
-	        } else {
-	            $origin = "payments";
-	        }
+			if (preg_match('/po_/i', $txn->source)) {
+				$origin = "payouts";
+			} elseif (preg_match('/fee_/i', $txn->source)) {
+				$origin = "connect/application_fees";
+			} else {
+				$origin = "payments";
+			}
 
 			$url = 'https://dashboard.stripe.com/'.$connect.'test/'.$origin.'/'.$txn->source;
 			if ($servicestatus) {
 				$url = 'https://dashboard.stripe.com/'.$connect.$origin.'/'.$txn->source;
 			}
-	        if ($txn->type == 'stripe_fee' || $txn->type == 'reserve_transaction') {
-	            print "<td>".$txn->type."</td>";
-	        } else {
-	            print "<td><a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'globe')." ".$txn->source."</a></td>\n";
-	        }
+			if ($txn->type == 'stripe_fee' || $txn->type == 'reserve_transaction') {
+				print "<td>".$txn->type."</td>";
+			} else {
+				print "<td><a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'globe')." ".$txn->source."</a></td>\n";
+			}
 
 			// Stripe customer
 			//print "<td>".$charge->customer."</td>\n";
 			// Link
 			/*print "<td>";
-			if ($societestatic->id > 0)
-			{
+			if ($societestatic->id > 0) {
 				print $societestatic->getNomUrl(1);
 			}
-			if ($memberstatic->id > 0)
-			{
+			if ($memberstatic->id > 0) {
 				print $memberstatic->getNomUrl(1);
 			}
 			print "</td>\n";*/
@@ -211,13 +215,13 @@ if (!$rowid) {
 			print '<td class="right">'.price(($txn->fee) / 100, 0, '', 1, - 1, - 1, strtoupper($txn->currency))."</td>";
 			// Status
 			print "<td class='right'>";
-	        if ($txn->status == 'available') {
-	            print img_picto($langs->trans("".$txn->status.""), 'statut4');
-	        } elseif ($txn->status == 'pending') {
-	            print img_picto($langs->trans("".$txn->status.""), 'statut7');
-	        } elseif ($txn->status == 'failed') {
-	            print img_picto($langs->trans("".$txn->status.""), 'statut8');
-	        }
+			if ($txn->status == 'available') {
+				print img_picto($langs->trans("".$txn->status.""), 'statut4');
+			} elseif ($txn->status == 'pending') {
+				print img_picto($langs->trans("".$txn->status.""), 'statut7');
+			} elseif ($txn->status == 'failed') {
+				print img_picto($langs->trans("".$txn->status.""), 'statut8');
+			}
 			print '</td>';
 			print "</tr>\n";
 		}

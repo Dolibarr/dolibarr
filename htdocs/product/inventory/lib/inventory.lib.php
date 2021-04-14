@@ -29,30 +29,30 @@
  */
 function inventoryAdminPrepareHead()
 {
-    global $langs, $conf;
+	global $langs, $conf;
 
-    $langs->load("inventory");
+	$langs->load("inventory");
 
-    $h = 0;
-    $head = array();
+	$h = 0;
+	$head = array();
 
-    $head[$h][0] = DOL_URL_ROOT."/admin/inventory.php";
-    $head[$h][1] = $langs->trans("Parameters");
-    $head[$h][2] = 'settings';
-    $h++;
+	$head[$h][0] = DOL_URL_ROOT."/admin/inventory.php";
+	$head[$h][1] = $langs->trans("Parameters");
+	$head[$h][2] = 'settings';
+	$h++;
 
 
-    // Show more tabs from modules
-    // Entries must be declared in modules descriptor with line
-    //$this->tabs = array(
-    //	'entity:+tabname:Title:@inventory:/inventory/mypage.php?id=__ID__'
-    //); // to add new tab
-    //$this->tabs = array(
-    //	'entity:-tabname:Title:@inventory:/inventory/mypage.php?id=__ID__'
-    //); // to remove a tab
-    complete_head_from_modules($conf, $langs, null, $head, $h, 'inventory');
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	//$this->tabs = array(
+	//	'entity:+tabname:Title:@inventory:/inventory/mypage.php?id=__ID__'
+	//); // to add new tab
+	//$this->tabs = array(
+	//	'entity:-tabname:Title:@inventory:/inventory/mypage.php?id=__ID__'
+	//); // to remove a tab
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'inventory');
 
-    return $head;
+	return $head;
 }
 
 /**

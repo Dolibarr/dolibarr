@@ -30,18 +30,20 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "mails"));
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 $action = GETPOST('action', 'aZ09');
 
+$form = new Form($db);
 
 
 /*
  * Actions
  */
 
-if ($action == 'setvalue')
-{
+if ($action == 'setvalue') {
 	$db->begin();
 
 	$mailfrom = GETPOST('MAILING_EMAIL_FROM', 'alpha');
@@ -49,20 +51,33 @@ if ($action == 'setvalue')
 	$checkread = GETPOST('value', 'alpha');
 	$checkread_key = GETPOST('MAILING_EMAIL_UNSUBSCRIBE_KEY', 'alpha');
 	$mailingdelay = GETPOST('MAILING_DELAY', 'int');
+	$contactbulkdefault = GETPOST('MAILING_CONTACT_DEFAULT_BULK_STATUS', 'int');
 
 	$res = dolibarr_set_const($db, "MAILING_EMAIL_FROM", $mailfrom, 'chaine', 0, '', $conf->entity);
-	if (!$res > 0) $error++;
+	if (!($res > 0)) {
+		$error++;
+	}
 	$res = dolibarr_set_const($db, "MAILING_EMAIL_ERRORSTO", $mailerror, 'chaine', 0, '', $conf->entity);
-	if (!$res > 0) $error++;
+	if (!($res > 0)) {
+		$error++;
+	}
 	$res = dolibarr_set_const($db, "MAILING_DELAY", $mailingdelay, 'chaine', 0, '', $conf->entity);
-	if (!$res > 0) $error++;
+	if (!($res > 0)) {
+		$error++;
+	}
+	$res = dolibarr_set_const($db, "MAILING_CONTACT_DEFAULT_BULK_STATUS", $contactbulkdefault, 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
 
 	// Create temporary encryption key if nedded
 	$res = dolibarr_set_const($db, "MAILING_EMAIL_UNSUBSCRIBE_KEY", $checkread_key, 'chaine', 0, '', $conf->entity);
-	if (!$res > 0) $error++;
+	if (!($res > 0)) {
+		$error++;
+	}
 
-	if (!$error)
-	{
+
+	if (!$error) {
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
@@ -70,7 +85,18 @@ if ($action == 'setvalue')
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
-
+if ($action == 'setonsearchandlistgooncustomerorsuppliercard') {
+	$setonsearchandlistgooncustomerorsuppliercard = GETPOST('value', 'int');
+	$res = dolibarr_set_const($db, "SOCIETE_ON_SEARCH_AND_LIST_GO_ON_CUSTOMER_OR_SUPPLIER_CARD", $setonsearchandlistgooncustomerorsuppliercard, 'yesno', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+}
 
 /*
  *	View
@@ -81,8 +107,7 @@ llxHeader('', $langs->trans("MailingSetup"));
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("MailingSetup"), $linkback, 'title_setup');
 
-if (!empty($conf->use_javascript_ajax))
-{
+if (!empty($conf->use_javascript_ajax)) {
 	print "\n".'<script type="text/javascript">';
 	print '$(document).ready(function () {
             $("#generate_token").click(function() {
@@ -112,18 +137,22 @@ print "</tr>\n";
 print '<tr class="oddeven"><td>';
 print $langs->trans("MailingEMailFrom").'</td><td>';
 print '<input size="32" type="text" name="MAILING_EMAIL_FROM" value="'.$conf->global->MAILING_EMAIL_FROM.'">';
-if (!empty($conf->global->MAILING_EMAIL_FROM) && !isValidEmail($conf->global->MAILING_EMAIL_FROM)) print ' '.img_warning($langs->trans("BadEMail"));
+if (!empty($conf->global->MAILING_EMAIL_FROM) && !isValidEmail($conf->global->MAILING_EMAIL_FROM)) {
+	print ' '.img_warning($langs->trans("BadEMail"));
+}
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("MailingEMailError").'</td><td>';
 print '<input size="32" type="text" name="MAILING_EMAIL_ERRORSTO" value="'.$conf->global->MAILING_EMAIL_ERRORSTO.'">';
-if (!empty($conf->global->MAILING_EMAIL_ERRORSTO) && !isValidEmail($conf->global->MAILING_EMAIL_ERRORSTO)) print ' '.img_warning($langs->trans("BadEMail"));
+if (!empty($conf->global->MAILING_EMAIL_ERRORSTO) && !isValidEmail($conf->global->MAILING_EMAIL_ERRORSTO)) {
+	print ' '.img_warning($langs->trans("BadEMail"));
+}
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("MailingDelay").'</td><td>';
-print '<input size="32" type="text" name="MAILING_DELAY" value="'.$conf->global->MAILING_DELAY.'">';
+print '<input class="width75" type="text" name="MAILING_DELAY" value="'.$conf->global->MAILING_DELAY.'">';
 print '</td></tr>';
 
 
@@ -133,8 +162,20 @@ print '</td></tr>';
 print '<tr class="oddeven"><td>';
 print $langs->trans("ActivateCheckReadKey").'</td><td>';
 print '<input size="32" type="text" name="MAILING_EMAIL_UNSUBSCRIBE_KEY" id="MAILING_EMAIL_UNSUBSCRIBE_KEY" value="'.$conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY.'">';
-if (!empty($conf->use_javascript_ajax)) print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
+if (!empty($conf->use_javascript_ajax)) {
+	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
+}
 print '</td></tr>';
+
+// default blacklist from mailing
+print '<tr class="oddeven">';
+print '<td>' . $langs->trans("DefaultBlacklistMailingStatus") . '</td>';
+print '<td>';
+$blacklist_setting=array(0=>$langs->trans('No'),1=>$langs->trans('Yes'),-1=>$langs->trans('DefaultStatusEmptyMandatory'));
+print $form->selectarray("MAILING_CONTACT_DEFAULT_BULK_STATUS", $blacklist_setting, $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS);
+print '</td>';
+print '</tr>';
+
 
 if (!empty($conf->use_javascript_ajax) && $conf->global->MAIN_FEATURES_LEVEL >= 1) {
 	print '<tr class="oddeven"><td>';

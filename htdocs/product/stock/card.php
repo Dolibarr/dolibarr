@@ -47,8 +47,12 @@ $ref = GETPOST('ref', 'alpha');
 
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-if (!$sortfield) $sortfield = "p.ref";
-if (!$sortorder) $sortorder = "DESC";
+if (!$sortfield) {
+	$sortfield = "p.ref";
+}
+if (!$sortorder) {
+	$sortorder = "DESC";
+}
 
 $backtopage = GETPOST('backtopage', 'alpha');
 
@@ -87,24 +91,24 @@ $usercandelete = (($user->rights->stock->supprimer));
 
 $parameters = array('id'=>$id, 'ref'=>$ref);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-if (empty($reshook))
-{
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+if (empty($reshook)) {
 	// Ajout entrepot
-	if ($action == 'add' && $user->rights->stock->creer)
-	{
-		$object->ref         = GETPOST("ref");
-		$object->fk_parent   = GETPOST("fk_parent");
-		$object->label = GETPOST("libelle");
-		$object->description = GETPOST("desc");
+	if ($action == 'add' && $user->rights->stock->creer) {
+		$object->ref = (string) GETPOST("ref", "alpha");
+		$object->fk_parent = (int) GETPOST("fk_parent", "int");
+		$object->label = (string) GETPOST("libelle", "alpha");
+		$object->description = (string) GETPOST("desc", "alpha");
 		$object->statut      = GETPOST("statut");
-		$object->lieu        = GETPOST("lieu");
-		$object->address     = GETPOST("address");
-		$object->zip         = GETPOST("zipcode");
-		$object->town        = GETPOST("town");
-		$object->country_id  = GETPOST("country_id");
-		$object->phone = GETPOST("phone");
-		$object->fax = GETPOST("fax");
+		$object->lieu = (string) GETPOST("lieu", "alpha");
+		$object->address = (string) GETPOST("address", "alpha");
+		$object->zip = (string) GETPOST("zipcode", "alpha");
+		$object->town = (string) GETPOST("town", "alpha");
+		$object->country_id = GETPOST("country_id");
+		$object->phone = (string) GETPOST("phone", "alpha");
+		$object->fax = (string) GETPOST("fax", "alpha");
 
 		if (!empty($object->label)) {
 			// Fill array 'array_options' with data from add form
@@ -140,12 +144,10 @@ if (empty($reshook))
 	}
 
 	// Delete warehouse
-	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->stock->supprimer)
-	{
+	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->stock->supprimer) {
 		$object->fetch(GETPOST('id', 'int'));
 		$result = $object->delete($user);
-		if ($result > 0)
-		{
+		if ($result > 0) {
 			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 			header("Location: ".DOL_URL_ROOT.'/product/stock/list.php?restore_lastsearch_values=1');
 			exit;
@@ -156,10 +158,8 @@ if (empty($reshook))
 	}
 
 	// Modification entrepot
-	if ($action == 'update' && $cancel <> $langs->trans("Cancel"))
-	{
-		if ($object->fetch($id))
-		{
+	if ($action == 'update' && $cancel <> $langs->trans("Cancel")) {
+		if ($object->fetch($id)) {
 			$object->label = GETPOST("libelle");
 			$object->fk_parent   = GETPOST("fk_parent");
 			$object->description = GETPOST("desc");
@@ -174,11 +174,15 @@ if (empty($reshook))
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object);
-			if ($ret < 0)   $error++;
+			if ($ret < 0) {
+				$error++;
+			}
 
 			if (!$error) {
 				$ret = $object->update($id, $user);
-				if ($ret < 0)   $error++;
+				if ($ret < 0) {
+					$error++;
+				}
 			}
 
 			if ($error) {
@@ -198,7 +202,9 @@ if (empty($reshook))
 
 		// Fill array 'array_options' with data from update form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
-		if ($ret < 0) $error++;
+		if ($ret < 0) {
+			$error++;
+		}
 		if (!$error) {
 			$result = $object->insertExtraFields();
 			if ($result < 0) {
@@ -206,11 +212,12 @@ if (empty($reshook))
 				$error++;
 			}
 		}
-		if ($error) $action = 'edit_extras';
+		if ($error) {
+			$action = 'edit_extras';
+		}
 	}
 
-	if ($cancel == $langs->trans("Cancel"))
-	{
+	if ($cancel == $langs->trans("Cancel")) {
 		$action = '';
 	}
 
@@ -236,8 +243,7 @@ $help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 llxHeader("", $langs->trans("WarehouseCard"), $help_url);
 
 
-if ($action == 'create')
-{
+if ($action == 'create') {
 	print load_fiche_titre($langs->trans("NewWarehouse"), '', 'stock');
 
 	dol_set_focus('input[name="libelle"]');
@@ -247,7 +253,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 
@@ -258,7 +264,7 @@ if ($action == 'create')
 
 	// Parent entrepot
 	print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
-	print $formproduct->selectWarehouses('ifone', 'fk_parent', '', 1);
+	print img_picto('', 'stock').$formproduct->selectWarehouses((GETPOSTISSET('fk_parent') ? GETPOST('fk_parent', 'int') : 'ifone'), 'fk_parent', '', 1);
 	print '</td></tr>';
 
 	// Description
@@ -285,7 +291,9 @@ if ($action == 'create')
 	print '<tr><td>'.$langs->trans('Country').'</td><td>';
 	print img_picto('', 'globe-americas', 'class="paddingright"');
 	print $form->select_country((!empty($object->country_id) ? $object->country_id : $mysoc->country_code), 'country_id');
-	if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+	if ($user->admin) {
+		print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+	}
 	print '</td></tr>';
 
 	// Phone / Fax
@@ -300,10 +308,8 @@ if ($action == 'create')
 	// Status
 	print '<tr><td>'.$langs->trans("Status").'</td><td>';
 	print '<select name="statut" class="flat">';
-	foreach ($object->statuts as $key => $value)
-	{
-		if ($key == 1)
-		{
+	foreach ($object->statuts as $key => $value) {
+		if ($key == 1) {
 			print '<option value="'.$key.'" selected>'.$langs->trans($value).'</option>';
 		} else {
 			print '<option value="'.$key.'">'.$langs->trans($value).'</option>';
@@ -319,28 +325,26 @@ if ($action == 'create')
 		// Categories
 		print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_WAREHOUSE, '', 'parent', 64, 0, 1);
-		print $form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, '', 0, '100%');
+		print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 		print "</td></tr>";
 	}
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Create").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
+	print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 	print '</div>';
 
 	print '</form>';
 } else {
 	$id = GETPOST("id", 'int');
-	if ($id > 0 || $ref)
-	{
+	if ($id > 0 || $ref) {
 		$object = new Entrepot($db);
 		$result = $object->fetch($id, $ref);
-		if ($result <= 0)
-		{
+		if ($result <= 0) {
 			print 'No record found';
 			exit;
 		}
@@ -348,25 +352,26 @@ if ($action == 'create')
 		/*
 		 * Affichage fiche
 		 */
-		if ($action <> 'edit' && $action <> 're-edit')
-		{
+		if ($action <> 'edit' && $action <> 're-edit') {
 			$head = stock_prepare_head($object);
 
-			dol_fiche_head($head, 'card', $langs->trans("Warehouse"), -1, 'stock');
+			print dol_get_fiche_head($head, 'card', $langs->trans("Warehouse"), -1, 'stock');
 
 			$formconfirm = '';
 
 			// Confirm delete warehouse
-			if ($action == 'delete')
-			{
+			if ($action == 'delete') {
 				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("DeleteAWarehouse"), $langs->trans("ConfirmDeleteWarehouse", $object->label), "confirm_delete", '', 0, 2);
 			}
 
 			// Call Hook formConfirm
 			$parameters = array('formConfirm' => $formconfirm);
 			$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-			if (empty($reshook)) $formconfirm .= $hookmanager->resPrint;
-			elseif ($reshook > 0) $formconfirm = $hookmanager->resPrint;
+			if (empty($reshook)) {
+				$formconfirm .= $hookmanager->resPrint;
+			} elseif ($reshook > 0) {
+				$formconfirm = $hookmanager->resPrint;
+			}
 
 			// Print form confirm
 			print $formconfirm;
@@ -379,7 +384,9 @@ if ($action == 'create')
 			$morehtmlref .= '</div>';
 
 			$shownav = 1;
-			if ($user->socid && !in_array('stock', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
+			if ($user->socid && !in_array('stock', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+				$shownav = 0;
+			}
 
 			dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', 'ref', $morehtmlref);
 
@@ -442,8 +449,10 @@ if ($action == 'create')
 				}
 				print '<tr><td>'.$langs->trans("LastMovement").'</td><td>';
 				if ($lastmovementdate) {
-					print dol_print_date($lastmovementdate, 'dayhour').' ';
-					print '(<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?id='.$object->id.'">'.$langs->trans("FullList").'</a>)';
+					print dol_print_date($lastmovementdate, 'dayhour');
+					print ' &nbsp; &nbsp; ';
+					print img_picto($langs->trans('LastMovement'), 'movement', 'class="pictofixedwidth"');
+					print '<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?id='.$object->id.'">'.$langs->trans("FullList").'</a>';
 				} else {
 					print $langs->trans("None");
 				}
@@ -468,34 +477,27 @@ if ($action == 'create')
 
 			print '<div class="clearboth"></div>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 
-			/* ************************************************************************** */
-			/*                                                                            */
-			/* Barre d'action                                                             */
-			/*                                                                            */
-			/* ************************************************************************** */
-
+			/*
+			 * Action bar
+			 */
 			print "<div class=\"tabsAction\">\n";
 
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-			if (empty($reshook))
-			{
-				if (empty($action))
-				{
+			if (empty($reshook)) {
+				if (empty($action)) {
 					if ($user->rights->stock->creer) {
 						print '<a class="butAction" href="card.php?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Modify").'</a>';
-					}
-					else {
+					} else {
 						print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("Modify").'</a>';
 					}
 
 					if ($user->rights->stock->supprimer) {
 						print '<a class="butActionDelete" href="card.php?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Delete").'</a>';
-					}
-					else {
+					} else {
 						print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("Delete").'</a>';
 					}
 				}
@@ -515,9 +517,11 @@ if ($action == 'create')
 			print "<tr class=\"liste_titre\">";
 			print_liste_field_titre("Product", "", "p.ref", "&amp;id=".$id, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("Label", "", "p.label", "&amp;id=".$id, "", "", $sortfield, $sortorder);
-			print_liste_field_titre("Units", "", "ps.reel", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
-			if (!empty($conf->global->PRODUCT_USE_UNITS)) print_liste_field_titre("Unit", "", "p.fk_unit", "&amp;id=".$id, "", 'align="left"', $sortfield, $sortorder);
-			print_liste_field_titre("AverageUnitPricePMPShort", "", "p.pmp", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+			print_liste_field_titre("NumberOfUnit", "", "ps.reel", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
+			if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+				print_liste_field_titre("Unit", "", "p.fk_unit", "&amp;id=".$id, "", 'align="left"', $sortfield, $sortorder);
+			}
+			print_liste_field_titre($form->textwithpicto($langs->trans("AverageUnitPricePMPShort"), $langs->trans("AverageUnitPricePMPDesc")), "", "p.pmp", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
 			print_liste_field_titre("EstimatedStockValueShort", "", "", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
 			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
 				print_liste_field_titre("SellPriceMin", "", "p.price", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
@@ -538,7 +542,9 @@ if ($action == 'create')
 
 			$sql = "SELECT p.rowid as rowid, p.ref, p.label as produit, p.tobatch, p.fk_product_type as type, p.pmp as ppmp, p.price, p.price_ttc, p.entity,";
 			$sql .= " ps.reel as value";
-			if (!empty($conf->global->PRODUCT_USE_UNITS)) $sql .= ",fk_unit";
+			if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+				$sql .= ",fk_unit";
+			}
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_stock as ps, ".MAIN_DB_PREFIX."product as p";
 			$sql .= " WHERE ps.fk_product = p.rowid";
 			$sql .= " AND ps.reel <> 0"; // We do not show if stock is 0 (no product in this warehouse)
@@ -547,17 +553,14 @@ if ($action == 'create')
 
 			dol_syslog('List products', LOG_DEBUG);
 			$resql = $db->query($sql);
-			if ($resql)
-			{
+			if ($resql) {
 				$num = $db->num_rows($resql);
 				$i = 0;
-				while ($i < $num)
-				{
+				while ($i < $num) {
 					$objp = $db->fetch_object($resql);
 
 					// Multilangs
-					if (!empty($conf->global->MAIN_MULTILANGS)) // si l'option est active
-					{
+					if (!empty($conf->global->MAIN_MULTILANGS)) { // si l'option est active
 						$sql = "SELECT label";
 						$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
 						$sql .= " WHERE fk_product=".$objp->rowid;
@@ -565,10 +568,11 @@ if ($action == 'create')
 						$sql .= " LIMIT 1";
 
 						$result = $db->query($sql);
-						if ($result)
-						{
+						if ($result) {
 							$objtp = $db->fetch_object($result);
-							if ($objtp->label != '') $objp->produit = $objtp->label;
+							if ($objtp->label != '') {
+								$objp->produit = $objtp->label;
+							}
 						}
 					}
 
@@ -598,7 +602,9 @@ if ($action == 'create')
 					if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 						// Units
 						print '<td align="left">';
-						if (is_null($productstatic->fk_unit))$productstatic->fk_unit = 1;
+						if (is_null($productstatic->fk_unit)) {
+							$productstatic->fk_unit = 1;
+						}
 						print $langs->trans($productstatic->getLabelOfUnit());
 						print '</td>';
 					}
@@ -610,8 +616,7 @@ if ($action == 'create')
 					$totalvalue += price2num($objp->ppmp * $objp->value, 'MT');
 
 					// Price sell min
-					if (empty($conf->global->PRODUIT_MULTIPRICES))
-					{
+					if (empty($conf->global->PRODUIT_MULTIPRICES)) {
 						$pricemin = $objp->price;
 						print '<td class="right">';
 						print price(price2num($pricemin, 'MU'), 1);
@@ -623,22 +628,25 @@ if ($action == 'create')
 					}
 					$totalvaluesell += price2num($pricemin * $objp->value, 'MT');
 
-					if ($user->rights->stock->mouvement->creer)
-					{
+					if ($user->rights->stock->mouvement->creer) {
 						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=transfert&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
-						print img_picto($langs->trans("StockMovement"), 'uparrow.png', 'class="hideonsmartphone"').' '.$langs->trans("StockMovement");
+						print img_picto($langs->trans("TransferStock"), 'add', 'class="hideonsmartphone pictofixedwidth" style="color: #a69944"');
+						print $langs->trans("TransferStock");
 						print "</a></td>";
 					}
 
-					if ($user->rights->stock->creer)
-					{
+					if ($user->rights->stock->creer) {
 						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=correction&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
-						print $langs->trans("StockCorrection");
+						print img_picto($langs->trans("CorrectStock"), 'add', 'class="hideonsmartphone pictofixedwidth" style="color: #a69944"');
+						print $langs->trans("CorrectStock");
 						print "</a></td>";
 					}
 					if (!empty($conf->global->PRODUCT_USE_UNITS)) {
-						if ($i == 0) $units = $productstatic->fk_unit;
-						elseif ($productstatic->fk_unit != $units) $sameunits = false;
+						if ($i == 0) {
+							$units = $productstatic->fk_unit;
+						} elseif ($productstatic->fk_unit != $units) {
+							$sameunits = false;
+						}
 					}
 					print "</tr>";
 					$i++;
@@ -648,14 +656,17 @@ if ($action == 'create')
 				print '<tr class="liste_total"><td class="liste_total" colspan="2">'.$langs->trans("Total").'</td>';
 				print '<td class="liste_total right">';
 				$valtoshow = price2num($totalunit, 'MS');
-				if (empty($conf->global->PRODUCT_USE_UNITS) || $sameunits) print empty($valtoshow) ? '0' : $valtoshow;
+				if (empty($conf->global->PRODUCT_USE_UNITS) || $sameunits) {
+					print empty($valtoshow) ? '0' : $valtoshow;
+				}
 				print '</td>';
 				print '<td class="liste_total">';
-				if (empty($conf->global->PRODUCT_USE_UNITS) && $sameunits) print $langs->trans($productstatic->getLabelOfUnit());
+				if (empty($conf->global->PRODUCT_USE_UNITS) && $sameunits) {
+					print $langs->trans($productstatic->getLabelOfUnit());
+				}
 				print '</td>';
 				print '<td class="liste_total right">'.price(price2num($totalvalue, 'MT')).'</td>';
-				if (empty($conf->global->PRODUIT_MULTIPRICES))
-				{
+				if (empty($conf->global->PRODUIT_MULTIPRICES)) {
 					print '<td class="liste_total">&nbsp;</td>';
 					print '<td class="liste_total right">'.price(price2num($totalvaluesell, 'MT')).'</td>';
 				}
@@ -672,8 +683,7 @@ if ($action == 'create')
 		/*
 		 * Edition fiche
 		 */
-		if ($action == 'edit' || $action == 're-edit')
-		{
+		if ($action == 'edit' || $action == 're-edit') {
 			$langs->trans("WarehouseEdit");
 
 			print '<form action="card.php" method="POST">';
@@ -683,14 +693,14 @@ if ($action == 'create')
 
 			$head = stock_prepare_head($object);
 
-			dol_fiche_head($head, 'card', $langs->trans("Warehouse"), 0, 'stock');
+			print dol_get_fiche_head($head, 'card', $langs->trans("Warehouse"), 0, 'stock');
 
 			print '<table class="border centpercent">';
 
 			// Ref
 			print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input name="libelle" size="20" value="'.$object->label.'"></td></tr>';
 
-			print '<tr><td>'.$langs->trans("LocationSummary").'</td><td><input name="lieu" size="40" value="'.$object->lieu.'"></td></tr>';
+			print '<tr><td>'.$langs->trans("LocationSummary").'</td><td><input name="lieu" class="minwidth300" value="'.$object->lieu.'"></td></tr>';
 
 			// Parent entrepot
 			print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
@@ -721,7 +731,9 @@ if ($action == 'create')
 			print '<tr><td>'.$langs->trans('Country').'</td><td>';
 			print img_picto('', 'globe-americas', 'class="paddingright"');
 			print $form->select_country($object->country_id ? $object->country_id : $mysoc->country_code, 'country_id');
-			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+			if ($user->admin) {
+				print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+			}
 			print '</td></tr>';
 
 			// Phone / Fax
@@ -735,10 +747,8 @@ if ($action == 'create')
 			// Status
 			print '<tr><td>'.$langs->trans("Status").'</td><td>';
 			print '<select name="statut" class="flat">';
-			foreach ($object->statuts as $key => $value)
-			{
-				if ($key == $object->statut)
-				{
+			foreach ($object->statuts as $key => $value) {
+				if ($key == $object->statut) {
 					print '<option value="'.$key.'" selected>'.$langs->trans($value).'</option>';
 				} else {
 					print '<option value="'.$key.'">'.$langs->trans($value).'</option>';
@@ -751,14 +761,12 @@ if ($action == 'create')
 			$parameters = array('colspan' => ' colspan="3"', 'cols' => '3');
 			$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
-			if (empty($reshook))
-			{
+			if (empty($reshook)) {
 				print $object->showOptionals($extrafields, 'edit', $parameters);
 			}
 
 			// Tags-Categories
-			if ($conf->categorie->enabled)
-			{
+			if ($conf->categorie->enabled) {
 				print '<tr><td class="tdtop">'.$langs->trans("Categories").'</td><td colspan="3">';
 				$cate_arbo = $form->select_all_categories(Categorie::TYPE_WAREHOUSE, '', 'parent', 64, 0, 1);
 				$c = new Categorie($db);
@@ -767,18 +775,18 @@ if ($action == 'create')
 				foreach ($cats as $cat) {
 					$arrayselected[] = $cat->id;
 				}
-				print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
+				print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 				print "</td></tr>";
 			}
 
 			print '</table>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 			print '<div class="center">';
-			print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+			print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+			print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 			print '</div>';
 
 			print '</form>';
@@ -792,8 +800,7 @@ if ($action == 'create')
 
 $modulepart = 'stock';
 
-if ($action != 'create' && $action != 'edit' && $action != 'delete')
-{
+if ($action != 'create' && $action != 'edit' && $action != 'delete') {
 	print '<br>';
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 	print '<a name="builddoc"></a>'; // ancre

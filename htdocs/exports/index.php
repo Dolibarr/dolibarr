@@ -27,11 +27,12 @@ require_once DOL_DOCUMENT_ROOT.'/exports/class/export.class.php';
 // Load translation files required by the page
 $langs->load("exports");
 
+$export = new Export($db);
+$export->load_arrays($user);
+
 // Security check
 $result = restrictedArea($user, 'export');
 
-$export = new Export($db);
-$export->load_arrays($user);
 
 /*
  * View
@@ -39,7 +40,10 @@ $export->load_arrays($user);
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("ExportsArea"), 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
+
+$help_url = 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones';
+
+llxHeader('', $langs->trans("ExportsArea"), $help_url);
 
 print load_fiche_titre($langs->trans("ExportsArea"));
 
@@ -48,9 +52,8 @@ print '<br>';
 
 
 print '<div class="center">';
-if (count($export->array_export_code))
-{
-    print dolGetButtonTitle($langs->trans('NewExport'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/exports/export.php?leftmenu=export', '', $user->rights->export->creer);
+if (count($export->array_export_code)) {
+	print dolGetButtonTitle($langs->trans('NewExport'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/exports/export.php?leftmenu=export', '', $user->rights->export->creer);
 }
 print '</div>';
 print '<br>';
@@ -71,12 +74,10 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
 $model = new ModeleExports($db);
 $liste = $model->liste_modeles($db); // This is not a static method for exports because method load non static properties
 
-foreach ($liste as $key => $val)
-{
-    if (preg_match('/__\(Disabled\)__/', $liste[$key]))
-    {
-    	$liste[$key] = preg_replace('/__\(Disabled\)__/', '('.$langs->transnoentitiesnoconv("Disabled").')', $liste[$key]);
-    }
+foreach ($liste as $key => $val) {
+	if (preg_match('/__\(Disabled\)__/', $liste[$key])) {
+		$liste[$key] = preg_replace('/__\(Disabled\)__/', '('.$langs->transnoentitiesnoconv("Disabled").')', $liste[$key]);
+	}
 
 	print '<tr class="oddeven">';
 	print '<td width="16">'.img_picto_common($model->getDriverLabelForKey($key), $model->getPictoForKey($key)).'</td>';

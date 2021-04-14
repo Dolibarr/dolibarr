@@ -34,17 +34,21 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/website2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formwebsite.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 require_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 $langs->loadLangs(array("admin", "other", "website", "errors"));
 
-if (!$user->rights->website->read) accessforbidden();
+if (!$user->rights->website->read) {
+	accessforbidden();
+}
 
 $conf->dol_hide_leftmenu = 1; // Force hide of left menu.
 
@@ -70,38 +74,78 @@ $section_dir = GETPOST('section_dir', 'alpha');
 $file_manager = GETPOST('file_manager', 'alpha');
 $replacesite = GETPOST('replacesite', 'alpha');
 
-if (GETPOST('deletesite', 'alpha')) { $action = 'deletesite'; }
-if (GETPOST('delete', 'alpha')) { $action = 'delete'; }
-if (GETPOST('preview', 'alpha')) $action = 'preview';
-if (GETPOST('createsite', 'alpha')) { $action = 'createsite'; }
-if (GETPOST('createcontainer', 'alpha')) { $action = 'createcontainer'; }
-if (GETPOST('editcss', 'alpha')) { $action = 'editcss'; }
-if (GETPOST('editmenu', 'alpha')) { $action = 'editmenu'; }
-if (GETPOST('setashome', 'alpha')) { $action = 'setashome'; }
-if (GETPOST('editmeta', 'alpha')) { $action = 'editmeta'; }
-if (GETPOST('editsource', 'alpha')) { $action = 'editsource'; }
-if (GETPOST('editcontent', 'alpha')) { $action = 'editcontent'; }
-if (GETPOST('exportsite', 'alpha')) { $action = 'exportsite'; }
-if (GETPOST('importsite', 'alpha')) { $action = 'importsite'; }
-if (GETPOST('createfromclone', 'alpha')) { $action = 'createfromclone'; }
-if (GETPOST('createpagefromclone', 'alpha')) { $action = 'createpagefromclone'; }
-if (empty($action) && $file_manager) $action = 'file_manager';
-if (empty($action) && $replacesite) $action = 'replacesite';
-if (GETPOST('refreshsite') || GETPOST('refreshsite_x') || GETPOST('refreshsite.x')) $pageid = 0;
+if (GETPOST('deletesite', 'alpha')) {
+	$action = 'deletesite';
+}
+if (GETPOST('delete', 'alpha')) {
+	$action = 'delete';
+}
+if (GETPOST('preview', 'alpha')) {
+	$action = 'preview';
+}
+if (GETPOST('createsite', 'alpha')) {
+	$action = 'createsite';
+}
+if (GETPOST('createcontainer', 'alpha')) {
+	$action = 'createcontainer';
+}
+if (GETPOST('editcss', 'alpha')) {
+	$action = 'editcss';
+}
+if (GETPOST('editmenu', 'alpha')) {
+	$action = 'editmenu';
+}
+if (GETPOST('setashome', 'alpha')) {
+	$action = 'setashome';
+}
+if (GETPOST('editmeta', 'alpha')) {
+	$action = 'editmeta';
+}
+if (GETPOST('editsource', 'alpha')) {
+	$action = 'editsource';
+}
+if (GETPOST('editcontent', 'alpha')) {
+	$action = 'editcontent';
+}
+if (GETPOST('exportsite', 'alpha')) {
+	$action = 'exportsite';
+}
+if (GETPOST('importsite', 'alpha')) {
+	$action = 'importsite';
+}
+if (GETPOST('createfromclone', 'alpha')) {
+	$action = 'createfromclone';
+}
+if (GETPOST('createpagefromclone', 'alpha')) {
+	$action = 'createpagefromclone';
+}
+if (empty($action) && $file_manager) {
+	$action = 'file_manager';
+}
+if (empty($action) && $replacesite) {
+	$action = 'replacesite';
+}
+if (GETPOST('refreshsite') || GETPOST('refreshsite_x') || GETPOST('refreshsite.x')) {
+	$pageid = 0;
+}
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 //if (! $sortfield) $sortfield='name';
 //if (! $sortorder) $sortorder='ASC';
 
-if (empty($action)) $action = 'preview';
+if (empty($action)) {
+	$action = 'preview';
+}
 
 $object = new Website($db);
 $objectpage = new WebsitePage($db);
@@ -109,16 +153,13 @@ $objectpage = new WebsitePage($db);
 $object->fetchAll('ASC', 'position'); // Init $object->records with list of websites
 
 // If website not defined, we take first found
-if (!($websiteid > 0) && empty($websitekey) && $action != 'createsite')
-{
-	foreach ($object->records as $key => $valwebsite)
-	{
+if (!($websiteid > 0) && empty($websitekey) && $action != 'createsite') {
+	foreach ($object->records as $key => $valwebsite) {
 		$websitekey = $valwebsite->ref;
 		break;
 	}
 }
-if ($websiteid > 0 || $websitekey)
-{
+if ($websiteid > 0 || $websitekey) {
 	$res = $object->fetch($websiteid, $websitekey);
 	$websitekey = $object->ref;
 }
@@ -126,38 +167,33 @@ if ($websiteid > 0 || $websitekey)
 $website = $object;
 
 // Check pageid received as parameter
-if ($pageid < 0) $pageid = 0;
-if (($pageid > 0 || $pageref) && $action != 'addcontainer')
-{
+if ($pageid < 0) {
+	$pageid = 0;
+}
+if (($pageid > 0 || $pageref) && $action != 'addcontainer') {
 	$res = $objectpage->fetch($pageid, ($object->id > 0 ? $object->id : null), $pageref);
-	if ($res == 0)
-	{
+	if ($res == 0) {
 		$res = $objectpage->fetch($pageid, ($object->id > 0 ? $object->id : null), null, $pageref);
 	}
 
 	// Check if pageid is inside the new website, if not we reset param pageid
-	if ($res >= 0 && $object->id > 0)
-	{
-		if ($objectpage->fk_website != $object->id)	// We have a bad page that does not belong to web site
-		{
-			if ($object->fk_default_home > 0)
-			{
+	if ($res >= 0 && $object->id > 0) {
+		if ($objectpage->fk_website != $object->id) {	// We have a bad page that does not belong to web site
+			if ($object->fk_default_home > 0) {
 				$res = $objectpage->fetch($object->fk_default_home, $object->id, ''); // We search first page of web site
-				if ($res > 0) $pageid = $object->fk_default_home;
-			}
-			else {
-				$res = $objectpage->fetch(0, $object->id, ''); // We search first page of web site
-				if ($res == 0)	// Page was not found, we reset it
-				{
-					$objectpage = new WebsitePage($db);
+				if ($res > 0) {
+					$pageid = $object->fk_default_home;
 				}
-				else // We found a page, we set pageid to it.
+			} else {
+				$res = $objectpage->fetch(0, $object->id, ''); // We search first page of web site
+				if ($res == 0) {	// Page was not found, we reset it
+					$objectpage = new WebsitePage($db);
+				} else // We found a page, we set pageid to it.
 				{
 					$pageid = $objectpage->id;
 				}
 			}
-		}
-		else // We have a valid page. We force pageid for the case we got the page with a fetch on ref.
+		} else // We have a valid page. We force pageid for the case we got the page with a fetch on ref.
 		{
 			$pageid = $objectpage->id;
 		}
@@ -165,20 +201,23 @@ if (($pageid > 0 || $pageref) && $action != 'addcontainer')
 }
 
 // Define pageid if pageid and pageref not received as parameter or was wrong
-if (empty($pageid) && empty($pageref) && $object->id > 0 && $action != 'createcontainer')
-{
+if (empty($pageid) && empty($pageref) && $object->id > 0 && $action != 'createcontainer') {
 	$pageid = $object->fk_default_home;
-	if (empty($pageid))
-	{
+	if (empty($pageid)) {
 		$array = $objectpage->fetchAll($object->id, 'ASC,ASC', 'type_container,pageurl');
-		if (!is_array($array) && $array < 0) dol_print_error('', $objectpage->error, $objectpage->errors);
+		if (!is_array($array) && $array < 0) {
+			dol_print_error('', $objectpage->error, $objectpage->errors);
+		}
 		$atleastonepage = (is_array($array) && count($array) > 0);
 
 		$firstpageid = 0; $homepageid = 0;
-		foreach ($array as $key => $valpage)
-		{
-			if (empty($firstpageid)) $firstpageid = $valpage->id;
-			if ($object->fk_default_home && $key == $object->fk_default_home) $homepageid = $valpage->id;
+		foreach ($array as $key => $valpage) {
+			if (empty($firstpageid)) {
+				$firstpageid = $valpage->id;
+			}
+			if ($object->fk_default_home && $key == $object->fk_default_home) {
+				$homepageid = $valpage->id;
+			}
 		}
 		$pageid = ($homepageid ? $homepageid : $firstpageid); // We choose home page and if not defined yet, we take first page
 	}
@@ -267,13 +306,19 @@ $manifestjsoncontentdefault .= '{
 $listofpages = array();
 
 $algo = '';
-if (GETPOST('optionmeta')) $algo .= 'meta';
-if (GETPOST('optioncontent')) $algo .= 'content';
-if (GETPOST('optionsitefiles')) $algo .= 'sitefiles';
+if (GETPOST('optionmeta')) {
+	$algo .= 'meta';
+}
+if (GETPOST('optioncontent')) {
+	$algo .= 'content';
+}
+if (GETPOST('optionsitefiles')) {
+	$algo .= 'sitefiles';
+}
 
 if (empty($sortfield)) {
 	if ($action == 'file_manager') {
-		$sortfield='name'; $sortorder = 'ASC';
+		$sortfield = 'name'; $sortorder = 'ASC';
 	} else {
 		$sortfield = 'pageurl'; $sortorder = 'ASC';
 	}
@@ -301,52 +346,62 @@ $permissiontodelete = $user->rights->website->delete;
  */
 
 // Protections
-if (GETPOST('refreshsite') || GETPOST('refreshsite_x') || GETPOST('refreshsite.x') || GETPOST('refreshpage') || GETPOST('refreshpage_x') || GETPOST('refreshpage.x'))
-{
+if (GETPOST('refreshsite') || GETPOST('refreshsite_x') || GETPOST('refreshsite.x') || GETPOST('refreshpage') || GETPOST('refreshpage_x') || GETPOST('refreshpage.x')) {
 	$action = 'preview'; // To avoid to make an action on another page or another site when we click on button to select another site or page.
 }
-if (GETPOST('refreshsite', 'alpha') || GETPOST('refreshsite.x', 'alpha') || GETPOST('refreshsite_x', 'alpha'))		// If we change the site, we reset the pageid and cancel addsite action.
-{
-	if ($action == 'addsite') $action = 'preview';
-	if ($action == 'updatesource') $action = 'preview';
+if (GETPOST('refreshsite', 'alpha') || GETPOST('refreshsite.x', 'alpha') || GETPOST('refreshsite_x', 'alpha')) {		// If we change the site, we reset the pageid and cancel addsite action.
+	if ($action == 'addsite') {
+		$action = 'preview';
+	}
+	if ($action == 'updatesource') {
+		$action = 'preview';
+	}
 
 	$pageid = $object->fk_default_home;
-	if (empty($pageid))
-	{
+	if (empty($pageid)) {
 		$array = $objectpage->fetchAll($object->id, 'ASC,ASC', 'type_container,pageurl');
-		if (!is_array($array) && $array < 0) dol_print_error('', $objectpage->error, $objectpage->errors);
+		if (!is_array($array) && $array < 0) {
+			dol_print_error('', $objectpage->error, $objectpage->errors);
+		}
 		$atleastonepage = (is_array($array) && count($array) > 0);
 
 		$firstpageid = 0; $homepageid = 0;
-		foreach ($array as $key => $valpage)
-		{
-			if (empty($firstpageid)) $firstpageid = $valpage->id;
-			if ($object->fk_default_home && $key == $object->fk_default_home) $homepageid = $valpage->id;
+		foreach ($array as $key => $valpage) {
+			if (empty($firstpageid)) {
+				$firstpageid = $valpage->id;
+			}
+			if ($object->fk_default_home && $key == $object->fk_default_home) {
+				$homepageid = $valpage->id;
+			}
 		}
 		$pageid = ($homepageid ? $homepageid : $firstpageid); // We choose home page and if not defined yet, we take first page
 	}
 }
-if (GETPOST('refreshpage', 'alpha') && !in_array($action, array('updatecss'))) $action = 'preview';
+if (GETPOST('refreshpage', 'alpha') && !in_array($action, array('updatecss'))) {
+	$action = 'preview';
+}
 
 if ($cancel && $action == 'renamefile') {
 	$cancel = '';
 }
 
 // Cancel
-if ($cancel)
-{
+if ($cancel) {
 	$action = 'preview';
-	if ($backtopage)
-	{
+	if ($backtopage) {
 		header("Location: ".$backtopage);
 		exit;
 	}
 }
 
 $savbacktopage = $backtopage;
-$backtopage = $_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid.(GETPOST('section_dir', 'alpha') ? '&section_dir='.urlencode(GETPOST('section_dir', 'alpha')) : ''); // used after a confirm_deletefile into actions_linkedfiles.inc.php
-if ($sortfield) $backtopage .= '&sortfield='.$sortfield;
-if ($sortorder) $backtopage .= '&sortorder='.$sortorder;
+$backtopage = $_SERVER["PHP_SELF"].'?file_manager=1&website='.urlencode($websitekey).'&pageid='.urlencode($pageid).(GETPOST('section_dir', 'alpha') ? '&section_dir='.urlencode(GETPOST('section_dir', 'alpha')) : ''); // used after a confirm_deletefile into actions_linkedfiles.inc.php
+if ($sortfield) {
+	$backtopage .= '&sortfield='.urlencode($sortfield);
+}
+if ($sortorder) {
+	$backtopage .= '&sortorder='.urlencode($sortorder);
+}
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 $backtopage = $savbacktopage;
 
@@ -354,43 +409,37 @@ if ($action == 'renamefile') {	// Must be after include DOL_DOCUMENT_ROOT.'/core
 	$action = 'file_manager';
 }
 
-if ($action == 'seteditinline')
-{
+if ($action == 'seteditinline') {
 	dolibarr_set_const($db, 'WEBSITE_EDITINLINE', 1);
 	setEventMessages($langs->trans("FeatureNotYetAvailable"), null, 'warnings');
-	dolibarr_set_const($db, 'WEBSITE_SUBCONTAINERSINLINE', 0); // Force disable of 'Include dynamic content'
+	//dolibarr_set_const($db, 'WEBSITE_SUBCONTAINERSINLINE', 0); // Force disable of 'Include dynamic content'
 	header("Location: ".$_SERVER["PHP_SELF"].'?website='.GETPOST('website', 'alphanohtml').'&pageid='.GETPOST('pageid', 'int'));
 	exit;
 }
-if ($action == 'unseteditinline')
-{
+if ($action == 'unseteditinline') {
 	dolibarr_del_const($db, 'WEBSITE_EDITINLINE');
 	header("Location: ".$_SERVER["PHP_SELF"].'?website='.GETPOST('website', 'alphanohtml').'&pageid='.GETPOST('pageid', 'int'));
 	exit;
 }
-if ($action == 'setshowsubcontainers')
-{
+if ($action == 'setshowsubcontainers') {
 	dolibarr_set_const($db, 'WEBSITE_SUBCONTAINERSINLINE', 1);
-	dolibarr_set_const($db, 'WEBSITE_EDITINLINE', 0); // Force disable of edit inline
+	//dolibarr_set_const($db, 'WEBSITE_EDITINLINE', 0); // Force disable of edit inline
 	header("Location: ".$_SERVER["PHP_SELF"].'?website='.GETPOST('website', 'alphanohtml').'&pageid='.GETPOST('pageid', 'int'));
 	exit;
 }
-if ($action == 'unsetshowsubcontainers')
-{
+if ($action == 'unsetshowsubcontainers') {
 	dolibarr_del_const($db, 'WEBSITE_SUBCONTAINERSINLINE');
 	header("Location: ".$_SERVER["PHP_SELF"].'?website='.GETPOST('website', 'alphanohtml').'&pageid='.GETPOST('pageid', 'int'));
 	exit;
 }
 
-if ($massaction == 'replace' && GETPOST('confirmmassaction', 'alpha') && !$searchkey)
-{
+if ($massaction == 'replace' && GETPOST('confirmmassaction', 'alpha') && !$searchkey) {
 	$action = 'replacesite';
 	$massaction = '';
 }
 
 // Set category
-if ($massaction == 'setcategory' && GETPOST('confirmmassaction', 'alpha') && $usercanedit)
-{
+if ($massaction == 'setcategory' && GETPOST('confirmmassaction', 'alpha') && $usercanedit) {
 	$error = 0;
 	$nbupdate = 0;
 
@@ -429,17 +478,14 @@ if ($massaction == 'setcategory' && GETPOST('confirmmassaction', 'alpha') && $us
 }
 
 // Replacement of string into pages
-if ($massaction == 'replace' && GETPOST('confirmmassaction', 'alpha'))
-{
+if ($massaction == 'replace' && GETPOST('confirmmassaction', 'alpha') && $usercanedit) {
 	$replacestring = GETPOST('replacestring', 'none');
 
 	if (empty($user->rights->website->writephp)) {
 		setEventMessages("NotAllowedToAddDynamicContent", null, 'errors');
-	}
-	elseif (!$replacestring) {
+	} elseif (!$replacestring) {
 		setEventMessages("ErrorReplaceStringEmpty", null, 'errors');
-	}
-	else {
+	} else {
 		$nbreplacement = 0;
 
 		foreach ($toselect as $keyselected) {
@@ -461,15 +507,13 @@ if ($massaction == 'replace' && GETPOST('confirmmassaction', 'alpha'))
 
 				// Save page alias
 				$result = dolSavePageAlias($filealias, $object, $objectpage);
-				if (!$result)
-				{
+				if (!$result) {
 					setEventMessages('Failed to write file '.basename($filealias), null, 'errors');
 				}
 
 				// Save page of content
 				$result = dolSavePageContent($filetpl, $object, $objectpage);
-				if ($result)
-				{
+				if ($result) {
 					$nbreplacement++;
 					//var_dump($objectpage->content);exit;
 					$objectpage->update($user);
@@ -524,33 +568,30 @@ if ($action == 'adddir' && $permtouploadfile)
 */
 
 // Add site
-if ($action == 'addsite')
-{
+if ($action == 'addsite' && $usercanedit) {
 	$db->begin();
 
-	if (GETPOST('virtualhost', 'alpha') && !preg_match('/^http/', GETPOST('virtualhost', 'alpha')))
-	{
+	if (GETPOST('virtualhost', 'alpha') && !preg_match('/^http/', GETPOST('virtualhost', 'alpha'))) {
 		$error++;
 		setEventMessages($langs->trans('ErrorURLMustStartWithHttp', $langs->transnoentitiesnoconv("VirtualHost")), null, 'errors');
 	}
 
-	if (!$error && !GETPOST('WEBSITE_REF', 'alpha'))
-	{
+	if (!$error && !GETPOST('WEBSITE_REF', 'alpha')) {
 		$error++;
 		$langs->load("errors");
 		setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities("Ref")), null, 'errors');
 	}
-	if (!$error && !preg_match('/^[a-z0-9_\-\.]+$/i', GETPOST('WEBSITE_REF', 'alpha')))
-	{
+	if (!$error && !preg_match('/^[a-z0-9_\-\.]+$/i', GETPOST('WEBSITE_REF', 'alpha'))) {
 		$error++;
 		$langs->load("errors");
 		setEventMessages($langs->transnoentities("ErrorFieldCanNotContainSpecialCharacters", $langs->transnoentities("Ref")), null, 'errors');
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$arrayotherlang = explode(',', GETPOST('WEBSITE_OTHERLANG', 'alphanohtml'));
 		foreach ($arrayotherlang as $key => $val) {
+			// It possible we have empty val here if postparam WEBSITE_OTHERLANG is empty or set like this : 'en,,sv' or 'en,sv,'
+			if (empty(trim($val))) continue;
 			$arrayotherlang[$key] = substr(trim($val), 0, 2); // Kept short language code only
 		}
 
@@ -562,78 +603,64 @@ if ($action == 'addsite')
 		$tmpobject->virtualhost = GETPOST('virtualhost', 'alpha');
 
 		$result = $tmpobject->create($user);
-		if ($result <= 0)
-		{
+		if ($result <= 0) {
 			$error++;
 			setEventMessages($tmpobject->error, $tmpobject->errors, 'errors');
 		}
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$db->commit();
 		setEventMessages($langs->trans("SiteAdded", $object->ref), null, 'mesgs');
 		$action = '';
 
 		header("Location: ".$_SERVER["PHP_SELF"].'?website='.$tmpobject->ref);
 		exit;
-	}
-	else {
+	} else {
 		$db->rollback();
 		$action = 'createsite';
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$action = 'preview';
 		$id = $object->id;
 	}
 }
 
 // Add page/container
-if ($action == 'addcontainer')
-{
+if ($action == 'addcontainer' && $usercanedit) {
 	dol_mkdir($pathofwebsite);
 
 	$db->begin();
 
 	$objectpage->fk_website = $object->id;
-	if (GETPOSTISSET('fetchexternalurl'))
-	{
+
+	if (GETPOSTISSET('fetchexternalurl')) {	// Fetch from external url
 		$urltograb = GETPOST('externalurl', 'alpha');
 		$grabimages = GETPOST('grabimages', 'alpha');
 		$grabimagesinto = GETPOST('grabimagesinto', 'alpha');
-		//var_dump($grabimages);exit;
-	}
 
-	if (GETPOSTISSET('fetchexternalurl'))
-	{
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
-		if (empty($urltograb))
-		{
+		if (empty($urltograb)) {
 			$error++;
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("URL")), null, 'errors');
 			$action = 'createcontainer';
-		}
-		elseif (!preg_match('/^http/', $urltograb))
-		{
+		} elseif (!preg_match('/^http/', $urltograb)) {
 			$error++;
 			$langs->load("errors");
 			setEventMessages('Error URL must start with http:// or https://', null, 'errors');
 			$action = 'createcontainer';
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			// Clean url to grab, so url can be
 			// http://www.example.com/ or http://www.example.com/dir1/ or http://www.example.com/dir1/aaa
 			$urltograbwithoutdomainandparam = preg_replace('/^https?:\/\/[^\/]+\/?/i', '', $urltograb);
 			//$urltograbwithoutdomainandparam = preg_replace('/^file:\/\/[^\/]+\/?/i', '', $urltograb);
 			$urltograbwithoutdomainandparam = preg_replace('/\?.*$/', '', $urltograbwithoutdomainandparam);
-			if (empty($urltograbwithoutdomainandparam) && !preg_match('/\/$/', $urltograb))
-			{
+			if (empty($urltograbwithoutdomainandparam) && !preg_match('/\/$/', $urltograb)) {
 				$urltograb .= '/';
 			}
 			$pageurl = dol_sanitizeFileName(preg_replace('/[\/\.]/', '-', preg_replace('/\/+$/', '', $urltograbwithoutdomainandparam)));
@@ -645,34 +672,27 @@ if ($action == 'addcontainer')
 		}
 
 		// Check pageurl is not already used
-		if ($pageurl)
-		{
+		if ($pageurl) {
 			$tmpwebsitepage = new WebsitePage($db);
 			$result = $tmpwebsitepage->fetch(0, $object->id, $pageurl);
-			if ($result > 0)
-			{
+			if ($result > 0) {
 				setEventMessages($langs->trans("AliasPageAlreadyExists", $pageurl), null, 'errors');
 				$error++;
 				$action = 'createcontainer';
 			}
 		}
 
-		if (!$error)
-		{
-			$tmp = getURLContent($urltograb);
-			if ($tmp['curl_error_no'])
-			{
+		if (!$error) {
+			$tmp = getURLContent($urltograb, 'GET', '', 1, array(), array('http', 'https'), 0);
+			if ($tmp['curl_error_no']) {
 				$error++;
 				setEventMessages('Error getting '.$urltograb.': '.$tmp['curl_error_msg'], null, 'errors');
 				$action = 'createcontainer';
-			}
-			elseif ($tmp['http_code'] != '200')
-			{
+			} elseif ($tmp['http_code'] != '200') {
 				$error++;
 				setEventMessages('Error getting '.$urltograb.': '.$tmp['http_code'], null, 'errors');
 				$action = 'createcontainer';
-			}
-			else {
+			} else {
 				// Remove comments
 				$tmp['content'] = removeHtmlComment($tmp['content']);
 
@@ -682,36 +702,34 @@ if ($action == 'addcontainer')
 				$head = $regs[1];
 
 				$objectpage->type_container = 'page';
-	   			$objectpage->pageurl = $pageurl;
-	   			if (empty($objectpage->pageurl))
-	   			{
-	   				$tmpdomain = getDomainFromURL($urltograb);
-	   				$objectpage->pageurl = $tmpdomain.'-home';
-	   			}
+				$objectpage->pageurl = $pageurl;
+				if (empty($objectpage->pageurl)) {
+					$tmpdomain = getDomainFromURL($urltograb);
+					$objectpage->pageurl = $tmpdomain.'-home';
+				}
 
-	   			$objectpage->aliasalt = '';
+				$objectpage->aliasalt = '';
 
-	   			if (preg_match('/^(\d+)\-/', basename($urltograb), $regs)) $objectpage->aliasalt = $regs[1];
+				if (preg_match('/^(\d+)\-/', basename($urltograb), $regs)) {
+					$objectpage->aliasalt = $regs[1];
+				}
 
-	   			$regtmp = array();
-				if (preg_match('/<title>(.*)<\/title>/ims', $head, $regtmp))
-				{
+				$regtmp = array();
+				if (preg_match('/<title>(.*)<\/title>/ims', $head, $regtmp)) {
 					$objectpage->title = $regtmp[1];
 				}
-				if (preg_match('/<meta name="title"[^"]+content="([^"]+)"/ims', $head, $regtmp))
-				{
-					if (empty($objectpage->title)) $objectpage->title = $regtmp[1]; // If title not found into <title>, we get it from <meta title>
+				if (preg_match('/<meta name="title"[^"]+content="([^"]+)"/ims', $head, $regtmp)) {
+					if (empty($objectpage->title)) {
+						$objectpage->title = $regtmp[1]; // If title not found into <title>, we get it from <meta title>
+					}
 				}
-				if (preg_match('/<meta name="description"[^"]+content="([^"]+)"/ims', $head, $regtmp))
-				{
+				if (preg_match('/<meta name="description"[^"]+content="([^"]+)"/ims', $head, $regtmp)) {
 					$objectpage->description = $regtmp[1];
 				}
-				if (preg_match('/<meta name="keywords"[^"]+content="([^"]+)"/ims', $head, $regtmp))
-				{
+				if (preg_match('/<meta name="keywords"[^"]+content="([^"]+)"/ims', $head, $regtmp)) {
 					$objectpage->keywords = $regtmp[1];
 				}
-				if (preg_match('/<html\s+lang="([^"]+)"/ims', $tmp['content'], $regtmp))
-				{
+				if (preg_match('/<html\s+lang="([^"]+)"/ims', $tmp['content'], $regtmp)) {
 					$tmplang = explode('-', $regtmp[1]);
 					$objectpage->lang = $tmplang[0].($tmplang[1] ? '_'.strtoupper($tmplang[1]) : '');
 				}
@@ -749,24 +767,21 @@ if ($action == 'addcontainer')
 				// Now loop to fetch JS
 				$tmp = $objectpage->htmlheader;
 
+				// We grab files found into <script> tags
 				preg_match_all('/<script([^\.>]+)src=["\']([^"\'>]+)["\']([^>]*)><\/script>/i', $objectpage->htmlheader, $regs);
 				$errorforsubresource = 0;
-				foreach ($regs[0] as $key => $val)
-				{
+				foreach ($regs[0] as $key => $val) {
 					dol_syslog("We will grab the script resource found into script tag ".$regs[2][$key]);
 
 					$linkwithoutdomain = $regs[2][$key];
-					if (preg_match('/^\//', $regs[2][$key]))
-					{
+					if (preg_match('/^\//', $regs[2][$key])) {
 						$urltograbbis = $urltograbdirrootwithoutslash.$regs[2][$key]; // We use dirroot
-					}
-					else {
+					} else {
 						$urltograbbis = $urltograbdirwithoutslash.'/'.$regs[2][$key]; // We use dir of grabbed file
 					}
 
 					//$filetosave = $conf->medias->multidir_output[$conf->entity].'/css/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
-					if (preg_match('/^http/', $regs[2][$key]))
-					{
+					if (preg_match('/^http/', $regs[2][$key])) {
 						$urltograbbis = $regs[2][$key];
 						$linkwithoutdomain = preg_replace('/^https?:\/\/[^\/]+\//i', '', $regs[2][$key]);
 						//$filetosave = $conf->medias->multidir_output[$conf->entity].'/css/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
@@ -778,17 +793,19 @@ if ($action == 'addcontainer')
 					// Test if this is an external URL of grabbed web site. If yes, we do not load resource
 					$domaintograb = getDomainFromURL($urltograbdirwithoutslash);
 					$domaintograbbis = getDomainFromURL($urltograbbis);
-					if ($domaintograb != $domaintograbbis) continue;
+					if ($domaintograb != $domaintograbbis) {
+						continue;
+					}
 
 					/*
-	    			$tmpgeturl = getURLContent($urltograbbis);
-	    			if ($tmpgeturl['curl_error_no'])
-	    			{
-	    				$error++;
-	    				setEventMessages('Error getting script url '.$urltograbbis.': '.$tmpgeturl['curl_error_msg'], null, 'errors');
-	    				$errorforsubresource++;
-	    				$action='createcontainer';
-	    			}
+					$tmpgeturl = getURLContent($urltograbbis, 'GET', '', 1, array(), array('http', 'https'), 0);
+					if ($tmpgeturl['curl_error_no'])
+					{
+						$error++;
+						setEventMessages('Error getting script url '.$urltograbbis.': '.$tmpgeturl['curl_error_msg'], null, 'errors');
+						$errorforsubresource++;
+						$action='createcontainer';
+					}
 					elseif ($tmpgeturl['http_code'] != '200')
 					{
 						$error++;
@@ -797,15 +814,15 @@ if ($action == 'addcontainer')
 						$action='createcontainer';
 					}
 					else
-	    			{
-	    				dol_mkdir(dirname($filetosave));
+					{
+						dol_mkdir(dirname($filetosave));
 
-	    				$fp = fopen($filetosave, "w");
-	    				fputs($fp, $tmpgeturl['content']);
-	    				fclose($fp);
-	    				if (! empty($conf->global->MAIN_UMASK))
-	    					@chmod($file, octdec($conf->global->MAIN_UMASK));
-	    			}
+						$fp = fopen($filetosave, "w");
+						fputs($fp, $tmpgeturl['content']);
+						fclose($fp);
+						if (! empty($conf->global->MAIN_UMASK))
+							@chmod($file, octdec($conf->global->MAIN_UMASK));
+					}
 					*/
 
 					//$filename = 'image/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
@@ -814,27 +831,23 @@ if ($action == 'addcontainer')
 				$objectpage->htmlheader = trim($tmp)."\n";
 
 
-				// Now loop to fetch CSS
+				// Now we grab CSS found into <link> tags
 				$pagecsscontent = "\n".'<style>'."\n";
 
 				preg_match_all('/<link([^\.>]+)href=["\']([^"\'>]+\.css[^"\'>]*)["\']([^>]*)>/i', $objectpage->htmlheader, $regs);
 				$errorforsubresource = 0;
-				foreach ($regs[0] as $key => $val)
-				{
+				foreach ($regs[0] as $key => $val) {
 					dol_syslog("We will grab the css resources found into link tag ".$regs[2][$key]);
 
 					$linkwithoutdomain = $regs[2][$key];
-					if (preg_match('/^\//', $regs[2][$key]))
-					{
+					if (preg_match('/^\//', $regs[2][$key])) {
 						$urltograbbis = $urltograbdirrootwithoutslash.$regs[2][$key]; // We use dirroot
-					}
-					else {
+					} else {
 						$urltograbbis = $urltograbdirwithoutslash.'/'.$regs[2][$key]; // We use dir of grabbed file
 					}
 
 					//$filetosave = $conf->medias->multidir_output[$conf->entity].'/css/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $regs[2][$key])?'':'/').$regs[2][$key];
-					if (preg_match('/^http/', $regs[2][$key]))
-					{
+					if (preg_match('/^http/', $regs[2][$key])) {
 						$urltograbbis = $regs[2][$key];
 						$linkwithoutdomain = preg_replace('/^https?:\/\/[^\/]+\//i', '', $regs[2][$key]);
 						//$filetosave = $conf->medias->multidir_output[$conf->entity].'/css/'.$object->ref.'/'.$objectpage->pageurl.(preg_match('/^\//', $linkwithoutdomain)?'':'/').$linkwithoutdomain;
@@ -846,24 +859,22 @@ if ($action == 'addcontainer')
 					// Test if this is an external URL of grabbed web site. If yes, we do not load resource
 					$domaintograb = getDomainFromURL($urltograbdirwithoutslash);
 					$domaintograbbis = getDomainFromURL($urltograbbis);
-					if ($domaintograb != $domaintograbbis) continue;
+					if ($domaintograb != $domaintograbbis) {
+						continue;
+					}
 
-					$tmpgeturl = getURLContent($urltograbbis);
-					if ($tmpgeturl['curl_error_no'])
-					{
+					$tmpgeturl = getURLContent($urltograbbis, 'GET', '', 1, array(), array('http', 'https'), 0);
+					if ($tmpgeturl['curl_error_no']) {
 						$errorforsubresource++;
 						setEventMessages('Error getting link tag url '.$urltograbbis.': '.$tmpgeturl['curl_error_msg'], null, 'errors');
 						dol_syslog('Error getting '.$urltograbbis.': '.$tmpgeturl['curl_error_msg']);
 						$action = 'createcontainer';
-					}
-					elseif ($tmpgeturl['http_code'] != '200')
-					{
+					} elseif ($tmpgeturl['http_code'] != '200') {
 						$errorforsubresource++;
 						setEventMessages('Error getting link tag url '.$urltograbbis.': '.$tmpgeturl['http_code'], null, 'errors');
 						dol_syslog('Error getting '.$urltograbbis.': '.$tmpgeturl['curl_error_msg']);
 						$action = 'createcontainer';
-					}
-					else {
+					} else {
 						// Clean some comment
 						//$tmpgeturl['content'] = dol_string_is_good_iso($tmpgeturl['content'], 1);
 						//$tmpgeturl['content'] = utf8_encode(utf8_decode($tmpgeturl['content']));
@@ -887,6 +898,7 @@ if ($action == 'addcontainer')
 
 						getAllImages($object, $objectpage, $urltograbbis, $tmpgeturl['content'], $action, 1, $grabimages, $grabimagesinto);
 
+						// We try to convert the CSS we got by adding a prefix .bodywebsite with lessc to avoid conflicit with CSS of Dolibarr.
 						include_once DOL_DOCUMENT_ROOT.'/core/class/lessc.class.php';
 						$lesscobj = new Lessc();
 						try {
@@ -914,7 +926,7 @@ if ($action == 'addcontainer')
 				$objectpage->htmlheader .= trim($pagecsscontent)."\n";
 
 
-				// Now loop to fetch all images into page
+				// Now we have to fetch all images into page
 				$tmp = $objectpage->content;
 
 				getAllImages($object, $objectpage, $urltograb, $tmp, $action, 1, $grabimages, $grabimagesinto);
@@ -931,15 +943,51 @@ if ($action == 'addcontainer')
 			}
 		}
 	} else {
+		$newaliasnames = '';
+		if (!$error && GETPOST('WEBSITE_ALIASALT', 'alpha')) {
+			$arrayofaliastotest = explode(',', str_replace(array('<', '>'), '', GETPOST('WEBSITE_ALIASALT', 'alpha')));
+			$websitepagetemp = new WebsitePage($db);
+			foreach ($arrayofaliastotest as $aliastotest) {
+				$aliastotest = trim(preg_replace('/\.php$/i', '', $aliastotest));
+
+				// Disallow alias name pageX (already used to save the page with id)
+				if (preg_match('/^page\d+/i', $aliastotest)) {
+					$error++;
+					$langs->load("errors");
+					setEventMessages("Alias name 'pageX' is not allowed", null, 'errors');
+					$action = 'createcontainer';
+					break;
+				} else {
+					$result = $websitepagetemp->fetch(0, $object->id, $aliastotest);
+					if ($result < 0) {
+						$error++;
+						$langs->load("errors");
+						setEventMessages($websitepagetemp->error, $websitepagetemp->errors, 'errors');
+						$action = 'createcontainer';
+						break;
+					}
+					if ($result > 0) {
+						$error++;
+						$langs->load("errors");
+						setEventMessages($langs->trans("ErrorAPageWithThisNameOrAliasAlreadyExists", $websitepagetemp->pageurl), null, 'errors');
+						$action = 'createcontainer';
+						break;
+					}
+					$newaliasnames .= ($newaliasnames ? ', ' : '').$aliastotest;
+				}
+			}
+		}
+
 		$objectpage->title = str_replace(array('<', '>'), '', GETPOST('WEBSITE_TITLE', 'alphanohtml'));
 		$objectpage->type_container = GETPOST('WEBSITE_TYPE_CONTAINER', 'aZ09');
 		$objectpage->pageurl = GETPOST('WEBSITE_PAGENAME', 'alpha');
-		$objectpage->aliasalt = str_replace(array('<', '>'), '', GETPOST('WEBSITE_ALIASALT', 'alphanohtml'));
+		$objectpage->aliasalt = $newaliasnames;
 		$objectpage->description = str_replace(array('<', '>'), '', GETPOST('WEBSITE_DESCRIPTION', 'alphanohtml'));
 		$objectpage->lang = GETPOST('WEBSITE_LANG', 'aZ09');
 		$objectpage->otherlang = GETPOST('WEBSITE_OTHERLANG', 'aZ09comma');
 		$objectpage->image = GETPOST('WEBSITE_IMAGE', 'alpha');
 		$objectpage->keywords = str_replace(array('<', '>'), '', GETPOST('WEBSITE_KEYWORDS', 'alphanohtml'));
+		$objectpage->allowed_in_frames = GETPOST('WEBSITE_ALLOWED_IN_FRAMES', 'aZ09');
 		$objectpage->htmlheader = GETPOST('htmlheader', 'none');
 		$objectpage->author_alias = GETPOST('WEBSITE_AUTHORALIAS', 'alphanohtml');
 		$objectpage->object_type = GETPOST('WEBSITE_OBJECTCLASS');
@@ -947,42 +995,64 @@ if ($action == 'addcontainer')
 		$substitutionarray = array();
 		$substitutionarray['__WEBSITE_CREATE_BY__'] = $user->getFullName($langs);
 
-		$sample = GETPOST('sample', 'alpha');
-		if (empty($sample)) $sample = 'empty';
+		// Define id of page the new page is translation of
+		$pageidfortranslation = (GETPOST('pageidfortranslation', 'int') > 0 ? GETPOST('pageidfortranslation', 'int') : 0);
+		if ($pageidfortranslation > 0) {
+			// Check if the page we are translation of is alreayd a translation of a source page. if yes, we will use source id instead
+			$objectpagetmp = new WebsitePage($db);
+			$objectpagetmp->fetch($pageidfortranslation);
+			if ($objectpagetmp->fk_page > 0) {
+				$pageidfortranslation = $objectpagetmp->fk_page;
+			}
+		}
+		$objectpage->fk_page = $pageidfortranslation;
 
-		$pathtosample = DOL_DOCUMENT_ROOT.'/website/samples/page-sample-'.$sample.'.html';
+		$sample = GETPOST('sample', 'alpha');
+		if (empty($sample)) {
+			$sample = 'empty';
+		}
+
+		$pathtosample = DOL_DOCUMENT_ROOT.'/website/samples/page-sample-'.dol_sanitizeFileName($sample).'.html';
 
 		// Init content with content into pagetemplate.html, blogposttempltate.html, ...
 		$objectpage->content = make_substitutions(@file_get_contents($pathtosample), $substitutionarray);
 	}
 
-	if (!$error)
-	{
-		if (empty($objectpage->pageurl))
-		{
+	if (!$error) {
+		if (empty($objectpage->pageurl)) {
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("WEBSITE_PAGENAME")), null, 'errors');
 			$error++;
 			$action = 'createcontainer';
-		}
-		elseif (!preg_match('/^[a-z0-9\-\_]+$/i', $objectpage->pageurl))
-		{
+		} elseif (!preg_match('/^[a-z0-9\-\_]+$/i', $objectpage->pageurl)) {
 			$langs->load("errors");
 			setEventMessages($langs->transnoentities("ErrorFieldCanNotContainSpecialCharacters", $langs->transnoentities('WEBSITE_PAGENAME')), null, 'errors');
 			$error++;
 			$action = 'createcontainer';
 		}
-		if (empty($objectpage->title))
-		{
+		if (empty($objectpage->title)) {
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("WEBSITE_TITLE")), null, 'errors');
 			$error++;
 			$action = 'createcontainer';
 		}
+		if ($objectpage->fk_page > 0 && empty($objectpage->lang)) {
+			$langs->load("errors");
+			setEventMessages($langs->trans("ErrorLanguageRequiredIfPageIsTranslationOfAnother"), null, 'errors');
+			$error++;
+			$action = 'createcontainer';
+		}
+		if ($objectpage->fk_page > 0 && !empty($objectpage->lang)) {
+			if ($objectpage->lang == $website->lang) {
+				$langs->load("errors");
+				setEventMessages($langs->trans("ErrorLanguageMustNotBeSourceLanguageIfPageIsTranslationOfAnother"), null, 'errors');
+				$error++;
+				$action = 'createcontainer';
+			}
+		}
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$pageid = $objectpage->create($user);
 		if ($pageid <= 0) {
 			$error++;
@@ -995,8 +1065,7 @@ if ($action == 'addcontainer')
 		// Website categories association
 		$categoriesarray = GETPOST('categories', 'array');
 		$result = $objectpage->setCategories($categoriesarray);
-		if ($result < 0)
-		{
+		if ($result < 0) {
 			$error++;
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -1007,8 +1076,7 @@ if ($action == 'addcontainer')
 		if (empty($object->fk_default_home)) {
 			$object->fk_default_home = $pageid;
 			$res = $object->update($user);
-			if ($res <= 0)
-			{
+			if ($res <= 0) {
 				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
 			} else {
@@ -1017,49 +1085,44 @@ if ($action == 'addcontainer')
 				// Generate the index.php page (to be the home page) and wrapper.php file
 				$result = dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper);
 
-				if ($result <= 0) setEventMessages('Failed to write file '.$fileindex, null, 'errors');
+				if ($result <= 0) {
+					setEventMessages('Failed to write file '.$fileindex, null, 'errors');
+				}
 			}
 		}
 	}
 
-	if (!$error)
-	{
-		if (!empty($objectpage->content))
-		{
+	if (!$error) {
+		if (!empty($objectpage->content)) {
 			$filealias = $pathofwebsite.'/'.$objectpage->pageurl.'.php';
 			$filetpl = $pathofwebsite.'/page'.$objectpage->id.'.tpl.php';
 
 			// Save page alias
 			$result = dolSavePageAlias($filealias, $object, $objectpage);
-			if (!$result)
-			{
+			if (!$result) {
 				setEventMessages('Failed to write file '.basename($filealias), null, 'errors');
 			}
 
 			// Save page of content
 			$result = dolSavePageContent($filetpl, $object, $objectpage);
-			if ($result)
-			{
+			if ($result) {
 				setEventMessages($langs->trans("Saved"), null, 'mesgs');
-			}
-			else {
+			} else {
 				setEventMessages('Failed to write file '.$filetpl, null, 'errors');
 				$action = 'createcontainer';
 			}
 		}
 	}
-	if (!$error)
-	{
+
+	if (!$error) {
 		$db->commit();
 		setEventMessages($langs->trans("PageAdded", $objectpage->pageurl), null, 'mesgs');
 		$action = '';
-	}
-	else {
+	} else {
 		$db->rollback();
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$pageid = $objectpage->id;
 
 		// To generate the CSS, robot and htmlheader file.
@@ -1067,53 +1130,54 @@ if ($action == 'addcontainer')
 		// Check symlink to medias and restore it if ko
 		$pathtomedias = DOL_DATA_ROOT.'/medias';
 		$pathtomediasinwebsite = $pathofwebsite.'/medias';
-		if (!is_link(dol_osencode($pathtomediasinwebsite)))
-		{
+		if (!is_link(dol_osencode($pathtomediasinwebsite))) {
 			dol_syslog("Create symlink for ".$pathtomedias." into name ".$pathtomediasinwebsite);
 			dol_mkdir(dirname($pathtomediasinwebsite)); // To be sure dir for website exists
 			$result = symlink($pathtomedias, $pathtomediasinwebsite);
 		}
 
-		if (!dol_is_file($filehtmlheader))
-		{
+		// Now generate the master.inc.php page if it does not exists yet
+		if (!dol_is_file($filemaster)) {
+			$result = dolSaveMasterFile($filemaster);
+			if (!$result) {
+				$error++;
+				setEventMessages('Failed to write file '.$filemaster, null, 'errors');
+			}
+		}
+
+		if (!dol_is_file($filehtmlheader)) {
 			$htmlheadercontent = "<html>\n";
 			$htmlheadercontent .= $htmlheadercontentdefault;
 			$htmlheadercontent .= "</html>";
 			$result = dolSaveHtmlHeader($filehtmlheader, $htmlheadercontent);
 		}
 
-		if (!dol_is_file($filecss))
-		{
+		if (!dol_is_file($filecss)) {
 			$csscontent = "/* CSS content (all pages) */\nbody.bodywebsite { margin: 0; font-family: 'Open Sans', sans-serif; }\n.bodywebsite h1 { margin-top: 0; margin-bottom: 0; padding: 10px;}";
 			$result = dolSaveCssFile($filecss, $csscontent);
 		}
 
-		if (!dol_is_file($filejs))
-		{
+		if (!dol_is_file($filejs)) {
 			$jscontent = "/* JS content (all pages) */\n";
 			$result = dolSaveJsFile($filejs, $jscontent);
 		}
 
-		if (!dol_is_file($filerobot))
-		{
+		if (!dol_is_file($filerobot)) {
 			$robotcontent = "# Robot file. Generated with Dolibarr\nUser-agent: *\nAllow: /public/\nDisallow: /administrator/";
 			$result = dolSaveRobotFile($filerobot, $robotcontent);
 		}
 
-		if (!dol_is_file($filehtaccess))
-		{
+		if (!dol_is_file($filehtaccess)) {
 			$htaccesscontent = "# Order allow,deny\n# Deny from all";
 			$result = dolSaveHtaccessFile($filehtaccess, $htaccesscontent);
 		}
 
-		if (!dol_is_file($filemanifestjson))
-		{
+		if (!dol_is_file($filemanifestjson)) {
 			$manifestjsoncontent = "";
 			$result = dolSaveManifestJson($filemanifestjson, $manifestjsoncontent);
 		}
 
-		if (!dol_is_file($filereadme))
-		{
+		if (!dol_is_file($filereadme)) {
 			$readmecontent = "Website generated by Dolibarr ERP CRM";
 			$result = dolSaveReadme($filereadme, $readmecontent);
 		}
@@ -1123,8 +1187,7 @@ if ($action == 'addcontainer')
 }
 
 // Delete site
-if ($action == 'confirm_deletesite' && $confirm == 'yes')
-{
+if ($action == 'confirm_deletesite' && $confirm == 'yes' && $permissiontodelete) {
 	$error = 0;
 
 	$db->begin();
@@ -1132,40 +1195,33 @@ if ($action == 'confirm_deletesite' && $confirm == 'yes')
 	$res = $object->fetch(GETPOST('id', 'int'));
 	$website = $object;
 
-	if ($res > 0)
-	{
+	if ($res > 0) {
 		$res = $object->delete($user);
-		if ($res <= 0)
-		{
+		if ($res <= 0) {
 			$error++;
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
-	if (!$error)
-	{
-		if (GETPOST('delete_also_js', 'alpha') == 'on')
-		{
+	if (!$error) {
+		if (GETPOST('delete_also_js', 'alpha') == 'on') {
 			$pathofwebsitejs = DOL_DATA_ROOT.'/medias/js/'.$object->ref;
 
 			dol_delete_dir_recursive($pathofwebsitejs);
 		}
-		if (GETPOST('delete_also_medias', 'alpha') == 'on')
-		{
+		if (GETPOST('delete_also_medias', 'alpha') == 'on') {
 			$pathofwebsitemedias = DOL_DATA_ROOT.'/medias/image/'.$object->ref;
 
 			dol_delete_dir_recursive($pathofwebsitemedias);
 		}
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$db->commit();
 		setEventMessages($langs->trans("SiteDeleted", $object->ref), null, 'mesgs');
 
 		header("Location: ".$_SERVER["PHP_SELF"].'?id='.$object->id);
 		exit;
-	}
-	else {
+	} else {
 		$db->rollback();
 		dol_print_error($db);
 	}
@@ -1182,54 +1238,48 @@ if (GETPOSTISSET('pageid') && $action == 'delete' && $permissiontodelete) {
 
 	$res = $objectpage->fetch($pageid, $object->id);
 
-	if ($res > 0)
-	{
+	if ($res > 0) {
 		$res = $objectpage->delete($user);
-		if ($res <= 0)
-		{
+		if ($res <= 0) {
 			$error++;
 			setEventMessages($objectpage->error, $objectpage->errors, 'errors');
 		}
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$db->commit();
 		setEventMessages($langs->trans("PageDeleted", $objectpage->pageurl, $websitekey), null, 'mesgs');
 
 		header("Location: ".$_SERVER["PHP_SELF"].'?website='.$websitekey);
 		exit;
-	}
-	else {
+	} else {
 		$db->rollback();
 		dol_print_error($db);
 	}
 }
 // Delete page (from menu search)
-if (! GETPOSTISSET('pageid')) {
+if (!GETPOSTISSET('pageid')) {
 	$objectclass = 'WebsitePage';
 
 	// Add part of code from actions_massactions.inc.php
 	// Delete record from mass action (massaction = 'delete' for direct delete, action/confirm='delete'/'yes' with a confirmation step before)
-	if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == 'yes')) && $permissiontodelete)
-	{
+	if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == 'yes')) && $permissiontodelete) {
 		$db->begin();
 
 		$objecttmp = new $objectclass($db);
 		$nbok = 0;
-		foreach ($toselect as $toselectid)
-		{
+		foreach ($toselect as $toselectid) {
 			$result = $objecttmp->fetch($toselectid);
-			if ($result > 0)
-			{
+			if ($result > 0) {
 				$result = $objecttmp->delete($user);
 
-				if ($result <= 0)
-				{
+				if ($result <= 0) {
 					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 					$error++;
 					break;
-				} else $nbok++;
+				} else {
+					$nbok++;
+				}
 			} else {
 				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 				$error++;
@@ -1237,10 +1287,12 @@ if (! GETPOSTISSET('pageid')) {
 			}
 		}
 
-		if (!$error)
-		{
-			if ($nbok > 1) setEventMessages($langs->trans("RecordsDeleted", $nbok), null, 'mesgs');
-			else setEventMessages($langs->trans("RecordDeleted", $nbok), null, 'mesgs');
+		if (!$error) {
+			if ($nbok > 1) {
+				setEventMessages($langs->trans("RecordsDeleted", $nbok), null, 'mesgs');
+			} else {
+				setEventMessages($langs->trans("RecordDeleted", $nbok), null, 'mesgs');
+			}
 			$db->commit();
 		} else {
 			$db->rollback();
@@ -1263,31 +1315,27 @@ if (! GETPOSTISSET('pageid')) {
 }
 
 // Update css Update site properties
-if ($action == 'updatecss')
-{
+if ($action == 'updatecss' && $usercanedit) {
 	// If we tried to reload another site/page, we stay on editcss mode.
-	if (GETPOST('refreshsite') || GETPOST('refreshsite_x') || GETPOST('refreshsite.x') || GETPOST('refreshpage') || GETPOST('refreshpage_x') || GETPOST('refreshpage.x'))
-	{
+	if (GETPOST('refreshsite') || GETPOST('refreshsite_x') || GETPOST('refreshsite.x') || GETPOST('refreshpage') || GETPOST('refreshpage_x') || GETPOST('refreshpage.x')) {
 		$action = 'editcss';
-	}
-	else {
+	} else {
 		$res = $object->fetch(0, $websitekey);
 		$website = $object;
 
-		if (GETPOSTISSET('virtualhost'))
-		{
+		if (GETPOSTISSET('virtualhost')) {
 			$tmpvirtualhost = preg_replace('/\/$/', '', GETPOST('virtualhost', 'alpha'));
-			if ($tmpvirtualhost && !preg_match('/^http/', $tmpvirtualhost))
-			{
+			if ($tmpvirtualhost && !preg_match('/^http/', $tmpvirtualhost)) {
 				$error++;
 				setEventMessages($langs->trans('ErrorURLMustStartWithHttp', $langs->transnoentitiesnoconv("VirtualHost")), null, 'errors');
 				$action = 'editcss';
 			}
 
-			if (!$error)
-			{
+			if (!$error) {
 				$arrayotherlang = explode(',', GETPOST('WEBSITE_OTHERLANG', 'alphanohtml'));
 				foreach ($arrayotherlang as $key => $val) {
+					// It possible we have empty val here if postparam WEBSITE_OTHERLANG is empty or set like this : 'en,,sv' or 'en,sv,'
+					if (empty(trim($val))) continue;
 					$arrayotherlang[$key] = substr(trim($val), 0, 2); // Kept short language code only
 				}
 
@@ -1297,8 +1345,7 @@ if ($action == 'updatecss')
 				$object->use_manifest = GETPOST('use_manifest', 'alpha');
 
 				$result = $object->update($user);
-				if ($result < 0)
-				{
+				if ($result < 0) {
 					$error++;
 					setEventMessages($object->error, $object->errors, 'errors');
 					$action = 'editcss';
@@ -1306,8 +1353,38 @@ if ($action == 'updatecss')
 			}
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
+			if (($_FILES['addedfile']["name"] != '')) {
+				$uploadfolder = $conf->website->dir_output.'/'.$websitekey;
+				if ($_FILES['addedfile']['type'] != 'image/png') {
+					$error++;
+					setEventMessages($langs->trans('ErrorFaviconType'), array(), 'errors');
+				}
+				$filetoread = realpath(dol_osencode($_FILES['addedfile']['tmp_name']));
+				$filesize = getimagesize($filetoread);
+				if ($filesize[0] != 32 || $filesize[1] != 32) {
+					$error++;
+					setEventMessages($langs->trans('ErrorFaviconSize'), array(), 'errors');
+				}
+				if (!$error) {
+					dol_add_file_process($uploadfolder, 1, 0, 'addedfile', 'favicon.png');
+				}
+			}
+			if ($error) {
+				if (!GETPOSTISSET('updateandstay')) {	// If we click on "Save And Stay", we don not make the redirect
+					$action = 'preview';
+					if ($backtopage) {
+						$backtopage = preg_replace('/searchstring=[^&]*/', '', $backtopage);	// Clean backtopage url
+						header("Location: ".$backtopage);
+						exit;
+					}
+				} else {
+					$action = 'editcss';
+				}
+			}
+		}
+
+		if (!$error) {
 			// Save master.inc.php file
 			dol_syslog("Save master file ".$filemaster);
 
@@ -1315,8 +1392,7 @@ if ($action == 'updatecss')
 
 			// Now generate the master.inc.php page
 			$result = dolSaveMasterFile($filemaster);
-			if (!$result)
-			{
+			if (!$result) {
 				$error++;
 				setEventMessages('Failed to write file '.$filemaster, null, 'errors');
 			}
@@ -1326,26 +1402,25 @@ if ($action == 'updatecss')
 			$htmlheadercontent = '';
 
 			/* We disable php code since htmlheader is never executed as an include but only read by fgets_content.
-    	    $htmlheadercontent.= "<?php // BEGIN PHP\n";
-    	    $htmlheadercontent.= '$websitekey=basename(__DIR__);'."\n";
-    	    $htmlheadercontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Load env if not already loaded"."\n";
-    	    $htmlheadercontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
-    	    $htmlheadercontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
-    	    $htmlheadercontent.= "ob_start();\n";
-    	    // $htmlheadercontent.= "header('Content-type: text/html');\n";		// Not required. htmlheader.html is never call as a standalone page
-    	    $htmlheadercontent.= "// END PHP ?>\n";*/
+			$htmlheadercontent.= "<?php // BEGIN PHP\n";
+			$htmlheadercontent.= '$websitekey=basename(__DIR__);'."\n";
+			$htmlheadercontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Load env if not already loaded"."\n";
+			$htmlheadercontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
+			$htmlheadercontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
+			$htmlheadercontent.= "ob_start();\n";
+			// $htmlheadercontent.= "header('Content-type: text/html');\n";		// Not required. htmlheader.html is never call as a standalone page
+			$htmlheadercontent.= "// END PHP ?>\n";*/
 
 			$htmlheadercontent .= preg_replace(array('/<html>\n*/ims', '/<\/html>\n*/ims'), array('', ''), GETPOST('WEBSITE_HTML_HEADER', 'none'));
 
 			/*$htmlheadercontent.= "\n".'<?php // BEGIN PHP'."\n";
-    	    $htmlheadercontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp);'."\n";
-    	    $htmlheadercontent.= "// END PHP ?>"."\n";*/
+			$htmlheadercontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp);'."\n";
+			$htmlheadercontent.= "// END PHP ?>"."\n";*/
 
 			$htmlheadercontent = trim($htmlheadercontent)."\n";
 
 			$result = dolSaveHtmlHeader($filehtmlheader, $htmlheadercontent);
-			if (!$result)
-			{
+			if (!$result) {
 				$error++;
 				setEventMessages('Failed to write file '.$filehtmlheader, null, 'errors');
 			}
@@ -1375,8 +1450,7 @@ if ($action == 'updatecss')
 			dol_syslog("Save css content into ".$filecss);
 
 			$result = dolSaveCssFile($filecss, $csscontent);
-			if (!$result)
-			{
+			if (!$result) {
 				$error++;
 				setEventMessages('Failed to write file '.$filecss, null, 'errors');
 			}
@@ -1402,8 +1476,7 @@ if ($action == 'updatecss')
 			$jscontent .= "// END PHP ?>\n";
 
 			$result = dolSaveJsFile($filejs, $jscontent);
-			if (!$result)
-			{
+			if (!$result) {
 				$error++;
 				setEventMessages('Failed to write file '.$filejs, null, 'errors');
 			}
@@ -1413,24 +1486,23 @@ if ($action == 'updatecss')
 			$robotcontent = '';
 
 			/*$robotcontent.= "<?php // BEGIN PHP\n";
-    	    $robotcontent.= '$websitekey=basename(__DIR__);'."\n";
-    	    $robotcontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Load env if not already loaded"."\n";
-    	    $robotcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
-    	    $robotcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
-    	    $robotcontent.= "ob_start();\n";
-    		$robotcontent.= "header('Cache-Control: max-age=3600, public, must-revalidate');\n";
-    	    $robotcontent.= "header('Content-type: text/css');\n";
-    	    $robotcontent.= "// END PHP ?>\n";*/
+			$robotcontent.= '$websitekey=basename(__DIR__);'."\n";
+			$robotcontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Load env if not already loaded"."\n";
+			$robotcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
+			$robotcontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
+			$robotcontent.= "ob_start();\n";
+			$robotcontent.= "header('Cache-Control: max-age=3600, public, must-revalidate');\n";
+			$robotcontent.= "header('Content-type: text/css');\n";
+			$robotcontent.= "// END PHP ?>\n";*/
 
 			$robotcontent .= trim(GETPOST('WEBSITE_ROBOT', 'restricthtml'))."\n";
 
 			/*$robotcontent.= "\n".'<?php // BEGIN PHP'."\n";
-    	    $robotcontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "robot");'."\n";
-    	    $robotcontent.= "// END PHP ?>"."\n";*/
+			$robotcontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "robot");'."\n";
+			$robotcontent.= "// END PHP ?>"."\n";*/
 
 			$result = dolSaveRobotFile($filerobot, $robotcontent);
-			if (!$result)
-			{
+			if (!$result) {
 				$error++;
 				setEventMessages('Failed to write file '.$filerobot, null, 'errors');
 			}
@@ -1441,87 +1513,81 @@ if ($action == 'updatecss')
 			$htaccesscontent .= trim(GETPOST('WEBSITE_HTACCESS', 'restricthtml'))."\n";
 
 			$result = dolSaveHtaccessFile($filehtaccess, $htaccesscontent);
-			if (!$result)
-			{
+			if (!$result) {
 				$error++;
 				setEventMessages('Failed to write file '.$filehtaccess, null, 'errors');
 			}
 
 
-	   		// manifest.json file
-	   		$manifestjsoncontent = '';
+			// manifest.json file
+			$manifestjsoncontent = '';
 
-	   		$manifestjsoncontent .= "<?php // BEGIN PHP\n";
-	   		$manifestjsoncontent .= '$websitekey=basename(__DIR__);'."\n";
-	   		$manifestjsoncontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once __DIR__.'/master.inc.php'; } // Load env if not already loaded\n"; // For the css, we need to set path of master using the dirname of css file.
-	   		$manifestjsoncontent .= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
-	   		$manifestjsoncontent .= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
-	   		$manifestjsoncontent .= "ob_start();\n";
-	   		$manifestjsoncontent .= "header('Cache-Control: max-age=3600, public, must-revalidate');\n";
-	   		$manifestjsoncontent .= "header('Content-type: application/manifest+json');\n";
-	   		$manifestjsoncontent .= "// END PHP ?>\n";
+			$manifestjsoncontent .= "<?php // BEGIN PHP\n";
+			$manifestjsoncontent .= '$websitekey=basename(__DIR__);'."\n";
+			$manifestjsoncontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once __DIR__.'/master.inc.php'; } // Load env if not already loaded\n"; // For the css, we need to set path of master using the dirname of css file.
+			$manifestjsoncontent .= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
+			$manifestjsoncontent .= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
+			$manifestjsoncontent .= "ob_start();\n";
+			$manifestjsoncontent .= "header('Cache-Control: max-age=3600, public, must-revalidate');\n";
+			$manifestjsoncontent .= "header('Content-type: application/manifest+json');\n";
+			$manifestjsoncontent .= "// END PHP ?>\n";
 
-	   		$manifestjsoncontent .= trim(GETPOST('WEBSITE_MANIFEST_JSON', 'none'))."\n";
+			$manifestjsoncontent .= trim(GETPOST('WEBSITE_MANIFEST_JSON', 'none'))."\n";
 
-	   		$manifestjsoncontent .= '<?php // BEGIN PHP'."\n";
-	   		$manifestjsoncontent .= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "manifest");'."\n";
-	   		$manifestjsoncontent .= "// END PHP ?>\n";
+			$manifestjsoncontent .= '<?php // BEGIN PHP'."\n";
+			$manifestjsoncontent .= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "manifest");'."\n";
+			$manifestjsoncontent .= "// END PHP ?>\n";
 
-	   		$result = dolSaveManifestJson($filemanifestjson, $manifestjsoncontent);
-	   		if (!$result)
-	   		{
-	   			$error++;
-	   			setEventMessages('Failed to write file '.$filemanifestjson, null, 'errors');
-	   		}
-
-
-	   		// README.md file
-	   		$readmecontent = '';
-
-	   		/*$readmecontent.= "<?php // BEGIN PHP\n";
-       		$readmecontent.= '$websitekey=basename(__DIR__);'."\n";
-       		$readmecontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once __DIR__.'/master.inc.php'; } // Load env if not already loaded"."\n";	// For the css, we need to set path of master using the dirname of css file.
-       		$readmecontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
-       		$readmecontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
-       		$readmecontent.= "ob_start();\n";
-       		$readmecontent.= "header('Cache-Control: max-age=3600, public, must-revalidate');\n";
-       		$readmecontent.= "header('Content-type: application/manifest+json');\n";
-       		$readmecontent.= "// END PHP ?>\n";*/
-
-	   		$readmecontent .= trim(GETPOST('WEBSITE_README', 'restricthtml'))."\n";
-
-	   		/*$readmecontent.= '<?php // BEGIN PHP'."\n";
-       		$readmecontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "manifest");'."\n";
-       		$readmecontent.= "// END PHP ?>"."\n";*/
-
-	   		$result = dolSaveReadme($filereadme, $readmecontent);
-	   		if (!$result)
-	   		{
-	   			$error++;
-	   			setEventMessages('Failed to write file '.$filereadme, null, 'errors');
-	   		}
+			$result = dolSaveManifestJson($filemanifestjson, $manifestjsoncontent);
+			if (!$result) {
+				$error++;
+				setEventMessages('Failed to write file '.$filemanifestjson, null, 'errors');
+			}
 
 
-	   		// Save wrapper.php
+			// README.md file
+			$readmecontent = '';
+
+			/*$readmecontent.= "<?php // BEGIN PHP\n";
+			   $readmecontent.= '$websitekey=basename(__DIR__);'."\n";
+			   $readmecontent.= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once __DIR__.'/master.inc.php'; } // Load env if not already loaded"."\n";	// For the css, we need to set path of master using the dirname of css file.
+			   $readmecontent.= "require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
+			   $readmecontent.= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
+			   $readmecontent.= "ob_start();\n";
+			   $readmecontent.= "header('Cache-Control: max-age=3600, public, must-revalidate');\n";
+			   $readmecontent.= "header('Content-type: application/manifest+json');\n";
+			   $readmecontent.= "// END PHP ?>\n";*/
+
+			$readmecontent .= trim(GETPOST('WEBSITE_README', 'restricthtml'))."\n";
+
+			/*$readmecontent.= '<?php // BEGIN PHP'."\n";
+			   $readmecontent.= '$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "manifest");'."\n";
+			   $readmecontent.= "// END PHP ?>"."\n";*/
+
+			$result = dolSaveReadme($filereadme, $readmecontent);
+			if (!$result) {
+				$error++;
+				setEventMessages('Failed to write file '.$filereadme, null, 'errors');
+			}
+
+
+			// Save wrapper.php
 			$result = dolSaveIndexPage($pathofwebsite, '', '', $filewrapper);
 
 
 			// Message if no error
-			if (!$error)
-			{
+			if (!$error) {
 				setEventMessages($langs->trans("Saved"), null, 'mesgs');
 			}
 
-			if (!GETPOSTISSET('updateandstay'))	// If we click on "Save And Stay", we don not make the redirect
-			{
+			if (!GETPOSTISSET('updateandstay')) {	// If we click on "Save And Stay", we don not make the redirect
 				$action = 'preview';
-				if ($backtopage)
-				{
+				if ($backtopage) {
+					$backtopage = preg_replace('/searchstring=[^&]*/', '', $backtopage);	// Clean backtopage url
 					header("Location: ".$backtopage);
 					exit;
 				}
-			}
-			else {
+			} else {
 				$action = 'editcss';
 			}
 		}
@@ -1529,22 +1595,19 @@ if ($action == 'updatecss')
 }
 
 // Update page
-if ($action == 'setashome')
-{
+if ($action == 'setashome' && $usercanedit) {
 	$db->begin();
 	$object->fetch(0, $websitekey);
 	$website = $object;
 
 	$object->fk_default_home = $pageid;
 	$res = $object->update($user);
-	if (!$res > 0)
-	{
+	if (! ($res > 0)) {
 		$error++;
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$db->commit();
 
 		$filetpl = $pathofwebsite.'/page'.$pageid.'.tpl.php';
@@ -1552,19 +1615,20 @@ if ($action == 'setashome')
 		// Generate the index.php page to be the home page
 		$result = dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper);
 
-		if ($result) setEventMessages($langs->trans("Saved"), null, 'mesgs');
-		else setEventMessages('Failed to write file '.$fileindex, null, 'errors');
+		if ($result) {
+			setEventMessages($langs->trans("Saved"), null, 'mesgs');
+		} else {
+			setEventMessages('Failed to write file '.$fileindex, null, 'errors');
+		}
 
 		$action = 'preview';
-	}
-	else {
+	} else {
 		$db->rollback();
 	}
 }
 
-// Update page (meta)
-if ($action == 'updatemeta')
-{
+// Update page properties (meta)
+if ($action == 'updatemeta' && $usercanedit) {
 	$db->begin();
 
 	$result = $object->fetch(0, $websitekey);
@@ -1573,8 +1637,7 @@ if ($action == 'updatemeta')
 	$objectpage->fk_website = $object->id;
 
 	// Check parameters
-	if (!preg_match('/^[a-z0-9\-\_]+$/i', GETPOST('WEBSITE_PAGENAME', 'alpha')))
-	{
+	if (!preg_match('/^[a-z0-9\-\_]+$/i', GETPOST('WEBSITE_PAGENAME', 'alpha'))) {
 		$error++;
 		$langs->load("errors");
 		setEventMessages($langs->transnoentities("ErrorFieldCanNotContainSpecialCharacters", $langs->transnoentities('WEBSITE_PAGENAME')), null, 'errors');
@@ -1582,80 +1645,78 @@ if ($action == 'updatemeta')
 	}
 
 	$res = $objectpage->fetch($pageid, $object->id);
-	if ($res <= 0)
-	{
+	if ($res <= 0) {
 		$error++;
 		setEventMessages('Page not found '.$objectpage->error, $objectpage->errors, 'errors');
 	}
 
 	// Check alias not exists
-	if (!$error && GETPOST('WEBSITE_PAGENAME', 'alpha'))
-	{
+	if (!$error && GETPOST('WEBSITE_PAGENAME', 'alpha')) {
 		$websitepagetemp = new WebsitePage($db);
 		$result = $websitepagetemp->fetch(-1 * $objectpage->id, $object->id, GETPOST('WEBSITE_PAGENAME', 'alpha'));
-		if ($result < 0)
-		{
+		if ($result < 0) {
 			$error++;
 			$langs->load("errors");
 			setEventMessages($websitepagetemp->error, $websitepagetemp->errors, 'errors');
 			$action = 'editmeta';
 		}
-		if ($result > 0)
-		{
+		if ($result > 0) {
 			$error++;
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorAPageWithThisNameOrAliasAlreadyExists", $websitepagetemp->pageurl), null, 'errors');
 			$action = 'editmeta';
 		}
 	}
-	if (!$error && GETPOST('WEBSITE_ALIASALT', 'alpha'))
-	{
-		$arrayofaliastotest = explode(',', GETPOST('WEBSITE_ALIASALT', 'alpha'));
+
+	$newaliasnames = '';
+	if (!$error && GETPOST('WEBSITE_ALIASALT', 'alpha')) {
+		$arrayofaliastotest = explode(',', str_replace(array('<', '>'), '', GETPOST('WEBSITE_ALIASALT', 'alpha')));
+
 		$websitepagetemp = new WebsitePage($db);
-		foreach ($arrayofaliastotest as $aliastotest)
-		{
+		foreach ($arrayofaliastotest as $aliastotest) {
+			$aliastotest = trim(preg_replace('/\.php$/i', '', $aliastotest));
+
 			// Disallow alias name pageX (already used to save the page with id)
 			if (preg_match('/^page\d+/i', $aliastotest)) {
 				$error++;
 				$langs->load("errors");
-				setEventMessages("Alias 'pageX' is not allowed", null, 'errors');
+				setEventMessages("Alias name 'pageX' is not allowed", null, 'errors');
 				$action = 'editmeta';
 				break;
 			} else {
 				$result = $websitepagetemp->fetch(-1 * $objectpage->id, $object->id, $aliastotest);
-				if ($result < 0)
-				{
+				if ($result < 0) {
 					$error++;
 					$langs->load("errors");
 					setEventMessages($websitepagetemp->error, $websitepagetemp->errors, 'errors');
 					$action = 'editmeta';
 					break;
 				}
-				if ($result > 0)
-				{
+				if ($result > 0) {
 					$error++;
 					$langs->load("errors");
 					setEventMessages($langs->trans("ErrorAPageWithThisNameOrAliasAlreadyExists", $websitepagetemp->pageurl), null, 'errors');
 					$action = 'editmeta';
 					break;
 				}
+				$newaliasnames .= ($newaliasnames ? ', ' : '').$aliastotest;
 			}
 		}
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$objectpage->old_object = clone $objectpage;
 
 		$objectpage->title = str_replace(array('<', '>'), '', GETPOST('WEBSITE_TITLE', 'alphanohtml'));
 		$objectpage->type_container = GETPOST('WEBSITE_TYPE_CONTAINER', 'aZ09');
 		$objectpage->pageurl = GETPOST('WEBSITE_PAGENAME', 'alpha');
-		$objectpage->aliasalt = str_replace(array('<', '>'), '', GETPOST('WEBSITE_ALIASALT', 'alphanohtml'));
+		$objectpage->aliasalt = $newaliasnames;
 		$objectpage->lang = GETPOST('WEBSITE_LANG', 'aZ09');
 		$objectpage->otherlang = GETPOST('WEBSITE_OTHERLANG', 'aZ09comma');
 		$objectpage->description = str_replace(array('<', '>'), '', GETPOST('WEBSITE_DESCRIPTION', 'alphanohtml'));
 		$objectpage->image = GETPOST('WEBSITE_IMAGE', 'alpha');
 		$objectpage->keywords = str_replace(array('<', '>'), '', GETPOST('WEBSITE_KEYWORDS', 'alphanohtml'));
+		$objectpage->allowed_in_frames = GETPOST('WEBSITE_ALLOWED_IN_FRAMES', 'aZ09');
 		$objectpage->htmlheader = trim(GETPOST('htmlheader', 'none'));
 		$objectpage->fk_page = (GETPOST('pageidfortranslation', 'int') > 0 ? GETPOST('pageidfortranslation', 'int') : 0);
 		$objectpage->author_alias = trim(GETPOST('WEBSITE_AUTHORALIAS', 'alphanohtml'));
@@ -1663,20 +1724,19 @@ if ($action == 'updatemeta')
 		$objectpage->fk_object = GETPOST('WEBSITE_OBJECTID', 'aZ09');
 
 		$newdatecreation = dol_mktime(GETPOST('datecreationhour', 'int'), GETPOST('datecreationmin', 'int'), GETPOST('datecreationsec', 'int'), GETPOST('datecreationmonth', 'int'), GETPOST('datecreationday', 'int'), GETPOST('datecreationyear', 'int'));
-		if ($newdatecreation) $objectpage->date_creation = $newdatecreation;
+		if ($newdatecreation) {
+			$objectpage->date_creation = $newdatecreation;
+		}
 
 		$res = $objectpage->update($user);
-		if (!($res > 0))
-		{
+		if (!($res > 0)) {
 			$langs->load("errors");
-			if ($db->lasterrno == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-			{
+			if ($db->lasterrno == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 				$error++;
 				$langs->load("errors");
 				setEventMessages($langs->trans("ErrorAPageWithThisNameOrAliasAlreadyExists"), null, 'errors');
 				$action = 'editmeta';
-			}
-			else {
+			} else {
 				$error++;
 				$langs->load("errors");
 				setEventMessages($objectpage->error, $objectpage->errors, 'errors');
@@ -1689,70 +1749,93 @@ if ($action == 'updatemeta')
 		// Website categories association
 		$categoriesarray = GETPOST('categories', 'array');
 		$result = $objectpage->setCategories($categoriesarray);
-		if ($result < 0)
-		{
+		if ($result < 0) {
 			$error++;
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$db->commit();
-	}
-	else {
+	} else {
 		$db->rollback();
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$filemaster = $pathofwebsite.'/master.inc.php';
 		$fileoldalias = $pathofwebsite.'/'.$objectpage->old_object->pageurl.'.php';
 		$filealias = $pathofwebsite.'/'.$objectpage->pageurl.'.php';
 
 		dol_mkdir($pathofwebsite);
 
-
 		// Now generate the master.inc.php page
 		$result = dolSaveMasterFile($filemaster);
-		if (!$result) setEventMessages('Failed to write file '.$filemaster, null, 'errors');
+		if (!$result) {
+			setEventMessages('Failed to write file '.$filemaster, null, 'errors');
+		}
 
 		// Now delete the alias.php page
-		if (!empty($fileoldalias))
-		{
+		if (!empty($fileoldalias)) {
 			dol_syslog("We delete old alias page name=".$fileoldalias." to build a new alias page=".$filealias);
 			dol_delete_file($fileoldalias);
+
+			// Delete also pages into language subdirectories
+			if (empty($objectpage->lang) || !in_array($objectpage->lang, explode(',', $object->otherlang))) {
+				$dirname = dirname($fileoldalias);
+				$filename = basename($fileoldalias);
+				$sublangs = explode(',', $object->otherlang);
+				foreach ($sublangs as $sublang) {
+					// Under certain conditions $sublang can be an empty string
+					// ($object->otherlang with empty string or with string like this 'en,,sv')
+					// if is the case we try to re-delete the main alias file. Avoid it.
+					if (empty(trim($sublang))) continue;
+					$fileoldaliassub = $dirname.'/'.$sublang.'/'.$filename;
+					dol_delete_file($fileoldaliassub);
+				}
+			}
 		}
 		// Now delete the alternative alias.php pages
-		if (!empty($objectpage->old_object->aliasalt))
-		{
+		if (!empty($objectpage->old_object->aliasalt)) {
 			$tmpaltaliases = explode(',', $objectpage->old_object->aliasalt);
-			if (is_array($tmpaltaliases))
-			{
-				foreach ($tmpaltaliases as $tmpaliasalt)
-				{
+			if (is_array($tmpaltaliases)) {
+				foreach ($tmpaltaliases as $tmpaliasalt) {
 					dol_syslog("We delete old alt alias pages name=".trim($tmpaliasalt));
 					dol_delete_file($pathofwebsite.'/'.trim($tmpaliasalt).'.php');
+
+					// Delete also pages into language subdirectories
+					if (empty($objectpage->lang) || !in_array($objectpage->lang, explode(',', $object->otherlang))) {
+						$dirname = dirname($pathofwebsite.'/'.trim($tmpaliasalt).'.php');
+						$filename = basename($pathofwebsite.'/'.trim($tmpaliasalt).'.php');
+						$sublangs = explode(',', $object->otherlang);
+						foreach ($sublangs as $sublang) {
+							// Under certain conditions $ sublang can be an empty string
+							// ($object->otherlang with empty string or with string like this 'en,,sv')
+							// if is the case we try to re-delete the main alias file. Avoid it.
+							if (empty(trim($sublang))) continue;
+							$fileoldaliassub = $dirname.'/'.$sublang.'/'.$filename;
+							dol_delete_file($fileoldaliassub);
+						}
+					}
 				}
 			}
 		}
 
-		// Save page alias
+		// Save page main alias
 		$result = dolSavePageAlias($filealias, $object, $objectpage);
-		if (!$result) setEventMessages('Failed to write file '.$filealias, null, 'errors');
+		if (!$result) {
+			setEventMessages('Failed to write file '.$filealias, null, 'errors');
+		}
 		// Save alt aliases
-		if (!empty($objectpage->aliasalt))
-		{
+		if (!empty($objectpage->aliasalt)) {
 			$tmpaltaliases = explode(',', $objectpage->aliasalt);
-			if (is_array($tmpaltaliases))
-			{
-				foreach ($tmpaltaliases as $tmpaliasalt)
-				{
-					if (trim($tmpaliasalt))
-					{
+			if (is_array($tmpaltaliases)) {
+				foreach ($tmpaltaliases as $tmpaliasalt) {
+					if (trim($tmpaliasalt)) {
 						$filealias = $pathofwebsite.'/'.trim($tmpaliasalt).'.php';
 						$result = dolSavePageAlias($filealias, $object, $objectpage);
-						if (!$result) setEventMessages('Failed to write file '.basename($filealias), null, 'errors');
+						if (!$result) {
+							setEventMessages('Failed to write file '.basename($filealias), null, 'errors');
+						}
 					}
 				}
 			}
@@ -1761,52 +1844,44 @@ if ($action == 'updatemeta')
 
 		// Save page of content
 		$result = dolSavePageContent($filetpl, $object, $objectpage);
-		if ($result)
-		{
+		if ($result) {
 			setEventMessages($langs->trans("Saved"), null, 'mesgs');
 
-			if (!GETPOSTISSET('updateandstay'))	// If we click on "Save And Stay", we do not make the redirect
-			{
+			if (!GETPOSTISSET('updateandstay')) {	// If we click on "Save And Stay", we do not make the redirect
 				//header("Location: ".$_SERVER["PHP_SELF"].'?website='.$websitekey.'&pageid='.$pageid);
 				//exit;
 				$action = 'preview';
-			}
-			else {
+			} else {
 				$action = 'editmeta';
 			}
-		}
-		else {
+		} else {
 			setEventMessages('Failed to write file '.$filetpl, null, 'errors');
 			//header("Location: ".$_SERVER["PHP_SELF"].'?website='.$websitekey.'&pageid='.$pageid);
-   			//exit;
+			//exit;
 			$action = 'preview';
 		}
 	}
 }
 
 // Update page
-if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'confirm_createfromclone' || $action == 'confirm_createpagefromclone')
-	|| ($action == 'preview' && (GETPOST('refreshsite') || GETPOST('refreshpage') || GETPOST('preview'))))
-{
+if ($usercanedit && (($action == 'updatesource' || $action == 'updatecontent' || $action == 'confirm_createfromclone' || $action == 'confirm_createpagefromclone')
+	|| ($action == 'preview' && (GETPOST('refreshsite') || GETPOST('refreshpage') || GETPOST('preview'))))) {
 	$object->fetch(0, $websitekey);
 	$website = $object;
 
-	if ($action == 'confirm_createfromclone')
-	{
+	if ($action == 'confirm_createfromclone') {
 		$db->begin();
 
 		$objectnew = new Website($db);
 		$result = $objectnew->createFromClone($user, GETPOST('id', 'int'), GETPOST('siteref', 'aZ09'), (GETPOST('newlang', 'aZ09') ?GETPOST('newlang', 'aZ09') : ''));
 
-		if ($result < 0)
-		{
+		if ($result < 0) {
 			$error++;
 			setEventMessages($objectnew->error, $objectnew->errors, 'errors');
 			$action = 'preview';
 
 			$db->rollback();
-		}
-		else {
+		} else {
 			$object = $objectnew;
 			$id = $object->id;
 			$pageid = $object->fk_default_home;
@@ -1816,14 +1891,11 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 		}
 	}
 
-	if ($action == 'confirm_createpagefromclone')
-	{
+	if ($action == 'confirm_createpagefromclone') {
 		$istranslation = (GETPOST('is_a_translation', 'aZ09') == 'on' ? 1 : 0);
 		// Protection if it is a translation page
-		if ($istranslation)
-		{
-			if (GETPOST('newlang', 'aZ09') == $objectpage->lang)
-			{
+		if ($istranslation) {
+			if (GETPOST('newlang', 'aZ09') == $objectpage->lang || !GETPOST('newlang', 'aZ09')) {
 				$error++;
 				setEventMessages($langs->trans("LanguageMustNotBeSameThanClonedPage"), null, 'errors');
 				$action = 'preview';
@@ -1835,27 +1907,23 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 			}
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$db->begin();
 
 			$newwebsiteid = GETPOST('newwebsite', 'int');
 			$pathofwebsitenew = $pathofwebsite;
 
 			$tmpwebsite = new Website($db);
-			if ($newwebsiteid > 0 && $newwebsiteid != $object->id)
-			{
+			if ($newwebsiteid > 0 && $newwebsiteid != $object->id) {
 				$tmpwebsite->fetch($newwebsiteid);
 				$pathofwebsitenew = $dolibarr_main_data_root.'/website/'.$tmpwebsite->ref;
-			}
-			else {
+			} else {
 				$tmpwebsite = $object;
 			}
 
 			$objectpage = new WebsitePage($db);
 			$resultpage = $objectpage->createFromClone($user, $pageid, GETPOST('newpageurl', 'aZ09'), (GETPOST('newlang', 'aZ09') ? GETPOST('newlang', 'aZ09') : ''), $istranslation, $newwebsiteid, GETPOST('newtitle', 'alphanohtml'));
-			if ($resultpage < 0)
-			{
+			if ($resultpage < 0) {
 				$error++;
 				setEventMessages($objectpage->error, $objectpage->errors, 'errors');
 				$action = 'createpagefromclone';
@@ -1873,8 +1941,7 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 				dolSavePageContent($filetpl, $tmpwebsite, $resultpage);
 
 				// Switch on the new page if web site of new page/container is same
-				if (empty($newwebsiteid) || $newwebsiteid == $object->id)
-				{
+				if (empty($newwebsiteid) || $newwebsiteid == $object->id) {
 					$pageid = $resultpage->id;
 				}
 
@@ -1885,47 +1952,39 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 
 	$res = 0;
 
-	if (!$error)
-	{
+	if (!$error) {
 		// Check symlink to medias and restore it if ko
 		$pathtomedias = DOL_DATA_ROOT.'/medias';
 		$pathtomediasinwebsite = $pathofwebsite.'/medias';
-		if (!is_link(dol_osencode($pathtomediasinwebsite)))
-		{
+		if (!is_link(dol_osencode($pathtomediasinwebsite))) {
 			dol_syslog("Create symlink for ".$pathtomedias." into name ".$pathtomediasinwebsite);
 			dol_mkdir(dirname($pathtomediasinwebsite)); // To be sure dir for website exists
 			$result = symlink($pathtomedias, $pathtomediasinwebsite);
 		}
 
 		/*if (GETPOST('savevirtualhost') && $object->virtualhost != GETPOST('previewsite'))
-	    {
-	        $object->virtualhost = GETPOST('previewsite', 'alpha');
-	        $object->update($user);
-	    }*/
+		{
+			$object->virtualhost = GETPOST('previewsite', 'alpha');
+			$object->update($user);
+		}*/
 
 		$objectpage->fk_website = $object->id;
 
-		if ($pageid > 0)
-		{
+		if ($pageid > 0) {
 			$res = $objectpage->fetch($pageid);
-		}
-		else {
+		} else {
 			$res = 0;
-			if ($object->fk_default_home > 0)
-			{
+			if ($object->fk_default_home > 0) {
 				$res = $objectpage->fetch($object->fk_default_home);
 			}
-			if (!($res > 0))
-			{
+			if (!($res > 0)) {
 				$res = $objectpage->fetch(0, $object->id);
 			}
 		}
 	}
 
-	if (!$error && $res > 0)
-	{
-		if ($action == 'updatesource' || $action == 'updatecontent')
-		{
+	if (!$error && $res > 0) {
+		if ($action == 'updatesource' || $action == 'updatecontent') {
 			$db->begin();
 
 			$phpfullcodestringold = dolKeepOnlyPhpCode($objectpage->content);
@@ -1935,30 +1994,33 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 			// Security analysis
 			$phpfullcodestring = dolKeepOnlyPhpCode($objectpage->content);
 			//print dol_escape_htmltag($phpfullcodestring);exit;
-			$forbiddenphpcommands = array("exec", "passthru", "system", "shell_exec", "proc_open");
-			if (empty($conf->global->WEBSITE_PHP_ALLOW_WRITE))    // If option is not on, we disallow functions to write files
-			{
+			$forbiddenphpcommands = array("exec", "passthru", "system", "shell_exec", "proc_open", "eval", "dol_eval");
+			if (empty($conf->global->WEBSITE_PHP_ALLOW_WRITE)) {    // If option is not on, we disallow functions to write files
 				$forbiddenphpcommands = array_merge($forbiddenphpcommands, array("fopen", "file_put_contents", "fputs", "fputscsv", "fwrite", "fpassthru", "unlink", "mkdir", "rmdir", "symlink", "touch", "umask"));
 			}
-			foreach ($forbiddenphpcommands as $forbiddenphpcommand)
-			{
-				if (preg_match('/'.$forbiddenphpcommand.'\s*\(/ms', $phpfullcodestring))
-				{
+			foreach ($forbiddenphpcommands as $forbiddenphpcommand) {
+				if (preg_match('/'.$forbiddenphpcommand.'\s*\(/ms', $phpfullcodestring)) {
 					$error++;
 					setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", $forbiddenphpcommand), null, 'errors');
-					if ($action == 'updatesource') $action = 'editsource';
-					if ($action == 'updatecontent') $action = 'editcontent';
+					if ($action == 'updatesource') {
+						$action = 'editsource';
+					}
+					if ($action == 'updatecontent') {
+						$action = 'editcontent';
+					}
 				}
 			}
 
-			if (empty($user->rights->website->writephp))
-			{
-				if ($phpfullcodestringold != $phpfullcodestring)
-				{
+			if (empty($user->rights->website->writephp)) {
+				if ($phpfullcodestringold != $phpfullcodestring) {
 					$error++;
 					setEventMessages($langs->trans("NotAllowedToAddDynamicContent"), null, 'errors');
-					if ($action == 'updatesource') $action = 'editsource';
-					if ($action == 'updatecontent') $action = 'editcontent';
+					if ($action == 'updatesource') {
+						$action = 'editsource';
+					}
+					if ($action == 'updatecontent') {
+						$action = 'editcontent';
+					}
 				}
 			}
 
@@ -1968,16 +2030,18 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 
 
 			$res = $objectpage->update($user);
-			if ($res < 0)
-			{
+			if ($res < 0) {
 				$error++;
 				setEventMessages($objectpage->error, $objectpage->errors, 'errors');
-				if ($action == 'updatesource') $action = 'editsource';
-				if ($action == 'updatecontent') $action = 'editcontent';
+				if ($action == 'updatesource') {
+					$action = 'editsource';
+				}
+				if ($action == 'updatecontent') {
+					$action = 'editcontent';
+				}
 			}
 
-			if (!$error)
-			{
+			if (!$error) {
 				$db->commit();
 
 				$filemaster = $pathofwebsite.'/master.inc.php';
@@ -1986,32 +2050,43 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 
 				dol_mkdir($pathofwebsite);
 
-
 				// Now generate the master.inc.php page
 				$result = dolSaveMasterFile($filemaster);
 
-				if (!$result) setEventMessages('Failed to write the master file file '.$filemaster, null, 'errors');
+				if (!$result) {
+					setEventMessages('Failed to write the master file file '.$filemaster, null, 'errors');
+				}
 
-
-				// Now generate the alias.php page
-				if (!empty($fileoldalias))
+				// Now delete the old alias.php page if we removed one
+				/*if (!empty($fileoldalias))
 				{
 					dol_syslog("We regenerate alias page new name=".$filealias.", old name=".$fileoldalias);
 					dol_delete_file($fileoldalias);
-				}
+
+					// Delete also pages into language subdirectories
+					if (empty($objectpage->lang) || !in_array($objectpage->lang, explode(',', $object->otherlang))) {
+						$dirname = dirname($fileoldalias);
+						$filename = basename($fileoldalias);
+						$sublangs = explode(',', $object->otherlang);
+						foreach ($sublangs as $sublang) {
+							$fileoldaliassub = $dirname.'/'.$sublang.'/'.$filename;
+							dol_delete_file($fileoldaliassub);
+						}
+					}
+				}*/
 
 				// Save page alias
 				$result = dolSavePageAlias($filealias, $object, $objectpage);
-				if (!$result) setEventMessages('Failed to write the alias file '.basename($filealias), null, 'errors');
+				if (!$result) {
+					setEventMessages('Failed to write the alias file '.basename($filealias), null, 'errors');
+				}
 
 				// Save page content
-				$result = dolSavePageContent($filetpl, $object, $objectpage);
-				if ($result)
-				{
+				$result = dolSavePageContent($filetpl, $object, $objectpage, 1);
+				if ($result) {
 					setEventMessages($langs->trans("Saved"), null, 'mesgs');
 
-					if (!GETPOSTISSET('updateandstay'))	// If we click on "Save And Stay", we do not make the redirect
-					{
+					if (!GETPOSTISSET('updateandstay')) {	// If we click on "Save And Stay", we do not make the redirect
 						if ($backtopage) {
 							header("Location: ".$backtopage);
 							exit;
@@ -2020,13 +2095,17 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 							exit;
 						}
 					} else {
-						if ($action == 'updatesource') $action = 'editsource';
-						if ($action == 'updatecontent') $action = 'editcontent';
+						if ($action == 'updatesource') {
+							$action = 'editsource';
+						}
+						if ($action == 'updatecontent') {
+							$action = 'editcontent';
+						}
 					}
 				} else {
 					setEventMessages('Failed to write file '.$filetpl, null, 'errors');
 					header("Location: ".$_SERVER["PHP_SELF"].'?website='.$websitekey.'&pageid='.$pageid);
-	   				exit;
+					exit;
 				}
 			} else {
 				$db->rollback();
@@ -2036,10 +2115,8 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 			exit;
 		}
 	} else {
-		if (!$error)
-		{
-			if (empty($websitekey) || $websitekey == '-1')
-			{
+		if (!$error) {
+			if (empty($websitekey) || $websitekey == '-1') {
 				setEventMessages($langs->trans("NoWebSiteCreateOneFirst"), null, 'warnings');
 			} else {
 				setEventMessages($langs->trans("NoPageYet"), null, 'warnings');
@@ -2050,12 +2127,10 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 }
 
 // Export site
-if ($action == 'exportsite')
-{
+if ($action == 'exportsite' && !empty($user->rights->website->export)) {
 	$fileofzip = $object->exportWebSite();
 
-	if ($fileofzip)
-	{
+	if ($fileofzip) {
 		$file_name = basename($fileofzip);
 
 		header("Content-Type: application/zip");
@@ -2064,19 +2139,29 @@ if ($action == 'exportsite')
 
 		readfile($fileofzip);
 		exit;
-	}
-	else {
+	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 		$action = 'preview';
 	}
 }
 
 // Regenerate site
-if ($action == 'regeneratesite')
-{
+if ($action == 'regeneratesite' && $usercanedit) {
+	// Check symlink to medias and restore it if ko. Recreate also dir of website if not found.
+	$pathtomedias = DOL_DATA_ROOT.'/medias';
+	$pathtomediasinwebsite = $pathofwebsite.'/medias';
+	if (!is_link(dol_osencode($pathtomediasinwebsite))) {
+		dol_syslog("Create symlink for ".$pathtomedias." into name ".$pathtomediasinwebsite);
+		dol_mkdir(dirname($pathtomediasinwebsite)); // To be sure dir for website exists
+		$result = symlink($pathtomedias, $pathtomediasinwebsite);
+		if (!$result) {
+			setEventMessages($langs->trans("ErrorFieldToCreateSymLinkToMedias", $pathtomediasinwebsite, $pathtomedias), null, 'errors');
+			$action = 'preview';
+		}
+	}
+
 	$result = $object->rebuildWebSiteFiles();
-	if ($result > 0)
-	{
+	if ($result > 0) {
 		setEventMessages($langs->trans("PagesRegenerated", $result), null, 'mesgs');
 		$action = 'preview';
 	} else {
@@ -2086,83 +2171,68 @@ if ($action == 'regeneratesite')
 }
 
 // Import site
-if ($action == 'importsiteconfirm')
-{
-	if (empty($_FILES) && !GETPOSTISSET('templateuserfile'))
-	{
+if ($action == 'importsiteconfirm' && $usercanedit) {
+	if (empty($_FILES) && !GETPOSTISSET('templateuserfile')) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
 		$action = 'importsite';
-	}
-	else {
-		if (!empty($_FILES) || GETPOSTISSET('templateuserfile'))
-		{
-			// Check symlink to medias and restore it if ko
+	} else {
+		if (!empty($_FILES) || GETPOSTISSET('templateuserfile')) {
+			// Check symlink to medias and restore it if ko. Recreate also dir of website if not found.
 			$pathtomedias = DOL_DATA_ROOT.'/medias';
 			$pathtomediasinwebsite = $pathofwebsite.'/medias';
-			if (!is_link(dol_osencode($pathtomediasinwebsite)))
-			{
+			if (!is_link(dol_osencode($pathtomediasinwebsite))) {
 				dol_syslog("Create symlink for ".$pathtomedias." into name ".$pathtomediasinwebsite);
 				dol_mkdir(dirname($pathtomediasinwebsite)); // To be sure dir for website exists
 				$result = symlink($pathtomedias, $pathtomediasinwebsite);
-				if (!$result)
-				{
+				if (!$result) {
 					setEventMessages($langs->trans("ErrorFieldToCreateSymLinkToMedias", $pathtomediasinwebsite, $pathtomedias), null, 'errors');
 					$action = 'importsite';
 				}
 			}
 
 			$fileofzip = '';
-			if (GETPOSTISSET('templateuserfile'))
-			{
+			if (GETPOSTISSET('templateuserfile')) {
 				$fileofzip = DOL_DATA_ROOT.'/doctemplates/websites/'.GETPOST('templateuserfile', 'alpha');
-			}
-			elseif (!empty($_FILES))
-			{
-				if (is_array($_FILES['userfile']['tmp_name'])) $userfiles = $_FILES['userfile']['tmp_name'];
-				else $userfiles = array($_FILES['userfile']['tmp_name']);
+			} elseif (!empty($_FILES)) {
+				if (is_array($_FILES['userfile']['tmp_name'])) {
+					$userfiles = $_FILES['userfile']['tmp_name'];
+				} else {
+					$userfiles = array($_FILES['userfile']['tmp_name']);
+				}
 
-				foreach ($userfiles as $key => $userfile)
-				{
-					if (empty($_FILES['userfile']['tmp_name'][$key]))
-					{
+				foreach ($userfiles as $key => $userfile) {
+					if (empty($_FILES['userfile']['tmp_name'][$key])) {
 						$error++;
 						if ($_FILES['userfile']['error'][$key] == 1 || $_FILES['userfile']['error'][$key] == 2) {
 							setEventMessages($langs->trans('ErrorFileSizeTooLarge'), null, 'errors');
 							$action = 'importsite';
-						}
-						else {
+						} else {
 							setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
 							$action = 'importsite';
 						}
 					}
 				}
 
-				if (!$error)
-				{
+				if (!$error) {
 					$upload_dir = $conf->website->dir_temp;
 					$result = dol_add_file_process($upload_dir, 1, -1, 'userfile', '');
 				}
 
 				// Get name of file (take last one if several name provided)
 				$fileofzip = $upload_dir.'/unknown';
-				foreach ($_FILES as $key => $ifile)
-				{
-					foreach ($ifile['name'] as $key2 => $ifile2)
-					{
+				foreach ($_FILES as $key => $ifile) {
+					foreach ($ifile['name'] as $key2 => $ifile2) {
 						$fileofzip = $upload_dir.'/'.$ifile2;
 					}
 				}
 			}
 
-			if (!$error)
-			{
+			if (!$error) {
 				$result = $object->importWebSite($fileofzip);
-				if ($result < 0)
-				{
+				if ($result < 0) {
 					setEventMessages($object->error, $object->errors, 'errors');
 					$action = 'importsite';
-				}
-				else {
+				} else {
 					// Force mode dynamic on
 					dolibarr_set_const($db, 'WEBSITE_SUBCONTAINERSINLINE', 1, 'chaine', 0, '', $conf->entity);
 
@@ -2174,7 +2244,77 @@ if ($action == 'importsiteconfirm')
 	}
 }
 
+$domainname = '0.0.0.0:8080';
+$tempdir = $conf->website->dir_output.'/'.$websitekey.'/';
 
+// Generate web site sitemaps
+if ($action == 'generatesitemaps' && $usercanedit) {
+	$domtree = new DOMDocument('1.0', 'UTF-8');
+	$root = $domtree->createElementNS('http://www.sitemaps.org/schemas/sitemap/0.9', 'urlset');
+	$domtree->formatOutput = true;
+	$xmlname = 'sitemap.'.$websitekey.'.xml';
+
+	$sql = "SELECT wp.type_container , wp.pageurl, wp.lang, wp.tms as tms, w.virtualhost";
+	$sql .= " FROM ".MAIN_DB_PREFIX."website_page as wp, ".MAIN_DB_PREFIX."website as w";
+	$sql .= " WHERE wp.type_container IN ('page', 'blogpost')";
+	$sql .= " AND wp.fk_website = w.rowid";
+	$sql .= " AND w.ref = '".dol_escape_json($websitekey)."'";
+	$resql = $db->query($sql);
+	if ($resql) {
+		$num_rows = $db->num_rows($resql);
+		if ($num_rows > 0) {
+			$i = 0;
+			while ($i < $num_rows) {
+				$objp = $db->fetch_object($resql);
+				$url = $domtree->createElement('url');
+				$pageurl = $objp->pageurl;
+				if ($objp->lang) {
+					$pageurl = $objp->lang.'/'.$pageurl;
+				}
+				if ($objp->virtualhost) {
+					$domainname = $objp->virtualhost;
+				}
+				$loc = $domtree->createElement('loc', 'http://'.$domainname.'/'.$pageurl);
+				$lastmod = $domtree->createElement('lastmod', $db->jdate($objp->tms));
+
+				$url->appendChild($loc);
+				$url->appendChild($lastmod);
+				$root->appendChild($url);
+				$i++;
+			}
+			$domtree->appendChild($root);
+			if ($domtree->save($tempdir.$xmlname)) {
+				if (!empty($conf->global->MAIN_UMASK)) {
+					@chmod($tempdir.$xmlname, octdec($conf->global->MAIN_UMASK));
+				}
+				setEventMessages($langs->trans("SitemapGenerated"), null, 'mesgs');
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+		}
+	} else {
+		dol_print_error($db);
+	}
+	$robotcontent = @file_get_contents($filerobot);
+	$result = preg_replace('/<?php // BEGIN PHP[^?]END PHP ?>\n/ims', '', $robotcontent);
+	if ($result) {
+		$robotcontent = $result;
+	}
+	$robotsitemap = "Sitemap: ".$domainname."/".$xmlname;
+	$result = strpos($robotcontent, 'Sitemap: ');
+	if ($result) {
+		$result = preg_replace("/Sitemap.*\n/", $robotsitemap, $robotcontent);
+		$robotcontent = $result ? $result : $robotcontent;
+	} else {
+		$robotcontent .= $robotsitemap."\n";
+	}
+	$result = dolSaveRobotFile($filerobot, $robotcontent);
+	if (!$result) {
+		$error++;
+		setEventMessages('Failed to write file '.$filerobot, null, 'errors');
+	}
+	$action = 'preview';
+}
 
 
 /*
@@ -2186,6 +2326,11 @@ $formadmin = new FormAdmin($db);
 $formwebsite = new FormWebsite($db);
 $formother = new FormOther($db);
 
+// Confirm generation of website sitemaps
+if ($action == 'confirmgeneratesitemaps') {
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?website='.$website->ref, $langs->trans('ConfirmSitemapsCreation'), $langs->trans('ConfirmGenerateSitemaps', $object->ref), 'generatesitemaps', '', "yes", 1);
+	$action = 'preview';
+}
 $helpurl = 'EN:Module_Website|FR:Module_Website_FR|ES:M&oacute;dulo_Website';
 
 $arrayofjs = array(
@@ -2202,7 +2347,9 @@ $moreheadjs = '';
 
 $arrayofjs[] = 'includes/jquery/plugins/blockUI/jquery.blockUI.js';
 $arrayofjs[] = 'core/js/blockUI.js'; // Used by ecm/tpl/enabledfiletreeajax.tpl.php
-if (empty($conf->global->MAIN_ECM_DISABLE_JS)) $arrayofjs[] = "includes/jquery/plugins/jqueryFileTree/jqueryFileTree.js";
+if (empty($conf->global->MAIN_ECM_DISABLE_JS)) {
+	$arrayofjs[] = "includes/jquery/plugins/jqueryFileTree/jqueryFileTree.js";
+}
 
 $moreheadjs .= '<script type="text/javascript">'."\n";
 $moreheadjs .= 'var indicatorBlockUI = \''.DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif".'\';'."\n";
@@ -2215,56 +2362,43 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="multipart/
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-if ($action == 'createsite')
-{
+if ($action == 'createsite') {
 	print '<input type="hidden" name="action" value="addsite">';
 }
-if ($action == 'createcontainer')
-{
+if ($action == 'createcontainer') {
 	print '<input type="hidden" name="action" value="addcontainer">';
 }
-if ($action == 'editcss')
-{
+if ($action == 'editcss') {
 	print '<input type="hidden" name="action" value="updatecss">';
 }
-if ($action == 'editmenu')
-{
+if ($action == 'editmenu') {
 	print '<input type="hidden" name="action" value="updatemenu">';
 }
-if ($action == 'setashome')
-{
+if ($action == 'setashome') {
 	print '<input type="hidden" name="action" value="updateashome">';
 }
-if ($action == 'editmeta')
-{
+if ($action == 'editmeta') {
 	print '<input type="hidden" name="action" value="updatemeta">';
 }
-if ($action == 'editsource')
-{
+if ($action == 'editsource') {
 	print '<input type="hidden" name="action" value="updatesource">';
 }
-if ($action == 'editcontent')
-{
+if ($action == 'editcontent') {
 	print '<input type="hidden" name="action" value="updatecontent">';
 }
-if ($action == 'edit')
-{
+if ($action == 'edit') {
 	print '<input type="hidden" name="action" value="update">';
 }
-if ($action == 'importsite')
-{
+if ($action == 'importsite') {
 	print '<input type="hidden" name="action" value="importsiteconfirm">';
 }
-if ($action == 'file_manager')
-{
+if ($action == 'file_manager') {
 	print '<input type="hidden" name="action" value="file_manager">';
 }
-if ($action == 'replacesite')
-{
+if ($action == 'replacesite') {
 	print '<input type="hidden" name="action" value="replacesiteconfirm">';
 }
-if ($action == 'replacesiteconfirm')
-{
+if ($action == 'replacesiteconfirm') {
 	print '<input type="hidden" name="action" value="replacesiteconfirm">';
 }
 
@@ -2272,33 +2406,42 @@ print '<div>';
 
 // Add a margin under toolbar ?
 $style = '';
-if ($action != 'preview' && $action != 'editcontent' && $action != 'editsource' && !GETPOST('createpagefromclone', 'alphanohtml')) $style = ' margin-bottom: 5px;';
+if ($action != 'preview' && $action != 'editcontent' && $action != 'editsource' && !GETPOST('createpagefromclone', 'alphanohtml')) {
+	$style = ' margin-bottom: 5px;';
+}
 
 
-if (!GETPOST('hide_websitemenu'))
-{
+if (!GETPOST('hide_websitemenu')) {
 	$disabled = '';
-	if (empty($user->rights->website->write)) $disabled = ' disabled="disabled"';
+	if (empty($user->rights->website->write)) {
+		$disabled = ' disabled="disabled"';
+	}
+	$disabledexport = '';
+	if (empty($user->rights->website->export)) {
+		$disabledexport = ' disabled="disabled"';
+	}
 
-	if ($websitekey)
-	{
+	if ($websitekey) {
 		$virtualurl = '';
 		$dataroot = DOL_DATA_ROOT.'/website/'.$websitekey;
-		if (!empty($object->virtualhost)) $virtualurl = $object->virtualhost;
+		if (!empty($object->virtualhost)) {
+			$virtualurl = $object->virtualhost;
+		}
 	}
 
 	$array = array();
-	if ($object->id > 0)
-	{
+	if ($object->id > 0) {
 		$array = $objectpage->fetchAll($object->id, 'ASC,ASC', 'type_container,pageurl');
 		$object->lines = $array;
 	}
-	if (!is_array($array) && $array < 0) dol_print_error('', $objectpage->error, $objectpage->errors);
+	if (!is_array($array) && $array < 0) {
+		dol_print_error('', $objectpage->error, $objectpage->errors);
+	}
 	$atleastonepage = (is_array($array) && count($array) > 0);
 
 
 	//var_dump($objectpage);exit;
-	print '<div class="centpercent websitebar">';
+	print '<div class="centpercent websitebar'.(GETPOST('dol_openinpopup', 'int') ? ' hidden' : '').'">';
 
 	//
 	// Toolbar for websites
@@ -2321,23 +2464,28 @@ if (!GETPOST('hide_websitemenu'))
 		print '<span class="websiteselection">';
 		$out = '';
 		$out .= '<select name="website" class="minwidth100 width200 maxwidth150onsmartphone" id="website">';
-		if (empty($object->records)) $out .= '<option value="-1">&nbsp;</option>';
-		if (! empty($conf->use_javascript_ajax)) {
+		if (empty($object->records)) {
+			$out .= '<option value="-1">&nbsp;</option>';
+		}
+		if (!empty($conf->use_javascript_ajax)) {
 			$valueoption = '<span class="classlink">'.img_picto('', 'add', 'class="paddingrightonly"').$langs->trans("AddWebsite").'</span>';
 			$out .= '<option value="-2" data-html="'.dol_escape_htmltag($valueoption).'">'.$valueoption.'</option>';
 		}
 		// Loop on each sites
 		$i = 0;
-		foreach ($object->records as $key => $valwebsite)
-		{
+		foreach ($object->records as $key => $valwebsite) {
 			if (empty($websitekey)) {
-				if ($action != 'createsite') $websitekey = $valwebsite->ref;
+				if ($action != 'createsite') {
+					$websitekey = $valwebsite->ref;
+				}
 			}
 
 			$out .= '<option value="'.$valwebsite->ref.'"';
-			if ($websitekey == $valwebsite->ref) $out .= ' selected'; // To preselect a value
+			if ($websitekey == $valwebsite->ref) {
+				$out .= ' selected'; // To preselect a value
+			}
 			//$outoption = $valwebsite->getLibStatut(3).' '.$valwebsite->ref.' ';
-			$outoption = (($valwebsite->status == $valwebsite::STATUS_DRAFT)?'<span class="opacitymedium">':'').$valwebsite->ref.(($valwebsite->status == $valwebsite::STATUS_DRAFT)?'</span>':'');
+			$outoption = (($valwebsite->status == $valwebsite::STATUS_DRAFT) ? '<span class="opacitymedium">' : '').$valwebsite->ref.(($valwebsite->status == $valwebsite::STATUS_DRAFT) ? '</span>' : '');
 			$out .= ' data-html="'.dol_escape_htmltag($outoption).'"';
 			$out .= '>';
 			$out .= $valwebsite->ref;
@@ -2367,48 +2515,53 @@ if (!GETPOST('hide_websitemenu'))
 			print '<input type="image" class="valignmiddle" src="'.img_picto('', 'refresh', '', 0, 1).'" name="refreshsite" value="'.$langs->trans("Load").'">';
 		}
 
-		if ($websitekey && $websitekey != '-1' && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite'))
-		{
+		if ($websitekey && $websitekey != '-1' && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite')) {
 			print ' &nbsp; ';
 
-			print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditCss")).'" name="editcss">';
+			//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditCss")).'" name="editcss">';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid.'&action=editcss" class="button bordertransp"'.$disabled.'>'.dol_escape_htmltag($langs->trans("EditCss")).'</a>';
 
 			$importlabel = $langs->trans("ImportSite");
 			$exportlabel = $langs->trans("ExportSite");
-			if (! empty($conf->dol_optimize_smallscreen)) {
+			if (!empty($conf->dol_optimize_smallscreen)) {
 				$importlabel = $langs->trans("Import");
 				$exportlabel = $langs->trans("Export");
 			}
 
-			if ($atleastonepage)
-			{
+			if ($atleastonepage) {
 				print '<input type="submit" class="button bordertransp" disabled="disabled" value="'.dol_escape_htmltag($importlabel).'" name="importsite">';
-			}
-			else {
+			} else {
 				print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($importlabel).'" name="importsite">';
 			}
 
 			//print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditMenu")).'" name="editmenu">';
-			print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($exportlabel).'" name="exportsite">';
+			print '<input type="submit" class="button bordertransp"'.$disabledexport.' value="'.dol_escape_htmltag($exportlabel).'" name="exportsite">';
+
 			print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("CloneSite")).'" name="createfromclone">';
 
 			print '<input type="submit" class="buttonDelete bordertransp" name="deletesite" value="'.$langs->trans("Delete").'"'.($atleastonepage ? ' disabled="disabled"' : '').'>';
 
+			// Regenerate all pages
+			print '<a href="'.$_SERVER["PHP_SEFL"].'?action=regeneratesite&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("RegenerateWebsiteContent")).'"><span class="fa fa-cogs"><span></a>';
+
+			print ' &nbsp; ';
+
+			// Generate site map
+			print '<a href="'.$_SERVER["PHP_SEFL"].'?action=confirmgeneratesitemaps&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("GenerateSitemaps")).'"><span class="fa fa-sitemap"><span></a>';
+
 			print ' &nbsp; ';
 
 			print '<a href="'.$_SERVER["PHP_SEFL"].'?action=replacesite&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("ReplaceWebsiteContent")).'"><span class="fa fa-search"><span></a>';
-
-			print '<a href="'.$_SERVER["PHP_SEFL"].'?action=regeneratesite&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("RegenerateWebsiteContent")).'"><span class="fa fa-cogs"><span></a>';
 		}
 
 		print '</span>';
 
-		if ($websitekey && $websitekey != '-1' && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite'))
-		{
+		if ($websitekey && $websitekey != '-1' && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite')) {
 			print '<span class="websiteselection">';
-			print '<a href="'.$_SERVER["PHP_SEFL"].'?action=file_manager&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("MediaFiles")).'"><span class="fa fa-image"><span></a>';
+			//print '<a href="'.$_SERVER["PHP_SELF"].'?action=file_manager&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("MediaFiles")).'"><span class="fa fa-image"><span></a>';
+			print dolButtonToOpenUrlInDialogPopup('file_manager', $langs->transnoentitiesnoconv("MediaFiles"), '<span class="fa fa-image"><span>', '/website/index.php?action=file_manager&website='.$website->ref, $disabled);
 
-			if (! empty($conf->categorie->enabled)) {
+			if (!empty($conf->categorie->enabled)) {
 				//print '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=website&dol_hide_leftmenu=1&nosearch=1&type=website_page&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("Categories")).'"><span class="fa fa-tags"><span></a>';
 				print dolButtonToOpenUrlInDialogPopup('categories', $langs->transnoentitiesnoconv("Categories"), '<span class="fa fa-tags"><span>', '/categories/index.php?leftmenu=website&nosearch=1&type=website_page&website='.$website->ref, $disabled);
 			}
@@ -2422,8 +2575,7 @@ if (!GETPOST('hide_websitemenu'))
 
 	print '<span class="websitetools websiteselection">';
 
-	if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite')
-	{
+	if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite') {
 		$urlext = $virtualurl;
 		$urlint = $urlwithroot.'/public/website/index.php?website='.$websitekey;
 
@@ -2432,26 +2584,21 @@ if (!GETPOST('hide_websitemenu'))
 		$linktotestonwebserver .= '<span class="hideonsmartphone paddingrightonly">'.$langs->trans("TestDeployOnWeb", $virtualurl).'</span>'.img_picto('', 'globe');
 		$linktotestonwebserver .= '</a>';
 		$htmltext = '';
-		if (empty($object->fk_default_home))
-		{
+		if (empty($object->fk_default_home)) {
 			$htmltext .= '<br><span class="error">'.$langs->trans("YouMustDefineTheHomePage").'</span><br><br>';
-		}
-		elseif (empty($virtualurl))
-		{
+		} elseif (empty($virtualurl)) {
 			//$htmltext .= '<br><span class="error">'.$langs->trans("VirtualHostUrlNotDefined").'</span><br><br>';
-		}
-		else {
+		} else {
 			$htmltext .= '<br><center>'.$langs->trans("GoTo").' <a href="'.$virtualurl.'" target="_website">'.$virtualurl.'</a></center><br>';
 		}
-		if (!empty($conf->global->WEBSITE_REPLACE_INFO_ABOUT_USAGE_WITH_WEBSERVER))
-		{
+		if (!empty($conf->global->WEBSITE_REPLACE_INFO_ABOUT_USAGE_WITH_WEBSERVER)) {
 			$htmltext .= '<br>'.$langs->trans($conf->global->WEBSITE_REPLACE_INFO_ABOUT_USAGE_WITH_WEBSERVER);
-		}
-		else {
+		} else {
 			$htmltext .= $langs->trans("SetHereVirtualHost", $dataroot);
 			$htmltext .= '<br>';
 			$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), DOL_DOCUMENT_ROOT);
-			$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), DOL_DATA_ROOT.'/website<br>'.DOL_DATA_ROOT.'/medias');
+			$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), '{s1}');
+			$htmltext = str_replace('{s1}', DOL_DATA_ROOT.'/website<br>'.DOL_DATA_ROOT.'/medias', $htmltext);
 
 			$examplewithapache = '#php_admin_value open_basedir /tmp/:'.DOL_DOCUMENT_ROOT.':'.DOL_DATA_ROOT.':/dev/urandom'."\n";
 			$examplewithapache .= '<Directory "'.DOL_DOCUMENT_ROOT.'">'."\n";
@@ -2483,12 +2630,19 @@ if (!GETPOST('hide_websitemenu'))
 		print '</span>';
 	}
 
-	if (in_array($action, array('editcss', 'editmenu', 'file_manager', 'replacesite', 'replacesiteconfirm')))
-	{
-		if ($action == 'editcss') print '<input type="submit" id="savefilean stay" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("SaveAndStay")).'" name="updateandstay">';
-		if (preg_match('/^create/', $action) && $action != 'file_manager' && $action != 'replacesite' && $action != 'replacesiteconfirm') print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
-		if (preg_match('/^edit/', $action) && $action != 'file_manager' && $action != 'replacesite' && $action != 'replacesiteconfirm') print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
-		if ($action != 'preview') print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="cancel">';
+	if (in_array($action, array('editcss', 'editmenu', 'file_manager', 'replacesite', 'replacesiteconfirm'))) {
+		if ($action == 'editcss') {
+			print '<input type="submit" id="savefilean stay" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("SaveAndStay")).'" name="updateandstay">';
+		}
+		if (preg_match('/^create/', $action) && $action != 'file_manager' && $action != 'replacesite' && $action != 'replacesiteconfirm') {
+			print '<input type="submit" id="savefile" class="button buttonforacesave button-save" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
+		}
+		if (preg_match('/^edit/', $action) && $action != 'file_manager' && $action != 'replacesite' && $action != 'replacesiteconfirm') {
+			print '<input type="submit" id="savefile" class="button buttonforacesave button-save" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
+		}
+		if ($action != 'preview') {
+			print '<input type="submit" class="button button-cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="cancel">';
+		}
 	}
 
 	print '</span>';
@@ -2497,8 +2651,7 @@ if (!GETPOST('hide_websitemenu'))
 	// Toolbar for pages
 	//
 
-	if ($websitekey && $websitekey != '-1' && !in_array($action, array('editcss', 'editmenu', 'importsite', 'file_manager', 'replacesite', 'replacesiteconfirm')) && !$file_manager)
-	{
+	if ($websitekey && $websitekey != '-1' && !in_array($action, array('editcss', 'editmenu', 'importsite', 'file_manager', 'replacesite', 'replacesiteconfirm')) && !$file_manager) {
 		print '</div>'; // Close current websitebar to open a new one
 
 		print '<!-- Bar for websitepage -->';
@@ -2514,32 +2667,36 @@ if (!GETPOST('hide_websitemenu'))
 
 		//print '<span class="websiteselection">';
 
-		if ($action != 'addcontainer')
-		{
-			print '<span class="websiteselection">';
-			print $formwebsite->selectContainer($website, 'pageid', $pageid, 0, $action, 'maxwidth200onsmartphone');
-			print '</span>';
-
-			$urltocreatenewpage = $_SERVER["PHP_SEFL"].'?action=createcontainer&website='.$website->ref;
-
+		if ($action != 'addcontainer') {
 			$out = '';
-			if (!empty($conf->use_javascript_ajax)) {
-				$out .= '<script language="javascript">';
-				$out .= 'jQuery(document).ready(function () {';
-				$out .= '	jQuery("#pageid").change(function () {';
-				$out .= '   	console.log("We select "+jQuery("#pageid option:selected").val());';
-				$out .= '   	if (jQuery("#pgeid option:selected").val() == \'-2\') {';
-				$out .= '  			window.location.href = "'.$urltocreatenewpage.'";';
-				$out .= '		} else {';
-				$out .= '  			window.location.href = "'.$_SERVER["PHP_SEFL"].'?website='.$website->ref.'&pageid="+jQuery("#pageid option:selected").val();';
-				$out .= '       }';
-				$out .= '   });';
-				$out .= '});';
-				$out .= '</script>';
+
+			$s = $formwebsite->selectContainer($website, 'pageid', $pageid, 0, $action, 'maxwidth200onsmartphone');
+
+			if ($formwebsite->num > 0) {
+				$out .= '<span class="websiteselection">';
+				$out .= $s;
+				$out .= '</span>';
+
+				$urltocreatenewpage = $_SERVER["PHP_SEFL"].'?action=createcontainer&website='.$website->ref;
+
+				if (!empty($conf->use_javascript_ajax)) {
+					$out .= '<script language="javascript">';
+					$out .= 'jQuery(document).ready(function () {';
+					$out .= '	jQuery("#pageid").change(function () {';
+					$out .= '   	console.log("We select "+jQuery("#pageid option:selected").val());';
+					$out .= '   	if (jQuery("#pgeid option:selected").val() == \'-2\') {';
+					$out .= '  			window.location.href = "'.$urltocreatenewpage.'";';
+					$out .= '		} else {';
+					$out .= '  			window.location.href = "'.$_SERVER["PHP_SEFL"].'?website='.$website->ref.'&pageid="+jQuery("#pageid option:selected").val();';
+					$out .= '       }';
+					$out .= '   });';
+					$out .= '});';
+					$out .= '</script>';
+				}
 			}
+
 			print $out;
-		}
-		else {
+		} else {
 			print $langs->trans("New");
 		}
 
@@ -2550,47 +2707,50 @@ if (!GETPOST('hide_websitemenu'))
 		// Print nav arrows
 		$pagepreviousid = 0;
 		$pagenextid = 0;
-		if ($pageid)
-		{
+		if ($pageid) {
 			$sql = 'SELECT MAX(rowid) as pagepreviousid FROM '.MAIN_DB_PREFIX.'website_page WHERE rowid < '.$pageid.' AND fk_website = '.$object->id;
 			$resql = $db->query($sql);
-			if ($resql)
-			{
+			if ($resql) {
 				$obj = $db->fetch_object($resql);
-				if ($obj)
-				{
+				if ($obj) {
 					$pagepreviousid = $obj->pagepreviousid;
 				}
+			} else {
+				dol_print_error($db);
 			}
-			else dol_print_error($db);
 			$sql = 'SELECT MIN(rowid) as pagenextid FROM '.MAIN_DB_PREFIX.'website_page WHERE rowid > '.$pageid.' AND fk_website = '.$object->id;
 			$resql = $db->query($sql);
-			if ($resql)
-			{
+			if ($resql) {
 				$obj = $db->fetch_object($resql);
-				if ($obj)
-				{
+				if ($obj) {
 					$pagenextid = $obj->pagenextid;
 				}
+			} else {
+				dol_print_error($db);
 			}
-			else dol_print_error($db);
 		}
 
-		if ($pagepreviousid) print '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?website='.urlencode($object->ref).'&pageid='.$pagepreviousid.'&action='.$action.'">'.img_previous($langs->trans("PreviousContainer")).'</a>';
-		else print '<span class="valignmiddle opacitymedium">'.img_previous($langs->trans("PreviousContainer")).'</span>';
-		if ($pagenextid) print '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?website='.urlencode($object->ref).'&pageid='.$pagenextid.'&action='.$action.'">'.img_next($langs->trans("NextContainer")).'</a>';
-		else print '<span class="valignmiddle opacitymedium">'.img_next($langs->trans("NextContainer")).'</span>';
+		if ($pagepreviousid) {
+			print '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?website='.urlencode($object->ref).'&pageid='.$pagepreviousid.'&action='.$action.'">'.img_previous($langs->trans("PreviousContainer")).'</a>';
+		} else {
+			print '<span class="valignmiddle opacitymedium">'.img_previous($langs->trans("Previous")).'</span>';
+		}
+		if ($pagenextid) {
+			print '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?website='.urlencode($object->ref).'&pageid='.$pagenextid.'&action='.$action.'">'.img_next($langs->trans("NextContainer")).'</a>';
+		} else {
+			print '<span class="valignmiddle opacitymedium">'.img_next($langs->trans("Next")).'</span>';
+		}
 
 		$websitepage = new WebSitePage($db);
-		if ($pageid > 0 && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone'))
-		{
+		if ($pageid > 0 && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone')) {
 			$websitepage->fetch($pageid);
 		}
 
-		if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite')
-		{
+		if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite') {
 			$disabled = '';
-			if (empty($user->rights->website->write)) $disabled = ' disabled="disabled"';
+			if (empty($user->rights->website->write)) {
+				$disabled = ' disabled="disabled"';
+			}
 
 			// Confirmation delete site
 			if ($action == 'deletesite') {
@@ -2619,48 +2779,64 @@ if (!GETPOST('hide_websitemenu'))
 				print $formconfirm;
 			}
 
-			if ($pageid > 0 && $atleastonepage)		// pageid can be set without pages, if homepage of site is set and all pages were removed
-			{
+			if ($pageid > 0 && $atleastonepage) {		// pageid can be set without pages, if homepage of site is set and all pages were removed
 				// Confirmation to clone
 				if ($action == 'createpagefromclone') {
 					// Create an array for form
-					$preselectedlanguage = GETPOST('newlang', 'aZ09') ? GETPOST('newlang', 'aZ09') : '';	// Dy default, we do not force any language on pages
+					$preselectedlanguage = GETPOST('newlang', 'aZ09') ? GETPOST('newlang', 'aZ09') : ''; // Dy default, we do not force any language on pages
 					$onlylang = array();
 					if ($website->otherlang) {
-						if (! empty($website->lang)) {
-							$onlylang[$website->lang] = $website->lang;
+						if (!empty($website->lang)) {
+							$onlylang[$website->lang] = $website->lang.' ('.$langs->trans("Default").')';
 						}
 						foreach (explode(',', $website->otherlang) as $langkey) {
+							if (empty(trim($langkey))) continue;
 							$onlylang[$langkey] = $langkey;
 						}
-						$textifempty = 1;
+						$textifempty = $langs->trans("Default");
 					} else {
-						$onlylang['none'] = '';
+						$onlylang['none'] = 'none';
+						$textifempty = $langs->trans("Default");
 					}
-					$textifempty = 1;
 					$formquestion = array(
 						array('type' => 'hidden', 'name' => 'sourcepageurl', 'value'=> $objectpage->pageurl),
 						array('type' => 'other', 'tdclass'=>'fieldrequired', 'name' => 'newwebsite', 'label' => $langs->trans("WebSite"), 'value' => $formwebsite->selectWebsite($object->id, 'newwebsite', 0)),
-						array('type' => 'text', 'tdclass'=>'maxwidth200 fieldrequired', 'name' => 'newtitle', 'label'=> $langs->trans("WEBSITE_TITLE"), 'value'=> $langs->trans("CopyOf").' '.$objectpage->title),
-						array('type' => 'text', 'tdclass'=>'maxwidth200', 'name' => 'newpageurl', 'label'=> $langs->trans("WEBSITE_PAGENAME"), 'value'=> ''),
-						array('type' => 'checkbox', 'tdclass'=>'maxwidth200', 'name' => 'is_a_translation', 'label' => $langs->trans("PageIsANewTranslation"), 'value' => 0, 'morecss'=>'margintoponly'),
-						array('type' => 'other', 'name' => 'newlang', 'label' => $form->textwithpicto($langs->trans("Language"), $langs->trans("DefineListOfAltLanguagesInWebsiteProperties")), 'value' => $formadmin->select_language($preselectedlanguage, 'newlang', 0, null, $textifempty, 0, 0, 'minwidth200', 0, 1, 0, $onlylang, 1)),
-					);
+						array('type' => 'text', 'tdclass'=>'maxwidth200 fieldrequired', 'moreattr'=>'autofocus="autofocus"', 'name' => 'newtitle', 'label'=> $langs->trans("WEBSITE_TITLE"), 'value'=> $langs->trans("CopyOf").' '.$objectpage->title),
+						array('type' => 'text', 'tdclass'=>'maxwidth200', 'name' => 'newpageurl', 'label'=> $langs->trans("WEBSITE_PAGENAME"), 'value'=> '')
+						);
+					if (count($onlylang) > 1) {
+						$formquestion[] = array('type' => 'checkbox', 'tdclass'=>'maxwidth200', 'name' => 'is_a_translation', 'label' => $langs->trans("PageIsANewTranslation"), 'value' => 0, 'morecss'=>'margintoponly');
+					}
 
-				   	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid, $langs->trans('ClonePage'), '', 'confirm_createpagefromclone', $formquestion, 0, 1, 300, 550);
+					$value= $formadmin->select_language($preselectedlanguage, 'newlang', 0, null, $textifempty, 0, 0, 'minwidth200', 1, 0, 0, $onlylang, 1);
+					$formquestion[] = array('type' => 'other', 'name' => 'newlang', 'label' => $form->textwithpicto($langs->trans("Language"), $langs->trans("DefineListOfAltLanguagesInWebsiteProperties")), 'value' => $value);
+
+					$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid, $langs->trans('ClonePage'), '', 'confirm_createpagefromclone', $formquestion, 0, 1, 300, 550);
 
 					print $formconfirm;
 				}
 
 				print ' &nbsp; ';
 
-				print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditPageMeta")).'" name="editmeta">';
+				//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditPageMeta")).'" name="editmeta">';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid.'&action=editmeta" class="button bordertransp"'.$disabled.'>'.dol_escape_htmltag($langs->trans("EditPageMeta")).'</a>';
 
-				print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditHTMLSource")).'" name="editsource">';
+				//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditHTMLSource")).'" name="editsource">';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid.'&action=editsource" class="button bordertransp"'.$disabled.'>'.dol_escape_htmltag($langs->trans("EditHTMLSource")).'</a>';
 
 				print '<!-- button EditInLine and ShowSubcontainers -->'."\n";
 				print '<div class="websiteselectionsection inline-block">';
-				print '<div class="inline-block marginrightonly">';
+
+				print '<div class="inline-block marginrightonly">';	// Button include dynamic contant
+				print $langs->trans("ShowSubcontainers");
+				if (empty($conf->global->WEBSITE_SUBCONTAINERSINLINE)) {
+					print '<a class="nobordertransp nohoverborder marginleftonlyshort valignmiddle"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=setshowsubcontainers&token='.newToken().'">'.img_picto($langs->trans("ShowSubContainersOnOff", $langs->transnoentitiesnoconv("Off")), 'switch_off', '', false, 0, 0, '', 'nomarginleft').'</a>';
+				} else {
+					print '<a class="nobordertransp nohoverborder marginleftonlyshort valignmiddle"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=unsetshowsubcontainers&token='.newToken().'">'.img_picto($langs->trans("ShowSubContainersOnOff", $langs->transnoentitiesnoconv("On")), 'switch_on', '', false, 0, 0, '', 'nomarginleft').'</a>';
+				}
+				print '</div>';
+
+				print '<div class="inline-block marginrightonly">';	// Button edit inline
 
 				print '<span id="switchckeditorinline">'."\n";
 				print '<!-- Code to enabled edit inline ckeditor -->'."\n";
@@ -2712,45 +2888,29 @@ if (!GETPOST('hide_websitemenu'))
 
 				//$disableeditinline = $websitepage->grabbed_from;
 				$disableeditinline = 0;
-				if ($disableeditinline)
-				{
+				if ($disableeditinline) {
 					//print '<input type="submit" class="button bordertransp" disabled="disabled" title="'.dol_escape_htmltag($langs->trans("OnlyEditionOfSourceForGrabbedContent")).'" value="'.dol_escape_htmltag($langs->trans("EditWithEditor")).'" name="editcontent">';
 					print '<a class="nobordertransp opacitymedium nohoverborder marginleftonlyshort"'.$disabled.' href="#" disabled="disabled" title="'.dol_escape_htmltag($langs->trans("OnlyEditionOfSourceForGrabbedContent")).'">'.img_picto($langs->trans("OnlyEditionOfSourceForGrabbedContent"), 'switch_off', '', false, 0, 0, '', 'nomarginleft').'</a>';
-				}
-				else {
+				} else {
 					//print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditWithEditor")).'" name="editcontent">';
-					if (empty($conf->global->WEBSITE_EDITINLINE))
-					{
+					if (empty($conf->global->WEBSITE_EDITINLINE)) {
 						print '<a class="nobordertransp nohoverborder marginleftonlyshort valignmiddle"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=seteditinline&token='.newToken().'">'.img_picto($langs->trans("EditInLineOnOff", $langs->transnoentitiesnoconv("Off")), 'switch_off', '', false, 0, 0, '', 'nomarginleft').'</a>';
-					}
-					else {
+					} else {
 						print '<a class="nobordertransp nohoverborder marginleftonlyshort valignmiddle"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=unseteditinline&token='.newToken().'">'.img_picto($langs->trans("EditInLineOnOff", $langs->transnoentitiesnoconv("On")), 'switch_on', '', false, 0, 0, '', 'nomarginleft').'</a>';
 					}
 				}
 
 				print '</div>';
-				print '<div class="inline-block marginrightonly">';
-				print $langs->trans("ShowSubcontainers");
-				if (empty($conf->global->WEBSITE_SUBCONTAINERSINLINE))
-				{
-					print '<a class="nobordertransp nohoverborder marginleftonlyshort valignmiddle"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=setshowsubcontainers&token='.newToken().'">'.img_picto($langs->trans("ShowSubContainersOnOff", $langs->transnoentitiesnoconv("Off")), 'switch_off', '', false, 0, 0, '', 'nomarginleft').'</a>';
-				}
-				else {
-					print '<a class="nobordertransp nohoverborder marginleftonlyshort valignmiddle"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=unsetshowsubcontainers&token='.newToken().'">'.img_picto($langs->trans("ShowSubContainersOnOff", $langs->transnoentitiesnoconv("On")), 'switch_on', '', false, 0, 0, '', 'nomarginleft').'</a>';
-				}
-				/*}*/
-				print '</div>';
+
 				print '</div>';
 
 				// Set page as homepage
-				if ($object->fk_default_home > 0 && $pageid == $object->fk_default_home)
-				{
+				if ($object->fk_default_home > 0 && $pageid == $object->fk_default_home) {
 					//$disabled=' disabled="disabled"';
 					//print '<span class="button bordertransp disabled"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'"><span class="fa fa-home"></span></span>';
 					//print '<input type="submit" class="button bordertransp" disabled="disabled" value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
 					print '<a href="#" class="button bordertransp disabled" disabled="disabled" title="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'"><span class="fa fa-home valignmiddle btnTitle-icon"><span></a>';
-				}
-				else {
+				} else {
 					//$disabled='';
 					//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
 					print '<a href="'.$_SERVER["PHP_SEFL"].'?action=setashome&token='.newToken().'&website='.$website->ref.'&pageid='.$pageid.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'"><span class="fa fa-home valignmiddle btnTitle-icon"><span></a>';
@@ -2764,14 +2924,15 @@ if (!GETPOST('hide_websitemenu'))
 
 		print '<span class="websitetools">';
 
-		if (($pageid > 0 && $atleastonepage) && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite'))
-		{
+		if (($pageid > 0 && $atleastonepage) && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite')) {
 			$realpage = $urlwithroot.'/public/website/index.php?website='.$websitekey.'&pageref='.$websitepage->pageurl;
 			$pagealias = $websitepage->pageurl;
 
 			$htmltext = $langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $realpage, $dataroot);
-			$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), DOL_DOCUMENT_ROOT);
-			$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), DOL_DATA_ROOT.'/website<br>'.DOL_DATA_ROOT.'/medias');
+			$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), '{s1}');
+			$htmltext = str_replace('{s1}', $dataroot.'<br>'.DOL_DATA_ROOT.'/medias<br>'.DOL_DOCUMENT_ROOT, $htmltext);
+			//$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), '{s1}');
+			//$htmltext = str_replace('{s1}', DOL_DATA_ROOT.'/medias', $htmltext);
 
 			print '<div class="websiteinputurl inline-block paddingright">';
 			print '<a class="websitebuttonsitepreview inline-block" id="previewpage" href="'.$realpage.'&nocache='.dol_now().'" class="button" target="tab'.$websitekey.'" alt="'.dol_escape_htmltag($htmltext).'">';
@@ -2799,30 +2960,34 @@ if (!GETPOST('hide_websitemenu'))
 
 			// TODO Add js to save alias like we save virtual host name and use dynamic virtual host for url of id=previewpageext
 		}
-		if (!in_array($action, array('editcss', 'editmenu', 'file_manager', 'replacesite', 'replacesiteconfirm', 'createsite', 'createcontainer', 'createfromclone', 'createpagefromclone', 'deletesite')))
-		{
-			if ($action == 'editsource' || $action == 'editmeta') print '<input type="submit" id="savefilean stay" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("SaveAndStay")).'" name="updateandstay">';
-			if (preg_match('/^create/', $action)) print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
-			if (preg_match('/^edit/', $action)) print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
-			if ($action != 'preview') print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="cancel">';
+		if (!in_array($action, array('editcss', 'editmenu', 'file_manager', 'replacesite', 'replacesiteconfirm', 'createsite', 'createcontainer', 'createfromclone', 'createpagefromclone', 'deletesite'))) {
+			if ($action == 'editsource' || $action == 'editmeta') {
+				print '<input type="submit" id="savefilean stay" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("SaveAndStay")).'" name="updateandstay">';
+			}
+			if (preg_match('/^create/', $action)) {
+				print '<input type="submit" id="savefile" class="button buttonforacesave button-save" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
+			}
+			if (preg_match('/^edit/', $action)) {
+				print '<input type="submit" id="savefile" class="button buttonforacesave button-save" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
+			}
+			if ($action != 'preview') {
+				print '<input type="submit" class="button button-cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="cancel">';
+			}
 		}
 
 		print '</span>'; // end websitetools
 
 		print '<span class="websitehelp">';
-		if (GETPOST('editsource', 'alpha') || GETPOST('editcontent', 'alpha'))
-		{
+		if (GETPOST('editsource', 'alpha') || GETPOST('editcontent', 'alpha')) {
 			$url = 'https://wiki.dolibarr.org/index.php/Module_Website';
 
 			$htmltext = $langs->transnoentitiesnoconv("YouCanEditHtmlSource", $url);
 			$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource2", $url);
 			$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSourceMore", $url);
 			$htmltext .= '<br>';
-			if ($conf->browser->layout == 'phone')
-			{
+			if ($conf->browser->layout == 'phone') {
 				print $form->textwithpicto('', $htmltext, 1, 'help', 'inline-block', 1, 2, 'tooltipsubstitution');
-			}
-			else {
+			} else {
 				//img_help(($tooltiptrigger != '' ? 2 : 1), $alt)
 				print $form->textwithpicto($langs->trans("SyntaxHelp").' '.img_help(2, $langs->trans("SyntaxHelp")), $htmltext, 1, 'none', 'inline-block', 1, 2, 'tooltipsubstitution');
 			}
@@ -2830,12 +2995,9 @@ if (!GETPOST('hide_websitemenu'))
 		print '</span>'; // end websitehelp
 
 
-
-		if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone')
-		{
+		if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone') {
 			// Adding jquery code to change on the fly url of preview ext
-			if (!empty($conf->use_javascript_ajax))
-			{
+			if (!empty($conf->use_javascript_ajax)) {
 				print '<script type="text/javascript" language="javascript">
                     jQuery(document).ready(function() {
                 		jQuery("#websiteinputurl").keyup(function() {
@@ -2886,7 +3048,6 @@ if (!GETPOST('hide_websitemenu'))
 }
 
 
-
 $head = array();
 
 
@@ -2894,121 +3055,102 @@ $head = array();
  * Edit Site HTML header and CSS
  */
 
-if ($action == 'editcss')
-{
+if ($action == 'editcss') {
 	print '<div class="fiche">';
 
 	print '<br>';
 
-	if (!GETPOSTISSET('WEBSITE_CSS_INLINE'))
-	{
+	if (!GETPOSTISSET('WEBSITE_CSS_INLINE')) {
 		$csscontent = @file_get_contents($filecss);
 		// Clean the php css file to remove php code and get only css part
 		$csscontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP \?>\n*/ims', '', $csscontent);
-	}
-	else {
+	} else {
 		$csscontent = GETPOST('WEBSITE_CSS_INLINE', 'none');
 	}
 	if (!trim($csscontent)) {
 		$csscontent = '/* CSS content (all pages) */'."\nbody.bodywebsite { margin: 0; font-family: 'Open Sans', sans-serif; }\n.bodywebsite h1 { margin-top: 0; margin-bottom: 0; padding: 10px;}";
 	}
 
-	if (!GETPOSTISSET('WEBSITE_JS_INLINE'))
-	{
+	if (!GETPOSTISSET('WEBSITE_JS_INLINE')) {
 		$jscontent = @file_get_contents($filejs);
 		// Clean the php js file to remove php code and get only js part
 		$jscontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP \?>\n*/ims', '', $jscontent);
-	}
-	else {
+	} else {
 		$jscontent = GETPOST('WEBSITE_JS_INLINE', 'none');
 	}
-	if (!trim($jscontent)) $jscontent = '/* JS content (all pages) */'."\n";
+	if (!trim($jscontent)) {
+		$jscontent = '/* JS content (all pages) */'."\n";
+	}
 
-	if (!GETPOSTISSET('WEBSITE_HTML_HEADER'))
-	{
+	if (!GETPOSTISSET('WEBSITE_HTML_HEADER')) {
 		$htmlheadercontent = @file_get_contents($filehtmlheader);
 		// Clean the php htmlheader file to remove php code and get only html part
 		$htmlheadercontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP \?>\n*/ims', '', $htmlheadercontent);
-	}
-	else {
+	} else {
 		$htmlheadercontent = GETPOST('WEBSITE_HTML_HEADER', 'none');
 	}
-	if (!trim($htmlheadercontent))
-	{
+	if (!trim($htmlheadercontent)) {
 		$htmlheadercontent = "<html>\n";
 		$htmlheadercontent .= $htmlheadercontentdefault;
 		$htmlheadercontent .= "</html>";
-	}
-	else {
+	} else {
 		$htmlheadercontent = preg_replace('/^\s*<html>/ims', '', $htmlheadercontent);
 		$htmlheadercontent = preg_replace('/<\/html>\s*$/ims', '', $htmlheadercontent);
 		$htmlheadercontent = '<html>'."\n".trim($htmlheadercontent)."\n".'</html>';
 	}
 
-	if (!GETPOSTISSET('WEBSITE_ROBOT'))
-	{
+	if (!GETPOSTISSET('WEBSITE_ROBOT')) {
 		$robotcontent = @file_get_contents($filerobot);
 		// Clean the php htmlheader file to remove php code and get only html part
 		$robotcontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP \?>\n*/ims', '', $robotcontent);
-	}
-	else {
+	} else {
 		$robotcontent = GETPOST('WEBSITE_ROBOT', 'nothtml');
 	}
-	if (!trim($robotcontent))
-	{
+	if (!trim($robotcontent)) {
 		$robotcontent .= "# Robot file. Generated with ".DOL_APPLICATION_TITLE."\n";
 		$robotcontent .= "User-agent: *\n";
 		$robotcontent .= "Allow: /public/\n";
 		$robotcontent .= "Disallow: /administrator/\n";
 	}
 
-	if (!GETPOSTISSET('WEBSITE_HTACCESS'))
-	{
+	if (!GETPOSTISSET('WEBSITE_HTACCESS')) {
 		$htaccesscontent = @file_get_contents($filehtaccess);
 		// Clean the php htaccesscontent file to remove php code and get only html part
 		$htaccesscontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP \?>\n*/ims', '', $htaccesscontent);
-	}
-	else {
+	} else {
 		$htaccesscontent = GETPOST('WEBSITE_HTACCESS', 'nohtml');
 	}
-	if (!trim($htaccesscontent))
-	{
+	if (!trim($htaccesscontent)) {
 		$htaccesscontent .= "# Order allow,deny\n";
 		$htaccesscontent .= "# Deny from all\n";
 	}
 
 
-	if (!GETPOSTISSET('WEBSITE_MANIFEST_JSON'))
-	{
+	if (!GETPOSTISSET('WEBSITE_MANIFEST_JSON')) {
 		$manifestjsoncontent = @file_get_contents($filemanifestjson);
 		// Clean the manifestjson file to remove php code and get only html part
 		$manifestjsoncontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP \?>\n*/ims', '', $manifestjsoncontent);
-	}
-	else {
+	} else {
 		$manifestjsoncontent = GETPOST('WEBSITE_MANIFEST_JSON', 'restricthtml');
 	}
-	if (!trim($manifestjsoncontent))
-	{
+	if (!trim($manifestjsoncontent)) {
 		//$manifestjsoncontent.="";
 	}
 
-	if (!GETPOSTISSET('WEBSITE_README'))
-	{
+	if (!GETPOSTISSET('WEBSITE_README')) {
 		$readmecontent = @file_get_contents($filereadme);
 		// Clean the readme file to remove php code and get only html part
 		$readmecontent = preg_replace('/<\?php \/\/ BEGIN PHP[^\?]*END PHP \?>\n*/ims', '', $readmecontent);
-	}
-	else {
+	} else {
 		$readmecontent = GETPOST('WEBSITE_README', 'none');
 	}
-	if (!trim($readmecontent))
-	{
+	if (!trim($readmecontent)) {
 		//$readmecontent.="";
 	}
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
-	print '<!-- Edit CSS -->'."\n";
+	print '<!-- Edit Website properties -->'."\n";
 	print '<table class="border centpercent">';
 
 	// Website
@@ -3038,8 +3180,8 @@ if ($action == 'editcss')
 
 	// Other languages
 	print '<tr><td class="tdtop">';
-	$htmltext = '';
-	print $form->textwithpicto($langs->trans('OtherLanguages'), $htmltext, 1, 'help', '', 0, 2, 'WEBSITE_OTHERLANG');
+	$htmltext = $langs->trans("Example").': fr,de,sv,it,pt';
+	print $form->textwithpicto($langs->trans('OtherLanguages'), $htmltext, 1, 'help', '', 0, 2);
 	print '</td><td>';
 	print '<input type="text" class="flat" value="'.(GETPOSTISSET('WEBSITE_OTHERLANG') ? GETPOST('WEBSITE_OTHERLANG', 'alpha') : $object->otherlang).'" name="WEBSITE_OTHERLANG">';
 	print '</td>';
@@ -3048,16 +3190,25 @@ if ($action == 'editcss')
 	// VirtualHost
 	print '<tr><td class="tdtop">';
 
-	$htmltext = $langs->trans("SetHereVirtualHost", DOL_DATA_ROOT.'/website/<i>'.$websitekey.'</i>');
+	$htmltext = $langs->trans("SetHereVirtualHost", DOL_DATA_ROOT.'/website/{s1}'.$websitekey.'{s2}');
+	$htmltext = str_replace(array('{s1}', '{s2}'), array('<i>', '</i>'), $htmltext);
 	$htmltext .= '<br>';
 	$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), DOL_DOCUMENT_ROOT);
-	$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), DOL_DATA_ROOT.'/website<br>'.DOL_DATA_ROOT.'/medias');
+	$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), '{s1}');
+	$htmltext = str_replace('{s1}', DOL_DATA_ROOT.'/website<br>'.DOL_DATA_ROOT.'/medias', $htmltext);
 
 	print $form->textwithpicto($langs->trans('Virtualhost'), $htmltext, 1, 'help', '', 0, 2, 'virtualhosttooltip');
 	print '</td><td>';
 	print '<input type="text" class="flat" value="'.(GETPOSTISSET('virtualhost') ? GETPOST('virtualhost', 'alpha') : $virtualurl).'" name="virtualhost">';
 	print '</td>';
 	print '</tr>';
+
+	// Favicon
+	print '<tr><td>';
+	print $form->textwithpicto($langs->trans('ImportFavicon'), $langs->trans('FaviconTooltip'));
+	print '</td><td>';
+	print '<input type="file" class="flat minwidth300" name="addedfile" id="addedfile"/>';
+	print '</tr></td>';
 
 	// CSS file
 	print '<tr><td class="tdtop">';
@@ -3150,7 +3301,7 @@ if ($action == 'editcss')
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '</div>';
 
@@ -3158,8 +3309,7 @@ if ($action == 'editcss')
 }
 
 
-if ($action == 'createsite')
-{
+if ($action == 'createsite') {
 	print '<div class="fiche">';
 
 	print '<br>';
@@ -3169,12 +3319,14 @@ if ($action == 'createsite')
 
 	$head[$h][0] = dol_buildpath('/website/index.php',1).'?id='.$object->id;
 	$head[$h][1] = $langs->trans("AddSite");
-   	$head[$h][2] = 'card';
+	   $head[$h][2] = 'card';
 	$h++;
 
-    dol_fiche_head($head, 'card', $langs->trans("AddSite"), -1, 'globe');
-    */
-	if ($action == 'createcontainer') print load_fiche_titre($langs->trans("AddSite"));
+	print dol_get_fiche_head($head, 'card', $langs->trans("AddSite"), -1, 'globe');
+	*/
+	if ($action == 'createcontainer') {
+		print load_fiche_titre($langs->trans("AddSite"));
+	}
 
 	print '<!-- Add site -->'."\n";
 	//print '<div class="fichecenter">';
@@ -3182,10 +3334,18 @@ if ($action == 'createsite')
 	print '<table class="border centpercent">';
 
 	$siteref = $sitedesc = $sitelang = $siteotherlang = '';
-	if (GETPOST('WEBSITE_REF'))         $siteref = GETPOST('WEBSITE_REF', 'alpha');
-	if (GETPOST('WEBSITE_DESCRIPTION')) $sitedesc = GETPOST('WEBSITE_DESCRIPTION', 'alpha');
-	if (GETPOST('WEBSITE_LANG'))        $sitelang = GETPOST('WEBSITE_LANG', 'aZ09');
-	if (GETPOST('WEBSITE_OTHERLANG'))   $siteotherlang = GETPOST('WEBSITE_OTHERLANG', 'aZ09comma');
+	if (GETPOST('WEBSITE_REF')) {
+		$siteref = GETPOST('WEBSITE_REF', 'alpha');
+	}
+	if (GETPOST('WEBSITE_DESCRIPTION')) {
+		$sitedesc = GETPOST('WEBSITE_DESCRIPTION', 'alpha');
+	}
+	if (GETPOST('WEBSITE_LANG')) {
+		$sitelang = GETPOST('WEBSITE_LANG', 'aZ09');
+	}
+	if (GETPOST('WEBSITE_OTHERLANG')) {
+		$siteotherlang = GETPOST('WEBSITE_OTHERLANG', 'aZ09comma');
+	}
 
 	print '<tr><td class="titlefieldcreate fieldrequired">';
 	print $form->textwithpicto($langs->trans('WebSite'), $langs->trans("Example").': www.mywebsite.com, myportal, ...');
@@ -3207,17 +3367,20 @@ if ($action == 'createsite')
 	print '</td></tr>';
 
 	print '<tr><td>';
-	print $langs->trans('OtherLanguages');
+	$htmltext = $langs->trans("Example").': fr,de,sv,it,pt';
+	print $form->textwithpicto($langs->trans('OtherLanguages'), $htmltext, 1, 'help', '', 0, 2);
 	print '</td><td>';
 	print '<input type="text" class="flat minwidth300" name="WEBSITE_OTHERLANG" value="'.dol_escape_htmltag($siteotherlang).'">';
 	print '</td></tr>';
 
 	print '<tr><td>';
 
-	$htmltext = $langs->trans("SetHereVirtualHost", DOL_DATA_ROOT.'/website/<i>websiteref</i>');
+	$htmltext = $langs->trans("SetHereVirtualHost", '{s1}');
+	$htmltext = str_replace('{s1}', DOL_DATA_ROOT.'/website/<i>websiteref</i>', $htmltext);
 	$htmltext .= '<br>';
 	$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), DOL_DOCUMENT_ROOT);
-	$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), DOL_DATA_ROOT.'/website<br>'.DOL_DATA_ROOT.'/medias');
+	$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), '{s1}');
+	$htmltext = str_replace('{s1}', DOL_DATA_ROOT.'/website<br>'.DOL_DATA_ROOT.'/medias', $htmltext);
 
 	print $form->textwithpicto($langs->trans('Virtualhost'), $htmltext, 1, 'help', '', 0, 2, 'virtualhosttooltip');
 	print '</td><td>';
@@ -3227,12 +3390,11 @@ if ($action == 'createsite')
 
 	print '</table>';
 
-	if ($action == 'createsite')
-	{
+	if ($action == 'createsite') {
 		print '<div class="center">';
 
 		print '<input class="button" type="submit" name="addcontainer" value="'.$langs->trans("Create").'">';
-		print '<input class="button" type="submit" name="preview" value="'.$langs->trans("Cancel").'">';
+		print '<input class="button button-cancel" type="submit" name="preview" value="'.$langs->trans("Cancel").'">';
 
 		print '</div>';
 	}
@@ -3240,29 +3402,28 @@ if ($action == 'createsite')
 
 	//print '</div>';
 
-	//dol_fiche_end();
+	//print dol_get_fiche_end();
 
 	print '</div>';
 
 	print '<br>';
 }
 
-if ($action == 'importsite')
-{
+if ($action == 'importsite') {
 	print '<div class="fiche">';
 
 	print '<br>';
 
 	print load_fiche_titre($langs->trans("ImportSite"));
 
-	dol_fiche_head(array(), '0', '', -1);
+	print dol_get_fiche_head(array(), '0', '', -1);
 
 	print '<span class="opacitymedium">'.$langs->trans("ZipOfWebsitePackageToImport").'</span><br><br>';
 
 	print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
 	print '<input class="flat minwidth400" type="file" name="userfile[]" accept=".zip">';
 	print '<input type="submit" class="button" name="buttonsubmitimportfile" value="'.dol_escape_htmltag($langs->trans("Upload")).'">';
-	print '<input type="submit" class="button" name="preview" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+	print '<input type="submit" class="button button-cancel" name="preview" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 
 	print '<br><br><br>';
 
@@ -3271,15 +3432,14 @@ if ($action == 'importsite')
 
 	showWebsiteTemplates($website);
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '</div>';
 
 	print '<br>';
 }
 
-if ($action == 'editmeta' || $action == 'createcontainer')
-{
+if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties of a web site OR properties of a web page
 	print '<div class="fiche">';
 
 	print '<br>';
@@ -3289,31 +3449,38 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 
 	$head[$h][0] = dol_buildpath('/website/index.php',1).'?id='.$object->id;
 	$head[$h][1] = $langs->trans("AddPage");
-   	$head[$h][2] = 'card';
+	   $head[$h][2] = 'card';
 	$h++;
 
-    dol_fiche_head($head, 'card', $langs->trans("AddPage"), -1, 'globe');
-    */
-	if ($action == 'createcontainer') print load_fiche_titre($langs->trans("AddPage"));
+	print dol_get_fiche_head($head, 'card', $langs->trans("AddPage"), -1, 'globe');
+	*/
+	if ($action == 'createcontainer') {
+		print load_fiche_titre($langs->trans("AddPage"));
+	}
 
 	print '<!-- Edit or create page/container -->'."\n";
 	//print '<div class="fichecenter">';
 
 	$hiddenfromfetchingafterload = ' hideobject';
 	$hiddenmanuallyafterload = ' hideobject';
-	if (GETPOST('radiocreatefrom') == 'checkboxcreatefromfetching') $hiddenfromfetchingafterload = '';
-	if (GETPOST('radiocreatefrom') == 'checkboxcreatemanually') $hiddenmanuallyafterload = '';
+	if (GETPOST('radiocreatefrom') == 'checkboxcreatefromfetching') {
+		$hiddenfromfetchingafterload = '';
+	}
+	if (GETPOST('radiocreatefrom') == 'checkboxcreatemanually') {
+		$hiddenmanuallyafterload = '';
+	}
 
 	if ($action == 'editmeta' || empty($conf->use_javascript_ajax)) {	// No autohide/show in such case
 		$hiddenfromfetchingafterload = '';
 		$hiddenmanuallyafterload = '';
 	}
 
-	if ($action == 'createcontainer')
-	{
+	if ($action == 'createcontainer') {
 		print '<br>';
 
-		if (!empty($conf->use_javascript_ajax)) print '<input type="radio" name="radiocreatefrom" id="checkboxcreatefromfetching" value="checkboxcreatefromfetching"'.(GETPOST('radiocreatefrom') == 'checkboxcreatefromfetching' ? ' checked' : '').'> ';
+		if (!empty($conf->use_javascript_ajax)) {
+			print '<input type="radio" name="radiocreatefrom" id="checkboxcreatefromfetching" value="checkboxcreatefromfetching"'.(GETPOST('radiocreatefrom') == 'checkboxcreatefromfetching' ? ' checked' : '').'> ';
+		}
 		print '<label for="checkboxcreatefromfetching"><span class="opacitymediumxx">'.$langs->trans("CreateByFetchingExternalPage").'</span></label><br>';
 		print '<hr class="tablecheckboxcreatefromfetching'.$hiddenfromfetchingafterload.'">';
 		print '<table class="tableforfield centpercent tablecheckboxcreatefromfetching'.$hiddenfromfetchingafterload.'">';
@@ -3326,7 +3493,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		print ' ';
 		print $langs->trans("ImagesShouldBeSavedInto").' ';
 		$arraygrabimagesinto = array('root'=>$langs->trans("WebsiteRootOfImages"), 'subpage'=>$langs->trans("SubdirOfPage"));
-		print $form->selectarray('grabimagesinto', $arraygrabimagesinto, GETPOSTISSET('grabimagesinto') ?GETPOST('grabimagesinto') : 'root');
+		print $form->selectarray('grabimagesinto', $arraygrabimagesinto, GETPOSTISSET('grabimagesinto') ? GETPOST('grabimagesinto') : 'root', 0, 0, 0, '', 0, 0, 0, '', '', 1);
 		print '<br>';
 		print '<input class="button" style="margin-top: 5px" type="submit" name="fetchexternalurl" value="'.dol_escape_htmltag($langs->trans("FetchAndCreate")).'">';
 		print '</td></tr>';
@@ -3334,15 +3501,16 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 
 		print '<br>';
 
-		if (!empty($conf->use_javascript_ajax)) print '<input type="radio" name="radiocreatefrom" id="checkboxcreatemanually" value="checkboxcreatemanually"'.(GETPOST('radiocreatefrom') == 'checkboxcreatemanually' ? ' checked' : '').'> ';
+		if (!empty($conf->use_javascript_ajax)) {
+			print '<input type="radio" name="radiocreatefrom" id="checkboxcreatemanually" value="checkboxcreatemanually"'.(GETPOST('radiocreatefrom') == 'checkboxcreatemanually' ? ' checked' : '').'> ';
+		}
 		print '<label for="checkboxcreatemanually"><span class="opacitymediumxx">'.$langs->trans("OrEnterPageInfoManually").'</span></label><br>';
 		print '<hr class="tablecheckboxcreatemanually'.$hiddenmanuallyafterload.'">';
 	}
 
 	print '<table class="border tableforfield nobackground centpercent tablecheckboxcreatemanually'.$hiddenmanuallyafterload.'">';
 
-	if ($action != 'createcontainer')
-	{
+	if ($action != 'createcontainer') {
 		print '<tr><td class="titlefield fieldrequired">';
 		print $langs->trans('IDOfPage').' - '.$langs->trans('InternalURLOfPage');
 		print '</td><td>';
@@ -3365,15 +3533,15 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		$pageimage = $objectpage->image;
 		$pagekeywords = $objectpage->keywords;
 		$pagelang = $objectpage->lang;
+		$pageallowedinframes = $objectpage->allowed_in_frames;
 		$pagehtmlheader = $objectpage->htmlheader;
 		$pagedatecreation = $objectpage->date_creation;
 		$pagedatemodification = $objectpage->date_modification;
 		$pageauthorid = $objectpage->fk_user_creat;
 		$pageusermodifid = $objectpage->fk_user_modif;
 		$pageauthoralias = $objectpage->author_alias;
- 		$pagestatus = $objectpage->status;
-	}
-	else {
+		$pagestatus = $objectpage->status;
+	} else {
 		$type_container = 'page';
 		$pagedatecreation = dol_now();
 		$pageauthorid = $user->id;
@@ -3381,17 +3549,35 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		$pageauthoralias = '';
 		$pagestatus = 1;
 	}
-	if (GETPOST('WEBSITE_TITLE', 'alpha'))       $pagetitle = str_replace(array('<', '>'), '', GETPOST('WEBSITE_TITLE', 'alphanohtml'));
-	if (GETPOST('WEBSITE_PAGENAME', 'alpha'))    $pageurl = GETPOST('WEBSITE_PAGENAME', 'alpha');
-	if (GETPOST('WEBSITE_ALIASALT', 'alpha'))    $pagealiasalt = str_replace(array('<', '>'), '', GETPOST('WEBSITE_ALIASALT', 'alphanohtml'));
-	if (GETPOST('WEBSITE_DESCRIPTION', 'alpha')) $pagedescription = str_replace(array('<', '>'), '', GETPOST('WEBSITE_DESCRIPTION', 'alphanohtml'));
-	if (GETPOST('WEBSITE_IMAGE', 'alpha'))       $pageimage = GETPOST('WEBSITE_IMAGE', 'alpha');
-	if (GETPOST('WEBSITE_KEYWORDS', 'alpha'))    $pagekeywords = str_replace(array('<', '>'), '', GETPOST('WEBSITE_KEYWORDS', 'alphanohtml'));
-	if (GETPOST('WEBSITE_LANG', 'aZ09'))         $pagelang = GETPOST('WEBSITE_LANG', 'aZ09');
-	if (GETPOST('htmlheader', 'none'))			 $pagehtmlheader = GETPOST('htmlheader', 'none');
+	if (GETPOST('WEBSITE_TITLE', 'alpha')) {
+		$pagetitle = str_replace(array('<', '>'), '', GETPOST('WEBSITE_TITLE', 'alphanohtml'));
+	}
+	if (GETPOST('WEBSITE_PAGENAME', 'alpha')) {
+		$pageurl = GETPOST('WEBSITE_PAGENAME', 'alpha');
+	}
+	if (GETPOST('WEBSITE_ALIASALT', 'alpha')) {
+		$pagealiasalt = str_replace(array('<', '>'), '', GETPOST('WEBSITE_ALIASALT', 'alphanohtml'));
+	}
+	if (GETPOST('WEBSITE_DESCRIPTION', 'alpha')) {
+		$pagedescription = str_replace(array('<', '>'), '', GETPOST('WEBSITE_DESCRIPTION', 'alphanohtml'));
+	}
+	if (GETPOST('WEBSITE_IMAGE', 'alpha')) {
+		$pageimage = GETPOST('WEBSITE_IMAGE', 'alpha');
+	}
+	if (GETPOST('WEBSITE_KEYWORDS', 'alpha')) {
+		$pagekeywords = str_replace(array('<', '>'), '', GETPOST('WEBSITE_KEYWORDS', 'alphanohtml'));
+	}
+	if (GETPOST('WEBSITE_LANG', 'aZ09')) {
+		$pagelang = GETPOST('WEBSITE_LANG', 'aZ09');
+	}
+	if (GETPOST('WEBSITE_ALLOWED_IN_FRAMES', 'aZ09')) {
+		$pageallowedinframes = GETPOST('WEBSITE_ALLOWED_IN_FRAMES', 'aZ09');
+	}
+	if (GETPOST('htmlheader', 'none')) {
+		$pagehtmlheader = GETPOST('htmlheader', 'none');
+	}
 
-	if ($action != 'createcontainer')
-	{
+	if ($action != 'createcontainer') {
 		print '<!-- Status of page -->'."\n";
 		print '<tr><td class="fieldrequired">';
 		print $langs->trans('Status');
@@ -3406,15 +3592,14 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	print $langs->trans('WEBSITE_TYPE_CONTAINER');
 	print '</td><td>';
 	print img_picto('', 'object_technic', 'class="paddingrightonly"').' ';
-	$formwebsite->selectTypeOfContainer('WEBSITE_TYPE_CONTAINER', (GETPOST('WEBSITE_TYPE_CONTAINER', 'alpha') ?GETPOST('WEBSITE_TYPE_CONTAINER', 'alpha') : $type_container));
+	$formwebsite->selectTypeOfContainer('WEBSITE_TYPE_CONTAINER', (GETPOST('WEBSITE_TYPE_CONTAINER', 'alpha') ? GETPOST('WEBSITE_TYPE_CONTAINER', 'alpha') : $type_container), 0, '', 1);
 	print '</td></tr>';
 
-	if ($action == 'createcontainer')
-	{
+	if ($action == 'createcontainer') {
 		print '<tr><td class="titlefield fieldrequired">';
 		print $langs->trans('WEBSITE_PAGE_EXAMPLE');
 		print '</td><td>';
-		print $formwebsite->selectSampleOfContainer('sample', (GETPOSTISSET('sample') ?GETPOST('sample', 'alpha') : 'empty'));
+		print $formwebsite->selectSampleOfContainer('sample', (GETPOSTISSET('sample') ? GETPOST('sample', 'alpha') : 'empty'), 0, '', 1);
 		print '</td></tr>';
 	}
 
@@ -3464,8 +3649,11 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	print $langs->trans('Language');
 	print '</td><td>';
 	$onlykeys = array();
-	if ($object->lang) $onlykeys[$object->lang] = $object->lang;
-	else $onlykeys[$langs->defaultlang] = $langs->defaultlang;
+	if ($object->lang) {
+		$onlykeys[$object->lang] = $object->lang;
+	} else {
+		$onlykeys[$langs->defaultlang] = $langs->defaultlang;
+	}
 	if ($object->otherlang) {
 		$tmparray = explode(',', $object->otherlang);
 		foreach ($tmparray as $key) {
@@ -3490,63 +3678,69 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	print '<!-- Translation of --><tr><td>';
 	print $langs->trans('TranslationLinks');
 	print '</td><td>';
-	if ($action != 'createcontainer')
-	{
+	if ($action != 'createcontainer') {
 		// Has translation pages
 		$sql = 'SELECT rowid, lang from '.MAIN_DB_PREFIX.'website_page where fk_page = '.$objectpage->id;
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num_rows = $db->num_rows($resql);
-			if ($num_rows > 0)
-			{
+			if ($num_rows > 0) {
 				print '<span class="opacitymedium">'.$langs->trans('ThisPageHasTranslationPages').':</span>';
 				$i = 0;
 				$tmppage = new WebsitePage($db);
 				$tmpstring = '';
-				while ($obj = $db->fetch_object($resql))
-				{
+				while ($obj = $db->fetch_object($resql)) {
 					$result = $tmppage->fetch($obj->rowid);
 					if ($result > 0) {
-						if ($i > 0) $tmpstring .= '<br>';
+						if ($i > 0) {
+							$tmpstring .= '<br>';
+						}
 						$tmpstring .= $tmppage->getNomUrl(1).' ('.$tmppage->lang.')';
 						$translatedby++;
 						$i++;
 					}
 				}
-				if ($i > 1) print '<br>';
-				else print ' ';
+				if ($i > 1) {
+					print '<br>';
+				} else {
+					print ' ';
+				}
 				print $tmpstring;
 			}
+		} else {
+			dol_print_error($db);
 		}
-		else dol_print_error($db);
 	}
-	if (empty($translatedby) && ($action == 'editmeta' || $action == 'createcontainer' || $objectpage->fk_page > 0))
-	{
+	if (empty($translatedby) && ($action == 'editmeta' || $action == 'createcontainer' || $objectpage->fk_page > 0)) {
 		$sourcepage = new WebsitePage($db);
 		$result = $sourcepage->fetch($objectpage->fk_page);
-		if ($result == 0)
-		{
+		if ($result == 0) {
 			// not found, we can reset value to clean database
-		}
-		elseif ($result > 0)
-		{
+		} elseif ($result > 0) {
 			$translationof = $objectpage->fk_page;
 			print '<span class="opacitymedium">'.$langs->trans('ThisPageIsTranslationOf').'</span> ';
 			print $formwebsite->selectContainer($website, 'pageidfortranslation', ($translationof ? $translationof : -1), 1, $action, 'minwidth300', array($objectpage->id));
-			if ($translationof > 0) {
+			if ($translationof > 0 && $sourcepage->lang) {
 				print $sourcepage->getNomUrl(2).' ('.$sourcepage->lang.')';
 			}
 		}
 	}
 	print '</td></tr>';
 
+	// Allowed in frames
+	print '<tr><td>';
+	print $langs->trans('AllowedInFrames');
+	//$htmlhelp = $langs->trans("AllowedInFramesDesc");
+	//print $form->textwithpicto($langs->trans('AllowedInFrames'), $htmlhelp, 1, 'help', '', 0, 2, 'allowedinframestooltip');
+	print '</td><td>';
+	print '<input type="checkbox" class="flat" name="WEBSITE_ALLOWED_IN_FRAMES" value="1"'.($pageallowedinframes ? 'checked="checked"' : '').'>';
+	print '</td></tr>';
+
 	// Categories
-	if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire))
-	{
+	if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
 		$langs->load('categories');
 
-		if (! GETPOSTISSET('categories')) {
+		if (!GETPOSTISSET('categories')) {
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_WEBSITE_PAGE, '', null, null, null, 1);
 			$c = new Categorie($db);
 			$cats = $c->containing($objectpage->id, Categorie::TYPE_WEBSITE_PAGE);
@@ -3560,31 +3754,32 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_WEBSITE_PAGE, '', 'parent', null, null, 1);
 		}
 
-		print '<tr class="visibleifsupplier"><td class="toptd">'.$form->editfieldkey('Categories', 'categories', '', $objectpage, 0).'</td><td colspan="3">';
-		print img_picto('', 'category', 'class="paddingright"').$form->multiselectarray('categories', $cate_arbo, (GETPOSTISSET('categories') ? GETPOST('categories', 'array') : $arrayselected), null, null, null, null, "90%");
+		print '<tr><td class="toptd">'.$form->editfieldkey('Categories', 'categories', '', $objectpage, 0).'</td><td>';
+		print img_picto('', 'category', 'class="paddingright"');
+		print $form->multiselectarray('categories', $cate_arbo, (GETPOSTISSET('categories') ? GETPOST('categories', 'array') : $arrayselected), null, null, 'minwidth200 widthcentpercentminusxx');
 		print "</td></tr>";
 	}
 
-	print '<tr><td class="titlefieldcreate">';
-	print 'ObjectClass';
-	print '</td><td>';
-	print '<input type="text" class="flat minwidth300" name="WEBSITE_OBJECTCLASS" placeholder="ClassName::/path/class/ObjectClass.class.php" >';
-	print '</td></tr>';
+	if (!empty($conf->global->WEBSITE_PAGE_SHOW_INTERNAL_LINKS_TO_OBJECT)) {	// TODO Replace this with link into element_element ?
+		print '<tr><td class="titlefieldcreate">';
+		print 'ObjectClass';
+		print '</td><td>';
+		print '<input type="text" class="flat minwidth300" name="WEBSITE_OBJECTCLASS" placeholder="ClassName::/path/class/ObjectClass.class.php" >';
+		print '</td></tr>';
 
-	print '<tr><td class="titlefieldcreate">';
-	print 'ObjectID';
-	print '</td><td>';
-	print '<input type="text" class="flat minwidth300" name="WEBSITE_OBJECTID" >';
-	print '</td></tr>';
-
+		print '<tr><td class="titlefieldcreate">';
+		print 'ObjectID';
+		print '</td><td>';
+		print '<input type="text" class="flat minwidth300" name="WEBSITE_OBJECTID" >';
+		print '</td></tr>';
+	}
 
 	$fuser = new User($db);
 
 	print '<tr><td>';
 	print $langs->trans('Author');
 	print '</td><td>';
-	if ($pageauthorid > 0)
-	{
+	if ($pageauthorid > 0) {
 		$fuser->fetch($pageauthorid);
 		print $fuser->getNomUrl(1);
 	} else {
@@ -3605,13 +3800,11 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	//print dol_print_date($pagedatecreation, 'dayhour');
 	print '</td></tr>';
 
-	if ($action != 'createcontainer')
-	{
+	if ($action != 'createcontainer') {
 		print '<tr><td>';
 		print $langs->trans('UserModif');
 		print '</td><td>';
-		if ($pageusermodifid > 0)
-		{
+		if ($pageusermodifid > 0) {
 			$fuser->fetch($pageusermodifid);
 			print $fuser->getNomUrl(1);
 		}
@@ -3635,18 +3828,16 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	print '</td></tr>';
 
 	print '</table>';
-	if ($action == 'createcontainer')
-	{
+	if ($action == 'createcontainer') {
 		print '<div class="center tablecheckboxcreatemanually'.$hiddenmanuallyafterload.'">';
 
 		print '<input class="button" type="submit" name="addcontainer" value="'.$langs->trans("Create").'">';
-		print '<input class="button" type="submit" name="preview" value="'.$langs->trans("Cancel").'">';
+		print '<input class="button button-cancel" type="submit" name="preview" value="'.$langs->trans("Cancel").'">';
 
 		print '</div>';
 	}
 
-	if ($action == 'createcontainer')
-	{
+	if ($action == 'createcontainer') {
 		print '<script type="text/javascript" language="javascript">
 			jQuery(document).ready(function() {
 				var disableautofillofalias = 0;
@@ -3684,34 +3875,39 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	}
 	//print '</div>';
 
-	//dol_fiche_end();
+	//print dol_get_fiche_end();
 
 	print '</div>';
 
 	print '<br>';
 }
 
-if ($action == 'editfile' || $action == 'file_manager')
-{
+
+// Print formconfirm
+if ($action == 'preview') {
+	print $formconfirm;
+}
+
+if ($action == 'editfile' || $action == 'file_manager' || $action == 'convertimgwebp' || $action == 'confirmconvertimgwebp') {
 	print '<!-- Edit Media -->'."\n";
 	print '<div class="fiche"><br>';
 	//print '<div class="center">'.$langs->trans("FeatureNotYetAvailable").'</center>';
 
 	$module = 'medias';
-	if (empty($url)) $url = DOL_URL_ROOT.'/website/index.php'; // Must be an url without param
+	if (empty($url)) {
+		$url = DOL_URL_ROOT.'/website/index.php'; // Must be an url without param
+	}
 	include DOL_DOCUMENT_ROOT.'/core/tpl/filemanager.tpl.php';
 
 	print '</div>';
 }
 
-if ($action == 'editmenu')
-{
+if ($action == 'editmenu') {
 	print '<!-- Edit Menu -->'."\n";
 	print '<div class="center">'.$langs->trans("FeatureNotYetAvailable").'</center>';
 }
 
-if ($action == 'editsource')
-{
+if ($action == 'editsource') {
 	// Editing with source editor
 
 	$contentforedit = '';
@@ -3721,10 +3917,13 @@ if ($action == 'editsource')
 	$contentforedit .= $objectpage->content;
 	//var_dump($_SESSION["dol_screenheight"]);
 	$maxheightwin = 480;
-	if (isset($_SESSION["dol_screenheight"]))
-	{
-		if ($_SESSION["dol_screenheight"] > 680) $maxheightwin = $_SESSION["dol_screenheight"] - 400;
-		if ($_SESSION["dol_screenheight"] > 800) $maxheightwin = $_SESSION["dol_screenheight"] - 490;
+	if (isset($_SESSION["dol_screenheight"])) {
+		if ($_SESSION["dol_screenheight"] > 680) {
+			$maxheightwin = $_SESSION["dol_screenheight"] - 400;
+		}
+		if ($_SESSION["dol_screenheight"] > 800) {
+			$maxheightwin = $_SESSION["dol_screenheight"] - 490;
+		}
 	}
 	//var_dump($_SESSION["dol_screenheight"]);
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -3738,8 +3937,8 @@ if ($action == 'editsource')
 
 	$contentforedit = '';
 	//$contentforedit.='<style scoped>'."\n";        // "scoped" means "apply to parent element only". Not yet supported by browsers
-    //$contentforedit.=$csscontent;
-    //$contentforedit.='</style>'."\n";
+	//$contentforedit.=$csscontent;
+	//$contentforedit.='</style>'."\n";
 	$contentforedit .= $objectpage->content;
 
 	$contentforedit = preg_replace('/(<img.*src=")(?!http)/', '\1'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $contentforedit, -1, $nbrep);
@@ -3753,8 +3952,7 @@ print "</div>\n";
 print "</form>\n";
 
 
-if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction == 'replace')
-{
+if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction == 'replace') {
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="replacesiteconfirm">';
@@ -3816,8 +4014,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 	print '</div>';
 
 	// Categories
-	if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire))
-	{
+	if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
 		print '<div class="tagtr">';
 		print '<div class="tagtd paddingrightonly marginrightonly opacitymedium" style="padding-right: 10px !important">';
 		print $langs->trans("Category");
@@ -3836,16 +4033,14 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 
 	print '</div></div>';
 
-	if ($action == 'replacesiteconfirm')
-	{
+	if ($action == 'replacesiteconfirm') {
 		print '<!-- List of search result -->'."\n";
 		print '<div class="rowsearchresult clearboth">';
 
 		print '<br>';
 		print '<br>';
 
-		if ($listofpages['code'] == 'OK')
-		{
+		if ($listofpages['code'] == 'OK') {
 			$arrayofselected = is_array($toselect) ? $toselect : array();
 			$param = '';
 			$nbtotalofrecords = count($listofpages['list']);
@@ -3854,10 +4049,18 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 
 			// List of mass actions available
 			$arrayofmassactions = array();
-			if ($user->rights->website->writephp && $searchkey) $arrayofmassactions['replace'] = $langs->trans("Replace");
-			if ($user->rights->website->write) $arrayofmassactions['setcategory'] = $langs->trans("ClassifyInCategory");
-			if ($permissiontodelete) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
-			if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
+			if ($user->rights->website->writephp && $searchkey) {
+				$arrayofmassactions['replace'] = $langs->trans("Replace");
+			}
+			if ($user->rights->website->write) {
+				$arrayofmassactions['setcategory'] = $langs->trans("ClassifyInCategory");
+			}
+			if ($permissiontodelete) {
+				$arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+			}
+			if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) {
+				$arrayofmassactions = array();
+			}
 
 			$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 			$massactionbutton .= '<div class="massactionother massactionreplace hidden">';
@@ -3885,12 +4088,24 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 
 			$param = 'action=replacesiteconfirm&website='.urlencode($website->ref);
 			$param .= '&searchstring='.urlencode($searchkey);
-			if (GETPOST('optioncontent')) $param .= '&optioncontent=content';
-			if (GETPOST('optionmeta')) $param .= '&optionmeta=meta';
-			if (GETPOST('optionsitefiles')) $param .= '&optionsitefiles=optionsitefiles';
-			if (GETPOST('optioncontainertype')) $param .= '&optioncontainertype='.GETPOST('optioncontainertype', 'aZ09');
-			if (GETPOST('optionlanguage')) $param .= '&optionlanguage='.GETPOST('optionlanguage', 'aZ09');
-			if (GETPOST('optioncategory')) $param .= '&optioncategory='.GETPOST('optioncategory', 'aZ09');
+			if (GETPOST('optioncontent')) {
+				$param .= '&optioncontent=content';
+			}
+			if (GETPOST('optionmeta')) {
+				$param .= '&optionmeta=meta';
+			}
+			if (GETPOST('optionsitefiles')) {
+				$param .= '&optionsitefiles=optionsitefiles';
+			}
+			if (GETPOST('optioncontainertype')) {
+				$param .= '&optioncontainertype='.GETPOST('optioncontainertype', 'aZ09');
+			}
+			if (GETPOST('optionlanguage')) {
+				$param .= '&optionlanguage='.GETPOST('optionlanguage', 'aZ09');
+			}
+			if (GETPOST('optioncategory')) {
+				$param .= '&optioncategory='.GETPOST('optioncategory', 'aZ09');
+			}
 
 			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder centpercent">';
@@ -3900,6 +4115,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 			print getTitleFieldOfList("Categories", 0, $_SERVER['PHP_SELF']);
 			print getTitleFieldOfList("", 0, $_SERVER['PHP_SELF']);
 			print getTitleFieldOfList("", 0, $_SERVER['PHP_SELF']);
+			print getTitleFieldOfList("DateLastModification", 0, $_SERVER['PHP_SELF'], 'tms', '', $param, '', $sortfield, $sortorder, 'center ')."\n";		// Date last modif
 			print getTitleFieldOfList("", 0, $_SERVER['PHP_SELF']);
 			print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 			print '</tr>';
@@ -3909,10 +4125,8 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 
 			$totalnbwords = 0;
 
-			foreach ($listofpages['list'] as $answerrecord)
-			{
-				if (get_class($answerrecord) == 'WebsitePage')
-				{
+			foreach ($listofpages['list'] as $answerrecord) {
+				if (get_class($answerrecord) == 'WebsitePage') {
 					print '<tr>';
 
 					// Type of container
@@ -3932,8 +4146,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 
 					// Categories - Tags
 					print '<td>';
-					if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire))
-					{
+					if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
 						// Get current categories
 						$existing = $c->containing($answerrecord->id, Categorie::TYPE_WEBSITE_PAGE, 'object');
 						if (is_array($existing)) {
@@ -3973,6 +4186,10 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 					}
 					print '</td>';
 
+					// Date last modification
+					print '<td class="center nowraponall">';
+					print dol_print_date($answerrecord->date_modification, 'dayhour');
+					print '</td>';
 
 					// Edit properties, HTML sources, status
 					print '<td class="tdwebsitesearchresult right nowraponall">';
@@ -4000,10 +4217,11 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 					print '<td class="nowrap center">';
 
 					print '<!-- Status of page -->'."\n";
-					if ($massactionbutton || $massaction)
-					{
+					if ($massactionbutton || $massaction) {
 						$selected = 0;
-						if (in_array($answerrecord->id, $arrayofselected)) $selected = 1;
+						if (in_array($answerrecord->id, $arrayofselected)) {
+							$selected = 1;
+						}
 						print '<input id="'.$answerrecord->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$answerrecord->id.'"'.($selected ? ' checked="checked"' : '').'>';
 					}
 					print '</td>';
@@ -4058,6 +4276,11 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 					print '<td>';
 					print '</td>';
 
+					// Date last modification
+					print '<td class="center nowraponall">';
+					//print dol_print_date(filemtime());
+					print '</td>';
+
 					// Edit properties, HTML sources, status
 					print '<td>';
 					print '</td>';
@@ -4096,6 +4319,10 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 				print $totalnbwords.' '.$langs->trans("words");
 				print '</td>';
 
+				// Date last modification
+				print '<td>';
+				print '</td>';
+
 				// Edit properties, HTML sources, status
 				print '<td>';
 				print '</td>';
@@ -4110,8 +4337,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 			print '</table>';
 			print '</div>';
 			print '<br>';
-		}
-		else {
+		} else {
 			print '<div class="warning">'.$listofpages['message'].'</div>';
 		}
 
@@ -4121,10 +4347,8 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 	print '</form>';
 }
 
-if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone')
-{
-	if ($pageid > 0 && $atleastonepage)
-	{
+if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone') {
+	if ($pageid > 0 && $atleastonepage) {
 		// $filejs
 		// $filecss
 		// $filephp
@@ -4174,7 +4398,7 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 		// REPLACEMENT OF LINKS When page called by website editor
 
 		$out .= '<!-- style of website from file -->'."\n";
-		$out .= '<style scoped>'."\n"; // "scoped" means "apply to parent element only". No more supported by browsers, snif !
+		$out .= '<style scoped>'."\n"; // "scoped" means "apply to parent element only and not grand parent". No more supported by browsers, snif !
 		$tmpout = '';
 		$tmpout .= '/* Include website CSS file */'."\n";
 		//$csscontent = @file_get_contents($filecss);
@@ -4188,10 +4412,11 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 		$tmp = preg_split('(<style[^>]*>|</style>)', $objectpage->htmlheader);
 		$tmpstyleinheader = '';
 		$i = 0;
-		foreach ($tmp as $valtmp)
-		{
+		foreach ($tmp as $valtmp) {
 			$i++;
-			if ($i % 2 == 0) $tmpstyleinheader .= $valtmp."\n";
+			if ($i % 2 == 0) {
+				$tmpstyleinheader .= $valtmp."\n";
+			}
 		}
 		$tmpout .= $tmpstyleinheader."\n";
 		// Clean style that may affect global style of Dolibarr
@@ -4209,8 +4434,7 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 		$newcontent = $objectpage->content;
 
 		// If mode WEBSITE_SUBCONTAINERSINLINE is on
-		if (!empty($conf->global->WEBSITE_SUBCONTAINERSINLINE))
-		{
+		if (!empty($conf->global->WEBSITE_SUBCONTAINERSINLINE)) {
 			// TODO Check file $filephp exists, if not create it.
 
 			//var_dump($filetpl);
@@ -4221,8 +4445,7 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 				if (empty($res)) {
 					print "ERROR: Failed to include file '".$filephp."'. Try to edit and save page.";
 				}
-			} catch (Exception $e)
-			{
+			} catch (Exception $e) {
 				print $e->getMessage();
 			}
 			$newcontent = ob_get_contents();
@@ -4230,12 +4453,10 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 		}
 
 		// Change the contenteditable to "true" or "false" when mode Edit Inline is on or off
-		if (empty($conf->global->WEBSITE_EDITINLINE))
-		{
+		if (empty($conf->global->WEBSITE_EDITINLINE)) {
 			// Remove the contenteditable="true"
 			$newcontent = preg_replace('/(div|section)(\s[^\>]*)contenteditable="true"/', '\1\2', $newcontent);
-		}
-		else {
+		} else {
 			// Keep the contenteditable="true" when mode Edit Inline is on
 		}
 		$out .= dolWebsiteReplacementOfLinks($object, $newcontent, 0, 'html', $objectpage->id)."\n";
@@ -4256,33 +4477,30 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 		print $out;
 
 		/*file_put_contents($filetpl, $out);
-        if (! empty($conf->global->MAIN_UMASK))
-            @chmod($filetpl, octdec($conf->global->MAIN_UMASK));
+		if (! empty($conf->global->MAIN_UMASK))
+			@chmod($filetpl, octdec($conf->global->MAIN_UMASK));
 
-        // Output file on browser
-        dol_syslog("index.php include $filetpl $filename content-type=$type");
-        $original_file_osencoded=dol_osencode($filetpl);	// New file name encoded in OS encoding charset
+		// Output file on browser
+		dol_syslog("index.php include $filetpl $filename content-type=$type");
+		$original_file_osencoded=dol_osencode($filetpl);	// New file name encoded in OS encoding charset
 
-        // This test if file exists should be useless. We keep it to find bug more easily
-        if (! file_exists($original_file_osencoded))
-        {
-            dol_print_error(0,$langs->trans("ErrorFileDoesNotExists",$original_file));
-            exit;
-        }
+		// This test if file exists should be useless. We keep it to find bug more easily
+		if (! file_exists($original_file_osencoded))
+		{
+			dol_print_error(0,$langs->trans("ErrorFileDoesNotExists",$original_file));
+			exit;
+		}
 
-        //include_once $original_file_osencoded;
-        */
+		//include_once $original_file_osencoded;
+		*/
 
 		/*print '<iframe class="websiteiframenoborder centpercent" src="'.DOL_URL_ROOT.'/public/website/index.php?website='.$websitekey.'&pageid='.$pageid.'"/>';
-        print '</iframe>';*/
-	}
-	else {
-		if (empty($websitekey) || $websitekey == '-1')
-		{
+		print '</iframe>';*/
+	} else {
+		if (empty($websitekey) || $websitekey == '-1') {
 			print '<br><br><div class="center previewnotyetavailable"><span class="">'.$langs->trans("NoWebSiteCreateOneFirst").'</span></div><br><br><br>';
 			print '<div class="center"><div class="logo_setup"></div></div>';
-		}
-		else {
+		} else {
 			print '<br><br><div class="center previewnotyetavailable"><span class="">'.$langs->trans("PreviewOfSiteNotYetAvailable", $object->ref).'</span></div><br><br><br>';
 			print '<div class="center"><div class="logo_setup"></div></div>';
 		}

@@ -126,7 +126,7 @@ class Hook extends CommonObject
 		),
 		'module' => array(
 			'type' => 'varchar(128)',
-			'label' => 'Url',
+			'label' => 'Module',
 			'enabled' => 1,
 			'visible' => 1,
 			'position' => 30,
@@ -137,7 +137,7 @@ class Hook extends CommonObject
 		),
 		'action' => array(
 			'type' => 'varchar(128)',
-			'label' => 'Url',
+			'label' => 'Action',
 			'enabled' => 1,
 			'visible' => 1,
 			'position' => 30,
@@ -212,9 +212,14 @@ class Hook extends CommonObject
 	public $label;
 
 	/**
-	 * @var string amount
+	 * @var string url of webhook
 	 */
-	public $amount;
+	public $url;
+
+	/**
+	 * @var int ID of user owner webhook
+	 */
+	public $fk_user;
 
 	/**
 	 * @var int Status
@@ -245,35 +250,6 @@ class Hook extends CommonObject
 	 * @var string import_key
 	 */
 	public $import_key;
-
-
-	// If this object has a subtable with lines
-
-	/**
-	 * @var int    Name of subtable line
-	 */
-	//public $table_element_line = 'hookdet';
-
-	/**
-	 * @var int    Field with ID of parent key if this field has a parent
-	 */
-	//public $fk_element = 'fk_hook';
-
-	/**
-	 * @var int    Name of subtable class that manage subtable lines
-	 */
-	//public $class_element_line = 'MyObjectline';
-
-	/**
-	 * @var array  Array of child tables (child tables to delete before deleting a record)
-	 */
-	//protected $childtables=array('hookdet');
-
-	/**
-	 * @var MyObjectLine[]     Array of subtable lines
-	 */
-	//public $lines = array();
-
 
 
 	/**
@@ -409,13 +385,13 @@ class Hook extends CommonObject
 	 * @return int         <0 if KO, 0 if not found, >0 if OK
 	 */
 	/*public function fetchLines()
-    {
-        $this->lines=array();
+	{
+		$this->lines=array();
 
-        // Load lines with object MyObjectLine
+		// Load lines with object MyObjectLine
 
-        return count($this->lines)?1:0;
-    }*/
+		return count($this->lines)?1:0;
+	}*/
 
 	/**
 	 * Load list of objects in memory from the database.
@@ -440,13 +416,13 @@ class Hook extends CommonObject
 		$sql .= ' t.rowid';
 		// TODO Get all fields
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		$sql .= ' WHERE t.entity = '.$conf->entity;
+		$sql .= ' WHERE t.entity = '.((int) $conf->entity);
 		// Manage filter
 		$sqlwhere = array();
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid') {
-					$sqlwhere[] = $key.'='.$value;
+					$sqlwhere[] = $key.' = '.((int) $value);
 				} elseif (strpos($key, 'date') !== false) {
 					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
 				} elseif ($key == 'customsql') {
@@ -566,11 +542,11 @@ class Hook extends CommonObject
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
 
 			/*
-             $hookmanager->initHooks(array('hookdao'));
-             $parameters=array('id'=>$this->id);
-             $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-             if ($reshook > 0) $linkclose = $hookmanager->resPrint;
-             */
+			 $hookmanager->initHooks(array('hookdao'));
+			 $parameters=array('id'=>$this->id);
+			 $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+			 if ($reshook > 0) $linkclose = $hookmanager->resPrint;
+			 */
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
@@ -645,7 +621,9 @@ class Hook extends CommonObject
 		}
 
 		$statusType = 'status5';
-		if ($status == self::STATUS_VALIDATED) $statusType = 'status4';
+		if ($status == self::STATUS_VALIDATED) {
+			$statusType = 'status4';
+		}
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
@@ -661,7 +639,7 @@ class Hook extends CommonObject
 		$sql = 'SELECT rowid, date_creation as datec, tms as datem,';
 		$sql .= ' fk_user_creat, fk_user_modif';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		$sql .= ' WHERE t.rowid = '.$id;
+		$sql .= ' WHERE t.rowid = '.((int) $id);
 		$result = $this->db->query($sql);
 		if ($result) {
 			if ($this->db->num_rows($result)) {
@@ -744,11 +722,11 @@ class Hook extends CommonObject
 /*
 class MyObjectLine
 {
-    // @var int ID
-    public $id;
-    // @var mixed Sample line property 1
-    public $prop1;
-    // @var mixed Sample line property 2
-    public $prop2;
+	// @var int ID
+	public $id;
+	// @var mixed Sample line property 1
+	public $prop1;
+	// @var mixed Sample line property 2
+	public $prop2;
 }
 */

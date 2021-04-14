@@ -16,7 +16,6 @@ EditMedias=Editar medios
 EditPageMeta=Edita prop pag/contenedor
 Webpage=Página web / contenedor
 AddPage=Añadir página / contenedor
-PageContainer=Página / contenedor
 PreviewOfSiteNotYetAvailable=Vista previa de su sitio web <strong>%s</strong> aún no está disponible. Primero debe &#39; <strong>Importar una plantilla de sitio web completa</strong> &#39; o simplemente &#39; <strong>Agregar una página / contenedor</strong> &#39;.
 RequestedPageHasNoContentYet=La página solicitada con el id. %s aún no tiene contenido o el archivo de caché .tpl.php fue eliminado. Edita el contenido de la página para resolver esto.
 SiteDeleted=Sitio web &#39;%s&#39; eliminado

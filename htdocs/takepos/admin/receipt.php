@@ -2,6 +2,7 @@
 /* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011-2017 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2019 Andreu Bisquerra Gaya		<jove@bisquerra.com>
+ * Copyright (C) 2021    Nicolas ZABOURI    <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +31,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/takepos.lib.php";
 
 // Security check
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 $langs->loadLangs(array("admin", "cashdesk", "commercial"));
 
@@ -38,8 +41,7 @@ $langs->loadLangs(array("admin", "cashdesk", "commercial"));
  * Actions
  */
 
-if (GETPOST('action', 'alpha') == 'set')
-{
+if (GETPOST('action', 'alpha') == 'set') {
 	$db->begin();
 
 	$res = dolibarr_set_const($db, "TAKEPOS_HEADER", GETPOST('TAKEPOS_HEADER', 'alpha'), 'chaine', 0, '', $conf->entity);
@@ -47,24 +49,28 @@ if (GETPOST('action', 'alpha') == 'set')
 	$res = dolibarr_set_const($db, "TAKEPOS_RECEIPT_NAME", GETPOST('TAKEPOS_RECEIPT_NAME', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_SHOW_CUSTOMER", GETPOST('TAKEPOS_SHOW_CUSTOMER', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_AUTO_PRINT_TICKETS", GETPOST('TAKEPOS_AUTO_PRINT_TICKETS', 'int'), 'int', 0, '', $conf->entity);
-    $res = dolibarr_set_const($db, "TAKEPOS_PRINT_SERVER", GETPOST('TAKEPOS_PRINT_SERVER', 'alpha'), 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "TAKEPOS_PRINT_SERVER", GETPOST('TAKEPOS_PRINT_SERVER', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_PRINT_PAYMENT_METHOD", GETPOST('TAKEPOS_PRINT_PAYMENT_METHOD', 'alpha'), 'chaine', 0, '', $conf->entity);
 
 	dol_syslog("admin/cashdesk: level ".GETPOST('level', 'alpha'));
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) {
+		$error++;
+	}
 
- 	if (!$error)
-    {
-        $db->commit();
-	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    } else {
-        $db->rollback();
-	    setEventMessages($langs->trans("Error"), null, 'errors');
-    }
-} elseif (GETPOST('action', 'alpha') == 'setmethod')
-{
-    dolibarr_set_const($db, "TAKEPOS_PRINT_METHOD", GETPOST('value', 'alpha'), 'chaine', 0, '', $conf->entity);
+	if (!$error) {
+		$db->commit();
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		$db->rollback();
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+} elseif (GETPOST('action', 'alpha') == 'setmethod') {
+	dolibarr_set_const($db, "TAKEPOS_PRINT_METHOD", GETPOST('value', 'alpha'), 'chaine', 0, '', $conf->entity);
+	// TakePOS connector require ReceiptPrinter module
+	if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector" && !$conf->receiptprinter->enabled) {
+		activateModule("modReceiptPrinter");
+	}
 }
 
 
@@ -80,7 +86,7 @@ llxHeader('', $langs->trans("CashDeskSetup"));
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("CashDeskSetup").' (TakePOS)', $linkback, 'title_setup');
 $head = takepos_admin_prepare_head();
-dol_fiche_head($head, 'receipt', 'TakePOS', -1, 'cash-register');
+print dol_get_fiche_head($head, 'receipt', 'TakePOS', -1, 'cash-register');
 
 print '<form action="'.$_SERVER["PHP_SELF"].'?terminal='.(empty($terminal) ? 1 : $terminal).'" method="post">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -100,36 +106,33 @@ print $langs->trans('Browser');
 print '<td>';
 print $langs->trans('BrowserMethodDescription');
 print '</td><td class="right">';
-if ($conf->global->TAKEPOS_PRINT_METHOD == "browser")
-{
-    print img_picto($langs->trans("Activated"), 'switch_on');
+if ($conf->global->TAKEPOS_PRINT_METHOD == "browser") {
+	print img_picto($langs->trans("Activated"), 'switch_on');
 } else {
-    print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmethod&token='.newToken().'&value=browser">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmethod&token='.newToken().'&value=browser">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 }
 print "</td></tr>\n";
 
 // Receipt printer module
-if ($conf->global->MAIN_FEATURES_LEVEL >= 1) {
-	print '<tr class="oddeven"><td>';
-	print $langs->trans('DolibarrReceiptPrinter');
-	print '<td>';
-	print $langs->trans('ReceiptPrinterMethodDescription');
-	print '<br>';
-	print '<a href="'.DOL_URL_ROOT.'/admin/receiptprinter.php">'.$langs->trans("Setup").'</a>';
-	print '</td><td class="right">';
-	if ($conf->receiptprinter->enabled) {
-		if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
-			print img_picto($langs->trans("Activated"), 'switch_on');
-		} else {
-			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmethod&token='.newToken().'&value=receiptprinter">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
-		}
+print '<tr class="oddeven"><td>';
+print $langs->trans('DolibarrReceiptPrinter');
+print '<td>';
+print $langs->trans('ReceiptPrinterMethodDescription');
+print '<br>';
+print '<a href="'.DOL_URL_ROOT.'/admin/receiptprinter.php">'.$langs->trans("Setup").'</a>';
+print '</td><td class="right">';
+if ($conf->receiptprinter->enabled) {
+	if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
+		print img_picto($langs->trans("Activated"), 'switch_on');
 	} else {
-		print '<span class="opacitymedium">';
-		print $langs->trans("ModuleReceiptPrinterMustBeEnabled");
-		print '</span>';
+		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmethod&token='.newToken().'&value=receiptprinter">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 	}
-	print "</td></tr>\n";
+} else {
+	print '<span class="opacitymedium">';
+	print $langs->trans("ModuleReceiptPrinterMustBeEnabled");
+	print '</span>';
 }
+print "</td></tr>\n";
 
 // TakePOS Connector
 print '<tr class="oddeven"><td>';
@@ -137,11 +140,10 @@ print "TakePOS Connector";
 print '<td>';
 print $langs->trans('TakeposConnectorMethodDescription');
 print '</td><td class="right">';
-if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector")
-{
-    print img_picto($langs->trans("Activated"), 'switch_on');
+if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") {
+	print img_picto($langs->trans("Activated"), 'switch_on');
 } else {
-    print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmethod&token='.newToken().'&value=takeposconnector">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmethod&token='.newToken().'&value=takeposconnector">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 }
 print "</td></tr>\n";
 print '</table>';
@@ -176,15 +178,16 @@ if ($conf->global->TAKEPOS_PRINT_METHOD == "browser" || $conf->global->TAKEPOS_P
 	$substitutionarray = pdf_getSubstitutionArray($langs, null, null, 2);
 	$substitutionarray['__(AnyTranslationKey)__'] = $langs->trans("Translation");
 	$htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
-	foreach ($substitutionarray as $key => $val)	$htmltext .= $key.'<br>';
+	foreach ($substitutionarray as $key => $val) {
+		$htmltext .= $key.'<br>';
+	}
 	$htmltext .= '</i>';
 
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("FreeLegalTextOnInvoices")." - ".$langs->trans("Header"), $htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
 	print '</td><td>';
 	$variablename = 'TAKEPOS_HEADER';
-	if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
-	{
+	if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
 		print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
 	} else {
 		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -197,8 +200,7 @@ if ($conf->global->TAKEPOS_PRINT_METHOD == "browser" || $conf->global->TAKEPOS_P
 	print $form->textwithpicto($langs->trans("FreeLegalTextOnInvoices")." - ".$langs->trans("Footer"), $htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
 	print '</td><td>';
 	$variablename = 'TAKEPOS_FOOTER';
-	if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
-	{
+	if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
 		print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
 	} else {
 		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -233,6 +235,14 @@ print '<td colspan="2">';
 print $form->selectyesno("TAKEPOS_AUTO_PRINT_TICKETS", $conf->global->TAKEPOS_AUTO_PRINT_TICKETS, 1);
 print "</td></tr>\n";
 
+
+// Show price without vat
+print '<tr class="oddeven"><td>';
+print $langs->trans('ShowPriceHTOnReceipt');
+print '<td colspan="2">';
+print ajax_constantonoff("TAKEPOS_SHOW_HT_RECEIPT", array(), $conf->entity, 0, 0, 1, 0);
+print "</td></tr>\n";
+
 if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector" && filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans('WeighingScale');
@@ -246,7 +256,7 @@ print '</div>';
 
 print '<br>';
 
-print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
+print '<div class="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></div>';
 
 print "</form>\n";
 

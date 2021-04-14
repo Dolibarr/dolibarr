@@ -41,26 +41,29 @@ $childids = $user->getAllChildIds(1);
 
 // Security check
 $socid = 0;
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'expensereport', $id, 'expensereport');
 
 
 $object = new ExpenseReport($db);
-if (!$object->fetch($id, $ref) > 0)
-{
+if (!$object->fetch($id, $ref) > 0) {
 	dol_print_error($db);
 }
 
 $permissionnote = $user->rights->expensereport->creer; // Used by the include of actions_setnotes.inc.php
 
-if ($object->id > 0)
-{
+if ($object->id > 0) {
 	// Check current user can read this expense report
 	$canread = 0;
-	if (!empty($user->rights->expensereport->readall)) $canread = 1;
-	if (!empty($user->rights->expensereport->lire) && in_array($object->fk_user_author, $childids)) $canread = 1;
-	if (!$canread)
-	{
+	if (!empty($user->rights->expensereport->readall)) {
+		$canread = 1;
+	}
+	if (!empty($user->rights->expensereport->lire) && in_array($object->fk_user_author, $childids)) {
+		$canread = 1;
+	}
+	if (!$canread) {
 		accessforbidden();
 	}
 }
@@ -82,15 +85,14 @@ llxHeader("", $title, $helpurl);
 
 $form = new Form($db);
 
-if ($id > 0 || !empty($ref))
-{
+if ($id > 0 || !empty($ref)) {
 	$object = new ExpenseReport($db);
 	$object->fetch($id, $ref);
 	$object->info($object->id);
 
 	$head = expensereport_prepare_head($object);
 
-	dol_fiche_head($head, 'note', $langs->trans("ExpenseReport"), -1, 'trip');
+	print dol_get_fiche_head($head, 'note', $langs->trans("ExpenseReport"), -1, 'trip');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
@@ -108,7 +110,7 @@ if ($id > 0 || !empty($ref))
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 // End of page

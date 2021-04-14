@@ -96,10 +96,16 @@ abstract class ModeleNumRefPayments
 		global $langs;
 		$langs->load("admin");
 
-		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
-		elseif ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-		elseif ($this->version == 'dolibarr') return DOL_VERSION;
-		elseif ($this->version) return $this->version;
-		else return $langs->trans("NotAvailable");
+		if ($this->version == 'development') {
+			return $langs->trans("VersionDevelopment");
+		} elseif ($this->version == 'experimental') {
+			return $langs->trans("VersionExperimental");
+		} elseif ($this->version == 'dolibarr') {
+			return DOL_VERSION;
+		} elseif ($this->version) {
+			return $this->version;
+		} else {
+			return $langs->trans("NotAvailable");
+		}
 	}
 }

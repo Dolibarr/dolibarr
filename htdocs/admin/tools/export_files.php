@@ -33,8 +33,8 @@ $langs->load("admin");
 $action = GETPOST('action', 'aZ09');
 $what = GETPOST('what', 'alpha');
 $export_type = GETPOST('export_type', 'alpha');
-$file = GETPOST('zipfilename_template', 'alpha');
-$compression = GETPOST('compression');
+$file = trim(GETPOST('zipfilename_template', 'alpha'));
+$compression = GETPOST('compression', 'aZ09');
 
 $file = dol_sanitizeFileName($file);
 $file = preg_replace('/(\.zip|\.tar|\.tgz|\.gz|\.tar\.gz|\.bz2)$/i', '', $file);
@@ -42,13 +42,23 @@ $file = preg_replace('/(\.zip|\.tar|\.tgz|\.gz|\.tar\.gz|\.bz2)$/i', '', $file);
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (!$sortorder) $sortorder = "DESC";
-if (!$sortfield) $sortfield = "date";
-if ($page < 0) { $page = 0; } elseif (empty($page)) $page = 0;
+if (!$sortorder) {
+	$sortorder = "DESC";
+}
+if (!$sortfield) {
+	$sortfield = "date";
+}
+if ($page < 0) {
+	$page = 0;
+} elseif (empty($page)) {
+	$page = 0;
+}
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $offset = $limit * $page;
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 $errormsg = '';
 
@@ -57,13 +67,15 @@ $errormsg = '';
  * Actions
  */
 
-if ($action == 'delete')
-{
-    $filerelative = dol_sanitizeFileName(GETPOST('urlfile', 'alpha'));
-    $filepath = $conf->admin->dir_output.'/'.$filerelative;
+if ($action == 'delete') {
+	$filerelative = dol_sanitizeFileName(GETPOST('urlfile', 'alpha'));
+	$filepath = $conf->admin->dir_output.'/'.$filerelative;
 	$ret = dol_delete_file($filepath, 1);
-	if ($ret) setEventMessages($langs->trans("FileWasRemoved", $filerelative), null, 'mesgs');
-	else setEventMessages($langs->trans("ErrorFailToDeleteFile", $filerelative), null, 'errors');
+	if ($ret) {
+		setEventMessages($langs->trans("FileWasRemoved", $filerelative), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("ErrorFailToDeleteFile", $filerelative), null, 'errors');
+	}
 	$action = '';
 }
 
@@ -74,18 +86,16 @@ if ($action == 'delete')
 
 // Increase limit of time. Works only if we are not in safe mode
 $ExecTimeLimit = 1800; // 30mn
-if (!empty($ExecTimeLimit))
-{
-    $err = error_reporting();
-    error_reporting(0); // Disable all errors
-    //error_reporting(E_ALL);
-    @set_time_limit($ExecTimeLimit); // Need more than 240 on Windows 7/64
-    error_reporting($err);
+if (!empty($ExecTimeLimit)) {
+	$err = error_reporting();
+	error_reporting(0); // Disable all errors
+	//error_reporting(E_ALL);
+	@set_time_limit($ExecTimeLimit); // Need more than 240 on Windows 7/64
+	error_reporting($err);
 }
 $MemoryLimit = 0;
-if (!empty($MemoryLimit))
-{
-    @ini_set('memory_limit', $MemoryLimit);
+if (!empty($MemoryLimit)) {
+	@ini_set('memory_limit', $MemoryLimit);
 }
 
 $form = new Form($db);
@@ -110,61 +120,54 @@ $result = dol_mkdir($outputdir);
 
 $utils = new Utils($db);
 
-if ($compression == 'zip')
-{
+if ($compression == 'zip') {
 	$file .= '.zip';
-    $ret = dol_compress_dir(DOL_DATA_ROOT, $outputdir."/".$file, $compression, '/(\.back|\.old|\.log|[\\\/]temp[\\\/]|documents[\\\/]admin[\\\/]documents[\\\/])/i');
-    if ($ret < 0)
-    {
-    	if ($ret == -2) {
-    		$langs->load("errors");
-    		$errormsg = $langs->trans("ErrNoZipEngine");
-    	} else {
-    		$langs->load("errors");
-    		$errormsg = $langs->trans("ErrorFailedToWriteInDir", $outputdir);
-    	}
-    }
-} elseif (in_array($compression, array('gz', 'bz')))
-{
+	$excludefiles = '/(\.back|\.old|\.log|[\/\\\]temp[\/\\\]|documents[\/\\\]admin[\/\\\]documents[\/\\\])/i';
+	$ret = dol_compress_dir(DOL_DATA_ROOT, $outputdir."/".$file, $compression, $excludefiles);
+	if ($ret < 0) {
+		if ($ret == -2) {
+			$langs->load("errors");
+			$errormsg = $langs->trans("ErrNoZipEngine");
+		} else {
+			$langs->load("errors");
+			$errormsg = $langs->trans("ErrorFailedToWriteInDir", $outputdir);
+		}
+	}
+} elseif (in_array($compression, array('gz', 'bz'))) {
 	$userlogin = ($user->login ? $user->login : 'unknown');
 
 	$outputfile = $conf->admin->dir_temp.'/export_files.'.$userlogin.'.out'; // File used with popen method
 
-    $file .= '.tar';
-    // We also exclude '/temp/' dir and 'documents/admin/documents'
-    $cmd = "tar -cf ".$outputdir."/".$file." --exclude-vcs --exclude 'temp' --exclude 'dolibarr.log' --exclude 'dolibarr_*.log' --exclude 'documents/admin/documents' -C ".dirname(DOL_DATA_ROOT)." ".basename(DOL_DATA_ROOT);
+	$file .= '.tar';
+	// We also exclude '/temp/' dir and 'documents/admin/documents'
+	$cmd = "tar -cf ".$outputdir."/".$file." --exclude-vcs --exclude 'temp' --exclude 'dolibarr.log' --exclude 'dolibarr_*.log' --exclude 'documents/admin/documents' -C ".dirname(DOL_DATA_ROOT)." ".basename(DOL_DATA_ROOT);
 
-    $result = $utils->executeCLI($cmd, $outputfile);
+	$result = $utils->executeCLI($cmd, $outputfile);
 
-    $retval = $result['error'];
-    if ($result['result'] || !empty($retval))
-    {
-        $langs->load("errors");
-        dol_syslog("Documents tar retval after exec=".$retval, LOG_ERR);
-        $errormsg = 'Error tar generation return '.$retval;
-    } else {
-        if ($compression == 'gz')
-        {
-            $cmd = "gzip -f ".$outputdir."/".$file;
-        }
-        if ($compression == 'bz')
-        {
-            $cmd = "bzip2 -f ".$outputdir."/".$file;
-        }
+	$retval = $result['error'];
+	if ($result['result'] || !empty($retval)) {
+		$langs->load("errors");
+		dol_syslog("Documents tar retval after exec=".$retval, LOG_ERR);
+		$errormsg = 'Error tar generation return '.$retval;
+	} else {
+		if ($compression == 'gz') {
+			$cmd = "gzip -f ".$outputdir."/".$file;
+		}
+		if ($compression == 'bz') {
+			$cmd = "bzip2 -f ".$outputdir."/".$file;
+		}
 
-        $result = $utils->executeCLI($cmd, $outputfile);
+		$result = $utils->executeCLI($cmd, $outputfile);
 
-        $retval = $result['error'];
-        if ($result['result'] || !empty($retval))
-        {
-            $errormsg = 'Error '.$compression.' generation return '.$retval;
-            unlink($outputdir."/".$file);
-        }
-    }
+		$retval = $result['error'];
+		if ($result['result'] || !empty($retval)) {
+			$errormsg = 'Error '.$compression.' generation return '.$retval;
+			unlink($outputdir."/".$file);
+		}
+	}
 }
 
-if ($errormsg)
-{
+if ($errormsg) {
 	setEventMessages($langs->trans("Error")." : ".$errormsg, null, 'errors');
 }
 

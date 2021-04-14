@@ -133,3 +133,4 @@ KeysToUseForUpdates=Chiave da utilizzare per l'aggiornamento dei dati
 NbInsert=Numero di righe inserite: %s
 NbUpdate=Numero di righe aggiornate: %s
 MultipleRecordFoundWithTheseFilters=Righe multiple sono state trovate con questi filtri: %s
+StocksWithBatch=Scorte e ubicazione (magazzino) dei prodotti con numero di lotto / seriale
