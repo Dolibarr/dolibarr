@@ -86,7 +86,7 @@ if ($module == 'ecm') {
 	print img_picto('', 'refresh', 'id="refreshbutton"', false, 0, 0, '', 'size15x marginrightonly');
 	print '</a>';
 }
-if ($permtoadd && !GETPOSTISSET('website')) {	// If on file manager to manage medias of a web site
+if ($permtoadd && GETPOSTISSET('website')) {	// If on file manager to manage medias of a web site
 	print '<a href="'.$_SERVER["PHP_SELF"].'?action=confirmconvertimgwebp&website='.$website->ref.'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans("GenerateImgWebp")).'">';
 	print img_picto('', 'images', '', false, 0, 0, '', 'size15x flip marginrightonly');
 	print '</a>';
