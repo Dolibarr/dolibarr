@@ -191,7 +191,7 @@ if ($id > 0 || !empty($ref)) {
 		$param = '&id='.$object->id.'&num='.urlencode($numref);
 		$moreparam = '&num='.urlencode($numref); ;
 		$relativepathwithnofile = $id."/statement/".dol_sanitizeFileName($numref)."/";
-		include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+		include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 	} else {
 		dol_print_error($db);
 	}

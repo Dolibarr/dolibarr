@@ -676,7 +676,7 @@ if (empty($type) || $type == 'c' || $type == 'p')
 }
 if (empty($type) || $type == 'f')
 {
-	if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire)
+	if (!empty($conf->fournisseur->enabled) && !empty($conf->categorie->enabled) && $user->rights->categorie->lire)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
