@@ -127,7 +127,7 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 
 $managedfor = $conf->global->PARTNERSHIP_IS_MANAGED_FOR;
 
-if($managedfor != 'member' && $sortfield == 'd.datefin') $sortfield = '';
+if ($managedfor != 'member' && $sortfield == 'd.datefin') $sortfield = '';
 
 // Default sort order (if not yet defined by previous GETPOST)
 if (!$sortfield) {
@@ -271,7 +271,7 @@ $morecss = array();
 // --------------------------------------------------------------------
 $sql = 'SELECT ';
 $sql .= $object->getFieldList('t');
-if ($managedfor == 'member'){
+if ($managedfor == 'member') {
 	$sql .= ', d.datefin, d.fk_adherent_type, dty.subscription';
 }
 // Add fields from extrafields
@@ -289,7 +289,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
 }
-if ($managedfor == 'member'){
+if ($managedfor == 'member') {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent as d on (d.rowid = t.fk_member)";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent_type as dty on (dty.rowid = d.fk_adherent_type)";
 }
@@ -304,8 +304,7 @@ if ($object->ismultientitymanaged == 1) {
 }
 if ($managedfor == 'member')
 	$sql .= " AND fk_member > 0";
-else 
-	$sql .= " AND fk_soc > 0";
+else $sql .= " AND fk_soc > 0";
 foreach ($search as $key => $val) {
 	if (array_key_exists($key, $object->fields)) {
 		if ($key == 'status' && $search[$key] == -1) {
@@ -335,7 +334,7 @@ foreach ($search as $key => $val) {
 		}
 	}
 }
-if ($managedfor == 'member'){
+if ($managedfor == 'member') {
 	if ($search_filter == 'withoutsubscription') {
 		$sql .= " AND (d.datefin IS NULL OR dty.subscription = 0)";
 	}
@@ -533,10 +532,9 @@ print '<div class="div-table-responsive">'; // You can use div-table-responsive-
 print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 
-if ($managedfor == 'member'){
+if ($managedfor == 'member') {
 	$arrayfields['t.fk_member']['checked'] = 1;
-}
-else {
+} else {
 	$arrayfields['t.fk_soc']['checked'] = 1;
 }
 // Fields title search
@@ -573,7 +571,7 @@ foreach ($object->fields as $key => $val) {
 	}
 }
 // End of subscription date
-if ($managedfor == 'member'){
+if ($managedfor == 'member') {
 	print '<td class="liste_titre center">';
 	$selectarray = array('-1'=>'', 'withoutsubscription'=>$langs->trans("WithoutSubscription"), 'uptodate'=>$langs->trans("UpToDate"), 'outofdate'=>$langs->trans("OutOfDate"));
 	print $form->selectarray('search_filter', $selectarray, $search_filter);
@@ -613,7 +611,7 @@ foreach ($object->fields as $key => $val) {
 	}
 }
 // End of subscription date
-if ($managedfor == 'member'){
+if ($managedfor == 'member') {
 	$key = 'datefin';
 	$cssforfield = 'center';
 	print getTitleFieldOfList('SubscriptionEndDate', 0, $_SERVER['PHP_SELF'], 'd.'.$key, '', $param, ($cssforfield ? 'class="'.$cssforfield.'"' : ''), $sortfield, $sortorder, ($cssforfield ? $cssforfield.' ' : ''))."\n";
@@ -694,10 +692,10 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		}
 	}
 	// End of subscription date
-	if ($managedfor == 'member'){
+	if ($managedfor == 'member') {
 		print '<td class="nowrap center">';
 		$result = $adherent->fetch($object->fk_member);
-		if($result){
+		if ($result) {
 			$datefin = $adherent->datefin;
 			if ($datefin) {
 				print dol_print_date($datefin, 'day');
