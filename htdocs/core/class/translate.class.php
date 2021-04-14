@@ -612,61 +612,61 @@ class Translate
 	 *	@param	int		$maxsize	Max length of text. Warning: Will not work if paramX has HTML content. deprecated.
 	 *	@param	string	$picto		Picto name
 	 *	@param	string	$picto_pos	Picto position
-	 
+
 	 *  @return string      		Translated string (encoded into HTML entities and UTF8)
 	 */
-	public function trans($key, $param1 = '', $param2 = '', $param3 = '', $param4 = '', $maxsize = 0, $picto = '', $picto_pos = '')
-	{
-		global $conf;
+public function trans($key, $param1 = '', $param2 = '', $param3 = '', $param4 = '', $maxsize = 0, $picto = '', $picto_pos = '')
+{
+	global $conf;
 
-		if (!empty($this->tab_translate[$key])) {	// Translation is available
-			$str = $this->tab_translate[$key];
+	if (!empty($this->tab_translate[$key])) {	// Translation is available
+		$str = $this->tab_translate[$key];
 
-			// Make some string replacement after translation
-			$replacekey = 'MAIN_REPLACE_TRANS_'.$this->defaultlang;
-			if (!empty($conf->global->$replacekey)) {    // Replacement translation variable with string1:newstring1;string2:newstring2
-				$tmparray = explode(';', $conf->global->$replacekey);
-				foreach ($tmparray as $tmp) {
-					$tmparray2 = explode(':', $tmp);
-					$str = preg_replace('/'.preg_quote($tmparray2[0]).'/', $tmparray2[1], $str);
-				}
+		// Make some string replacement after translation
+		$replacekey = 'MAIN_REPLACE_TRANS_'.$this->defaultlang;
+		if (!empty($conf->global->$replacekey)) {    // Replacement translation variable with string1:newstring1;string2:newstring2
+			$tmparray = explode(';', $conf->global->$replacekey);
+			foreach ($tmparray as $tmp) {
+				$tmparray2 = explode(':', $tmp);
+				$str = preg_replace('/'.preg_quote($tmparray2[0]).'/', $tmparray2[1], $str);
 			}
+		}
 
-			// We replace some HTML tags by __xx__ to avoid having them encoded by htmlentities because
-			// we want to keep '"' '<b>' '</b>' '<strong' '</strong>' '<a ' '</a>' '<br>' '< ' '<span' '</span>' that are reliable HTML tags inside translation strings.
-			$str = str_replace(
-				array('"', '<b>', '</b>', '<u>', '</u>', '<i', '</i>', '<center>', '</center>', '<strong>', '</strong>', '<a ', '</a>', '<br>', '<span', '</span>', '< ', '>'), // We accept '< ' but not '<'. We can accept however '>'
-				array('__quot__', '__tagb__', '__tagbend__', '__tagu__', '__taguend__', '__tagi__', '__tagiend__', '__tagcenter__', '__tagcenterend__', '__tagb__', '__tagbend__', '__taga__', '__tagaend__', '__tagbr__', '__tagspan__', '__tagspanend__', '__ltspace__', '__gt__'),
-				$str
-			);
+		// We replace some HTML tags by __xx__ to avoid having them encoded by htmlentities because
+		// we want to keep '"' '<b>' '</b>' '<strong' '</strong>' '<a ' '</a>' '<br>' '< ' '<span' '</span>' that are reliable HTML tags inside translation strings.
+		$str = str_replace(
+			array('"', '<b>', '</b>', '<u>', '</u>', '<i', '</i>', '<center>', '</center>', '<strong>', '</strong>', '<a ', '</a>', '<br>', '<span', '</span>', '< ', '>'), // We accept '< ' but not '<'. We can accept however '>'
+			array('__quot__', '__tagb__', '__tagbend__', '__tagu__', '__taguend__', '__tagi__', '__tagiend__', '__tagcenter__', '__tagcenterend__', '__tagb__', '__tagbend__', '__taga__', '__tagaend__', '__tagbr__', '__tagspan__', '__tagspanend__', '__ltspace__', '__gt__'),
+			$str
+		);
 
-			if (strpos($key, 'Format') !== 0) {
-				$str = sprintf($str, $param1, $param2, $param3, $param4); // Replace %s and %d except for FormatXXX strings.
+		if (strpos($key, 'Format') !== 0) {
+			$str = sprintf($str, $param1, $param2, $param3, $param4); // Replace %s and %d except for FormatXXX strings.
+		}
+
+		// Crypt string into HTML
+		$str = htmlentities($str, ENT_COMPAT, $this->charset_output); // Do not convert simple quotes in translation (strings in html are embraced by "). Use dol_escape_htmltag around text in HTML content
+
+		// Restore reliable HTML tags into original translation string
+		$str = str_replace(
+			array('__quot__', '__tagb__', '__tagbend__', '__tagu__', '__taguend__', '__tagi__', '__tagiend__', '__tagcenter__', '__tagcenterend__', '__taga__', '__tagaend__', '__tagbr__', '__tagspan__', '__tagspanend__', '__ltspace__', '__gt__'),
+			array('"', '<b>', '</b>', '<u>', '</u>', '<i', '</i>', '<center>', '</center>', '<a ', '</a>', '<br>', '<span', '</span>', '< ', '>'),
+			$str
+		);
+
+		if ($maxsize) {
+			$str = dol_trunc($str, $maxsize);
+		}
+		if (!empty($picto)){
+			if ($picto_pos == 'after'){
+				$str = $str.'&ensp;'.img_picto('', $picto);
+			}elseif ($picto_pos == 'between'){
+				$str = img_picto('', $picto).'&ensp;'.$str.'&ensp;'.img_picto('', $picto);
+			}else{
+				$str = img_picto('', $picto).'&ensp;'.$str;
 			}
-
-			// Crypt string into HTML
-			$str = htmlentities($str, ENT_COMPAT, $this->charset_output); // Do not convert simple quotes in translation (strings in html are embraced by "). Use dol_escape_htmltag around text in HTML content
-
-			// Restore reliable HTML tags into original translation string
-			$str = str_replace(
-				array('__quot__', '__tagb__', '__tagbend__', '__tagu__', '__taguend__', '__tagi__', '__tagiend__', '__tagcenter__', '__tagcenterend__', '__taga__', '__tagaend__', '__tagbr__', '__tagspan__', '__tagspanend__', '__ltspace__', '__gt__'),
-				array('"', '<b>', '</b>', '<u>', '</u>', '<i', '</i>', '<center>', '</center>', '<a ', '</a>', '<br>', '<span', '</span>', '< ', '>'),
-				$str
-			);
-
-			if ($maxsize) {
-				$str = dol_trunc($str, $maxsize);
-			}
-			if (!empty($picto)){
-				if ($picto_pos == 'after'){
-					$str = $str.'&ensp;'.img_picto('', $picto);
-				}elseif ($picto_pos == 'between'){
-					$str = img_picto('', $picto).'&ensp;'.$str.'&ensp;'.img_picto('', $picto);
-				}else{
-					$str = img_picto('', $picto).'&ensp;'.$str;
-				}
-			}
-			return $str;
+		}
+		return $str;
 		} else { // Translation is not available
 			//if ($key[0] == '$') { return dol_eval($key,1); }
 			return $this->getTradFromKey($key);
