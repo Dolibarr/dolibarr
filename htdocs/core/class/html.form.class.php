@@ -883,7 +883,7 @@ class Form
 		$label = array();
 		$atleastonefavorite = 0;
 
-		$sql = "SELECT rowid, code as code_iso, code_iso as code_iso3, label, favorite";
+		$sql = "SELECT rowid, code as code_iso, code_iso as code_iso3, label, favorite, eec";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_country";
 		$sql .= " WHERE active > 0";
 		//$sql.= " ORDER BY code ASC";
@@ -902,7 +902,8 @@ class Form
 					$countryArray[$i]['code_iso'] = $obj->code_iso;
 					$countryArray[$i]['code_iso3'] 	= $obj->code_iso3;
 					$countryArray[$i]['label'] = ($obj->code_iso && $langs->transnoentitiesnoconv("Country".$obj->code_iso) != "Country".$obj->code_iso ? $langs->transnoentitiesnoconv("Country".$obj->code_iso) : ($obj->label != '-' ? $obj->label : ''));
-					$countryArray[$i]['favorite']   = $obj->favorite;
+					$countryArray[$i]['favorite'] = $obj->favorite;
+					$countryArray[$i]['eec'] = $obj->eec;
 					$favorite[$i] = $obj->favorite;
 					$label[$i] = dol_string_unaccent($countryArray[$i]['label']);
 					$i++;
@@ -959,9 +960,9 @@ class Form
 					}
 
 					if ($selected && $selected != '-1' && ($selected == $row['rowid'] || $selected == $row['code_iso'] || $selected == $row['code_iso3'] || $selected == $row['label'])) {
-						$out .= '<option value="'.($usecodeaskey ? ($usecodeaskey == 'code2' ? $row['code_iso'] : $row['code_iso3']) : $row['rowid']).'" selected data-html="'.dol_escape_htmltag($labeltoshow).'">';
+						$out .= '<option value="'.($usecodeaskey ? ($usecodeaskey == 'code2' ? $row['code_iso'] : $row['code_iso3']) : $row['rowid']).'" selected data-html="'.dol_escape_htmltag($labeltoshow).'" data-eec="'.((int) $row['eec']).'">';
 					} else {
-						$out .= '<option value="'.($usecodeaskey ? ($usecodeaskey == 'code2' ? $row['code_iso'] : $row['code_iso3']) : $row['rowid']).'" data-html="'.dol_escape_htmltag($labeltoshow).'">';
+						$out .= '<option value="'.($usecodeaskey ? ($usecodeaskey == 'code2' ? $row['code_iso'] : $row['code_iso3']) : $row['rowid']).'" data-html="'.dol_escape_htmltag($labeltoshow).'" data-eec="'.((int) $row['eec']).'">';
 					}
 					$out .= $labeltoshow;
 					$out .= '</option>';
