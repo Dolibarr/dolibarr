@@ -611,7 +611,7 @@ class Translate
 	 *	@param	int		$maxsize	Max length of text. Warning: Will not work if paramX has HTML content. deprecated.
 	 *  @return string      		Translated string (encoded into HTML entities and UTF8)
 	 */
-	public function trans($key, $param1 = '', $param2 = '', $param3 = '', $param4 = '', $maxsize = 0)
+	public function trans($key, $param1 = '', $param2 = '', $param3 = '', $param4 = '', $maxsize = 0, $picto = '')
 	{
 		global $conf;
 
@@ -653,7 +653,9 @@ class Translate
 			if ($maxsize) {
 				$str = dol_trunc($str, $maxsize);
 			}
-
+			if (!empty($picto)){
+				$str = img_picto('', $picto).'&ensp;'.$str;
+			}
 			return $str;
 		} else { // Translation is not available
 			//if ($key[0] == '$') { return dol_eval($key,1); }
