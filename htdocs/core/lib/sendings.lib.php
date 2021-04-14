@@ -77,12 +77,12 @@ function shipping_prepare_head($object)
 		$h++;
 	}
 
-    if(! empty($conf->productbatch->enabled)) {
-        $head[$h][0] = DOL_URL_ROOT."/expedition/detail_batch.php?id=".$object->id;
-        $head[$h][1] = $langs->trans("DetailBatch");
-        $head[$h][2] = 'detail_batch';
-        $h++;
-    }
+	if (! empty($conf->productbatch->enabled)) {
+		$head[$h][0] = DOL_URL_ROOT."/expedition/detail_batch.php?id=".$object->id;
+		$head[$h][1] = $langs->trans("DetailBatch");
+		$head[$h][2] = 'detail_batch';
+		$h++;
+	}
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
