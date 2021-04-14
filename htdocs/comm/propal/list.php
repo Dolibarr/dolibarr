@@ -218,9 +218,10 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $permissiontoread = $user->rights->propal->lire;
 $permissiontoadd = $user->rights->propal->write;
 $permissiontodelete = $user->rights->propal->supprimer;
-if (!empty(MAIN_USE_ADVANCED_PERMS)) {
+if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 	$permissiontovalidate = $user->rights->propale->propal_advance->validate;
 	$permissiontoclose = $user->rights->propale->propal_advance->close;
+	$permissiontosendbymail = $user->rights->propale->propal_advance->send;
 } else {
 	$permissiontovalidate = $user->rights->propal->write;
 	$permissiontoclose = $user->rights->propal->write;
@@ -837,7 +838,7 @@ if ($resql) {
 		$arrayofmassactions['setbilled'] =img_picto('', 'bill').'&ensp;'.$langs->trans("ClassifyBilled");
 	}
 	if ($permissiontodelete) {
-		$arrayofmassactions['predelete'] = img_picto('', 'delete').'&ensp;'$langs->trans("Delete");
+		$arrayofmassactions['predelete'] = img_picto('', 'delete').'&ensp;'.$langs->trans("Delete");
 	}
 
 	if (in_array($massaction, array('presend', 'predelete', 'closed'))) {
