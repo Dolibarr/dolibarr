@@ -653,7 +653,7 @@ class Translate
 			if ($maxsize) {
 				$str = dol_trunc($str, $maxsize);
 			}
-			if (!empty($picto)){
+			if (!empty($picto)) {
 				$str = img_picto('', $picto).'&ensp;'.$str;
 			}
 			return $str;
