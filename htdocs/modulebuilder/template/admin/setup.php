@@ -82,6 +82,7 @@ $arrayofparameters = array(
 	//'MYMODULE_MYPARAM5'=>array('type'=>'yesno', 'enabled'=>1),
 	//'MYMODULE_MYPARAM5'=>array('type'=>'thirdparty_type', 'enabled'=>1),
     //'MYMODULE_MYPARAM6'=>array('type'=>'securekey', 'enabled'=>1),
+    //'MYMODULE_MYPARAM7'=>array('type'=>'product', 'enabled'=>1),
 );
 
 $error = 0;
@@ -297,6 +298,11 @@ if ($action == 'edit') {
                     });';
 			        print '</script>';
 			    }
+			} elseif ($val['type'] == 'product') {
+			    if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+			        $selected = (empty($conf->global->$constname) ? '' : $conf->global->$constname);
+			        $form->select_produits($selected, $constname, '', 0);
+			    }
 			} else {
 				print '<input name="'.$constname.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.$conf->global->{$constname}.'">';
 			}
@@ -363,8 +369,16 @@ if ($action == 'edit') {
 					} elseif ($conf->global->{$constname}==0) {
 						print $langs->trans("NorProspectNorCustomer");
 					}
+				} elseif ($val['type'] == 'product') {
+				    $product = new Product($db);
+				    $resprod = $product->fetch($conf->global->{$constname});
+				    if ($resprod > 0) {
+				        print $product->ref;
+				    } elseif ($resprod < 0) {
+				        setEventMessages(null, $object->errors, "errors");
+				    }
 				} else {
-					print  $conf->global->{$constname};
+					print $conf->global->{$constname};
 				}
 				print '</td></tr>';
 			}
