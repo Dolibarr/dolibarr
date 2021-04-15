@@ -338,14 +338,11 @@ if (empty($reshook) && $action == 'add') {
 
 				$result = $facture->addline($label, 0, 1, $vattouse, 0, 0, $idprodsubscription, 0, $datesubscription, '', 0, 0, '', 'TTC', $amount, 1);
 				if ($result <= 0) {
-					$confattendee->error = $confattendee->error;
-					$confattendee->errors = $confattendee->errors;
+					$confattendee->error = $facture->error;
+					$confattendee->errors = $facture->errors;
 					$error++;
 				}
-				var_dump('a');
 				$resultfacture = $facture->create($user);
-				var_dump('b');
-				var_dump($resultfacture);
 				if ($resultfacture < 0) {
 					$error++;
 					$errmsg .= $facture->error;
