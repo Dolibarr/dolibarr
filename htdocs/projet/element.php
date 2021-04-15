@@ -367,7 +367,7 @@ $listofreferent = array(
 	'class'=>'Entrepot',
 	'table'=>'entrepot',
 	'datefieldname'=>'date_entrepot',
-	'urlnew'=>DOL_URL_ROOT.'/product/stock/card.php?action=create&origin=project&originid='.$id,
+	'urlnew'=>DOL_URL_ROOT.'/product/stock/card.php?action=create&projectid='.$id,
 	'lang'=>'entrepot',
 	'buttonnew'=>'AddWarehouse',
 	'project_field'=>'fk_project',
