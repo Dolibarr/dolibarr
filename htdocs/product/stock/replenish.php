@@ -786,7 +786,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		// Force call prod->load_stats_xxx to choose status to count (otherwise it is loaded by load_stock function)
 		if (isset($draftchecked)) {
 			$result = $prod->load_stats_commande_fournisseur(0, '0,1,2,3,4');
-		} else if (!$usevirtualstock){
+		} elseif (!$usevirtualstock) {
 			$result = $prod->load_stats_commande_fournisseur(0, '1,2,3,4');
 		}
 
