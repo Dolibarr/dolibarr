@@ -435,7 +435,7 @@ print '<tr><td>'.$langs->trans("Email").' <FONT COLOR="red">*</FONT></td><td><in
 // Company
 print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company");
 if (!empty(floatval($project->price_registration))) {
-	print '<FONT COLOR="red">*</FONT>';
+	print '<FONT COLOR="red"> *</FONT>';
 }
 print ' </td><td><input type="text" name="societe" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
 // Address
