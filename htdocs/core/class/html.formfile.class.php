@@ -1330,8 +1330,8 @@ class FormFile
 					print '<td class="center">';
 					if ($relativedir && $filearray[$key]['rowid'] > 0) {	// only if we are in a mode where a scan of dir were done and we have id of file in ECM table
 						if ($editline) {
-							print $langs->trans("FileSharedViaALink").' ';
-							print '<input class="inline-block" type="checkbox" name="shareenabled"'.($file['share'] ? ' checked="checked"' : '').' /> ';
+							print '<label for="idshareenabled'.$key.'">'.$langs->trans("FileSharedViaALink").'</label> ';
+							print '<input class="inline-block" type="checkbox" id="idshareenabled'.$key.'" name="shareenabled"'.($file['share'] ? ' checked="checked"' : '').' /> ';
 						} else {
 							if ($file['share']) {
 								// Define $urlwithroot
