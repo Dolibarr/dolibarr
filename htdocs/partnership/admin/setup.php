@@ -81,30 +81,13 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'setting') {
 	require_once DOL_DOCUMENT_ROOT."/core/modules/modPartnership.class.php";
-	$partnership = new modPartnership($db);
 
 	$value = GETPOST('managed_for', 'alpha');
-
 
 	$modulemenu = ($value == 'member') ? 'member' : 'thirdparty';
 	$res = dolibarr_set_const($db, "PARTNERSHIP_IS_MANAGED_FOR", $modulemenu, 'chaine', 0, '', $conf->entity);
 
-	$partnership->tabs = array();
-	if ($modulemenu == 'member') {
-		$partnership->tabs[] = array('data'=>'member:+partnership:Partnership:partnership@partnership:$user->rights->partnership->read:/adherents/partnership.php?socid=__ID__');
-		$fk_mainmenu = "members";
-	} else {
-		$partnership->tabs[] = array('data'=>'thirdparty:+partnership:Partnership:partnership@partnership:$user->rights->partnership->read:/societe/partnership.php?socid=__ID__');
-		$fk_mainmenu = "companies";
-	}
-
-	foreach ($partnership->menu as $key => $menu) {
-		$partnership->menu[$key]['mainmenu'] = $fk_mainmenu;
-
-		if ($menu['leftmenu'] == 'partnership')
-			$partnership->menu[$key]['fk_menu'] = 'fk_mainmenu='.$fk_mainmenu;
-		else $partnership->menu[$key]['fk_menu'] = 'fk_mainmenu='.$fk_mainmenu.',fk_leftmenu=partnership';
-	}
+	$partnership = new modPartnership($db);
 
 	$error += $partnership->delete_tabs();
 	$error += $partnership->insert_tabs();
