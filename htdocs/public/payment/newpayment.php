@@ -61,6 +61,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
+require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class.php';
+require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 // Hook to be used by external payment modules (ie Payzen, ...)
 include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 $hookmanager = new HookManager($db);
@@ -1724,6 +1727,136 @@ if ($source == 'donation') {
 	print '<input type="hidden" name="desc" value="'.dol_escape_htmltag($labeldesc).'">'."\n";
 }
 
+if ($source == 'conferencesubscription') {
+	// @todo cas paiement de conferenceattendee
+	$found = true;
+	$langs->load("members");
+
+	// Finding the Attendee
+	$attendee = new ConferenceOrBoothAttendee($db);
+	$result = $attendee->fetch('', $ref);
+	if ($result <= 0) {
+		$mesg = $attendee->error;
+		$error++;
+	}
+	$object = $attendee;
+
+	// Finding the thirdparty associated to the Attendee
+	$thirdparty = new Societe($db);
+	$resultthirdparty = $thirdparty->fetch($attendee->fk_soc);
+	if ($resultthirdparty <= 0) {
+		$mesg = $thirdparty->error;
+		$error++;
+	}
+
+	// Finding the conference
+	$conference = new ConferenceOrBooth($db);
+	$resultconf = $conference->fetch($attendee->fk_actioncomm);
+	if ($resultconf <= 0) {
+		$mesg = $conference->error;
+		$error++;
+	}
+
+	// Finding the project
+	$project = new Project($db);
+	$resultproj = $project->fetch($conference->fk_project);
+	if ($resultproj <= 0) {
+		$mesg = $project->error;
+		$error++;
+	}
+
+	if ($action != 'dopayment') { // Do not change amount if we just click on first dopayment
+		$amount = $project->price_registration;
+		if (GETPOST("amount", 'alpha')) {
+			$amount = GETPOST("amount", 'alpha');
+		}
+		$amount = price2num($amount, 'MT');
+	}
+
+	if (GETPOST('fulltag', 'alpha')) {
+		$fulltag = GETPOST('fulltag', 'alpha');
+	} else {
+		$fulltag = 'MEM='.$member->id.'.DAT='.dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+		if (!empty($TAG)) {
+			$tag = $TAG; $fulltag .= '.TAG='.$TAG;
+		}
+	}
+	$fulltag = dol_string_unaccent($fulltag);
+
+	// Creditor
+	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("Creditor");
+	print '</td><td class="CTableRow'.($var ? '1' : '2').'"><b>'.$creditor.'</b>';
+	print '<input type="hidden" name="creditor" value="'.$creditor.'">';
+	print '</td></tr>'."\n";
+
+	// Debitor
+	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("Member");
+	print '</td><td class="CTableRow'.($var ? '1' : '2').'"><b>';
+	print $thirdparty->name;
+	print '</b>';
+	print '</td></tr>'."\n";
+
+	// Object
+	$text = '<b>'.$langs->trans("PaymentConferenceAttendee").'</b>';
+	if (GETPOST('desc', 'alpha')) {
+		$text = '<b>'.$langs->trans(GETPOST('desc', 'alpha')).'</b>';
+	}
+	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("Designation");
+	print '</td><td class="CTableRow'.($var ? '1' : '2').'">'.$text;
+	print '<input type="hidden" name="source" value="'.dol_escape_htmltag($source).'">';
+	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($member->ref).'">';
+	print '</td></tr>'."\n";
+
+	// Amount
+	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("Amount");
+	print '</td><td class="CTableRow'.($var ? '1' : '2').'">';
+	$valtoshow = $project->price_registration;
+	print '<b>'.price($valtoshow).'</b>';
+	print '<input type="hidden" name="amount" value="'.$valtoshow.'">';
+	print '<input type="hidden" name="newamount" value="'.$valtoshow.'">';
+
+	// Currency
+	print ' <b>'.$langs->trans("Currency".$currency).'</b>';
+	print '<input type="hidden" name="currency" value="'.$currency.'">';
+	print '</td></tr>'."\n";
+
+	// Tag
+	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("PaymentCode");
+	print '</td><td class="CTableRow'.($var ? '1' : '2').'"><b style="word-break: break-all;">'.$fulltag.'</b>';
+	print '<input type="hidden" name="tag" value="'.$tag.'">';
+	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
+	print '</td></tr>'."\n";
+
+	// Shipping address
+	$shipToName = $thirdparty->getFullName($langs);
+	$shipToStreet = $thirdparty->address;
+	$shipToCity = $thirdparty->town;
+	$shipToState = $thirdparty->state_code;
+	$shipToCountryCode = $thirdparty->country_code;
+	$shipToZip = $thirdparty->zip;
+	$shipToStreet2 = '';
+	$phoneNum = $thirdparty->phone;
+	if ($shipToName && $shipToStreet && $shipToCity && $shipToCountryCode && $shipToZip) {
+		print '<!-- Shipping address information -->';
+		print '<input type="hidden" name="shipToName" value="'.$shipToName.'">'."\n";
+		print '<input type="hidden" name="shipToStreet" value="'.$shipToStreet.'">'."\n";
+		print '<input type="hidden" name="shipToCity" value="'.$shipToCity.'">'."\n";
+		print '<input type="hidden" name="shipToState" value="'.$shipToState.'">'."\n";
+		print '<input type="hidden" name="shipToCountryCode" value="'.$shipToCountryCode.'">'."\n";
+		print '<input type="hidden" name="shipToZip" value="'.$shipToZip.'">'."\n";
+		print '<input type="hidden" name="shipToStreet2" value="'.$shipToStreet2.'">'."\n";
+		print '<input type="hidden" name="phoneNum" value="'.$phoneNum.'">'."\n";
+	} else {
+		print '<!-- Shipping address not complete, so we don t use it -->'."\n";
+	}
+	print '<input type="hidden" name="thirdparty_id" value="'.$thirdparty->id.'">'."\n";
+	print '<input type="hidden" name="email" value="'.$thirdparty->email.'">'."\n";
+	$labeldesc = $langs->trans("PaymentSubscription");
+	if (GETPOST('desc', 'alpha')) {
+		$labeldesc = GETPOST('desc', 'alpha');
+	}
+	print '<input type="hidden" name="desc" value="'.dol_escape_htmltag($labeldesc).'">'."\n";
+}
 
 if (!$found && !$mesg) {
 	$mesg = $langs->trans("ErrorBadParameters");

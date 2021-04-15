@@ -61,8 +61,8 @@ $arrayofparameters = array(
 	'EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER'=>array('type'=>'emailtemplate:eventorganization_send', 'enabled'=>1),
 	'EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES'=>array('type'=>'emailtemplate:eventorganization_send', 'enabled'=>1),
 	'EVENTORGANIZATION_SECUREKEY'=>array('type'=>'securekey', 'enabled'=>1),
-    'SERVICE_BOOTH_LOCATION'=>array('type'=>'product', 'enabled'=>1),
-    'SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION'=>array('type'=>'product', 'enabled'=>1),
+	'SERVICE_BOOTH_LOCATION'=>array('type'=>'product', 'enabled'=>1),
+	'SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION'=>array('type'=>'product', 'enabled'=>1),
 );
 
 $error = 0;
@@ -209,12 +209,12 @@ if ($action == 'edit') {
 	print '<tr class="liste_titre"><td class="titlefieldcreate">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	foreach ($arrayofparameters as $constname => $val) {
-	    if ($val['enabled']==1) {
-	        $setupnotempty++;
-	        print '<tr class="oddeven"><td>';
-	        $tooltiphelp = (($langs->trans($constname . 'Tooltip') != $constname . 'Tooltip') ? $langs->trans($constname . 'Tooltip') : '');
-	        print '<span id="helplink'.$constname.'" class="spanforparamtooltip">'.$form->textwithpicto($langs->trans($constname), $tooltiphelp, 1, 'info', '', 0, 3, 'tootips'.$constname).'</span>';
-	        print '</td><td>';
+		if ($val['enabled']==1) {
+			$setupnotempty++;
+			print '<tr class="oddeven"><td>';
+			$tooltiphelp = (($langs->trans($constname . 'Tooltip') != $constname . 'Tooltip') ? $langs->trans($constname . 'Tooltip') : '');
+			print '<span id="helplink'.$constname.'" class="spanforparamtooltip">'.$form->textwithpicto($langs->trans($constname), $tooltiphelp, 1, 'info', '', 0, 3, 'tootips'.$constname).'</span>';
+			print '</td><td>';
 
 			if ($val['type'] == 'textarea') {
 				print '<textarea class="flat" name="'.$constname.'" id="'.$constname.'" cols="50" rows="5" wrap="soft">' . "\n";
@@ -259,13 +259,13 @@ if ($action == 'edit') {
 				$formcompany = new FormCompany($db);
 				print $formcompany->selectProspectCustomerType($conf->global->{$constname}, $constname);
 			} elseif ($val['type'] == 'securekey') {
-    			print '<input required="required" type="text" class="flat" id="'.$constname.'" name="'.$constname.'" value="'.(GETPOST($constname, 'alpha') ?GETPOST($constname, 'alpha') : $conf->global->{$constname}).'" size="40">';
-    			if (!empty($conf->use_javascript_ajax)) {
-    			    print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token'.$constname.'" class="linkobject"');
-    			}
-    			if (!empty($conf->use_javascript_ajax)) {
-    			    print "\n".'<script type="text/javascript">';
-    			    print '$(document).ready(function () {
+				print '<input required="required" type="text" class="flat" id="'.$constname.'" name="'.$constname.'" value="'.(GETPOST($constname, 'alpha') ?GETPOST($constname, 'alpha') : $conf->global->{$constname}).'" size="40">';
+				if (!empty($conf->use_javascript_ajax)) {
+					print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token'.$constname.'" class="linkobject"');
+				}
+				if (!empty($conf->use_javascript_ajax)) {
+					print "\n".'<script type="text/javascript">';
+					print '$(document).ready(function () {
                         $("#generate_token'.$constname.'").click(function() {
                 	        $.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
                 		      action: \'getrandompassword\',
@@ -276,25 +276,16 @@ if ($action == 'edit') {
             				});
                          });
                     });';
-    			    print '</script>';
-    			}
+					print '</script>';
+				}
 			} elseif ($var['type'] == 'product') {
-			    if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
-			        print '<tr class="oddeven"><td>'.$langs->trans("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS").'</td>';
-			        print '<td>';
-			        $selected = (empty($conf->global->$constname) ? '' : $conf->global->$constname);
-			        $form->select_produits($selected, $constname, '', 0);
-			        print '</td>';
-			        print "</tr>\n";
-			    }
-			    if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
-			            print '<tr class="oddeven"><td>'.$langs->trans("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS").'</td>';
-			            print '<td>';
-			            $selected = (empty($conf->global->$constname) ? '' : $conf->global->$constname);
-			            $form->select_produits($selected, $constname, '', 0);
-			            print '</td>';
-			    }
-			    print "</tr>\n";
+				if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+					print '<tr class="oddeven"><td>'.$langs->trans("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS").'</td>';
+					print '<td>';
+					$selected = (empty($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS) ? '' : $conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS);
+					$form->select_produits($selected, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', '', 0);
+					print '</td>';
+				}
 			} else {
 				print '<input name="'.$constname.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.$conf->global->{$constname}.'">';
 			}

@@ -86,15 +86,16 @@ $id = dol_decode($encodedid, $dolibarr_main_instance_unique_id);
 $conference = new ConferenceOrBooth($db);
 $resultconf = $conference->fetch($id);
 if ($resultconf < 0) {
-    setEventMessages(null, $object->errors, "errors");
+	setEventMessages(null, $object->errors, "errors");
 }
 
 $project = new Project($db);
 $resultproject = $project->fetch($conference->fk_project);
-if ($resultproject < 0){
-    $error++;
-    $errmsg .= $project->error;
+if ($resultproject < 0) {
+	$error++;
+	$errmsg .= $project->error;
 }
+var_dump($conference->fk_project);
 
 // Getting 'securekey'.'id' from Post and decoding it
 $encodedsecurekeyandid = GETPOST('securekey', 'alpha');
@@ -293,32 +294,31 @@ if (empty($reshook) && $action == 'add') {
 
 	if (!$error) {
 		$db->commit();
-	    global $dolibarr_main_url_root;
-	    if (!empty(floatval($project->price_registration))){
-	        $facture = new Facture($db);
-	        $facture->type = 0;
-	        $facture->socid = $thirdparty->id;
-	        $facture->paye = 0;
-	        //@todo price and taxes to add
-	        $tva = get_default_tva($mysoc, $thirdparty);
-	        $facture->date = dol_now();
-	        $resultfacture = $facture->create($user); 
-	        if ($resultfacture < 0){
-                $error++;
-	            $errmsg .= $facture->error;
-	        } else {
-	            $redirection = $dolibarr_main_url_root.'/public/payment/newpayment.php';
-	            Header("Location: ".$redirection);
-	            exit;
-	        }
-
-	    } else {
-	        // No price has been set
-	        // Validating the subscription
-	        $confattendee->setStatut(1);
-	        $redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php';
-	        Header("Location: ".$redirection);
-	        exit;
+		global $dolibarr_main_url_root;
+		if (!empty(floatval($project->price_registration))) {
+			$facture = new Facture($db);
+			$facture->type = 0;
+			$facture->socid = $thirdparty->id;
+			$facture->paye = 0;
+			//@todo price and taxes to add
+			$tva = get_default_tva($mysoc, $thirdparty);
+			$facture->date = dol_now();
+			$resultfacture = $facture->create($user);
+			if ($resultfacture < 0) {
+				$error++;
+				$errmsg .= $facture->error;
+			} else {
+				$redirection = $dolibarr_main_url_root.'/public/payment/newpayment.php?source=conferencesubscription&ref='.$confattendee->id;
+				Header("Location: ".$redirection);
+				exit;
+			}
+		} else {
+			// No price has been set
+			// Validating the subscription
+			$confattendee->setStatut(1);
+			$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php';
+			Header("Location: ".$redirection);
+			exit;
 		}
 		//Header("Location: ".$urlback);
 		//exit;
@@ -394,8 +394,8 @@ print '<table class="border" summary="form to subscribe" id="tablesubscribe">'."
 print '<tr><td>'.$langs->trans("Email").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="email" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
 // Company
 print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company");
-if(!empty(floatval($project->price_registration))){
-    print '<FONT COLOR="red">*</FONT>';
+if (!empty(floatval($project->price_registration))) {
+	print '<FONT COLOR="red">*</FONT>';
 }
 print ' </td><td><input type="text" name="societe" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
 // Address

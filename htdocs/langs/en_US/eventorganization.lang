@@ -105,3 +105,7 @@ EvntOrgEndDuration =  and ends on
 # SubscriptionOk page
 #
 SubscriptionOk = Your subscription to this conference has been validated
+#
+# Payment page
+#
+PaymentConferenceAttendee = Paiement de participation à une conférence
