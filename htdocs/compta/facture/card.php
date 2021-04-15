@@ -5512,13 +5512,6 @@ if ($action == 'create') {
 			print showOnlinePaymentUrl('invoice', $object->ref).'<br>';
 		}
 
-		// Show direct download link
-		//if ($object->statut != Facture::STATUS_DRAFT && !empty($conf->global->INVOICE_ALLOW_EXTERNAL_DOWNLOAD)) {
-		if ($object->statut != Facture::STATUS_DRAFT) {
-			print '<br><!-- Link to download main doc -->'."\n";
-			print showDirectDownloadLink($object).'<br>';
-		}
-
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 		// List of actions on element
