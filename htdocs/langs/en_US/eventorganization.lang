@@ -19,7 +19,6 @@
 ModuleEventOrganizationName = Event Organization
 EventOrganizationDescription = Event Organization through Module Project
 EventOrganizationDescriptionLong= Manage Event organization for conference, attendees, speaker, and attendees, with public subcription page
-
 #
 # Menu
 #
@@ -82,6 +81,7 @@ PriceOfBoothHelp=Subscription price to stand a booth
 EventOrganizationICSLink=Link ICS for events
 ConferenceOrBoothInformation=Conference Or Booth informations
 Attendees = Attendees
+EVENTORGANIZATION_SECUREKEY = Secure Key of the public registration link to a conference
 #
 # Status
 #
@@ -91,3 +91,11 @@ EvntOrgConfirmed = Confirmed
 EvntOrgNotQualified = Not Qualified
 EvntOrgDone = Done
 EvntOrgCancelled = Cancelled
+#
+# Public page
+#
+PublicAttendeeSubscriptionPage = Public link of registration to a conference
+MissingOrBadSecureKey = The security key is invalid or missing
+EvntOrgWelcomeMessage = This form allows you to register as a new participant to the conference 
+EvntOrgStartDuration = This conference starts on 
+EvntOrgEndDuration =  and ends on

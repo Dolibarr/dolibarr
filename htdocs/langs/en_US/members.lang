@@ -169,6 +169,7 @@ DocForLabels=Generate address sheets
 SubscriptionPayment=Subscription payment
 LastSubscriptionDate=Date of latest subscription payment
 LastSubscriptionAmount=Amount of latest subscription
+LastMemberType=Last Member type
 MembersStatisticsByCountries=Members statistics by country
 MembersStatisticsByState=Members statistics by state/province
 MembersStatisticsByTown=Members statistics by town

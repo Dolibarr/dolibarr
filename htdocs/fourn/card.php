@@ -326,7 +326,7 @@ if ($object->id > 0) {
 	print '</td>';
 	print '</tr>';
 
-	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled)) && !empty($conf->global->ORDER_MANAGE_MIN_AMOUNT)) {
+	if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled)) && !empty($conf->global->ORDER_MANAGE_MIN_AMOUNT)) {
 		print '<tr class="nowrap">';
 		print '<td>';
 		print $form->editfieldkey("OrderMinAmount", 'supplier_order_min_amount', $object->supplier_order_min_amount, $object, $user->rights->societe->creer);
@@ -406,7 +406,7 @@ if ($object->id > 0) {
 		}
 	}
 
-	if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled)) {
 		// Box proposals
 		$tmp = $object->getOutstandingOrders('supplier');
 		$outstandingOpened = $tmp['opened'];
@@ -427,7 +427,7 @@ if ($object->id > 0) {
 		}
 	}
 
-	if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_invoice->enabled)) {
 		$tmp = $object->getOutstandingBills('supplier');
 		$outstandingOpened = $tmp['opened'];
 		$outstandingTotal = $tmp['total_ht'];
@@ -832,7 +832,7 @@ if ($object->id > 0) {
 			}
 		}
 
-		if ($user->rights->fournisseur->commande->creer) {
+		if ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer) {
 			$langs->load("orders");
 			if ($object->status == 1) {
 				print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddOrder").'</a>';
@@ -841,7 +841,7 @@ if ($object->id > 0) {
 			}
 		}
 
-		if ($user->rights->fournisseur->facture->creer) {
+		if ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer) {
 			if (!empty($orders2invoice) && $orders2invoice > 0) {
 				if ($object->status == 1) {
 					// Company is open
@@ -854,7 +854,7 @@ if ($object->id > 0) {
 			}
 		}
 
-		if ($user->rights->fournisseur->facture->creer) {
+		if ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer) {
 			$langs->load("bills");
 			if ($object->status == 1) {
 				print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a>';

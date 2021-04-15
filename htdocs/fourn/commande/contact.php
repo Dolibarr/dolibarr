@@ -53,7 +53,7 @@ $object = new CommandeFournisseur($db);
  * Add a new contact
  */
 
-if ($action == 'addcontact' && $user->rights->fournisseur->commande->creer) {
+if ($action == 'addcontact' && ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer)) {
 	$result = $object->fetch($id);
 
 	if ($result > 0 && $id > 0) {
@@ -73,14 +73,14 @@ if ($action == 'addcontact' && $user->rights->fournisseur->commande->creer) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
-} elseif ($action == 'swapstatut' && $user->rights->fournisseur->commande->creer) {
+} elseif ($action == 'swapstatut' && ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer)) {
 	// Toggle the status of a contact
 	if ($object->fetch($id)) {
 		$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
 	} else {
 		dol_print_error($db);
 	}
-} elseif ($action == 'deletecontact' && $user->rights->fournisseur->commande->creer) {
+} elseif ($action == 'deletecontact' && ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer)) {
 	// Deleting a contact
 	$object->fetch($id);
 	$result = $object->delete_contact(GETPOST("lineid", 'int'));
@@ -136,7 +136,7 @@ if ($id > 0 || !empty($ref)) {
 		if (!empty($conf->projet->enabled)) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-			if ($user->rights->fournisseur->commande->creer) {
+			if ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer) {
 				if ($action != 'classify') {
 					//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 					$morehtmlref .= ' : ';

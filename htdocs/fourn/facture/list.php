@@ -274,9 +274,9 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'FactureFournisseur';
 	$objectlabel = 'SupplierInvoices';
-	$permissiontoread = $user->rights->fournisseur->facture->lire;
-	$permissiontoadd = $user->rights->fournisseur->facture->creer;
-	$permissiontodelete = $user->rights->fournisseur->facture->supprimer;
+	$permissiontoread = ($user->rights->fournisseur->facture->lire || $user->rights->supplier_invoice->lire);
+	$permissiontoadd = ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer);
+	$permissiontodelete = ($user->rights->fournisseur->facture->supprimer || $user->rights->supplier_invoice->supprimer);
 	$uploaddir = $conf->fournisseur->facture->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
@@ -524,6 +524,10 @@ if ($search_user > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."element_contact as ec";
 	$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as tc";
 }
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql .= ' WHERE f.fk_soc = s.rowid';
 $sql .= ' AND f.entity IN ('.getEntity('facture_fourn').')';
 if (!$user->rights->societe->client->voir && !$socid) {
@@ -686,9 +690,18 @@ if (!$search_all) {
 			$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ",ef.".$key : '');
 		}
 	}
+	// Add GroupBy from hooks
+	$parameters = array('all' => $all, 'fieldstosearchall' => $fieldstosearchall);
+	$reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object); // Note that $action and $object may have been modified by hook
+	$sql .= $hookmanager->resPrint;
 } else {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
+
+// Add HAVING from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object); // Note that $action and $object may have been modified by hook
+$sql .= !empty($hookmanager->resPrint) ? (' HAVING 1=1 ' . $hookmanager->resPrint) : '';
 
 $sql .= $db->order($sortfield, $sortorder);
 
@@ -832,6 +845,10 @@ if ($resql) {
 
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+	// Add $param from hooks
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object); // Note that $action and $object may have been modified by hook
+	$param .= $hookmanager->resPrint;
 
 	// List of mass actions available
 	$arrayofmassactions = array(
@@ -861,7 +878,7 @@ if ($resql) {
 	if (!empty($socid)) {
 		$url .= '&socid='.$socid;
 	}
-	$newcardbutton = dolGetButtonTitle($langs->trans('NewBill'), '', 'fa fa-plus-circle', $url, '', $user->rights->fournisseur->facture->creer);
+	$newcardbutton = dolGetButtonTitle($langs->trans('NewBill'), '', 'fa fa-plus-circle', $url, '', ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer));
 
 	$i = 0;
 	print '<form method="POST" name="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";

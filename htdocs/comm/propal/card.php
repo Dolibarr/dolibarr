@@ -122,7 +122,7 @@ $usercancreateorder = $user->rights->commande->creer;
 $usercancreateinvoice = $user->rights->facture->creer;
 $usercancreatecontract = $user->rights->contrat->creer;
 $usercancreateintervention = $user->rights->ficheinter->creer;
-$usercancreatepurchaseorder = $user->rights->fournisseur->commande->creer;
+$usercancreatepurchaseorder = ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer);
 
 $permissionnote = $usercancreate; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $usercancreate; // Used by the include of actions_dellink.inc.php
@@ -623,7 +623,7 @@ if (empty($reshook)) {
 		// Classify billed
 		$db->begin();
 
-		$result = $object->cloture($user, $object::STATUS_BILLED, '');
+		$result = $object->classifyBilled($user, 0, '');
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$error++;
@@ -639,12 +639,12 @@ if (empty($reshook)) {
 		if (!(GETPOST('statut', 'int') > 0)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CloseAs")), null, 'errors');
 			$action = 'closeas';
-		} else {
+		} elseif (GETPOST('statut', 'int') == $object::STATUS_SIGNED || GETPOST('statut', 'int') == $object::STATUS_NOTSIGNED) {
 			// prevent browser refresh from closing proposal several times
 			if ($object->statut == $object::STATUS_VALIDATED) {
 				$db->begin();
 
-				$result = $object->signature($user, GETPOST('statut', 'int'), GETPOST('note_private', 'restricthtml'));
+				$result = $object->closeProposal($user, GETPOST('statut', 'int'), GETPOST('note_private', 'restricthtml'));
 				if ($result < 0) {
 					setEventMessages($object->error, $object->errors, 'errors');
 					$error++;
@@ -2534,7 +2534,7 @@ if ($action == 'create') {
 
 				// Create a purchase order
 				if (!empty($conf->global->WORKFLOW_CAN_CREATE_PURCHASE_ORDER_FROM_PROPOSAL)) {
-					if (!empty($conf->fournisseur->enabled) && $object->statut == Propal::STATUS_SIGNED) {
+					if ($object->statut == Propal::STATUS_SIGNED && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled))) {
 						if ($usercancreatepurchaseorder) {
 							print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddPurchaseOrder").'</a>';
 						}

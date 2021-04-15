@@ -492,11 +492,15 @@ if ($step == 2 && $datatoimport) {
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
 
+	print '<br>';
+
 	print '<span class="opacitymedium">';
 	$s = $langs->trans("ChooseFormatOfFileToImport", '{s1}');
 	$s = str_replace('{s1}', img_picto('', 'next'), $s);
 	print $s;
 	print '</span><br><br>';
+
+	print '<br>';
 
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
@@ -513,7 +517,9 @@ if ($step == 2 && $datatoimport) {
 		print '<td width="16">'.img_picto_common($key, $objmodelimport->getPictoForKey($key)).'</td>';
 		$text = $objmodelimport->getDriverDescForKey($key);
 		print '<td>'.$form->textwithpicto($objmodelimport->getDriverLabelForKey($key), $text).'</td>';
-		print '<td style="text-align:center"><a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$key.$param.'" target="_blank">'.$langs->trans("DownloadEmptyExample").'</a></td>';
+		print '<td style="text-align:center">';
+		print img_picto('', 'download', 'class="paddingright opacitymedium"').'<a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$key.$param.'" target="_blank">'.$langs->trans("DownloadEmptyExample").'</a>';
+		print '</td>';
 		// Action button
 		print '<td style="text-align:right">';
 		print '<a href="'.DOL_URL_ROOT.'/imports/import.php?step=3&format='.$key.$param.'">'.img_picto($langs->trans("SelectFormat"), 'next', 'class="fa-15x"').'</a>';
@@ -587,7 +593,7 @@ if ($step == 3 && $datatoimport) {
 	print '</table>';
 	print '</div>';
 
-	print load_fiche_titre($langs->trans("InformationOnSourceFile"), '', '');
+	print load_fiche_titre($langs->trans("InformationOnSourceFile"), '', 'file-export');
 
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
@@ -598,8 +604,8 @@ if ($step == 3 && $datatoimport) {
 	print '<td>';
 	$text = $objmodelimport->getDriverDescForKey($format);
 	print $form->textwithpicto($objmodelimport->getDriverLabelForKey($format), $text);
-	print '</td><td style="text-align:right" class="nowrap"><a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$format.$param.'" target="_blank">'.$langs->trans("DownloadEmptyExample").'</a>';
-
+	print '</td><td style="text-align:right" class="nowrap">';
+	print img_picto('', 'download', 'class="paddingright opacitymedium"').'<a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$format.$param.'" target="_blank">'.$langs->trans("DownloadEmptyExample").'</a>';
 	print '</td></tr>';
 
 	print '</table>';
@@ -890,7 +896,7 @@ if ($step == 4 && $datatoimport) {
 	print '</table>';
 	print '</div>';
 
-	print load_fiche_titre($langs->trans("InformationOnSourceFile"), '', '');
+	print load_fiche_titre($langs->trans("InformationOnSourceFile"), '', 'file-export');
 
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
@@ -1374,7 +1380,7 @@ if ($step == 5 && $datatoimport) {
 	print '</table>';
 	print '</div>';
 
-	print load_fiche_titre($langs->trans("InformationOnSourceFile"), '', '');
+	print load_fiche_titre($langs->trans("InformationOnSourceFile"), '', 'file-export');
 
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
@@ -1468,7 +1474,7 @@ if ($step == 5 && $datatoimport) {
 	print '</div>';
 
 
-	print load_fiche_titre($langs->trans("InformationOnTargetTables"), '', '');
+	print load_fiche_titre($langs->trans("InformationOnTargetTables"), '', 'file-import');
 
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
@@ -1812,7 +1818,7 @@ if ($step == 6 && $datatoimport) {
 	print '</table>';
 	print '</div>';
 
-	print load_fiche_titre($langs->trans("InformationOnSourceFile"), '', '');
+	print load_fiche_titre($langs->trans("InformationOnSourceFile"), '', 'file-export');
 
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
@@ -1875,8 +1881,7 @@ if ($step == 6 && $datatoimport) {
 	print '<b>'.$langs->trans("InformationOnTargetTables").'</b>';
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
-	print '<table width="100%" class="border">';
-	//print '<tr><td colspan="2"><b>'.$langs->trans("InformationOnTargetTables").'</b></td></tr>';
+	print '<table class="border centpercent">';
 
 	// Tables imported
 	print '<tr><td width="25%">';

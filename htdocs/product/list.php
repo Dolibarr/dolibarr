@@ -681,16 +681,16 @@ if ($resql) {
 
 	// List of mass actions available
 	$arrayofmassactions = array(
-		'generate_doc'=>$langs->trans("ReGeneratePDF"),
-		//'builddoc'=>$langs->trans("PDFMerge"),
-		//'presend'=>$langs->trans("SendByMail"),
+		'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
+		//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
+		//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 	);
 
 	if ($user->rights->{$rightskey}->supprimer) {
-		$arrayofmassactions['predelete'] = "<span class='fa fa-trash paddingrightonly'></span>".$langs->trans("Delete");
+		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	}
 	if ($user->rights->{$rightskey}->creer) {
-		$arrayofmassactions['preaffecttag'] = '<span class="fa fa-tag paddingrightonly"></span>'.$langs->trans("AffectTag");
+		$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 	}
 	if (in_array($massaction, array('presend', 'predelete','preaffecttag'))) {
 		$arrayofmassactions = array();
@@ -1579,7 +1579,7 @@ if ($resql) {
 				//print price($obj->minsellprice).' '.$langs->trans("HT");
 				if ($product_fourn->find_min_price_product_fournisseur($obj->rowid) > 0) {
 					if ($product_fourn->product_fourn_price_id > 0) {
-						if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire) {
+						if ((!empty($conf->fournisseur->enabled) && !empty($user->rights->fournisseur->lire) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (!empty($conf->supplier_order->enabled) && !empty($user->rights->supplier_order->lire)) || (!empty($conf->supplier_invoice->enabled) && !empty($user->rights->supplier_invoice->lire))) {
 							$htmltext = $product_fourn->display_price_product_fournisseur(1, 1, 0, 1);
 							print '<span class="amount">'.$form->textwithpicto(price($product_fourn->fourn_unitprice * (1 - $product_fourn->fourn_remise_percent / 100) - $product_fourn->fourn_remise).' '.$langs->trans("HT"), $htmltext).'</span>';
 						} else {
