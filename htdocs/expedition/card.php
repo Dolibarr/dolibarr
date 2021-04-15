@@ -1252,7 +1252,7 @@ if ($action == 'create') {
 							print '<input name="batchl'.$indiceAsked.'_'.$subj.'" type="hidden" value="0">';
 							print '</td>';
 							print '<td class="left">';
-							print $langs->trans('AllWarehouses').' ('.$product->stock_reel.')';
+							print  $langs->trans('Warehouse').' '.$langs->trans('and').'  '.$langs->trans('Batch').' '.$langs->trans('ToDefine').' ('.$product->stock_reel.')';
 							$subj++;
 							print '</td></tr>';
 							print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
@@ -1401,7 +1401,7 @@ if ($action == 'create') {
 							print '<input name="batchl'.$indiceAsked.'_'.$subj.'" type="hidden" value="0">';
 							print '</td>';
 							print '<td class="left">';
-							print $langs->trans('AllWarehouses').' ('.$product->stock_reel.')';
+							print  $langs->trans('Warehouse').' '.$langs->trans('and').'  '.$langs->trans('Batch').' '.$langs->trans('ToDefine').' ('.$product->stock_reel.')';
 							$subj++;
 							print '</td></tr>';
 							foreach ($product->stock_warehouse as $warehouse_id => $stock_warehouse) {
