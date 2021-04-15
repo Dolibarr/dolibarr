@@ -6399,12 +6399,13 @@ div.tabsElem a.tab {
 .ticketlargemargin {
 	padding-left: 50px;
 	padding-right: 50px;
-	padding-top: 10px;
+	padding-top: 30px;
 }
 @media only screen and (max-width: 767px)
 {
 	.ticketlargemargin {
 		padding-left: 5px; padding-right: 5px;
+		padding-top: 10px;
 	}
 	.ticketpublicarea {
 		margin-left: 10px;
