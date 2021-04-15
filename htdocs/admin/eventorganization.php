@@ -278,16 +278,13 @@ if ($action == 'edit') {
                     });';
 					print '</script>';
 				}
-			} elseif ($var['type'] == 'product') {
+			} elseif ($val['type'] == 'product') {
 				if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
-					print '<tr class="oddeven"><td>'.$langs->trans("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS").'</td>';
-					print '<td>';
-					$selected = (empty($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS) ? '' : $conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS);
-					$form->select_produits($selected, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', '', 0);
-					print '</td>';
+					$selected = (empty($conf->global->$constname) ? '' : $conf->global->$constname);
+					$form->select_produits($selected, $constname, '', 0);
 				}
 			} else {
-				print '<input name="'.$constname.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.$conf->global->{$constname}.'">';
+				print '<input name="'.ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.$conf->global->{ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS}.'">';
 			}
 			print '</td></tr>';
 		}
