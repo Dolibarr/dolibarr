@@ -151,7 +151,7 @@ fi
 #mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile
 echo "echo \"UPDATE llx_user SET pass_crypted = MD5('$demopass') WHERE login = '$demologin';\" | mysql -P$port $base"
 
-if [ "x$demopasshash" != "password_hash" ]
+if [ "x$demopasshash" != "xpassword_hash" ]
 then
 	newpass=`echo '<?php echo md5("$demopass"); ?>' | php`
 else
