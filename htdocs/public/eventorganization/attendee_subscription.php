@@ -431,11 +431,11 @@ jQuery(document).ready(function () {
 print '<table class="border" summary="form to subscribe" id="tablesubscribe">'."\n";
 
 // Email
-print '<tr><td>'.$langs->trans("Email").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="email" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("Email").'<FONT COLOR="red">*</FONT></td><td><input type="text" name="email" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
 // Company
 print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company");
 if (!empty(floatval($project->price_registration))) {
-	print '<FONT COLOR="red"> *</FONT>';
+	print '<FONT COLOR="red">*</FONT>';
 }
 print ' </td><td><input type="text" name="societe" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
 // Address
