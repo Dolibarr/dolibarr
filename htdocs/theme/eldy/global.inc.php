@@ -2607,7 +2607,7 @@ table.login_table_securitycode tr td {
 }
 
 div.backgroundsemitransparent {
-	background:rgba(255,255,255,0.6);
+	background:rgba(255,255,255,0.68);
 	padding-left: 10px;
 	padding-right: 10px;
 }
