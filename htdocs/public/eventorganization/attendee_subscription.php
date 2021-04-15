@@ -86,7 +86,7 @@ $id = dol_decode($encodedid, $dolibarr_main_instance_unique_id);
 $conference = new ConferenceOrBooth($db);
 $resultconf = $conference->fetch($id);
 if ($resultconf < 0) {
-	setEventMessages(null, $object->errors, "errors");
+	setEventMessages(null, $conference->errors, "errors");
 }
 
 $project = new Project($db);
@@ -295,21 +295,31 @@ if (empty($reshook) && $action == 'add') {
 		$db->commit();
 		global $dolibarr_main_url_root;
 		if (!empty(floatval($project->price_registration))) {
-			$facture = new Facture($db);
-			$facture->type = 0;
-			$facture->socid = $thirdparty->id;
-			$facture->paye = 0;
-			//@todo price and taxes to add
-			$tva = get_default_tva($mysoc, $thirdparty);
-			$facture->date = dol_now();
-			$resultfacture = $facture->create($user);
-			if ($resultfacture < 0) {
+			$productforinvoicerow = new Product($db);
+			$resultprod = $productforinvoicerow->fetch($conf->global->SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION);
+			if ($resultprod < 0) {
 				$error++;
-				$errmsg .= $facture->error;
+				$errmsg .= $productforinvoicerow->error;
 			} else {
-				$redirection = $dolibarr_main_url_root.'/public/payment/newpayment.php?source=conferencesubscription&ref='.$confattendee->id;
-				Header("Location: ".$redirection);
-				exit;
+				$facture = new Facture($db);
+				$facture->type = 0;
+				$facture->socid = $thirdparty->id;
+				$facture->paye = 0;
+				// @todo complete
+				//$baseprice = $productforinvoicerow->
+				$facture->total_ht = 10;
+				$facture->total_vat = $productforinvoicerow->tva_tx*10;
+				$facture->total_ttc =  $facture->total_ht + $facture->total_ttc;
+				$facture->date = dol_now();
+				$resultfacture = $facture->create($user);
+				if ($resultfacture < 0) {
+					$error++;
+					$errmsg .= $facture->error;
+				} else {
+					$redirection = $dolibarr_main_url_root.'/public/payment/newpayment.php?source=conferencesubscription&ref='.$confattendee->id;
+					Header("Location: ".$redirection);
+					exit;
+				}
 			}
 		} else {
 			// No price has been set

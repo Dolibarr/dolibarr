@@ -56,6 +56,8 @@ if (!empty($conf->paypal->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
 }
 
+global $dolibarr_main_instance_unique_id;
+
 $langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paybox", "paypal"));
 
 // Clean parameters
@@ -105,6 +107,21 @@ $ref = GETPOST('ref');
 $suffix = GETPOST("suffix", 'aZ09');
 $membertypeid = GETPOST("membertypeid", 'int');
 
+$conferencesubscription = GETPOST('conferencesubscription');
+$uncryptedconferencesubscription = dol_decode($conferencesubscription, $dolibarr_main_instance_unique_id);
+$subscription = substr($uncryptedconferencesubscription, 0, strlen($uncryptedconferencesubscription)-strlen($ref));
+$reffrompayment = substr($uncryptedconferencesubscription, -strlen($ref), strlen($ref));
+
+// Validation of an attendee after his payment
+if ($subscription == 'subscriptionok' && $ref == $reffrompayment) {
+	$attendeetovalidate = new ConferenceOrBoothAttendee($db);
+	$resultattendee = $attendeetovalidate->fetch($ref);
+	if ($resultattendee < 0) {
+		setEventMessages(null, $attendeetovalidate->errors, "errors");
+	} else {
+		$attendeetovalidate->setStatut(1);
+	}
+}
 
 // Detect $paymentmethod
 $paymentmethod = '';
