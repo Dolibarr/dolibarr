@@ -318,7 +318,7 @@ print '<table class="tagtable liste centpercent">'."\n";
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Box").'</td>';
 print '<td>'.$langs->trans("Note").'/'.$langs->trans("Parameters").'</td>';
-print '<td>'.$langs->trans("SourceFile").'</td>';
+print '<td></td>';
 print '<td width="160" class="center">'.$langs->trans("ActivatableOn").'</td>';
 print "</tr>\n";
 
@@ -351,7 +351,9 @@ foreach ($boxtoadd as $box) {
 		print ($box->note ? $box->note : '&nbsp;');
 	}
 	print '</td>'."\n";
-	print '<td class="twoverflowmax200" title="'.dol_escape_htmltag($box->sourcefile).'">'.dol_escape_htmltag($box->sourcefile).'</td>'."\n";
+	print '<td>';
+	print $form->textwithpicto('', $langs->trans("SourceFile").' : '.$box->sourcefile);
+	print '</td>'."\n";
 
 	// For each possible position, an activation link is displayed if the box is not already active for that position
 	print '<td class="center">';
