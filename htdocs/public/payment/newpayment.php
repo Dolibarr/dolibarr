@@ -109,6 +109,41 @@ if (!$action) {
 	}
 }
 
+if ($source == 'conferencesubscription') {
+	// Finding the Attendee
+	$attendee = new ConferenceOrBoothAttendee($db);
+	$result = $attendee->fetch('', $ref);
+	if ($result <= 0) {
+		$mesg = $attendee->error;
+		$error++;
+	}
+	$object = $attendee;
+
+	// Finding the thirdparty associated to the Attendee
+	$thirdparty = new Societe($db);
+	$resultthirdparty = $thirdparty->fetch($attendee->fk_soc);
+	if ($resultthirdparty <= 0) {
+		$mesg = $thirdparty->error;
+		$error++;
+	}
+
+	// Finding the conference
+	$conference = new ConferenceOrBooth($db);
+	$resultconf = $conference->fetch($attendee->fk_actioncomm);
+	if ($resultconf <= 0) {
+		$mesg = $conference->error;
+		$error++;
+	}
+
+	// Finding the project
+	$project = new Project($db);
+	$resultproj = $project->fetch($conference->fk_project);
+	if ($resultproj <= 0) {
+		$mesg = $project->error;
+		$error++;
+	}
+}
+
 
 $paymentmethod = GETPOST('paymentmethod', 'alphanohtml') ?GETPOST('paymentmethod', 'alphanohtml') : ''; // Empty in most cases. Defined when a payment mode is forced
 $validpaymentmethod = array();
@@ -712,6 +747,7 @@ if ($action == 'charge' && !empty($conf->stripe->enabled)) {
 		header("Location: ".$urlko);
 		exit;
 	} else {
+		$attendee->setStatut(1);
 		header("Location: ".$urlok);
 		exit;
 	}
@@ -1728,42 +1764,8 @@ if ($source == 'donation') {
 }
 
 if ($source == 'conferencesubscription') {
-	// @todo cas paiement de conferenceattendee
 	$found = true;
 	$langs->load("members");
-
-	// Finding the Attendee
-	$attendee = new ConferenceOrBoothAttendee($db);
-	$result = $attendee->fetch('', $ref);
-	if ($result <= 0) {
-		$mesg = $attendee->error;
-		$error++;
-	}
-	$object = $attendee;
-
-	// Finding the thirdparty associated to the Attendee
-	$thirdparty = new Societe($db);
-	$resultthirdparty = $thirdparty->fetch($attendee->fk_soc);
-	if ($resultthirdparty <= 0) {
-		$mesg = $thirdparty->error;
-		$error++;
-	}
-
-	// Finding the conference
-	$conference = new ConferenceOrBooth($db);
-	$resultconf = $conference->fetch($attendee->fk_actioncomm);
-	if ($resultconf <= 0) {
-		$mesg = $conference->error;
-		$error++;
-	}
-
-	// Finding the project
-	$project = new Project($db);
-	$resultproj = $project->fetch($conference->fk_project);
-	if ($resultproj <= 0) {
-		$mesg = $project->error;
-		$error++;
-	}
 
 	if ($action != 'dopayment') { // Do not change amount if we just click on first dopayment
 		$amount = $project->price_registration;
@@ -1804,7 +1806,7 @@ if ($source == 'conferencesubscription') {
 	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow'.($var ? '1' : '2').'">'.$text;
 	print '<input type="hidden" name="source" value="'.dol_escape_htmltag($source).'">';
-	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($member->ref).'">';
+	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($attendee->ref).'">';
 	print '</td></tr>'."\n";
 
 	// Amount

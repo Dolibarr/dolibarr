@@ -95,7 +95,6 @@ if ($resultproject < 0) {
 	$error++;
 	$errmsg .= $project->error;
 }
-var_dump($conference->fk_project);
 
 // Getting 'securekey'.'id' from Post and decoding it
 $encodedsecurekeyandid = GETPOST('securekey', 'alpha');
