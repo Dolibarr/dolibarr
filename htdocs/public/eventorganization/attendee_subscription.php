@@ -68,6 +68,7 @@ require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class
 require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/paymentterm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 // Init vars
@@ -189,6 +190,7 @@ function llxFooterVierge()
 /*
  * Actions
  */
+global $mysoc;
 $parameters = array();
 // Note that $action and $object may have been modified by some hooks
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
@@ -302,16 +304,48 @@ if (empty($reshook) && $action == 'add') {
 				$errmsg .= $productforinvoicerow->error;
 			} else {
 				$facture = new Facture($db);
-				$facture->type = 0;
+				$facture->type = Facture::TYPE_STANDARD;
 				$facture->socid = $thirdparty->id;
 				$facture->paye = 0;
-				// @todo complete
-				//$baseprice = $productforinvoicerow->
-				$facture->total_ht = 10;
-				$facture->total_vat = $productforinvoicerow->tva_tx*10;
-				$facture->total_ttc =  $facture->total_ht + $facture->total_ttc;
 				$facture->date = dol_now();
+				$facture->cond_reglement_id = $confattendee->cond_reglement_id;
+				if (empty($facture->cond_reglement_id)) {
+					$paymenttermstatic = new PaymentTerm($confattendee->db);
+					$facture->cond_reglement_id = $paymenttermstatic->getDefaultId();
+					if (empty($facture->cond_reglement_id)) {
+						$error++;
+						$confattendee->error = 'ErrorNoPaymentTermRECEPFound';
+						$confattendee->errors[] = $confattendee->error;
+					}
+				}
+
 				$resultfacture = $facture->create($user);
+				if ($resultfacture <= 0) {
+					$confattendee->error = $facture->error;
+					$confattendee->errors = $facture->errors;
+					$error++;
+				}
+			}
+
+			if (!$error) {
+				// Add line to draft invoice
+				$idprodsubscription = 0;
+				if (!empty($conf->global->SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION) && (!empty($conf->product->enabled) || !empty($conf->service->enabled))) {
+					$idprodsubscription = $conf->global->SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION;
+				}
+
+				$vattouse = get_default_tva($mysoc, $thirdparty, $idprodsubscription);
+
+				$result = $facture->addline($label, 0, 1, $vattouse, 0, 0, $idprodsubscription, 0, $datesubscription, '', 0, 0, '', 'TTC', $amount, 1);
+				if ($result <= 0) {
+					$confattendee->error = $confattendee->error;
+					$confattendee->errors = $confattendee->errors;
+					$error++;
+				}
+				var_dump('a');
+				$resultfacture = $facture->create($user);
+				var_dump('b');
+				var_dump($resultfacture);
 				if ($resultfacture < 0) {
 					$error++;
 					$errmsg .= $facture->error;

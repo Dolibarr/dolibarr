@@ -1804,7 +1804,7 @@ if ($source == 'conferencesubscription') {
 	print '</td></tr>'."\n";
 
 	// Debitor
-	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("Member");
+	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("Attendee");
 	print '</td><td class="CTableRow'.($var ? '1' : '2').'"><b>';
 	print $thirdparty->name;
 	print '</b>';

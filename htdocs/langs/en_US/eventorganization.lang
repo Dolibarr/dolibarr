@@ -108,4 +108,5 @@ SubscriptionOk = Your subscription to this conference has been validated
 #
 # Payment page
 #
+Attendee = Participant
 PaymentConferenceAttendee = Paiement de participation à une conférence
