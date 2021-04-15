@@ -1273,3 +1273,4 @@ class MouvementStock extends CommonObject
 		return $this->deleteCommon($user, $notrigger);
 		//return $this->deleteCommon($user, $notrigger, 1);
 	}
+}
