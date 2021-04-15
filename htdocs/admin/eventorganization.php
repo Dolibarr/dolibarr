@@ -283,8 +283,6 @@ if ($action == 'edit') {
 					$selected = (empty($conf->global->$constname) ? '' : $conf->global->$constname);
 					$form->select_produits($selected, $constname, '', 0);
 				}
-			} else {
-				print '<input name="'.ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.$conf->global->{ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS}.'">';
 			}
 			print '</td></tr>';
 		}
