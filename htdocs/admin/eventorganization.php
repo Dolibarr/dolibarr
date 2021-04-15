@@ -351,6 +351,14 @@ if ($action == 'edit') {
 					} elseif ($conf->global->{$constname}==0) {
 						print $langs->trans("NorProspectNorCustomer");
 					}
+				} elseif ($val['type'] == 'product') {
+					$product = new Product($db);
+					$resprod = $product->fetch($conf->global->{$constname});
+					if ($resprod > 0) {
+						print $product->ref;
+					} elseif ($resprod < 0) {
+						setEventMessages(null, $object->errors, "errors");
+					}
 				} else {
 					print  $conf->global->{$constname};
 				}
