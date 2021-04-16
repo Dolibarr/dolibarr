@@ -367,7 +367,7 @@ $arrayofmassactions = array(
 	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 	//'buildsepa'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("BuildSepa"),	// TODO
 );
-//if ($permissiontodelete) $arrayofmassactions['predelete'] = img_picto('', 'delete').$langs->trans("Delete");
+//if ($permissiontodelete) $arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) {
 	$arrayofmassactions = array();
 }
