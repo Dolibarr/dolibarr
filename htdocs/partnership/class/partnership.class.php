@@ -169,14 +169,9 @@ class Partnership extends CommonObject
 
 		$this->db = $db;
 
-		$fk_soc_visible 	= ($conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') ? 0 : 1;
-		$fk_member_visible 	= ($conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') ? 1 : 0;
-
 		$this->fields=array(
 			'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
 			'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
-			'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'ThirdParty', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>$fk_soc_visible, 'index'=>1,),
-			'fk_member' => array('type'=>'integer:Adherent:adherents/class/adherent.class.php:1', 'label'=>'Member', 'enabled'=>'1', 'position'=>51, 'notnull'=>-1, 'visible'=>$fk_member_visible, 'index'=>1,),
 			'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => 1, 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 15, 'index' => 1),
 			'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>61, 'notnull'=>0, 'visible'=>0,),
 			'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>'1', 'position'=>62, 'notnull'=>0, 'visible'=>0,),
@@ -187,12 +182,18 @@ class Partnership extends CommonObject
 			'last_main_doc' => array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>'1', 'position'=>600, 'notnull'=>0, 'visible'=>0,),
 			'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>'1', 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
 			'model_pdf' => array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>'1', 'position'=>1010, 'notnull'=>-1, 'visible'=>0,),
-			'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'notnull'=>0, 'visible'=>0, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Brouillon', '1'=>'Accept&eacute;', '2'=>'Refus&eacute;', '9'=>'Annul&eacute;'),),
 			'date_partnership_start' => array('type'=>'date', 'label'=>'DatePartnershipStart', 'enabled'=>'1', 'position'=>52, 'notnull'=>1, 'visible'=>1,),
 			'date_partnership_end' => array('type'=>'date', 'label'=>'DatePartnershipEnd', 'enabled'=>'1', 'position'=>53, 'notnull'=>1, 'visible'=>1,),
+			'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>54, 'notnull'=>0, 'visible'=>2, 'index'=>1, 'arrayofkeyval'=>array('-1'=>'','0'=>$langs->trans('Draft'), '1'=>$langs->trans('Accepted'), '2'=>$langs->trans('Refused'), '9'=>$langs->trans('Canceled')),),
 			'count_last_url_check_error' => array('type'=>'integer', 'label'=>'CountLastUrlCheckError', 'enabled'=>'1', 'position'=>63, 'notnull'=>0, 'visible'=>-2, 'default'=>'0',),
 			'reason_decline_or_cancel' => array('type'=>'text', 'label'=>'ReasonDeclineOrCancel', 'enabled'=>'1', 'position'=>64, 'notnull'=>0, 'visible'=>-2,),
 		);
+
+		if($conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member'){
+			$this->fields['fk_member'] = array('type'=>'integer:Adherent:adherents/class/adherent.class.php:1', 'label'=>'Member', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1,);
+		} else {
+			$this->fields['fk_soc'] = array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'ThirdParty', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1,);
+		}
 
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;

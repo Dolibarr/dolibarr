@@ -16,23 +16,23 @@
 #
 # Generic
 #
-ModulePartnershipName = Partnership management
-PartnershipDescription = Module Partnership management
+ModulePartnershipName=Partnership management
+PartnershipDescription=Module Partnership management
 PartnershipDescriptionLong= Module Partnership management
 
 #
 # Menu
 #
-NewPartnership = New Partnership
-ListOfPartnerships = List of partnership
+NewPartnership=New Partnership
+ListOfPartnerships=List of partnership
 
 #
 # Admin page
 #
-PartnershipSetup = Partnership setup
-PartnershipAbout = About Partnership
-PartnershipAboutPage = Partnership about page
-PartnershipManagedFor = Partnership managed for
+PartnershipSetup=Partnership setup
+PartnershipAbout=About Partnership
+PartnershipAboutPage=Partnership about page
+PartnershipManagedFor=Partnership managed for
 
 #
 # Object
@@ -44,12 +44,22 @@ DatePartnershipEnd=End date
 #
 # Template Mail
 #
+SendingEmailOnPartnershipWillExpire=Partnership will expire
+SendingEmailOnPartnershipRefused=Partnership refused
+SendingEmailOnPartnershipCanceled=Partnership canceled
 
+YourPartnershipWillSoonExpireTopic=Partnership expiration
+YourPartnershipRefusedTopic=Partnership refused
+YourPartnershipCanceledTopic=Partnership canceled
+
+YourPartnershipWillSoonExpireContent=We inform you that your partnership will soon expire.
+YourPartnershipRefusedContent=We inform you that your partnership request has been refused.
+YourPartnershipCanceledContent=We inform you that your partnership has been canceled.
 
 #
 # Status
 #
-PartnershipDraft = Draft
-PartnershipAccepted = Accepted
-PartnershipRefused = Refused
-PartnershipCanceled = Canceled
+PartnershipDraft=Draft
+PartnershipAccepted=Accepted
+PartnershipRefused=Refused
+PartnershipCanceled=Canceled

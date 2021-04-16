@@ -123,21 +123,18 @@ if (empty($action) && empty($id) && empty($ref)) {
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
 
-$permissiontoread = $user->rights->partnership->read;
-$permissiontoadd = $user->rights->partnership->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->rights->partnership->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
-$permissionnote = $user->rights->partnership->write; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->partnership->write; // Used by the include of actions_dellink.inc.php
-$upload_dir = $conf->partnership->multidir_output[isset($object->entity) ? $object->entity : 1];
+$permissiontoread 		= $user->rights->partnership->read;
+$permissiontoadd 		= $user->rights->partnership->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontodelete 	= $user->rights->partnership->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+$permissionnote 		= $user->rights->partnership->write; // Used by the include of actions_setnotes.inc.php
+$permissiondellink 		= $user->rights->partnership->write; // Used by the include of actions_dellink.inc.php
+$upload_dir 			= $conf->partnership->multidir_output[isset($object->entity) ? $object->entity : 1];
+$managedfor 			= $conf->global->PARTNERSHIP_IS_MANAGED_FOR;
 
-// Security check - Protection if external user
-//if ($user->socid > 0) accessforbidden();
-//if ($user->socid > 0) $socid = $user->socid;
-//$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
-//restrictedArea($user, $object->element, $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
-//if (empty($conf->partnership->enabled)) accessforbidden();
-//if (empty($permissiontoread)) accessforbidden();
-
+if (empty($conf->partnership->enabled)) accessforbidden();
+if (empty($permissiontoread)) accessforbidden();
+if ($object->id > 0 && $object->fk_member > 0 && $managedfor != 'member') accessforbidden();
+if ($object->id > 0 && $object->fk_soc > 0 && $managedfor != 'thirdparty') accessforbidden();
 
 /*
  * Actions
@@ -502,6 +499,32 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	//unset($object->fields['fk_soc']);					// Hide field already shown in banner
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
 
+	// End of subscription date
+	if ($managedfor == 'member') {
+		$fadherent = new Adherent($db);
+		$fadherent->fetch($object->fk_member);
+		print '<tr><td>'.$langs->trans("SubscriptionEndDate").'</td><td class="valeur">';
+		if ($fadherent->datefin) {
+			print dol_print_date($fadherent->datefin, 'day');
+			if ($fadherent->hasDelay()) {
+				print " ".img_warning($langs->trans("Late"));
+			}
+		} else {
+			if (!$adht->subscription) {
+				print $langs->trans("SubscriptionNotRecorded");
+				if ($fadherent->statut > 0) {
+					print " ".img_warning($langs->trans("Late")); // Display a delay picto only if it is not a draft and is not canceled
+				}
+			} else {
+				print $langs->trans("SubscriptionNotReceived");
+				if ($fadherent->statut > 0) {
+					print " ".img_warning($langs->trans("Late")); // Display a delay picto only if it is not a draft and is not canceled
+				}
+			}
+		}
+		print '</td></tr>';
+	}
+
 	// Other attributes. Fields from hook formObjectOptions and Extrafields.
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
@@ -669,7 +692,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 	// Presend form
-	$modelmail = 'partnership';
+	$modelmail = 'partnership_send';
 	$defaulttopic = 'InformationMessage';
 	$diroutput = $conf->partnership->dir_output;
 	$trackid = 'partnership'.$object->id;

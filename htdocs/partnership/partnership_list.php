@@ -86,7 +86,7 @@ require_once __DIR__.'/class/partnership.class.php';
 //dol_include_once('/othermodule/class/otherobject.class.php');
 
 // Load translation files required by the page
-$langs->loadLangs(array("partnership@partnership", "other"));
+$langs->loadLangs(array("partnership", "members", "other"));
 
 $action     = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
@@ -185,8 +185,8 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-$permissiontoread = $user->rights->partnership->read;
-$permissiontoadd = $user->rights->partnership->write;
+$permissiontoread 	= $user->rights->partnership->read;
+$permissiontoadd 	= $user->rights->partnership->write;
 $permissiontodelete = $user->rights->partnership->delete;
 
 // Security check
@@ -248,6 +248,38 @@ if (empty($reshook)) {
 	$objectlabel = 'Partnership';
 	$uploaddir = $conf->partnership->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+
+	// Cancel partnership
+	if ($massaction == 'cancel' && $permissiontoadd) {
+		$db->begin();
+
+		$objecttmp = new $objectclass($db);
+		$nbok = 0;
+		foreach ($toselect as $toselectid) {
+			$result = $objecttmp->fetch($toselectid);
+			if ($result > 0) {
+				$result = $objecttmp->cancel($user, 3);
+				if ($result <= 0) {
+					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+					$error++;
+					break;
+				} else {
+					$nbok++;
+				}
+			} else {
+				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+				$error++;
+				break;
+			}
+		}
+
+		if (!$error) {
+			setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+			$db->commit();
+		} else {
+			$db->rollback();
+		}
+	}
 }
 
 
@@ -466,7 +498,7 @@ $arrayofmassactions = array(
 	'cancel'=>$langs->trans("Cancel"),
 	//'generate_doc'=>$langs->trans("ReGeneratePDF"),
 	//'builddoc'=>$langs->trans("PDFMerge"),
-	'presend'=>$langs->trans("SendByMail"),
+	'presend'=>$langs->trans("SendMail"),
 );
 if ($permissiontodelete) {
 	$arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
@@ -493,9 +525,9 @@ print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sort
 
 // Add code for pre mass action (confirmation or email presend form)
 $topicmail = "SendPartnershipRef";
-$modelmail = "partnership";
+$modelmail = "partnership_send";
 $objecttmp = new Partnership($db);
-$trackid = 'xxxx'.$object->id;
+$trackid = 'partnership'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if ($search_all) {
@@ -742,6 +774,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 	$i++;
 }
+$totalarray['nbfield']++; // End of subscription date
 
 // Show total line
 include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
@@ -754,6 +787,7 @@ if ($num == 0) {
 			$colspan++;
 		}
 	}
+	$colspan++; // End of subscription date
 	print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 }
 
