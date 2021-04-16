@@ -61,8 +61,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
-require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class.php';
-require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 // Hook to be used by external payment modules (ie Payzen, ...)
 include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
@@ -114,36 +113,21 @@ if (!$action) {
 
 if ($source == 'conferencesubscription') {
 	// Finding the Attendee
-	$attendee = new ConferenceOrBoothAttendee($db);
-	$result = $attendee->fetch('', $ref);
-	if ($result <= 0) {
-		$mesg = $attendee->error;
+	$decodedinvoiceid = dol_decode(GETPOST('ref'), $dolibarr_main_instance_unique_id);
+	$invoice = new Facture($db);
+	$resultinvoice = $invoice->fetch($decodedinvoiceid);
+	if ($resultinvoice <= 0) {
+		$mesg = $invoice->error;
 		$error++;
-	}
-	$object = $attendee;
-
-	// Finding the thirdparty associated to the Attendee
-	$thirdparty = new Societe($db);
-	$resultthirdparty = $thirdparty->fetch($attendee->fk_soc);
-	if ($resultthirdparty <= 0) {
-		$mesg = $thirdparty->error;
-		$error++;
-	}
-
-	// Finding the conference
-	$conference = new ConferenceOrBooth($db);
-	$resultconf = $conference->fetch($attendee->fk_actioncomm);
-	if ($resultconf <= 0) {
-		$mesg = $conference->error;
-		$error++;
-	}
-
-	// Finding the project
-	$project = new Project($db);
-	$resultproj = $project->fetch($conference->fk_project);
-	if ($resultproj <= 0) {
-		$mesg = $project->error;
-		$error++;
+	} else {
+		// Finding the thirdparty associated to the Attendee
+		$thirdparty = new Societe($db);
+		$resultthirdparty = $thirdparty->fetch($invoice->socid);
+		if ($resultthirdparty <= 0) {
+			$mesg = $thirdparty->error;
+			$error++;
+		}
+		$object = $thirdparty;
 	}
 }
 
@@ -1824,7 +1808,7 @@ if ($source == 'conferencesubscription') {
 	// Amount
 	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("Amount");
 	print '</td><td class="CTableRow'.($var ? '1' : '2').'">';
-	$valtoshow = $project->price_registration;
+	$valtoshow = $invoice->total_ttc;
 	print '<b>'.price($valtoshow).'</b>';
 	print '<input type="hidden" name="amount" value="'.$valtoshow.'">';
 	print '<input type="hidden" name="newamount" value="'.$valtoshow.'">';

@@ -338,7 +338,7 @@ if (empty($reshook) && $action == 'add') {
 					$error++;
 				}
 				if (!$error) {
-					$redirection = $dolibarr_main_url_root.'/public/payment/newpayment.php?source=conferencesubscription&ref='.$confattendee->id;
+					$redirection = $dolibarr_main_url_root.'/public/payment/newpayment.php?source=conferencesubscription&ref='.dol_encode($facture->id, $dolibarr_main_instance_unique_id);
 					Header("Location: ".$redirection);
 					exit;
 				}
