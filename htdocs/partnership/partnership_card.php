@@ -163,7 +163,7 @@ if (empty($reshook)) {
 
 	$fk_partner 	= ($managedfor == 'member') ? GETPOST('fk_member', 'int') : GETPOST('fk_soc', 'int');
 	$obj_partner 	= ($managedfor == 'member') ? $object->fk_member : $object->fk_soc;
-	
+
 	if ($action == 'add' || ($action == 'update' && $obj_partner != $fk_partner)) {
 		$fpartnership = new Partnership($db);
 
