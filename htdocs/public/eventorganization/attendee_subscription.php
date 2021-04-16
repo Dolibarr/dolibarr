@@ -241,15 +241,14 @@ if (empty($reshook) && $action == 'add') {
 			} else {
 				$thirdparty->name        = $email;
 			}
-
-			$thirdparty->address     = GETPOST("address");
-			$thirdparty->zip         = GETPOST("zipcode");
-			$thirdparty->town        = GETPOST("town");
-			$thirdparty->client      = 2;
-			$thirdparty->fournisseur = 0;
-			$thirdparty->country_id  = GETPOST("country_id", 'int');
-			$thirdparty->state_id    = GETPOST("state_id", 'int');
-			$thirdparty->email       = $email;
+			$thirdparty->address      = GETPOST("address");
+			$thirdparty->zip          = GETPOST("zipcode");
+			$thirdparty->town         = GETPOST("town");
+			$thirdparty->client       = 2;
+			$thirdparty->fournisseur  = 0;
+			$thirdparty->country_id   = GETPOST("country_id", 'int');
+			$thirdparty->state_id     = GETPOST("state_id", 'int');
+			$thirdparty->email        = $email;
 
 			// Load object modCodeTiers
 			$module = (!empty($conf->global->SOCIETE_CODECLIENT_ADDON) ? $conf->global->SOCIETE_CODECLIENT_ADDON : 'mod_codeclient_leopard');
@@ -270,6 +269,8 @@ if (empty($reshook) && $action == 'add') {
 			}
 			$thirdparty->code_client = $tmpcode;
 			$readythirdparty = $thirdparty->create($user);
+			$thirdparty->country_code = getCountry($thirdparty->country_id, 2, $db, $langs);
+			$thirdparty->country      = getCountry($thirdparty->country_code, 0, $db, $langs);
 		} else {
 			// We have an existing thirdparty ready to use
 			$readythirdparty = 1;
@@ -329,24 +330,14 @@ if (empty($reshook) && $action == 'add') {
 
 			if (!$error) {
 				// Add line to draft invoice
-				$idprodsubscription = 0;
-				if (!empty($conf->global->SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION) && (!empty($conf->product->enabled) || !empty($conf->service->enabled))) {
-					$idprodsubscription = $conf->global->SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION;
-				}
-
-				$vattouse = get_default_tva($mysoc, $thirdparty, $idprodsubscription);
-
-				$result = $facture->addline($label, 0, 1, $vattouse, 0, 0, $idprodsubscription, 0, $datesubscription, '', 0, 0, '', 'TTC', $amount, 1);
+				$vattouse = get_default_tva($mysoc, $thirdparty, $productforinvoicerow->id);
+				$result = $facture->addline($label, 0, 1, $vattouse, 0, 0, $productforinvoicerow->id, 0, dol_now(), '', 0, 0, '', 'TTC', floatval($project->price_registration), 1);
 				if ($result <= 0) {
 					$confattendee->error = $facture->error;
 					$confattendee->errors = $facture->errors;
 					$error++;
 				}
-				$resultfacture = $facture->create($user);
-				if ($resultfacture < 0) {
-					$error++;
-					$errmsg .= $facture->error;
-				} else {
+				if (!$error) {
 					$redirection = $dolibarr_main_url_root.'/public/payment/newpayment.php?source=conferencesubscription&ref='.$confattendee->id;
 					Header("Location: ".$redirection);
 					exit;
