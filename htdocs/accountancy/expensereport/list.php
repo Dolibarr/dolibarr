@@ -298,7 +298,7 @@ if ($result) {
 	}
 
 	$arrayofmassactions = array(
-		'ventil' => $langs->trans("Ventilate")
+		'ventil' => img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Ventilate")
 	);
 	$massactionbutton = $form->selectMassAction('ventil', $arrayofmassactions, 1);
 

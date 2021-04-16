@@ -172,7 +172,7 @@ if ($action == 'edit') {
 
 	// Disable
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_ALL_SMS").'</td><td>';
-	print $form->selectyesno('MAIN_DISABLE_ALL_SMS', $conf->global->MAIN_DISABLE_ALL_SMS, 1);
+	print $form->selectyesno('MAIN_DISABLE_ALL_SMS', getDolGlobalString('MAIN_DISABLE_ALL_SMS'), 1);
 	print '</td></tr>';
 
 	// Separator
@@ -189,7 +189,7 @@ if ($action == 'edit') {
 
 	// From
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMS_FROM", $langs->transnoentities("Undefined")).'</td>';
-	print '<td><input class="flat" name="MAIN_MAIL_SMS_FROM" size="32" value="'.$conf->global->MAIN_MAIL_SMS_FROM;
+	print '<td><input class="flat" name="MAIN_MAIL_SMS_FROM" size="32" value="'.getDolGlobalString('MAIN_MAIL_SMS_FROM');
 	print '"></td></tr>';
 
 	// Autocopy to
@@ -213,14 +213,14 @@ if ($action == 'edit') {
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	// Disable
-	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_ALL_SMS").'</td><td>'.yn($conf->global->MAIN_DISABLE_ALL_SMS).'</td></tr>';
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_ALL_SMS").'</td><td>'.yn(getDolGlobalString('MAIN_DISABLE_ALL_SMS')).'</td></tr>';
 
 	// Separator
 	print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
 
 	// Method
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_SMS_SENDMODE").'</td><td>';
-	$text = $listofmethods[$conf->global->MAIN_SMS_SENDMODE];
+	$text = empty(getDolGlobalString('MAIN_SMS_SENDMODE')) ? '' : $listofmethods[getDolGlobalString('MAIN_SMS_SENDMODE')];
 	if (empty($text)) {
 		$text = $langs->trans("Undefined").' '.img_warning();
 	}
@@ -229,7 +229,7 @@ if ($action == 'edit') {
 
 	// From
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMS_FROM", $langs->transnoentities("Undefined")).'</td>';
-	print '<td>'.$conf->global->MAIN_MAIL_SMS_FROM;
+	print '<td>'.getDolGlobalString('MAIN_MAIL_SMS_FROM');
 	if (!empty($conf->global->MAIN_MAIL_SMS_FROM) && !isValidPhone($conf->global->MAIN_MAIL_SMS_FROM)) {
 		print ' '.img_warning($langs->trans("ErrorBadPhone"));
 	}

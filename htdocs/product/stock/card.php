@@ -41,6 +41,7 @@ $langs->loadLangs(array('products', 'stocks', 'companies', 'categories'));
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm');
+$projectid = GETPOST('projectid', 'int');
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');

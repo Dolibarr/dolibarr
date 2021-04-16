@@ -7,6 +7,7 @@
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2016      Josep Lluís Amador   <joseplluis@lliuretic.cat>
  * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2021      Noé Cendrier         <noe.cendrier@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -360,6 +361,18 @@ print '<br>';
  */
 
 $listofreferent = array(
+'entrepot'=>array(
+	'name'=>"Warehouse",
+	'title'=>"ListWarehouseAssociatedProject",
+	'class'=>'Entrepot',
+	'table'=>'entrepot',
+	'datefieldname'=>'date_entrepot',
+	'urlnew'=>DOL_URL_ROOT.'/product/stock/card.php?action=create&projectid='.$id,
+	'lang'=>'entrepot',
+	'buttonnew'=>'AddWarehouse',
+	'project_field'=>'fk_project',
+	'testnew'=>$user->rights->stock->creer,
+	'test'=>$conf->stock->enabled && $user->rights->stock->lire),
 'propal'=>array(
 	'name'=>"Proposals",
 	'title'=>"ListProposalsAssociatedProject",
