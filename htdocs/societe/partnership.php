@@ -535,14 +535,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			if ($permissiontoadd) {
 				print dolGetButtonAction($langs->trans('ShowPartnership'), '', 'default', dol_buildpath('/partnership/partnership_card.php', 1).'?id='.$object->id, '', $permissiontoadd);
 			}
-			
+
 			// Cancel
 			if ($permissiontoadd) {
 				if ($object->status == $object::STATUS_ACCEPTED) {
 					print dolGetButtonAction($langs->trans('Cancel'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=close&token='.newToken(), '', $permissiontoadd);
 				}
 			}
-
 		}
 		print '</div>'."\n";
 	}

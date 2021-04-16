@@ -166,8 +166,8 @@ if (empty($reshook)) {
 		$fpartnership = new Partnership($db);
 
 		$partnershipid = $fpartnership->fetch(0, "", $fk_soc);
-		if($partnershipid > 0){
-			setEventMessages($langs->trans('PartnershipAlreadyExist').' : '.$fpartnership->getNomUrl(0,'',1), '', 'errors');
+		if ($partnershipid > 0) {
+			setEventMessages($langs->trans('PartnershipAlreadyExist').' : '.$fpartnership->getNomUrl(0, '', 1), '', 'errors');
 			$action = ($action == 'add') ? 'create' : 'edit';
 		}
 	}
@@ -226,7 +226,6 @@ if (empty($reshook)) {
 					$error++;
 				} else {
 					$object->reason_decline_or_cancel = GETPOST('reason_decline_or_cancel', 'restricthtml');
-					
 				}
 
 				if (!$error) {
@@ -262,7 +261,7 @@ if (empty($reshook)) {
 	$trackid = 'partnership'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
-	if(!empty($id) && !empty(GETPOST('confirm'))){
+	if (!empty($id) && !empty(GETPOST('confirm'))) {
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 		exit;
 	}
