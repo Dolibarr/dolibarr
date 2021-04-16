@@ -30,6 +30,8 @@
 
 -- Missing in v13 or lower
 
+ALTER TABLE llx_recruitment_recruitmentcandidature MODIFY COLUMN email_msgid VARCHAR(175);
+
 ALTER TABLE llx_asset CHANGE COLUMN amount amount_ht double(24,8) DEFAULT NULL;
 ALTER TABLE llx_asset ADD COLUMN amount_vat double(24,8) DEFAULT NULL;
 
@@ -47,6 +49,14 @@ UPDATE llx_c_country SET eec = 1 WHERE code IN ('AT','BE','BG','CY','CZ','DE','D
 
 
 -- For v14
+
+create table llx_accounting_groups_account
+(
+  rowid            integer AUTO_INCREMENT PRIMARY KEY,
+  fk_accounting_account		INTEGER NOT NULL,
+  fk_c_accounting_category	INTEGER NOT NULL
+)ENGINE=innodb;
+
 
 ALTER TABLE llx_oauth_token ADD COLUMN restricted_ips varchar(200);
 ALTER TABLE llx_oauth_token ADD COLUMN datec datetime DEFAULT NULL;
@@ -269,8 +279,8 @@ ALTER TABLE llx_payment_salary CHANGE COLUMN fk_user fk_user integer NULL;
 ALTER TABLE llx_payment_salary ADD COLUMN fk_salary integer;
 
 INSERT INTO llx_salary (rowid, ref, fk_user, amount, fk_projet, fk_typepayment, label, datesp, dateep, entity, note, fk_bank, paye) SELECT ps.rowid, ps.rowid, ps.fk_user, ps.amount, ps.fk_projet, ps.fk_typepayment, ps.label, ps.datesp, ps.dateep, ps.entity, ps.note, ps.fk_bank, 1 FROM llx_payment_salary ps WHERE ps.fk_salary IS NULL;
-UPDATE llx_payment_salary as ps SET ps.fk_salary = ps.rowid WHERE ps.fk_salary IS NULL;
-UPDATE llx_payment_salary as ps SET ps.ref = ps.rowid WHERE ps.ref IS NULL;
+UPDATE llx_payment_salary SET fk_salary = rowid WHERE fk_salary IS NULL;
+UPDATE llx_payment_salary SET ref = rowid WHERE ref IS NULL;
 
 ALTER TABLE llx_salary CHANGE paye paye smallint default 0 NOT NULL;
 
@@ -325,7 +335,7 @@ CREATE TABLE llx_eventorganization_conferenceorboothattendee(
     note_private text,
     date_creation datetime NOT NULL,
     tms timestamp,
-    fk_user_creat integer NOT NULL,
+    fk_user_creat integer,
     fk_user_modif integer,
     last_main_doc varchar(255),
     import_key varchar(14),
@@ -339,7 +349,6 @@ ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_evento
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_eventorganization_conferenceorboothattendee_fk_actioncomm (fk_actioncomm);
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD CONSTRAINT fx_eventorganization_conferenceorboothattendee_fk_actioncomm FOREIGN KEY (fk_actioncomm) REFERENCES llx_actioncomm(id);
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_eventorganization_conferenceorboothattendee_email (email);
-ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD CONSTRAINT llx_eventorganization_conferenceorboothattendee_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_eventorganization_conferenceorboothattendee_status (status);
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD UNIQUE INDEX uk_eventorganization_conferenceorboothattendee(fk_soc, fk_actioncomm, email);
 

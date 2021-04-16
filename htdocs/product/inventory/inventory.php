@@ -448,23 +448,25 @@ if ($object->id > 0) {
 			 print '<a href="#" class="butAction">'.$langs->trans('UpdateByScaningLot').'</a>';
 			 }*/
 			if (!empty($conf->barcode->enabled) || !empty($conf->productbatch->enabled)) {
-				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=updatebyscaning" class="">'.$langs->trans("UpdateByScaning").'</a>';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=updatebyscaning" class="">'.img_picto('', 'barcode', 'class="paddingrightonly"').$langs->trans("UpdateByScaning").'</a>';
 			}
 		} else {
-			print '<a class="classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Save").'</a>'."\n";
+			print '<a class="classfortooltip marginrightonly paddingright marginleftonly paddingleft" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Save").'</a>'."\n";
 		}
 		if ($permissiontoadd && $conf->use_javascript_ajax) {
-			print '&nbsp;';
-			print '<button type="button" class="butAction" id="fillwithexpected">'.$langs->trans('AutofillWithExpected').'</button>';
+			print '<a id="fillwithexpected" class="marginrightonly paddingright marginleftonly paddingleft" href="#">'.img_picto('', 'autofill', 'class="paddingrightonly"').$langs->trans('AutofillWithExpected').'</a>';
+
 			print '<script>';
-			print '$("#fillwithexpected").on("click",function fillWithExpected(){
-					$(".expectedqty").each(function(){
+			print '$( document ).ready(function() {';
+			print ' $("#fillwithexpected").on("click",function fillWithExpected(){
+					  $(".expectedqty").each(function(){
 						var object = $(this)[0];
 						var objecttofill = $("#"+object.id+"_input")[0];
 						objecttofill.value = object.innerText;
 						})
 						console.log("Values filled");
-					});';
+			         });';
+			print '});';
 			print '</script>';
 		}
 		print '<br>';

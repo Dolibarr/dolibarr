@@ -65,32 +65,10 @@ print load_fiche_titre($langs->trans("ProspectionArea"), '', 'propal');
 print '<div class="fichecenter">';
 print '<div class="fichethirdleft">';
 
-// This is useless due to the global search combo
-if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {
-	print '<form method="post" action="'.DOL_URL_ROOT.'/comm/propal/list.php">';
-	print '<div class="div-table-responsive-no-min">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<table class="noborder nohover centpercent">';
-
-	print '<tr class="liste_titre">';
-	print '<td colspan="3">'.$langs->trans("Search").'</td>';
-	print '</tr>';
-
-	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("Proposal").':</td>';
-	print '<td><input type="text" class="flat" name="sall" size=18></td>';
-	print '<td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
-	print '</tr>';
-
-	print '</table>';
-	print '</div>';
-	print '</form>';
-	print '<br>';
-}
-
 /*
  * Statistics
  */
+
 $listofstatus = array(Propal::STATUS_DRAFT, Propal::STATUS_VALIDATED, Propal::STATUS_SIGNED, Propal::STATUS_NOTSIGNED, Propal::STATUS_BILLED);
 
 $sql = "SELECT count(p.rowid) as nb, p.fk_statut as status";

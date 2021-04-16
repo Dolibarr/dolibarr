@@ -116,6 +116,7 @@ body {
 	margin-right: 0;
 	margin-left: 0;
 	font-weight: 400;
+	background-color: var(--colorbackbody);
 	<?php print 'direction: '.$langs->trans("DIRECTION").";\n"; ?>
 }
 
@@ -1696,6 +1697,11 @@ td.showDragHandle {
 	z-index: 1001;
 }
 <?php } ?>
+<?php if (!empty($conf->global->THEME_DARKMODEENABLED)) {  ?>
+.side-nav-vert {
+	border-bottom: 1px solid #888;
+}
+<?php } ?>
 
 .side-nav {
 	/*display: block;
@@ -1720,13 +1726,13 @@ div.blockvmenulogo
 	margin-left: 11px;
 	margin-right: 9px;
 	padding: 0;
-	height: <?php echo $disableimages ? '20' : '32'; ?>px;
+	height: <?php echo $disableimages ? '20' : '35'; ?>px;
 	/* width: 100px; */
 	max-width: 100px;
 	vertical-align: middle;
 }
 .backgroundforcompanylogo {
-	background-color: rgba(255,255,255,0.7);
+	background-color: rgba(255,255,255,0.2);
 	border-radius: 4px;
 }
 .menulogocontainer img.mycompany {
@@ -2071,7 +2077,7 @@ span.widthpictotitle.pictotitle {
 	opacity: 0.4;
 }
 .pictofixedwidth {
-	text-align: left;
+	text-align: <?php echo $left; ?>;
 	width: 20px;
 	padding-right: 0;
 }
@@ -2601,7 +2607,7 @@ table.login_table_securitycode tr td {
 }
 
 div.backgroundsemitransparent {
-	background:rgba(255,255,255,0.6);
+	background:rgba(255,255,255,0.68);
 	padding-left: 10px;
 	padding-right: 10px;
 }
@@ -2810,7 +2816,7 @@ a.help:link, a.help:visited, a.help:hover, a.help:active, span.help { text-align
 .helppresentcircle {
 	color: var(--colorbackhmenu1);
 	filter: invert(0.8);
-	margin-left: -7px;
+	margin-<?php echo $left ?>: -7px;
 	display: inline-block;
 	margin-top: -10px;
 	font-size: x-small;
@@ -5709,7 +5715,7 @@ input.select2-input {
 	-webkit-box-shadow: none !important;
 	box-shadow: none !important;
 	border-radius: 0 !important;
-	color: black;
+	/* color: black; */
 }
 .select2-container-active .select2-choice, .select2-container-active .select2-choices
 {
@@ -6393,12 +6399,13 @@ div.tabsElem a.tab {
 .ticketlargemargin {
 	padding-left: 50px;
 	padding-right: 50px;
-	padding-top: 10px;
+	padding-top: 30px;
 }
 @media only screen and (max-width: 767px)
 {
 	.ticketlargemargin {
 		padding-left: 5px; padding-right: 5px;
+		padding-top: 10px;
 	}
 	.ticketpublicarea {
 		margin-left: 10px;

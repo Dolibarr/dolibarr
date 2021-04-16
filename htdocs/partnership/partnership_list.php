@@ -495,13 +495,13 @@ $param .= $hookmanager->resPrint;
 
 // List of mass actions available
 $arrayofmassactions = array(
-	'cancel'=>$langs->trans("Cancel"),
-	//'generate_doc'=>$langs->trans("ReGeneratePDF"),
-	//'builddoc'=>$langs->trans("PDFMerge"),
-	'presend'=>$langs->trans("SendMail"),
+'cancel'=>img_picto('', 'close_title', 'class="pictofixedwidth"').$langs->trans("Cancel"),
+	//'generate_doc'=>img_picto('', 'pdf').$langs->trans("ReGeneratePDF"),
+	//'builddoc'=>img_picto('', 'pdf').$langs->trans("PDFMerge"),
+	'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendMail"),
 );
 if ($permissiontodelete) {
-	$arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) {
 	$arrayofmassactions = array();

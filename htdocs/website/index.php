@@ -590,6 +590,8 @@ if ($action == 'addsite' && $usercanedit) {
 	if (!$error) {
 		$arrayotherlang = explode(',', GETPOST('WEBSITE_OTHERLANG', 'alphanohtml'));
 		foreach ($arrayotherlang as $key => $val) {
+			// It possible we have empty val here if postparam WEBSITE_OTHERLANG is empty or set like this : 'en,,sv' or 'en,sv,'
+			if (empty(trim($val))) continue;
 			$arrayotherlang[$key] = substr(trim($val), 0, 2); // Kept short language code only
 		}
 
@@ -941,10 +943,45 @@ if ($action == 'addcontainer' && $usercanedit) {
 			}
 		}
 	} else {
+		$newaliasnames = '';
+		if (!$error && GETPOST('WEBSITE_ALIASALT', 'alpha')) {
+			$arrayofaliastotest = explode(',', str_replace(array('<', '>'), '', GETPOST('WEBSITE_ALIASALT', 'alpha')));
+			$websitepagetemp = new WebsitePage($db);
+			foreach ($arrayofaliastotest as $aliastotest) {
+				$aliastotest = trim(preg_replace('/\.php$/i', '', $aliastotest));
+
+				// Disallow alias name pageX (already used to save the page with id)
+				if (preg_match('/^page\d+/i', $aliastotest)) {
+					$error++;
+					$langs->load("errors");
+					setEventMessages("Alias name 'pageX' is not allowed", null, 'errors');
+					$action = 'createcontainer';
+					break;
+				} else {
+					$result = $websitepagetemp->fetch(0, $object->id, $aliastotest);
+					if ($result < 0) {
+						$error++;
+						$langs->load("errors");
+						setEventMessages($websitepagetemp->error, $websitepagetemp->errors, 'errors');
+						$action = 'createcontainer';
+						break;
+					}
+					if ($result > 0) {
+						$error++;
+						$langs->load("errors");
+						setEventMessages($langs->trans("ErrorAPageWithThisNameOrAliasAlreadyExists", $websitepagetemp->pageurl), null, 'errors');
+						$action = 'createcontainer';
+						break;
+					}
+					$newaliasnames .= ($newaliasnames ? ', ' : '').$aliastotest;
+				}
+			}
+		}
+
 		$objectpage->title = str_replace(array('<', '>'), '', GETPOST('WEBSITE_TITLE', 'alphanohtml'));
 		$objectpage->type_container = GETPOST('WEBSITE_TYPE_CONTAINER', 'aZ09');
 		$objectpage->pageurl = GETPOST('WEBSITE_PAGENAME', 'alpha');
-		$objectpage->aliasalt = str_replace(array('<', '>'), '', GETPOST('WEBSITE_ALIASALT', 'alphanohtml'));
+		$objectpage->aliasalt = $newaliasnames;
 		$objectpage->description = str_replace(array('<', '>'), '', GETPOST('WEBSITE_DESCRIPTION', 'alphanohtml'));
 		$objectpage->lang = GETPOST('WEBSITE_LANG', 'aZ09');
 		$objectpage->otherlang = GETPOST('WEBSITE_OTHERLANG', 'aZ09comma');
@@ -1297,6 +1334,8 @@ if ($action == 'updatecss' && $usercanedit) {
 			if (!$error) {
 				$arrayotherlang = explode(',', GETPOST('WEBSITE_OTHERLANG', 'alphanohtml'));
 				foreach ($arrayotherlang as $key => $val) {
+					// It possible we have empty val here if postparam WEBSITE_OTHERLANG is empty or set like this : 'en,,sv' or 'en,sv,'
+					if (empty(trim($val))) continue;
 					$arrayotherlang[$key] = substr(trim($val), 0, 2); // Kept short language code only
 				}
 
@@ -1628,15 +1667,20 @@ if ($action == 'updatemeta' && $usercanedit) {
 			$action = 'editmeta';
 		}
 	}
+
+	$newaliasnames = '';
 	if (!$error && GETPOST('WEBSITE_ALIASALT', 'alpha')) {
-		$arrayofaliastotest = explode(',', GETPOST('WEBSITE_ALIASALT', 'alpha'));
+		$arrayofaliastotest = explode(',', str_replace(array('<', '>'), '', GETPOST('WEBSITE_ALIASALT', 'alpha')));
+
 		$websitepagetemp = new WebsitePage($db);
 		foreach ($arrayofaliastotest as $aliastotest) {
+			$aliastotest = trim(preg_replace('/\.php$/i', '', $aliastotest));
+
 			// Disallow alias name pageX (already used to save the page with id)
 			if (preg_match('/^page\d+/i', $aliastotest)) {
 				$error++;
 				$langs->load("errors");
-				setEventMessages("Alias 'pageX' is not allowed", null, 'errors');
+				setEventMessages("Alias name 'pageX' is not allowed", null, 'errors');
 				$action = 'editmeta';
 				break;
 			} else {
@@ -1655,6 +1699,7 @@ if ($action == 'updatemeta' && $usercanedit) {
 					$action = 'editmeta';
 					break;
 				}
+				$newaliasnames .= ($newaliasnames ? ', ' : '').$aliastotest;
 			}
 		}
 	}
@@ -1665,7 +1710,7 @@ if ($action == 'updatemeta' && $usercanedit) {
 		$objectpage->title = str_replace(array('<', '>'), '', GETPOST('WEBSITE_TITLE', 'alphanohtml'));
 		$objectpage->type_container = GETPOST('WEBSITE_TYPE_CONTAINER', 'aZ09');
 		$objectpage->pageurl = GETPOST('WEBSITE_PAGENAME', 'alpha');
-		$objectpage->aliasalt = str_replace(array('<', '>'), '', GETPOST('WEBSITE_ALIASALT', 'alphanohtml'));
+		$objectpage->aliasalt = $newaliasnames;
 		$objectpage->lang = GETPOST('WEBSITE_LANG', 'aZ09');
 		$objectpage->otherlang = GETPOST('WEBSITE_OTHERLANG', 'aZ09comma');
 		$objectpage->description = str_replace(array('<', '>'), '', GETPOST('WEBSITE_DESCRIPTION', 'alphanohtml'));
@@ -1740,6 +1785,10 @@ if ($action == 'updatemeta' && $usercanedit) {
 				$filename = basename($fileoldalias);
 				$sublangs = explode(',', $object->otherlang);
 				foreach ($sublangs as $sublang) {
+					// Under certain conditions $sublang can be an empty string
+					// ($object->otherlang with empty string or with string like this 'en,,sv')
+					// if is the case we try to re-delete the main alias file. Avoid it.
+					if (empty(trim($sublang))) continue;
 					$fileoldaliassub = $dirname.'/'.$sublang.'/'.$filename;
 					dol_delete_file($fileoldaliassub);
 				}
@@ -1759,6 +1808,10 @@ if ($action == 'updatemeta' && $usercanedit) {
 						$filename = basename($pathofwebsite.'/'.trim($tmpaliasalt).'.php');
 						$sublangs = explode(',', $object->otherlang);
 						foreach ($sublangs as $sublang) {
+							// Under certain conditions $ sublang can be an empty string
+							// ($object->otherlang with empty string or with string like this 'en,,sv')
+							// if is the case we try to re-delete the main alias file. Avoid it.
+							if (empty(trim($sublang))) continue;
 							$fileoldaliassub = $dirname.'/'.$sublang.'/'.$filename;
 							dol_delete_file($fileoldaliassub);
 						}
@@ -2263,36 +2316,6 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 	$action = 'preview';
 }
 
-$imagefolder = $conf->website->dir_output.'/'.$websitekey.'/medias/image/'.$websitekey.'/';
-
-if ($action == 'convertimgwebp' && $usercanedit) {
-	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
-
-	$regeximgext = getListOfPossibleImageExt();
-
-	$filelist = dol_dir_list($imagefolder, "all", 1, $regeximgext);
-
-	foreach ($filelist as $filename) {
-		$filepath = $filename['fullname'];
-		if (!(substr_compare($filepath, 'webp', -strlen('webp')) === 0)) {
-			if (image_format_supported($filepath) == 1) {
-				$filepathnoext = preg_replace("/\..*/", "", $filepath);
-				$result = dol_imageResizeOrCrop($filepath, 0, 0, 0, 0, 0, $filepathnoext.'.webp');
-				if (!dol_is_file($result)) {
-					$error++;
-					setEventMessages($result, null, 'errors');
-				}
-			}
-		}
-		if ($error) {
-			break;
-		}
-	}
-	if (!$error) {
-		setEventMessages($langs->trans('SucessConvertImgWebp'), null);
-	}
-	$action = 'preview';
-}
 
 /*
  * View
@@ -2306,10 +2329,6 @@ $formother = new FormOther($db);
 // Confirm generation of website sitemaps
 if ($action == 'confirmgeneratesitemaps') {
 	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?website='.$website->ref, $langs->trans('ConfirmSitemapsCreation'), $langs->trans('ConfirmGenerateSitemaps', $object->ref), 'generatesitemaps', '', "yes", 1);
-	$action = 'preview';
-}
-if ($action == 'confirmconvertimgwebp') {
-	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?website='.$website->ref, $langs->trans('ConfirmImgWebpCreation'), $langs->trans('ConfirmGenerateImgWebp', $object->ref), 'convertimgwebp', '', "yes", 1);
 	$action = 'preview';
 }
 $helpurl = 'EN:Module_Website|FR:Module_Website_FR|ES:M&oacute;dulo_Website';
@@ -2530,7 +2549,6 @@ if (!GETPOST('hide_websitemenu')) {
 			// Generate site map
 			print '<a href="'.$_SERVER["PHP_SEFL"].'?action=confirmgeneratesitemaps&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("GenerateSitemaps")).'"><span class="fa fa-sitemap"><span></a>';
 
-			print '<a href="'.$_SERVER["PHP_SEFL"].'?action=confirmconvertimgwebp&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("GenerateImgWebp")).'"><span class="fa fa-cogs"><span></a>';
 			print ' &nbsp; ';
 
 			print '<a href="'.$_SERVER["PHP_SEFL"].'?action=replacesite&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("ReplaceWebsiteContent")).'"><span class="fa fa-search"><span></a>';
@@ -2772,6 +2790,7 @@ if (!GETPOST('hide_websitemenu')) {
 							$onlylang[$website->lang] = $website->lang.' ('.$langs->trans("Default").')';
 						}
 						foreach (explode(',', $website->otherlang) as $langkey) {
+							if (empty(trim($langkey))) continue;
 							$onlylang[$langkey] = $langkey;
 						}
 						$textifempty = $langs->trans("Default");
@@ -3869,7 +3888,7 @@ if ($action == 'preview') {
 	print $formconfirm;
 }
 
-if ($action == 'editfile' || $action == 'file_manager') {
+if ($action == 'editfile' || $action == 'file_manager' || $action == 'convertimgwebp' || $action == 'confirmconvertimgwebp') {
 	print '<!-- Edit Media -->'."\n";
 	print '<div class="fiche"><br>';
 	//print '<div class="center">'.$langs->trans("FeatureNotYetAvailable").'</center>';

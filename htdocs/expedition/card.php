@@ -130,6 +130,7 @@ $date_delivery = dol_mktime(GETPOST('date_deliveryhour', 'int'), GETPOST('date_d
 if ($user->socid) {
 	$socid = $user->socid;
 }
+
 $result = restrictedArea($user, 'expedition', $object->id, '');
 
 
@@ -1035,7 +1036,7 @@ if ($action == 'create') {
 				print '<td class="center">'.$langs->trans("QtyShipped").'</td>';
 				print '<td class="center">'.$langs->trans("QtyToShip");
 				if (empty($conf->productbatch->enabled)) {
-					print '<br><a href="#" id="autofill" class="opacitymedium link cursor cursorpointer">'.$langs->trans("Fill").'</a>';
+					print '<br><a href="#" id="autofill" class="opacitymedium link cursor cursorpointer">'.img_picto($langs->trans("Autofill"), 'autofill', 'class="paddingrightonly"').$langs->trans("Fill").'</a>';
 					print ' / ';
 				} else {
 					print '<br>';

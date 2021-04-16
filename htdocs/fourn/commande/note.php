@@ -48,7 +48,7 @@ $result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'com
 $object = new CommandeFournisseur($db);
 $object->fetch($id, $ref);
 
-$permissionnote = $user->rights->fournisseur->commande->creer; // Used by the include of actions_setnotes.inc.php
+$permissionnote = ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer); // Used by the include of actions_setnotes.inc.php
 
 
 /*
@@ -100,7 +100,7 @@ if ($id > 0 || !empty($ref)) {
 		if (!empty($conf->projet->enabled)) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-			if ($user->rights->fournisseur->commande->creer) {
+			if ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer) {
 				if ($action != 'classify') {
 					//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 					$morehtmlref .= ' : ';

@@ -808,7 +808,7 @@ class Products extends DolibarrApi
 		$sql .= ' WHERE t.entity IN ('.getEntity('product').')';
 
 		if ($supplier > 0) {
-			$sql .= " AND s.fk_soc = "((int) $supplier);
+			$sql .= " AND s.fk_soc = ".((int) $supplier);
 		}
 		if ($socid > 0) {	// if external user
 			$sql .= " AND s.fk_soc = ".((int) $socid);

@@ -534,24 +534,23 @@ function dolibarr_del_const($db, $name, $entity = 1)
 }
 
 /**
- *	Recupere une constante depuis la base de donnees.
+ *	Get the value of a setup constant from database
  *
  *	@param	    DoliDB		$db         Database handler
- *	@param	    string		$name		Nom de la constante
+ *	@param	    string		$name		Name of constant
  *	@param	    int			$entity		Multi company id
- *	@return     string      			Valeur de la constante
+ *	@return     string      			Value of constant
  *
  *	@see		dolibarr_del_const(), dolibarr_set_const(), dol_set_user_param()
  */
 function dolibarr_get_const($db, $name, $entity = 1)
 {
-	global $conf;
 	$value = '';
 
 	$sql = "SELECT ".$db->decrypt('value')." as value";
 	$sql .= " FROM ".MAIN_DB_PREFIX."const";
 	$sql .= " WHERE name = ".$db->encrypt($name, 1);
-	$sql .= " AND entity = ".$entity;
+	$sql .= " AND entity = ".((int) $entity);
 
 	dol_syslog("admin.lib::dolibarr_get_const", LOG_DEBUG);
 	$resql = $db->query($sql);
@@ -571,7 +570,7 @@ function dolibarr_get_const($db, $name, $entity = 1)
  *	@param	    DoliDB		$db         Database handler
  *	@param	    string		$name		Name of constant
  *	@param	    string		$value		Value of constant
- *	@param	    string		$type		Type of constant ('chaine by default)
+ *	@param	    string		$type		Type of constant. Deprecated, only strings are allowed for $value. Caller must json encode/decode to store other type of data.
  *	@param	    int			$visible	Is constant visible in Setup->Other page (0 by default)
  *	@param	    string		$note		Note on parameter
  *	@param	    int			$entity		Multi company id (0 means all entities)
@@ -599,7 +598,7 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
 	$sql .= " WHERE name = ".$db->encrypt($name, 1);
 	if ($entity >= 0) {
-		$sql .= " AND entity = ".$entity;
+		$sql .= " AND entity = ".((int) $entity);
 	}
 
 	dol_syslog("admin.lib::dolibarr_set_const", LOG_DEBUG);
@@ -610,7 +609,7 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 		$sql .= " VALUES (";
 		$sql .= $db->encrypt($name, 1);
 		$sql .= ", ".$db->encrypt($value, 1);
-		$sql .= ",'".$db->escape($type)."',".$visible.",'".$db->escape($note)."',".$entity.")";
+		$sql .= ",'".$db->escape($type)."',".((int) $visible).",'".$db->escape($note)."',".((int) $entity).")";
 
 		//print "sql".$value."-".pg_escape_string($value)."-".$sql;exit;
 		//print "xx".$db->escape($value);

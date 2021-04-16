@@ -28,7 +28,6 @@
  */
 function payment_prepare_head(Paiement $object)
 {
-
 	global $langs, $conf;
 
 	$h = 0;
@@ -174,7 +173,7 @@ function showOnlinePaymentUrl($type, $ref)
 	$out = img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePayment", $servicename).'</span><br>';
 	$url = getOnlinePaymentUrl(0, $type, $ref);
 	$out .= '<div class="urllink"><input type="text" id="onlinepaymenturl" class="quatrevingtpercent" value="'.$url.'">';
-	$out .= '<a href="'.$url.'" target="_blank">'.img_picto('', 'globe').'</a></div>';
+	$out .= '<a href="'.$url.'" target="_blank">'.img_picto('', 'globe', 'class="paddingleft"').'</a></div>';
 	$out .= ajax_autoselect("onlinepaymenturl", 0);
 	return $out;
 }
@@ -211,9 +210,9 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag
 		$out = $urltouse.'/public/payment/newpayment.php?amount='.($mode ? '<font color="#666666">' : '').$amount.($mode ? '</font>' : '').'&tag='.($mode ? '<font color="#666666">' : '').$freetag.($mode ? '</font>' : '');
 		if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-				$out .= '&securekey='.$conf->global->PAYMENT_SECURITY_TOKEN;
+				$out .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
 			} else {
-				$out .= '&securekey='.dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
+				$out .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2));
 			}
 		}
 		//if ($mode) $out.='&noidempotency=1';
@@ -228,7 +227,7 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag
 		$out .= ($mode ? '</font>' : '');
 		if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-				$out .= '&securekey='.$conf->global->PAYMENT_SECURITY_TOKEN;
+				$out .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
 			} else {
 				$out .= '&securekey='.($mode ? '<font color="#666666">' : '');
 				if ($mode == 1) {
@@ -251,7 +250,7 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag
 		$out .= ($mode ? '</font>' : '');
 		if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-				$out .= '&securekey='.$conf->global->PAYMENT_SECURITY_TOKEN;
+				$out .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
 			} else {
 				$out .= '&securekey='.($mode ? '<font color="#666666">' : '');
 				if ($mode == 1) {
@@ -274,7 +273,7 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag
 		$out .= ($mode ? '</font>' : '');
 		if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-				$out .= '&securekey='.$conf->global->PAYMENT_SECURITY_TOKEN;
+				$out .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
 			} else {
 				$out .= '&securekey='.($mode ? '<font color="#666666">' : '');
 				if ($mode == 1) {
@@ -287,6 +286,7 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag
 			}
 		}
 	} elseif ($type == 'member' || $type == 'membersubscription') {
+		$newtype = 'member';
 		$out = $urltouse.'/public/payment/newpayment.php?source=membersubscription&ref='.($mode ? '<font color="#666666">' : '');
 		if ($mode == 1) {
 			$out .= 'member_ref';
@@ -297,14 +297,14 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag
 		$out .= ($mode ? '</font>' : '');
 		if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-				$out .= '&securekey='.$conf->global->PAYMENT_SECURITY_TOKEN;
+				$out .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
 			} else {
 				$out .= '&securekey='.($mode ? '<font color="#666666">' : '');
 				if ($mode == 1) {
-					$out .= "hash('".$conf->global->PAYMENT_SECURITY_TOKEN."' + '".$type."' + member_ref)";
+					$out .= "hash('".$conf->global->PAYMENT_SECURITY_TOKEN."' + '".$newtype."' + member_ref)";
 				}
 				if ($mode == 0) {
-					$out .= dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.$type.$ref, 2);
+					$out .= dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.$newtype.$ref, 2);
 				}
 				$out .= ($mode ? '</font>' : '');
 			}
@@ -321,7 +321,7 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag
 		$out .= ($mode ? '</font>' : '');
 		if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-				$out .= '&securekey='.$conf->global->PAYMENT_SECURITY_TOKEN;
+				$out .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
 			} else {
 				$out .= '&securekey='.($mode ? '<font color="#666666">' : '');
 				if ($mode == 1) {
