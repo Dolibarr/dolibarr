@@ -202,6 +202,20 @@ class modTakePos extends DolibarrModules
 		$this->rights[$r][2] = 'a';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'run';
+		
+		$r++;
+		$this->rights[$r][0] = 50152;
+		$this->rights[$r][1] = 'Edit sales lines';
+		$this->rights[$r][2] = 'a';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'editlines';
+		
+		$r++;
+		$this->rights[$r][0] = 50153;
+		$this->rights[$r][1] = 'Edit ordered sales lines';
+		$this->rights[$r][2] = 'a';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'editorderedlines';
 
 
 		// Main menu entries
