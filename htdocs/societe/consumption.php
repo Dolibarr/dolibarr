@@ -379,7 +379,7 @@ if (empty($elementTypeArray) && !$object->client && !$object->fournisseur) {
 
 // Define type of elements
 $typeElementString = $form->selectarray("type_element", $elementTypeArray, GETPOST('type_element'), $showempty, 0, 0, '', 0, 0, $disabled, '', 'maxwidth150onsmartphone');
-$button = '<input type="submit" class="button" name="button_third" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+$button = '<input type="submit" class="button buttonform" name="button_third" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 
 $param = '';
 $param .= "&sref=".urlencode($sref);
@@ -643,10 +643,10 @@ if ($sql_select) {
 		if ($type_element == 'invoice' && $objp->doc_type == Facture::TYPE_CREDIT_NOTE) {
 			$objp->prod_qty = -($objp->prod_qty);
 		}
-		print '<td class="right">'.$objp->prod_qty.'</td>';
+		print '<td class="right"><span class="amount">'.$objp->prod_qty.'</span></td>';
 		$total_qty += $objp->prod_qty;
 
-		print '<td class="right">'.price($objp->total_ht).'</td>';
+		print '<td class="right"><span class="amount">'.price($objp->total_ht).'</span></td>';
 		$total_ht += $objp->total_ht;
 
 		print '<td class="right">'.price($objp->total_ht / (empty($objp->prod_qty) ? 1 : $objp->prod_qty)).'</td>';

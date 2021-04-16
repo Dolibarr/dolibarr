@@ -492,7 +492,7 @@ if ($action == 'create') {
 	// Bank
 	if (!empty($conf->banque->enabled)) {
 		print '<tr><td id="label_fk_account">';
-		print $form->editfieldkey('DefaultBankAccount', 'selectaccountid', '', $object, 0, 'string', '', 1).'</td><td>';
+		print $form->editfieldkey('BankAccount', 'selectaccountid', '', $object, 0, 'string', '', 1).'</td><td>';
 		print img_picto('', 'bank_account', 'class="paddingrighonly"');
 		$form->select_comptes($accountid, "accountid", 0, '', 1); // Affiche liste des comptes courant
 		print '</td></tr>';
@@ -500,7 +500,7 @@ if ($action == 'create') {
 
 	// Type payment
 	print '<tr><td id="label_type_payment">';
-	print $form->editfieldkey('DefaultPaymentMode', 'selectpaymenttype', '', $object, 0, 'string', '', 1).'</td><td>';
+	print $form->editfieldkey('PaymentMode', 'selectpaymenttype', '', $object, 0, 'string', '', 1).'</td><td>';
 	$form->select_types_paiements(GETPOST("paymenttype", 'aZ09'), "paymenttype", '');
 	print '</td></tr>';
 
@@ -526,10 +526,10 @@ if ($action == 'create') {
 	}
 
 	// Bouton Save payment
-	print '<tr class="hide_if_no_auto_create_payment"><td>';
+/*	print '<tr class="hide_if_no_auto_create_payment"><td>';
 	print $langs->trans("ClosePaidSalaryAutomatically");
 	print '</td><td><input type="checkbox" checked value="1" name="closepaidsalary"></td></tr>';
-
+*/
 	// Other attributes
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -543,6 +543,12 @@ if ($action == 'create') {
 	print dol_get_fiche_end();
 
 	print '<div class="center">';
+
+	print '<div class="hide_if_no_auto_create_payment paddingbottom">';
+	print '<input type="checkbox" checked value="1" name="closepaidsalary">'.$langs->trans("ClosePaidSalaryAutomatically");
+	print '<br>';
+	print '</div>';
+
 	print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
 	print '&nbsp;&nbsp; &nbsp;&nbsp;';
 	print '<input type="submit" class="button" name="saveandnew" value="'.$langs->trans("SaveAndNew").'">';

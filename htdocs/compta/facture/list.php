@@ -1284,10 +1284,6 @@ if ($resql) {
 		print '<td class="liste_titre right">';
 		print '</td>';
 	}
-	if (!empty($arrayfields['f.date_closing']['checked'])) {
-		print '<td class="liste_titre">';
-		print '</td>';
-	}
 	if (!empty($arrayfields['total_pa']['checked'])) {
 		print '<td class="liste_titre right">';
 		print '</td>';
@@ -1319,6 +1315,11 @@ if ($resql) {
 	}
 	// Date modification
 	if (!empty($arrayfields['f.tms']['checked'])) {
+		print '<td class="liste_titre">';
+		print '</td>';
+	}
+	// Date closing
+	if (!empty($arrayfields['f.date_closing']['checked'])) {
 		print '<td class="liste_titre">';
 		print '</td>';
 	}
