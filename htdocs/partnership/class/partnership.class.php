@@ -849,21 +849,24 @@ class Partnership extends CommonObject
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
 	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
 	 */
-	public function refused($user, $notrigger = '')
+	public function refused($user, $reasondeclinenote = '', $notrigger = 0)
 	{
 		// Protection
 		if ($this->status == self::STATUS_REFUSED) {
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->partnership->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->partnership_advance->validate))))
-		 {
-		 $this->error='Permission denied';
-		 return -1;
-		 }*/
+		$this->status 					= self::STATUS_REFUSED;
+		$this->reason_decline_or_cancel = $reasondeclinenote;
 
-		return $this->setStatusCommon($user, self::STATUS_REFUSED, $notrigger, 'PARTNERSHIP_REFUSE');
+		$result = $this->update($user);
+
+		if ($result) {
+			$this->reason_decline_or_cancel = $reasondeclinenote;
+			return 1;
+		}
+
+		return -1;
 	}
 
 	/**

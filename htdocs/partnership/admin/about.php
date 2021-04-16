@@ -87,13 +87,13 @@ llxHeader('', $langs->trans($page_name));
 // Subheader
 $linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';
 
-print load_fiche_titre($langs->trans($page_name), $linkback, 'object_partnership@partnership');
+print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 
 // Configuration header
 $head = partnershipAdminPrepareHead();
 print dol_get_fiche_head($head, 'about', '', 0, 'partnership@partnership');
 
-dol_include_once('/partnership/core/modules/modPartnership.class.php');
+require_once DOL_DOCUMENT_ROOT.'/core/modules/modPartnership.class.php';
 $tmpmodule = new modPartnership($db);
 print $tmpmodule->getDescLong();
 

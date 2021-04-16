@@ -209,10 +209,13 @@ if (empty($reshook)) {
 			if ($object->statut != $object::STATUS_REFUSED) {
 				$db->begin();
 
-				$result = $object->refused($user, GETPOST('reason_decline_or_cancel', 'alpha'));
+				$result = $object->refused($user, GETPOST('reason_decline_or_cancel', 'restricthtml'));
 				if ($result < 0) {
 					setEventMessages($object->error, $object->errors, 'errors');
 					$error++;
+				} else {
+					$object->reason_decline_or_cancel = GETPOST('reason_decline_or_cancel', 'restricthtml');
+					
 				}
 
 				if (!$error) {
@@ -249,6 +252,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 }
 
+if ($object->id > 0 && $object->status == $object::STATUS_REFUSED) $object->fields['reason_decline_or_cancel']['visible'] = 3;
 
 
 
@@ -400,7 +404,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if ($action == 'refuse') {
 		//Form to close proposal (signed or not)
 		$formquestion = array(
-			array('type' => 'text', 'name' => 'reason_decline_or_cancel', 'label' => $langs->trans("Note"), 'morecss' => 'reason_decline_or_cancel', 'value' => '')				// Field to complete private note (not replace)
+			array('type' => 'text', 'name' => 'reason_decline_or_cancel', 'label' => $langs->trans("Note"), 'morecss' => 'reason_decline_or_cancel minwidth400', 'value' => '')				// Field to complete private note (not replace)
 		);
 
 		// if (!empty($conf->notification->enabled)) {

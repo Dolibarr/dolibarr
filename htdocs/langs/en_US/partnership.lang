@@ -40,6 +40,8 @@ PartnershipManagedFor=Partnership managed for
 PartnershipDedicatedToThisThirdParty=Partnership dedicated to this third party	
 DatePartnershipStart=Start date
 DatePartnershipEnd=End date
+ReasonDecline=Decline reason
+ReasonDeclineOrCancel=Decline reason
 
 #
 # Template Mail
