@@ -161,11 +161,13 @@ if (empty($reshook)) {
 		}
 	}
 
-	$fk_soc = GETPOST('fk_soc', 'int');
-	if ($action == 'add' || ($action == 'update' && $object->fk_soc != $fk_soc)) {
+	$fk_partner 	= ($managedfor == 'member') ? GETPOST('fk_member', 'int') : GETPOST('fk_soc', 'int');
+	$obj_partner 	= ($managedfor == 'member') ? $object->fk_member : $object->fk_soc;
+	
+	if ($action == 'add' || ($action == 'update' && $obj_partner != $fk_partner)) {
 		$fpartnership = new Partnership($db);
 
-		$partnershipid = $fpartnership->fetch(0, "", $fk_soc);
+		$partnershipid = $fpartnership->fetch(0, "", $fk_partner);
 		if ($partnershipid > 0) {
 			setEventMessages($langs->trans('PartnershipAlreadyExist').' : '.$fpartnership->getNomUrl(0, '', 1), '', 'errors');
 			$action = ($action == 'add') ? 'create' : 'edit';
@@ -503,6 +505,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	 }*/
 	$morehtmlref .= '</div>';
 
+	if ($managedfor == 'member') $npfilter .= " AND te.fk_member > 0 "; else $npfilter .= " AND te.fk_soc > 0 ";
+	$object->next_prev_filter = $npfilter;
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 

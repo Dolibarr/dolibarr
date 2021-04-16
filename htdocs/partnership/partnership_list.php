@@ -735,9 +735,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 					$textlate .= ' ('.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($conf->adherent->subscription->warning_delay / 60 / 60 / 24) >= 0 ? '+' : '').ceil($conf->adherent->subscription->warning_delay / 60 / 60 / 24).' '.$langs->trans("days").')';
 					print " ".img_warning($langs->trans("SubscriptionLate").$textlate);
 				}
-				print '</td>';
 			} else {
-				print '<td class="nowrap left">';
 				if ($adherent->subscription == 'yes') {
 					print $langs->trans("SubscriptionNotReceived");
 					if ($adherent->statut > 0) {
@@ -774,7 +772,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 	$i++;
 }
-$totalarray['nbfield']++; // End of subscription date
+if ($managedfor != 'member') $totalarray['nbfield']++; // End of subscription date
 
 // Show total line
 include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
@@ -787,7 +785,7 @@ if ($num == 0) {
 			$colspan++;
 		}
 	}
-	$colspan++; // End of subscription date
+	if ($managedfor != 'member') $colspan++; // End of subscription date
 	print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 }
 
