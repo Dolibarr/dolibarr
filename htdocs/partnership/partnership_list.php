@@ -725,7 +725,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	}
 	// End of subscription date
 	if ($managedfor == 'member') {
-		print '<td class="nowrap center">';
+		print '<td class="nowrap center endofsubscriptiondate">';
 		$result = $adherent->fetch($object->fk_member);
 		if ($result) {
 			$datefin = $adherent->datefin;

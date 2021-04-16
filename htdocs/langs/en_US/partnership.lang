@@ -51,14 +51,17 @@ ConfirmClosePartnershipAsk=Are you sure you want to cancel this partnership?
 #
 SendingEmailOnPartnershipWillExpire=Partnership will expire
 SendingEmailOnPartnershipRefused=Partnership refused
+SendingEmailOnPartnershipAccepted=Partnership accepted
 SendingEmailOnPartnershipCanceled=Partnership canceled
 
 YourPartnershipWillSoonExpireTopic=Partnership expiration
 YourPartnershipRefusedTopic=Partnership refused
+YourPartnershipAcceptedTopic=Partnership accepted
 YourPartnershipCanceledTopic=Partnership canceled
 
 YourPartnershipWillSoonExpireContent=We inform you that your partnership will soon expire.
 YourPartnershipRefusedContent=We inform you that your partnership request has been refused.
+YourPartnershipAcceptedContent=We inform you that your partnership request has been accepted.
 YourPartnershipCanceledContent=We inform you that your partnership has been canceled.
 
 #
