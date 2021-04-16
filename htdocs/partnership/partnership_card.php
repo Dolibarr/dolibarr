@@ -161,6 +161,17 @@ if (empty($reshook)) {
 		}
 	}
 
+	$fk_soc = GETPOST('fk_soc', 'int');
+	if ($action == 'add' || ($action == 'update' && $object->fk_soc != $fk_soc)) {
+		$fpartnership = new Partnership($db);
+
+		$partnershipid = $fpartnership->fetch(0, "", $fk_soc);
+		if($partnershipid > 0){
+			setEventMessages($langs->trans('PartnershipAlreadyExist').' : '.$fpartnership->getNomUrl(0,'',1), '', 'errors');
+			$action = ($action == 'add') ? 'create' : 'edit';
+		}
+	}
+
 	$triggermodname = 'PARTNERSHIP_MODIFY'; // Name of trigger action code to execute when we modify record
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
@@ -250,6 +261,11 @@ if (empty($reshook)) {
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_PARTNERSHIP_TO';
 	$trackid = 'partnership'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
+
+	if(!empty($id) && !empty(GETPOST('confirm'))){
+		header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+		exit;
+	}
 }
 
 if ($object->id > 0 && $object->status == $object::STATUS_REFUSED) $object->fields['reason_decline_or_cancel']['visible'] = 3;
@@ -391,7 +407,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if ($action == 'close') {
 		// Create an array for form
 		$formquestion = array();
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClose'), $langs->trans('ConfirmCloseAsk', $object->ref), 'confirm_close', $formquestion, 'yes', 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClose'), $langs->trans('ConfirmClosePartnershipAsk', $object->ref), 'confirm_close', $formquestion, 'yes', 1);
 	}
 	// Reopon confirmation
 	if ($action == 'reopen') {
@@ -415,7 +431,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// 	));
 		// }
 
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ReasonDecline'), $text, 'confirm_refuse', $formquestion, '', 1, 250);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToRefuse'), $text, 'confirm_refuse', $formquestion, '', 1, 250);
 	}
 
 	// Confirmation of action xxxx
@@ -626,7 +642,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// Cancel
 			if ($permissiontoadd) {
 				if ($object->status == $object::STATUS_ACCEPTED) {
-					print dolGetButtonAction($langs->trans('Cancel'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_close&confirm=yes&token='.newToken(), '', $permissiontoadd);
+					print dolGetButtonAction($langs->trans('Cancel'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=close&token='.newToken(), '', $permissiontoadd);
 				} elseif ($object->status > $object::STATUS_ACCEPTED) {
 					// print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken().'">'.$langs->trans("Re-Open").'</a>'."\n";
 					print dolGetButtonAction($langs->trans('Re-Open'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_reopen&confirm=yes&token='.newToken(), '', $permissiontoadd);

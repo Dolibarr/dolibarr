@@ -186,6 +186,7 @@ if (empty($reshook)) {
 			$object->fk_soc           			= $socid;
 			$object->date_partnership_start   	= (!GETPOST('date_partnership_start')) ? '' : $date_start;
 			$object->date_partnership_end     	= (!GETPOST('date_partnership_end')) ? '' : $date_end;
+			$object->note_public     			= GETPOST('note_public', 'restricthtml');
 			$object->date_creation 				= $now;
 			$object->fk_user_creat 				= $user->id;
 			$object->entity 					= $conf->entity;
@@ -229,6 +230,7 @@ if (empty($reshook)) {
 
 			$object->date_partnership_start   	= (!GETPOST('date_partnership_start')) ? '' : $date_start;
 			$object->date_partnership_end     	= (!GETPOST('date_partnership_end')) ? '' : $date_end;
+			$object->note_public     			= GETPOST('note_public', 'restricthtml');
 			$object->fk_user_creat 				= $user->id;
 			$object->fk_user_modif 				= $user->id;
 
@@ -266,15 +268,11 @@ if (empty($reshook)) {
 
 	// Actions when linking object each other
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';
-
-	// // Actions to send emails
-	// $triggersendname = 'PARTNERSHIP_SENTBYMAIL';
-	// $autocopy = 'MAIN_MAIL_AUTOCOPY_PARTNERSHIP_TO';
-	// $trackid = 'partnership'.$object->id;
-	// include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 }
 
-
+$object->fields['fk_soc']['visible'] = 0;
+if ($object->id > 0 && $object->status == $object::STATUS_REFUSED && empty($action)) $object->fields['reason_decline_or_cancel']['visible'] = 1;
+$object->fields['note_public']['visible'] = 1;
 
 /*
  * View
@@ -353,8 +351,6 @@ if ($socid) {
 } else {
 	dol_print_error('', 'Parameter socid not defined');
 }
-
-$object->fields['fk_soc']['visible'] = 0;
 
 // Part to create
 if ($action == 'create') {
@@ -455,7 +451,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if ($action == 'close') {
 		// Create an array for form
 		$formquestion = array();
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClose'), $langs->trans('ConfirmCloseAsk', $object->ref), 'confirm_close', $formquestion, 'yes', 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClose'), $langs->trans('ConfirmClosePartnershipAsk', $object->ref), 'confirm_close', $formquestion, 'yes', 1);
 	}
 	// Reopon confirmation
 	if ($action == 'reopen') {
@@ -535,72 +531,21 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER["PHP_SELF"].'?socid='.$socid.'&action=edit', '', $permissiontoadd);
 			}
 
+			// Show
+			if ($permissiontoadd) {
+				print dolGetButtonAction($langs->trans('ShowPartnership'), '', 'default', dol_buildpath('/partnership/partnership_card.php', 1).'?id='.$object->id, '', $permissiontoadd);
+			}
+			
 			// Cancel
 			if ($permissiontoadd) {
 				if ($object->status == $object::STATUS_ACCEPTED) {
 					print dolGetButtonAction($langs->trans('Cancel'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=close&token='.newToken(), '', $permissiontoadd);
 				}
 			}
+
 		}
 		print '</div>'."\n";
 	}
-
-
-	// Select mail models is same action as presend
-	if (GETPOST('modelselected')) {
-		$action = 'presend';
-	}
-
-	// if ($action != 'presend') {
-	// 	print '<div class="fichecenter"><div class="fichehalfleft">';
-	// 	print '<a name="builddoc"></a>'; // ancre
-
-	// 	$includedocgeneration = 0;
-
-	// 	// Documents
-	// 	if ($includedocgeneration) {
-	// 		$objref = dol_sanitizeFileName($object->ref);
-	// 		$relativepath = $objref.'/'.$objref.'.pdf';
-	// 		$filedir = $conf->partnership->dir_output.'/'.$object->element.'/'.$objref;
-	// 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-	// 		$genallowed = $user->rights->partnership->read; // If you can read, you can build the PDF to read content
-	// 		$delallowed = $user->rights->partnership->write; // If you can create/edit, you can remove a file on card
-	// 		print $formfile->showdocuments('partnership:Partnership', $object->element.'/'.$objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
-	// 	}
-
-	// 	// Show links to link elements
-	// 	$linktoelem = $form->showLinkToObjectBlock($object, null, array('partnership'));
-	// 	$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
-
-
-	// 	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-
-	// 	$MAXEVENT = 10;
-
-	// 	$morehtmlright = '<a href="'.dol_buildpath('/partnership/partnership_agenda.php', 1).'?id='.$object->id.'">';
-	// 	$morehtmlright .= $langs->trans("SeeAll");
-	// 	$morehtmlright .= '</a>';
-
-	// 	// List of actions on element
-	// 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
-	// 	$formactions = new FormActions($db);
-	// 	$somethingshown = $formactions->showactions($object, $object->element.'@'.$object->module, (is_object($object->thirdparty) ? $object->thirdparty->id : 0), 1, '', $MAXEVENT, '', $morehtmlright);
-
-	// 	print '</div></div></div>';
-	// }
-
-	//Select mail models is same action as presend
-	if (GETPOST('modelselected')) {
-		$action = 'presend';
-	}
-
-	// Presend form
-	$modelmail = 'partnership';
-	$defaulttopic = 'InformationMessage';
-	$diroutput = $conf->partnership->dir_output;
-	$trackid = 'partnership'.$object->id;
-
-	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 }
 
 // End of page

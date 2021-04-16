@@ -42,6 +42,9 @@ DatePartnershipStart=Start date
 DatePartnershipEnd=End date
 ReasonDecline=Decline reason
 ReasonDeclineOrCancel=Decline reason
+PartnershipAlreadyExist=Partnership already exist
+ShowPartnership=Show partnership
+ConfirmClosePartnershipAsk=Are you sure you want to cancel this partnership?
 
 #
 # Template Mail
