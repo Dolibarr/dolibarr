@@ -88,7 +88,7 @@ if ($action == 'addcontact' && $user->rights->commande->creer) {
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	} else {
-		etEventMessages($object->error, $object->errors, 'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 /*
