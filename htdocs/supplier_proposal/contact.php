@@ -78,7 +78,7 @@ if ($action == 'addcontact' && $permissiontoedit) {
 	if ($object->fetch($id)) {
 		$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
 	} else {
-		dol_print_error($db);
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 } elseif ($action == 'deletecontact' && $permissiontoedit) {
 	// Deleting a contact
