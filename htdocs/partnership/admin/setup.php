@@ -93,8 +93,8 @@ if ($action == 'setting') {
 	$error += $partnership->delete_menus();
 	$error += $partnership->insert_menus();
 
-	if(GETPOST("PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL",'int'))
-		dolibarr_set_const($db, "PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL", GETPOST("PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL",'int'), 'chaine', 0, '', $conf->entity);
+	if (GETPOST("PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL", 'int'))
+		dolibarr_set_const($db, "PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL", GETPOST("PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL", 'int'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "PARTNERSHIP_BACKLINKS_TO_CHECK", GETPOST("PARTNERSHIP_BACKLINKS_TO_CHECK"), 'chaine', 0, '', $conf->entity);
 }
 
@@ -160,7 +160,7 @@ print '<td><span class="opacitymedium">'.$langs->trans("partnershipforthirdparty
 print '</tr>';
 
 
-if($conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member'){
+if ($conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') {
 	print '<tr class="oddeven"><td>'.$langs->trans("PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL").'</td>';
 	print '<td>';
 	$dnbdays 	= '7';
