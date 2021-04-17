@@ -228,7 +228,7 @@ if (empty($reshook) && $action == 'add') {
 		$errmsg .= $langs->trans("ErrorBadEMail", GETPOST("email"))."<br>\n";
 	}
 	$birthday = dol_mktime(GETPOST("birthhour", 'int'), GETPOST("birthmin", 'int'), GETPOST("birthsec", 'int'), GETPOST("birthmonth", 'int'), GETPOST("birthday", 'int'), GETPOST("birthyear", 'int'));
-	if (GETPOSTISSET("birthmonth") && empty($birthday)) {
+	if (GETPOST("birthmonth") && empty($birthday)) {
 		$error++;
 		$langs->load("errors");
 		$errmsg .= $langs->trans("ErrorBadDateFormat")."<br>\n";
