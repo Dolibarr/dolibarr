@@ -115,7 +115,7 @@ if (!empty($conf->supplier_proposal->enabled) && empty($conf->global->MAIN_SEARC
 if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_SEARCHFORM_SUPPLIER_ORDER_DISABLED) || !empty($conf->supplier_order->enabled)) && $user->rights->fournisseur->commande->lire) {
 	$arrayresult['searchintosupplierorder'] = array('position'=>110, 'img'=>'object_order', 'label'=>$langs->trans("SearchIntoSupplierOrders", $search_boxvalue), 'text'=>img_picto('', 'object_supplier_order').' '.$langs->trans("SearchIntoSupplierOrders", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/fourn/commande/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
 }
-if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_SEARCHFORM_SUPPLIER_INVOICE_DISABLED) || !empty($conf->supplier_invoice->enabled)) && $user->rights->fournisseur->facture->lire) {
+if ((!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->lire && empty($conf->global->MAIN_SEARCHFORM_SUPPLIER_INVOICE_DISABLED)) || (!empty($conf->supplier_invoice->enabled) && $user->rights->fournisseur->facture->lire)) {
 	$arrayresult['searchintosupplierinvoice'] = array('position'=>120, 'img'=>'object_bill', 'label'=>$langs->trans("SearchIntoSupplierInvoices", $search_boxvalue), 'text'=>img_picto('', 'object_supplier_invoice').' '.$langs->trans("SearchIntoSupplierInvoices", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/fourn/facture/list.php'.($search_boxvalue ? '?sall='.urlencode($search_boxvalue) : ''));
 }
 
