@@ -142,6 +142,11 @@ class Adherent extends CommonObject
 	public $email;
 
 	/**
+	 * @var string url
+	 */
+	public $url;
+
+	/**
 	 * @var array array of socialnetworks
 	 */
 	public $socialnetworks;
@@ -309,6 +314,7 @@ class Adherent extends CommonObject
 		'state_id' => array('type' => 'integer', 'label' => 'State id', 'enabled' => 1, 'visible' => -1, 'position' => 90),
 		'country' => array('type' => 'integer:Ccountry:core/class/ccountry.class.php', 'label' => 'Country', 'enabled' => 1, 'visible' => -1, 'position' => 95),
 		'email' => array('type' => 'varchar(255)', 'label' => 'Email', 'enabled' => 1, 'visible' => -1, 'position' => 100),
+		'url' =>array('type'=>'varchar(255)', 'label'=>'Url', 'enabled'=>1, 'visible'=>-1, 'position'=>110),
 		'socialnetworks' => array('type' => 'text', 'label' => 'Socialnetworks', 'enabled' => 1, 'visible' => -1, 'position' => 105),
 		'phone' => array('type' => 'varchar(30)', 'label' => 'Phone', 'enabled' => 1, 'visible' => -1, 'position' => 115),
 		'phone_perso' => array('type' => 'varchar(30)', 'label' => 'Phone perso', 'enabled' => 1, 'visible' => -1, 'position' => 120),
@@ -645,6 +651,7 @@ class Adherent extends CommonObject
 		$this->setUpperOrLowerCase();
 		$this->note_public = ($this->note_public ? $this->note_public : $this->note_public);
 		$this->note_private = ($this->note_private ? $this->note_private : $this->note_private);
+		$this->url = $this->url ?clean_url($this->url, 0) : '';
 
 		// Check parameters
 		if (!empty($conf->global->ADHERENT_MAIL_REQUIRED) && !isValidEMail($this->email)) {
@@ -670,6 +677,7 @@ class Adherent extends CommonObject
 		$sql .= ", country = ".($this->country_id > 0 ? $this->db->escape($this->country_id) : "null");
 		$sql .= ", state_id = ".($this->state_id > 0 ? $this->db->escape($this->state_id) : "null");
 		$sql .= ", email = '".$this->db->escape($this->email)."'";
+		$sql .= ", url = ".(!empty($this->url) ? "'".$this->db->escape($this->url)."'" : "null");
 		$sql .= ", socialnetworks = '".$this->db->escape(json_encode($this->socialnetworks))."'";
 		$sql .= ", phone = ".($this->phone ? "'".$this->db->escape($this->phone)."'" : "null");
 		$sql .= ", phone_perso = ".($this->phone_perso ? "'".$this->db->escape($this->phone_perso)."'" : "null");
@@ -1282,7 +1290,7 @@ class Adherent extends CommonObject
 		$sql = "SELECT d.rowid, d.ref, d.ref_ext, d.civility as civility_code, d.gender, d.firstname, d.lastname,";
 		$sql .= " d.societe as company, d.fk_soc, d.statut, d.public, d.address, d.zip, d.town, d.note_private,";
 		$sql .= " d.note_public,";
-		$sql .= " d.email, d.socialnetworks, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass, d.pass_crypted,";
+		$sql .= " d.email, d.url, d.socialnetworks, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass, d.pass_crypted,";
 		$sql .= " d.photo, d.fk_adherent_type, d.morphy, d.entity,";
 		$sql .= " d.datec as datec,";
 		$sql .= " d.tms as datem,";
@@ -1361,6 +1369,7 @@ class Adherent extends CommonObject
 				$this->phone_perso = $obj->phone_perso;
 				$this->phone_mobile = $obj->phone_mobile;
 				$this->email = $obj->email;
+				$this->url = $obj->url;
 
 				$this->socialnetworks = (array) json_decode($obj->socialnetworks, true);
 

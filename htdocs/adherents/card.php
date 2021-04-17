@@ -284,6 +284,7 @@ if (empty($reshook)) {
 			$object->phone_perso = trim(GETPOST("phone_perso", 'alpha'));
 			$object->phone_mobile = trim(GETPOST("phone_mobile", 'alpha'));
 			$object->email       = preg_replace('/\s+/', '', GETPOST("member_email", 'alpha'));
+			$object->url 		 = trim(GETPOST('member_url', 'custom', 0, FILTER_SANITIZE_URL));
 			$object->socialnetworks = array();
 			foreach ($socialnetworks as $key => $value) {
 				if (GETPOSTISSET($key) && GETPOST($key, 'alphanohtml') != '') {
@@ -431,6 +432,7 @@ if (empty($reshook)) {
 		// $facebook=GETPOST("member_facebook", 'alpha');
 		// $linkedin=GETPOST("member_linkedin", 'alpha');
 		$email = preg_replace('/\s+/', '', GETPOST("member_email", 'alpha'));
+		$url   = trim(GETPOST('url', 'custom', 0, FILTER_SANITIZE_URL));
 		$login = GETPOST("member_login", 'alphanohtml');
 		$pass = GETPOST("password", 'alpha');
 		$photo = GETPOST("photo", 'alpha');
@@ -469,6 +471,7 @@ if (empty($reshook)) {
 		// $object->linkedin    = $linkedin;
 
 		$object->email       = $email;
+		$object->url       	 = $url;
 		$object->login       = $login;
 		$object->pass        = $pass;
 		$object->birth       = $birthdate;
@@ -536,6 +539,10 @@ if (empty($reshook)) {
 			$error++;
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorBadEMail", $email), null, 'errors');
+		}
+		if (!empty($object->url) && !isValidUrl($object->url)) {
+			$langs->load("errors");
+			setEventMessages('', $langs->trans("ErrorBadUrl", $object->url), 'errors');
 		}
 		$public = 0;
 		if (isset($public)) {
@@ -1031,6 +1038,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<tr><td>'.($conf->global->ADHERENT_MAIL_REQUIRED ? '<span class="fieldrequired">' : '').$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED ? '</span>' : '').'</td>';
 		print '<td>'.img_picto('', 'object_email').' <input type="text" name="member_email" class="minwidth300" maxlength="255" value="'.(GETPOSTISSET('member_email') ? GETPOST('member_email', 'alpha') : $object->email).'"></td></tr>';
 
+		// Website
+		print '<tr><td>'.$form->editfieldkey('Web', 'member_url', '', $object, 0).'</td>';
+		print '<td>'.img_picto('', 'globe').' <input type="text" class="maxwidth500 widthcentpercentminusx" name="member_url" id="member_url" value="'.$object->url.'"></td></tr>';
+
 		// Address
 		print '<tr><td class="tdtop">'.$langs->trans("Address").'</td><td>';
 		print '<textarea name="address" wrap="soft" class="quatrevingtpercent" rows="2">'.(GETPOSTISSET('address') ?GETPOST('address', 'alphanohtml') : $object->address).'</textarea>';
@@ -1277,6 +1288,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// EMail
 		print '<tr><td>'.($conf->global->ADHERENT_MAIL_REQUIRED ? '<span class="fieldrequired">' : '').$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED ? '</span>' : '').'</td>';
 		print '<td>'.img_picto('', 'object_email').' <input type="text" name="member_email" class="minwidth300" maxlength="255" value="'.(GETPOSTISSET("member_email") ? GETPOST("member_email", '', 2) : $object->email).'"></td></tr>';
+
+		// Website
+		print '<tr><td>'.$form->editfieldkey('Web', 'member_url', GETPOST('member_url', 'alpha'), $object, 0).'</td>';
+			print '<td colspan="3">'.img_picto('', 'globe').' <input type="text" name="member_url" id="member_url" class="maxwidth200onsmartphone maxwidth500 widthcentpercentminusx " value="'.(GETPOSTISSET('member_url') ?GETPOST('member_url', 'alpha') : $object->url).'"></td></tr>';
 
 		// Address
 		print '<tr><td>'.$langs->trans("Address").'</td><td>';
