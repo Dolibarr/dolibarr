@@ -118,6 +118,7 @@ class Partnership extends CommonObject
 	public $date_partnership_start;
 	public $date_partnership_end;
 	public $count_last_url_check_error;
+	public $last_check_backlink;
 	public $reason_decline_or_cancel;
 	// END MODULEBUILDER PROPERTIES
 
@@ -186,6 +187,7 @@ class Partnership extends CommonObject
 			'date_partnership_end' => array('type'=>'date', 'label'=>'DatePartnershipEnd', 'enabled'=>'1', 'position'=>53, 'notnull'=>1, 'visible'=>1,),
 			'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>54, 'notnull'=>0, 'visible'=>2, 'index'=>1, 'arrayofkeyval'=>array('-1'=>'','0'=>$langs->trans('Draft'), '1'=>$langs->trans('Accepted'), '2'=>$langs->trans('Refused'), '9'=>$langs->trans('Canceled')),),
 			'count_last_url_check_error' => array('type'=>'integer', 'label'=>'CountLastUrlCheckError', 'enabled'=>'1', 'position'=>63, 'notnull'=>0, 'visible'=>-2, 'default'=>'0',),
+			'last_check_backlink' => array('type'=>'datetime', 'label'=>'LastCheckBacklink', 'enabled'=>'1', 'position'=>65, 'notnull'=>0, 'visible'=>-2,),
 			'reason_decline_or_cancel' => array('type'=>'text', 'label'=>'ReasonDeclineOrCancel', 'enabled'=>'1', 'position'=>64, 'notnull'=>0, 'visible'=>-2,),
 		);
 
@@ -361,7 +363,7 @@ class Partnership extends CommonObject
 		$sql .= ', p.entity, p.date_partnership_start, p.date_partnership_end, p.date_creation';
 		$sql .= ', p.fk_user_creat, p.tms, p.fk_user_modif, p.fk_user_modif';
 		$sql .= ', p.note_private, p.note_public';
-		$sql .= ', p.last_main_doc, p.count_last_url_check_error, p.reason_decline_or_cancel';
+		$sql .= ', p.last_main_doc, p.count_last_url_check_error, p.last_check_backlink, p.reason_decline_or_cancel';
 		$sql .= ', p.import_key, p.model_pdf';
 
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'partnership as p';
@@ -407,6 +409,7 @@ class Partnership extends CommonObject
 				$this->note_public 					= $obj->note_public;
 				$this->last_main_doc 				= $obj->last_main_doc;
 				$this->count_last_url_check_error	= $obj->count_last_url_check_error;
+				$this->last_check_backlink			= $this->db->jdate($obj->last_check_backlink);
 				$this->reason_decline_or_cancel 	= $obj->reason_decline_or_cancel;
 				$this->import_key 					= $obj->import_key;
 				$this->model_pdf 					= $obj->model_pdf;
