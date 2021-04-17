@@ -427,7 +427,7 @@ class PartnershipUtils
 	 * Action to check if Dolibarr backlink not found on partner website
 	 *
 	 * CAN BE A CRON TASK
-	 *
+	 * @param  $website      Partner's website
 	 * @return  int                 0 if KO, 1 if OK
 	 */
 	public function checkDolibarrBacklink($website = null)

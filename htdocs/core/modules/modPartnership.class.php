@@ -177,7 +177,7 @@ class modPartnership extends DolibarrModules
 		// Array to add new pages in new tabs
 		$this->tabs = array();
 
-		$tabtoadd = ($conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') ? 'member' : 'thirdparty';
+		$tabtoadd = (!empty(getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR')) && getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') ? 'member' : 'thirdparty';
 
 		if ($tabtoadd == 'member') {
 			$this->tabs[] = array('data'=>'member:+partnership:Partnership:partnership@partnership:$user->rights->partnership->read:/adherents/partnership.php?socid=__ID__');
@@ -258,7 +258,7 @@ class modPartnership extends DolibarrModules
 
 		$this->cronjobs = array(
 			0	=> array('priority'=>60, 'label'=>'CancelPartnershipForExpiredMembers', 'jobtype'=>'method', 'class'=>'/partnership/class/partnershiputils.class.php', 'objectname'=>'PartnershipUtils', 'method'=>'doCancelStatusOfMemberPartnership', 'parameters'=>'',      'comment'=>'Cancel status of partnership when subscription is expired + x days.', 'frequency'=>1, 'unitfrequency'=>86400, 'status'=>1, 'test'=>'$conf->partnership->enabled', 'datestart'=>$datestart),
-			1	=> array('priority'=>61, 'label'=>'WarningOfPartnershipIfDolibarrBacklinkNotfound', 'jobtype'=>'method', 'class'=>'/partnership/class/partnershiputils.class.php', 'objectname'=>'PartnershipUtils', 'method'=>'doWarningOfPartnershipIfDolibarrBacklinkNotfound', 'parameters'=>'',      'comment'=>'Warning of partnership if Dolibarr backlink not found on partner website.', 'frequency'=>1, 'unitfrequency'=>86400, 'status'=>0, 'test'=>'$conf->partnership->enabled', 'datestart'=>$datestart),
+			1	=> array('priority'=>61, 'label'=>'CheckDolibarrBacklink', 'jobtype'=>'method', 'class'=>'/partnership/class/partnershiputils.class.php', 'objectname'=>'PartnershipUtils', 'method'=>'doWarningOfPartnershipIfDolibarrBacklinkNotfound', 'parameters'=>'',      'comment'=>'Warning of partnership if Dolibarr backlink not found on partner website.', 'frequency'=>1, 'unitfrequency'=>86400, 'status'=>0, 'test'=>'$conf->partnership->enabled', 'datestart'=>$datestart),
 		);
 
 		// Permissions provided by this module
