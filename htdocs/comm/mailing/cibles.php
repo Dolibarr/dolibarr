@@ -689,6 +689,7 @@ if ($object->fetch($id) >= 0)
 
 				// Search Icon
 				print '<td class="right">';
+				print '<!-- ID mailing_cibles = '.$obj->rowid.' -->';
 				if ($obj->statut == 0)	// Not sent yet
 				{
 					if ($user->rights->mailing->creer && $allowaddtarget) {

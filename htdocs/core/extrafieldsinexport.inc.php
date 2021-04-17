@@ -1,5 +1,9 @@
 <?php
 
+// $keyforselect = name of main table
+// keyforelement = name of picto
+// $keyforaliasextra = a key to avoid conflict with extrafields of other objects
+
 if (empty($keyforselect) || empty($keyforelement) || empty($keyforaliasextra))
 {
 	//print $keyforselet.' - '.$keyforelement.' - '.$keyforaliasextra;
