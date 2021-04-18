@@ -2250,15 +2250,23 @@ $tempdir = $conf->website->dir_output.'/'.$websitekey.'/';
 // Generate web site sitemaps
 if ($action == 'generatesitemaps' && $usercanedit) {
 	$domtree = new DOMDocument('1.0', 'UTF-8');
+
 	$root = $domtree->createElementNS('http://www.sitemaps.org/schemas/sitemap/0.9', 'urlset');
+	$root->setAttributeNS('http://www.w3.org/2000/xmlns/' ,'xmlns:xhtml', 'http://www.w3.org/1999/xhtml');
+
 	$domtree->formatOutput = true;
+
 	$xmlname = 'sitemap.'.$websitekey.'.xml';
 
-	$sql = "SELECT wp.type_container , wp.pageurl, wp.lang, wp.tms as tms, w.virtualhost";
+	$sql = "SELECT wp.rowid, wp.type_container , wp.pageurl, wp.lang, wp.fk_page, wp.tms as tms,";
+	$sql .= " w.virtualhost, w.fk_default_home";
 	$sql .= " FROM ".MAIN_DB_PREFIX."website_page as wp, ".MAIN_DB_PREFIX."website as w";
 	$sql .= " WHERE wp.type_container IN ('page', 'blogpost')";
 	$sql .= " AND wp.fk_website = w.rowid";
+	$sql .= " AND wp.status = ".WebsitePage::STATUS_VALIDATED;
+	$sql .= " AND wp.pageurl NOT IN ('404', '500', '501', '503')";
 	$sql .= " AND w.ref = '".dol_escape_json($websitekey)."'";
+	$sql .= " ORDER BY wp.tms DESC, wp.rowid DESC";
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num_rows = $db->num_rows($resql);
@@ -2267,18 +2275,115 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 			while ($i < $num_rows) {
 				$objp = $db->fetch_object($resql);
 				$url = $domtree->createElement('url');
-				$pageurl = $objp->pageurl;
+
+				$shortlangcode = '';
 				if ($objp->lang) {
-					$pageurl = $objp->lang.'/'.$pageurl;
+					$shortlangcode = substr($objp->lang, 0, 2); // en_US or en-US -> en
 				}
+				if (empty($shortlangcode)) {
+					$shortlangcode = substr($object->lang, 0, 2); // en_US or en-US -> en
+				}
+
+				// Forge $pageurl, adding language prefix if it is an alternative language
+				$pageurl = $objp->pageurl.'.php';
+				if ($objp->fk_default_home == $objp->rowid) {
+					$pageurl = '';
+				} else {
+					if ($shortlangcode != substr($object->lang, 0, 2)) {
+						$pageurl = $shortlangcode.'/'.$pageurl;
+					}
+				}
+
 				if ($objp->virtualhost) {
 					$domainname = $objp->virtualhost;
 				}
-				$loc = $domtree->createElement('loc', 'http://'.$domainname.'/'.$pageurl);
-				$lastmod = $domtree->createElement('lastmod', $db->jdate($objp->tms));
+				if (! preg_match('/^http/i', $domainname)) {
+					$domainname .= 'https://'.$domainname;
+				}
+				//$pathofpage = $dolibarr_main_url_root.'/'.$pageurl.'.php';
+
+				// URL of sitemaps must end with trailing slash if page is ''
+				$loc = $domtree->createElement('loc', $domainname.'/'.$pageurl);
+				$lastmod = $domtree->createElement('lastmod', dol_print_date($db->jdate($objp->tms), 'dayrfc', 'gmt'));
+				$changefreq = $domtree->createElement('changefreq', 'weekly');	// TODO Manage other values
+				$priority = $domtree->createElement('priority', '1');
 
 				$url->appendChild($loc);
 				$url->appendChild($lastmod);
+				// Add suggested frequency for refresh
+				if (!empty($conf->global->WEBSITE_SITEMAPS_ADD_WEEKLY_FREQ)) {
+					$url->appendChild($changefreq);
+				}
+				// Add higher priority for home page
+				if ($objp->fk_default_home == $objp->rowid) {
+					$url->appendChild($priority);
+				}
+
+				// Now add alternate language entries
+				if ($object->isMultiLang()) {
+					$alternatefound = 0;
+
+					// Add page "translation of"
+					$translationof = $objp->fk_page;
+					if ($translationof) {
+						$tmppage = new WebsitePage($db);
+						$tmppage->fetch($translationof);
+						if ($tmppage->id > 0) {
+							$tmpshortlangcode = '';
+							if ($tmppage->lang) {
+								$tmpshortlangcode = preg_replace('/[_-].*$/', '', $tmppage->lang); // en_US or en-US -> en
+							}
+							if (empty($tmpshortlangcode)) {
+								$tmpshortlangcode = preg_replace('/[_-].*$/', '', $object->lang); // en_US or en-US -> en
+							}
+							if ($tmpshortlangcode != $shortlangcode) {
+								$xhtmllink = $domtree->createElement('xhtml:link', '');
+								$xhtmllink->setAttribute("rel", "alternante");
+								$xhtmllink->setAttribute("hreflang", $tmpshortlangcode);
+								$xhtmllink->setAttribute("href", $domainname.($objp->fk_default_home == $tmppage->id ? '/' : (($tmpshortlangcode != substr($objp->lang, 0, 2)) ? '/'.$tmpshortlangcode : '').'/'.$tmppage->pageurl.'.php'));
+								$url->appendChild($xhtmllink);
+
+								$alternatefound++;
+							}
+						}
+					}
+
+					// Add "has translation pages"
+					$sql = 'SELECT rowid as id, lang, pageurl from '.MAIN_DB_PREFIX.'website_page where fk_page IN ('.$db->sanitize($objp->rowid.($translationof ? ', '.$translationof : '')).")";
+					$resqlhastrans = $db->query($sql);
+					if ($resqlhastrans) {
+						$num_rows_hastrans = $db->num_rows($resqlhastrans);
+						if ($num_rows_hastrans > 0) {
+							while ($objhastrans = $db->fetch_object($resqlhastrans)) {
+								$tmpshortlangcode = '';
+								if ($objhastrans->lang) {
+									$tmpshortlangcode = preg_replace('/[_-].*$/', '', $objhastrans->lang); // en_US or en-US -> en
+								}
+								if ($tmpshortlangcode != $shortlangcode) {
+									$xhtmllink = $domtree->createElement('xhtml:link', '');
+									$xhtmllink->setAttribute("rel", "alternate");
+									$xhtmllink->setAttribute("hreflang", $tmpshortlangcode);
+									$xhtmllink->setAttribute("href", $domainname.($objp->fk_default_home == $objhastrans->id ? '/' : (($tmpshortlangcode != substr($objp->lang, 0, 2) ? '/'.$tmpshortlangcode : '')).'/'.$objhastrans->pageurl.'.php'));
+									$url->appendChild($xhtmllink);
+
+									$alternatefound++;
+								}
+							}
+						}
+					} else {
+						dol_print_error($db);
+					}
+
+					if ($alternatefound) {
+						// Add myself
+						$xhtmllink = $domtree->createElement('xhtml:link', '');
+						$xhtmllink->setAttribute("rel", "alternate");
+						$xhtmllink->setAttribute("hreflang", $shortlangcode);
+						$xhtmllink->setAttribute("href", $domainname.'/'.$pageurl);
+						$url->appendChild($xhtmllink);
+					}
+				}
+
 				$root->appendChild($url);
 				$i++;
 			}
@@ -2295,6 +2400,8 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 	} else {
 		dol_print_error($db);
 	}
+
+	// Add the entry Sitemap: into the robot file.
 	$robotcontent = @file_get_contents($filerobot);
 	$result = preg_replace('/<?php // BEGIN PHP[^?]END PHP ?>\n/ims', '', $robotcontent);
 	if ($result) {
@@ -4113,7 +4220,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 			print getTitleFieldOfList("Type", 0, $_SERVER['PHP_SELF'], 'type_container', '', $param, '', $sortfield, $sortorder, '')."\n";
 			print getTitleFieldOfList("Page", 0, $_SERVER['PHP_SELF'], 'pageurl', '', $param, '', $sortfield, $sortorder, '')."\n";
 			print getTitleFieldOfList("Categories", 0, $_SERVER['PHP_SELF']);
-			print getTitleFieldOfList("", 0, $_SERVER['PHP_SELF']);
+			print getTitleFieldOfList("Language", 0, $_SERVER['PHP_SELF'], 'lang', '', $param, '', $sortfield, $sortorder, 'center ')."\n";
 			print getTitleFieldOfList("", 0, $_SERVER['PHP_SELF']);
 			print getTitleFieldOfList("DateLastModification", 0, $_SERVER['PHP_SELF'], 'tms', '', $param, '', $sortfield, $sortorder, 'center ')."\n";		// Date last modif
 			print getTitleFieldOfList("", 0, $_SERVER['PHP_SELF']);
@@ -4171,8 +4278,8 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 					$param .= '&searchstring='.urlencode($searchkey);
 
 					// Language
-					print '<td>';
-					print $answerrecord->lang;
+					print '<td class="center">';
+					print picto_from_langcode($answerrecord->lang, $answerrecord->lang);
 					print '</td>';
 
 					// Number of words
