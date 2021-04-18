@@ -2337,17 +2337,18 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 								$xhtmllink->setAttribute("rel", "alternante");
 								$xhtmllink->setAttribute("hreflang", "'.$tmpshortlangcode.'");
 								$xhtmllink->setAttribute("href", "'.$pageurl.'");
+								$url->appendChild($xhtmllink);
 							}
 						}
 					}
 
 					// Add "has translation pages"
 					$sql = 'SELECT rowid as id, lang, pageurl from '.MAIN_DB_PREFIX.'website_page where fk_page IN ('.$db->sanitize($objp->rowid.($translationof ? ', '.$translationof : '')).")";
-					$resql = $db->query($sql);
-					if ($resql) {
-						$num_rows = $db->num_rows($resql);
-						if ($num_rows > 0) {
-							while ($objhastrans = $db->fetch_object($resql)) {
+					$resqlhastrans = $db->query($sql);
+					if ($resqlhastrans) {
+						$num_rows_hastrans = $db->num_rows($resqlhastrans);
+						if ($num_rows_hastrans > 0) {
+							while ($objhastrans = $db->fetch_object($resqlhastrans)) {
 								$tmpshortlangcode = '';
 								if ($objhastrans->lang) {
 									$tmpshortlangcode = preg_replace('/[_-].*$/', '', $objhastrans->lang); // en_US or en-US -> en
@@ -2357,6 +2358,7 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 									$xhtmllink->setAttribute("rel", "alternante");
 									$xhtmllink->setAttribute("hreflang", "'.$tmpshortlangcode.'");
 									$xhtmllink->setAttribute("href", "'.$pageurl.'");
+									$url->appendChild($xhtmllink);
 								}
 							}
 						}
@@ -2369,6 +2371,7 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 					$xhtmllink->setAttribute("rel", "alternante");
 					$xhtmllink->setAttribute("hreflang", "'.$shortlang.'");
 					$xhtmllink->setAttribute("href", "'.$pageurl.'");
+					$url->appendChild($xhtmllink);
 				}
 
 				$root->appendChild($url);
