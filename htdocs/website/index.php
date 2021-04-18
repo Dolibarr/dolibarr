@@ -2251,6 +2251,7 @@ $tempdir = $conf->website->dir_output.'/'.$websitekey.'/';
 if ($action == 'generatesitemaps' && $usercanedit) {
 	$domtree = new DOMDocument('1.0', 'UTF-8');
 	$root = $domtree->createElementNS('http://www.sitemaps.org/schemas/sitemap/0.9', 'urlset');
+	$domtree->createAttributeNS("http://www.w3.org/1999/xhtml", 'xmlns:xhtml');
 	$domtree->formatOutput = true;
 	$xmlname = 'sitemap.'.$websitekey.'.xml';
 
@@ -2258,6 +2259,7 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 	$sql .= " FROM ".MAIN_DB_PREFIX."website_page as wp, ".MAIN_DB_PREFIX."website as w";
 	$sql .= " WHERE wp.type_container IN ('page', 'blogpost')";
 	$sql .= " AND wp.fk_website = w.rowid";
+	$sql .= " AND wp.pageurl NOT IN ('404', '500', '501', '503')";
 	$sql .= " AND w.ref = '".dol_escape_json($websitekey)."'";
 	$resql = $db->query($sql);
 	if ($resql) {
@@ -2274,7 +2276,12 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 				if ($objp->virtualhost) {
 					$domainname = $objp->virtualhost;
 				}
-				$loc = $domtree->createElement('loc', 'http://'.$domainname.'/'.$pageurl);
+				if (! preg_match('/^http/i', $domainname)) {
+					$domainname .= 'https://'.$domainname;
+				}
+				//$pathofpage = $dolibarr_main_url_root.'/'.$pageurl.'.php';
+
+				$loc = $domtree->createElement('loc', $domainname.'/'.$pageurl.'.php');
 				$lastmod = $domtree->createElement('lastmod', $db->jdate($objp->tms));
 
 				$url->appendChild($loc);
@@ -2295,6 +2302,8 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 	} else {
 		dol_print_error($db);
 	}
+
+	// Add the entry Sitemap: into the robot file.
 	$robotcontent = @file_get_contents($filerobot);
 	$result = preg_replace('/<?php // BEGIN PHP[^?]END PHP ?>\n/ims', '', $robotcontent);
 	if ($result) {
