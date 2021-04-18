@@ -2304,7 +2304,7 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 
 				// URL of sitemaps must end with trailing slash if page is ''
 				$loc = $domtree->createElement('loc', $domainname.'/'.$pageurl);
-				$lastmod = $domtree->createElement('lastmod', $db->jdate($objp->tms));
+				$lastmod = $domtree->createElement('lastmod', dol_print_date($db->jdate($objp->tms), 'dayrfc', 'gmt');
 				$changefreq = $domtree->createElement('changefreq', 'weekly');	// TODO Manage other values
 				$priority = $domtree->createElement('priority', '1');
 
