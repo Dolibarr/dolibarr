@@ -2250,12 +2250,16 @@ $tempdir = $conf->website->dir_output.'/'.$websitekey.'/';
 // Generate web site sitemaps
 if ($action == 'generatesitemaps' && $usercanedit) {
 	$domtree = new DOMDocument('1.0', 'UTF-8');
+
 	$root = $domtree->createElementNS('http://www.sitemaps.org/schemas/sitemap/0.9', 'urlset');
-	$domtree->createAttributeNS("http://www.w3.org/1999/xhtml", 'xmlns:xhtml');
+	$root->setAttributeNS('http://www.w3.org/2000/xmlns/' ,'xmlns:xhtml', 'http://www.w3.org/1999/xhtml');
+
 	$domtree->formatOutput = true;
+
 	$xmlname = 'sitemap.'.$websitekey.'.xml';
 
-	$sql = "SELECT wp.type_container , wp.pageurl, wp.lang, wp.tms as tms, w.virtualhost";
+	$sql = "SELECT wp.rowid, wp.type_container , wp.pageurl, wp.lang, wp.fk_page, wp.tms as tms,";
+	$sql .= " w.virtualhost, w.fk_default_home";
 	$sql .= " FROM ".MAIN_DB_PREFIX."website_page as wp, ".MAIN_DB_PREFIX."website as w";
 	$sql .= " WHERE wp.type_container IN ('page', 'blogpost')";
 	$sql .= " AND wp.fk_website = w.rowid";
@@ -2269,10 +2273,25 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 			while ($i < $num_rows) {
 				$objp = $db->fetch_object($resql);
 				$url = $domtree->createElement('url');
-				$pageurl = $objp->pageurl;
+
+				$shortlangcode = '';
 				if ($objp->lang) {
-					$pageurl = $objp->lang.'/'.$pageurl;
+					$shortlangcode = substr($objp->lang, 0, 2); // en_US or en-US -> en
 				}
+				if (empty($shortlangcode)) {
+					$shortlangcode = substr($object->lang, 0, 2); // en_US or en-US -> en
+				}
+
+				// Forge $pageurl, adding language prefix if it is an alternative language
+				$pageurl = $objp->pageurl;
+				if ($objp->fk_default_home == $objp->rowid) {
+					$pageurl = '';
+				} else {
+					if ($shortlangcode != substr($object->lang, 0, 2)) {
+						$pageurl = $shortlangcode.'/'.$pageurl.'.php';
+					}
+				}
+
 				if ($objp->virtualhost) {
 					$domainname = $objp->virtualhost;
 				}
@@ -2281,11 +2300,77 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 				}
 				//$pathofpage = $dolibarr_main_url_root.'/'.$pageurl.'.php';
 
-				$loc = $domtree->createElement('loc', $domainname.'/'.$pageurl.'.php');
+				// URL of sitemaps must end with trailing slash if page is ''
+				$loc = $domtree->createElement('loc', $domainname.'/'.$pageurl);
 				$lastmod = $domtree->createElement('lastmod', $db->jdate($objp->tms));
+				$changefreq = $domtree->createElement('changefreq', 'weekly');	// TODO Manage other values
+				$priority = $domtree->createElement('priority', '1');
 
 				$url->appendChild($loc);
 				$url->appendChild($lastmod);
+				// Add suggested frequency for refresh
+				if (!empty($conf->global->WEBSITE_SITEMAPS_ADD_WEEKLY_FREQ)) {
+					$url->appendChild($changefreq);
+				}
+				// Add higher priority for home page
+				if ($objp->fk_default_home == $objp->rowid) {
+					$url->appendChild($priority);
+				}
+
+				// Now add alternate language entries
+				if ($object->isMultiLang()) {
+					// Add page "translation of"
+					$translationof = $objp->fk_page;
+					if ($translationof) {
+						$tmppage = new WebsitePage($db);
+						$tmppage->fetch($translationof);
+						if ($tmppage->id > 0) {
+							$tmpshortlangcode = '';
+							if ($tmppage->lang) {
+								$tmpshortlangcode = preg_replace('/[_-].*$/', '', $tmppage->lang); // en_US or en-US -> en
+							}
+							if (empty($tmpshortlangcode)) {
+								$tmpshortlangcode = preg_replace('/[_-].*$/', '', $object->lang); // en_US or en-US -> en
+							}
+							if ($tmpshortlangcode != $shortlangcode) {
+								$xhtmllink = $domtree->createElement('xhtml:link', '');
+								$xhtmllink->setAttribute("rel", "alternante");
+								$xhtmllink->setAttribute("hreflang", "'.$tmpshortlangcode.'");
+								$xhtmllink->setAttribute("href", "'.$pageurl.'");
+							}
+						}
+					}
+
+					// Add "has translation pages"
+					$sql = 'SELECT rowid as id, lang, pageurl from '.MAIN_DB_PREFIX.'website_page where fk_page IN ('.$db->sanitize($objp->rowid.($translationof ? ', '.$translationof : '')).")";
+					$resql = $db->query($sql);
+					if ($resql) {
+						$num_rows = $db->num_rows($resql);
+						if ($num_rows > 0) {
+							while ($objhastrans = $db->fetch_object($resql)) {
+								$tmpshortlangcode = '';
+								if ($objhastrans->lang) {
+									$tmpshortlangcode = preg_replace('/[_-].*$/', '', $objhastrans->lang); // en_US or en-US -> en
+								}
+								if ($tmpshortlangcode != $shortlangcode) {
+									$xhtmllink = $domtree->createElement('xhtml:link', '');
+									$xhtmllink->setAttribute("rel", "alternante");
+									$xhtmllink->setAttribute("hreflang", "'.$tmpshortlangcode.'");
+									$xhtmllink->setAttribute("href", "'.$pageurl.'");
+								}
+							}
+						}
+					} else {
+						dol_print_error($db);
+					}
+
+					// Add myself
+					$xhtmllink = $domtree->createElement('xhtml:link', '');
+					$xhtmllink->setAttribute("rel", "alternante");
+					$xhtmllink->setAttribute("hreflang", "'.$shortlang.'");
+					$xhtmllink->setAttribute("href", "'.$pageurl.'");
+				}
+
 				$root->appendChild($url);
 				$i++;
 			}
