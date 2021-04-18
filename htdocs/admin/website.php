@@ -490,6 +490,9 @@ if ($id) {
 				}
 			}
 		}
+		if (!isset($obj->position)) {
+			$obj->position = 1;
+		}
 
 		fieldListWebsites($fieldlist, $obj, $tabname[$id], 'add');
 
@@ -499,8 +502,6 @@ if ($id) {
 		}
 		print '</td>';
 		print "</tr>";
-
-		$colspan = count($fieldlist) + 2;
 	}
 
 	print '</table>';
