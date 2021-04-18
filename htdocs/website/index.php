@@ -2338,7 +2338,7 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 								$xhtmllink = $domtree->createElement('xhtml:link', '');
 								$xhtmllink->setAttribute("rel", "alternante");
 								$xhtmllink->setAttribute("hreflang", $tmpshortlangcode);
-								$xhtmllink->setAttribute("href", $domainname.($objp->fk_default_home == $tmppage->id ? '/' : (($tmpshortlangcode != substr($objp->lang, 0, 2)) ? '/'.$tmpshortlangcode : '').'/'.$tmppage->pageurl.'.php');
+								$xhtmllink->setAttribute("href", $domainname.($objp->fk_default_home == $tmppage->id ? '/' : (($tmpshortlangcode != substr($objp->lang, 0, 2)) ? '/'.$tmpshortlangcode : '').'/'.$tmppage->pageurl.'.php'));
 								$url->appendChild($xhtmllink);
 
 								$alternatefound++;
@@ -2361,7 +2361,7 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 									$xhtmllink = $domtree->createElement('xhtml:link', '');
 									$xhtmllink->setAttribute("rel", "alternate");
 									$xhtmllink->setAttribute("hreflang", $tmpshortlangcode);
-									$xhtmllink->setAttribute("href", $domainname.($objp->fk_default_home == $objhastrans->id ? '/' : (($tmpshortlangcode != substr($objp->lang, 0, 2) ? '/'.$tmpshortlangcode : '')).'/'.$objhastrans->pageurl.'.php');
+									$xhtmllink->setAttribute("href", $domainname.($objp->fk_default_home == $objhastrans->id ? '/' : (($tmpshortlangcode != substr($objp->lang, 0, 2) ? '/'.$tmpshortlangcode : '')).'/'.$objhastrans->pageurl.'.php'));
 									$url->appendChild($xhtmllink);
 
 									$alternatefound++;
