@@ -7996,7 +7996,7 @@ function dol_validElement($element)
 }
 
 /**
- * 	Return img flag of country for a language code or country code
+ * 	Return img flag of country for a language code or country code.
  *
  * 	@param	string	$codelang	Language code ('en_IN', 'fr_CA', ...) or ISO Country code on 2 characters in uppercase ('IN', 'FR')
  *  @param	string	$moreatt	Add more attribute on img tag (For example 'style="float: right"' or 'class="saturatemedium"')
