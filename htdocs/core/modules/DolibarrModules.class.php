@@ -2275,7 +2275,6 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		}
 
 		if ($this->isCoreOrExternalModule() == 'external' || preg_match('/development|experimental|deprecated/i', $version)) {
-
 			$versionTitle =  $langs->trans("Version").' '.$this->getVersion(1);
 			if ($this->needUpdate) {
 				$versionTitle.= '<br/>'.$langs->trans('ModuleUpdateAvailable').' : '.$this->lastVersion;
@@ -2318,7 +2317,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 *
 	 * @return int <0 if Error, 0 == no update needed,  >0 if need update
 	 */
-	public function checkForUpdate(){
+	public function checkForUpdate()
+	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 		if (!empty($this->url_last_version)) {
 			$lastVersion = getURLContent($this->url_last_version, 'GET', '', 1, array(), array('http', 'https'), 0);	// Accept http or https links on external remote server only
