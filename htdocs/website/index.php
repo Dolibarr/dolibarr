@@ -2283,12 +2283,12 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 				}
 
 				// Forge $pageurl, adding language prefix if it is an alternative language
-				$pageurl = $objp->pageurl;
+				$pageurl = $objp->pageurl.'.php';
 				if ($objp->fk_default_home == $objp->rowid) {
 					$pageurl = '';
 				} else {
 					if ($shortlangcode != substr($object->lang, 0, 2)) {
-						$pageurl = $shortlangcode.'/'.$pageurl.'.php';
+						$pageurl = $shortlangcode.'/'.$pageurl;
 					}
 				}
 
@@ -2319,6 +2319,8 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 
 				// Now add alternate language entries
 				if ($object->isMultiLang()) {
+					$alternatefound = 0;
+
 					// Add page "translation of"
 					$translationof = $objp->fk_page;
 					if ($translationof) {
@@ -2336,8 +2338,10 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 								$xhtmllink = $domtree->createElement('xhtml:link', '');
 								$xhtmllink->setAttribute("rel", "alternante");
 								$xhtmllink->setAttribute("hreflang", $tmpshortlangcode);
-								$xhtmllink->setAttribute("href", $domainname.'/'.$tmppage->pageurl);
+								$xhtmllink->setAttribute("href", $domainname.($objp->fk_default_home == $tmppage->id ? '/' : (($tmpshortlangcode != substr($objp->lang, 0, 2)) ? '/'.$tmpshortlangcode : '').'/'.$tmppage->pageurl.'.php');
 								$url->appendChild($xhtmllink);
+
+								$alternatefound++;
 							}
 						}
 					}
@@ -2355,10 +2359,12 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 								}
 								if ($tmpshortlangcode != $shortlangcode) {
 									$xhtmllink = $domtree->createElement('xhtml:link', '');
-									$xhtmllink->setAttribute("rel", "alternante");
+									$xhtmllink->setAttribute("rel", "alternate");
 									$xhtmllink->setAttribute("hreflang", $tmpshortlangcode);
-									$xhtmllink->setAttribute("href", $domainname.'/'.$objhastrans->pageurl);
+									$xhtmllink->setAttribute("href", $domainname.($objp->fk_default_home == $objhastrans->id ? '/' : (($tmpshortlangcode != substr($objp->lang, 0, 2) ? '/'.$tmpshortlangcode : '')).'/'.$objhastrans->pageurl.'.php');
 									$url->appendChild($xhtmllink);
+
+									$alternatefound++;
 								}
 							}
 						}
@@ -2366,12 +2372,14 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 						dol_print_error($db);
 					}
 
-					// Add myself
-					$xhtmllink = $domtree->createElement('xhtml:link', '');
-					$xhtmllink->setAttribute("rel", "alternante");
-					$xhtmllink->setAttribute("hreflang", $shortlang);
-					$xhtmllink->setAttribute("href", $domainname.'/'.$pageurl);
-					$url->appendChild($xhtmllink);
+					if ($alternatefound) {
+						// Add myself
+						$xhtmllink = $domtree->createElement('xhtml:link', '');
+						$xhtmllink->setAttribute("rel", "alternate");
+						$xhtmllink->setAttribute("hreflang", $shortlangcode);
+						$xhtmllink->setAttribute("href", $domainname.'/'.$pageurl);
+						$url->appendChild($xhtmllink);
+					}
 				}
 
 				$root->appendChild($url);
