@@ -502,8 +502,6 @@ if ($id) {
 		}
 		print '</td>';
 		print "</tr>";
-
-		$colspan = count($fieldlist) + 2;
 	}
 
 	print '</table>';
