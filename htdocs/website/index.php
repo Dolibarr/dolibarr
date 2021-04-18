@@ -2266,6 +2266,7 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 	$sql .= " AND wp.status = ".WebsitePage::STATUS_VALIDATED;
 	$sql .= " AND wp.pageurl NOT IN ('404', '500', '501', '503')";
 	$sql .= " AND w.ref = '".dol_escape_json($websitekey)."'";
+	$sql .= " ORDER BY wp.fk_default_home DESC, wp.rowid DESC";
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num_rows = $db->num_rows($resql);
