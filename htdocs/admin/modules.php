@@ -585,7 +585,6 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	// Show list of modules
 	$oldfamily = '';
 	$linenum = 0;
-	$numOfModuleToUpdate = 0;
 	foreach ($orders as $key => $value) {
 		$linenum++;
 		$tab = explode('_', $value);
@@ -721,6 +720,23 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 		}
 		if ($objMod->isCoreOrExternalModule() == 'external' || preg_match('/development|experimental|deprecated/i', $version)) {
 			$versiontrans .= $objMod->getVersion(1);
+		}
+
+		if ($objMod->isCoreOrExternalModule() == 'external'
+			&& (
+				$action == 'checklastversion'
+				// This is a bad practice to activate a synch external access during building of a page. 1 external module can hang the application.
+				// Adding a cron job could be a good idea see DolibarrModules::checkForUpdate()
+				|| 	!empty($conf->global->CHECKLASTVERSION_EXTERNALMODULE)
+			)
+		) {
+			$checkRes = $objMod->checkForUpdate();
+			if ($checkRes > 0) {
+				setEventMessage($objMod->getName().' : '.$versiontrans.' -> '.$objMod->lastVersion);
+			}
+			elseif ($checkRes < 0) {
+				setEventMessage($objMod->getName().' '.$langs->trans('CheckVersionFail'), 'warnings');
+			}
 		}
 
 		// Define imginfo
@@ -860,7 +876,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 
 		if ($mode == 'commonkanban') {
 			// Output Kanban
-			print $objMod->getKanbanView($codeenabledisable, $codetoconfig, $action == 'checklastversion'?1:0);
+			print $objMod->getKanbanView($codeenabledisable, $codetoconfig);
 		} else {
 			print '<tr class="oddeven">'."\n";
 			if (!empty($conf->global->MAIN_MODULES_SHOW_LINENUMBERS)) {
@@ -897,16 +913,12 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 
 			// Version
 			print '<td class="center nowrap" width="120px">';
-			print $versiontrans;
-			if (!empty($conf->global->CHECKLASTVERSION_EXTERNALMODULE) || $action == 'checklastversion') {	// This is a bad practice to activate a synch external access during building of a page. 1 external module can hang the application.
-				$checkRes = $objMod->checkForUpdate();
-				if ($checkRes > 0) {
-					setEventMessage($objMod->getName().' : '.$versiontrans.' -> '.$objMod->lastVersion);
-					print '&nbsp;<span class="badge badge-success" title="'.dol_escape_htmltag($langs->trans('LastStableVersion')).'">'.$objMod->lastVersion.'</span>';
-				}
-				elseif ($checkRes < 0) {
-					setEventMessage($objMod->getName().' '.$langs->trans('CheckVersionFail'), 'warnings');
-				}
+			if ($objMod->needUpdate) {
+				$versionTitle = $langs->trans('ModuleUpdateAvailable').' : '.$objMod->lastVersion;
+				print '<span class="badge badge-warning classfortooltip" title="'.dol_escape_htmltag($versionTitle).'">'.$versiontrans.'</span>';
+			}
+			else{
+				print $versiontrans;
 			}
 			print "</td>\n";
 

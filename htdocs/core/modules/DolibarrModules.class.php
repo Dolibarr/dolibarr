@@ -2227,13 +2227,9 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 * @param	string	$codetoconfig			HTML code to go to config page
 	 * @return 	string							HTML code of Kanban view
 	 */
-	public function getKanbanView($codeenabledisable = '', $codetoconfig = '', $checkUpdate = false)
+	public function getKanbanView($codeenabledisable = '', $codetoconfig = '')
 	{
 		global $conf, $langs;
-
-		if ($this->isCoreOrExternalModule() == 'external' && $checkUpdate) {
-			$this->checkForUpdate();
-		}
 
 		// Define imginfo
 		$imginfo = "info";
@@ -2317,15 +2313,19 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 	/**
 	 * check for module update
+	 * TODO : store results for $this->url_last_version and $this->needUpdate
+	 *  Add a cron task to monitor for updates
+	 *
 	 * @return int <0 if Error, 0 == no update needed,  >0 if need update
 	 */
 	function checkForUpdate(){
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 		if (!empty($this->url_last_version)) {
 			$lastVersion = getURLContent($this->url_last_version, 'GET', '', 1, array(), array('http', 'https'), 0);	// Accept http or https links on external remote server only
-			if (isset($lastVersion['content'])) {
-				$this->lastVersion = $lastVersion['content'];
-				if (version_compare($lastVersion['content'], $this->version) > 0) {
+			if (isset($lastVersion['content']) && strlen($lastVersion['content']) < 30) {
+				// Security warning :  be careful with remote data content, the module editor could be hacked (or evil) so limit to a-z A-Z 0-9 _ . -
+				$this->lastVersion = preg_replace("/[^a-zA-Z0-9_\.\-]+/", "", $lastVersion['content']);
+				if (version_compare($this->lastVersion, $this->version) > 0) {
 					$this->needUpdate = true;
 					return 1;
 				}else{
