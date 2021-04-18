@@ -733,8 +733,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			$checkRes = $objMod->checkForUpdate();
 			if ($checkRes > 0) {
 				setEventMessage($objMod->getName().' : '.$versiontrans.' -> '.$objMod->lastVersion);
-			}
-			elseif ($checkRes < 0) {
+			} elseif ($checkRes < 0) {
 				setEventMessage($objMod->getName().' '.$langs->trans('CheckVersionFail'), 'warnings');
 			}
 		}
@@ -916,8 +915,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			if ($objMod->needUpdate) {
 				$versionTitle = $langs->trans('ModuleUpdateAvailable').' : '.$objMod->lastVersion;
 				print '<span class="badge badge-warning classfortooltip" title="'.dol_escape_htmltag($versionTitle).'">'.$versiontrans.'</span>';
-			}
-			else{
+			} else {
 				print $versiontrans;
 			}
 			print "</td>\n";
