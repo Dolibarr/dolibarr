@@ -1366,7 +1366,7 @@ if ($action == 'updatecss' && $usercanedit) {
 					$error++;
 					setEventMessages($langs->trans('ErrorFaviconMustBeASquaredImage'), array(), 'errors');
 				}
-				if (! $error && ($filesize[0] != 16 || $filesize[0] != 32 || $filesize[0] != 64)) {
+				if (! $error && ($filesize[0] != 16 && $filesize[0] != 32 && $filesize[0] != 64)) {
 					$error++;
 					setEventMessages($langs->trans('ErrorFaviconSize'), array(), 'errors');
 				}
