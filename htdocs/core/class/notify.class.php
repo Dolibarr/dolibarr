@@ -80,11 +80,39 @@ class Notify
 		'SHIPPING_VALIDATE',
 		'EXPENSE_REPORT_VALIDATE',
 		'EXPENSE_REPORT_APPROVE',
-	'HOLIDAY_VALIDATE',
-	'HOLIDAY_APPROVE',
+    'HOLIDAY_VALIDATE',
+    'HOLIDAY_APPROVE',
 		'ACTION_CREATE'
 	);
+  
+	/**
+	 *  Return label of a action code (fix for Dolibarr terms)
+	 *
+	 * @param	string	$notifcode		Code of action in llx_c_action_trigger (new usage)
+	 *  @return string       	 			Convert code action name
+	 */
+	public function convCodeNotify($notifcode = '')
+	{
 
+			if ($notifcode == 'BILL_VALIDATE' || $notifcode == 'BILL_PAYED') {
+				return 'BILLING';
+			} elseif ($notifcode == 'ORDER_VALIDATE') {
+				return 'CUSTOMER';
+			} elseif ($notifcode == 'SHIPPING_VALIDATE') {
+				return 'SHIPPING';
+			} elseif ($notifcode == 'PROPAL_VALIDATE' || $notifcode == 'PROPAL_CLOSE_SIGNED') {
+				return 'CUSTOMER';
+			} elseif ($notifcode == 'FICHINTER_VALIDATE' || $notifcode == 'FICHINTER_ADD_CONTACT') {
+				return 'CUSTOMER';
+			} elseif ($notifcode == 'EXPENSE_REPORT_VALIDATE' || $notifcode == 'EXPENSE_REPORT_APPROVE') {
+				return 'CUSTOMER';
+			} elseif ($notifcode == 'ORDER_SUPPLIER_VALIDATE' || $notifcode == 'ORDER_SUPPLIER_APPROVE' || $notifcode == 'ORDER_SUPPLIER_REFUSE') {
+				return 'CUSTOMER';
+			} else {
+       return null;
+			}
+
+}
 
 	/**
 	 *	Constructor
@@ -181,6 +209,53 @@ class Notify
 				$sqlnotifcode = " AND a.code = '".$this->db->escape($notifcode)."'"; // New usage
 			}
 		}
+    
+		if (!$error && !empty($conf->global->NOTIFICATION_EMAIL_AUTOMATIC)) {
+			if ($socid >= 0 && in_array('thirdparty', $scope)) {
+        $arrayidcontact = $object->getIdContact('external', $this->convCodeNotify($notifcode));
+        if (count($arrayidcontact) > 0) {
+				$sql = "SELECT c.email, c.rowid";
+				$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c,"; 
+				$sql .= " ".MAIN_DB_PREFIX."societe as s";
+				$sql .= " WHERE c.fk_soc = s.rowid";
+				$sql .= " AND s.entity IN (".getEntity('societe').")";
+        $sql .= " AND c.rowid IN (" . implode(',', $arrayidcontact) . ")";
+				if ($socid > 0) {
+					$sql .= " AND s.rowid = ".$socid;
+				}
+
+				dol_syslog(__METHOD__." ".$notifcode.", ".$socid."", LOG_DEBUG);
+
+				$resql = $this->db->query($sql);
+ 
+				if ($resql) {
+					$num = $this->db->num_rows($resql);
+					$i = 0;
+					while ($i < $num) {
+						$obj = $this->db->fetch_object($resql);
+						if ($obj) {
+							$newval2 = trim($obj->email);
+							$isvalid = isValidEmail($newval2);
+							if (empty($resarray[$newval2])) {
+								$resarray[$newval2] = array('type'=> 'tocontact', 'code'=>$notifcode, 'emaildesc'=>'Contact id '.$obj->rowid, 'email'=>$newval2, 'contactid'=>$obj->rowid, 'isemailvalid'=>$isvalid);
+							}
+						}
+						$i++;
+					}
+				} else {
+					$error++;
+					$this->error = $this->db->lasterror();
+				} 
+      } 
+      if (count($resarray) == 0) {
+              $object->fetch_thirdparty();
+							$newval2 = trim($object->thirdparty->email);
+							$isvalid = isValidEmail($newval2);
+              $resarray[$newval2] = array('type'=> 'tothirdparty', 'code'=>$notifcode, 'emaildesc'=>'Thirdparty id '.$object->socid, 'email'=>$newval2, 'contactid'=>null, 'isemailvalid'=>$isvalid);	
+        } 
+ 
+			}
+		}
 
 		if (!$error) {
 			if ($socid >= 0 && in_array('thirdparty', $scope)) {
@@ -218,7 +293,7 @@ class Notify
 				} else {
 					$error++;
 					$this->error = $this->db->lasterror();
-				}
+				}   
 			}
 		}
 
@@ -363,12 +438,43 @@ class Notify
 		$num = 0;
 		$error = 0;
 
+		$sql = '';
+    
 		$oldref = (empty($object->oldref) ? $object->ref : $object->oldref);
 		$newref = (empty($object->newref) ? $object->ref : $object->newref);
+    
+		// Check auto notification per thirdparty
+		if (!empty($object->socid) && $object->socid > 0 && !empty($conf->global->NOTIFICATION_EMAIL_AUTOMATIC)) {
+      $arrayidcontact = $object->getIdContact('external', $this->convCodeNotify($notifcode));
+      if (count($arrayidcontact) > 0) {
+	    $sql .= "SELECT 'tocontactid' as type_target, c.email, c.rowid as cid, c.lastname, c.firstname, c.default_lang,";
+			$sql .= " '1' as adid, 'testlabel' as label, 'testcode' as code, '2' as rowid, 'email' as type";
+			$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c,"; 
+			$sql .= " ".MAIN_DB_PREFIX."societe as s";
+			$sql .= " WHERE c.fk_soc = s.rowid";
+			$sql .= " AND s.entity IN (".getEntity('societe').")";
+      $sql .= " AND c.rowid IN (" . implode(',', $arrayidcontact) . ")";
+				if ($socid > 0) {
+					$sql .= " AND s.rowid = ".$socid;
+				}        
 
-		$sql = '';
+      $result2 = $this->db->query($sql);
+      if ($result2) {
+      	$sql .= "\nUNION\n";
+      } else {
+			$sql = '';
+      } 
+      } else {
+			$sql = "SELECT 'tothirdpartyid' as type_target, s.email, s.rowid as cid, s.nom as lastname, 't' as firstname, s.default_lang,";
+			$sql .= " '1' as adid, 'testlabel' as label, 'testcode' as code, '2' as rowid, 'email' as type";
+			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+			$sql .= " WHERE s.entity IN (".getEntity('societe').")";
+			$sql .= " AND s.rowid = ".$object->socid;
+			$sql .= "\nUNION\n";
+		  }
+    }
 
-		// Check notification per third party
+		// Check notification per thirdparty
 		if (!empty($object->socid) && $object->socid > 0) {
 			$sql .= "SELECT 'tocontactid' as type_target, c.email, c.rowid as cid, c.lastname, c.firstname, c.default_lang,";
 			$sql .= " a.rowid as adid, a.label, a.code, n.rowid, n.type";
@@ -425,6 +531,9 @@ class Notify
 					if ($obj->type_target == 'tocontactid') {
 						$trackid = 'con'.$obj->id;
 					}
+					if ($obj->type_target == 'tthirdpartyid') {
+						$trackid = 'thi'.$obj->id;
+					}
 					if ($obj->type_target == 'touserid') {
 						$trackid = 'use'.$obj->id;
 					}
@@ -439,13 +548,14 @@ class Notify
 						}
 
 						$subject = '['.$mysoc->name.'] '.$outputlangs->transnoentitiesnoconv("DolibarrNotification").($projtitle ? ' '.$projtitle : '');
-
+            $ret = $object->fetch($object->id); // Reload to get new records
 						switch ($notifcode) {
 							case 'BILL_VALIDATE':
 								$link = '<a href="'.$urlwithroot.'/compta/facture/card.php?facid='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->facture->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'invoice');
 								$object_type = 'facture';
 								$labeltouse = $conf->global->BILL_VALIDATE_TEMPLATE;
+                $defaultmodelpdf = $conf->global->FACTURE_ADDON_PDF;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInvoiceValidated", $link);
 								break;
 							case 'BILL_PAYED':
@@ -453,6 +563,7 @@ class Notify
 								$dir_output = $conf->facture->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'invoice');
 								$object_type = 'facture';
 								$labeltouse = $conf->global->BILL_PAYED_TEMPLATE;
+                $defaultmodelpdf = $conf->global->FACTURE_ADDON_PDF;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInvoicePayed", $link);
 								break;
 							case 'ORDER_VALIDATE':
@@ -460,6 +571,7 @@ class Notify
 								$dir_output = $conf->commande->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'commande');
 								$object_type = 'order';
 								$labeltouse = $conf->global->ORDER_VALIDATE_TEMPLATE;
+                $defaultmodelpdf = $conf->global->COMMANDE_ADDON_PDF;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextOrderValidated", $link);
 								break;
 							case 'PROPAL_VALIDATE':
@@ -467,6 +579,7 @@ class Notify
 								$dir_output = $conf->propal->multidir_output[$object->entity]."/".get_exdir(0, 0, 0, 1, $object, 'propal');
 								$object_type = 'propal';
 								$labeltouse = $conf->global->PROPAL_VALIDATE_TEMPLATE;
+                $defaultmodelpdf = $conf->global->PROPALE_ADDON_PDF;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextProposalValidated", $link);
 								break;
 							case 'PROPAL_CLOSE_SIGNED':
@@ -474,6 +587,7 @@ class Notify
 								$dir_output = $conf->propal->multidir_output[$object->entity]."/".get_exdir(0, 0, 0, 1, $object, 'propal');
 								$object_type = 'propal';
 								$labeltouse = $conf->global->PROPAL_CLOSE_SIGNED_TEMPLATE;
+                $defaultmodelpdf = $conf->global->PROPALE_ADDON_PDF;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextProposalClosedSigned", $link);
 								break;
 							case 'FICHINTER_ADD_CONTACT':
@@ -517,6 +631,7 @@ class Notify
 								$dir_output = $conf->expedition->dir_output."/sending/".get_exdir(0, 0, 0, 1, $object, 'shipment');
 								$object_type = 'expedition';
 								$labeltouse = $conf->global->SHIPPING_VALIDATE_TEMPLATE;
+                $defaultmodelpdf = $conf->global->EXPEDITION_ADDON_PDF;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextExpeditionValidated", $link);
 								break;
 							case 'EXPENSE_REPORT_VALIDATE':
@@ -524,6 +639,7 @@ class Notify
 								$dir_output = $conf->expensereport->dir_output;
 								$object_type = 'expensereport';
 								$labeltouse = $conf->global->EXPENSE_REPORT_VALIDATE_TEMPLATE;
+                $defaultmodelpdf = $conf->global->EXPENSEREPORT_ADDON_PDF;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextExpenseReportValidated", $link);
 								break;
 							case 'EXPENSE_REPORT_APPROVE':
@@ -531,6 +647,7 @@ class Notify
 								$dir_output = $conf->expensereport->dir_output;
 								$object_type = 'expensereport';
 								$labeltouse = $conf->global->EXPENSE_REPORT_APPROVE_TEMPLATE;
+                $defaultmodelpdf = $conf->global->EXPENSEREPORT_ADDON_PDF;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextExpenseReportApproved", $link);
 								break;
 							case 'HOLIDAY_VALIDATE':
@@ -538,6 +655,7 @@ class Notify
 								$dir_output = $conf->holiday->dir_output;
 								$object_type = 'holiday';
 								$labeltouse = $conf->global->HOLIDAY_VALIDATE_TEMPLATE;
+                //$defaultmodelpdf = $conf->global->HOLIDAY_ADDON_PDF;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextHolidayValidated", $link);
 								break;
 							case 'HOLIDAY_APPROVE':
@@ -545,13 +663,15 @@ class Notify
 								$dir_output = $conf->holiday->dir_output;
 								$object_type = 'holiday';
 								$labeltouse = $conf->global->HOLIDAY_APPROVE_TEMPLATE;
+                //$defaultmodelpdf = $conf->global->HOLIDAY_ADDON_PDF;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextHolidayApproved", $link);
-				break;
+                break;
 							case 'ACTION_CREATE':
 								$link = '<a href="'.$urlwithroot.'/comm/action/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->agenda->dir_output;
 								$object_type = 'action';
-								$labeltouse = $conf->global->ACTION_CREATE_TEMPLATE;
+								//$labeltouse = $conf->global->ACTION_CREATE_TEMPLATE;
+                //$defaultmodelpdf = $conf->global->ACTION_ADDON_PDF;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextActionAdded", $link);
 								break;
 						}
@@ -575,15 +695,43 @@ class Notify
 
 						$ref = dol_sanitizeFileName($newref);
 						$pdf_path = $dir_output."/".$ref.".pdf";
-						if (!dol_is_file($pdf_path)) {
+						if (!dol_is_file($pdf_path) || empty($object->fk_statut)) {
 							// We can't add PDF as it is not generated yet.
-							$filepdf = '';
-						} else {
+							if (method_exists($object, 'generateDocument') && empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+								$outputlangs = $langs;
+								$newlang = '';
+
+								if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+										  $newlang = $object->thirdparty->default_lang;
+								}
+								if (!empty($newlang)) {
+									$outputlangs = new Translate("", $conf);
+									$outputlangs->setDefaultLang($newlang);
+								}
+								$modelpdf = !empty($object->modelpdf)?$object->modelpdf:$defaultmodelpdf;
+								$ret = $object->fetch($object->id); // Reload to get new records
+
+								$hidedetails = (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0);
+								$hidedesc = (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0);
+								$hideref = (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0);
+                
+								if (!empty($modelpdf)) $object->generateDocument($modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+								$ref = dol_sanitizeFileName($newref);
+									$pdf_path = $dir_output."/".$ref.".pdf";
+								if (dol_is_file($pdf_path)) {
+									$filepdf = $pdf_path;
+									$filename_list[] = $filepdf;
+									$mimetype_list[] = mime_content_type($filepdf);
+									$mimefilename_list[] = $ref.".pdf";
+								} else {
+									$filepdf = '';
+								}
+							}	} else {
 							$filepdf = $pdf_path;
 							$filename_list[] = $filepdf;
 							$mimetype_list[] = mime_content_type($filepdf);
 							$mimefilename_list[] = $ref.".pdf";
-						}
+							}
 
 						$parameters = array('notifcode'=>$notifcode, 'sendto'=>$sendto, 'replyto'=>$replyto, 'file'=>$filename_list, 'mimefile'=>$mimetype_list, 'filename'=>$mimefilename_list);
 						if (!isset($action)) {
