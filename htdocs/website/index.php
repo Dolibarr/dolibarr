@@ -2263,7 +2263,7 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 	$sql .= " FROM ".MAIN_DB_PREFIX."website_page as wp, ".MAIN_DB_PREFIX."website as w";
 	$sql .= " WHERE wp.type_container IN ('page', 'blogpost')";
 	$sql .= " AND wp.fk_website = w.rowid";
-	$sql .= " AND status = ".WebsitePage::STATUS_VALIDATED;
+	$sql .= " AND wp.status = ".WebsitePage::STATUS_VALIDATED;
 	$sql .= " AND wp.pageurl NOT IN ('404', '500', '501', '503')";
 	$sql .= " AND w.ref = '".dol_escape_json($websitekey)."'";
 	$resql = $db->query($sql);
