@@ -9713,6 +9713,7 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 /**
  * Add space between dolGetButtonTitle
  *
+ * @param string $moreClass more css class label
  * @return string html of title separator
  */
 function dolGetButtonTitleSeparator($moreClass = "")
@@ -9765,8 +9766,7 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
 
 	if ($status == 2) {
 		$attr['class'] .= ' btnTitleSelected';
-	}
-	elseif ($status <= 0) {
+	} elseif ($status <= 0) {
 		$attr['class'] .= ' refused';
 
 		$attr['href'] = '';
