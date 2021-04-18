@@ -162,10 +162,18 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 				$permok = !empty($user->rights->$keyforperm->creer) || !empty($user->rights->$keyforperm->create) || !empty($user->rights->$keyforperm->write);
 			}
 			if ($object->element == 'order_supplier') {
-				$permok = $user->rights->fournisseur->commande->creer;
+				if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
+					$permok = $user->rights->fournisseur->commande->creer;
+				} else {
+					$permok = $user->rights->supplier_order->creer;
+				}
 			}
 			if ($object->element == 'invoice_supplier') {
-				$permok = $user->rights->fournisseur->facture->creer;
+				if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
+					$permok = $user->rights->fournisseur->facture->creer;
+				} else {
+					$permok = $user->rights->supplier_invoice->creer;
+				}
 			}
 			if ($object->element == 'shipping') {
 				$permok = $user->rights->expedition->creer;

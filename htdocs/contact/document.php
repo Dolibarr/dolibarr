@@ -88,6 +88,8 @@ if ($id > 0) {
 $upload_dir = $conf->societe->multidir_output[$object->entity].'/contact/'.dol_sanitizeFileName($object->ref);
 $modulepart = 'contact';
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('contactdocument'));
 
 /*
  * Actions

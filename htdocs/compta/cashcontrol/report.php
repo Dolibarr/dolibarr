@@ -41,6 +41,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php'
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
 
 $langs->loadLangs(array("bills", "banks"));
 
@@ -267,7 +269,7 @@ if ($resql) {
 		// Debit
 		print '<td class="right">';
 		if ($objp->amount < 0) {
-			print price($objp->amount * -1);
+			print '<span class="amount">'.price($objp->amount * -1).'</span>';
 			$totalarray['val']['totaldebfield'] += $objp->amount;
 			$amountpertype[$objp->code] += $objp->amount;
 		}
@@ -282,7 +284,7 @@ if ($resql) {
 		// Credit
 		print '<td class="right">';
 		if ($objp->amount > 0) {
-			print price($objp->amount);
+			print '<span class="amount">'.price($objp->amount).'</span>';
 			$totalarray['val']['totalcredfield'] += $objp->amount;
 			$amountpertype[$objp->code] -= $objp->amount;
 		}
@@ -307,7 +309,7 @@ if ($resql) {
 	//$cash = $amountpertype['LIQ'] + $cashcontrol->opening;
 	$cash = price2num($cash + $cashcontrol->opening, 'MT');
 
-	print "<div style='text-align: right'><h2>";
+	print '<div style="text-align: right"><h2>';
 	print $langs->trans("Cash").": ".price($cash);
 	if ($cashcontrol->status == $cashcontrol::STATUS_VALIDATED && $cash != $cashcontrol->cash) {
 		print ' <> <span class="amountremaintopay">'.$langs->trans("Declared").': '.price($cashcontrol->cash).'</span>';

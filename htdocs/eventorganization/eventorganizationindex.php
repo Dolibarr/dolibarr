@@ -60,7 +60,9 @@ $result = restrictedArea($user, 'eventorganization');
 $form = new Form($db);
 $formfile = new FormFile($db);
 
-llxHeader("", $langs->trans("EventOrganizationArea"));
+$title = $langs->trans('EventOrganizationArea');
+
+llxHeader('', $title, '');
 
 print load_fiche_titre($langs->trans("EventOrganizationArea"), '', 'eventorganization.png@eventorganization');
 

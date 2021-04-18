@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
-$langs->load("bills");
+$langs->loadLangs(array("banks", "bills"));
 
 $action = GETPOST('action', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
@@ -78,7 +78,7 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 		$action = 'create';
 	}
 	if (!empty($conf->banque->enabled) && !(GETPOST("accountid", 'int') > 0)) {
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountToCredit")), null, 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountToDebit")), null, 'errors');
 		$error++;
 		$action = 'create';
 	}
@@ -223,6 +223,7 @@ if ($action == 'create') {
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
 	print '<td>';
+	print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 	$form->select_comptes(GETPOSTISSET("accountid") ? GETPOST("accountid", 'int') : $salary->accountid, "accountid", 0, '', 1); // Show opend bank account list
 	print '</td></tr>';
 

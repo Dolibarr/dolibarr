@@ -2096,9 +2096,17 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	                '.$userDropDownImage.'
 	                <p>
 	                    '.$profilName.'<br>';
-		if ($user->datepreviouslogin) {
-			$btnUser .= '<small class="classfortooltip" title="'.$langs->trans("PreviousConnexion").'" ><i class="fa fa-user-clock"></i> '.dol_print_date($user->datepreviouslogin, "dayhour", 'tzuser').'</small><br>';
+		if ($user->datelastlogin) {
+			$title = $langs->trans("ConnectedSince").' : '.dol_print_date($user->datelastlogin, "dayhour", 'tzuser');
+			if ($user->datepreviouslogin) {
+				$title .= '<br>'.$langs->trans("PreviousConnexion").' : '.dol_print_date($user->datepreviouslogin, "dayhour", 'tzuser');
+			}
 		}
+		$btnUser .= '<small class="classfortooltip" title="'.dol_escape_htmltag($title).'" ><i class="fa fa-user-clock"></i> '.dol_print_date($user->datelastlogin, "dayhour", 'tzuser').'</small><br>';
+		if ($user->datepreviouslogin) {
+			$btnUser .= '<small class="classfortooltip" title="'.dol_escape_htmltag($title).'" ><i class="fa fa-user-clock opacitymedium"></i> '.dol_print_date($user->datepreviouslogin, "dayhour", 'tzuser').'</small><br>';
+		}
+
 		//$btnUser .= '<small class="classfortooltip"><i class="fa fa-cog"></i> '.$langs->trans("Version").' '.$appli.'</small>';
 		$btnUser .= '
 	                </p>
@@ -2278,7 +2286,7 @@ function top_menu_quickadd()
                 ';
 	}
 
-	if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande->creer) {
+	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->commande->creer) || (!empty($conf->supplier_order->enabled) && $user->rights->supplier_order->creer)) {
 		$langs->load("orders");
 		$dropDownQuickAddHtml .= '
                 <!-- Supplier order link -->
@@ -2291,7 +2299,7 @@ function top_menu_quickadd()
                 ';
 	}
 
-	if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->creer) {
+	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->facture->creer) || (!empty($conf->supplier_invoice->enabled) && $user->rights->supplier_invoice->creer)) {
 		$langs->load("bills");
 		$dropDownQuickAddHtml .= '
                 <!-- Supplier invoice link -->

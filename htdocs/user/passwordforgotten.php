@@ -49,7 +49,7 @@ if (!$mode) {
 }
 
 $username = GETPOST('username', 'alphanohtml');
-$passwordhash = GETPOST('passwordhash', 'alpha');
+$passworduidhash = GETPOST('passworduidhash', 'alpha');
 $conf->entity = (GETPOST('entity', 'int') ? GETPOST('entity', 'int') : 1);
 
 // Instantiate hooks of thirdparty module only if not already define
@@ -85,19 +85,23 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	// Validate new password
-	if ($action == 'validatenewpassword' && $username && $passwordhash) {
+	if ($action == 'validatenewpassword' && $username && $passworduidhash) {
 		$edituser = new User($db);
 		$result = $edituser->fetch('', $_GET["username"]);
 		if ($result < 0) {
 			$message = '<div class="error">'.dol_escape_htmltag($langs->trans("ErrorLoginDoesNotExists", $username)).'</div>';
 		} else {
-			if (dol_verifyHash($edituser->pass_temp, $passwordhash)) {
+			global $dolibarr_main_instance_unique_id;
+
+			//print $edituser->pass_temp.'-'.$edituser->id.'-'.$dolibarr_main_instance_unique_id.' '.$passworduidhash;
+			if (dol_verifyHash($edituser->pass_temp.'-'.$edituser->id.'-'.$dolibarr_main_instance_unique_id, $passworduidhash)) {
 				// Clear session
 				unset($_SESSION['dol_login']);
 				$_SESSION['dol_loginmesg'] = $langs->trans('NewPasswordValidated'); // Save message for the session page
 
 				$newpassword = $edituser->setPassword($user, $edituser->pass_temp, 0);
 				dol_syslog("passwordforgotten.php new password for user->id=".$edituser->id." validated in database");
+
 				header("Location: ".DOL_URL_ROOT.'/');
 				exit;
 			} else {
