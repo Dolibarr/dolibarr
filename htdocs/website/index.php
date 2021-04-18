@@ -3306,7 +3306,7 @@ if ($action == 'editcss') {
 
 	print $form->textwithpicto($langs->trans('Virtualhost'), $htmltext, 1, 'help', '', 0, 2, 'virtualhosttooltip');
 	print '</td><td>';
-	print '<input type="text" class="flat" value="'.(GETPOSTISSET('virtualhost') ? GETPOST('virtualhost', 'alpha') : $virtualurl).'" name="virtualhost">';
+	print '<input type="text" class="flat minwidth300" value="'.(GETPOSTISSET('virtualhost') ? GETPOST('virtualhost', 'alpha') : $virtualurl).'" name="virtualhost">';
 	print '</td>';
 	print '</tr>';
 
