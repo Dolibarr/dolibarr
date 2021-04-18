@@ -518,7 +518,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 
 	print $deschelp;
 
-	$moreforfilter = '<div class="valignmiddle ">';
+	$moreforfilter = '<div class="valignmiddle">';
 
 	$moreforfilter .= '<div class="floatright right pagination --module-list"><ul><li>';
 	$moreforfilter .= dolGetButtonTitle($langs->trans('CheckForModuleUpdate'), $langs->trans('CheckForModuleUpdateHelp'), 'fa fa-check-double ', $_SERVER["PHP_SELF"].'?action=checklastversion&token='.newToken().'&mode='.$mode.$param, '', 1, array('morecss'=>'reposition'));
