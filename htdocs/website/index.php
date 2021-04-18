@@ -2335,8 +2335,8 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 							if ($tmpshortlangcode != $shortlangcode) {
 								$xhtmllink = $domtree->createElement('xhtml:link', '');
 								$xhtmllink->setAttribute("rel", "alternante");
-								$xhtmllink->setAttribute("hreflang", "'.$tmpshortlangcode.'");
-								$xhtmllink->setAttribute("href", "'.$pageurl.'");
+								$xhtmllink->setAttribute("hreflang", $tmpshortlangcode);
+								$xhtmllink->setAttribute("href", $domainname.'/'.$tmppage->pageurl);
 								$url->appendChild($xhtmllink);
 							}
 						}
@@ -2356,8 +2356,8 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 								if ($tmpshortlangcode != $shortlangcode) {
 									$xhtmllink = $domtree->createElement('xhtml:link', '');
 									$xhtmllink->setAttribute("rel", "alternante");
-									$xhtmllink->setAttribute("hreflang", "'.$tmpshortlangcode.'");
-									$xhtmllink->setAttribute("href", "'.$pageurl.'");
+									$xhtmllink->setAttribute("hreflang", $tmpshortlangcode);
+									$xhtmllink->setAttribute("href", $domainname.'/'.$objhastrans->pageurl);
 									$url->appendChild($xhtmllink);
 								}
 							}
@@ -2369,8 +2369,8 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 					// Add myself
 					$xhtmllink = $domtree->createElement('xhtml:link', '');
 					$xhtmllink->setAttribute("rel", "alternante");
-					$xhtmllink->setAttribute("hreflang", "'.$shortlang.'");
-					$xhtmllink->setAttribute("href", "'.$pageurl.'");
+					$xhtmllink->setAttribute("hreflang", $shortlang);
+					$xhtmllink->setAttribute("href", $domainname.'/'.$pageurl);
 					$url->appendChild($xhtmllink);
 				}
 
