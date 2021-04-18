@@ -1362,7 +1362,11 @@ if ($action == 'updatecss' && $usercanedit) {
 				}
 				$filetoread = realpath(dol_osencode($_FILES['addedfile']['tmp_name']));
 				$filesize = getimagesize($filetoread);
-				if ($filesize[0] != 32 || $filesize[1] != 32) {
+				if ($filesize[0] != $filesize[1]) {
+					$error++;
+					setEventMessages($langs->trans('ErrorFaviconMustBeASquaredImage'), array(), 'errors');
+				}
+				if (! $error && ($filesize[0] != 16 || $filesize[0] != 32 || $filesize[0] != 64)) {
 					$error++;
 					setEventMessages($langs->trans('ErrorFaviconSize'), array(), 'errors');
 				}
