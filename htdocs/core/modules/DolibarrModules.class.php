@@ -2251,7 +2251,6 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			$versiontrans .= 'warning';
 		}
 
-		$versiontrans .= ' --need-update classfortooltip';
 		print '
     	<div class="box-flex-item info-box-module'
 			.(empty($conf->global->$const_name) ? ' --disabled' : '')
@@ -2281,7 +2280,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				$versionTitle.= '<br/>'.$langs->trans('ModuleUpdateAvailable').' : '.$this->lastVersion;
 			}
 
-			print '<span class="info-box-icon-version'.($versiontrans ? ' '.$versiontrans : '').'" title="'.dol_escape_js($versionTitle).'" >';
+			print '<span class="info-box-icon-version'.($versiontrans ? ' '.$versiontrans : '').' classfortooltip" title="'.dol_escape_js($versionTitle).'" >';
 			print $this->getVersion(1);
 			print '</span>';
 		}
