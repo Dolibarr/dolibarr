@@ -490,6 +490,9 @@ if ($id) {
 				}
 			}
 		}
+		if (!isset($obj->position)) {
+			$obj->position = 1;
+		}
 
 		fieldListWebsites($fieldlist, $obj, $tabname[$id], 'add');
 
