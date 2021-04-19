@@ -643,7 +643,7 @@ class AdvanceTargetingMailing extends CommonObject
 					} elseif ($extrafields->attributes[$elementtype]['type'][$key] == 'link') {
 						if ($arrayquery['options_'.$key] > 0){
                                                         $sqlwhere[]= " (te.".$key." = ".$arrayquery['options_'.$key].")";
-                                                }
+						}
 					} else {
 						if (is_array($arrayquery['options_'.$key])) {
 							$sqlwhere[]= " (te.".$key." IN ('".implode("','", $arrayquery['options_'.$key])."'))";
