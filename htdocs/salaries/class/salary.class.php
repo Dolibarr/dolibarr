@@ -498,6 +498,12 @@ class Salary extends CommonObject
 		$label = '<u>'.$langs->trans("Salary").'</u>';
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		if ($this->label) {
+			$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
+		}
+		if ($this->datesp && $this->dateep) {
+			$label .= '<br><b>'.$langs->trans('Period').':</b> '.dol_print_date($this->datesp, 'day').' - '.dol_print_date($this->dateep, 'day');
+		}
 
 		$url = DOL_URL_ROOT.'/salaries/card.php?id='.$this->id;
 
@@ -647,9 +653,9 @@ class Salary extends CommonObject
 	/**
 	 * Retourne le libelle du statut d'une facture (brouillon, validee, abandonnee, payee)
 	 *
-	 * @param	int		$mode       	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 * @param	int			$mode       	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 * @param   double		$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
-	 * @return  string				Libelle
+	 * @return  string						Label
 	 */
 	public function getLibStatut($mode = 0, $alreadypaid = -1)
 	{
