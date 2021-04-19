@@ -637,7 +637,7 @@ if ($ispaymentok) {
 								$outputlangs->load("errors");
 								$postactionmessages[] = 'Error in create external user : '.$nuser->error;
 							} else {
-								$infouserlogin = $outputlangs->trans("Login").': '.$nuser->login."<br>"."\n".$outputlangs->trans("Password").': '.$newpassword;
+								$infouserlogin = $outputlangs->trans("Login").': '.$nuser->login.' '."\n".$outputlangs->trans("Password").': '.$newpassword;
 								$postactionmessages[] = $langs->trans("NewUserCreated", $nuser->login);
 							}
 							$substitutionarray['__MEMBER_USER_LOGIN_INFORMATION__'] = $infouserlogin;
