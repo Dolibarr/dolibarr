@@ -5635,6 +5635,16 @@ class FactureLigne extends CommonInvoiceLine
 			return 0;
 		}
 
+		$formmail = new FormMail($this->db);
+
+		// Select email template
+		$arraymessagetemplate = $formmail->getEMailTemplate($this->db, 'facture', $user, $langs, $idtemplate, 1);
+		if (is_numeric($arraymessagetemplate) && $arraymessagetemplate <= 0) {
+			$langs->load("bills");
+			$this->output = $langs->trans('FailedToFindEmailTemplate', $idtemplate);
+			return 0;
+		}
+
 		$now = dol_now();
 		$tmpinvoice = new Facture($this->db);
 
@@ -5652,12 +5662,10 @@ class FactureLigne extends CommonInvoiceLine
 		$resql = $this->db->query($sql);
 
 		if ($resql) {
-			$formmail = new FormMail($this->db);
-
 			while ($obj = $this->db->fetch_object($resql)) {
 				if (!$error) {
 					//Select email template
-					$arraymessage = $formmail->getEMailTemplate($this->db, 'facture', $user, $langs, $idtemplate, 1);
+					$arraymessage = $arraymessagetemplate;
 
 					// Load event
 					$res = $tmpinvoice->fetch($obj->id);
