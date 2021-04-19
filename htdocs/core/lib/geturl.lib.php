@@ -165,20 +165,32 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		} elseif (in_array($hosttocheck, array('ip6-localhost', 'ip6-loopback'))) {
 			$iptocheck = '::1';
 		} else {
-			// TODO Resolve $hosttocheck to get the IP $iptocheck and set CURLOPT_CONNECT_TO to use this ip
-			$iptocheck = $hosttocheck;
+			// Resolve $hosttocheck to get the IP $iptocheck and set CURLOPT_CONNECT_TO to use this ip so curl will not try another resolution that may give a different result
+			if (function_exists('gethostbyname')) {
+				$iptocheck = gethostbyname($hosttocheck);
+			} else {
+				$iptocheck = $hosttocheck;
+			}
+			// TODO Resolve ip v6
 		}
 
-		if (!filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6)) {	// This is not an IP
+		// Check $iptocheck is an IP (v4 or v6), if not clear value.
+		if (!filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6)) {	// This is not an IP, we clean data
 			$iptocheck = '0'; //
 		}
 
+		//var_dump($_SERVER);
 		if ($iptocheck) {
 			if ($localurl == 0) {	// Only external url allowed (dangerous, may allow to get malware)
 				if (!filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
 					// Deny ips like 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 0.0.0.0/8, 169.254.0.0/16, 127.0.0.0/8 et 240.0.0.0/4, ::1/128, ::/128, ::ffff:0:0/96, fe80::/10...
 					$info['http_code'] = 400;
 					$info['content'] = 'Error bad hostname IP (private or reserved range). Must be an external URL.';
+					break;
+				}
+				if ($iptocheck == $_SERVER["SERVER_ADDR"]) {
+					$info['http_code'] = 400;
+					$info['content'] = 'Error bad hostname IP (IP is a local IP). Must be an external URL.';
 					break;
 				}
 				if (in_array($iptocheck, array('100.100.100.200'))) {
@@ -194,6 +206,9 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 					break;
 				}
 			}
+
+			// Set CURLOPT_CONNECT_TO so curl will not try another resolution that may give a different result
+			curl_setopt($ch, CURLOPT_CONNECT_TO, $iptocheck);
 		}
 
 		// Getting response from server
@@ -220,7 +235,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 	$rep = array();
 	if (curl_errno($ch)) {
-		// Ad keys to $rep
+		// Add keys to $rep
 		$rep['content'] = $response;
 
 		// moving to display page to display curl errors
@@ -231,14 +246,16 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	} else {
 		//$info = curl_getinfo($ch);
 
-		// Ad keys to $rep
+		// Add keys to $rep
 		$rep = $info;
 		//$rep['header_size']=$info['header_size'];
 		//$rep['http_code']=$info['http_code'];
 		dol_syslog("getURLContent http_code=".$rep['http_code']);
 
 		// Add more keys to $rep
-		$rep['content'] = $response;
+		if ($response) {
+			$rep['content'] = $response;
+		}
 		$rep['curl_error_no'] = '';
 		$rep['curl_error_msg'] = '';
 	}
