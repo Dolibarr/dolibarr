@@ -2122,3 +2122,4 @@ IfCLINotRequiredYouShouldDisablePHPFunctions=Except if you need to run system co
 NoWritableFilesFoundIntoRootDir=No writable files or directories of the common programs were found into your root directory (Good)
 RecommendedValueIs=Recommended: %s
 ARestrictedPath=A restricted path
+SwaggerDescriptionFile=Swagger API description file (for use with redoc for example)
