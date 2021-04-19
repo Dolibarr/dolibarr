@@ -144,26 +144,35 @@ class ExpeditionLineBatch extends CommonObject
 			$error++; $this->errors[] = "Error ".$this->db->lasterror();
 		}
 		else $this->fk_expeditiondet = $id_line_expdet;
-		if (!$error && !$notrigger)
-		{
-			// Call trigger
-			$result = $this->call_trigger('LINESHIPPINGBATCH_INSERT', $user);
-			if ($result < 0) { $error++; }
-			// End call triggers
-		}
-
 		if (!$error) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.self::$_table_element);
-			return $this->id;
-		} else {
-			foreach ($this->errors as $errmsg) {
-				dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
-				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
-			}
-			$this->db->rollback();
-			return -1 * $error;
-		}
-	}
+            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.self::$_table_element);
+            if(! $error && ! $notrigger) {
+                // Call trigger
+                $result = $this->call_trigger('LINESHIPPINGBATCH_INSERT', $user);
+                if($result < 0) {
+                    $error++;
+                }
+                // End call triggers
+            }
+            if(! $error) return $this->id;
+            else {
+                foreach($this->errors as $errmsg) {
+                    dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
+                    $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+                }
+                $this->db->rollback();
+                return -1 * $error;
+            }
+        }
+        else {
+            foreach($this->errors as $errmsg) {
+                dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
+                $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+            }
+            $this->db->rollback();
+            return -1 * $error;
+        }
+    }
 
 	/**
 	 * Delete batch record attach to a shipment
