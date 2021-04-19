@@ -482,71 +482,65 @@ if ($resql) {
 		print '<tr class="oddeven">';
 
 
-        // USER REQUEST UPDATE FOR THIS LINE
-        if ($action == "updateRate" && $obj->rowid == $id_rate_selected) {
-            //  var_dump($obj);
+		// USER REQUEST UPDATE FOR THIS LINE
+		if ($action == "updateRate" && $obj->rowid == $id_rate_selected) {
+			//  var_dump($obj);
 			$form = new Form($db);
 			print '<td>' . $form->selectDate($obj->date_sync, 'dateinput', 0, 0, 1).'</td>';
 
 
-            print '<td>' . $form->selectMultiCurrency($obj->code, 'multicurrency_code', 1, " code != '".$conf->currency."'", true) . '</td>';
-            print ' <td><input type="number" min ="0" step="any" class="minwidth200" name="rateinput" value="' . dol_escape_htmltag($obj->rate) . '"></td>';
+			print '<td>' . $form->selectMultiCurrency($obj->code, 'multicurrency_code', 1, " code != '".$conf->currency."'", true) . '</td>';
+			print ' <td><input type="number" min ="0" step="any" class="minwidth200" name="rateinput" value="' . dol_escape_htmltag($obj->rate) . '"></td>';
 
-            print '<td class="center nowrap ">';
-            print '<input type="hidden" name="page" value="'.dol_escape_htmltag($page).'">';
-            print '<input type="hidden" name="id_rate" value="'.dol_escape_htmltag($obj->rowid).'">';
-            print '<button type="submit" class="button" name="action" value="update">'.$langs->trans("Modify").'</button>';
-            print '<button type="submit" class="button" name="action" value="cancel">'.$langs->trans("Cancel").'</button>';
-            print '</td>';
-        }
-        else {
-            // date_sync
-            if (!empty($arrayfields['cr.date_sync']['checked']))
-            {
-                print '<td class="tdoverflowmax200">';
-                print $obj->date_sync;
-                print "</td>\n";
-                if (!$i) $totalarray['nbfield']++;
-            }
+			print '<td class="center nowrap ">';
+			print '<input type="hidden" name="page" value="'.dol_escape_htmltag($page).'">';
+			print '<input type="hidden" name="id_rate" value="'.dol_escape_htmltag($obj->rowid).'">';
+			print '<button type="submit" class="button" name="action" value="update">'.$langs->trans("Modify").'</button>';
+			print '<button type="submit" class="button" name="action" value="cancel">'.$langs->trans("Cancel").'</button>';
+			print '</td>';
+		} else {
+			// date_sync
+			if (!empty($arrayfields['cr.date_sync']['checked'])) {
+				print '<td class="tdoverflowmax200">';
+				print $obj->date_sync;
+				print "</td>\n";
+				if (!$i) $totalarray['nbfield']++;
+			}
 
-            // code
-            if (! empty($arrayfields['m.code']['checked']))
-            {
-                print '<td class="tdoverflowmax200">';
-                print $obj->code." ".$obj->name;
-                print "</td>\n";
+			// code
+			if (! empty($arrayfields['m.code']['checked'])) {
+				print '<td class="tdoverflowmax200">';
+				print $obj->code." ".$obj->name;
+				print "</td>\n";
 
-                if (! $i) $totalarray['nbfield']++;
-            }
+				if (! $i) $totalarray['nbfield']++;
+			}
 
-            // rate
-            if (! empty($arrayfields['cr.rate']['checked']))
-            {
-                print '<td class="tdoverflowmax200">';
-                print $obj->rate;
-                print "</td>\n";
-                if (! $i) $totalarray['nbfield']++;
-            }
+			// rate
+			if (! empty($arrayfields['cr.rate']['checked'])) {
+				print '<td class="tdoverflowmax200">';
+				print $obj->rate;
+				print "</td>\n";
+				if (! $i) $totalarray['nbfield']++;
+			}
 
-		// Fields from hook
-		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj);
-		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
-		print $hookmanager->resPrint;
+			// Fields from hook
+			$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
+			print $hookmanager->resPrint;
 
-            // Action
-            print '<td class="nowrap " >';
-            if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-            {
-                $selected = 0;
-                if (in_array($obj->rowid, $arrayofselected)) $selected = 1;
-                $par = '&amp;id_rate='.$obj->rowid.'&amp;page='.$page.'&amp;sortorder='.$sortorder.'&amp;sortfield='.$sortfield.'&amp;search_code='.$search_code.'&amp;search_rate='.$search_rate.'&amp;search_date_sync='.dol_print_date($search_date_sync, "%Y-%m-%d") .'&amp;search_date_sync_end='.dol_print_date($search_date_sync_end, "%Y-%m-%d") .'&amp;edit_mode=1';
-                print '<a class="editfielda marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?action=updateRate'. $par .  '">'.img_picto('edit', 'edit').'</a>';
-                print '<a class="marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?action=deleteRate&amp;id_rate='.$obj->rowid.'">'.img_picto('delete', 'delete').'</a>';
-                print '<input id="cb'.$obj->rowid.'" class="flat checkforselect marginleftonly" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
-            }
-            print '</td>';
-            if (!$i) $totalarray['nbfield']++;
-
+			// Action
+			print '<td class="nowrap " >';
+			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+				$selected = 0;
+				if (in_array($obj->rowid, $arrayofselected)) $selected = 1;
+				$par = '&amp;id_rate='.$obj->rowid.'&amp;page='.$page.'&amp;sortorder='.$sortorder.'&amp;sortfield='.$sortfield.'&amp;search_code='.$search_code.'&amp;search_rate='.$search_rate.'&amp;search_date_sync='.dol_print_date($search_date_sync, "%Y-%m-%d") .'&amp;search_date_sync_end='.dol_print_date($search_date_sync_end, "%Y-%m-%d") .'&amp;edit_mode=1';
+				print '<a class="editfielda marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?action=updateRate'. $par .  '">'.img_picto('edit', 'edit').'</a>';
+				print '<a class="marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?action=deleteRate&amp;id_rate='.$obj->rowid.'">'.img_picto('delete', 'delete').'</a>';
+				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect marginleftonly" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+			}
+			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
 		}
 
 		print "</tr>\n";
