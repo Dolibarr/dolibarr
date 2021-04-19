@@ -1140,9 +1140,9 @@ class Cronjob extends CommonObject
 				$ret = dol_include_once($this->classesname);
 				if ($ret === false || (!class_exists($this->objectname))) {
 					if ($ret === false) {
-						$this->error = $langs->trans('CronCannotLoadClass', $this->classesname, $this->objectname);
+						$this->error = $langs->transnoentitiesnoconv('CronCannotLoadClass', $this->classesname, $this->objectname);
 					} else {
-						$this->error = $langs->trans('CronCannotLoadObject', $this->classesname, $this->objectname);
+						$this->error = $langs->transnoentitiesnoconv('CronCannotLoadObject', $this->classesname, $this->objectname);
 					}
 					dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
 					$this->lastoutput = $this->error;
@@ -1155,7 +1155,7 @@ class Cronjob extends CommonObject
 			// test if method exists
 			if (!$error) {
 				if (!method_exists($this->objectname, $this->methodename)) {
-					$this->error = $langs->trans('CronMethodDoesNotExists', $this->objectname, $this->methodename);
+					$this->error = $langs->transnoentitiesnoconv('CronMethodDoesNotExists', $this->objectname, $this->methodename);
 					dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
 					$this->lastoutput = $this->error;
 					$this->lastresult = -1;
@@ -1163,7 +1163,7 @@ class Cronjob extends CommonObject
 					$error++;
 				}
 				if (in_array(strtolower(trim($this->methodename)), array('executecli'))) {
-					$this->error = $langs->trans('CronMethodNotAllowed', $this->methodename, $this->objectname);
+					$this->error = $langs->transnoentitiesnoconv('CronMethodNotAllowed', $this->methodename, $this->objectname);
 					dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
 					$this->lastoutput = $this->error;
 					$this->lastresult = -1;

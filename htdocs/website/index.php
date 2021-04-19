@@ -2256,7 +2256,7 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 	$domtree = new DOMDocument('1.0', 'UTF-8');
 
 	$root = $domtree->createElementNS('http://www.sitemaps.org/schemas/sitemap/0.9', 'urlset');
-	$root->setAttributeNS('http://www.w3.org/2000/xmlns/' ,'xmlns:xhtml', 'http://www.w3.org/1999/xhtml');
+	$root->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:xhtml', 'http://www.w3.org/1999/xhtml');
 
 	$domtree->formatOutput = true;
 

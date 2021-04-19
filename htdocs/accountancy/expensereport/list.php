@@ -164,7 +164,7 @@ if ($massaction == 'ventil' && $user->rights->accounting->bind->write) {
 					$msg .= '<div><span style="color:green">'.$langs->trans("LineOfExpenseReport").' '.$monId.' - '.$langs->trans("VentilatedinAccount").' : '.length_accountg($accountventilated->account_number).'</span></div>';
 					$ok++;
 				} else {
-					$msg .= '<div><span style="color:red">'.$langs->trans("ErrorDB").' : '.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("NotVentilatedinAccount").' : '.length_accountg($accountventilated->account_number).'<br/> <pre>'.$sql.'</pre></span></div>';
+					$msg .= '<div><span style="color:red">'.$langs->trans("ErrorDB").' : '.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("NotVentilatedinAccount").' : '.length_accountg($accountventilated->account_number).'<br> <pre>'.$sql.'</pre></span></div>';
 					$ko++;
 				}
 			}

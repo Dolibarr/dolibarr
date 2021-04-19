@@ -70,8 +70,8 @@ if (!$allowed) {
 $acts = array(); $actl = array();
 $acts[0] = "activate";
 $acts[1] = "disable";
-$actl[0] = img_picto($langs->trans("Disabled"), 'switch_off');
-$actl[1] = img_picto($langs->trans("Activated"), 'switch_on');
+$actl[0] = img_picto($langs->trans("Disabled"), 'switch_off', 'class="size15x"');
+$actl[1] = img_picto($langs->trans("Activated"), 'switch_on', 'class="size15x"');
 
 $listoffset = GETPOST('listoffset');
 $listlimit = GETPOST('listlimit') > 0 ?GETPOST('listlimit') : 1000; // To avoid too long dictionaries

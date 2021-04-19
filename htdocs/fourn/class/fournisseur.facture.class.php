@@ -177,7 +177,13 @@ class FactureFournisseur extends CommonInvoice
 
 	public $amount = 0;
 	public $remise = 0;
+
+	/**
+	 * @var float tva
+	 * @deprecated Use $total_tva
+	 */
 	public $tva = 0;
+
 	public $localtax1;
 	public $localtax2;
 	public $total_ht = 0;
@@ -703,7 +709,7 @@ class FactureFournisseur extends CommonInvoice
 				$this->remise				= $obj->remise;
 				$this->close_code			= $obj->close_code;
 				$this->close_note			= $obj->close_note;
-				$this->tva = $obj->tva;
+				$this->tva					= $obj->tva;
 				$this->total_localtax1		= $obj->localtax1;
 				$this->total_localtax2		= $obj->localtax2;
 				$this->total_ht				= $obj->total_ht;

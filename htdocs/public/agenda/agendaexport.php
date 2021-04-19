@@ -153,7 +153,7 @@ $reshook = $hookmanager->executeHooks('doActions', $filters); // Note that $acti
 if ($reshook < 0) {
 	llxHeaderVierge();
 	if (!empty($hookmanager->errors) && is_array($hookmanager->errors)) {
-		print '<div class="error">'.implode('<br/>', $hookmanager->errors).'</div>';
+		print '<div class="error">'.implode('<br>', $hookmanager->errors).'</div>';
 	} else {
 		print '<div class="error">'.$hookmanager->error.'</div>';
 	}
