@@ -96,6 +96,7 @@ EvntOrgCancelled = Cancelled
 #
 # Public page
 #
+RegisterPage = Page for conferences or booth
 PublicAttendeeSubscriptionPage = Public link of registration to a conference
 MissingOrBadSecureKey = The security key is invalid or missing
 EvntOrgWelcomeMessage = This form allows you to register as a new participant to the conference 
