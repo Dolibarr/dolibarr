@@ -32,7 +32,9 @@ $langs->loadLangs(array("admin", "other"));
 
 $action = GETPOST('action', 'aZ09');
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 if (GETPOST('msg', 'alpha')) {
 	setEventMessages(GETPOST('msg', 'alpha'), null, 'errors');
@@ -52,8 +54,7 @@ $version = '0.0';
  *	Actions
  */
 
-if ($action == 'getlastversion')
-{
+if ($action == 'getlastversion') {
 	$result = getURLContent('https://sourceforge.net/projects/dolibarr/rss');
 	//var_dump($result['content']);
 	$sfurl = simplexml_load_string($result['content']);
@@ -73,25 +74,22 @@ print '<br>';
 
 print $langs->trans("CurrentVersion").' : <strong>'.DOL_VERSION.'</strong><br>';
 
-if (function_exists('curl_init'))
-{
+if (function_exists('curl_init')) {
 	$conf->global->MAIN_USE_RESPONSE_TIMEOUT = 10;
 
-	if ($action == 'getlastversion')
-	{
-		if ($sfurl)
-		{
+	if ($action == 'getlastversion') {
+		if ($sfurl) {
 			$i = 0;
-			while (!empty($sfurl->channel[0]->item[$i]->title) && $i < 10000)
-			{
+			while (!empty($sfurl->channel[0]->item[$i]->title) && $i < 10000) {
 				$title = $sfurl->channel[0]->item[$i]->title;
-				if (preg_match('/([0-9]+\.([0-9\.]+))/', $title, $reg))
-				{
+				if (preg_match('/([0-9]+\.([0-9\.]+))/', $title, $reg)) {
 					$newversion = $reg[1];
 					$newversionarray = explode('.', $newversion);
 					$versionarray = explode('.', $version);
 					//var_dump($newversionarray);var_dump($versionarray);
-					if (versioncompare($newversionarray, $versionarray) > 0) $version = $newversion;
+					if (versioncompare($newversionarray, $versionarray) > 0) {
+						$version = $newversion;
+					}
 				}
 				$i++;
 			}

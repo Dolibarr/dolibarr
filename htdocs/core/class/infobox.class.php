@@ -37,18 +37,21 @@ class InfoBox
 	{
 		global $conf;
 
-		if (empty($conf->global->MAIN_FEATURES_LEVEL) || $conf->global->MAIN_FEATURES_LEVEL < 2)
-		{
+		if (empty($conf->global->MAIN_FEATURES_LEVEL) || $conf->global->MAIN_FEATURES_LEVEL < 2) {
 			return array(
 				0 => 'Home',
+				1 => 'UsersHome',
+				2 => 'MembersHome',
+				3 => 'ThirdpartiesHome',
+				11 => 'TicketsHome',
 				27 => 'AccountancyHome'
 			);
 		} else {
 			return array(
 				0 => 'Home',
-				1 => 'userhome',
-				2 => 'membersindex',
-				3 => 'thirdpartiesindex',
+				1 => 'UsersHome',
+				2 => 'MembersHome',
+				3 => 'ThirdpartiesHome',
 				4 => 'productindex',
 				5 => 'productindex',
 				6 => 'mrpindex',
@@ -56,7 +59,7 @@ class InfoBox
 				8 => 'projectsindex',
 				9 => 'invoiceindex',
 				10 => 'hrmindex',
-				11 => 'ticketsindex',
+				11 => 'TicketsHome',
 				12 => 'stockindex',
 				13 => 'sendingindex',
 				14 => 'receptionindex',
@@ -95,19 +98,22 @@ class InfoBox
 		$boxes = array();
 
 		$confuserzone = 'MAIN_BOXES_'.$zone;
-		if ($mode == 'activated')	// activated
-		{
+		if ($mode == 'activated') {	// activated
 			$sql = "SELECT b.rowid, b.position, b.box_order, b.fk_user,";
 			$sql .= " d.rowid as box_id, d.file, d.note, d.tms";
 			$sql .= " FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as d";
 			$sql .= " WHERE b.box_id = d.rowid";
 			$sql .= " AND b.entity IN (0,".$conf->entity.")";
-			if ($zone >= 0) $sql .= " AND b.position = ".$zone;
-			if (is_object($user)) $sql .= " AND b.fk_user IN (0,".$user->id.")";
-			else $sql .= " AND b.fk_user = 0";
+			if ($zone >= 0) {
+				$sql .= " AND b.position = ".$zone;
+			}
+			if (is_object($user)) {
+				$sql .= " AND b.fk_user IN (0,".$user->id.")";
+			} else {
+				$sql .= " AND b.fk_user = 0";
+			}
 			$sql .= " ORDER BY b.box_order";
-		} else // available
-		{
+		} else { // available
 			$sql = "SELECT d.rowid as box_id, d.file, d.note, d.tms";
 			$sql .= " FROM ".MAIN_DB_PREFIX."boxes_def as d";
 			$sql .= " WHERE d.entity IN (0,".$conf->entity.")";
@@ -115,19 +121,15 @@ class InfoBox
 
 		dol_syslog(get_class()."::listBoxes get default box list for mode=".$mode." userid=".(is_object($user) ? $user->id : '')."", LOG_DEBUG);
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $db->num_rows($resql);
 			$j = 0;
-			while ($j < $num)
-			{
+			while ($j < $num) {
 				$obj = $db->fetch_object($resql);
 
-				if (!in_array($obj->box_id, $excludelist))
-				{
+				if (!in_array($obj->box_id, $excludelist)) {
 					$regs = array();
-					if (preg_match('/^([^@]+)@([^@]+)$/i', $obj->file, $regs))
-					{
+					if (preg_match('/^([^@]+)@([^@]+)$/i', $obj->file, $regs)) {
 						$boxname = preg_replace('/\.php$/i', '', $regs[1]);
 						$module = $regs[2];
 						$relsourcefile = "/".$module."/core/boxes/".$boxname.".php";
@@ -142,26 +144,26 @@ class InfoBox
 					// the "enabled" condition for modules forbidden for external users and the depends condition can be done.
 					// Goal is to avoid making a "new" done for each boxes returned by select.
 					dol_include_once($relsourcefile);
-					if (class_exists($boxname))
-					{
+					if (class_exists($boxname)) {
 						$box = new $boxname($db, $obj->note); // Constructor may set properties like box->enabled. obj->note is note into box def, not user params.
 						//$box=new stdClass();
 
 						// box properties
 						$box->rowid = (empty($obj->rowid) ? '' : $obj->rowid);
 						$box->id = (empty($obj->box_id) ? '' : $obj->box_id);
-						$box->position = ($obj->position == '' ? '' : $obj->position); // '0' must stay '0'
+						$box->position = ((isset($obj->position) && $obj->position == '') ? '' : (isset($obj->position) ? $obj->position : '')); // '0' must stay '0'
 						$box->box_order	= (empty($obj->box_order) ? '' : $obj->box_order);
 						$box->fk_user = (empty($obj->fk_user) ? 0 : $obj->fk_user);
 						$box->sourcefile = $relsourcefile;
-						$box->class     = $boxname;
+						$box->class = $boxname;
 
-						if ($mode == 'activated' && !is_object($user))	// List of activated box was not yet personalized into database
-						{
-							if (is_numeric($box->box_order))
-							{
-								if ($box->box_order % 2 == 1) $box->box_order = 'A'.$box->box_order;
-								elseif ($box->box_order % 2 == 0) $box->box_order = 'B'.$box->box_order;
+						if ($mode == 'activated' && !is_object($user)) {	// List of activated box was not yet personalized into database
+							if (is_numeric($box->box_order)) {
+								if ($box->box_order % 2 == 1) {
+									$box->box_order = 'A'.$box->box_order;
+								} elseif ($box->box_order % 2 == 0) {
+									$box->box_order = 'B'.$box->box_order;
+								}
 							}
 						}
 						// box_def properties
@@ -171,20 +173,18 @@ class InfoBox
 						// Filter on box->enabled (used for example by box_comptes)
 						// Filter also on box->depends. Example: array("product|service") or array("contrat", "service")
 						$enabled = $box->enabled;
-						if (isset($box->depends) && count($box->depends) > 0)
-						{
-							foreach ($box->depends as $moduleelem)
-							{
+						if (isset($box->depends) && count($box->depends) > 0) {
+							foreach ($box->depends as $moduleelem) {
 								$arrayelem = explode('|', $moduleelem);
 								$tmpenabled = 0; // $tmpenabled is used for the '|' test (OR)
-								foreach ($arrayelem as $module)
-								{
+								foreach ($arrayelem as $module) {
 									$tmpmodule = preg_replace('/@[^@]+/', '', $module);
-									if (!empty($conf->$tmpmodule->enabled)) $tmpenabled = 1;
+									if (!empty($conf->$tmpmodule->enabled)) {
+										$tmpenabled = 1;
+									}
 									//print $boxname.'-'.$module.'-module enabled='.(empty($conf->$tmpmodule->enabled)?0:1).'<br>';
 								}
-								if (empty($tmpenabled))	// We found at least one module required that is disabled
-								{
+								if (empty($tmpenabled)) {	// We found at least one module required that is disabled
 									$enabled = 0;
 									break;
 								}
@@ -193,8 +193,11 @@ class InfoBox
 						//print '=>'.$boxname.'-enabled='.$enabled.'<br>';
 
 						//print 'xx module='.$module.' enabled='.$enabled;
-						if ($enabled && ($includehidden || empty($box->hidden))) $boxes[] = $box;
-						else unset($box);
+						if ($enabled && ($includehidden || empty($box->hidden))) {
+							$boxes[] = $box;
+						} else {
+							unset($box);
+						}
 					} else {
 						dol_syslog("Failed to load box '".$boxname."' into file '".$relsourcefile."'", LOG_WARNING);
 					}
@@ -229,7 +232,9 @@ class InfoBox
 
 		dol_syslog(get_class()."::saveboxorder zone=".$zone." userid=".$userid);
 
-		if (!$userid || $userid == 0) return 0;
+		if (!$userid || $userid == 0) {
+			return 0;
+		}
 
 		$user = new User($db);
 		$user->id = $userid;
@@ -240,8 +245,7 @@ class InfoBox
 		$tab = array();
 		$confuserzone = 'MAIN_BOXES_'.$zone;
 		$tab[$confuserzone] = 1;
-		if (dol_set_user_param($db, $conf, $user, $tab) < 0)
-		{
+		if (dol_set_user_param($db, $conf, $user, $tab) < 0) {
 			$error = $db->lasterror();
 			$db->rollback();
 			return -3;
@@ -255,11 +259,9 @@ class InfoBox
 
 		dol_syslog(get_class()."::saveboxorder", LOG_DEBUG);
 		$result = $db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			$colonnes = explode('-', $boxorder);
-			foreach ($colonnes as $collist)
-			{
+			foreach ($colonnes as $collist) {
 				$part = explode(':', $collist);
 				$colonne = $part[0];
 				$list = $part[1];
@@ -267,10 +269,8 @@ class InfoBox
 
 				$i = 0;
 				$listarray = explode(',', $list);
-				foreach ($listarray as $id)
-				{
-					if (is_numeric($id))
-					{
+				foreach ($listarray as $id) {
+					if (is_numeric($id)) {
 						//dol_syslog("aaaaa".count($listarray));
 						$i++;
 						$ii = sprintf('%02d', $i);
@@ -287,8 +287,7 @@ class InfoBox
 
 						dol_syslog(get_class()."::saveboxorder", LOG_DEBUG);
 						$result = $db->query($sql);
-						if ($result < 0)
-						{
+						if ($result < 0) {
 							$error++;
 							break;
 						}
@@ -299,8 +298,7 @@ class InfoBox
 			$error++;
 		}
 
-		if ($error)
-		{
+		if ($error) {
 			$db->rollback();
 			return -2;
 		} else {

@@ -358,7 +358,7 @@ VATIntraCheckableOnEUSite=Pārbaudiet Kopienas iekšējo PVN identifikācijas nu
 VATIntraManualCheck=Jūs varat manuāli pārbaudīt arī Eiropas Komisijas vietnē <a href="%s" target="_blank">%s</a>
 ErrorVATCheckMS_UNAVAILABLE=Pārbaude nav iespējams. Pārbaudes pakalpojums netiek nodrošināts no dalībvalsts (%s).
 NorProspectNorCustomer=Nav izredzes, ne klients
-JuridicalStatus=Juridiskās personas veids
+JuridicalStatus=Business entity type
 Workforce=Darbaspēks
 Staff=Darbinieki
 ProspectLevelShort=Potenciāls

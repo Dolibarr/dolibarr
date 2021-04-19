@@ -358,7 +358,7 @@ VATIntraCheckableOnEUSite=Kiểm tra ID VAT nội bộ cộng đồng trên tran
 VATIntraManualCheck=Bạn cũng có thể kiểm tra thủ công trên trang web của Ủy ban Châu Âu <a href="%s" target="_blank">%s</a>
 ErrorVATCheckMS_UNAVAILABLE=Check not possible. Check service is not provided by the member state (%s).
 NorProspectNorCustomer=Không phải triển vọng, cũng không phải khách hàng
-JuridicalStatus=Loại pháp nhân
+JuridicalStatus=Business entity type
 Workforce=Workforce
 Staff=Nhân viên
 ProspectLevelShort=Tiềm năng

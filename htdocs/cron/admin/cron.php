@@ -32,22 +32,21 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/cron.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'cron'));
 
-if (!$user->admin)
+if (!$user->admin) {
 	accessforbidden();
+}
 
 $actionsave = GETPOST("save", 'alphanohtml');
 
 // Save parameters
-if (!empty($actionsave))
-{
+if (!empty($actionsave)) {
 	$i = 0;
 
 	$db->begin();
 
 	$i += dolibarr_set_const($db, 'CRON_KEY', GETPOST("CRON_KEY"), 'chaine', 0, '', 0);
 
-	if ($i >= 1)
-	{
+	if ($i >= 1) {
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
@@ -90,13 +89,15 @@ print "</tr>";
 print '<tr class="oddeven">';
 print '<td class="fieldrequired">'.$langs->trans("KeyForCronAccess").'</td>';
 $disabled = '';
-if (!empty($conf->global->CRON_DISABLE_KEY_CHANGE)) $disabled = ' disabled="disabled"';
+if (!empty($conf->global->CRON_DISABLE_KEY_CHANGE)) {
+	$disabled = ' disabled="disabled"';
+}
 print '<td>';
-if (empty($conf->global->CRON_DISABLE_KEY_CHANGE))
-{
+if (empty($conf->global->CRON_DISABLE_KEY_CHANGE)) {
 	print '<input type="text" class="flat minwidth300"'.$disabled.' id="CRON_KEY" name="CRON_KEY" value="'.(GETPOST('CRON_KEY') ?GETPOST('CRON_KEY') : (!empty($conf->global->CRON_KEY) ? $conf->global->CRON_KEY : '')).'">';
-	if (!empty($conf->use_javascript_ajax))
+	if (!empty($conf->use_javascript_ajax)) {
 		print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
+	}
 } else {
 	print (!empty($conf->global->CRON_KEY) ? $conf->global->CRON_KEY : '');
 	print '<input type="hidden" id="CRON_KEY" name="CRON_KEY" value="'.(GETPOST('CRON_KEY') ?GETPOST('CRON_KEY') : (!empty($conf->global->CRON_KEY) ? $conf->global->CRON_KEY : '')).'">';
@@ -119,7 +120,9 @@ print '</form>';
 print '<br><br><br>';
 
 //print $langs->trans("UseMenuModuleToolsToAddCronJobs", dol_buildpath('/cron/list.php?leftmenu=admintools', 1)).'<br>';
-if (!empty($conf->global->CRON_WARNING_DELAY_HOURS)) print info_admin($langs->trans("WarningCronDelayed", $conf->global->CRON_WARNING_DELAY_HOURS)).'<br>';
+if (!empty($conf->global->CRON_WARNING_DELAY_HOURS)) {
+	print info_admin($langs->trans("WarningCronDelayed", $conf->global->CRON_WARNING_DELAY_HOURS)).'<br>';
+}
 
 print '<br>';
 
@@ -128,8 +131,7 @@ dol_print_cron_urls();
 
 print '<br>';
 
-if (!empty($conf->use_javascript_ajax))
-{
+if (!empty($conf->use_javascript_ajax)) {
 	print "\n".'<script type="text/javascript">';
 	print '$(document).ready(function () {
 		$("#generate_token").click(function() {

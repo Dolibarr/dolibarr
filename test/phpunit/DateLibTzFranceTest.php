@@ -29,8 +29,7 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
 
-if (empty($user->id))
-{
+if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
 	$user->getrights();
@@ -74,139 +73,139 @@ class DateLibTzFranceTest extends PHPUnit\Framework\TestCase
 		print "\n";
 	}
 
-    /**
-     * setUpBeforeClass
-     *
-     * @return void
-     */
-    public static function setUpBeforeClass()
-    {
-    	global $conf,$user,$langs,$db;
+	/**
+	 * setUpBeforeClass
+	 *
+	 * @return void
+	 */
+	public static function setUpBeforeClass()
+	{
+		global $conf,$user,$langs,$db;
 
-    	if (getServerTimeZoneString() != 'Europe/Paris') {
-    		print "\n".__METHOD__." This PHPUnit test can be launched manually only onto a server with PHP timezone set to TZ+1 Europe/Paris, not a TZ=".getServerTimeZoneString().".\n"; die();
-    	}
+		if (getServerTimeZoneString() != 'Europe/Paris' && getServerTimeZoneString() != 'Europe/Berlin') {
+			print "\n".__METHOD__." This PHPUnit test can be launched manually only onto a server with PHP timezone set to TZ=Europe/Paris, not a TZ=".getServerTimeZoneString().".\n"; die();
+		}
 
-    	$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
-    	print __METHOD__."\n";
-    }
+		print __METHOD__."\n";
+	}
 
-    /**
-     * tearDownAfterClass
-     *
-     * @return	void
-     */
-    public static function tearDownAfterClass()
-    {
-    	global $conf,$user,$langs,$db;
+	/**
+	 * tearDownAfterClass
+	 *
+	 * @return	void
+	 */
+	public static function tearDownAfterClass()
+	{
+		global $conf,$user,$langs,$db;
 		$db->rollback();
 
 		print __METHOD__."\n";
-    }
+	}
 
 	/**
 	 * Init phpunit tests
 	 *
 	 * @return	void
 	 */
-    protected function setUp()
-    {
-    	global $conf,$user,$langs,$db;
+	protected function setUp()
+	{
+		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
 		print __METHOD__."\n";
-    }
+	}
 	/**
 	 * End phpunit tests
 	 *
 	 * @return	void
 	 */
-    protected function tearDown()
-    {
-    	print __METHOD__."\n";
-    }
+	protected function tearDown()
+	{
+		print __METHOD__."\n";
+	}
 
-    /**
-     * testDolPrintDateTzFrance
-     * Same than official testDolPrintDate but with parameter tzoutput that is false='tzserver'.
-     * This test works only onto a server using TZ+1 Europe/Paris.
-     *
-     * You can use http://www.epochconverter.com/ to generate more tests.
-     *
-     * @return void
-     */
-    public function testDolPrintDateTzFrance()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+	/**
+	 * testDolPrintDateTzFrance
+	 * Same than official testDolPrintDate but with parameter tzoutput that is false='tzserver'.
+	 * This test works only onto a server using TZ+1 Europe/Paris.
+	 *
+	 * You can use http://www.epochconverter.com/ to generate more tests.
+	 *
+	 * @return void
+	 */
+	public function testDolPrintDateTzFrance()
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
 
-    	// Check %Y-%m-%d %H:%M:%S format
-        $result=dol_print_date(0, '%Y-%m-%d %H:%M:%S', false);
-       	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('1970-01-01 01:00:00', $result);
+		// Check %Y-%m-%d %H:%M:%S format
+		$result=dol_print_date(0, '%Y-%m-%d %H:%M:%S', false);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('1970-01-01 01:00:00', $result);
 
-    	// Check %Y-%m-%d %H:%M:%S format
-        $result=dol_print_date(16725225600, '%Y-%m-%d %H:%M:%S', false);
-       	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('2500-01-01 01:00:00', $result);
+		// Check %Y-%m-%d %H:%M:%S format
+		$result=dol_print_date(16725225600, '%Y-%m-%d %H:%M:%S', false);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('2500-01-01 01:00:00', $result);
 
-    	// Check %Y-%m-%d %H:%M:%S format
-    	$result=dol_print_date(-1830384000, '%Y-%m-%d %H:%M:%S', false);	// http://www.epochconverter.com/
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('1912-01-01 01:00:00', $result);		// dol_print_date use a timezone, not epoch converter as it did not exists this year
+		// Check %Y-%m-%d %H:%M:%S format
+		$result=dol_print_date(-1830384000, '%Y-%m-%d %H:%M:%S', false);	// http://www.epochconverter.com/
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('1912-01-01 01:00:00', $result);		// dol_print_date use a timezone, not epoch converter as it did not exists this year
 
-    	// Specific cas during war
+		// Specific cas during war
 
-    	// 1940, no timezone
-    	$result=dol_print_date(-946771200, '%Y-%m-%d %H:%M:%S', false);	// http://www.epochconverter.com/
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('1940-01-01 01:00:00', $result);		//  dol_print_date use a modern timezone, not epoch converter as it did not exists this year
+		// 1940, no timezone
+		$result=dol_print_date(-946771200, '%Y-%m-%d %H:%M:%S', false);	// http://www.epochconverter.com/
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('1940-01-01 01:00:00', $result);		//  dol_print_date use a modern timezone, not epoch converter as it did not exists this year
 
-    	// 1941, timezone is added by germany to +2 (same for 1942)
-    	$result=dol_print_date(-915148800, '%Y-%m-%d %H:%M:%S', false);	// http://www.epochconverter.com/
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('1941-01-01 01:00:00', $result);		// dol_print_date use a modern timezone, epoch converter use historic timezone
+		// 1941, timezone is added by germany to +2 (same for 1942)
+		$result=dol_print_date(-915148800, '%Y-%m-%d %H:%M:%S', false);	// http://www.epochconverter.com/
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('1941-01-01 01:00:00', $result);		// dol_print_date use a modern timezone, epoch converter use historic timezone
 
-    	// 1943, timezone is +1
-    	$result=dol_print_date(-852076800, '%Y-%m-%d %H:%M:%S', false);	// http://www.epochconverter.com/
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('1943-01-01 01:00:00', $result);
+		// 1943, timezone is +1
+		$result=dol_print_date(-852076800, '%Y-%m-%d %H:%M:%S', false);	// http://www.epochconverter.com/
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('1943-01-01 01:00:00', $result);
 
-    	// test with negative timezone
-    	$result=dol_print_date(-1, '%Y-%m-%d %H:%M:%S', false);	// http://www.epochconverter.com/
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('1970-01-01 00:59:59', $result);
+		// test with negative timezone
+		$result=dol_print_date(-1, '%Y-%m-%d %H:%M:%S', false);	// http://www.epochconverter.com/
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('1970-01-01 00:59:59', $result);
 
-    	// Check dayhour format for fr_FR
-    	$outputlangs=new Translate('', $conf);
-    	$outputlangs->setDefaultLang('fr_FR');
-    	$outputlangs->load("main");
+		// Check dayhour format for fr_FR
+		$outputlangs=new Translate('', $conf);
+		$outputlangs->setDefaultLang('fr_FR');
+		$outputlangs->load("main");
 
-    	$result=dol_print_date(0+24*3600, 'dayhour', false, $outputlangs);
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('02/01/1970 01:00', $result);
+		$result=dol_print_date(0+24*3600, 'dayhour', false, $outputlangs);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('02/01/1970 01:00', $result);
 
-    	// Check day format for en_US
-    	$outputlangs=new Translate('', $conf);
-    	$outputlangs->setDefaultLang('en_US');
-    	$outputlangs->load("main");
+		// Check day format for en_US
+		$outputlangs=new Translate('', $conf);
+		$outputlangs->setDefaultLang('en_US');
+		$outputlangs->load("main");
 
-    	$result=dol_print_date(0+24*3600, 'day', false, $outputlangs);
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('01/02/1970', $result);
+		$result=dol_print_date(0+24*3600, 'day', false, $outputlangs);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('01/02/1970', $result);
 
-    	// Check %a and %b format for en_US
-    	$result=dol_print_date(0, '%a %b', false, $outputlangs);
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('Thu Jan', $result);
+		// Check %a and %b format for en_US
+		$result=dol_print_date(0, '%a %b', false, $outputlangs);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('Thu Jan', $result);
 
-    	return $result;
-    }
+		return $result;
+	}
 }

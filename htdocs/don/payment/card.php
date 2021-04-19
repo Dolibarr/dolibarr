@@ -27,7 +27,9 @@ require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/paymentdonation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
-if (!empty($conf->banque->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+if (!empty($conf->banque->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array("bills", "banks", "companies", "donations"));
@@ -36,15 +38,18 @@ $langs->loadLangs(array("bills", "banks", "companies", "donations"));
 $id = GETPOST('rowid') ? GETPOST('rowid', 'int') : GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 // TODO Add rule to restrict access payment
 //$result = restrictedArea($user, 'facture', $id,'');
 
 $object = new PaymentDonation($db);
-if ($id > 0)
-{
+if ($id > 0) {
 	$result = $object->fetch($id);
-	if (!$result) dol_print_error($db, 'Failed to get payment id '.$id);
+	if (!$result) {
+		dol_print_error($db, 'Failed to get payment id '.$id);
+	}
 }
 
 
@@ -53,13 +58,11 @@ if ($id > 0)
  */
 
 // Delete payment
-if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->don->supprimer)
-{
+if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->don->supprimer) {
 	$db->begin();
 
 	$result = $object->delete($user);
-	if ($result > 0)
-	{
+	if ($result > 0) {
 		$db->commit();
 		header("Location: ".DOL_URL_ROOT."/don/index.php");
 		exit;
@@ -93,8 +96,7 @@ print dol_get_fiche_head($head, $hselected, $langs->trans("DonationPayment"), -1
 /*
  * Confirm deleting of the payment
  */
-if ($action == 'delete')
-{
+if ($action == 'delete') {
 	print $form->formconfirm('card.php?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete', '', 0, 2);
 }
 
@@ -122,10 +124,8 @@ print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount, 0, $
 print '<tr><td>'.$langs->trans('Note').'</td><td>'.nl2br($object->note_public).'</td></tr>';
 
 // Bank account
-if (!empty($conf->banque->enabled))
-{
-	if ($object->bank_account)
-	{
+if (!empty($conf->banque->enabled)) {
+	if ($object->bank_account) {
 		$bankline = new AccountLine($db);
 		$bankline->fetch($object->bank_line);
 
@@ -150,12 +150,11 @@ $sql = 'SELECT d.rowid as did, d.paid, d.amount as d_amount, pd.amount';
 $sql .= ' FROM '.MAIN_DB_PREFIX.'payment_donation as pd,'.MAIN_DB_PREFIX.'don as d';
 $sql .= ' WHERE pd.fk_donation = d.rowid';
 $sql .= ' AND d.entity = '.$conf->entity;
-$sql .= ' AND pd.rowid = '.$id;
+$sql .= ' AND pd.rowid = '.((int) $id);
 
 dol_syslog("don/payment/card.php", LOG_DEBUG);
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$num = $db->num_rows($resql);
 
 	$i = 0;
@@ -168,10 +167,8 @@ if ($resql)
 	print '<td class="right">'.$langs->trans('PayedByThisPayment').'</td>';
 	print "</tr>\n";
 
-	if ($num > 0)
-	{
-		while ($i < $num)
-		{
+	if ($num > 0) {
+		while ($i < $num) {
 			$objp = $db->fetch_object($resql);
 
 			print '<tr class="oddeven">';
@@ -184,7 +181,7 @@ if ($resql)
 			print '<td class="right">'.price($objp->d_amount).'</td>';
 			// Status
 			print '<td class="center">'.$don->getLibStatut(4, $objp->amount).'</td>';
-			// Amount payed
+			// Amount paid
 			print '<td class="right">'.price($objp->amount).'</td>';
 			print "</tr>\n";
 			if ($objp->paid == 1) {
@@ -213,12 +210,9 @@ print dol_get_fiche_end();
  */
 print '<div class="tabsAction">';
 
-if (empty($action))
-{
-	if ($user->rights->don->supprimer)
-	{
-		if (!$disable_delete)
-		{
+if (empty($action)) {
+	if ($user->rights->don->supprimer) {
+		if (!$disable_delete) {
 			print '<a class="butActionDelete" href="card.php?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans('Delete').'</a>';
 		} else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("CantRemovePaymentWithOneInvoicePaid")).'">'.$langs->trans('Delete').'</a>';

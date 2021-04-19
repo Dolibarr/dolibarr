@@ -43,8 +43,7 @@ function check_user_password_openid($usertotest, $passwordtotest, $entitytotest)
 	$login = '';
 
 	// Get identity from user and redirect browser to OpenID Server
-	if (GETPOSISSET('username'))
-	{
+	if (GETPOSTISSET('username')) {
 		$openid = new SimpleOpenID();
 		$openid->SetIdentity($_POST['username']);
 		$protocol = ($conf->file->main_force_https ? 'https://' : 'http://');
@@ -52,8 +51,7 @@ function check_user_password_openid($usertotest, $passwordtotest, $entitytotest)
 		$openid->SetRequiredFields(array('email', 'fullname'));
 		$_SESSION['dol_entity'] = $_POST["entity"];
 		//$openid->SetOptionalFields(array('dob','gender','postcode','country','language','timezone'));
-		if ($openid->sendDiscoveryRequestToGetXRDS())
-		{
+		if ($openid->sendDiscoveryRequestToGetXRDS()) {
 			$openid->SetApprovedURL($protocol.$_SERVER["HTTP_HOST"].$_SERVER["SCRIPT_NAME"]); // Send Response from OpenID server to this script
 			$openid->Redirect(); // This will redirect user to OpenID Server
 		} else {
@@ -61,15 +59,12 @@ function check_user_password_openid($usertotest, $passwordtotest, $entitytotest)
 			return false;
 		}
 		return false;
-	}
-	// Perform HTTP Request to OpenID server to validate key
-	elseif ($_GET['openid_mode'] == 'id_res')
-	{
+	} elseif ($_GET['openid_mode'] == 'id_res') {
+		// Perform HTTP Request to OpenID server to validate key
 		$openid = new SimpleOpenID();
 		$openid->SetIdentity($_GET['openid_identity']);
 		$openid_validation_result = $openid->ValidateWithServer();
-		if ($openid_validation_result === true)
-		{
+		if ($openid_validation_result === true) {
 			// OK HERE KEY IS VALID
 
 			$sql = "SELECT login, entity, datestartvalidity, dateendvalidity";
@@ -79,11 +74,9 @@ function check_user_password_openid($usertotest, $passwordtotest, $entitytotest)
 
 			dol_syslog("functions_openid::check_user_password_openid", LOG_DEBUG);
 			$resql = $db->query($sql);
-			if ($resql)
-			{
+			if ($resql) {
 				$obj = $db->fetch_object($resql);
-				if ($obj)
-				{
+				if ($obj) {
 					$now = dol_now();
 					if ($obj->datestartvalidity && $db->jdate($obj->datestartvalidity) > $now) {
 						// Load translation files required by the page
@@ -101,8 +94,7 @@ function check_user_password_openid($usertotest, $passwordtotest, $entitytotest)
 					$login = $obj->login;
 				}
 			}
-		} elseif ($openid->IsError() === true)
-		{
+		} elseif ($openid->IsError() === true) {
 			// ON THE WAY, WE GOT SOME ERROR
 			$_SESSION["dol_loginmesg"] = $openid->GetError();
 			return false;
@@ -111,8 +103,7 @@ function check_user_password_openid($usertotest, $passwordtotest, $entitytotest)
 			//echo "INVALID AUTHORIZATION";
 			return false;
 		}
-	} elseif ($_GET['openid_mode'] == 'cancel')
-	{
+	} elseif ($_GET['openid_mode'] == 'cancel') {
 		// User Canceled your Request
 		//echo "USER CANCELED REQUEST";
 		return false;

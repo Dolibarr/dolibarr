@@ -40,7 +40,7 @@ class EcmDirectory extends CommonObject
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
-	public $picto = 'dir';
+	public $picto = 'folder-open';
 
 	/**
 	 * @var int ID
@@ -262,7 +262,7 @@ class EcmDirectory extends CommonObject
 		$sql .= " label='".$this->db->escape($this->label)."',";
 		$sql .= " fk_parent='".$this->db->escape($this->fk_parent)."',";
 		$sql .= " description='".$this->db->escape($this->description)."'";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -345,7 +345,7 @@ class EcmDirectory extends CommonObject
 		$sql .= " t.date_c as date_c,";
 		$sql .= " t.tms as date_m";
 		$sql .= " FROM ".MAIN_DB_PREFIX."ecm_directories as t";
-		$sql .= " WHERE t.rowid = ".$id;
+		$sql .= " WHERE t.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -403,7 +403,7 @@ class EcmDirectory extends CommonObject
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."ecm_directories";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -646,6 +646,7 @@ class EcmDirectory extends CommonObject
 		$sql .= " c.fk_user_c,";
 		$sql .= " c.date_c,";
 		$sql .= " u.login as login_c,";
+		$sql .= " u.statut as statut_c,";
 		$sql .= " ca.rowid as rowid_fille";
 		$sql .= " FROM ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."ecm_directories as c";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."ecm_directories as ca";
@@ -667,7 +668,8 @@ class EcmDirectory extends CommonObject
 				$this->cats[$obj->rowid]['description'] = $obj->description;
 				$this->cats[$obj->rowid]['cachenbofdoc'] = $obj->cachenbofdoc;
 				$this->cats[$obj->rowid]['date_c'] = $this->db->jdate($obj->date_c);
-				$this->cats[$obj->rowid]['fk_user_c'] = $obj->fk_user_c;
+				$this->cats[$obj->rowid]['fk_user_c'] = (int) $obj->fk_user_c;
+				$this->cats[$obj->rowid]['statut_c'] = (int) $obj->statut_c;
 				$this->cats[$obj->rowid]['login_c'] = $obj->login_c;
 
 				if (!empty($obj->rowid_fille)) {

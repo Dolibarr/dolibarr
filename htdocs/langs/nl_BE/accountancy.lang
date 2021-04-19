@@ -20,6 +20,7 @@ UpdateMvts=Wijzigen van een transactie
 Processing=Verwerken
 EndProcessing=Verwerking beëindigd
 Lineofinvoice=Factuur lijn
+ACCOUNTING_LIMIT_LIST_VENTILATION=Maximum number of lines on list and bind page (recommended: 50)
 Docdate=Datum
 Docref=Artikelcode
 TotalVente=Totaal omzet voor belastingen

@@ -358,7 +358,7 @@ VATIntraCheckableOnEUSite=Ellenőrizze a Közösségen belüli ÁFA-azonosítót
 VATIntraManualCheck=Manuálisan ellenőrizheti az Európai Bizottság webhelyén <a href="%s" target="_blank"> %s </a>
 ErrorVATCheckMS_UNAVAILABLE=Ellenőrzés nem lehetséges. A szolgáltatást a tagállam nem teszi lehetővé (%s).
 NorProspectNorCustomer=Nem leendő partner, nem ügyfél
-JuridicalStatus=Jogi személy típusa
+JuridicalStatus=Business entity type
 Workforce=Workforce
 Staff=Alkalmazottak
 ProspectLevelShort=Potenciális

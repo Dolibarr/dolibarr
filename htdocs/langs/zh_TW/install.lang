@@ -209,7 +209,7 @@ MigrationResetBlockedLog=為v7 algorithm重置模組"被阻止的日誌(Blocked 
 ShowNotAvailableOptions=顯示不可用的選項
 HideNotAvailableOptions=隱藏不可用的選項
 ErrorFoundDuringMigration=在移轉過程中出現了錯誤，因此無法進行下一步。要忽略錯誤，可以<a href="%s">點擊此處</a> ，但是在解決錯誤之前，該應用程序或某些功能可能無法正常運行。
-YouTryInstallDisabledByDirLock=該應用程式嘗試進行自我升級，但是出於安全性考慮，已禁用了安裝/升級頁面（使用.lock後綴重命名資料夾）。 <br>
+YouTryInstallDisabledByDirLock=該應用程式嘗試進行自我升級，但是出於安全性考慮，已禁用了安裝/升級頁面（使用.lock副檔名重新命名資料夾）。 <br>
 YouTryInstallDisabledByFileLock=此應用程式嘗試進行自我升級，但是出於安全性考慮，已禁用了安裝/升級頁面（由於dolibarr檔案資料夾中存在鎖定文件<strong>install.lock</strong> ）。 <br>
 ClickHereToGoToApp=點擊此處前往您的應用程式
 ClickOnLinkOrRemoveManualy=如果正在進行升級，請等待。如果沒有，請點擊以下連結。如果始終看到同一頁面，則必須在documents資料夾中刪除/重新命名install.lock檔案。

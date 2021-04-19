@@ -47,7 +47,7 @@ create table llx_commande
   remise_percent			real      default 0,
   remise_absolue			real      default 0,
   remise					real      default 0,
-  tva						double(24,8)     default 0,
+  total_tva                 double(24,8)     default 0,
   localtax1					double(24,8)     default 0,	-- total localtax1 
   localtax2					double(24,8)     default 0,	-- total localtax2
   total_ht					double(24,8)     default 0,

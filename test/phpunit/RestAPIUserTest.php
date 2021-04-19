@@ -32,9 +32,9 @@ require_once dirname(__FILE__).'/../../htdocs/core/lib/geturl.lib.php';
 
 
 if (empty($user->id)) {
-    print "Load permissions for admin user nb 1\n";
-    $user->fetch(1);
-    $user->getrights();
+	print "Load permissions for admin user nb 1\n";
+	$user->fetch(1);
+	$user->getrights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 $conf->global->MAIN_UMASK='0666';
@@ -49,194 +49,195 @@ $conf->global->MAIN_UMASK='0666';
  */
 class RestAPIUserTest extends PHPUnit\Framework\TestCase
 {
-    protected $savconf;
-    protected $savuser;
-    protected $savlangs;
-    protected $savdb;
-    protected $api_url;
-    protected $api_key;
+	protected $savconf;
+	protected $savuser;
+	protected $savlangs;
+	protected $savdb;
+	protected $api_url;
+	protected $api_key;
 
-    /**
-     * Constructor
-     * We save global variables into local variables
-     *
-     * @return DateLibTest
-     */
-    public function __construct()
-    {
-    	parent::__construct();
+	/**
+	 * Constructor
+	 * We save global variables into local variables
+	 *
+	 * @return DateLibTest
+	 */
+	public function __construct()
+	{
+		parent::__construct();
 
-    	//$this->sharedFixture
-        global $conf,$user,$langs,$db;
-        $this->savconf=$conf;
-        $this->savuser=$user;
-        $this->savlangs=$langs;
-        $this->savdb=$db;
+		//$this->sharedFixture
+		global $conf,$user,$langs,$db;
+		$this->savconf=$conf;
+		$this->savuser=$user;
+		$this->savlangs=$langs;
+		$this->savdb=$db;
 
-        if (empty($conf->api->enabled)) { print __METHOD__." module api must be enabled.\n"; die(); }
+		if (empty($conf->api->enabled)) {
+			print __METHOD__." module api must be enabled.\n"; die();
+		}
 
-        print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-        //print " - db ".$db->db;
-        print "\n";
-    }
+		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
+		//print " - db ".$db->db;
+		print "\n";
+	}
 
-    /**
-     * setUpBeforeClass
-     *
-     * @return void
-     */
-    public static function setUpBeforeClass()
-    {
-        global $conf,$user,$langs,$db;
-        $db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
+	/**
+	 * setUpBeforeClass
+	 *
+	 * @return void
+	 */
+	public static function setUpBeforeClass()
+	{
+		global $conf,$user,$langs,$db;
+		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
-        print __METHOD__."\n";
-    }
+		print __METHOD__."\n";
+	}
 
-    /**
-     * tearDownAfterClass
-     *
-     * @return	void
-     */
-    public static function tearDownAfterClass()
-    {
-        global $conf,$user,$langs,$db;
-        $db->rollback();
+	/**
+	 * tearDownAfterClass
+	 *
+	 * @return	void
+	 */
+	public static function tearDownAfterClass()
+	{
+		global $conf,$user,$langs,$db;
+		$db->rollback();
 
-        print __METHOD__."\n";
-    }
+		print __METHOD__."\n";
+	}
 
-    /**
-     * Init phpunit tests
-     *
-     * @return  void
-    */
-    protected function setUp()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+	/**
+	 * Init phpunit tests
+	 *
+	 * @return  void
+	*/
+	protected function setUp()
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
 
-        $this->api_url=DOL_MAIN_URL_ROOT.'/api/index.php';
+		$this->api_url=DOL_MAIN_URL_ROOT.'/api/index.php';
 
-        $login='admin';
-        $password='admin';
-        $url=$this->api_url.'/login?login='.$login.'&password='.$password;
-        // Call the API login method to save api_key for this test class
-        $result=getURLContent($url, 'GET', '', 1, array(), array('http', 'https'), 2);
-        print __METHOD__." result = ".var_export($result, true)."\n";
-        print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
-        $this->assertEquals($result['curl_error_no'], '');
-        $object=json_decode($result['content'], true);
-        $this->assertNotNull($object, "Parsing of json result must no be null");
-        $this->assertEquals('200', $object['success']['code']);
+		$login='admin';
+		$password='admin';
+		$url=$this->api_url.'/login?login='.$login.'&password='.$password;
+		// Call the API login method to save api_key for this test class
+		$result=getURLContent($url, 'GET', '', 1, array(), array('http', 'https'), 2);
+		print __METHOD__." result = ".var_export($result, true)."\n";
+		print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
+		$this->assertEquals($result['curl_error_no'], '');
+		$object=json_decode($result['content'], true);
+		$this->assertNotNull($object, "Parsing of json result must not be null");
+		$this->assertEquals('200', $object['success']['code']);
 
-        $this->api_key = $object['success']['token'];
-        print __METHOD__." api_key: $this->api_key \n";
+		$this->api_key = $object['success']['token'];
+		print __METHOD__." api_key: $this->api_key \n";
 
-        print __METHOD__."\n";
-    }
+		print __METHOD__."\n";
+	}
 
-    /**
-     * End phpunit tests
-     *
-     * @return void
-     */
-    protected function tearDown()
-    {
-        print __METHOD__."\n";
-    }
+	/**
+	 * End phpunit tests
+	 *
+	 * @return void
+	 */
+	protected function tearDown()
+	{
+		print __METHOD__."\n";
+	}
 
 
-    /**
-     * testRestGetUser
-     *
-     * @return int
-     */
-    public function testRestGetUser()
-    {
-        global $conf,$user,$langs,$db;
+	/**
+	 * testRestGetUser
+	 *
+	 * @return int
+	 */
+	public function testRestGetUser()
+	{
+		global $conf,$user,$langs,$db;
 
-        $url = $this->api_url.'/users/123456789?api_key='.$this->api_key;
-        //$addheaders=array('Content-Type: application/json');
+		$url = $this->api_url.'/users/123456789?api_key='.$this->api_key;
+		//$addheaders=array('Content-Type: application/json');
 
-        print __METHOD__." Request GET url=".$url."\n";
-        $result=getURLContent($url, 'GET', '', 1, array(), array('http', 'https'), 2);
-        //print __METHOD__." Result for unexisting user: ".var_export($result, true)."\n";
-        print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
-        $this->assertEquals($result['curl_error_no'], '');
-        $object=json_decode($result['content'], true);
-        $this->assertNotNull($object, "Parsing of json result must no be null");
-        $this->assertEquals(404, $object['error']['code']);
+		print __METHOD__." Request GET url=".$url."\n";
+		$result=getURLContent($url, 'GET', '', 1, array(), array('http', 'https'), 2);
+		//print __METHOD__." result for get on unexisting user: ".var_export($result, true)."\n";
+		print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
+		$this->assertEquals($result['curl_error_no'], '');
+		$object=json_decode($result['content'], true);
+		$this->assertNotNull($object, "Parsing of json result must not be null");
+		$this->assertEquals(404, $object['error']['code'], 'Error code is not 404');
 
-        $url = $this->api_url.'/users/1?api_key='.$this->api_key;
+		$url = $this->api_url.'/users/1?api_key='.$this->api_key;
 
-        print __METHOD__." Request GET url=".$url."\n";
-        $result=getURLContent($url, 'GET', '', 1, array(), array('http', 'https'), 2);
-        //print __METHOD__." Result for existing user user: ".var_export($result, true)."\n";
-        print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
-        $this->assertEquals($result['curl_error_no'], '');
-        $object=json_decode($result['content'], true);
-        $this->assertNotNull($object, "Parsing of json result must no be null");
-        $this->assertEquals(1, $object['statut']);
-    }
+		print __METHOD__." Request GET url=".$url."\n";
+		$result=getURLContent($url, 'GET', '', 1, array(), array('http', 'https'), 2);
+		print __METHOD__." result for get on an existing user: ".var_export($result, true)."\n";
+		print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
+		$this->assertEquals($result['curl_error_no'], '');
+		$object=json_decode($result['content'], true);
+		$this->assertNotNull($object, "Parsing of json result must not be null");
+		$this->assertEquals(1, $object['statut']);
+	}
 
-    /**
-     * testRestCreateUser
-     *
-     * @return void
-     */
-    public function testRestCreateUser()
-    {
+	/**
+	 * testRestCreateUser
+	 *
+	 * @return void
+	 */
+	public function testRestCreateUser()
+	{
+		// attemp to create without mandatory fields :
+		$url = $this->api_url.'/users?api_key='.$this->api_key;
+		$addheaders=array('Content-Type: application/json');
 
-        // attemp to create without mandatory fields :
-        $url = $this->api_url.'/users?api_key='.$this->api_key;
-        $addheaders=array('Content-Type: application/json');
+		$bodyobj = array(
+			"lastname"=>"testRestUser",
+			"password"=>"testRestPassword",
+			"email"=>"test@restuser.com"
+		);
+		$body = json_encode($bodyobj);
 
-        $bodyobj = array(
-            "lastname"=>"testRestUser",
-            "password"=>"testRestPassword",
-            "email"=>"test@restuser.com"
-        );
-        $body = json_encode($bodyobj);
+		print __METHOD__." Request POST url=".$url."\n";
+		$result=getURLContent($url, 'POST', $body, 1, $addheaders, array('http', 'https'), 2);
+		//print __METHOD__." Result for creating incomplete user".var_export($result, true)."\n";
+		print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
+		$this->assertEquals($result['curl_error_no'], '');
+		$object=json_decode($result['content'], true);
+		$this->assertNotNull($object, "Parsing of json result must no be null");
+		$this->assertEquals(500, $object['error']['code'], $object['error']['code'].' '.$object['error']['message']);
 
-        print __METHOD__." Request POST url=".$url."\n";
-        $result=getURLContent($url, 'POST', $body, 1, $addheaders, array('http', 'https'), 2);
-        //print __METHOD__." Result for creating incomplete user".var_export($result, true)."\n";
-        print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
-        $this->assertEquals($result['curl_error_no'], '');
-        $object=json_decode($result['content'], true);
-        $this->assertNotNull($object, "Parsing of json result must no be null");
-        $this->assertEquals(500, $object['error']['code'], $object['error']['code'].' '.$object['error']['message']);
+		// create regular user
+		unset($result);
+		$bodyobj = array(
+			"login"=>"testRestLogin".mt_rand(),
+			"lastname"=>"testRestUser",
+			"password"=>"testRestPassword",
+			"email"=>"test@restuser.com"
+		);
+		$body = json_encode($bodyobj);
+		print __METHOD__." Request POST url=".$url."\n";
+		$result=getURLContent($url, 'POST', $body, 1, $addheaders, array('http', 'https'), 2);
+		print __METHOD__." rclsesult code for creating user ".var_export($result, true)."\n";
+		print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
+		$this->assertEquals($result['curl_error_no'], '');
+		$resid=json_decode($result['content'], true);
+		$this->assertNotNull($resid, "Parsing of json result must no be null");
+		$this->assertGreaterThan(0, $resid, $object['error']['code'].' '.$object['error']['message']);
 
-        // create regular user
-        unset($result);
-        $bodyobj = array(
-            "login"=>"testRestLogin".mt_rand(),
-            "lastname"=>"testRestUser",
-            "password"=>"testRestPassword",
-            "email"=>"test@restuser.com"
-        );
-        $body = json_encode($bodyobj);
-        print __METHOD__." Request POST url=".$url."\n";
-        $result=getURLContent($url, 'POST', $body, 1, $addheaders, array('http', 'https'), 2);
-        print __METHOD__." Result code for creating user ".var_export($result, true)."\n";
-        print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
-        $this->assertEquals($result['curl_error_no'], '');
-        $resid=json_decode($result['content'], true);
-        $this->assertNotNull($resid, "Parsing of json result must no be null");
-        $this->assertGreaterThan(0, $resid, $object['error']['code'].' '.$object['error']['message']);
-
-        // attempt to create duplicated user
-        print __METHOD__." Request POST url=".$url."\n";
-        $result=getURLContent($url, 'POST', $body, 1, $addheaders, array('http', 'https'), 2);
-        //print __METHOD__." Result for creating duplicate user".var_export($result, true)."\n";
-        print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
-        $this->assertEquals($result['curl_error_no'], '');
-        $object=json_decode($result['content'], true);
-        $this->assertNotNull($object, "Parsing of json result must no be null");
-        $this->assertEquals(500, $object['error']['code'], $object['error']['code'].' '.$object['error']['message']);
-    }
+		// attempt to create duplicated user
+		print __METHOD__." Request POST url=".$url."\n";
+		$result=getURLContent($url, 'POST', $body, 1, $addheaders, array('http', 'https'), 2);
+		//print __METHOD__." Result for creating duplicate user".var_export($result, true)."\n";
+		print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
+		$this->assertEquals($result['curl_error_no'], '');
+		$object=json_decode($result['content'], true);
+		$this->assertNotNull($object, "Parsing of json result must no be null");
+		$this->assertEquals(500, $object['error']['code'], $object['error']['code'].' '.$object['error']['message']);
+	}
 }

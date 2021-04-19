@@ -1,8 +1,8 @@
 # Dolibarr language file - Source file is en_US - loan
 ModuleBuilderDesc=このツールは、経験豊富なユーザーまたは開発者のみが使用する必要がある。独自のモジュールを構築または編集するためのユーティリティを提供する。代替の<a href="%s" target="_blank">手動開発のドキュメントは、</a>にある。
-EnterNameOfModuleDesc=作成するモジュール/アプリケーションの名前をスペースなしで入力する。大文字を使用して単語を区切る（例：MyModule、EcommerceForShop、SyncWithMySystem ...）
-EnterNameOfObjectDesc=作成するオブジェクトの名前をスペースなしで入力する。大文字を使用して単語を区切る（例：MyObject、Student、Teacher ...）。 CRUDクラスファイルだけでなく、APIファイル、オブジェクトを一覧表示/追加/編集/削除するページ、およびSQLファイルが生成される。
-ModuleBuilderDesc2=モジュールが生成/編集されるパス（%sに定義された外部モジュールの最初のディレクトリ）：<strong> %s </strong>
+EnterNameOfModuleDesc=作成するモジュール/アプリケーションの名前をスペースなしで入力する。大文字を使用して単語を区切る(例：MyModule、EcommerceForShop、SyncWithMySystem ...)
+EnterNameOfObjectDesc=作成するオブジェクトの名前をスペースなしで入力する。大文字を使用して単語を区切る(例：MyObject、Student、Teacher ...)。 CRUDクラスファイルだけでなく、APIファイル、オブジェクトを一覧表示/追加/編集/削除するページ、およびSQLファイルが生成される。
+ModuleBuilderDesc2=モジュールが生成/編集されるパス(%sに定義された外部モジュールの最初のディレクトリ)：<strong> %s </strong>
 ModuleBuilderDesc3=生成された/編集可能なモジュールが見つかった：<strong> %s </strong>
 ModuleBuilderDesc4=ファイル<strong>%s </strong>がモジュールディレクトリのルートに存在する場合、モジュールは「編集可能」として検出される。
 NewModule=新規モジュール
@@ -11,18 +11,18 @@ ModuleKey=モジュールキー
 ObjectKey=オブジェクトキー
 ModuleInitialized=モジュールが初期化された
 FilesForObjectInitialized=初期化された新規オブジェクト '%s'のファイル
-FilesForObjectUpdated=オブジェクト「%s」のファイルが更新された（.sqlファイルおよび.class.phpファイル）
+FilesForObjectUpdated=オブジェクト「%s」のファイルが更新された(.sqlファイルおよび.class.phpファイル)
 ModuleBuilderDescdescription=モジュールを説明するすべての一般情報をここに入力する。
-ModuleBuilderDescspecifications=まだ他のタブに構造化されていないモジュール仕様の詳細説明をここに入力できる。したがって、開発するすべてのルールに簡単にアクセスできる。また、このテキストコンテンツは、生成されたドキュメントに含まれる（最後のタブを参照）。 Markdown形式を使用できるが、Asciidoc形式を使用することをお勧めする（.mdと.asciidocの比較： http://asciidoctor.org/docs/user-manual/#compared-to-markdown ）。
+ModuleBuilderDescspecifications=まだ他のタブに構造化されていないモジュール仕様の詳細説明をここに入力できる。したがって、開発するすべてのルールに簡単にアクセスできる。また、このテキストコンテンツは、生成されたドキュメントに含まれる(最後のタブを参照)。 Markdown形式を使用できるが、Asciidoc形式を使用することをお勧めする(.mdと.asciidocの比較： http://asciidoctor.org/docs/user-manual/#compared-to-markdown )。
 ModuleBuilderDescobjects=ここで、モジュールで管理するオブジェクトを定義する。 CRUD DAOクラス、SQLファイル、オブジェクトのレコードを一覧表示するページ、レコードを作成/編集/表示するためのページ、およびAPIが生成される。
 ModuleBuilderDescmenus=このタブは、モジュールによって提供されるメニューエントリを定義するためのもの。
 ModuleBuilderDescpermissions=このタブは、モジュールに提供する新規権限を定義するためのもの。
 ModuleBuilderDesctriggers=これは、モジュールによって提供されるトリガーのビュー。トリガーされたビジネスイベントの起動時に実行されるコードを含めるには、このファイルを編集するだけ。
 ModuleBuilderDeschooks=このタブはフック専用。
 ModuleBuilderDescwidgets=このタブは、ウィジェットの管理/構築専用。
-ModuleBuilderDescbuildpackage=ここで、モジュールの「配布準備完了」パッケージファイル（正規化された.zipファイル）と「配布準備完了」ドキュメントファイルを生成できる。ボタンをクリックするだけで、パッケージまたはドキュメントファイルを作成できる。
-EnterNameOfModuleToDeleteDesc=モジュールを削除できる。警告：モジュールのすべてのコーディングファイル（手動で生成または作成されたもの）および構造化されたデータとドキュメントは削除される！
-EnterNameOfObjectToDeleteDesc=オブジェクトを削除できる。警告：オブジェクトに関連するすべてのコーディングファイル（手動で生成または作成されたもの）は削除される！
+ModuleBuilderDescbuildpackage=ここで、モジュールの「配布準備完了」パッケージファイル(正規化された.zipファイル)と「配布準備完了」ドキュメントファイルを生成できる。ボタンをクリックするだけで、パッケージまたはドキュメントファイルを作成できる。
+EnterNameOfModuleToDeleteDesc=モジュールを削除できる。警告：モジュールのすべてのコーディングファイル(手動で生成または作成されたもの)および構造化されたデータとドキュメントは削除される！
+EnterNameOfObjectToDeleteDesc=オブジェクトを削除できる。警告：オブジェクトに関連するすべてのコーディングファイル(手動で生成または作成されたもの)は削除される！
 DangerZone=危険区域
 BuildPackage=パッケージをビルドする
 BuildPackageDesc=アプリケーションのzipパッケージを生成して、Dolibarrで配布する準備を整えることができる。また、<a href="https://www.dolistore.com"> DoliStore.com</a>のようなマーケットプレイスで配布または販売することもできる。
@@ -40,8 +40,9 @@ PageForCreateEditView=レコードを作成/編集/表示するためのPHPペ�
 PageForAgendaTab=イベントタブのPHPページ
 PageForDocumentTab=ドキュメントタブのPHPページ
 PageForNoteTab=メモタブのPHPページ
+PageForContactTab=連絡先タブのPHPページ
 PathToModulePackage=モジュール/アプリケーションパッケージのzipへのパス
-PathToModuleDocumentation=モジュール/アプリケーションドキュメントのファイルへのパス（%s）
+PathToModuleDocumentation=モジュール/アプリケーションドキュメントのファイルへのパス(%s)
 SpaceOrSpecialCharAreNotAllowed=スペースや特殊文字は使用できない。
 FileNotYetGenerated=ファイルはまだ生成されていない
 RegenerateClassAndSql=.classファイルと.sqlファイルの強制更新
@@ -51,7 +52,7 @@ LanguageFile=言語のファイル
 ObjectProperties=オブジェクトのプロパティ
 ConfirmDeleteProperty=プロパティ<strong>%s </strong>を削除してもよいか？これにより、PHPクラスのコードが変更されるが、オブジェクトのテーブル定義から列も削除される。
 NotNull=NULLではない
-NotNullDesc=1 =データベースをNOTNULLに設定する。 -1 = null値を許可し、空（ ''または0）の場合は値をNULLに強制する。
+NotNullDesc=1 =データベースをNOTNULLに設定する。 -1 = null値を許可し、空( ''または0)の場合は値をNULLに強制する。
 SearchAll=「すべて検索」に使用
 DatabaseIndex=データベースインデックス
 FileAlreadyExists=ファイル%sはすでに存在する
@@ -72,7 +73,7 @@ SqlFileExtraFields=補完属性のSQLファイル
 SqlFileKey=キーのSQLファイル
 SqlFileKeyExtraFields=補完的な属性のキーのSQLファイル
 AnObjectAlreadyExistWithThisNameAndDiffCase=この名前と別の大文字小文字のオブジェクトはすでに存在する
-UseAsciiDocFormat=Markdown形式を使用できるが、Asciidoc形式を使用することをお勧めする（.mdと.asciidocの比較： http://asciidoctor.org/docs/user-manual/#compared-to-markdown ）
+UseAsciiDocFormat=Markdown形式を使用できるが、Asciidoc形式を使用することをお勧めする(.mdと.asciidocの比較： http://asciidoctor.org/docs/user-manual/#compared-to-markdown )
 IsAMeasure=尺度は
 DirScanned=スキャンされたディレクトリ
 NoTrigger=トリガーなし
@@ -82,20 +83,20 @@ ListOfMenusEntries=メニューエントリのリスト
 ListOfDictionariesEntries=辞書エントリのリスト
 ListOfPermissionsDefined=定義された権限のリスト
 SeeExamples=こちらの例をご覧ください
-EnabledDesc=このフィールドをアクティブにする条件（例：1または$ conf-> global-> MYMODULE_MYOPTION）
-VisibleDesc=フィールドは表示されているか？ （例：0 =表示されない、1 =リストおよび作成/更新/表示フォームで表示、2 =リストでのみ表示、3 =作成/更新/表示フォームでのみ表示（リストではない）、4 =リストおよび更新/表示フォームでのみ表示（作成しない）、5 =リストおよび表示フォームでのみ表示（作成しない、更新しない）<br> <br>負の値を使用すると、フィールドはデフォルトでリストに表示されないが、表示用に選択できる）。 <br> <br>これは、次のような式にできる。例: <br> preg_match('/public/', $_SERVER['PHP_SELF'])?0:<br>($user->rights->holiday->define_holiday ? 1 : 0)
+EnabledDesc=このフィールドをアクティブにする条件(例：1または$ conf-> global-> MYMODULE_MYOPTION)
+VisibleDesc=フィールドは表示されているか？ (例：0 =表示されない、1 =リストおよび作成/更新/表示フォームで表示、2 =リストでのみ表示、3 =作成/更新/表示フォームでのみ表示(リストではない)、4 =リストおよび更新/表示フォームでのみ表示(作成しない)、5 =リストおよび表示フォームでのみ表示(作成しない、更新しない)<br> <br>負の値を使用すると、フィールドはデフォルトでリストに表示されないが、表示用に選択できる)。 <br> <br>これは、次のような式にできる。例: <br> preg_match('/public/', $_SERVER['PHP_SELF'])?0:<br>($user->rights->holiday->define_holiday ? 1 : 0)
 DisplayOnPdfDesc=互換性のあるPDFドキュメントでこのフィールドを表示する。「位置」フィールドで位置を管理できる。<br/>現在、既知の互換性のあるPDFモデルは次のとおり  : eratosthene (order), espadon (ship), sponge (invoices), cyan (propal/quotation), cornas (supplier order)<br/><br/><strong>ドキュメントに対して :</strong><br/>0 = 非表示 <br/>1 = 表示<br/>2 = 空でない場合のみ表示<br/><br/><strong>ドキュメント行に対して :</strong><br/>0 = 非表示 <br/>1 = カラム内で表示<br/>3 = 説明欄の後の行説明カラムの中で表示<br/>4 = 空でない場合のみ、説明欄の後の行説明カラムの中で表示
 DisplayOnPdf=PDFで表示
-IsAMeasureDesc=フィールドの値を累積して、合計をリストに入れることはできるか？ （例：1または0）
-SearchAllDesc=クイック検索ツールから検索するためにフィールドが使用されているか？ （例：1または0）
+IsAMeasureDesc=フィールドの値を累積して、合計をリストに入れることはできるか？ (例：1または0)
+SearchAllDesc=クイック検索ツールから検索するためにフィールドが使用されているか？ (例：1または0)
 SpecDefDesc=他のタブでまだ定義されていない、モジュールで提供するすべてのドキュメントをここに入力する。豊富な.asciidoc構文である.md以上を使用できる。
 LanguageDefDesc=このファイルに、各言語ファイルのすべてのキーと翻訳を入力する。
 MenusDefDesc=モジュールが提供するメニューをここで定義する
 DictionariesDefDesc=モジュールが提供する辞書をここで定義する
 PermissionsDefDesc=モジュールによって提供される新規権限をここで定義する
-MenusDefDescTooltip=モジュール/アプリケーションによって提供されるメニューは、モジュール記述子ファイルの配列<strong> $ this-> menus</strong>に定義されている。このファイルを手動で編集するか、埋め込みエディターを使用できる。 <br> <br>注：定義されると（およびモジュールが再アクティブ化されると）、メニューは%sの管理者ユーザーが使用できるメニューエディターにも表示される。
-DictionariesDefDescTooltip=モジュール/アプリケーションによって提供されるディクショナリは、モジュール記述子ファイルの配列<strong> $ this-> dictionaries</strong>に定義されている。このファイルを手動で編集するか、埋め込みエディターを使用できる。 <br> <br>注：定義（およびモジュールの再アクティブ化）が完了すると、%sの管理者ユーザーには辞書もセットアップ領域に表示される。
-PermissionsDefDescTooltip=モジュール/アプリケーションによって提供されるアクセス許可は、配列<strong> $ this-> rights</strong>にモジュール記述子ファイルに定義される。このファイルを手動で編集するか、埋め込みエディターを使用できる。 <br> <br>注：定義されると（およびモジュールが再アクティブ化されると）、アクセス許可はデフォルトのアクセス許可セットアップ%sに表示される。
+MenusDefDescTooltip=モジュール/アプリケーションによって提供されるメニューは、モジュール記述子ファイルの配列<strong> $ this-> menus</strong>に定義されている。このファイルを手動で編集するか、埋め込みエディターを使用できる。 <br> <br>注：定義されると(およびモジュールが再アクティブ化されると)、メニューは%sの管理者ユーザーが使用できるメニューエディターにも表示される。
+DictionariesDefDescTooltip=モジュール/アプリケーションによって提供されるディクショナリは、モジュール記述子ファイルの配列<strong> $ this-> dictionaries</strong>に定義されている。このファイルを手動で編集するか、埋め込みエディターを使用できる。 <br> <br>注：定義(およびモジュールの再アクティブ化)が完了すると、%sの管理者ユーザーには辞書もセットアップ領域に表示される。
+PermissionsDefDescTooltip=モジュール/アプリケーションによって提供されるアクセス許可は、配列<strong> $ this-> rights</strong>にモジュール記述子ファイルに定義される。このファイルを手動で編集するか、埋め込みエディターを使用できる。 <br> <br>注：定義されると(およびモジュールが再アクティブ化されると)、アクセス許可はデフォルトのアクセス許可セットアップ%sに表示される。
 HooksDefDesc=定義する：管理したいフックのコンテキストを <b>module_parts['hooks']</b> プロパティのモジュール記述子の中に。 (コンテキストのリストは、コアコードで '<b>initHooks(</b>' を検索すると見つかる).<br>編集する：フックされた関数のコードを追加するためのフックファイルを。 (フック可能な関数は、コアコードで '<b>executeHooks</b>' を検索すると見つかる).
 TriggerDefDesc=実行されるビジネスイベントごとに実行するコードをトリガーファイルで定義する。
 SeeIDsInUse=インストールで使用されているIDを確認する
@@ -104,8 +105,8 @@ ToolkitForDevelopers=Dolibarr開発者向けのツールキット
 TryToUseTheModuleBuilder=SQLとPHPの知識がある場合は、ネイティブモジュールビルダーウィザードを使用できる。 <br>モジュール<strong>%s </strong>を有効にし、右上のメニューで<span class="fa fa-bug"></span>をクリックしてウィザードを使用する。 <br>警告：これは高度な開発者機能。本番サイトで</b>実験ではなく<b>を実行すること。
 SeeTopRightMenu=右上のメニューの<span class="fa fa-bug"></span>を参照すること
 AddLanguageFile=言語ファイルを追加する
-YouCanUseTranslationKey=ここでは、言語ファイルにある翻訳キーであるキーを使用できる（「言語」タブを参照）。
-DropTableIfEmpty=（空の場合はテーブルを削除する）
+YouCanUseTranslationKey=ここでは、言語ファイルにある翻訳キーであるキーを使用できる(「言語」タブを参照)。
+DropTableIfEmpty=(空の場合はテーブルを破棄する)
 TableDoesNotExists=テーブル%sは存在しない
 TableDropped=テーブル%sが削除された
 InitStructureFromExistingTable=既存のテーブルの構造体配列文字列を作成する
@@ -126,7 +127,6 @@ UseSpecificEditorURL = 特定のエディターURLを使用する
 UseSpecificFamily = 特定の家族を使用する
 UseSpecificAuthor = 特定の作成者を使用する
 UseSpecificVersion = 特定の初期バージョンを使用する
-ModuleMustBeEnabled=モジュール/アプリケーションを最初に有効にする必要がある
 IncludeRefGeneration=オブジェクトの参照は自動的に生成される必要がある
 IncludeRefGenerationHelp=参照の生成を自動的に管理するコードを含める場合は、これをチェックすること
 IncludeDocGeneration=オブジェクトからいくつかのドキュメントを生成したい
@@ -140,3 +140,4 @@ TypeOfFieldsHelp=フィールドの種別:<br>varchar(99), double(24,8), real, t
 AsciiToHtmlConverter=アスキーからHTMLへのコンバーター
 AsciiToPdfConverter=アスキーからPDFへのコンバーター
 TableNotEmptyDropCanceled=テーブルが空ではない。ドロップはキャンセルされた。
+ModuleBuilderNotAllowed=モジュールビルダーは利用できるが、あなたのユーザには許可されていない。

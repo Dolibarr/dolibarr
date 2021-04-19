@@ -45,38 +45,43 @@ $confirm	= GETPOST('confirm');
 $id			= GETPOST('id', 'int');
 $ref		= GETPOST('ref');
 
-// Security check
-if ($user->socid)
-{
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'expedition', $id, '');
-
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder) $sortorder = "ASC";
-if (!$sortfield) $sortfield = "name";
+if (!$sortorder) {
+	$sortorder = "ASC";
+}
+if (!$sortfield) {
+	$sortfield = "name";
+}
 
 $object = new Expedition($db);
+
+if ($object->fetch($id, $ref)) {
+	$object->fetch_thirdparty();
+	$upload_dir = $conf->expedition->dir_output."/sending/".dol_sanitizeFileName($object->ref);
+}
+
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'expedition', $object->id, '');
 
 
 /*
  * Actions
  */
-if ($object->fetch($id))
-{
-	$object->fetch_thirdparty();
-	$upload_dir = $conf->expedition->dir_output."/sending/".dol_sanitizeFileName($object->ref);
-}
 
-include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 
 /*
@@ -175,7 +180,7 @@ if ($id > 0 || !empty($ref)) {
 		$permission = $user->rights->expedition->creer;
 		$permtoedit = $user->rights->expedition->creer;
 		$param = '&id='.$object->id;
-		include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+		include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 	} else {
 		dol_print_error($db);
 	}

@@ -26,7 +26,9 @@ function genkeypad($keypadname, $formname)
 {
 	global $conf;
 
-	if (empty($conf->global->CASHDESK_SHOW_KEYPAD)) return '';
+	if (empty($conf->global->CASHDESK_SHOW_KEYPAD)) {
+		return '';
+	}
 
 	// défine the font size of button
 	$btnsize = 32;

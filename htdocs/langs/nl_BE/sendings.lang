@@ -3,6 +3,7 @@ ShowSending=Toon Verzendingen
 Receivings=Ontvangstbevestingen
 LastSendings=Laatste %s verzendingen
 QtyPreparedOrShipped=Aantal voorbereid of verzonden
+QtyToShip=Aantal te verzenden
 QtyInOtherShipments=Aantal in andere verzendingen
 SendingsAndReceivingForSameOrder=Verzendingen en ontvangstbevestigingen van deze bestelling
 ConfirmDeleteSending=Weet u zeker dat u deze verzending wilt verwijderen?

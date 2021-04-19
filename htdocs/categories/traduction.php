@@ -35,14 +35,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('categories', 'languages'));
 
-$id     = GETPOST('id', 'int');
-$label  = GETPOST('label', 'alpha');
+$id = GETPOST('id', 'int');
+$label = GETPOST('label', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
-$type   = GETPOST('type', 'aZ09');
 
-if ($id == '' && $label == '')
-{
+if ($id == '' && $label == '') {
 	dol_print_error('', 'Missing parameter id');
 	exit();
 }
@@ -51,16 +49,15 @@ if ($id == '' && $label == '')
 $result = restrictedArea($user, 'categorie', $id, '&category');
 
 $object = new Categorie($db);
-$result = $object->fetch($id, $label, $type);
-if ($result <= 0) {
-	dol_print_error($db, $object->error); exit;
-}
-$object->fetch_optionals();
+$result = $object->fetch($id, $label);
 if ($result <= 0) {
 	dol_print_error($db, $object->error); exit;
 }
 
-if (is_numeric($type)) $type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
+$type = $object->type;
+if (is_numeric($type)) {
+	$type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
+}
 
 /*
  * Actions
@@ -68,8 +65,7 @@ if (is_numeric($type)) $type = Categorie::$MAP_ID_TO_CODE[$type]; // For backwar
 $error = 0;
 
 // retour a l'affichage des traduction si annulation
-if ($cancel == $langs->trans("Cancel"))
-{
+if ($cancel == $langs->trans("Cancel")) {
 	$action = '';
 }
 
@@ -77,8 +73,7 @@ if ($cancel == $langs->trans("Cancel"))
 // Validation de l'ajout
 if ($action == 'vadd' &&
 $cancel != $langs->trans("Cancel") &&
-($user->rights->categorie->creer))
-{
+($user->rights->categorie->creer)) {
 	$object->fetch($id);
 	$current_lang = $langs->getDefaultLang();
 
@@ -110,7 +105,9 @@ $cancel != $langs->trans("Cancel") &&
 
 			// sauvegarde en base
 			$res = $object->setMultiLangs($user);
-			if ($res < 0) $error++;
+			if ($res < 0) {
+				$error++;
+			}
 		}
 	}
 
@@ -125,13 +122,11 @@ $cancel != $langs->trans("Cancel") &&
 // Validation de l'edition
 if ($action == 'vedit' &&
 $cancel != $langs->trans("Cancel") &&
-($user->rights->categorie->creer))
-{
+($user->rights->categorie->creer)) {
 	$object->fetch($id);
 	$current_lang = $langs->getDefaultLang();
 
-	foreach ($object->multilangs as $key => $value) // enregistrement des nouvelles valeurs dans l'objet
-	{
+	foreach ($object->multilangs as $key => $value) { // enregistrement des nouvelles valeurs dans l'objet
 		$libelle = GETPOST('libelle-'.$key, 'alpha');
 		$desc = GETPOST('desc-'.$key);
 
@@ -151,7 +146,9 @@ $cancel != $langs->trans("Cancel") &&
 
 	if (!$error) {
 		$res = $object->setMultiLangs($user);
-		if ($res < 0)   $error++;
+		if ($res < 0) {
+			$error++;
+		}
 	}
 
 	if ($error) {
@@ -179,17 +176,16 @@ $head = categories_prepare_head($object, $type);
 
 // Calculate $cnt_trans
 $cnt_trans = 0;
-if (!empty($object->multilangs))
-{
-	foreach ($object->multilangs as $key => $value)
-	{
+if (!empty($object->multilangs)) {
+	foreach ($object->multilangs as $key => $value) {
 		$cnt_trans++;
 	}
 }
 
 print dol_get_fiche_head($head, 'translation', $langs->trans($title), -1, 'category');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("BackToList").'</a>';
+$backtolist = (GETPOST('backtolist') ? GETPOST('backtolist') : DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.urlencode($type));
+$linkback = '<a href="'.dol_sanitizeUrl($backtolist).'">'.$langs->trans("BackToList").'</a>';
 $object->next_prev_filter = ' type = '.$object->type;
 $object->ref = $object->label;
 $morehtmlref = '<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
@@ -228,20 +224,17 @@ print dol_get_fiche_end();
 
 
 
-/* ************************************************************************** */
-/*                                                                            */
-/* Barre d'action                                                             */
-/*                                                                            */
-/* ************************************************************************** */
-
+/*
+ * Action bar
+ */
 print "\n<div class=\"tabsAction\">\n";
 
-if ($action == '')
-{
-	if ($user->rights->produit->creer || $user->rights->service->creer)
-	{
+if ($action == '') {
+	if ($user->rights->produit->creer || $user->rights->service->creer) {
 		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=add&id='.$object->id.'&type='.$type.'">'.$langs->trans('Add').'</a>';
-		if ($cnt_trans > 0) print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&id='.$object->id.'&type='.$type.'">'.$langs->trans('Update').'</a>';
+		if ($cnt_trans > 0) {
+			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&id='.$object->id.'&type='.$type.'">'.$langs->trans('Update').'</a>';
+		}
 	}
 }
 
@@ -249,8 +242,7 @@ print "\n</div>\n";
 
 
 
-if ($action == 'edit')
-{
+if ($action == 'edit') {
 	//WYSIWYG Editor
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
@@ -260,10 +252,8 @@ if ($action == 'edit')
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 	print '<input type="hidden" name="type" value="'.$type.'">';
 
-	if (!empty($object->multilangs))
-	{
-		foreach ($object->multilangs as $key => $value)
-		{
+	if (!empty($object->multilangs)) {
+		foreach ($object->multilangs as $key => $value) {
 			print "<br><b><u>".$langs->trans('Language_'.$key)." :</u></b><br>";
 			print '<table class="border centpercent">';
 
@@ -291,27 +281,27 @@ if ($action == 'edit')
 	print '</div>';
 
 	print '</form>';
-} elseif ($action != 'add')
-{
-	if ($cnt_trans) print '<div class="underbanner clearboth"></div>';
+} elseif ($action != 'add') {
+	if ($cnt_trans) {
+		print '<div class="underbanner clearboth"></div>';
+	}
 
-	if (!empty($object->multilangs))
-	{
-		foreach ($object->multilangs as $key => $value)
-		{
+	if (!empty($object->multilangs)) {
+		foreach ($object->multilangs as $key => $value) {
 			$s = picto_from_langcode($key);
 			print '<table class="border centpercent">';
 			print '<tr class="liste_titre"><td colspan="2">'.($s ? $s.' ' : '')." <b>".$langs->trans('Language_'.$key).":</b> ".'<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'&langtodelete='.$key.'&type='.$type.'">'.img_delete('', '').'</a></td></tr>';
 			print '<tr><td class="titlefield">'.$langs->trans('Label').'</td><td>'.$object->multilangs[$key]["label"].'</td></tr>';
 			print '<tr><td>'.$langs->trans('Description').'</td><td>'.$object->multilangs[$key]["description"].'</td></tr>';
-			if (!empty($conf->global->CATEGORY_USE_OTHER_FIELD_IN_TRANSLATION))
-			{
+			if (!empty($conf->global->CATEGORY_USE_OTHER_FIELD_IN_TRANSLATION)) {
 				print '<tr><td>'.$langs->trans('Other').' ('.$langs->trans("NotUsed").')</td><td>'.$object->multilangs[$key]["other"].'</td></tr>';
 			}
 			print '</table>';
 		}
 	}
-	if (!$cnt_trans && $action != 'add') print '<div class="opacitymedium">'.$langs->trans('NoTranslation').'</div>';
+	if (!$cnt_trans && $action != 'add') {
+		print '<div class="opacitymedium">'.$langs->trans('NoTranslation').'</div>';
+	}
 }
 
 
@@ -319,8 +309,7 @@ if ($action == 'edit')
  * Form to add a new translation
  */
 
-if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service->creer))
-{
+if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service->creer)) {
 	//WYSIWYG Editor
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 

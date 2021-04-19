@@ -122,7 +122,9 @@ class BlockedLogAuthority
 	public function checkBlock($block)
 	{
 
-		if (strlen($block) != 64) return false;
+		if (strlen($block) != 64) {
+			return false;
+		}
 
 		$blocks = str_split($this->blockchain, 64);
 
@@ -148,8 +150,7 @@ class BlockedLogAuthority
 
 		dol_syslog(get_class($this)."::fetch id=".$id, LOG_DEBUG);
 
-		if (empty($id) && empty($signature))
-		{
+		if (empty($id) && empty($signature)) {
 			$this->error = 'BadParameter';
 			return -1;
 		}
@@ -159,14 +160,15 @@ class BlockedLogAuthority
 		$sql = "SELECT b.rowid, b.signature, b.blockchain, b.tms";
 		$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog_authority as b";
 
-		if ($id) $sql .= " WHERE b.rowid = ".$id;
-		elseif ($signature)$sql .= " WHERE b.signature = '".$this->db->escape($signature)."'";
+		if ($id) {
+			$sql .= " WHERE b.rowid = ".((int) $id);
+		} elseif ($signature) {
+			$sql .= " WHERE b.signature = '".$this->db->escape($signature)."'";
+		}
 
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			if ($this->db->num_rows($resql))
-			{
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id = $obj->rowid;
@@ -216,12 +218,10 @@ class BlockedLogAuthority
 		$sql .= ")";
 
 		$res = $this->db->query($sql);
-		if ($res)
-		{
+		if ($res) {
 			$id = $this->db->last_insert_id(MAIN_DB_PREFIX."blockedlog_authority");
 
-			if ($id > 0)
-			{
+			if ($id > 0) {
 				$this->id = $id;
 
 				$this->db->commit();
@@ -259,11 +259,10 @@ class BlockedLogAuthority
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."blockedlog_authority SET ";
 		$sql .= " blockchain='".$this->db->escape($this->blockchain)."'";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$res = $this->db->query($sql);
-		if ($res)
-		{
+		if ($res) {
 			$this->db->commit();
 
 			return 1;

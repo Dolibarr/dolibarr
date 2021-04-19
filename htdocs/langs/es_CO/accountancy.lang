@@ -83,6 +83,7 @@ VentilatedinAccount=Enlazado exitosamente a la cuenta contable.
 NotVentilatedinAccount=No vinculado a la cuenta contable.
 XLineSuccessfullyBinded=%s productos / servicios vinculados con éxito a una cuenta contable
 XLineFailedToBeBinded=%s productos / servicios no estaban vinculados a ninguna cuenta contable
+ACCOUNTING_LIMIT_LIST_VENTILATION=Maximum number of lines on list and bind page (recommended: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Comience la clasificación de la página "Enlace para hacer" según los elementos más recientes.
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Comience la clasificación de la página "Encuadernación hecha" por los elementos más recientes.
 ACCOUNTING_LENGTH_DESCRIPTION=Truncar la descripción de productos y servicios en las listas después de x caracteres (Mejor = 50)
@@ -107,7 +108,6 @@ LetteringCode=Codigo de letras
 Codejournal=diario
 NumPiece=Número de pieza
 TransactionNumShort=Num. transacción
-GroupByAccountAccounting=Grupo por cuenta contable
 AccountingAccountGroupsDesc=Puede definir aquí algunos grupos de cuentas contables. Serán utilizados para informes contables personalizados.
 ByPredefinedAccountGroups=Por grupos predefinidos.
 DelYear=Año para borrar

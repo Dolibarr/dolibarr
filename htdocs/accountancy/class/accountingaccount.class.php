@@ -236,19 +236,23 @@ class AccountingAccount extends CommonObject
 		$now = dol_now();
 
 		// Clean parameters
-		if (isset($this->fk_pcg_version))
+		if (isset($this->fk_pcg_version)) {
 			$this->fk_pcg_version = trim($this->fk_pcg_version);
-		if (isset($this->pcg_type))
+		}
+		if (isset($this->pcg_type)) {
 			$this->pcg_type = trim($this->pcg_type);
-		if (isset($this->account_number))
+		}
+		if (isset($this->account_number)) {
 			$this->account_number = trim($this->account_number);
-		if (isset($this->label))
+		}
+		if (isset($this->label)) {
 			$this->label = trim($this->label);
-		if (isset($this->labelshort))
+		}
+		if (isset($this->labelshort)) {
 			$this->labelshort = trim($this->labelshort);
+		}
 
-		if (empty($this->pcg_type) || $this->pcg_type == '-1')
-		{
+		if (empty($this->pcg_type) || $this->pcg_type == '-1') {
 			$this->pcg_type = 'XXXXXX';
 		}
 		// Check parameters
@@ -329,8 +333,7 @@ class AccountingAccount extends CommonObject
 	public function update($user)
 	{
 		// Check parameters
-		if (empty($this->pcg_type) || $this->pcg_type == '-1')
-		{
+		if (empty($this->pcg_type) || $this->pcg_type == '-1') {
 			$this->pcg_type = 'XXXXXX';
 		}
 
@@ -411,7 +414,7 @@ class AccountingAccount extends CommonObject
 
 			if (!$error) {
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."accounting_account";
-				$sql .= " WHERE rowid=".$this->id;
+				$sql .= " WHERE rowid=".((int) $this->id);
 
 				dol_syslog(get_class($this)."::delete sql=".$sql);
 				$resql = $this->db->query($sql);
@@ -456,7 +459,9 @@ class AccountingAccount extends CommonObject
 		global $langs, $conf;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 
-		if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
+		if (!empty($conf->dol_no_mouse_hover)) {
+			$notooltip = 1; // Force disable tooltips
+		}
 
 		$result = '';
 
@@ -474,31 +479,36 @@ class AccountingAccount extends CommonObject
 
 		// Add param to save lastsearch_values or not
 		$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-		if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
-		if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
+		if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			$add_save_lastsearch_values = 1;
+		}
+		if ($add_save_lastsearch_values) {
+			$url .= '&save_lastsearch_values=1';
+		}
 
 		$picto = 'billr';
 		$label = '';
 
-		if (empty($this->labelshort) || $withcompletelabel == 1)
-		{
+		if (empty($this->labelshort) || $withcompletelabel == 1) {
 			$labeltoshow = $this->label;
 		} else {
 			$labeltoshow = $this->labelshort;
 		}
 
 		$label = '<u>'.$labelurl.'</u>';
-		if (!empty($this->account_number))
+		if (!empty($this->account_number)) {
 			$label .= '<br><b>'.$langs->trans('AccountAccounting').':</b> '.length_accountg($this->account_number);
-		if (!empty($labeltoshow))
+		}
+		if (!empty($labeltoshow)) {
 			$label .= '<br><b>'.$langs->trans('Label').':</b> '.$labeltoshow;
-		if ($moretitle) $label .= ' - '.$moretitle;
+		}
+		if ($moretitle) {
+			$label .= ' - '.$moretitle;
+		}
 
 		$linkclose = '';
-		if (empty($notooltip))
-		{
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-			{
+		if (empty($notooltip)) {
+			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$label = $labelurl;
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -510,19 +520,26 @@ class AccountingAccount extends CommonObject
 		$linkstart .= $linkclose.'>';
 		$linkend = '</a>';
 
-		if ($nourl)
-		{
+		if ($nourl) {
 			$linkstart = '';
 			$linkclose = '';
 			$linkend = '';
 		}
 
 		$label_link = length_accountg($this->account_number);
-		if ($withlabel) $label_link .= ' - '.($nourl ? '<span class="opacitymedium">' : '').$labeltoshow.($nourl ? '</span>' : '');
+		if ($withlabel) {
+			$label_link .= ' - '.($nourl ? '<span class="opacitymedium">' : '').$labeltoshow.($nourl ? '</span>' : '');
+		}
 
-		if ($withpicto) $result .= ($linkstart.img_object(($notooltip ? '' : $label), $picto, ($notooltip ? '' : 'class="classfortooltip"'), 0, 0, $notooltip ? 0 : 1).$linkend);
-		if ($withpicto && $withpicto != 2) $result .= ' ';
-		if ($withpicto != 2) $result .= $linkstart.$label_link.$linkend;
+		if ($withpicto) {
+			$result .= ($linkstart.img_object(($notooltip ? '' : $label), $picto, ($notooltip ? '' : 'class="classfortooltip"'), 0, 0, $notooltip ? 0 : 1).$linkend);
+		}
+		if ($withpicto && $withpicto != 2) {
+			$result .= ' ';
+		}
+		if ($withpicto != 2) {
+			$result .= $linkstart.$label_link.$linkend;
+		}
 		return $result;
 	}
 
@@ -536,7 +553,7 @@ class AccountingAccount extends CommonObject
 	{
 		$sql = 'SELECT a.rowid, a.datec, a.fk_user_author, a.fk_user_modif, a.tms';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'accounting_account as a';
-		$sql .= ' WHERE a.rowid = '.$id;
+		$sql .= ' WHERE a.rowid = '.((int) $id);
 
 		dol_syslog(get_class($this).'::info sql='.$sql);
 		$result = $this->db->query($sql);
@@ -576,8 +593,7 @@ class AccountingAccount extends CommonObject
 		$result = $this->checkUsage();
 
 		$fieldtouse = 'active';
-		if ($mode == 1)
-		{
+		if ($mode == 1) {
 			$fieldtouse = 'reconcilable';
 		}
 
@@ -664,30 +680,42 @@ class AccountingAccount extends CommonObject
 		global $langs;
 		$langs->loadLangs(array("users"));
 
-		if ($mode == 0)
-		{
-			if ($status == 1) return $langs->trans('Enabled');
-			elseif ($status == 0) return $langs->trans('Disabled');
-		} elseif ($mode == 1)
-		{
-			if ($status == 1) return $langs->trans('Enabled');
-			elseif ($status == 0) return $langs->trans('Disabled');
-		} elseif ($mode == 2)
-		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
-			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
-		} elseif ($mode == 3)
-		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4');
-			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5');
-		} elseif ($mode == 4)
-		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
-			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
-		} elseif ($mode == 5)
-		{
-			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
-			elseif ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
+		if ($mode == 0) {
+			if ($status == 1) {
+				return $langs->trans('Enabled');
+			} elseif ($status == 0) {
+				return $langs->trans('Disabled');
+			}
+		} elseif ($mode == 1) {
+			if ($status == 1) {
+				return $langs->trans('Enabled');
+			} elseif ($status == 0) {
+				return $langs->trans('Disabled');
+			}
+		} elseif ($mode == 2) {
+			if ($status == 1) {
+				return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
+			} elseif ($status == 0) {
+				return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
+			}
+		} elseif ($mode == 3) {
+			if ($status == 1) {
+				return img_picto($langs->trans('Enabled'), 'statut4');
+			} elseif ($status == 0) {
+				return img_picto($langs->trans('Disabled'), 'statut5');
+			}
+		} elseif ($mode == 4) {
+			if ($status == 1) {
+				return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
+			} elseif ($status == 0) {
+				return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
+			}
+		} elseif ($mode == 5) {
+			if ($status == 1) {
+				return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
+			} elseif ($status == 0) {
+				return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
+			}
 		}
 	}
 }

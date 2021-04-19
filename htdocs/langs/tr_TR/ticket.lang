@@ -31,10 +31,8 @@ TicketDictType=Destek Bildirimi - Türler
 TicketDictCategory=Destek Bildirimi - Gruplar
 TicketDictSeverity=Destek Bildirimi - Önemler
 TicketDictResolution=Destek Bildirimi - Çözüm
-TicketTypeShortBUGSOFT=Yazılım arızası
-TicketTypeShortBUGHARD=Donanım arızası
-TicketTypeShortCOM=Ticari soru
 
+TicketTypeShortCOM=Ticari soru
 TicketTypeShortHELP=Request for functionnal help
 TicketTypeShortISSUE=Issue, bug or problem
 TicketTypeShortREQUEST=Change or enhancement request
@@ -44,7 +42,7 @@ TicketTypeShortOTHER=Diğer
 TicketSeverityShortLOW=Düşük
 TicketSeverityShortNORMAL=Normal
 TicketSeverityShortHIGH=Yüksek
-TicketSeverityShortBLOCKING=Kritik/Engelleyici
+TicketSeverityShortBLOCKING=Critical, Blocking
 
 ErrorBadEmailAddress='%s' alanı hatalı
 MenuTicketMyAssign=Destek bildirimlerim
@@ -60,7 +58,6 @@ OriginEmail=E-posta kaynağı
 Notify_TICKET_SENTBYMAIL=Destek bildirimini e-posta ile gönderil
 
 # Status
-NotRead=Okunmayan
 Read=Okundu
 Assigned=Atanan
 InProgress=Devam etmekte
@@ -126,6 +123,7 @@ TicketsActivatePublicInterfaceHelp=Genel arayüz, ziyaretçilerin destek bildiri
 TicketsAutoAssignTicket=Destek bildirimini oluşturan kullanıcıyı otomatik olarak atayın
 TicketsAutoAssignTicketHelp=Bir destek bildirimi oluştururken, kullanıcı otomatik olarak destek bildirimine atanabilir.
 TicketNumberingModules=Destek bildirimi numaralandırma modülü
+TicketsModelModule=Document templates for tickets
 TicketNotifyTiersAtCreation=Oluşturunca üçüncü tarafa bildir
 TicketsDisableCustomerEmail=Bir destek bildirimi ortak arayüzden oluşturulduğunda e-postaları her zaman devre dışı bırak
 TicketsPublicNotificationNewMessage=Send email(s) when a new message is added
@@ -233,7 +231,6 @@ TicketLogStatusChanged=Status changed: %s to %s
 TicketNotNotifyTiersAtCreate=Not notify company at create
 Unread=Okunmamış
 TicketNotCreatedFromPublicInterface=Mevcut değil. Destek bildirimi genel arayüzden oluşturulmadı.
-PublicInterfaceNotEnabled=Public interface was not enabled
 ErrorTicketRefRequired=Destek bildirimi referans adı gerekli
 
 #

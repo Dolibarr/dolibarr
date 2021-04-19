@@ -2,17 +2,17 @@
 
 ## Features
 
-Description...
+Description of the module...
 
 <!--
 ![Screenshot mymodule](img/screenshot_mymodule.png?raw=true "MyModule"){imgmd}
 -->
 
-Other modules are available on [Dolistore.com](https://www.dolistore.com).
+Other external modules are available on [Dolistore.com](https://www.dolistore.com).
 
 ## Translations
 
-Translations can be define manually by editing files into directories *langs*.
+Translations can be completed manually by editing files into directories *langs*.
 
 <!--
 This module contains also a sample configuration for Transifex, under the hidden directory [.tx](.tx), so it is possible to manage translation using this service.

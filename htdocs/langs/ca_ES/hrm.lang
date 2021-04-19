@@ -1,6 +1,6 @@
 # Dolibarr language file - en_US - hrm
 # Admin
-HRM_EMAIL_EXTERNAL_SERVICE=Correu electrònic per prevenir serveis externs HRM
+HRM_EMAIL_EXTERNAL_SERVICE=Correu electrònic per a evitar el servei extern de HRM
 Establishments=Establiments
 Establishment=Establiment
 NewEstablishment=Establiment nou

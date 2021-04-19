@@ -19,19 +19,32 @@
  * Library javascript to enable Browser notifications
  */
 
-if (!defined('NOREQUIREUSER')) define('NOREQUIREUSER', '1');
-if (!defined('NOREQUIRESOC')) define('NOREQUIRESOC', '1');
-if (!defined('NOCSRFCHECK')) define('NOCSRFCHECK', 1);
-if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1);
-if (!defined('NOLOGIN')) define('NOLOGIN', 1);
-if (!defined('NOREQUIREMENU')) define('NOREQUIREMENU', 1);
-if (!defined('NOREQUIREHTML')) define('NOREQUIREHTML', 1);
+if (!defined('NOREQUIREUSER')) {
+	define('NOREQUIREUSER', '1');
+}
+if (!defined('NOREQUIRESOC')) {
+	define('NOREQUIRESOC', '1');
+}
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', 1);
+}
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', 1);
+}
+if (!defined('NOLOGIN')) {
+	define('NOLOGIN', 1);
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', 1);
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', 1);
+}
 
 require_once '../../main.inc.php';
 
 if (!($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root.'/' || $_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root.'/index.php'
-	|| preg_match('/getmenu_div\.php/', $_SERVER['HTTP_REFERER'])))
-{
+	|| preg_match('/getmenu_div\.php/', $_SERVER['HTTP_REFERER']))) {
 	global $langs, $conf;
 
 	top_httphead('text/javascript; charset=UTF-8');
@@ -45,44 +58,44 @@ if (!($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root.'/' || $_SERVER['HTTP
 	/* Check if permission ok */
 	if (Notification.permission !== "granted") {
 		console.log("Ask Notification.permission");
-        Notification.requestPermission()
-    }
+		Notification.requestPermission()
+	}
 
 	/* Launch timer */
-   	// We set a delay before launching first test so next check will arrive after the time_auto_update compared to previous one.
-    //var time_first_execution = (time_auto_update + (time_js_next_test - nowtime)) * 1000;	//need milliseconds
-    var time_first_execution = <?php echo max(3, empty($conf->global->MAIN_BROWSER_NOTIFICATION_CHECK_FIRST_EXECUTION) ? 0 : $conf->global->MAIN_BROWSER_NOTIFICATION_CHECK_FIRST_EXECUTION); ?>;
-    if (login != '') {
-    	setTimeout(first_execution, time_first_execution * 1000);
-        time_js_next_test = nowtime + time_first_execution;
-    	console.log("Launch browser notif check: setTimeout is set to launch 'first_execution' function after a wait of time_first_execution="+time_first_execution+". nowtime (time php page generation) = "+nowtime+" time_js_next_check = "+time_js_next_test);
-    } //first run auto check
+	   // We set a delay before launching first test so next check will arrive after the time_auto_update compared to previous one.
+	//var time_first_execution = (time_auto_update + (time_js_next_test - nowtime)) * 1000;	//need milliseconds
+	var time_first_execution = <?php echo max(3, empty($conf->global->MAIN_BROWSER_NOTIFICATION_CHECK_FIRST_EXECUTION) ? 0 : $conf->global->MAIN_BROWSER_NOTIFICATION_CHECK_FIRST_EXECUTION); ?>;
+	if (login != '') {
+		setTimeout(first_execution, time_first_execution * 1000);
+		time_js_next_test = nowtime + time_first_execution;
+		console.log("Launch browser notif check: setTimeout is set to launch 'first_execution' function after a wait of time_first_execution="+time_first_execution+". nowtime (time php page generation) = "+nowtime+" time_js_next_check = "+time_js_next_test);
+	} //first run auto check
 
 
-    function first_execution() {
-    	console.log("Call first_execution then set repeat time to time_auto_update = MAIN_BROWSER_NOTIFICATION_FREQUENCY = "+time_auto_update);
-        check_events();	//one check before setting the new time for other checks
-        setInterval(check_events, time_auto_update * 1000); // Set new time to run next check events
-    }
+	function first_execution() {
+		console.log("Call first_execution then set repeat time to time_auto_update = MAIN_BROWSER_NOTIFICATION_FREQUENCY = "+time_auto_update);
+		check_events();	//one check before setting the new time for other checks
+		setInterval(check_events, time_auto_update * 1000); // Set new time to run next check events
+	}
 
-    function check_events() {
-    	if (Notification.permission === "granted")
-    	{
-    	    time_js_next_test += time_auto_update;
-    		console.log("Call ajax to check_events with time_js_next_test = "+time_js_next_test);
+	function check_events() {
+		if (Notification.permission === "granted")
+		{
+			time_js_next_test += time_auto_update;
+			console.log("Call ajax to check_events with time_js_next_test = "+time_js_next_test);
 
-            $.ajax("<?php print DOL_URL_ROOT.'/core/ajax/check_notifications.php'; ?>", {
-                type: "post",   // Usually post or get
-                async: true,
-                data: { time_js_next_test: time_js_next_test, forcechecknow: 1, token: 'notrequired' },
-                dataType: "json",
-                success: function (result) {
-                	//console.log(result);
-                    var arrayofpastreminders = Object.values(result.pastreminders);
-                    if (arrayofpastreminders && arrayofpastreminders.length > 0) {
-	                    console.log("Retrieved "+arrayofpastreminders.length+" reminders to do.");
-                    	var audio = null;
-                        <?php
+			$.ajax("<?php print DOL_URL_ROOT.'/core/ajax/check_notifications.php'; ?>", {
+				type: "post",   // Usually post or get
+				async: true,
+				data: { time_js_next_test: time_js_next_test, forcechecknow: 1, token: 'notrequired' },
+				dataType: "json",
+				success: function (result) {
+					//console.log(result);
+					var arrayofpastreminders = Object.values(result.pastreminders);
+					if (arrayofpastreminders && arrayofpastreminders.length > 0) {
+						console.log("Retrieved "+arrayofpastreminders.length+" reminders to do.");
+						var audio = null;
+						<?php
 						if (!empty($conf->global->AGENDA_REMINDER_BROWSER_SOUND)) {
 							print 'audio = new Audio(\''.DOL_URL_ROOT.'/theme/common/sound/notification_agenda.wav\');';
 						}
@@ -90,70 +103,70 @@ if (!($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root.'/' || $_SERVER['HTTP
 						var listofreminderids = '';
 						var noti = []
 
-                        $.each(arrayofpastreminders, function (index, value) {
-                        	console.log(value);
-                            var url = "notdefined";
-                            var title = "Not defined";
-                            var body = value.label;
-                            if (value.type == 'agenda' && value.location != null && value.location != '') {
-                                body += '\n' + value.location;
-                            }
+						$.each(arrayofpastreminders, function (index, value) {
+							console.log(value);
+							var url = "notdefined";
+							var title = "Not defined";
+							var body = value.label;
+							if (value.type == 'agenda' && value.location != null && value.location != '') {
+								body += '\n' + value.location;
+							}
 
-                            if (value.type == 'agenda' && (value.event_date_start_formated != null || value.event_date_start_formated['event_date_start'] != '')) {
-                                body += '\n' + value.event_date_start_formated;
-                            }
+							if (value.type == 'agenda' && (value.event_date_start_formated != null || value.event_date_start_formated['event_date_start'] != '')) {
+								body += '\n' + value.event_date_start_formated;
+							}
 
-                            if (value.type == 'agenda')
-                            {
-                             	url = '<?php print DOL_URL_ROOT.'/comm/action/card.php?id='; ?>' + value.id_agenda;
-                                title = '<?php print dol_escape_js($langs->trans('EventReminder')) ?>';
-                            }
-                            var extra = {
-                                icon: '<?php print DOL_URL_ROOT.'/theme/common/bell.png'; ?>',
-                                //image: '<?php print DOL_URL_ROOT.'/theme/common/bell.png'; ?>',
-                                body: body,
-                                tag: value.id_agenda,
-                                requireInteraction: true
-                            };
+							if (value.type == 'agenda')
+							{
+								 url = '<?php print DOL_URL_ROOT.'/comm/action/card.php?id='; ?>' + value.id_agenda;
+								title = '<?php print dol_escape_js($langs->trans('EventReminder')) ?>';
+							}
+							var extra = {
+								icon: '<?php print DOL_URL_ROOT.'/theme/common/bell.png'; ?>',
+								//image: '<?php print DOL_URL_ROOT.'/theme/common/bell.png'; ?>',
+								body: body,
+								tag: value.id_agenda,
+								requireInteraction: true
+							};
 
-                            // We release the notify
-                            console.log("Send notification on browser");
-                            noti[index] = new Notification(title, extra);
-                            if (index==0 && audio)
-                            {
-                            	audio.play();
-                            }
+							// We release the notify
+							console.log("Send notification on browser");
+							noti[index] = new Notification(title, extra);
+							if (index==0 && audio)
+							{
+								audio.play();
+							}
 
-                            if (noti[index]) {
-	                            noti[index].onclick = function (event) {
-	                                console.log("A click on notification on browser has been done");
-	                                event.preventDefault(); // prevent the browser from focusing the Notification's tab
-	                                window.focus();
-	                                window.open(url, '_blank');
-	                                noti[index].close();
-	                            };
+							if (noti[index]) {
+								noti[index].onclick = function (event) {
+									console.log("A click on notification on browser has been done");
+									event.preventDefault(); // prevent the browser from focusing the Notification's tab
+									window.focus();
+									window.open(url, '_blank');
+									noti[index].close();
+								};
 
-	                            listofreminderids = (listofreminderids == '' ? '' : listofreminderids + ',') + value.id_reminder
-	                        }
-                        });
+								listofreminderids = (listofreminderids == '' ? '' : listofreminderids + ',') + value.id_reminder
+							}
+						});
 
-                        // Update status of all notifications we sent on browser (listofreminderids)
-                        console.log("Flag notification as done for listofreminderids="+listofreminderids);
+						// Update status of all notifications we sent on browser (listofreminderids)
+						console.log("Flag notification as done for listofreminderids="+listofreminderids);
 						$.ajax("<?php print DOL_URL_ROOT.'/core/ajax/check_notifications.php?action=stopreminder&listofreminderids='; ?>"+listofreminderids, {
-			                type: "post",   // Usually post or get
-			                async: true,
-			                data: { time_js_next_test: time_js_next_test, token: 'notrequired' }
-			            });
-                    } else {
-                    	console.log("No reminder to do found, next search at "+time_js_next_test);
-                    }
-                }
-            });
-        }
-        else
-        {
-        	console.log("Cancel check_events. Useless because javascript Notification.permission is "+Notification.permission+" (blocked manualy or web site is not https).");
-        }
-    }
-    <?php
+							type: "post",   // Usually post or get
+							async: true,
+							data: { time_js_next_test: time_js_next_test, token: 'notrequired' }
+						});
+					} else {
+						console.log("No reminder to do found, next search at "+time_js_next_test);
+					}
+				}
+			});
+		}
+		else
+		{
+			console.log("Cancel check_events. Useless because javascript Notification.permission is "+Notification.permission+" (blocked manualy or web site is not https).");
+		}
+	}
+	<?php
 }

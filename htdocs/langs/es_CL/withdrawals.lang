@@ -79,6 +79,7 @@ PleaseCheckOne=Por favor marque uno solo
 DirectDebitOrderCreated=Orden de débito directo %s creado
 AmountRequested=Monto solicitado
 CreateForSepa=Crear un archivo de débito directo
+ICS=Creditor Identifier CI for direct debit
 END_TO_END=Etiqueta XML SEPA &quot;EndToEndId&quot; - ID única asignada por transacción
 USTRD=Etiqueta XML no estructurada de SEPA
 InfoCreditSubject=Pago de la orden de pago de débito directo %s por el banco

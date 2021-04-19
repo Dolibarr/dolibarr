@@ -30,6 +30,7 @@ OtherSendingsForSameOrder=Tellimusega seotud teised saadetised
 SendingsAndReceivingForSameOrder=Shipments and receipts for this order
 SendingsToValidate=Kinnitamast vajavad saadetised
 StatusSendingCanceled=Tühistatud
+StatusSendingCanceledShort=Tühistatud
 StatusSendingDraft=Mustand
 StatusSendingValidated=Kinnitatud (väljastamisele minevad või juba väljastatud kaubad)
 StatusSendingProcessed=Töödeldud
@@ -65,6 +66,7 @@ ValidateOrderFirstBeforeShipment=You must first validate the order before being 
 # Sending methods
 # ModelDocument
 DocumentModelTyphon=Täiuslikum saatelehtede dokumendi mudel (logo jne)
+DocumentModelStorm=More complete document model for delivery receipts and extrafields compatibility (logo...)
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Konstant EXPEDITION_ADDON_NUMBER on määratlemata
 SumOfProductVolumes=Toodete ruumala summa
 SumOfProductWeights=Toodete kaalude summa

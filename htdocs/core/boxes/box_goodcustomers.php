@@ -62,8 +62,12 @@ class box_goodcustomers extends ModeleBoxes
 		$this->db = $db;
 
 		// disable box for such cases
-		if (!empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) $this->enabled = 0; // disabled by this option
-		if (empty($conf->global->MAIN_BOX_ENABLE_BEST_CUSTOMERS)) $this->enabled = 0; // not enabled by default. Very slow on large database
+		if (!empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) {
+			$this->enabled = 0; // disabled by this option
+		}
+		if (empty($conf->global->MAIN_BOX_ENABLE_BEST_CUSTOMERS)) {
+			$this->enabled = 0; // not enabled by default. Very slow on large database
+		}
 
 		$this->hidden = !($user->rights->societe->lire);
 	}
@@ -86,8 +90,7 @@ class box_goodcustomers extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleGoodCustomers", $max));
 
-		if ($user->rights->societe->lire)
-		{
+		if ($user->rights->societe->lire) {
 			$sql = "SELECT s.rowid, s.nom as name, s.logo, s.code_client, s.code_fournisseur, s.client, s.fournisseur, s.tms as datem, s.status as status,";
 			$sql .= " count(*) as nbfact, sum(".$this->db->ifsql('f.paye=1', '1', '0').") as nbfactpaye";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f";
@@ -99,13 +102,11 @@ class box_goodcustomers extends ModeleBoxes
 
 			dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
 			$result = $this->db->query($sql);
-			if ($result)
-			{
+			if ($result) {
 				$num = $this->db->num_rows($result);
 
 				$line = 0;
-				while ($line < $num)
-				{
+				while ($line < $num) {
 					$objp = $this->db->fetch_object($result);
 					$datem = $this->db->jdate($objp->tms);
 					$thirdpartystatic->id = $objp->rowid;
@@ -142,10 +143,12 @@ class box_goodcustomers extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num == 0) $this->info_box_contents[$line][0] = array(
+				if ($num == 0) {
+					$this->info_box_contents[$line][0] = array(
 					'td' => 'class="center opacitymedium"',
 					'text'=>$langs->trans("NoRecordedCustomers")
-				);
+					);
+				}
 
 				$this->db->free($result);
 			} else {

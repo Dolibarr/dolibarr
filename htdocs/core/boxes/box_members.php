@@ -63,7 +63,9 @@ class box_members extends ModeleBoxes
 
 		// disable module for such cases
 		$listofmodulesforexternal = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
-		if (!in_array('adherent', $listofmodulesforexternal) && !empty($user->socid)) $this->enabled = 0; // disabled for external users
+		if (!in_array('adherent', $listofmodulesforexternal) && !empty($user->socid)) {
+			$this->enabled = 0; // disabled for external users
+		}
 
 		$this->hidden = !($user->rights->adherent->lire);
 	}
@@ -87,10 +89,10 @@ class box_members extends ModeleBoxes
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedMembers", $max));
 
 		if ($user->rights->adherent->lire) {
-			$sql = "SELECT a.rowid, a.lastname, a.firstname, a.societe as company, a.fk_soc,";
+			$sql = "SELECT a.rowid, a.ref, a.lastname, a.firstname, a.societe as company, a.fk_soc,";
 			$sql .= " a.datec, a.tms, a.statut as status, a.datefin as date_end_subscription,";
 			$sql .= ' a.photo, a.email, a.gender, a.morphy,';
-			$sql .= " t.subscription";
+			$sql .= " t.subscription, t.libelle as label";
 			$sql .= " FROM ".MAIN_DB_PREFIX."adherent as a, ".MAIN_DB_PREFIX."adherent_type as t";
 			$sql .= " WHERE a.entity IN (".getEntity('member').")";
 			$sql .= " AND a.fk_adherent_type = t.rowid";
@@ -110,13 +112,17 @@ class box_members extends ModeleBoxes
 					$memberstatic->lastname = $objp->lastname;
 					$memberstatic->firstname = $objp->firstname;
 					$memberstatic->id = $objp->rowid;
-					$memberstatic->ref = $objp->rowid;
+					$memberstatic->ref = $objp->ref;
 					$memberstatic->photo = $objp->photo;
 					$memberstatic->gender = $objp->gender;
 					$memberstatic->email = $objp->email;
 					$memberstatic->morphy = $objp->morphy;
 					$memberstatic->company = $objp->company;
 					$memberstatic->statut = $objp->status;
+					$memberstatic->date_creation = $datec;
+					$memberstatic->date_modification = $datem;
+					$memberstatic->need_subscription = $objp->subscription;
+					$memberstatic->datefin = $this->db->jdate($objp->date_end_subscription);
 
 					if (!empty($objp->fk_soc)) {
 						$memberstatic->socid = $objp->fk_soc;
@@ -151,11 +157,12 @@ class box_members extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num == 0)
+				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center"',
 						'text'=>$langs->trans("NoRecordedCustomers"),
 					);
+				}
 
 				$this->db->free($result);
 			} else {

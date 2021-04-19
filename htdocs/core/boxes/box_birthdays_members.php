@@ -82,27 +82,24 @@ class box_birthdays_members extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleMemberNextBirthdays"));
 
-		if ($user->rights->adherent->lire)
-		{
+		if ($user->rights->adherent->lire) {
 			$tmparray = dol_getdate(dol_now(), true);
 
 			$sql = "SELECT u.rowid, u.firstname, u.lastname, u.birth";
 			$sql .= " FROM ".MAIN_DB_PREFIX."adherent as u";
 			$sql .= " WHERE u.entity IN (".getEntity('adherent').")";
-	  		$sql .= " AND u.statut = 1";
-	  		$sql .= dolSqlDateFilter('u.birth', 0, $tmparray['mon'], 0);
-			$sql .= " ORDER BY u.birth ASC";
+			$sql .= " AND u.statut = 1";
+			$sql .= dolSqlDateFilter('u.birth', 0, $tmparray['mon'], 0);
+			$sql .= " ORDER BY DAY(u.birth) ASC";
 			$sql .= $this->db->plimit($max, 0);
 
 			dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
 			$result = $this->db->query($sql);
-			if ($result)
-			{
+			if ($result) {
 				$num = $this->db->num_rows($result);
 
 				$line = 0;
-				while ($line < $num)
-				{
+				while ($line < $num) {
 					$objp = $this->db->fetch_object($result);
 					$memberstatic->id = $objp->rowid;
 					$memberstatic->firstname = $objp->firstname;
@@ -123,14 +120,16 @@ class box_birthdays_members extends ModeleBoxes
 					);
 
 					/*$this->info_box_contents[$line][] = array(
-                        'td' => 'class="right" width="18"',
-                        'text' => $memberstatic->LibStatut($objp->status, 3)
-                    );*/
+						'td' => 'class="right" width="18"',
+						'text' => $memberstatic->LibStatut($objp->status, 3)
+					);*/
 
 					$line++;
 				}
 
-				if ($num == 0) $this->info_box_contents[$line][0] = array('td' => 'class="center opacitymedium"', 'text'=>$langs->trans("None"));
+				if ($num == 0) {
+					$this->info_box_contents[$line][0] = array('td' => 'class="center opacitymedium"', 'text'=>$langs->trans("None"));
+				}
 
 				$this->db->free($result);
 			} else {

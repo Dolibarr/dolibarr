@@ -7,13 +7,13 @@ IsTokenGenerated=S'ha generat el token?
 NoAccessToken=No es pot accedir al token desat en la base de dades local
 HasAccessToken=S'ha generat un token i s'ha desat en la base de dades local
 NewTokenStored=Token rebut i desat
-ToCheckDeleteTokenOnProvider=Fes clic aqui per comprovar/eliminar l'autorització desada pel proveïdor OAuth %s
+ToCheckDeleteTokenOnProvider=Feu clic aquí per comprovar/eliminar l'autorització desada pel proveïdor OAuth %s
 TokenDeleted=Token eliminat
-RequestAccess=Clica aquí per demanar/renovar l'accés i rebre un nou token per desar
-DeleteAccess=Faci clic aquí per eliminar token
+RequestAccess=Feu clic aquí per a sol·licitar/renovar l'accés i rebre un nou testimoni per a desar
+DeleteAccess=Feu clic aquí per a suprimir el testimoni
 UseTheFollowingUrlAsRedirectURI=Utilitzeu l'URL següent com a URI de redirecció quan creeu les vostres credencials amb el vostre proveïdor de OAuth:
 ListOfSupportedOauthProviders=Introduïu les credencials proporcionades pel vostre proveïdor OAuth2. Només es mostren aquí els proveïdors compatibles OAuth2. Aquests serveis poden ser utilitzats per altres mòduls que necessiten autenticació OAuth2.
-OAuthSetupForLogin=Pàgina per generar un token OAuth
+OAuthSetupForLogin=Pàgina per a generar un token OAuth
 SeePreviousTab=Veure la pestanya anterior
 OAuthIDSecret=OAuth ID i Secret
 TOKEN_REFRESH=Refresc present de token
@@ -27,6 +27,6 @@ OAUTH_GOOGLE_DESC=Aneu a <a class="notasortlink" href="https://console.developer
 OAUTH_GITHUB_NAME=Servei OAuth GitHub
 OAUTH_GITHUB_ID=OAuth GitHub Id
 OAUTH_GITHUB_SECRET=OAuth GitHub Secret
-OAUTH_GITHUB_DESC=Aneu a <a class="notasortlink" href="https://github.com/settings/developers" target="_blank"> a aquesta pàgina </a> i després "Registra una nova aplicació" per crear credencials d'OAuth.
+OAUTH_GITHUB_DESC=Aneu a<a class="notasortlink" href="https://github.com/settings/developers" target="_blank">aquesta pàgina</a> i després a "Registra una aplicació nova" per a crear les credencials d'OAuth
 OAUTH_STRIPE_TEST_NAME=OAuth Stripe Test
 OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live

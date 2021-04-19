@@ -30,7 +30,9 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/takepos.lib.php";
 
 // Security check
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 $langs->loadLangs(array("admin", "cashdesk", "printing"));
 
@@ -41,22 +43,22 @@ $res = 0;
  * Actions
  */
 
-if (GETPOST('action', 'alpha') == 'set')
-{
+if (GETPOST('action', 'alpha') == 'set') {
 	$db->begin();
 
 	dol_syslog("admin/bar");
 
 	$suplement_category = GETPOST('TAKEPOS_SUPPLEMENTS_CATEGORY', 'alpha');
-	if ($suplement_category < 0) $suplement_category = 0;
+	if ($suplement_category < 0) {
+		$suplement_category = 0;
+	}
 
 	$res = dolibarr_set_const($db, "TAKEPOS_SUPPLEMENTS_CATEGORY", $suplement_category, 'chaine', 0, '', $conf->entity);
 	if ($res <= 0) {
 		$error++;
 	}
 
- 	if (!$error)
-	{
+	if (!$error) {
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
@@ -153,8 +155,7 @@ if ($conf->global->TAKEPOS_BAR_RESTAURANT) {
 	print ajax_constantonoff("TAKEPOS_SUPPLEMENTS", array(), $conf->entity, 0, 0, 1, 0);
 	print '</td></tr>';
 
-	if ($conf->global->TAKEPOS_SUPPLEMENTS)
-	{
+	if ($conf->global->TAKEPOS_SUPPLEMENTS) {
 		print '<tr class="oddeven"><td>';
 		print $langs->trans("SupplementCategory");
 		print '</td>';
@@ -187,8 +188,7 @@ if ($conf->global->TAKEPOS_BAR_RESTAURANT) {
 }
 
 if ($conf->global->TAKEPOS_BAR_RESTAURANT) {
-	if ($conf->global->TAKEPOS_QR_MENU)
-	{
+	if ($conf->global->TAKEPOS_QR_MENU) {
 		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 		$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 		print '<br>';
@@ -205,8 +205,7 @@ if ($conf->global->TAKEPOS_BAR_RESTAURANT) {
 		print '</table>';
 	}
 
-	if ($conf->global->TAKEPOS_AUTO_ORDER)
-	{
+	if ($conf->global->TAKEPOS_AUTO_ORDER) {
 		print '<br>';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';

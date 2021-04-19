@@ -358,7 +358,7 @@ VATIntraCheckableOnEUSite=Проверьте идентификатора НДС
 VATIntraManualCheck=Вы также можете проверить его вручную на сайте Европейской Комиссии <a href="%s" target="_blank">%s</a>
 ErrorVATCheckMS_UNAVAILABLE=Проверка невозможна. Сервис проверки не предоставляется государством-членом ЕС (%s).
 NorProspectNorCustomer=Не потенциальный клиент, не клиент
-JuridicalStatus=Тип юридического лица
+JuridicalStatus=Business entity type
 Workforce=Workforce
 Staff=Сотрудники
 ProspectLevelShort=Потенциальный

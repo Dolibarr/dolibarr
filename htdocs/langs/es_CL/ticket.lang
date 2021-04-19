@@ -14,7 +14,6 @@ TypeContact_ticket_internal_CONTRIBUTOR=Colaborador
 TypeContact_ticket_external_SUPPORTCLI=Contacto con el cliente / seguimiento de incidentes
 OriginEmail=Fuente de correo electrónico
 Notify_TICKET_SENTBYMAIL=Enviar mensaje de Ticket por correo electrónico
-NotRead=No leer
 Read=Leer
 NeedMoreInformation=Esperando informacion
 Waiting=Esperando

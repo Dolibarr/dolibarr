@@ -14,7 +14,7 @@ EventsNb=Nombre d'événements
 ListOfActions=Liste des événements
 EventReports=Rapport des évènements
 Location=Lieu
-ToUserOfGroup=Assigné à tout utilisateur du groupe
+ToUserOfGroup=Événement assigné à tout utilisateur du groupe
 EventOnFullDay=Événement sur la(les) journée(s)
 MenuToDoActions=Événements incomplets
 MenuDoneActions=Événements terminés
@@ -130,7 +130,7 @@ AgendaUrlOptions4=<b>logint=%s</b>pour limiter l'export aux actions assignées �
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> pour restreindre aux événements associés au projet <b>__PROJECT_ID__</b>.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> pour exclure les événements automatiques.
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> pour inclure les événements de type congé.
-AgendaShowBirthdayEvents=Afficher les anniversaires de contacts
+AgendaShowBirthdayEvents=Anniversaires de contacts
 AgendaHideBirthdayEvents=Masquer les anniversaires de contacts
 Busy=Occupé
 ExportDataset_event1=Liste des événements de l'agenda
@@ -152,6 +152,7 @@ ActionType=Type événement
 DateActionBegin=Date début événément
 ConfirmCloneEvent=Êtes-vous sûr de vouloir cloner cet événement <b>%s</b> ?
 RepeatEvent=Evénement répétitif
+OnceOnly=Une seule fois
 EveryWeek=Chaque semaine
 EveryMonth=Chaque mois
 DayOfMonth=Jour du mois
@@ -160,10 +161,9 @@ DateStartPlusOne=Date de début + 1 heure
 SetAllEventsToTodo=Réglez tous les événements à "A faire"
 SetAllEventsToInProgress=Définir tous les événements à "En cours"
 SetAllEventsToFinished=Définir tous les événements sur "Terminés"
-ReminderTime=Délai de rappel avant l'événement
+ReminderTime=Période de rappel avant l'événement
 TimeType=Type de durée
 ReminderType=Type de rappel
-AddReminder=Créer une notification de rappel automatique pour cet évènement
-ErrorReminderActionCommCreation=Erreur lors de la création de la notification de rappel de cet événement
-BrowserPush=Notification navigateur
-EventReminder=Rappel événement
+AddReminder=Créer une notification de rappel automatique pour cet événement
+ErrorReminderActionCommCreation=Erreur lors de la création de la notification de rappel pour cet événement
+BrowserPush=Notification par Popup navigateur

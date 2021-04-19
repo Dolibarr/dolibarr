@@ -31,10 +31,8 @@ TicketDictType=Opgaver - Typer
 TicketDictCategory=Opgave - Grupper
 TicketDictSeverity=Opgave - Sværhedsgrader
 TicketDictResolution=Opgave - Afsluttet
-TicketTypeShortBUGSOFT=Funktionssvigt logik
-TicketTypeShortBUGHARD=Funktionssvigt udstyr
-TicketTypeShortCOM=Kommercielt spørgsmål
 
+TicketTypeShortCOM=Kommercielt spørgsmål
 TicketTypeShortHELP=Anmodning om hjælp
 TicketTypeShortISSUE=Problem, fejl eller problemer
 TicketTypeShortREQUEST=Skift eller anmodning om forbedring
@@ -44,7 +42,7 @@ TicketTypeShortOTHER=Andre
 TicketSeverityShortLOW=Lav
 TicketSeverityShortNORMAL=Normal
 TicketSeverityShortHIGH=Høj
-TicketSeverityShortBLOCKING=Kritiske / Blokering
+TicketSeverityShortBLOCKING=Kritisk, blokering
 
 ErrorBadEmailAddress=Felt '%s' forkert
 MenuTicketMyAssign=Mine opgaver
@@ -60,7 +58,6 @@ OriginEmail=Email kilde
 Notify_TICKET_SENTBYMAIL=Send opgaver besked via Email
 
 # Status
-NotRead=Ikke læst
 Read=Læs
 Assigned=Tildelt
 InProgress=I gang
@@ -126,6 +123,7 @@ TicketsActivatePublicInterfaceHelp=Offentlig grænseflade tillader alle besøgen
 TicketsAutoAssignTicket=Tildel automatisk brugeren, der oprettede opgaven
 TicketsAutoAssignTicketHelp=Når du opretter en opgave, kan brugeren automatisk tildeles opgaven.
 TicketNumberingModules=Opgave nummerering modul
+TicketsModelModule=Dokumentskabeloner til billetter
 TicketNotifyTiersAtCreation=Underret tredjepart ved oprettelsen
 TicketsDisableCustomerEmail=Deaktiver altid Emails, når en opgave oprettes fra den offentlige grænseflade
 TicketsPublicNotificationNewMessage=Send e-mail (s), når en ny besked tilføjes
@@ -164,7 +162,7 @@ TicketCategory=Gruppe
 SeeTicket=Se opgave
 TicketMarkedAsRead=Opgaven er blevet markeret som læst
 TicketReadOn=Læs videre
-TicketCloseOn=Udløbsdato
+TicketCloseOn=lukke dato
 MarkAsRead=Markér opgaven som læst
 TicketHistory=Opgave historik
 AssignUser=Tildel til bruger
@@ -224,7 +222,7 @@ InitialMessage=Indledende besked
 LinkToAContract=Link til en kontrakt
 TicketPleaseSelectAContract=Vælg en kontrakt
 UnableToCreateInterIfNoSocid=Kan ikke oprette en intervention, når der ikke er defineret nogen tredjepart
-TicketMailExchanges=Email udvekslinger
+TicketMailExchanges=Email udveksling
 TicketInitialMessageModified=Indledende besked ændret
 TicketMessageSuccesfullyUpdated=Meddelelsen er opdateret
 TicketChangeStatus=Skift status
@@ -233,7 +231,6 @@ TicketLogStatusChanged=Status ændret: %s til %s
 TicketNotNotifyTiersAtCreate=Ikke underret firma på create
 Unread=Ulæst
 TicketNotCreatedFromPublicInterface=Ikke tilgængelig. Opgaven blev ikke oprettet fra den offentlige grænseflade.
-PublicInterfaceNotEnabled=Den offentlige grænseflade var ikke aktiveret
 ErrorTicketRefRequired=Opgave reference navn er påkrævet
 
 #

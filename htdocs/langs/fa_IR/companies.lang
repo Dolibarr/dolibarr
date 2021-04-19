@@ -358,7 +358,7 @@ VATIntraCheckableOnEUSite=بررسی شناسۀ م.ب.ا.ا. داخل جامعه
 VATIntraManualCheck=همچنین می‌توانید به‌طور دستی روی وبگاه کمیسیون اروپا بررسی کنید <a href="%s" target="_blank">%s</a>
 ErrorVATCheckMS_UNAVAILABLE=بررسی مقدور نبود. خدمات بررسی برای کشور عضو (%s) ارائه نمی‌شود.
 NorProspectNorCustomer=مشتری‌احتمالی نیست/مشتری نیست
-JuridicalStatus=نوع موجودیت قانونی
+JuridicalStatus=Business entity type
 Workforce=Workforce
 Staff=کارمندان
 ProspectLevelShort=توان‌بالقوه-پتانسیل

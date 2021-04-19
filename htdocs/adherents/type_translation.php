@@ -15,8 +15,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -42,7 +42,9 @@ $ref = GETPOST('ref', 'alphanohtml');
 // Security check
 $fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
 $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 // Security check
 $result = restrictedArea($user, 'adherent', $id, 'adherent_type');
 
@@ -140,13 +142,16 @@ $result = $object->fetch($id);
  */
 
 $title = $langs->trans('MemberTypeCard');
-$helpurl = '';
+
+$help_url = '';
+
 $shortlabel = dol_trunc($object->label, 16);
 
 $title = $langs->trans('MemberType')." ".$shortlabel." - ".$langs->trans('Translation');
-$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 
-llxHeader('', $title, $helpurl);
+$help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios|DE:Modul_Mitglieder';
+
+llxHeader('', $title, $help_url);
 
 $form = new Form($db);
 $formadmin = new FormAdmin($db);
@@ -173,18 +178,17 @@ print dol_get_fiche_end();
 
 
 
-/* ************************************************************************** */
-/*                                                                            */
-/* Barre d'action                                                             */
-/*                                                                            */
-/* ************************************************************************** */
-
+/*
+ * Action bar
+ */
 print "\n<div class=\"tabsAction\">\n";
 
 if ($action == '') {
 	if ($user->rights->produit->creer || $user->rights->service->creer) {
 		print '<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/type_translation.php?action=add&rowid='.$object->id.'">'.$langs->trans("Add").'</a>';
-		if ($cnt_trans > 0) print '<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/type_translation.php?action=edit&rowid='.$object->id.'">'.$langs->trans("Update").'</a>';
+		if ($cnt_trans > 0) {
+			print '<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/type_translation.php?action=edit&rowid='.$object->id.'">'.$langs->trans("Update").'</a>';
+		}
 	}
 }
 
@@ -242,7 +246,9 @@ if ($action == 'edit') {
 			print '</div>';
 		}
 	}
-	if (!$cnt_trans && $action != 'add') print '<div class="opacitymedium">'.$langs->trans('NoTranslation').'</div>';
+	if (!$cnt_trans && $action != 'add') {
+		print '<div class="opacitymedium">'.$langs->trans('NoTranslation').'</div>';
+	}
 }
 
 

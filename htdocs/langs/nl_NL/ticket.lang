@@ -31,10 +31,8 @@ TicketDictType=Types
 TicketDictCategory=Groepen
 TicketDictSeverity=Prioriteit
 TicketDictResolution=Ticket - resolutie
-TicketTypeShortBUGSOFT=Foutmelding
-TicketTypeShortBUGHARD=Storing hardware
-TicketTypeShortCOM=Commerciële vraag
 
+TicketTypeShortCOM=Commerciële vraag
 TicketTypeShortHELP=Verzoek om functionele hulp
 TicketTypeShortISSUE=Probleem of bug
 TicketTypeShortREQUEST=Verander-  of verbeteringsverzoek
@@ -44,7 +42,7 @@ TicketTypeShortOTHER=Overig
 TicketSeverityShortLOW=Laag
 TicketSeverityShortNORMAL=Normaal
 TicketSeverityShortHIGH=Hoog
-TicketSeverityShortBLOCKING=Kritiek/Bokkerend
+TicketSeverityShortBLOCKING=Kritiek, blokkerend
 
 ErrorBadEmailAddress=Veld '%s' foutief
 MenuTicketMyAssign=Mijn tickets
@@ -60,7 +58,6 @@ OriginEmail=E-mail bron
 Notify_TICKET_SENTBYMAIL=Verzend ticketbericht per e-mail
 
 # Status
-NotRead=Niet gelezen
 Read=Gelezen
 Assigned=Toegekend
 InProgress=Reeds bezig
@@ -126,6 +123,7 @@ TicketsActivatePublicInterfaceHelp=Met de openbare interface kunnen bezoekers ti
 TicketsAutoAssignTicket=Wijs automatisch de gebruiker toe die het ticket heeft aangemaakt
 TicketsAutoAssignTicketHelp=Bij het maken van een ticket kan de gebruiker automatisch aan het ticket worden toegewezen.
 TicketNumberingModules=Nummering module voor tickets
+TicketsModelModule=Documentsjablonen voor tickets
 TicketNotifyTiersAtCreation=Breng relatie op de hoogte bij het aanmaken
 TicketsDisableCustomerEmail=Schakel e-mails altijd uit wanneer een ticket wordt gemaakt vanuit de openbare interface
 TicketsPublicNotificationNewMessage=Stuur e-mail (s) wanneer een nieuw bericht is toegevoegd
@@ -233,7 +231,6 @@ TicketLogStatusChanged=Status gewijzigd: %s in %s
 TicketNotNotifyTiersAtCreate=Geen bedrijf melden bij aanmaken
 Unread=Niet gelezen
 TicketNotCreatedFromPublicInterface=Niet beschikbaar. Ticket is niet gemaakt vanuit de openbare interface.
-PublicInterfaceNotEnabled=Publieke interface was niet ingeschakeld
 ErrorTicketRefRequired=Naam van ticket is vereist
 
 #

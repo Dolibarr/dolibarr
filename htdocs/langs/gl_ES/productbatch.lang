@@ -1,6 +1,6 @@
 # ProductBATCH language file - en_US - ProductBATCH
 ManageLotSerial=Usar numeración por lote/serie
-ProductStatusOnBatch=Se (é preciso lote/serie)
+ProductStatusOnBatch=Sí (é preciso lote/serie)
 ProductStatusNotOnBatch=Non (non é preciso lote/serie)
 ProductStatusOnBatchShort=Sí
 ProductStatusNotOnBatchShort=Non

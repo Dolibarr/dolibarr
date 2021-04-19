@@ -16,3 +16,4 @@ Journals=Diarios Contables
 JournalFinancial=Diarios Financieros
 AssignDedicatedAccountingAccount=Nueva cuenta para asignar
 InvoiceLabel=Etiqueta de la factura
+ACCOUNTING_LIMIT_LIST_VENTILATION=Maximum number of lines on list and bind page (recommended: 50)

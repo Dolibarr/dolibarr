@@ -31,10 +31,8 @@ TicketDictType=Tiket - Jenis
 TicketDictCategory=Tiket - Grup
 TicketDictSeverity=Tiket - Tingkat Permasalahan
 TicketDictResolution=Tiket - Resolusi
-TicketTypeShortBUGSOFT=Logika Tidak Berfungsi 
-TicketTypeShortBUGHARD=Materi Tidak Berfungsi
-TicketTypeShortCOM=Pertanyaan komersial
 
+TicketTypeShortCOM=Pertanyaan komersial
 TicketTypeShortHELP=Permintaan bantuan fungsional
 TicketTypeShortISSUE=Masalah, bug, atau masalah
 TicketTypeShortREQUEST=Ubah atau tingkatkan permintaan
@@ -44,7 +42,7 @@ TicketTypeShortOTHER=Lainnya
 TicketSeverityShortLOW=Rendah
 TicketSeverityShortNORMAL=Normal
 TicketSeverityShortHIGH=Tinggi
-TicketSeverityShortBLOCKING=Kritis/Memblokir
+TicketSeverityShortBLOCKING=Critical, Blocking
 
 ErrorBadEmailAddress=Bidang '%s' salah
 MenuTicketMyAssign=Tiket saya
@@ -60,7 +58,6 @@ OriginEmail=Sumber email
 Notify_TICKET_SENTBYMAIL=Kirim pesan tiket melalui email
 
 # Status
-NotRead=Tidak membaca
 Read=Baca
 Assigned=Ditugaskan
 InProgress=Sedang berlangsung
@@ -126,6 +123,7 @@ TicketsActivatePublicInterfaceHelp=Antarmuka publik memungkinkan setiap pengunju
 TicketsAutoAssignTicket=Secara otomatis menetapkan pengguna yang membuat tiket
 TicketsAutoAssignTicketHelp=Saat membuat tiket, pengguna dapat secara otomatis ditugaskan ke tiket.
 TicketNumberingModules=Modul penomoran tiket
+TicketsModelModule=Document templates for tickets
 TicketNotifyTiersAtCreation=Beri tahu pihak ketiga saat membuat
 TicketsDisableCustomerEmail=Selalu nonaktifkan email saat tiket dibuat dari antarmuka publik
 TicketsPublicNotificationNewMessage=Kirim email saat pesan baru ditambahkan
@@ -233,7 +231,6 @@ TicketLogStatusChanged=Status berubah: %s menjadi %s
 TicketNotNotifyTiersAtCreate=Tidak memberi tahu perusahaan saat membuat
 Unread=Belum dibaca
 TicketNotCreatedFromPublicInterface=Tidak tersedia. Tiket tidak dibuat dari antarmuka publik.
-PublicInterfaceNotEnabled=Antarmuka publik tidak diaktifkan
 ErrorTicketRefRequired=Diperlukan nama referensi tiket
 
 #

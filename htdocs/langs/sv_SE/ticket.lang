@@ -31,10 +31,8 @@ TicketDictType=Biljett - Typer
 TicketDictCategory=Biljett - Grupper
 TicketDictSeverity=Ticket - Severiteter
 TicketDictResolution=Ticket - Resolution
-TicketTypeShortBUGSOFT=Programfel
-TicketTypeShortBUGHARD=Hårdvarufel
-TicketTypeShortCOM=Kommersiell fråga
 
+TicketTypeShortCOM=Kommersiell fråga
 TicketTypeShortHELP=Request for functionnal help
 TicketTypeShortISSUE=Issue, bug or problem
 TicketTypeShortREQUEST=Change or enhancement request
@@ -44,7 +42,7 @@ TicketTypeShortOTHER=Andra
 TicketSeverityShortLOW=Låg
 TicketSeverityShortNORMAL=Vanligt
 TicketSeverityShortHIGH=Hög
-TicketSeverityShortBLOCKING=Kritisk / Blockering
+TicketSeverityShortBLOCKING=Critical, Blocking
 
 ErrorBadEmailAddress=Fältet '%s' felaktigt
 MenuTicketMyAssign=Mina biljetter
@@ -60,7 +58,6 @@ OriginEmail=E-postkälla
 Notify_TICKET_SENTBYMAIL=Skicka biljettmeddelande via e-post
 
 # Status
-NotRead=Inte läst
 Read=Läsa
 Assigned=Tilldelad
 InProgress=Pågående
@@ -126,6 +123,7 @@ TicketsActivatePublicInterfaceHelp=Offentligt gränssnitt tillåter alla besöka
 TicketsAutoAssignTicket=Tilldela automatiskt användaren som skapade biljetten
 TicketsAutoAssignTicketHelp=När du skapar en biljett kan användaren automatiskt tilldelas biljetten.
 TicketNumberingModules=Biljettnummermodul
+TicketsModelModule=Document templates for tickets
 TicketNotifyTiersAtCreation=Meddela tredje part vid skapandet
 TicketsDisableCustomerEmail=Avaktivera alltid e-postmeddelanden när en biljett skapas från det offentliga gränssnittet
 TicketsPublicNotificationNewMessage=Send email(s) when a new message is added
@@ -233,7 +231,6 @@ TicketLogStatusChanged=Status ändrad: %s till %s
 TicketNotNotifyTiersAtCreate=Meddela inte företaget på create
 Unread=Oläst
 TicketNotCreatedFromPublicInterface=Not available. Ticket was not created from public interface.
-PublicInterfaceNotEnabled=Public interface was not enabled
 ErrorTicketRefRequired=Ticket reference name is required
 
 #

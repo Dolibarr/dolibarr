@@ -35,7 +35,9 @@ $action = GETPOST('action', 'aZ09');
 
 // Security check
 $socid = GETPOST("socid", "int");
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'banque', '', '', '');
 
 /*
@@ -55,12 +57,10 @@ print dol_get_fiche_head($head, 'info', $langs->trans("VariousPayment"), -1, $ob
 
 $morehtmlref = '<div class="refidno">';
 // Project
-if (!empty($conf->projet->enabled))
-{
+if (!empty($conf->projet->enabled)) {
 	$langs->load("projects");
 	$morehtmlref .= $langs->trans('Project').' : ';
-	if ($user->rights->banque->modifier && 0)
-	{
+	if ($user->rights->banque->modifier && 0) {
 		if ($action != 'classify') {
 			$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 		}

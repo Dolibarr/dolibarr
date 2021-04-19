@@ -358,7 +358,7 @@ VATIntraCheckableOnEUSite=Periksa ID PPN intra-Komunitas di situs web Komisi Ero
 VATIntraManualCheck=Anda juga dapat memeriksa secara manual di situs web Komisi Eropa <a href="%s" target="_blank"> %s </a>
 ErrorVATCheckMS_UNAVAILABLE=Periksa tidak mungkin. Layanan cek tidak disediakan oleh negara anggota (%s).
 NorProspectNorCustomer=Bukan prospek, bukan pelanggan
-JuridicalStatus=Jenis Badan Hukum
+JuridicalStatus=Business entity type
 Workforce=Workforce
 Staff=karyawan
 ProspectLevelShort=Potensi

@@ -141,11 +141,12 @@ OrderByEMail=Correo
 OrderByWWW=En línea
 OrderByPhone=Teléfono
 # Documents models
-PDFEinsteinDescription=Una plantilla de orden completo 
-PDFEratostheneDescription=Una plantilla de orden completa
+PDFEinsteinDescription=Un modelo de pedido completo (implementación anterior de la plantilla Eratosthene)
+PDFEratostheneDescription=Un modelo de pedido completo
 PDFEdisonDescription=Modelo de pedido simple
-PDFProformaDescription=Una plantilla de factura Proforma completa
+PDFProformaDescription=Un modelo de factura Proforma completo
 CreateInvoiceForThisCustomer=Facturar pedidos
+CreateInvoiceForThisSupplier=Facturar pedidos
 NoOrdersToInvoice=Sin pedidos facturables
 CloseProcessedOrdersAutomatically=Clasificar automáticamente como "Procesados" los pedidos seleccionados.
 OrderCreation=Creación pedido

@@ -22,7 +22,9 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
-if (!defined("NOCSRFCHECK")) define("NOCSRFCHECK", '1');
+if (!defined("NOCSRFCHECK")) {
+	define("NOCSRFCHECK", '1');
+}
 
 require '../master.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php'; // Include SOAP
@@ -36,8 +38,7 @@ dol_syslog("Call Dolibarr webservices interfaces");
 $langs->load("main");
 
 // Enable and test if module web services is enabled
-if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
-{
+if (empty($conf->global->MAIN_MODULE_WEBSERVICES)) {
 	$langs->load("admin");
 	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
 	print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
@@ -56,12 +57,12 @@ $server->wsdl->schemaTargetNamespace = $ns;
 
 // Define WSDL Authentication object
 $server->wsdl->addComplexType(
-		'authentication',
-		'complexType',
-		'struct',
-		'all',
-		'',
-		array(
+	'authentication',
+	'complexType',
+	'struct',
+	'all',
+	'',
+	array(
 				'dolibarrkey' => array('name'=>'dolibarrkey', 'type'=>'xsd:string'),
 				'sourceapplication' => array('name'=>'sourceapplication', 'type'=>'xsd:string'),
 				'login' => array('name'=>'login', 'type'=>'xsd:string'),
@@ -71,12 +72,12 @@ $server->wsdl->addComplexType(
 );
 // Define WSDL Return object
 $server->wsdl->addComplexType(
-		'result',
-		'complexType',
-		'struct',
-		'all',
-		'',
-		array(
+	'result',
+	'complexType',
+	'struct',
+	'all',
+	'',
+	array(
 				'result_code' => array('name'=>'result_code', 'type'=>'xsd:string'),
 				'result_label' => array('name'=>'result_label', 'type'=>'xsd:string'),
 		)
@@ -120,27 +121,30 @@ $extrafield_line_array = null;
 if (is_array($extrafields) && count($extrafields) > 0) {
 	$extrafield_line_array = array();
 }
-if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
-{
-	foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
-	{
+if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
+	foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label) {
 		//$value=$object->array_options["options_".$key];
 		$type = $extrafields->attributes[$elementtype]['type'][$key];
-		if ($type == 'date' || $type == 'datetime') {$type = 'xsd:dateTime'; }
-		else {$type = 'xsd:string'; }
+		if ($type == 'date' || $type == 'datetime') {
+			$type = 'xsd:dateTime';
+		} else {
+			$type = 'xsd:string';
+		}
 		$extrafield_line_array['options_'.$key] = array('name'=>'options_'.$key, 'type'=>$type);
 	}
 }
-if (is_array($extrafield_line_array)) $line_fields = array_merge($line_fields, $extrafield_line_array);
+if (is_array($extrafield_line_array)) {
+	$line_fields = array_merge($line_fields, $extrafield_line_array);
+}
 
 // Define other specific objects
 $server->wsdl->addComplexType(
-		'line',
-		'complexType',
-		'struct',
-		'all',
-		'',
-		$line_fields
+	'line',
+	'complexType',
+	'struct',
+	'all',
+	'',
+	$line_fields
 );
 
 /*$server->wsdl->addComplexType(
@@ -159,12 +163,12 @@ $server->wsdl->addComplexType(
 		'tns:line'
 );*/
 $server->wsdl->addComplexType(
-		'LinesArray2',
-		'complexType',
-		'array',
-		'sequence',
-		'',
-		array(
+	'LinesArray2',
+	'complexType',
+	'array',
+	'sequence',
+	'',
+	array(
 				'line' => array(
 						'name' => 'line',
 						'type' => 'tns:line',
@@ -224,26 +228,29 @@ $extrafield_array = null;
 if (is_array($extrafields) && count($extrafields) > 0) {
 	$extrafield_array = array();
 }
-if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
-{
-	foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
-	{
+if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
+	foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label) {
 		//$value=$object->array_options["options_".$key];
 		$type = $extrafields->attributes[$elementtype]['type'][$key];
-		if ($type == 'date' || $type == 'datetime') {$type = 'xsd:dateTime'; }
-		else {$type = 'xsd:string'; }
+		if ($type == 'date' || $type == 'datetime') {
+			$type = 'xsd:dateTime';
+		} else {
+			$type = 'xsd:string';
+		}
 		$extrafield_array['options_'.$key] = array('name'=>'options_'.$key, 'type'=>$type);
 	}
 }
-if (is_array($extrafield_array)) $order_fields = array_merge($order_fields, $extrafield_array);
+if (is_array($extrafield_array)) {
+	$order_fields = array_merge($order_fields, $extrafield_array);
+}
 
 $server->wsdl->addComplexType(
-		'order',
-		'complexType',
-		'struct',
-		'all',
-		'',
-		$order_fields
+	'order',
+	'complexType',
+	'struct',
+	'all',
+	'',
+	$order_fields
 );
 
 /*
@@ -263,12 +270,12 @@ $server->wsdl->addComplexType(
 		'tns:order'
 );*/
 $server->wsdl->addComplexType(
-		'OrdersArray2',
-		'complexType',
-		'array',
-		'sequence',
-		'',
-		array(
+	'OrdersArray2',
+	'complexType',
+	'array',
+	'sequence',
+	'',
+	array(
 				'order' => array(
 						'name' => 'order',
 						'type' => 'tns:order',
@@ -289,58 +296,58 @@ $styleuse = 'encoded'; // encoded/literal/literal wrapped
 
 // Register WSDL
 $server->register(
-		'getOrder',
-		array('authentication'=>'tns:authentication', 'id'=>'xsd:string', 'ref'=>'xsd:string', 'ref_ext'=>'xsd:string'), // Entry values
-		array('result'=>'tns:result', 'order'=>'tns:order'), // Exit values
-		$ns,
-		$ns.'#getOrder',
-		$styledoc,
-		$styleuse,
-		'WS to get a particular invoice'
+	'getOrder',
+	array('authentication'=>'tns:authentication', 'id'=>'xsd:string', 'ref'=>'xsd:string', 'ref_ext'=>'xsd:string'), // Entry values
+	array('result'=>'tns:result', 'order'=>'tns:order'), // Exit values
+	$ns,
+	$ns.'#getOrder',
+	$styledoc,
+	$styleuse,
+	'WS to get a particular invoice'
 );
 
 $server->register(
-		'getOrdersForThirdParty',
-		array('authentication'=>'tns:authentication', 'idthirdparty'=>'xsd:string'), // Entry values
-		array('result'=>'tns:result', 'orders'=>'tns:OrdersArray2'), // Exit values
-		$ns,
-		$ns.'#getOrdersForThirdParty',
-		$styledoc,
-		$styleuse,
-		'WS to get all orders of a third party'
+	'getOrdersForThirdParty',
+	array('authentication'=>'tns:authentication', 'idthirdparty'=>'xsd:string'), // Entry values
+	array('result'=>'tns:result', 'orders'=>'tns:OrdersArray2'), // Exit values
+	$ns,
+	$ns.'#getOrdersForThirdParty',
+	$styledoc,
+	$styleuse,
+	'WS to get all orders of a third party'
 );
 
 $server->register(
-		'createOrder',
-		array('authentication'=>'tns:authentication', 'order'=>'tns:order'), // Entry values
-		array('result'=>'tns:result', 'id'=>'xsd:string', 'ref'=>'xsd:string'), // Exit values
-		$ns,
-		$ns.'#createOrder',
-		$styledoc,
-		$styleuse,
-		'WS to create an order'
+	'createOrder',
+	array('authentication'=>'tns:authentication', 'order'=>'tns:order'), // Entry values
+	array('result'=>'tns:result', 'id'=>'xsd:string', 'ref'=>'xsd:string'), // Exit values
+	$ns,
+	$ns.'#createOrder',
+	$styledoc,
+	$styleuse,
+	'WS to create an order'
 );
 
 $server->register(
-		'updateOrder',
-		array('authentication'=>'tns:authentication', 'order'=>'tns:order'), // Entry values
-		array('result'=>'tns:result', 'id'=>'xsd:string', 'ref'=>'xsd:string', 'ref_ext'=>'xsd:string'), // Exit values
-		$ns,
-		$ns.'#updateOrder',
-		$styledoc,
-		$styleuse,
-		'WS to update an order'
+	'updateOrder',
+	array('authentication'=>'tns:authentication', 'order'=>'tns:order'), // Entry values
+	array('result'=>'tns:result', 'id'=>'xsd:string', 'ref'=>'xsd:string', 'ref_ext'=>'xsd:string'), // Exit values
+	$ns,
+	$ns.'#updateOrder',
+	$styledoc,
+	$styleuse,
+	'WS to update an order'
 );
 
 $server->register(
-		'validOrder',
-		array('authentication'=>'tns:authentication', 'id'=>'xsd:string', 'id_warehouse'=>'xsd:string'), // Entry values
-		array('result'=>'tns:result'), // Exit values
-		$ns,
-		$ns.'#validOrder',
-		$styledoc,
-		$styleuse,
-		'WS to valid an order'
+	'validOrder',
+	array('authentication'=>'tns:authentication', 'id'=>'xsd:string', 'id_warehouse'=>'xsd:string'), // Entry values
+	array('result'=>'tns:result'), // Exit values
+	$ns,
+	$ns.'#validOrder',
+	$styledoc,
+	$styleuse,
+	'WS to valid an order'
 );
 
 /**
@@ -354,51 +361,49 @@ $server->register(
  */
 function getOrder($authentication, $id = '', $ref = '', $ref_ext = '')
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	dol_syslog("Function: getOrder login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
 
-	if ($authentication['entity']) $conf->entity = $authentication['entity'];
+	if ($authentication['entity']) {
+		$conf->entity = $authentication['entity'];
+	}
 
 	// Init and check authentication
 	$objectresp = array();
 	$errorcode = ''; $errorlabel = '';
 	$error = 0;
+	$socid = 0;
 
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 
-	if ($fuser->societe_id) $socid = $fuser->societe_id;
+	if ($fuser->socid) {
+		$socid = $fuser->socid;
+	}
 
 	// Check parameters
-	if (!$error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext)))
-	{
+	if (!$error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext))) {
 		$error++;
 		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$fuser->getrights();
 
-		if ($fuser->rights->commande->lire)
-		{
+		if ($fuser->rights->commande->lire) {
 			$order = new Commande($db);
 			$result = $order->fetch($id, $ref, $ref_ext);
-			if ($result > 0)
-			{
+			if ($result > 0) {
 				// Security for external user
-				if ($socid && ($socid != $order->socid))
-				{
+				if ($socid && $socid != $order->socid) {
 					$error++;
-					$errorcode = 'PERMISSION_DENIED'; $errorlabel = $order->socid.'User does not have permission for this request';
+					$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
 				}
 
-				if (!$error)
-				{
+				if (!$error) {
 					$linesresp = array();
 					$i = 0;
-					foreach ($order->lines as $line)
-					{
+					foreach ($order->lines as $line) {
 						//var_dump($line); exit;
 						$linesresp[] = array(
 						'id'=>$line->rowid,
@@ -472,22 +477,19 @@ function getOrder($authentication, $id = '', $ref = '', $ref_ext = '')
 					'lines' => $linesresp
 					));
 				}
-			}
-			else {
+			} else {
 				$error++;
 				$errorcode = 'NOT_FOUND';
 				$errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
 			}
-		}
-		else {
+		} else {
 			$error++;
 			$errorcode = 'PERMISSION_DENIED';
 			$errorlabel = 'User does not have permission for this request';
 		}
 	}
 
-	if ($error)
-	{
+	if ($error) {
 		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 
@@ -504,11 +506,13 @@ function getOrder($authentication, $id = '', $ref = '', $ref_ext = '')
  */
 function getOrdersForThirdParty($authentication, $idthirdparty)
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	dol_syslog("Function: getOrdersForThirdParty login=".$authentication['login']." idthirdparty=".$idthirdparty);
 
-	if ($authentication['entity']) $conf->entity = $authentication['entity'];
+	if ($authentication['entity']) {
+		$conf->entity = $authentication['entity'];
+	}
 
 	// Init and check authentication
 	$objectresp = array();
@@ -516,32 +520,32 @@ function getOrdersForThirdParty($authentication, $idthirdparty)
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 
-	if ($fuser->societe_id) $socid = $fuser->societe_id;
+	if ($fuser->socid) {
+		$socid = $fuser->socid;
+	}
 
 	// Check parameters
-	if (!$error && empty($idthirdparty))
-	{
+	if (!$error && empty($idthirdparty)) {
 		$error++;
 		$errorcode = 'BAD_PARAMETERS'; $errorlabel = 'Parameter id is not provided';
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$linesorders = array();
 
 		$sql = 'SELECT c.rowid as orderid';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'commande as c';
 		$sql .= " WHERE c.entity = ".$conf->entity;
-		if ($idthirdparty != 'all') $sql .= " AND c.fk_soc = ".$db->escape($idthirdparty);
+		if ($idthirdparty != 'all') {
+			$sql .= " AND c.fk_soc = ".$db->escape($idthirdparty);
+		}
 
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $db->num_rows($resql);
 			$i = 0;
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				// En attendant remplissage par boucle
 				$obj = $db->fetch_object($resql);
 
@@ -549,19 +553,16 @@ function getOrdersForThirdParty($authentication, $idthirdparty)
 				$order->fetch($obj->orderid);
 
 				// Sécurité pour utilisateur externe
-				if ($socid && ($socid != $order->socid))
-				{
+				if ($socid && ($socid != $order->socid)) {
 					$error++;
 					$errorcode = 'PERMISSION_DENIED';
 					$errorlabel = $order->socid.' User does not have permission for this request';
 				}
 
-				if (!$error)
-				{
+				if (!$error) {
 					// Define lines of invoice
 					$linesresp = array();
-					foreach ($order->lines as $line)
-					{
+					foreach ($order->lines as $line) {
 						$linesresp[] = array(
 						'id'=>$line->rowid,
 						'type'=>$line->product_type,
@@ -637,15 +638,13 @@ function getOrdersForThirdParty($authentication, $idthirdparty)
 			'orders'=>$linesorders
 
 			);
-		}
-		else {
+		} else {
 			$error++;
 			$errorcode = $db->lasterrno(); $errorlabel = $db->lasterror();
 		}
 	}
 
-	if ($error)
-	{
+	if ($error) {
 		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 
@@ -670,7 +669,9 @@ function createOrder($authentication, $order)
 
 	dol_syslog("Function: createOrder login=".$authentication['login']." socid :".$order['socid']);
 
-	if ($authentication['entity']) $conf->entity = $authentication['entity'];
+	if ($authentication['entity']) {
+		$conf->entity = $authentication['entity'];
+	}
 
 	// Init and check authentication
 	$objectresp = array();
@@ -682,8 +683,7 @@ function createOrder($authentication, $order)
 	// Check parameters
 
 
-	if (!$error)
-	{
+	if (!$error) {
 		$newobject = new Commande($db);
 		$newobject->socid = $order['thirdparty_id'];
 		$newobject->type = $order['type'];
@@ -705,10 +705,8 @@ function createOrder($authentication, $order)
 		// fetch optionals attributes and labels
 		$extrafields = new ExtraFields($db);
 		$extrafields->fetch_name_optionals_label($elementtype, true);
-		if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
-		{
-			foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
-			{
+		if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
+			foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label) {
 				$key = 'options_'.$key;
 				$newobject->array_options[$key] = $order[$key];
 			}
@@ -716,11 +714,13 @@ function createOrder($authentication, $order)
 
 		// Trick because nusoap does not store data with same structure if there is one or several lines
 		$arrayoflines = array();
-		if (isset($order['lines']['line'][0])) $arrayoflines = $order['lines']['line'];
-		else $arrayoflines = $order['lines'];
+		if (isset($order['lines']['line'][0])) {
+			$arrayoflines = $order['lines']['line'];
+		} else {
+			$arrayoflines = $order['lines'];
+		}
 
-		foreach ($arrayoflines as $key => $line)
-		{
+		foreach ($arrayoflines as $key => $line) {
 			// $key can be 'line' or '0','1',...
 			$newline = new OrderLine($db);
 
@@ -743,10 +743,8 @@ function createOrder($authentication, $order)
 			// fetch optionals attributes and labels
 			$extrafields = new ExtraFields($db);
 			$extrafields->fetch_name_optionals_label($elementtype, true);
-			if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
-			{
-				foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
-				{
+			if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
+				foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label) {
 					$key = 'options_'.$key;
 					$newline->array_options[$key] = $line[$key];
 				}
@@ -760,30 +758,25 @@ function createOrder($authentication, $order)
 		dol_syslog("Webservice server_order:: order creation start", LOG_DEBUG);
 		$result = $newobject->create($fuser);
 		dol_syslog('Webservice server_order:: order creation done with $result='.$result, LOG_DEBUG);
-		if ($result < 0)
-		{
+		if ($result < 0) {
 			dol_syslog("Webservice server_order:: order creation failed", LOG_ERR);
 			$error++;
 		}
 
-		if ($order['status'] == 1)   // We want order to have status validated
-		{
+		if ($order['status'] == 1) {   // We want order to have status validated
 			dol_syslog("Webservice server_order:: order validation start", LOG_DEBUG);
 			$result = $newobject->valid($fuser);
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				dol_syslog("Webservice server_order:: order validation failed", LOG_ERR);
 				$error++;
 			}
 		}
 
-		if ($result >= 0)
-		{
+		if ($result >= 0) {
 			dol_syslog("Webservice server_order:: order creation & validation succeeded, commit", LOG_DEBUG);
 			$db->commit();
 			$objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'id'=>$newobject->id, 'ref'=>$newobject->ref);
-		}
-		else {
+		} else {
 			dol_syslog("Webservice server_order:: order creation or validation failed, rollback", LOG_ERR);
 			$db->rollback();
 			$error++;
@@ -792,8 +785,7 @@ function createOrder($authentication, $order)
 		}
 	}
 
-	if ($error)
-	{
+	if ($error) {
 		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 
@@ -813,52 +805,47 @@ function validOrder($authentication, $id = '', $id_warehouse = 0)
 {
 	global $db, $conf, $langs;
 
-	dol_syslog("Function: validOrder login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
+	dol_syslog("Function: validOrder login=".$authentication['login']." id=".$id." id_warehouse=".$id_warehouse);
 
 	// Init and check authentication
 	$objectresp = array();
 	$errorcode = '';
 	$errorlabel = '';
 	$error = 0;
-	if ($authentication['entity']) $conf->entity = $authentication['entity'];
+	if ($authentication['entity']) {
+		$conf->entity = $authentication['entity'];
+	}
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 
-	if (!$error)
-	{
+	if (!$error) {
 		$fuser->getrights();
 
-		if ($fuser->rights->commande->lire)
-		{
+		if ($fuser->rights->commande->lire) {
 			$order = new Commande($db);
-			$result = $order->fetch($id, $ref, $ref_ext);
+			$result = $order->fetch($id);
 
 			$order->fetch_thirdparty();
 			$db->begin();
-			if ($result > 0)
-			{
+			if ($result > 0) {
 				$result = $order->valid($fuser, $id_warehouse);
 
-				if ($result >= 0)
-				{
+				if ($result >= 0) {
 					// Define output language
 					$outputlangs = $langs;
 					$order->generateDocument($order->model_pdf, $outputlangs);
-				}
-				else {
+				} else {
 					$db->rollback();
 					$error++;
 					$errorcode = 'KO';
 					$errorlabel = $order->error;
 				}
-			}
-			else {
+			} else {
 				$db->rollback();
 				$error++;
 				$errorcode = 'KO';
 				$errorlabel = $order->error;
 			}
-		}
-		else {
+		} else {
 			$db->rollback();
 			$error++;
 			$errorcode = 'KO';
@@ -866,11 +853,9 @@ function validOrder($authentication, $id = '', $id_warehouse = 0)
 		}
 	}
 
-	if ($error)
-	{
+	if ($error) {
 		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
-	}
-	else {
+	} else {
 		$db->commit();
 		$objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''));
 	}
@@ -889,11 +874,11 @@ function updateOrder($authentication, $order)
 {
 	global $db, $conf, $langs;
 
-	$now = dol_now();
-
 	dol_syslog("Function: updateOrder login=".$authentication['login']);
 
-	if ($authentication['entity']) $conf->entity = $authentication['entity'];
+	if ($authentication['entity']) {
+		$conf->entity = $authentication['entity'];
+	}
 
 	// Init and check authentication
 	$objectresp = array();
@@ -905,8 +890,7 @@ function updateOrder($authentication, $order)
 		$error++; $errorcode = 'KO'; $errorlabel = "Order id or ref or ref_ext is mandatory.";
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$objectfound = false;
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -919,27 +903,33 @@ function updateOrder($authentication, $order)
 
 			$db->begin();
 
-			if (isset($order['status']))
-			{
-				if ($order['status'] == -1) $result = $object->cancel($fuser);
-				if ($order['status'] == 1)
-				{
+			if (isset($order['status'])) {
+				if ($order['status'] == -1) {
+					$result = $object->cancel($fuser);
+				}
+				if ($order['status'] == 1) {
 					$result = $object->valid($fuser);
-					if ($result >= 0)
-					{
+					if ($result >= 0) {
 						// Define output language
 						$outputlangs = $langs;
 						$object->generateDocument($order->model_pdf, $outputlangs);
 					}
 				}
-				if ($order['status'] == 0)  $result = $object->set_reopen($fuser);
-				if ($order['status'] == 3)  $result = $object->cloture($fuser);
+				if ($order['status'] == 0) {
+					$result = $object->set_reopen($fuser);
+				}
+				if ($order['status'] == 3) {
+					$result = $object->cloture($fuser);
+				}
 			}
 
-			if (isset($order['billed']))
-			{
-				if ($order['billed'])   $result = $object->classifyBilled($fuser);
-				if (!$order['billed']) $result = $object->classifyUnBilled($fuser);
+			if (isset($order['billed'])) {
+				if ($order['billed']) {
+					$result = $object->classifyBilled($fuser);
+				}
+				if (!$order['billed']) {
+					$result = $object->classifyUnBilled($fuser);
+				}
 			}
 
 			$elementtype = 'commande';
@@ -948,13 +938,10 @@ function updateOrder($authentication, $order)
 			// fetch optionals attributes and labels
 			$extrafields = new ExtraFields($db);
 			$extrafields->fetch_name_optionals_label($elementtype, true);
-			if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
-			{
-				foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
-				{
+			if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
+				foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label) {
 					$key = 'options_'.$key;
-					if (isset($order[$key]))
-					{
+					if (isset($order[$key])) {
 						$result = $object->setValueFrom($key, $order[$key], 'commande_extrafields');
 					}
 				}
@@ -965,8 +952,7 @@ function updateOrder($authentication, $order)
 			}
 		}
 
-		if ((!$error) && ($objectfound))
-		{
+		if ((!$error) && ($objectfound)) {
 			$db->commit();
 			$objectresp = array(
 					'result'=>array('result_code'=>'OK', 'result_label'=>''),
@@ -974,9 +960,7 @@ function updateOrder($authentication, $order)
 					'ref'=>$object->ref,
 					'ref_ext'=>$object->ref_ext
 			);
-		}
-		elseif ($objectfound)
-		{
+		} elseif ($objectfound) {
 			$db->rollback();
 			$error++;
 			$errorcode = 'KO';
@@ -988,8 +972,7 @@ function updateOrder($authentication, $order)
 		}
 	}
 
-	if ($error)
-	{
+	if ($error) {
 		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 

@@ -83,9 +83,9 @@ DefaultModelPropalClosed=Standaard sjabloon bij het sluiten van een zakelijk voo
 ProposalCustomerSignature=Schriftelijke aanvaarding , stempel , datum en handtekening
 ProposalsStatisticsSuppliers=Leveranciersoffertes statistieken 
 CaseFollowedBy=Geval gevolgd door
-SignedOnly=Signed only
-IdProposal=Proposal ID
-IdProduct=Product ID
-PrParentLine=Proposal Parent Line
-LineBuyPriceHT=Buy Price Amount net of tax for line
+SignedOnly=Alleen gesigneerd
+IdProposal=Offerte-ID
+IdProduct=Product-ID
+PrParentLine=Voorstel bovenliggende lijn
+LineBuyPriceHT=Koopprijs bedrag exclusief BTW voor regel
 

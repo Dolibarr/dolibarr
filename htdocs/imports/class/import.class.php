@@ -2,6 +2,7 @@
 /* Copyright (C) 2011       Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2020		Ahmad Jamaly Rabib	<rabib@metroworks.co.jp>
+ * Copyright (C) 2021		Frédéric France		<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,15 +88,17 @@ class Import
 		$modulesdir = dolGetModulesDirs();
 
 		// Load list of modules
-		foreach ($modulesdir as $dir)
-		{
+		foreach ($modulesdir as $dir) {
 			$handle = @opendir(dol_osencode($dir));
-			if (!is_resource($handle)) continue;
+			if (!is_resource($handle)) {
+				continue;
+			}
 
 			// Search module files
-			while (($file = readdir($handle)) !== false)
-			{
-				if (!preg_match("/^(mod.*)\.class\.php/i", $file, $reg)) continue;
+			while (($file = readdir($handle)) !== false) {
+				if (!preg_match("/^(mod.*)\.class\.php/i", $file, $reg)) {
+					continue;
+				}
 
 				$modulename = $reg[1];
 
@@ -103,10 +106,16 @@ class Import
 				$enabled = true;
 				$part = strtolower(preg_replace('/^mod/i', '', $modulename));
 				// Adds condition for propal module
-				if ($part === 'propale') $part = 'propal';
-				if (empty($conf->$part->enabled)) $enabled = false;
+				if ($part === 'propale') {
+					$part = 'propal';
+				}
+				if (empty($conf->$part->enabled)) {
+					$enabled = false;
+				}
 
-				if (empty($enabled)) continue;
+				if (empty($enabled)) {
+					continue;
+				}
 
 				// Init load class
 				$file = $dir."/".$modulename.".class.php";
@@ -114,11 +123,11 @@ class Import
 				require_once $file;
 				$module = new $classname($this->db);
 
-				if (isset($module->import_code) && is_array($module->import_code))
-				{
-					foreach ($module->import_code as $r => $value)
-					{
-						if ($filter && ($filter != $module->import_code[$r])) continue;
+				if (isset($module->import_code) && is_array($module->import_code)) {
+					foreach ($module->import_code as $r => $value) {
+						if ($filter && ($filter != $module->import_code[$r])) {
+							continue;
+						}
 
 						// Test if permissions are ok
 						/*$perm=$module->import_permission[$r][0];
@@ -137,10 +146,8 @@ class Import
 
 						// Load lang file
 						$langtoload = $module->getLangFilesArray();
-						if (is_array($langtoload))
-						{
-							foreach ($langtoload as $key)
-							{
+						if (is_array($langtoload)) {
+							foreach ($langtoload as $key) {
 								$langs->load($key);
 							}
 						}
@@ -160,15 +167,15 @@ class Import
 						// Array of fields to import (key=field, value=label)
 						$this->array_import_fields[$i] = $module->import_fields_array[$r];
 						// Array of hidden fields to import (key=field, value=label)
-						$this->array_import_fieldshidden[$i] = $module->import_fieldshidden_array[$r];
+						$this->array_import_fieldshidden[$i] = (isset($module->import_fieldshidden_array[$r]) ? $module->import_fieldshidden_array[$r] : '');
 						// Tableau des entites a exporter (cle=champ, valeur=entite)
 						$this->array_import_entities[$i] = $module->import_entities_array[$r];
 						// Tableau des alias a exporter (cle=champ, valeur=alias)
-						$this->array_import_regex[$i] = $module->import_regex_array[$r];
+						$this->array_import_regex[$i] = (isset($module->import_regex_array[$r]) ? $module->import_regex_array[$r] : '');
 						// Array of columns allowed as UPDATE options
-						$this->array_import_updatekeys[$i] = $module->import_updatekeys_array[$r];
+						$this->array_import_updatekeys[$i] = (isset($module->import_updatekeys_array[$r]) ? $module->import_updatekeys_array[$r] : '');
 						// Array of examples
-						$this->array_import_examplevalues[$i] = $module->import_examplevalues_array[$r];
+						$this->array_import_examplevalues[$i] = (isset($module->import_examplevalues_array[$r]) ? $module->import_examplevalues_array[$r] : '');
 						// Tableau des regles de conversion d'une valeur depuis une autre source (cle=champ, valeur=tableau des regles)
 						$this->array_import_convertvalue[$i] = (isset($module->import_convertvalue_array[$r]) ? $module->import_convertvalue_array[$r] : '');
 						// Sql request to run after import
@@ -246,9 +253,15 @@ class Import
 		dol_syslog("Import.class.php::create");
 
 		// Check parameters
-		if (empty($this->model_name)) { $this->error = 'ErrorWrongParameters'; return -1; }
-		if (empty($this->datatoimport)) { $this->error = 'ErrorWrongParameters'; return -1; }
-		if (empty($this->hexa)) { $this->error = 'ErrorWrongParameters'; return -1; }
+		if (empty($this->model_name)) {
+			$this->error = 'ErrorWrongParameters'; return -1;
+		}
+		if (empty($this->datatoimport)) {
+			$this->error = 'ErrorWrongParameters'; return -1;
+		}
+		if (empty($this->hexa)) {
+			$this->error = 'ErrorWrongParameters'; return -1;
+		}
 
 		$this->db->begin();
 
@@ -259,8 +272,7 @@ class Import
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$this->db->commit();
 			return 1;
 		} else {
@@ -285,11 +297,9 @@ class Import
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			$obj = $this->db->fetch_object($result);
-			if ($obj)
-			{
+			if ($obj) {
 				$this->id                   = $obj->rowid;
 				$this->hexa                 = $obj->field;
 				$this->model_name           = $obj->label;
@@ -319,32 +329,30 @@ class Import
 		$error = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."import_model";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+		if (!$resql) {
+			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+		}
 
-		if (!$error)
-		{
-			if (!$notrigger)
-			{
+		if (!$error) {
+			if (!$notrigger) {
 				/* Not used. This is not a business object. To convert it we must herit from CommonObject
-                // Call trigger
-                $result=$this->call_trigger('IMPORT_DELETE',$user);
-                if ($result < 0) $error++;
-                // End call triggers
-                 */
+				// Call trigger
+				$result=$this->call_trigger('IMPORT_DELETE',$user);
+				if ($result < 0) $error++;
+				// End call triggers
+				 */
 			}
 		}
 
 		// Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}

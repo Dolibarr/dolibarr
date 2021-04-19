@@ -16,8 +16,10 @@ descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Klasificējiet saistīto avota pār
 # Autoclassify purchase order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Saistīto avotu pārdevēju priekšlikuma klasifikācija tiek apmaksāta, kad tiek apstiprināts piegādātāja rēķins (un ja rēķina summa ir tāda pati kā saistītā piedāvājuma kopējā summa)
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Klasificēt saistīto avotu pirkuma pasūtījumu, par kuru jāmaksā, kad tiek apstiprināts piegādātāja rēķins (un ja rēķina summa ir tāda pati kā saistītā pasūtījuma summa)
-descWORKFLOW_BILL_ON_RECEPTION=Classify receptions to "billed" when a linked supplier order is validated
+descWORKFLOW_BILL_ON_RECEPTION=Klasificējiet pieņemjumus uz “rēķinu”, kad ir apstiprināts saistītā piegādātāja pasūtījums
 # Autoclose intervention
-descWORKFLOW_TICKET_CLOSE_INTERVENTION=Close all interventions linked to the ticket when a ticket is closed
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=Kad biļete ir slēgta, aizveriet visas ar biļeti saistītās darbības
 AutomaticCreation=Automātiska veidošana
 AutomaticClassification=Automātiskā klasifikācija
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated

@@ -133,3 +133,4 @@ KeysToUseForUpdates=Schlüssel (Spalte), der zum <b> Aktualisieren </b> der vorh
 NbInsert=Anzahl eingefügter Zeilen: %s
 NbUpdate=Anzahl geänderter Zeilen: %s
 MultipleRecordFoundWithTheseFilters=Mehrere Ergebnisse wurden mit diesen Filtern gefunden: %s
+StocksWithBatch=Lagerbestände und Standort (Lager) von Produkten mit Chargen- / Seriennummer

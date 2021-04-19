@@ -7,13 +7,14 @@ Permission23103 = Hapus pekerjaan terjadwal
 Permission23104 = Jalankan pekerjaan yang Dijadwalkan
 # Admin
 CronSetup=Penyiapan manajemen pekerjaan terjadwal
-URLToLaunchCronJobs=URL untuk memeriksa dan meluncurkan pekerjaan cron yang berkualitas
-OrToLaunchASpecificJob=Atau untuk memeriksa dan meluncurkan pekerjaan tertentu
+URLToLaunchCronJobs=URL to check and launch qualified cron jobs from a browser
+OrToLaunchASpecificJob=Or to check and launch a specific job from a browser
 KeyForCronAccess=Kunci keamanan untuk URL untuk meluncurkan pekerjaan cron
 FileToLaunchCronJobs=Baris perintah untuk memeriksa dan meluncurkan pekerjaan cron yang berkualitas
 CronExplainHowToRunUnix=Pada lingkungan Unix Anda harus menggunakan entri crontab berikut untuk menjalankan baris perintah setiap 5 menit
 CronExplainHowToRunWin=Pada lingkungan Microsoft (tm) Windows Anda dapat menggunakan alat Tugas Terjadwal untuk menjalankan baris perintah setiap 5 menit
 CronMethodDoesNotExists=Kelas %s tidak mengandung metode apa pun %s
+CronMethodNotAllowed=Method %s of class %s is in blacklist of forbidden methods
 CronJobDefDesc=Profil pekerjaan Cron didefinisikan ke dalam file deskriptor modul. Ketika modul diaktifkan, mereka dimuat dan tersedia sehingga Anda dapat mengelola pekerjaan dari menu alat admin %s.
 CronJobProfiles=Daftar profil pekerjaan cron yang telah ditentukan
 # Menu
@@ -46,6 +47,7 @@ CronNbRun=Jumlah peluncuran
 CronMaxRun=Jumlah maksimum peluncuran
 CronEach=Setiap
 JobFinished=Pekerjaan diluncurkan dan selesai
+Scheduled=Scheduled
 #Page card
 CronAdd= Tambahkan pekerjaan
 CronEvery=Jalankan pekerjaan masing-masing
@@ -56,7 +58,7 @@ CronNote=Komentar
 CronFieldMandatory=Bidang %s wajib diisi
 CronErrEndDateStartDt=Tanggal akhir tidak boleh sebelum tanggal mulai
 StatusAtInstall=Status pada pemasangan modul
-CronStatusActiveBtn=Memungkinkan
+CronStatusActiveBtn=Schedule
 CronStatusInactiveBtn=Nonaktifkan
 CronTaskInactive=Pekerjaan ini dinonaktifkan
 CronId=Indo
@@ -82,3 +84,8 @@ MakeLocalDatabaseDumpShort=Pencadangan basis data lokal
 MakeLocalDatabaseDump=Buat dump basis data lokal. Parameternya adalah: kompresi ('gz' atau 'bz' atau 'tidak ada'), jenis cadangan ('mysql', 'pgsql', 'auto'), 1, 'otomatis' atau nama file yang akan dibuat, jumlah file cadangan yang akan disimpan
 WarningCronDelayed=Perhatian, untuk tujuan kinerja, apa pun tanggal berikutnya pelaksanaan pekerjaan yang diaktifkan, pekerjaan Anda mungkin tertunda hingga maksimum %s jam, sebelum dijalankan.
 DATAPOLICYJob=Pembersih data dan penganonim
+JobXMustBeEnabled=Job %s must be enabled
+# Cron Boxes
+LastExecutedScheduledJob=Last executed scheduled job
+NextScheduledJobExecute=Next scheduled job to execute
+NumberScheduledJobError=Number of scheduled jobs in error

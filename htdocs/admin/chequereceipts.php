@@ -34,14 +34,17 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "companies", "bills", "other", "banks"));
 
-if (!$user->admin)
-  accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 $action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
 
 
-if (empty($conf->global->CHEQUERECEIPTS_ADDON)) $conf->global->CHEQUERECEIPTS_ADDON = 'mod_chequereceipts_mint.php';
+if (empty($conf->global->CHEQUERECEIPTS_ADDON)) {
+	$conf->global->CHEQUERECEIPTS_ADDON = 'mod_chequereceipts_mint.php';
+}
 
 
 
@@ -49,37 +52,38 @@ if (empty($conf->global->CHEQUERECEIPTS_ADDON)) $conf->global->CHEQUERECEIPTS_AD
  * Actions
  */
 
-if ($action == 'updateMask')
-{
+if ($action == 'updateMask') {
 	$maskconstchequereceipts = GETPOST('maskconstchequereceipts', 'alpha');
 	$maskchequereceipts = GETPOST('maskchequereceipts', 'alpha');
-	if ($maskconstchequereceipts) $res = dolibarr_set_const($db, $maskconstchequereceipts, $maskchequereceipts, 'chaine', 0, '', $conf->entity);
+	if ($maskconstchequereceipts) {
+		$res = dolibarr_set_const($db, $maskconstchequereceipts, $maskchequereceipts, 'chaine', 0, '', $conf->entity);
+	}
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) {
+		$error++;
+	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
-if ($action == 'setmod')
-{
+if ($action == 'setmod') {
 	dolibarr_set_const($db, "CHEQUERECEIPTS_ADDON", $value, 'chaine', 0, '', $conf->entity);
 }
 
-if ($action == 'set_BANK_CHEQUERECEIPT_FREE_TEXT')
-{
+if ($action == 'set_BANK_CHEQUERECEIPT_FREE_TEXT') {
 	$freetext = GETPOST('BANK_CHEQUERECEIPT_FREE_TEXT', 'restricthtml'); // No alpha here, we want exact string
 
 	$res = dolibarr_set_const($db, "BANK_CHEQUERECEIPT_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
 
-	if (!$res > 0) $error++;
+	if (!($res > 0)) {
+		$error++;
+	}
 
- 	if (!$error)
-	{
+	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
@@ -118,45 +122,43 @@ print '</tr>'."\n";
 
 clearstatcache();
 
-foreach ($dirmodels as $reldir)
-{
+foreach ($dirmodels as $reldir) {
 	$dir = dol_buildpath($reldir."core/modules/cheque/");
-	if (is_dir($dir))
-	{
+	if (is_dir($dir)) {
 		$handle = opendir($dir);
-		if (is_resource($handle))
-		{
-			while (($file = readdir($handle)) !== false)
-			{
-				if (!is_dir($dir.$file) || (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS'))
-				{
+		if (is_resource($handle)) {
+			while (($file = readdir($handle)) !== false) {
+				if (!is_dir($dir.$file) || (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')) {
 					$filebis = $file;
 					$name = substr($file, 4, dol_strlen($file) - 16);
 					$classname = preg_replace('/\.php$/', '', $file);
 					// For compatibility
-					if (!is_file($dir.$filebis))
-					{
+					if (!is_file($dir.$filebis)) {
 						$filebis = $file."/".$file.".modules.php";
 						$classname = "mod_chequereceipt_".$file;
 					}
 					// Check if there is a filter on country
 					preg_match('/\-(.*)_(.*)$/', $classname, $reg);
-					if (!empty($reg[2]) && $reg[2] != strtoupper($mysoc->country_code)) continue;
+					if (!empty($reg[2]) && $reg[2] != strtoupper($mysoc->country_code)) {
+						continue;
+					}
 
 					$classname = preg_replace('/\-.*$/', '', $classname);
-					if (!class_exists($classname) && is_readable($dir.$filebis) && (preg_match('/mod_/', $filebis) || preg_match('/mod_/', $classname)) && substr($filebis, dol_strlen($filebis) - 3, 3) == 'php')
-					{
+					if (!class_exists($classname) && is_readable($dir.$filebis) && (preg_match('/mod_/', $filebis) || preg_match('/mod_/', $classname)) && substr($filebis, dol_strlen($filebis) - 3, 3) == 'php') {
 						// Charging the numbering class
 						require_once $dir.$filebis;
 
 						$module = new $classname($db);
 
 						// Show modules according to features level
-						if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+						if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+							continue;
+						}
+						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+							continue;
+						}
 
-						if ($module->isEnabled())
-						{
+						if ($module->isEnabled()) {
 							print '<tr class="oddeven"><td width="100">';
 							print (empty($module->name) ? $name : $module->name);
 							print "</td><td>\n";
@@ -171,13 +173,15 @@ foreach ($dirmodels as $reldir)
 							if (preg_match('/^Error/', $tmp)) {
 								$langs->load("errors");
 								print '<div class="error">'.$langs->trans($tmp).'</div>';
-							} elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
-							else print $tmp;
+							} elseif ($tmp == 'NotConfigured') {
+								print $langs->trans($tmp);
+							} else {
+								print $tmp;
+							}
 							print '</td>'."\n";
 
 							print '<td class="center">';
-							if ($conf->global->CHEQUERECEIPTS_ADDON == $file || $conf->global->CHEQUERECEIPTS_ADDON.'.php' == $file)
-							{
+							if ($conf->global->CHEQUERECEIPTS_ADDON == $file || $conf->global->CHEQUERECEIPTS_ADDON.'.php' == $file) {
 								print img_picto($langs->trans("Activated"), 'switch_on');
 							} else {
 								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.preg_replace('/\.php$/', '', $file).'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
@@ -194,8 +198,9 @@ foreach ($dirmodels as $reldir)
 							if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
 								$htmltooltip .= $langs->trans("NextValue").': ';
 								if ($nextval) {
-									if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured')
+									if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
 										$nextval = $langs->trans($nextval);
+									}
 									$htmltooltip .= $nextval.'<br>';
 								} else {
 									$htmltooltip .= $langs->trans($module->error).'<br>';
@@ -205,9 +210,10 @@ foreach ($dirmodels as $reldir)
 							print '<td class="center">';
 							print $form->textwithpicto('', $htmltooltip, 1, 0);
 
-							if ($conf->global->CHEQUERECEIPTS_ADDON.'.php' == $file)  // If module is the one used, we show existing errors
-							{
-								if (!empty($module->error)) dol_htmloutput_mesg($module->error, '', 'error', 1);
+							if ($conf->global->CHEQUERECEIPTS_ADDON.'.php' == $file) {  // If module is the one used, we show existing errors
+								if (!empty($module->error)) {
+									dol_htmloutput_mesg($module->error, '', 'error', 1);
+								}
 							}
 
 							print '</td>';
@@ -246,14 +252,15 @@ print "</tr>\n";
 $substitutionarray = pdf_getSubstitutionArray($langs, null, null, 2);
 $substitutionarray['__(AnyTranslationKey)__'] = $langs->trans("Translation");
 $htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
-foreach ($substitutionarray as $key => $val)	$htmltext .= $key.'<br>';
+foreach ($substitutionarray as $key => $val) {
+	$htmltext .= $key.'<br>';
+}
 $htmltext .= '</i>';
 
 print '<tr class="oddeven"><td colspan="2">';
 print $form->textwithpicto($langs->trans("FreeLegalTextOnChequeReceipts"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
 $variablename = 'BANK_CHEQUERECEIPT_FREE_TEXT';
-if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
-{
+if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
 	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
 } else {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';

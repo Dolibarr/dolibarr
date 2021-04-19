@@ -114,8 +114,7 @@ class Tickets extends DolibarrApi
 	{
 		try {
 			return $this->getCommon(0, '', $ref);
-		} catch (Exception $e)
-		{
+		} catch (Exception $e) {
 			   throw $e;
 		}
 	}
@@ -232,6 +231,10 @@ class Tickets extends DolibarrApi
 	public function index($socid = 0, $sortfield = "t.rowid", $sortorder = "ASC", $limit = 100, $page = 0, $sqlfilters = '')
 	{
 		global $db, $conf;
+
+		if (!DolibarrApiAccess::$user->rights->ticket->read) {
+			throw new RestException(403);
+		}
 
 		$obj_ret = array();
 

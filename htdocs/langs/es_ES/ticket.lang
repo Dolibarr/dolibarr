@@ -31,10 +31,8 @@ TicketDictType=Tipo de tickets
 TicketDictCategory=Categorías de tickets
 TicketDictSeverity=Gravedad de los tickets
 TicketDictResolution=Ticket - Resolución
-TicketTypeShortBUGSOFT=Mal funcionamiento del software
-TicketTypeShortBUGHARD=Mal funcionamiento del hardware
-TicketTypeShortCOM=Pregunta comercial
 
+TicketTypeShortCOM=Pregunta comercial
 TicketTypeShortHELP=Solicitud de ayuda funcional
 TicketTypeShortISSUE=Asunto, error o problema
 TicketTypeShortREQUEST=Solicitud de cambio o mejora
@@ -44,7 +42,7 @@ TicketTypeShortOTHER=Otro
 TicketSeverityShortLOW=Bajo
 TicketSeverityShortNORMAL=Normal
 TicketSeverityShortHIGH=Alto
-TicketSeverityShortBLOCKING=Crítico / Bloqueo
+TicketSeverityShortBLOCKING=Crítico, Bloqueo
 
 ErrorBadEmailAddress=El campo '%s' es incorrecto
 MenuTicketMyAssign=Mis tickets
@@ -60,7 +58,6 @@ OriginEmail=Origen E-Mail
 Notify_TICKET_SENTBYMAIL=Enviar mensaje de ticket por e-mail
 
 # Status
-NotRead=No lleído
 Read=Leido
 Assigned=Asignado
 InProgress=En progreso
@@ -126,6 +123,7 @@ TicketsActivatePublicInterfaceHelp=La interfaz pública permite a cualquier visi
 TicketsAutoAssignTicket=Asignar automáticamente al usuario que creó el ticket
 TicketsAutoAssignTicketHelp=Al crear un ticket, el usuario puede asignarse automáticamente al ticket.
 TicketNumberingModules=Módulo de numeración de tickets
+TicketsModelModule=Plantillas de documentos para tickets
 TicketNotifyTiersAtCreation=Notificar a los terceros en la creación
 TicketsDisableCustomerEmail=Desactivar siempre los e-mails al crear tickets desde la interfaz pública
 TicketsPublicNotificationNewMessage=Enviar e-mail(s) cuando se añade un nuevo mensaje
@@ -233,7 +231,6 @@ TicketLogStatusChanged=Estado cambiado: %s a %s
 TicketNotNotifyTiersAtCreate=No notificar a la compañía al crear
 Unread=No leído
 TicketNotCreatedFromPublicInterface=No disponible. El ticket no se creó desde la interfaz pública.
-PublicInterfaceNotEnabled=La interfaz pública no estaba habilitada
 ErrorTicketRefRequired=La referencia del ticket es obligatoria
 
 #

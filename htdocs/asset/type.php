@@ -26,9 +26,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/asset.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/asset/class/asset.class.php';
 require_once DOL_DOCUMENT_ROOT.'/asset/class/asset_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-if (!empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-if (!empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
-if (!empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
+if (!empty($conf->accounting->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+}
+if (!empty($conf->accounting->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
+}
+if (!empty($conf->accounting->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
+}
 
 // Load translation files required by the page
 $langs->load("assets");
@@ -44,12 +50,18 @@ $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder) {  $sortorder = "DESC"; }
-if (!$sortfield) {  $sortfield = "a.label"; }
+if (!$sortorder) {
+	$sortorder = "DESC";
+}
+if (!$sortfield) {
+	$sortfield = "a.label";
+}
 
 $label = GETPOST("label", "alpha");
 $accountancy_code_asset = GETPOST('accountancy_code_asset', 'string');
@@ -67,8 +79,7 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
-{
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 	$type = "";
 	$sall = "";
 }
@@ -86,15 +97,13 @@ $permissiontoadd = $user->rights->asset->setup_advance;
 if ($cancel) {
 	$action = '';
 
-	if (!empty($backtopage))
-	{
+	if (!empty($backtopage)) {
 		header("Location: ".$backtopage);
 		exit;
 	}
 }
 
-if ($action == 'add' && $user->rights->asset->write)
-{
+if ($action == 'add' && $user->rights->asset->write) {
 	$object->label = trim($label);
 	$object->accountancy_code_asset = trim($accountancy_code_asset);
 	$object->accountancy_code_depreciation_asset = trim($accountancy_code_depreciation_asset);
@@ -103,7 +112,9 @@ if ($action == 'add' && $user->rights->asset->write)
 
 	// Fill array 'array_options' with data from add form
 	$ret = $extrafields->setOptionalsFromPost(null, $object);
-	if ($ret < 0) $error++;
+	if ($ret < 0) {
+		$error++;
+	}
 
 	if (empty($object->label)) {
 		$error++;
@@ -121,11 +132,9 @@ if ($action == 'add' && $user->rights->asset->write)
 		}
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$id = $object->create($user);
-		if ($id > 0)
-		{
+		if ($id > 0) {
 			header("Location: ".$_SERVER["PHP_SELF"]);
 			exit;
 		} else {
@@ -137,8 +146,7 @@ if ($action == 'add' && $user->rights->asset->write)
 	}
 }
 
-if ($action == 'update' && $user->rights->asset->write)
-{
+if ($action == 'update' && $user->rights->asset->write) {
 	$object->fetch($rowid);
 
 	$object->oldcopy = clone $object;
@@ -151,13 +159,14 @@ if ($action == 'update' && $user->rights->asset->write)
 
 	// Fill array 'array_options' with data from add form
 	$ret = $extrafields->setOptionalsFromPost(null, $object);
-	if ($ret < 0) $error++;
+	if ($ret < 0) {
+		$error++;
+	}
 
 	$ret = $object->update($user);
 
-	if ($ret >= 0 && !count($object->errors))
-	{
-		setEventMessages($langs->trans("AssetsTypeModified"), null, 'mesgs');
+	if ($ret >= 0 && !count($object->errors)) {
+		setEventMessages($langs->trans("AssetTypeModified"), null, 'mesgs');
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
@@ -166,13 +175,11 @@ if ($action == 'update' && $user->rights->asset->write)
 	exit;
 }
 
-if ($action == 'confirm_delete' && $user->rights->asset->write)
-{
+if ($action == 'confirm_delete' && $user->rights->asset->write) {
 	$object->fetch($rowid);
 	$res = $object->delete();
 
-	if ($res > 0)
-	{
+	if ($res > 0) {
 		setEventMessages($langs->trans("AssetsTypeDeleted"), null, 'mesgs');
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
@@ -189,13 +196,13 @@ if ($action == 'confirm_delete' && $user->rights->asset->write)
 
 $form = new Form($db);
 
-$helpurl = '';
-llxHeader('', $langs->trans("AssetsTypeSetup"), $helpurl);
+$help_url = '';
+
+llxHeader('', $langs->trans("AssetsTypeSetup"), $help_url);
 
 
 // List of asset type
-if (!$rowid && $action != 'create' && $action != 'edit')
-{
+if (!$rowid && $action != 'create' && $action != 'edit') {
 	//print dol_get_fiche_head('');
 
 	$sql = "SELECT d.rowid, d.label as label, d.accountancy_code_asset, d.accountancy_code_depreciation_asset, d.accountancy_code_depreciation_expense, d.note";
@@ -203,8 +210,7 @@ if (!$rowid && $action != 'create' && $action != 'edit')
 	$sql .= " WHERE d.entity IN (".getEntity('asset_type').")";
 
 	$result = $db->query($sql);
-	if ($result)
-	{
+	if ($result) {
 		$num = $db->num_rows($result);
 		$nbtotalofrecords = $num;
 
@@ -213,7 +219,9 @@ if (!$rowid && $action != 'create' && $action != 'edit')
 		$param = '';
 
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-		if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+		if ($optioncss != '') {
+			print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+		}
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 		print '<input type="hidden" name="action" value="list">';
@@ -223,7 +231,7 @@ if (!$rowid && $action != 'create' && $action != 'edit')
 
 		$newcardbutton = dolGetButtonTitle($langs->trans('NewAssetType'), '', 'fa fa-plus-circle', dol_buildpath('/asset/type.php', 1).'?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
 
-		print_barre_liste($langs->trans("AssetsTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'accountancy', 0, $newcardbutton, '', $limit);
+		print_barre_liste($langs->trans("AssetsTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', $limit);
 
 		$moreforfilter = '';
 
@@ -241,8 +249,7 @@ if (!$rowid && $action != 'create' && $action != 'edit')
 
 		$assettype = new AssetType($db);
 
-		while ($i < $num)
-		{
+		while ($i < $num) {
 			$objp = $db->fetch_object($result);
 
 			$assettype->id = $objp->rowid;
@@ -257,8 +264,7 @@ if (!$rowid && $action != 'create' && $action != 'edit')
 			print '<td>'.dol_escape_htmltag($objp->label).'</td>';
 
 			print '<td class="center">';
-			if (!empty($conf->accounting->enabled))
-			{
+			if (!empty($conf->accounting->enabled)) {
 				$accountingaccount = new AccountingAccount($db);
 				$accountingaccount->fetch('', $objp->accountancy_code_asset, 1);
 
@@ -269,8 +275,7 @@ if (!$rowid && $action != 'create' && $action != 'edit')
 			print '</td>';
 
 			print '<td class="center">';
-			if (!empty($conf->accounting->enabled))
-			{
+			if (!empty($conf->accounting->enabled)) {
 				$accountingaccount2 = new AccountingAccount($db);
 				$accountingaccount2->fetch('', $objp->accountancy_code_depreciation_asset, 1);
 
@@ -281,8 +286,7 @@ if (!$rowid && $action != 'create' && $action != 'edit')
 			print '</td>';
 
 			print '<td class="center">';
-			if (!empty($conf->accounting->enabled))
-			{
+			if (!empty($conf->accounting->enabled)) {
 				$accountingaccount3 = new AccountingAccount($db);
 				$accountingaccount3->fetch('', $objp->accountancy_code_depreciation_expense, 1);
 
@@ -292,12 +296,21 @@ if (!$rowid && $action != 'create' && $action != 'edit')
 			}
 			print '</td>';
 
-			if ($user->rights->asset->write)
-				print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
-			else print '<td class="right">&nbsp;</td>';
+			if ($user->rights->asset->write) {
+				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
+			} else {
+				print '<td class="right">&nbsp;</td>';
+			}
 			print "</tr>";
 			$i++;
 		}
+
+		// If no record found
+		if ($num == 0) {
+			$colspan = 6;
+			print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
+		}
+
 		print "</table>";
 		print '</div>';
 
@@ -313,12 +326,13 @@ if (!$rowid && $action != 'create' && $action != 'edit')
 /* Creation mode                                                              */
 /*                                                                            */
 /* ************************************************************************** */
-if ($action == 'create')
-{
+if ($action == 'create') {
 	$object = new AssetType($db);
-	if (!empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($db);
+	if (!empty($conf->accounting->enabled)) {
+		$formaccounting = new FormAccounting($db);
+	}
 
-	print load_fiche_titre($langs->trans("NewAssetType"));
+	print load_fiche_titre($langs->trans("NewAssetType"), '', $object->picto);
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -331,8 +345,7 @@ if ($action == 'create')
 
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" name="label" size="40"></td></tr>';
 
-	if (!empty($conf->accounting->enabled))
-	{
+	if (!empty($conf->accounting->enabled)) {
 		// Accountancy_code_asset
 		print '<tr><td class="titlefield">'.$langs->trans("AccountancyCodeAsset").'</td>';
 		print '<td>';
@@ -375,8 +388,7 @@ if ($action == 'create')
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
-	if (empty($reshook))
-	{
+	if (empty($reshook)) {
 		print $object->showOptionals($extrafields, 'edit', $parameters);
 	}
 	print '<tbody>';
@@ -398,10 +410,8 @@ if ($action == 'create')
 /* View mode                                                                  */
 /*                                                                            */
 /* ************************************************************************** */
-if ($rowid > 0)
-{
-	if ($action != 'edit')
-	{
+if ($rowid > 0) {
+	if ($action != 'edit') {
 		$object = new AssetType($db);
 		$object->fetch($rowid);
 		$object->fetch_optionals();
@@ -409,14 +419,13 @@ if ($rowid > 0)
 		/*
 		 * Confirmation suppression
 		 */
-		if ($action == 'delete')
-		{
+		if ($action == 'delete') {
 			print $form->formconfirm($_SERVER['PHP_SELF']."?rowid=".$object->id, $langs->trans("DeleteAnAssetType"), $langs->trans("ConfirmDeleteAssetType", $object->label), "confirm_delete", '', 0, 1);
 		}
 
 		$head = asset_type_prepare_head($object);
 
-		print dol_get_fiche_head($head, 'card', $langs->trans("AssetType"), -1, 'setup');
+		print dol_get_fiche_head($head, 'card', $langs->trans("AssetType"), -1, 'asset');
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/asset/type.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -431,14 +440,13 @@ if ($rowid > 0)
 		print '<div class="fichecenter">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border centpercent">';
+		print '<table class="border centpercent tableforfield">';
 
 		print '<tr>';
-		print '<td class="nowrap">';
+		print '<td class="nowrap titlefieldcreate">';
 		print $langs->trans("AccountancyCodeAsset");
 		print '</td><td>';
-		if (!empty($conf->accounting->enabled))
-		{
+		if (!empty($conf->accounting->enabled)) {
 			$accountingaccount = new AccountingAccount($db);
 			$accountingaccount->fetch('', $object->accountancy_code_asset, 1);
 
@@ -453,8 +461,7 @@ if ($rowid > 0)
 		print '<td class="nowrap">';
 		print $langs->trans("AccountancyCodeDepreciationAsset");
 		print '</td><td>';
-		if (!empty($conf->accounting->enabled))
-		{
+		if (!empty($conf->accounting->enabled)) {
 			$accountingaccount2 = new AccountingAccount($db);
 			$accountingaccount2->fetch('', $object->accountancy_code_depreciation_asset, 1);
 
@@ -469,8 +476,7 @@ if ($rowid > 0)
 		print '<td class="nowrap">';
 		print $langs->trans("AccountancyCodeDepreciationExpense");
 		print '</td><td>';
-		if (!empty($conf->accounting->enabled))
-		{
+		if (!empty($conf->accounting->enabled)) {
 			$accountingaccount3 = new AccountingAccount($db);
 			$accountingaccount3->fetch('', $object->accountancy_code_depreciation_expense, 1);
 
@@ -499,14 +505,12 @@ if ($rowid > 0)
 		print '<div class="tabsAction">';
 
 		// Edit
-		if ($user->rights->asset->write)
-		{
+		if ($user->rights->asset->write) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&amp;rowid='.$object->id.'">'.$langs->trans("Modify").'</a></div>';
 		}
 
 		// Delete
-		if ($user->rights->asset->write)
-		{
+		if ($user->rights->asset->write) {
 			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&rowid='.$object->id.'">'.$langs->trans("DeleteType").'</a></div>';
 		}
 
@@ -519,12 +523,13 @@ if ($rowid > 0)
 	/*                                                                            */
 	/* ************************************************************************** */
 
-	if ($action == 'edit')
-	{
+	if ($action == 'edit') {
 		$object = new AssetType($db);
 		$object->fetch($rowid);
 		$object->fetch_optionals();
-		if (!empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($db);
+		if (!empty($conf->accounting->enabled)) {
+			$formaccounting = new FormAccounting($db);
+		}
 
 		$head = asset_type_prepare_head($object);
 
@@ -537,12 +542,11 @@ if ($rowid > 0)
 
 		print '<table class="border centpercent">';
 
-		print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>'.$object->id.'</td></tr>';
+		print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td>'.$object->id.'</td></tr>';
 
 		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" name="label" size="40" value="'.dol_escape_htmltag($object->label).'"></td></tr>';
 
-		if (!empty($conf->accounting->enabled))
-		{
+		if (!empty($conf->accounting->enabled)) {
 			// Accountancy_code_asset
 			print '<tr><td class="titlefield">'.$langs->trans("AccountancyCodeAsset").'</td>';
 			print '<td>';
@@ -585,8 +589,7 @@ if ($rowid > 0)
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $act, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
-		if (empty($reshook))
-		{
+		if (empty($reshook)) {
 			print $object->showOptionals($extrafields, 'edit', $parameters);
 		}
 

@@ -35,7 +35,9 @@ $langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies'));
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'prelevement', '', '', 'bons');
 
 $type = GETPOST('type', 'aZ09');
@@ -45,7 +47,9 @@ $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -62,8 +66,12 @@ if ($type == 'bank-transfer') {
 
 llxHeader('', $title);
 
-if ($sortorder == "") $sortorder = "DESC";
-if ($sortfield == "") $sortfield = "p.datec";
+if ($sortorder == "") {
+	$sortorder = "DESC";
+}
+if ($sortfield == "") {
+	$sortfield = "p.datec";
+}
 
 $rej = new RejetPrelevement($db, $user, $type);
 $line = new LignePrelevement($db);
@@ -90,13 +98,14 @@ if ($type == 'bank-transfer') {
 } else {
 	$sql .= " AND p.type = 'debit-order'";
 }
-if ($socid) $sql .= " AND s.rowid = ".$socid;
+if ($socid) {
+	$sql .= " AND s.rowid = ".$socid;
+}
 $sql .= $db->order($sortfield, $sortorder);
 $sql .= $db->plimit($limit + 1, $offset);
 
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
 	$num = $db->num_rows($result);
 	$i = 0;
 
@@ -112,8 +121,7 @@ if ($result)
 	print "</tr>\n";
 
 	if ($num) {
-		while ($i < min($num, $limit))
-		{
+		while ($i < min($num, $limit)) {
 			$obj = $db->fetch_object($result);
 
 			print '<tr class="oddeven">';

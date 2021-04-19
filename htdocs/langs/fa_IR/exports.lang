@@ -26,6 +26,8 @@ FieldTitle=عنوان بخش
 NowClickToGenerateToBuildExportFile=حالا نوع فایل را در کادرترکیبی وارد کرده و کلید "تولید" را برای ساخت فایل صادرات کلیک کنید..
 AvailableFormats=انواع‌فایل ممکن
 LibraryShort=کتابخانه
+ExportCsvSeparator=Csv caracter separator
+ImportCsvSeparator=Csv caracter separator
 Step=گام
 FormatedImport=دستیار واردات
 FormatedImportDesc1=این واحد به شما امکان می‌دهد با استفاده از فایل و بدون دانش فنی، با استفاده از یک دستیار داده‌های موجود را روزآمد کرده یا اشیاء جدید به پایگاه‌داده اضافه کنید.
@@ -131,3 +133,4 @@ KeysToUseForUpdates=کلید (ستون) برای استفاده در <b>به‌�
 NbInsert=تعدا سطور درج شده: %s
 NbUpdate=تعداد سطور روزآمد شده: %s
 MultipleRecordFoundWithTheseFilters=ردیف‌های متعددی با این صافی پیدا شد: %s
+StocksWithBatch=Stocks and location (warehouse) of products with batch/serial number

@@ -30,6 +30,7 @@ OtherSendingsForSameOrder=Pengiriman lain untuk pesanan ini
 SendingsAndReceivingForSameOrder=Pengiriman dan kwitansi untuk pesanan ini
 SendingsToValidate=Pengiriman untuk divalidasi
 StatusSendingCanceled=Dibatalkan
+StatusSendingCanceledShort=Dibatalkan
 StatusSendingDraft=Konsep
 StatusSendingValidated=Divalidasi (produk untuk dikirim atau pun sudah dikirim)
 StatusSendingProcessed=Diproses
@@ -65,6 +66,7 @@ ValidateOrderFirstBeforeShipment=Anda harus terlebih dahulu memvalidasi pesanan 
 # Sending methods
 # ModelDocument
 DocumentModelTyphon=Model dokumen yang lebih lengkap untuk tanda terima pengiriman (logo ...)
+DocumentModelStorm=More complete document model for delivery receipts and extrafields compatibility (logo...)
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER Konstan tidak ditentukan
 SumOfProductVolumes=Jumlah volume produk
 SumOfProductWeights=Jumlah bobot produk
