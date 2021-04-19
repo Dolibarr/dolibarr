@@ -47,20 +47,20 @@ class FormAdmin
 	/**
 	 *  Return html select list with available languages (key='en_US', value='United States' for example)
 	 *
-	 *  @param      string		$selected       Language pre-selected
-	 *  @param      string		$htmlname       Name of HTML select
-	 *  @param      int			$showauto       Show 'auto' choice
-	 *  @param      array		$filter         Array of keys to exclude in list (opposite of $onlykeys)
-	 *  @param		string		$showempty		'1'=Add empty value or 'string to show'
-	 *  @param      int			$showwarning    Show a warning if language is not complete
-	 *  @param		int			$disabled		Disable edit of select
-	 *  @param		string		$morecss		Add more css styles
-	 *  @param      int         $showcode       1=Add language code into label at begining, 2=Add language code into label at end
-	 *  @param		int			$forcecombo		Force to use combo box (so no ajax beautify effect)
-	 *  @param		int			$multiselect	Make the combo a multiselect
-	 *  @param		array		$onlykeys		Array of language keys to restrict list with the following keys (opposite of $filter). Example array('fr', 'es', ...)
-	 *  @param		int			$mainlangonly	1=Show only main languages ('fr_FR' no' fr_BE', 'es_ES' not 'es_MX', ...)
-	 *  @return		string						Return HTML select string with list of languages
+	 *  @param      string|array	$selected       Language pre-selected. Can be an array if $multiselect is 1.
+	 *  @param      string			$htmlname       Name of HTML select
+	 *  @param      int				$showauto       Show 'auto' choice
+	 *  @param      array			$filter         Array of keys to exclude in list (opposite of $onlykeys)
+	 *  @param		string			$showempty		'1'=Add empty value or 'string to show'
+	 *  @param      int				$showwarning    Show a warning if language is not complete
+	 *  @param		int				$disabled		Disable edit of select
+	 *  @param		string			$morecss		Add more css styles
+	 *  @param      int         	$showcode       1=Add language code into label at begining, 2=Add language code into label at end
+	 *  @param		int				$forcecombo		Force to use combo box (so no ajax beautify effect)
+	 *  @param		int				$multiselect	Make the combo a multiselect
+	 *  @param		array			$onlykeys		Array of language keys to restrict list with the following keys (opposite of $filter). Example array('fr', 'es', ...)
+	 *  @param		int				$mainlangonly	1=Show only main languages ('fr_FR' no' fr_BE', 'es_ES' not 'es_MX', ...)
+	 *  @return		string							Return HTML select string with list of languages
 	 */
 	public function select_language($selected = '', $htmlname = 'lang_id', $showauto = 0, $filter = null, $showempty = '', $showwarning = 0, $disabled = 0, $morecss = '', $showcode = 0, $forcecombo = 0, $multiselect = 0, $onlykeys = null, $mainlangonly = 0)
 	{
@@ -129,7 +129,7 @@ class FormAdmin
 			}
 
 			$valuetoshow = picto_from_langcode($key, 'class="saturatemedium"').' '.$valuetoshow;
-			if ((string) $selected == (string) $keytouse) {
+			if ((is_string($selected) && (string) $selected == (string) $keytouse) || (is_array($selected) && in_array($keytouse, $selected))) {
 				$out .= '<option value="'.$keytouse.'" selected data-html="'.dol_escape_htmltag($valuetoshow).'">'.$valuetoshow.'</option>';
 			} else {
 				$out .= '<option value="'.$keytouse.'" data-html="'.dol_escape_htmltag($valuetoshow).'">'.$valuetoshow.'</option>';

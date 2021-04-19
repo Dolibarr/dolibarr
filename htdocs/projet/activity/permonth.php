@@ -57,10 +57,6 @@ $socid = 0;
 $result = restrictedArea($user, 'projet', $projectid);
 
 $now = dol_now();
-$nowtmp = dol_getdate($now);
-$nowday = $nowtmp['mday'];
-$nowmonth = $nowtmp['mon'];
-$nowyear = $nowtmp['year'];
 
 $year = GETPOST('reyear') ?GETPOST('reyear', 'int') : (GETPOST("year") ?GETPOST("year", "int") : date("Y"));
 $month = GETPOST('remonth') ?GETPOST('remonth', 'int') : (GETPOST("month") ?GETPOST("month", "int") : date("m"));
@@ -68,7 +64,7 @@ $day = GETPOST('reday') ?GETPOST('reday', 'int') : (GETPOST("day") ?GETPOST("day
 $day = (int) $day;
 $week = GETPOST("week", "int") ?GETPOST("week", "int") : date("W");
 
-$search_categ = GETPOST("search_categ", 'alpha');
+//$search_categ = GETPOST("search_categ", 'alpha');
 $search_usertoprocessid = GETPOST('search_usertoprocessid', 'int');
 $search_task_ref = GETPOST('search_task_ref', 'alpha');
 $search_task_label = GETPOST('search_task_label', 'alpha');
@@ -119,7 +115,7 @@ if ($reshook < 0) {
 // Purge criteria
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 	$action = '';
-	$search_categ = '';
+	//$search_categ = '';
 	$search_usertoprocessid = $user->id;
 	$search_task_ref = '';
 	$search_task_label = '';
@@ -349,9 +345,7 @@ $param .= ($search_task_label ? '&search_task_label='.$search_task_label : '');
 $nav = '<a class="inline-block valignmiddle" href="?year='.$prev_year."&month=".$prev_month."&day=".$prev_day.$param.'">'.img_previous($langs->trans("Previous"))."</a>\n";
 $nav .= " <span id=\"month_name\">".dol_print_date(dol_mktime(0, 0, 0, $month, 1, $year), "%Y").", ".$langs->trans(date('F', mktime(0, 0, 0, $month, 10)))." </span>\n";
 $nav .= '<a class="inline-block valignmiddle" href="?year='.$next_year."&month=".$next_month."&day=".$next_day.$param.'">'.img_next($langs->trans("Next"))."</a>\n";
-//$nav.=" &nbsp; (<a href=\"?year=".$nowyear."&month=".$nowmonth."&day=".$nowday.$param."\">".$langs->trans("Today")."</a>)";
 $nav .= ' '.$form->selectDate(-1, '', 0, 0, 2, "addtime", 1, 1).' ';
-//$nav.=' <input type="submit" name="submitdateselect" class="button" value="'.$langs->trans("Refresh").'">';
 $nav .= ' <button type="submit" name="button_search_x" value="x" class="bordertransp"><span class="fa fa-search"></span></button>';
 
 $picto = 'clock';
@@ -428,18 +422,18 @@ $includeonly = 'hierachyme';
 if (empty($user->rights->user->user->lire)) {
 	$includeonly = array($user->id);
 }
-$moreforfilter .= img_picto($langs->trans('Filter').' '.$langs->trans('User'), 'user').$form->select_dolusers($search_usertoprocessid ? $search_usertoprocessid : $usertoprocess->id, 'search_usertoprocessid', $user->rights->user->user->lire ? 0 : 0, null, 0, $includeonly, null, 0, 0, 0, '', 0, '', 'maxwidth200');
+$moreforfilter .= img_picto($langs->trans('Filter').' '.$langs->trans('User'), 'user', 'class="paddingright"').$form->select_dolusers($search_usertoprocessid ? $search_usertoprocessid : $usertoprocess->id, 'search_usertoprocessid', $user->rights->user->user->lire ? 0 : 0, null, 0, $includeonly, null, 0, 0, 0, '', 0, '', 'maxwidth200');
 $moreforfilter .= '</div>';
 
 if (empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= '<div class="inline-block"></div>';
-	$moreforfilter .= img_picto($langs->trans('Filter').' '.$langs->trans('Project'), 'project').'<input type="text" size="4" name="search_project_ref" class="marginleftonly" value="'.dol_escape_htmltag($search_project_ref).'">';
+	$moreforfilter .= img_picto($langs->trans('Filter').' '.$langs->trans('Project'), 'project', 'class="paddingright"').'<input type="text" name="search_project_ref" class="maxwidth100" value="'.dol_escape_htmltag($search_project_ref).'">';
 	$moreforfilter .= '</div>';
 
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= '<div class="inline-block"></div>';
-	$moreforfilter .= img_picto($langs->trans('Filter').' '.$langs->trans('ThirdParty'), 'company').'<input type="text" size="4" name="search_thirdparty" class="marginleftonly" value="'.dol_escape_htmltag($search_thirdparty).'">';
+	$moreforfilter .= img_picto($langs->trans('Filter').' '.$langs->trans('ThirdParty'), 'company', 'class="paddingright"').'<input type="text" name="search_thirdparty" class="maxwidth100" value="'.dol_escape_htmltag($search_thirdparty).'">';
 	$moreforfilter .= '</div>';
 }
 

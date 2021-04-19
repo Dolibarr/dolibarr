@@ -359,13 +359,13 @@ if ($action == 'execute') {
 
 // List of mass actions available
 $arrayofmassactions = array(
-//'presend'=>$langs->trans("SendByMail"),
-//'builddoc'=>$langs->trans("PDFMerge"),
-	'enable'=>$langs->trans("CronStatusActiveBtn"),
-	'disable'=>$langs->trans("CronStatusInactiveBtn"),
+//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
+//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
+	'enable'=>img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("CronStatusActiveBtn"),
+	'disable'=>img_picto('', 'title_close', 'class="pictofixedwidth"').$langs->trans("CronStatusInactiveBtn"),
 );
 if ($user->rights->cron->delete) {
-	$arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
 if (in_array($massaction, array('presend', 'predelete'))) {
 	$arrayofmassactions = array();

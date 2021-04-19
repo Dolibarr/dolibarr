@@ -103,6 +103,10 @@ class Donations extends DolibarrApi
 	{
 		global $db, $conf;
 
+		if (!DolibarrApiAccess::$user->rights->don->lire) {
+			throw new RestException(401);
+		}
+
 		$obj_ret = array();
 
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
@@ -179,6 +183,7 @@ class Donations extends DolibarrApi
 		if (!DolibarrApiAccess::$user->rights->don->creer) {
 			throw new RestException(401, "Insuffisant rights");
 		}
+
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
 
@@ -247,6 +252,7 @@ class Donations extends DolibarrApi
 		if (!DolibarrApiAccess::$user->rights->don->supprimer) {
 			throw new RestException(401);
 		}
+
 		$result = $this->don->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'Donation not found');
@@ -295,6 +301,7 @@ class Donations extends DolibarrApi
 		if (!DolibarrApiAccess::$user->rights->don->creer) {
 			throw new RestException(401);
 		}
+
 		$result = $this->don->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'Donation not found');

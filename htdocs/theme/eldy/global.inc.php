@@ -116,6 +116,7 @@ body {
 	margin-right: 0;
 	margin-left: 0;
 	font-weight: 400;
+	background-color: var(--colorbackbody);
 	<?php print 'direction: '.$langs->trans("DIRECTION").";\n"; ?>
 }
 
@@ -861,7 +862,7 @@ span.fa.fa-plus-circle.paddingleft {
 
 /* Themes for badges */
 
-	<?php include dol_buildpath($path.'/theme/'.$theme.'/badges.inc.php', 0); ?>
+<?php include dol_buildpath($path.'/theme/'.$theme.'/badges.inc.php', 0); ?>
 
 .borderrightlight
 {
@@ -983,6 +984,19 @@ div.div-for-modal {
 	border: 1px solid #bbb;
 	box-shadow: 2px 2px 20px #ddd;
 	z-index: 100;
+}
+
+div.div-for-modal-topright {
+	/* display: none; */
+	position: fixed;
+	top: 0;
+	right: 0;
+	width:50%;  /* adjust as per your needs */
+	height:250px;   /* adjust as per your needs */
+	background: #fff;
+	border: 1px solid #bbb;
+	box-shadow: 2px 2px 20px #ddd;
+	z-index: 1100;
 }
 
 <?php
@@ -1683,6 +1697,11 @@ td.showDragHandle {
 	z-index: 1001;
 }
 <?php } ?>
+<?php if (!empty($conf->global->THEME_DARKMODEENABLED)) {  ?>
+.side-nav-vert {
+	border-bottom: 1px solid #888;
+}
+<?php } ?>
 
 .side-nav {
 	/*display: block;
@@ -1707,13 +1726,13 @@ div.blockvmenulogo
 	margin-left: 11px;
 	margin-right: 9px;
 	padding: 0;
-	height: <?php echo $disableimages ? '20' : '32'; ?>px;
+	height: <?php echo $disableimages ? '20' : '35'; ?>px;
 	/* width: 100px; */
 	max-width: 100px;
 	vertical-align: middle;
 }
 .backgroundforcompanylogo {
-	background-color: rgba(255,255,255,0.7);
+	background-color: rgba(255,255,255,0.2);
 	border-radius: 4px;
 }
 .menulogocontainer img.mycompany {
@@ -2058,7 +2077,7 @@ span.widthpictotitle.pictotitle {
 	opacity: 0.4;
 }
 .pictofixedwidth {
-	text-align: left;
+	text-align: <?php echo $left; ?>;
 	width: 20px;
 	padding-right: 0;
 }
@@ -2588,7 +2607,7 @@ table.login_table_securitycode tr td {
 }
 
 div.backgroundsemitransparent {
-	background:rgba(255,255,255,0.6);
+	background:rgba(255,255,255,0.68);
 	padding-left: 10px;
 	padding-right: 10px;
 }
@@ -2797,7 +2816,7 @@ a.help:link, a.help:visited, a.help:hover, a.help:active, span.help { text-align
 .helppresentcircle {
 	color: var(--colorbackhmenu1);
 	filter: invert(0.8);
-	margin-left: -7px;
+	margin-<?php echo $left ?>: -7px;
 	display: inline-block;
 	margin-top: -10px;
 	font-size: x-small;
@@ -3092,16 +3111,9 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	text-decoration: none;
 	white-space: nowrap;
 
-	/*border-right: 1px solid #ddd;
-	border-left: 1px solid #ddd;
-	border-top: 1px solid #ddd; */
-	border-right: 1px solid transparent;
-	border-left: 1px solid transparent;
-	border-top: 1px solid transparent;
-	border-bottom: 0px !important;
-
 	background-image: none !important;
 }
+
 .tabactive, a.tab#active {
 	color: var(--colortextbacktab); !important;
 	background: var(--colorbacktabcard1) !important;
@@ -3110,6 +3122,12 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	border-right: 1px solid #CCC !important;
 	border-left: 1px solid #CCC !important;
 	border-top: 3px solid var(--colorbackhmenu1) !important;
+}
+.tabunactive, a.tab#unactive {
+	border-right: 1px solid transparent;
+	border-left: 1px solid transparent;
+	border-top: 1px solid transparent;
+	border-bottom: 0px !important;*/
 }
 a.tab:hover
 {
@@ -3801,7 +3819,7 @@ tr.liste_titre_sel th, th.liste_titre_sel, tr.liste_titre_sel td, td.liste_titre
 	font-family: <?php print $fontlist ?>;
 	font-weight: normal;
 	border-bottom: 1px solid #FDFFFF;
-	text-decoration: underline;
+	/* text-decoration: underline; */
 }
 input.liste_titre {
 	background: transparent;
@@ -5697,7 +5715,7 @@ input.select2-input {
 	-webkit-box-shadow: none !important;
 	box-shadow: none !important;
 	border-radius: 0 !important;
-	color: black;
+	/* color: black; */
 }
 .select2-container-active .select2-choice, .select2-container-active .select2-choices
 {
@@ -6381,12 +6399,13 @@ div.tabsElem a.tab {
 .ticketlargemargin {
 	padding-left: 50px;
 	padding-right: 50px;
-	padding-top: 10px;
+	padding-top: 30px;
 }
 @media only screen and (max-width: 767px)
 {
 	.ticketlargemargin {
 		padding-left: 5px; padding-right: 5px;
+		padding-top: 10px;
 	}
 	.ticketpublicarea {
 		margin-left: 10px;

@@ -232,6 +232,10 @@ class Tickets extends DolibarrApi
 	{
 		global $db, $conf;
 
+		if (!DolibarrApiAccess::$user->rights->ticket->read) {
+			throw new RestException(403);
+		}
+
 		$obj_ret = array();
 
 		if (!$socid && DolibarrApiAccess::$user->socid) {

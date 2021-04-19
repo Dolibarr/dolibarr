@@ -155,6 +155,10 @@ class Proposals extends DolibarrApi
 	{
 		global $db, $conf;
 
+		if (!DolibarrApiAccess::$user->rights->propal->lire) {
+			throw new RestException(401);
+		}
+
 		$obj_ret = array();
 
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
@@ -762,7 +766,7 @@ class Proposals extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$result = $this->propal->cloture(DolibarrApiAccess::$user, $status, $note_private, $notrigger);
+		$result = $this->propal->closeProposal(DolibarrApiAccess::$user, $status, $note_private, $notrigger);
 		if ($result == 0) {
 			throw new RestException(304, 'Error nothing done. May be object is already closed');
 		}

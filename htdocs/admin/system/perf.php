@@ -77,7 +77,11 @@ $test = empty($conf->syslog->enabled);
 if ($test) {
 	print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotSlowedDownByThis");
 } else {
-	print img_picto('', 'warning').' '.$langs->trans("ModuleActivated", $langs->transnoentities("Syslog"));
+	if ($conf->global->SYSLOG_LEVEL > LOG_NOTICE) {
+		print img_picto('', 'warning').' '.$langs->trans("ModuleActivatedWithTooHighLogLevel", $langs->transnoentities("Syslog"));
+	} else {
+		print img_picto('', 'tick.png').' '.$langs->trans("ModuleSyslogActivatedButLevelNotTooVerbose", $langs->transnoentities("Syslog"), $conf->global->SYSLOG_LEVEL);
+	}
 	//print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
 }
 print '<br>';
@@ -100,10 +104,10 @@ print '<strong>'.$langs->trans("ApplicativeCache").'</strong>: ';
 $test = !empty($conf->memcached->enabled);
 if ($test) {
 	if (!empty($conf->global->MEMCACHED_SERVER)) {
-		print img_picto('', 'tick.png').' '.$langs->trans("MemcachedAvailableAndSetup");
+		print $langs->trans("MemcachedAvailableAndSetup");
 		print ' '.$langs->trans("MoreInformation").' <a href="'.dol_buildpath('/memcached/admin/memcached.php', 1).'">Memcached module admin page</a>';
 	} else {
-		print img_picto('', 'warning').' '.$langs->trans("MemcachedModuleAvailableButNotSetup");
+		print $langs->trans("MemcachedModuleAvailableButNotSetup");
 		print ' <a href="'.dol_buildpath('/memcached/admin/memcached.php', 1).'">Memcached module admin page</a>';
 	}
 } else {

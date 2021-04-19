@@ -552,11 +552,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// Load translation files required by the page
 			$langs->loadLangs(array('recruitment'));
 
-			$out = img_picto('', 'globe').' '.$langs->trans("PublicUrl").'<br>';
+			$out = img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("PublicUrl").'</span><br>';
 
 			$url = getPublicJobPositionUrl(0, $object->ref);
-			$out .= '<input type="text" id="recruitmentjobpositionurl" class="quatrevingtpercent" value="'.$url.'">';
-			$out .= '<a href="'.$url.'" target="_blank">'.img_picto('', 'globe').'</a>';
+			$out .= '<div class="urllink"><input type="text" id="recruitmentjobpositionurl" class="quatrevingtpercent" value="'.$url.'">';
+			$out .= '<a href="'.$url.'" target="_blank">'.img_picto('', 'globe').'</a></div>';
 			$out .= ajax_autoselect("recruitmentjobpositionurl", 0);
 
 			print $out;

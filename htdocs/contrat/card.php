@@ -1530,7 +1530,7 @@ if ($action == 'create') {
 					print '<td class="nowrap right">';
 					if ($user->rights->contrat->creer && count($arrayothercontracts) && ($object->statut >= 0)) {
 						print '<!-- link to move service line into another contract -->';
-						print '<a class="reposition" style="padding-left: 5px;" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=move&amp;rowid='.$objp->rowid.'">';
+						print '<a class="reposition marginrightonly" style="padding-left: 5px;" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=move&amp;rowid='.$objp->rowid.'">';
 						print img_picto($langs->trans("MoveToAnotherContract"), 'uparrow');
 						print '</a>';
 					}
@@ -2123,12 +2123,6 @@ if ($action == 'create') {
 			// Show links to link elements
 			$linktoelem = $form->showLinkToObjectBlock($object, null, array('contrat'));
 			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
-
-			// Show direct download link
-			if ($object->statut != Contrat::STATUS_DRAFT && !empty($conf->global->CONTRACT_ALLOW_EXTERNAL_DOWNLOAD)) {
-				print '<br><!-- Link to download main doc -->'."\n";
-				print showDirectDownloadLink($object).'<br>';
-			}
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 

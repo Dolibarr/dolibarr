@@ -326,7 +326,7 @@ if ($object->id > 0) {
 	print '</td>';
 	print '</tr>';
 
-	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled)) && !empty($conf->global->ORDER_MANAGE_MIN_AMOUNT)) {
+	if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled)) && !empty($conf->global->ORDER_MANAGE_MIN_AMOUNT)) {
 		print '<tr class="nowrap">';
 		print '<td>';
 		print $form->editfieldkey("OrderMinAmount", 'supplier_order_min_amount', $object->supplier_order_min_amount, $object, $user->rights->societe->creer);
@@ -406,7 +406,7 @@ if ($object->id > 0) {
 		}
 	}
 
-	if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled)) {
 		// Box proposals
 		$tmp = $object->getOutstandingOrders('supplier');
 		$outstandingOpened = $tmp['opened'];
@@ -427,7 +427,7 @@ if ($object->id > 0) {
 		}
 	}
 
-	if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_invoice->enabled)) {
 		$tmp = $object->getOutstandingBills('supplier');
 		$outstandingOpened = $tmp['opened'];
 		$outstandingTotal = $tmp['total_ht'];
@@ -507,7 +507,7 @@ if ($object->id > 0) {
 	if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
 		$langs->load("products");
 		//Query from product/liste.php
-		$sql = 'SELECT p.rowid, p.ref, p.label, p.fk_product_type, p.entity,';
+		$sql = 'SELECT p.rowid, p.ref, p.label, p.fk_product_type, p.entity, p.tosell as status, p.tobuy as status_buy, p.tobatch as status_batch,';
 		$sql .= ' pfp.tms, pfp.ref_fourn as supplier_ref, pfp.price, pfp.quantity, pfp.unitprice';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'product_fournisseur_price as pfp';
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = pfp.fk_product";
@@ -539,6 +539,9 @@ if ($object->id > 0) {
 				$productstatic->label = $objp->label;
 				$productstatic->type = $objp->fk_product_type;
 				$productstatic->entity = $objp->entity;
+				$productstatic->status = $objp->status;
+				$productstatic->status_buy = $objp->status_buy;
+				$productstatic->status_batch = $objp->status_batch;
 
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">';
@@ -829,7 +832,7 @@ if ($object->id > 0) {
 			}
 		}
 
-		if ($user->rights->fournisseur->commande->creer) {
+		if ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer) {
 			$langs->load("orders");
 			if ($object->status == 1) {
 				print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddOrder").'</a>';
@@ -838,7 +841,7 @@ if ($object->id > 0) {
 			}
 		}
 
-		if ($user->rights->fournisseur->facture->creer) {
+		if ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer) {
 			if (!empty($orders2invoice) && $orders2invoice > 0) {
 				if ($object->status == 1) {
 					// Company is open
@@ -851,7 +854,7 @@ if ($object->id > 0) {
 			}
 		}
 
-		if ($user->rights->fournisseur->facture->creer) {
+		if ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer) {
 			$langs->load("bills");
 			if ($object->status == 1) {
 				print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a>';

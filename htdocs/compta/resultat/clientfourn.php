@@ -371,7 +371,7 @@ if ($modecompta == 'BOOKKEEPING') {
 	print '<tr class="trforbreak"><td colspan="4">'.$langs->trans("CustomersInvoices").'</td></tr>';
 
 	if ($modecompta == 'CREANCES-DETTES') {
-		$sql = "SELECT s.nom as name, s.rowid as socid, sum(f.total) as amount_ht, sum(f.total_ttc) as amount_ttc";
+		$sql = "SELECT s.nom as name, s.rowid as socid, sum(f.total_ht) as amount_ht, sum(f.total_ttc) as amount_ttc";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql .= ", ".MAIN_DB_PREFIX."facture as f";
 		$sql .= " WHERE f.fk_soc = s.rowid";
@@ -1153,7 +1153,7 @@ if ($modecompta == 'BOOKKEEPING') {
 		if ($modecompta == 'CREANCES-DETTES') {
 			// VAT to pay
 			$amount = 0;
-			$sql = "SELECT date_format(f.datef,'%Y-%m') as dm, sum(f.tva) as amount";
+			$sql = "SELECT date_format(f.datef,'%Y-%m') as dm, sum(f.total_tva) as amount";
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 			$sql .= " WHERE f.fk_statut IN (1,2)";
 			if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {

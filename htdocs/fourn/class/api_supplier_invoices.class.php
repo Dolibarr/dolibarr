@@ -102,6 +102,10 @@ class SupplierInvoices extends DolibarrApi
 	{
 		global $db;
 
+		if (!DolibarrApiAccess::$user->rights->fournisseur->facture->lire) {
+			throw new RestException(401);
+		}
+
 		$obj_ret = array();
 
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid

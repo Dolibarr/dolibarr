@@ -119,7 +119,8 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 		if (count($object->fields)) {
 			foreach ($object->fields as $key => $val) {
 				$i++;
-				$texttoinsert .= "\t\t'".$key."' => array('type'=>'".$val['type']."', 'label'=>'".$val['label']."',";
+				$texttoinsert .= "\t\t'".$key."' => array('type'=>'".$val['type']."',";
+				$texttoinsert .= " 'label'=>'".$val['label']."',";
 				$texttoinsert .= " 'enabled'=>'".($val['enabled'] !== '' ? $val['enabled'] : 1)."',";
 				$texttoinsert .= " 'position'=>".($val['position'] !== '' ? $val['position'] : 50).",";
 				$texttoinsert .= " 'notnull'=>".(empty($val['notnull']) ? 0 : $val['notnull']).",";
@@ -144,6 +145,12 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 				}
 				if ($val['css']) {
 					$texttoinsert .= " 'css'=>'".$val['css']."',";
+				}
+				if ($val['cssview']) {
+					$texttoinsert .= " 'cssview'=>'".$val['cssview']."',";
+				}
+				if ($val['csslist']) {
+					$texttoinsert .= " 'csslist'=>'".$val['csslist']."',";
 				}
 				if ($val['help']) {
 					$texttoinsert .= " 'help'=>\"".preg_replace('/"/', '', $val['help'])."\",";

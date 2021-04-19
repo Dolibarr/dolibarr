@@ -28,3 +28,6 @@ SerialNumberAlreadyInUse=Le numéro de série %s est déjà utilisé pour le pro
 TooManyQtyForSerialNumber=Vous ne pouvez avoir qu'un produit %s avec le numéro de série %s
 BatchLotNumberingModules=Modèle de génération et contrôle des numéros de lot
 BatchSerialNumberingModules=Modèle de génération et contrôle des numéros de série
+CustomMasks=Ajoute une option pour définir le masque dans la fiche produit
+LotProductTooltip=Crée un champ dans la fiche produit pour définir un modèle spécifique de numéro de lot
+SNProductTooltip=Crée un champ dans la fiche produit pour définir un modèle spécifique de numéro de série

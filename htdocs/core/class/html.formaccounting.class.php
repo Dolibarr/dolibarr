@@ -275,8 +275,10 @@ class FormAccounting extends Form
 					if ($obj->rowid == $selected) {
 						$out .= ' selected';
 					}
-					$out .= '>'.($maxlen ? dol_trunc($obj->type, $maxlen) : $obj->type);
-					$out .= ' ('.$obj->range_account.')';
+					$out .= '>';
+					$titletoshow = dol_string_nohtmltag(($maxlen ? dol_trunc($obj->type, $maxlen) : $obj->type).' ('.$obj->range_account.')');
+					$out .= dol_escape_htmltag($titletoshow);
+					$out .= '</option>';
 					$i++;
 				}
 				$out .= '</select>';

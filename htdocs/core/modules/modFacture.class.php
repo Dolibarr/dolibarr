@@ -121,6 +121,7 @@ class modFacture extends DolibarrModules
 		$datestart = dol_mktime(23, 0, 0, $arraydate['mon'], $arraydate['mday'], $arraydate['year']);
 		$this->cronjobs = array(
 			0=>array('label'=>'RecurringInvoices', 'jobtype'=>'method', 'class'=>'compta/facture/class/facture-rec.class.php', 'objectname'=>'FactureRec', 'method'=>'createRecurringInvoices', 'parameters'=>'', 'comment'=>'Generate recurring invoices', 'frequency'=>1, 'unitfrequency'=>3600 * 24, 'priority'=>50, 'status'=>1, 'test'=>'$conf->facture->enabled', 'datestart'=>$datestart),
+			1=>array('label'=>'SendEmailsRemindersOnDueDate', 'jobtype'=>'method', 'class'=>'compta/facture/class/facture.class.php', 'objectname'=>'Facture', 'method'=>'sendEmailsReminderOnDueDate', 'parameters'=>"10,all,EmailTemplateCode", 'comment'=>'Send an emails when the unpaid invoices reach a due date + n days (an email template with EmailTemplateCode must exists. the version in the language of the thirdparty will be used in priority)', 'frequency'=>1, 'unitfrequency'=>3600 * 24, 'priority'=>50, 'status'=>0, 'test'=>'$conf->facture->enabled', 'datestart'=>$datestart),
 		);
 
 		// Permissions
@@ -220,8 +221,8 @@ class modFacture extends DolibarrModules
 			's.code_compta_fournisseur'=>'SupplierAccountancyCode',
 			's.tva_intra'=>'VATIntra',
 			'f.rowid'=>"InvoiceId", 'f.ref'=>"InvoiceRef", 'f.ref_client'=>'RefCustomer',
-			'f.type'=>"Type", 'f.datec'=>"InvoiceDateCreation", 'f.datef'=>"DateInvoice", 'f.date_lim_reglement'=>"DateDue", 'f.total'=>"TotalHT",
-			'f.total_ttc'=>"TotalTTC", 'f.tva'=>"TotalVAT", 'f.localtax1'=>'LT1', 'f.localtax2'=>'LT2', 'f.paye'=>"InvoicePaidCompletely", 'f.fk_statut'=>'InvoiceStatus', 'f.close_code'=>'EarlyClosingReason', 'f.close_note'=>'EarlyClosingComment',
+			'f.type'=>"Type", 'f.datec'=>"InvoiceDateCreation", 'f.datef'=>"DateInvoice", 'f.date_lim_reglement'=>"DateDue", 'f.total_ht'=>"TotalHT",
+			'f.total_ttc'=>"TotalTTC", 'f.total_tva'=>"TotalVAT", 'f.localtax1'=>'LT1', 'f.localtax2'=>'LT2', 'f.paye'=>"InvoicePaidCompletely", 'f.fk_statut'=>'InvoiceStatus', 'f.close_code'=>'EarlyClosingReason', 'f.close_note'=>'EarlyClosingComment',
 			'none.rest'=>'Rest',
 			'f.note_private'=>"NotePrivate", 'f.note_public'=>"NotePublic", 'f.fk_user_author'=>'CreatedById', 'uc.login'=>'CreatedByLogin',
 			'f.fk_user_valid'=>'ValidatedById', 'uv.login'=>'ValidatedByLogin', 'pj.ref'=>'ProjectRef', 'pj.title'=>'ProjectLabel', 'fd.rowid'=>'LineId', 'fd.description'=>"LineDescription",
@@ -245,7 +246,7 @@ class modFacture extends DolibarrModules
 			's.rowid'=>'Numeric', 's.nom'=>'Text', 's.code_client'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 'c.code'=>'Text', 'cd.nom'=>'Text', 's.phone'=>'Text', 's.siren'=>'Text',
 			's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text', 's.code_compta'=>'Text', 's.code_compta_fournisseur'=>'Text', 's.tva_intra'=>'Text',
 			'f.rowid'=>'Numeric', 'f.ref'=>"Text", 'f.ref_client'=>'Text', 'f.type'=>"Numeric", 'f.datec'=>"Date", 'f.datef'=>"Date", 'f.date_lim_reglement'=>"Date",
-			'f.total'=>"Numeric", 'f.total_ttc'=>"Numeric", 'f.tva'=>"Numeric", 'f.localtax1'=>'Numeric', 'f.localtax2'=>'Numeric', 'f.paye'=>"Boolean", 'f.fk_statut'=>'Numeric', 'f.close_code'=>'Text', 'f.close_note'=>'Text',
+			'f.total_ht'=>"Numeric", 'f.total_ttc'=>"Numeric", 'f.total_tva'=>"Numeric", 'f.localtax1'=>'Numeric', 'f.localtax2'=>'Numeric', 'f.paye'=>"Boolean", 'f.fk_statut'=>'Numeric', 'f.close_code'=>'Text', 'f.close_note'=>'Text',
 			'none.rest'=>"NumericCompute",
 			'f.note_private'=>"Text", 'f.note_public'=>"Text", 'f.fk_user_author'=>'Numeric', 'uc.login'=>'Text', 'f.fk_user_valid'=>'Numeric', 'uv.login'=>'Text',
 			'pj.ref'=>'Text', 'pj.title'=>'Text', 'fd.rowid'=>'Numeric', 'fd.label'=>'Text', 'fd.description'=>"Text", 'fd.subprice'=>"Numeric", 'fd.tva_tx'=>"Numeric",
@@ -317,8 +318,8 @@ class modFacture extends DolibarrModules
 			's.siren'=>'ProfId1', 's.siret'=>'ProfId2', 's.ape'=>'ProfId3', 's.idprof4'=>'ProfId4', 's.code_compta'=>'CustomerAccountancyCode',
 			's.code_compta_fournisseur'=>'SupplierAccountancyCode', 's.tva_intra'=>'VATIntra',
 			'f.rowid'=>"InvoiceId", 'f.ref'=>"InvoiceRef", 'f.ref_client'=>'RefCustomer',
-			'f.type'=>"Type", 'f.datec'=>"InvoiceDateCreation", 'f.datef'=>"DateInvoice", 'f.date_lim_reglement'=>"DateDue", 'f.total'=>"TotalHT",
-			'f.total_ttc'=>"TotalTTC", 'f.tva'=>"TotalVAT", 'f.localtax1'=>'LT1', 'f.localtax2'=>'LT2', 'f.paye'=>"InvoicePaidCompletely", 'f.fk_statut'=>'InvoiceStatus', 'f.close_code'=>'EarlyClosingReason', 'f.close_note'=>'EarlyClosingComment',
+			'f.type'=>"Type", 'f.datec'=>"InvoiceDateCreation", 'f.datef'=>"DateInvoice", 'f.date_lim_reglement'=>"DateDue", 'f.total_ht'=>"TotalHT",
+			'f.total_ttc'=>"TotalTTC", 'f.total_tva'=>"TotalVAT", 'f.localtax1'=>'LT1', 'f.localtax2'=>'LT2', 'f.paye'=>"InvoicePaidCompletely", 'f.fk_statut'=>'InvoiceStatus', 'f.close_code'=>'EarlyClosingReason', 'f.close_note'=>'EarlyClosingComment',
 			'none.rest'=>'Rest',
 			'f.note_private'=>"NotePrivate", 'f.note_public'=>"NotePublic", 'f.fk_user_author'=>'CreatedById', 'uc.login'=>'CreatedByLogin',
 			'f.fk_user_valid'=>'ValidatedById', 'uv.login'=>'ValidatedByLogin', 'pj.ref'=>'ProjectRef', 'pj.title'=>'ProjectLabel', 'p.rowid'=>'PaymentId', 'p.ref'=>'PaymentRef',
@@ -342,7 +343,7 @@ class modFacture extends DolibarrModules
 			's.rowid'=>'Numeric', 's.nom'=>'Text', 's.code_client'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 'c.code'=>'Text', 'cd.nom'=>'Text', 's.phone'=>'Text', 's.siren'=>'Text',
 			's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text', 's.code_compta'=>'Text', 's.code_compta_fournisseur'=>'Text', 's.tva_intra'=>'Text',
 			'f.rowid'=>"Numeric", 'f.ref'=>"Text", 'f.ref_client'=>'Text', 'f.type'=>"Numeric", 'f.datec'=>"Date", 'f.datef'=>"Date", 'f.date_lim_reglement'=>"Date",
-			'f.total'=>"Numeric", 'f.total_ttc'=>"Numeric", 'f.tva'=>"Numeric", 'f.localtax1'=>'Numeric', 'f.localtax2'=>'Numeric', 'f.paye'=>"Boolean", 'f.fk_statut'=>'Status', 'f.close_code'=>'Text', 'f.close_note'=>'Text',
+			'f.total_ht'=>"Numeric", 'f.total_ttc'=>"Numeric", 'f.total_tva'=>"Numeric", 'f.localtax1'=>'Numeric', 'f.localtax2'=>'Numeric', 'f.paye'=>"Boolean", 'f.fk_statut'=>'Status', 'f.close_code'=>'Text', 'f.close_note'=>'Text',
 			'none.rest'=>'NumericCompute',
 			'f.note_private'=>"Text", 'f.note_public'=>"Text", 'f.fk_user_author'=>'Numeric', 'uc.login'=>'Text', 'f.fk_user_valid'=>'Numeric', 'uv.login'=>'Text',
 			'pj.ref'=>'Text', 'pj.title'=>'Text', 'p.amount'=>'Numeric', 'pf.amount'=>'Numeric', 'p.rowid'=>'Numeric', 'p.ref'=>'Text', 'p.title'=>'Text', 'p.datep'=>'Date', 'p.num_paiement'=>'Numeric',

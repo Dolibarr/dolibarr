@@ -184,6 +184,11 @@ class Website extends CommonObject
 		$tmparray = explode(',', $this->otherlang);
 		if (is_array($tmparray)) {
 			foreach ($tmparray as $key => $val) {
+				// It possible we have empty val here if postparam WEBSITE_OTHERLANG is empty or set like this : 'en,,sv' or 'en,sv,'
+				if (empty(trim($val))) {
+					unset($tmparray[$key]);
+					continue;
+				}
 				$tmparray[$key] = preg_replace('/[_-].*$/', '', trim($val)); // en_US or en-US -> en
 			}
 			$this->otherlang = join(',', $tmparray);
@@ -496,6 +501,11 @@ class Website extends CommonObject
 		$tmparray = explode(',', $this->otherlang);
 		if (is_array($tmparray)) {
 			foreach ($tmparray as $key => $val) {
+				// It possible we have empty val here if postparam WEBSITE_OTHERLANG is empty or set like this : 'en,,sv' or 'en,sv,'
+				if (empty(trim($val))) {
+					unset($tmparray[$key]);
+					continue;
+				}
 				$tmparray[$key] = preg_replace('/[_-].*$/', '', trim($val)); // en_US or en-US -> en
 			}
 			$this->otherlang = join(',', $tmparray);
@@ -1080,6 +1090,12 @@ class Website extends CommonObject
 				fputs($fp, $line);
 			}
 		}
+
+		$line .= "\n-- For Dolibarr v14+ --\n";
+		$line .= "UPDATE llx_website SET fk_default_lang = '".$this->fk_default_lang."' WHERE rowid = __WEBSITE_ID__;\n";
+		$line .= "UPDATE llx_website SET otherlang = '".$this->otherlang."' WHERE rowid = __WEBSITE_ID__;\n";
+		$line .= "\n";
+		fputs($fp, $line);
 
 		fclose($fp);
 		if (!empty($conf->global->MAIN_UMASK)) {

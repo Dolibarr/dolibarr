@@ -60,19 +60,6 @@ print load_fiche_titre($langs->trans("SuppliersOrdersArea"), '', 'supplier_order
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-
-if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This is useless due to the global search combo
-	print '<form method="post" action="list.php">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder nohover centpercent">';
-	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-	print '<tr class="oddeven"><td>';
-	print $langs->trans("SupplierOrder").':</td><td><input type="text" class="flat" name="search_all" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-	print "</table></div></form><br>\n";
-}
-
-
 /*
  * Statistics
  */
@@ -115,7 +102,7 @@ if ($resql) {
 	}
 	$db->free($resql);
 
-	include_once DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder nohover centpercent">';
@@ -185,7 +172,7 @@ if ($resql) {
  * Draft orders
  */
 
-if (!empty($conf->fournisseur->enabled)) {
+if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled)) {
 	$sql = "SELECT c.rowid, c.ref, s.nom as name, s.rowid as socid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";

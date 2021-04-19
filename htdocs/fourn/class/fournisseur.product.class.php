@@ -634,9 +634,10 @@ class ProductFournisseur extends Product
 	 *    @param	string	$sortorder	Sort order
 	 *    @param	int		$limit		Limit
 	 *    @param	int		$offset		Offset
+	 *    @param	int		$socid		Filter on a third party id
 	 *    @return	array				Array of Products with new properties to define supplier price
 	 */
-	public function list_product_fournisseur_price($prodid, $sortfield = '', $sortorder = '', $limit = 0, $offset = 0)
+	public function list_product_fournisseur_price($prodid, $sortfield = '', $sortorder = '', $limit = 0, $offset = 0, $socid = 0)
 	{
 		// phpcs:enable
 		global $conf;
@@ -652,7 +653,8 @@ class ProductFournisseur extends Product
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp, ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."societe as s";
 		$sql .= " WHERE pfp.entity IN (".getEntity('productsupplierprice').")";
 		$sql .= " AND pfp.fk_soc = s.rowid AND pfp.fk_product = p.rowid";
-		$sql .= " AND s.status=1"; // only enabled company selected
+		$sql .= ($socid > 0 ? ' AND pfp.fk_soc = '.((int) $socid) : '');
+		$sql .= " AND s.status = 1"; // only enabled company selected
 		$sql .= " AND pfp.fk_product = ".((int) $prodid);
 		if (empty($sortfield)) {
 			$sql .= " ORDER BY s.nom, pfp.quantity, pfp.price";

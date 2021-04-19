@@ -44,9 +44,17 @@ if ($module == 'propal') {
 } elseif ($module == 'fichinter') {
 	$permission = $user->rights->ficheinter->creer;
 } elseif ($module == 'order_supplier') {
-	$permission = $user->rights->fournisseur->commande->creer;
-} elseif ($module == 'invoice_supplier') {
-	$permission = $user->rights->fournisseur->facture->creer;
+	if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
+		$permission = $user->rights->fournisseur->commande->creer;
+	} else {
+		$permission = $user->rights->supplier_order->creer;
+	}
+} elseif ($module == 'invoice_supplier' && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
+	if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
+		$permission = $user->rights->fournisseur->facture->creer;
+	} else {
+		$permission = $user->rights->supplier_invoice->creer;
+	}
 } elseif ($module == 'project') {
 	$permission = $user->rights->projet->creer;
 } elseif ($module == 'action') {
