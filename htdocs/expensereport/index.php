@@ -75,7 +75,7 @@ $tripandexpense_static = new ExpenseReport($db);
 $childids = $user->getAllChildIds();
 $childids[] = $user->id;
 
-$help_url = "EN:Module_Expense_Reports|FR:Module_Notes_de_frais"; 
+$help_url = "EN:Module_Expense_Reports|FR:Module_Notes_de_frais";
 
 llxHeader('', $langs->trans("ListOfFees"), $help_url);
 
