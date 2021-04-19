@@ -40,7 +40,9 @@ PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb of days before cance
 #
 # Object
 #
+DeletePartnership=Delete a partnership
 PartnershipDedicatedToThisThirdParty=Partnership dedicated to this third party	
+PartnershipDedicatedToThisMember=Partnership dedicated to this member	
 DatePartnershipStart=Start date
 DatePartnershipEnd=End date
 ReasonDecline=Decline reason
@@ -53,17 +55,17 @@ ConfirmClosePartnershipAsk=Are you sure you want to cancel this partnership?
 #
 # Template Mail
 #
-SendingEmailOnPartnershipWillExpire=Partnership will expire
+SendingEmailOnPartnershipWillSoonBeCanceled=Partnership will soon be canceled
 SendingEmailOnPartnershipRefused=Partnership refused
 SendingEmailOnPartnershipAccepted=Partnership accepted
 SendingEmailOnPartnershipCanceled=Partnership canceled
 
-YourPartnershipWillSoonExpireTopic=Partnership expiration
+YourPartnershipWillSoonBeCanceledTopic=Partnership will soon be canceled
 YourPartnershipRefusedTopic=Partnership refused
 YourPartnershipAcceptedTopic=Partnership accepted
 YourPartnershipCanceledTopic=Partnership canceled
 
-YourPartnershipWillSoonExpireContent=We inform you that your partnership will soon expire.
+YourPartnershipWillSoonBeCanceledContent=We inform you that your partnership will soon be canceled (Backlink not found)
 YourPartnershipRefusedContent=We inform you that your partnership request has been refused.
 YourPartnershipAcceptedContent=We inform you that your partnership request has been accepted.
 YourPartnershipCanceledContent=We inform you that your partnership has been canceled.

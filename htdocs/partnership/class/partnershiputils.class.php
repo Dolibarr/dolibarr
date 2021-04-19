@@ -311,7 +311,7 @@ class PartnershipUtils
 							if (!empty($obj->email)) {
 								$emailnotfound .= ($emailnotfound ? ', ' : '').'Email not found for id="'.$fk_partner.'"'."\n";
 							} else {
-								$labeltemplate = '(SendingEmailOnPartnershipWillExpire)';
+								$labeltemplate = '(SendingEmailOnPartnershipWillSoonBeCanceled)';
 
 								dol_syslog("Now we will send an email to partner id=".$fk_partner." with label ".$labeltemplate);
 

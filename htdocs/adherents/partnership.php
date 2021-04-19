@@ -74,18 +74,20 @@ if (!$res) {
 	die("Include of main fails");
 }
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 dol_include_once('/partnership/class/partnership.class.php');
 dol_include_once('/partnership/lib/partnership.lib.php');
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies","partnership", "other"));
+$langs->loadLangs(array("companies","members","partnership", "other"));
 
 // Get parameters
 $id = GETPOST('id', 'int');
+$memberid = GETPOST('rowid', 'int');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -95,20 +97,15 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 //$lineid   = GETPOST('lineid', 'int');
 
-// Security check
-$socid = GETPOST('socid', 'int');
-if (!empty($user->socid)) {
-	$socid = $user->socid;
-}
-
-$societe = new Societe($db);
-if ($socid > 0) {
-	$societe->fetch($socid);
+$member = new Adherent($db);
+if ($memberid > 0) {
+	$member->fetch($memberid);
 }
 
 // Initialize technical objects
 $object 		= new Partnership($db);
 $extrafields 	= new ExtraFields($db);
+$adht 			= new AdherentType($db);
 $diroutputmassaction = $conf->partnership->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('partnershipthirdparty', 'globalcard')); // Note that conf->hooks_modules contains array
 
@@ -139,19 +136,19 @@ $usercanclose 			= $user->rights->partnership->write; // Used by the include of 
 $upload_dir 			= $conf->partnership->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 
-if ($conf->global->PARTNERSHIP_IS_MANAGED_FOR != 'thirdparty') accessforbidden();
+if ($conf->global->PARTNERSHIP_IS_MANAGED_FOR != 'member') accessforbidden();
 if (empty($conf->partnership->enabled)) accessforbidden();
 if (empty($permissiontoread)) accessforbidden();
 if ($action == 'edit' && empty($permissiontoadd)) accessforbidden();
 
-$partnershipid = $object->fetch(0, "", $socid);
+$partnershipid = $object->fetch(0, "", $memberid);
 if (empty($action) && empty($partnershipid)) {
 	$action = 'create';
 }
-if (($action == 'update' || $action == 'edit') && $object->status != $object::STATUS_DRAFT && !empty($user->socid)) accessforbidden();
+if (($action == 'update' || $action == 'edit') && $object->status != $object::STATUS_DRAFT) accessforbidden();
 
-if (empty($socid) && $object) {
-	$socid = $object->fk_soc;
+if (empty($memberid) && $object) {
+	$memberid = $object->fk_member;
 }
 /*
  * Actions
@@ -169,7 +166,7 @@ $date_end = dol_mktime(0, 0, 0, GETPOST('date_partnership_endmonth', 'int'), GET
 if (empty($reshook)) {
 	$error = 0;
 
-	$backtopage = dol_buildpath('/partnership/partnership.php', 1).'?socid='.($socid > 0 ? $socid : '__ID__');
+	$backtopage = dol_buildpath('/partnership/partnership.php', 1).'?rowid='.($memberid > 0 ? $memberid : '__ID__');
 
 	$triggermodname = 'PARTNERSHIP_MODIFY'; // Name of trigger action code to execute when we modify record
 
@@ -183,7 +180,7 @@ if (empty($reshook)) {
 		if (!$error) {
 			$old_start_date = $object->date_partnership_start;
 
-			$object->fk_soc           			= $socid;
+			$object->fk_member           		= $memberid;
 			$object->date_partnership_start   	= (!GETPOST('date_partnership_start')) ? '' : $date_start;
 			$object->date_partnership_end     	= (!GETPOST('date_partnership_end')) ? '' : $date_end;
 			$object->note_public     			= GETPOST('note_public', 'restricthtml');
@@ -262,7 +259,7 @@ if (empty($reshook)) {
 	} elseif ($action == 'confirm_close' || $action == 'update_extras') {
 		include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 
-		header("Location: ".$_SERVER['PHP_SELF']."?socid=".$socid);
+		header("Location: ".$_SERVER['PHP_SELF']."?rowid=".$memberid);
 		exit;
 	}
 
@@ -270,7 +267,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';
 }
 
-$object->fields['fk_soc']['visible'] = 0;
+$object->fields['fk_member']['visible'] = 0;
 if ($object->id > 0 && $object->status == $object::STATUS_REFUSED && empty($action)) $object->fields['reason_decline_or_cancel']['visible'] = 1;
 $object->fields['note_public']['visible'] = 1;
 
@@ -288,56 +285,49 @@ llxHeader('', $title);
 
 $form = new Form($db);
 
-if ($socid) {
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+if ($memberid) {
+	$langs->load("members");
 
-	$langs->load("companies");
-
-	$societe = new Societe($db);
-	$result = $societe->fetch($socid);
+	$member = new Adherent($db);
+	$result = $member->fetch($memberid);
 
 	if (!empty($conf->notification->enabled)) {
 		$langs->load("mails");
 	}
-	$head = societe_prepare_head($societe);
 
-	print dol_get_fiche_head($head, 'partnership', $langs->trans("ThirdParty"), -1, 'company');
+	$adht->fetch($object->typeid);
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+	$head = member_prepare_head($member);
 
-	dol_banner_tab($societe, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom');
+	print dol_get_fiche_head($head, 'partnership', $langs->trans("ThirdParty"), -1, 'user');
+
+	$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
+	dol_banner_tab($member, 'rowid', $linkback);
 
 	print '<div class="fichecenter">';
 
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">';
 
-	if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
-		print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$societe->prefix_comm.'</td></tr>';
+	// Login
+	if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
+		print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$member->login.'&nbsp;</td></tr>';
 	}
 
-	if ($societe->client) {
-		print '<tr><td class="titlefield">';
-		print $langs->trans('CustomerCode').'</td><td colspan="3">';
-		print showValueWithClipboardCPButton(dol_escape_htmltag($societe->code_client));
-		$tmpcheck = $societe->check_codeclient();
-		if ($tmpcheck != 0 && $tmpcheck != -5) {
-			print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
-		}
-		print '</td></tr>';
-	}
+	// Type
+	print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
 
-	if ($societe->fournisseur) {
-		print '<tr><td class="titlefield">';
-		print $langs->trans('SupplierCode').'</td><td colspan="3">';
-		print showValueWithClipboardCPButton(dol_escape_htmltag($societe->code_fournisseur));
-		$tmpcheck = $societe->check_codefournisseur();
-		if ($tmpcheck != 0 && $tmpcheck != -5) {
-			print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
-		}
-		print '</td></tr>';
-	}
+	// Morphy
+	print '<tr><td>'.$langs->trans("MemberNature").'</td><td class="valeur" >'.$member->getmorphylib().'</td>';
+	print '</tr>';
+
+	// Company
+	print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$member->company.'</td></tr>';
+
+	// Civility
+	print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$member->getCivilityLabel().'&nbsp;</td>';
+	print '</tr>';
 
 	print '</table>';
 
@@ -349,20 +339,20 @@ if ($socid) {
 
 	print '<br>';
 } else {
-	dol_print_error('', 'Parameter socid not defined');
+	dol_print_error('', 'Parameter rowid not defined');
 }
 
 // Part to create
 if ($action == 'create') {
 	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("Partnership")), '', '');
 
-	$backtopageforcancel = DOL_URL_ROOT.'/partnership/partnership.php?socid='.$socid;
+	$backtopageforcancel = DOL_URL_ROOT.'/partnership/partnership.php?rowid='.$memberid;
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
-	print '<input type="hidden" name="socid" value="'.$socid.'">';
-	print '<input type="hidden" name="fk_soc" value="'.$socid.'">';
+	print '<input type="hidden" name="rowid" value="'.$memberid.'">';
+	print '<input type="hidden" name="fk_member" value="'.$memberid.'">';
 
 	if ($backtopage) {
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
@@ -398,13 +388,13 @@ if ($action == 'create') {
 if (($partnershipid || $ref) && $action == 'edit') {
 	print load_fiche_titre($langs->trans("Partnership"), '', '');
 
-	$backtopageforcancel = DOL_URL_ROOT.'/partnership/partnership.php?socid='.$socid;
+	$backtopageforcancel = DOL_URL_ROOT.'/partnership/partnership.php?rowid='.$memberid;
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
-	print '<input type="hidden" name="socid" value="'.$socid.'">';
-	print '<input type="hidden" name="fk_soc" value="'.$socid.'">';
+	print '<input type="hidden" name="rowid" value="'.$memberid.'">';
+	print '<input type="hidden" name="fk_member" value="'.$memberid.'">';
 	if ($backtopage) {
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	}
@@ -435,7 +425,7 @@ if (($partnershipid || $ref) && $action == 'edit') {
 
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
-	print load_fiche_titre($langs->trans("PartnershipDedicatedToThisThirdParty", $langs->transnoentitiesnoconv("Partnership")), '', '');
+	print load_fiche_titre($langs->trans("PartnershipDedicatedToThisMember", $langs->transnoentitiesnoconv("Partnership")), '', '');
 
 	$res = $object->fetch_optionals();
 
@@ -467,14 +457,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			array('type' => 'text', 'name' => 'reason_decline_or_cancel', 'label' => $langs->trans("Note"), 'morecss' => 'reason_decline_or_cancel', 'value' => '')				// Field to complete private note (not replace)
 		);
 
-		// if (!empty($conf->notification->enabled)) {
-		// 	require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
-		// 	$notify = new Notify($db);
-		// 	$formquestion = array_merge($formquestion, array(
-		// 		array('type' => 'onecolumn', 'value' => $notify->confirmMessage('PROPAL_CLOSE_SIGNED', $object->socid, $object)),
-		// 	));
-		// }
-
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ReasonDecline'), $text, 'confirm_refuse', $formquestion, '', 1, 250);
 	}
 
@@ -493,7 +475,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href="'.dol_buildpath('/partnership/partnership_list.php', 1).'?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.dol_buildpath('/partnership/partnership_list.php', 1).'?restore_lastsearch_values=1'.(!empty($memberid) ? '&rowid='.$memberid : '').'">'.$langs->trans("BackToList").'</a>';
 
 	print '<div class="fichecenter">';
 	print '<div class="fichehalfleft">';
@@ -503,8 +485,32 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Common attributes
 	//$keyforbreak='fieldkeytoswitchonsecondcolumn';	// We change column just before this field
 	//unset($object->fields['fk_project']);				// Hide field already shown in banner
-	//unset($object->fields['fk_soc']);					// Hide field already shown in banner
+	//unset($object->fields['fk_member']);					// Hide field already shown in banner
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
+
+	// End of subscription date
+	$fadherent = new Adherent($db);
+	$fadherent->fetch($object->fk_member);
+	print '<tr><td>'.$langs->trans("SubscriptionEndDate").'</td><td class="valeur">';
+	if ($fadherent->datefin) {
+		print dol_print_date($fadherent->datefin, 'day');
+		if ($fadherent->hasDelay()) {
+			print " ".img_warning($langs->trans("Late"));
+		}
+	} else {
+		if (!$adht->subscription) {
+			print $langs->trans("SubscriptionNotRecorded");
+			if ($fadherent->statut > 0) {
+				print " ".img_warning($langs->trans("Late")); // Display a delay picto only if it is not a draft and is not canceled
+			}
+		} else {
+			print $langs->trans("SubscriptionNotReceived");
+			if ($fadherent->statut > 0) {
+				print " ".img_warning($langs->trans("Late")); // Display a delay picto only if it is not a draft and is not canceled
+			}
+		}
+	}
+	print '</td></tr>';
 
 	// Other attributes. Fields from hook formObjectOptions and Extrafields.
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
@@ -528,7 +534,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		if (empty($reshook)) {
 			if ($object->status == $object::STATUS_DRAFT) {
-				print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER["PHP_SELF"].'?socid='.$socid.'&action=edit', '', $permissiontoadd);
+				print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER["PHP_SELF"].'?rowid='.$memberid.'&action=edit', '', $permissiontoadd);
 			}
 
 			// Show

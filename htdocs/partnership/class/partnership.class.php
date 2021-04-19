@@ -424,7 +424,7 @@ class Partnership extends CommonObject
 
 				return 1;
 			} else {
-				$this->error = 'Partnership with id '.$id.' not found sql='.$sql;
+				// $this->error = 'Partnership with id '.$id.' not found sql='.$sql;
 				return 0;
 			}
 		} else {

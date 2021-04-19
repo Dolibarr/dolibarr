@@ -180,7 +180,7 @@ class modPartnership extends DolibarrModules
 		$tabtoadd = (!empty(getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR')) && getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') ? 'member' : 'thirdparty';
 
 		if ($tabtoadd == 'member') {
-			$this->tabs[] = array('data'=>'member:+partnership:Partnership:partnership@partnership:$user->rights->partnership->read:/adherents/partnership.php?socid=__ID__');
+			$this->tabs[] = array('data'=>'member:+partnership:Partnership:partnership@partnership:$user->rights->partnership->read:/adherents/partnership.php?rowid=__ID__');
 			$fk_mainmenu = "members";
 		} else {
 			$this->tabs[] = array('data'=>'thirdparty:+partnership:Partnership:partnership@partnership:$user->rights->partnership->read:/societe/partnership.php?socid=__ID__');
