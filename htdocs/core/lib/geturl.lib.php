@@ -193,18 +193,23 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 					$info['content'] = 'Error bad hostname IP (IP is a local IP). Must be an external URL.';
 					break;
 				}
-				if (in_array($iptocheck, array('100.100.100.200'))) {
+				if (!empty($conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP) && in_array($iptocheck, explode(',', $conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP))) {
 					$info['http_code'] = 400;
-					$info['content'] = 'Error bad hostname IP (Used by Alibaba metadata). Must be an external URL.';
+					$info['content'] = 'Error bad hostname IP (IP is a local IP defined into MAIN_SECURITY_SERVER_IP). Must be an external URL.';
 					break;
 				}
-			}
-			if ($localurl == 1) {	// Only local url allowed (dangerous, may allow to get metadata on server or make internal port scanning)
+			} else {				// Only local url allowed (dangerous, may allow to get metadata on server or make internal port scanning)
 				if (filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
 					$info['http_code'] = 400;
 					$info['content'] = 'Error bad hostname. Must be a local URL.';
 					break;
 				}
+			}
+			// Common check (local and external)
+			if (in_array($iptocheck, array('100.100.100.200'))) {
+				$info['http_code'] = 400;
+				$info['content'] = 'Error bad hostname IP (Used by Alibaba metadata). Must be an external URL.';
+				break;
 			}
 
 			// Set CURLOPT_CONNECT_TO so curl will not try another resolution that may give a different result
