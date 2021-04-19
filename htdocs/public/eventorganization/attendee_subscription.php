@@ -331,7 +331,7 @@ if (empty($reshook) && $action == 'add') {
 			if (!$error) {
 				// Add line to draft invoice
 				$vattouse = get_default_tva($mysoc, $thirdparty, $productforinvoicerow->id);
-				$result = $facture->addline($label, floatval($project->price_registration), 1, $vattouse, 0, 0, $productforinvoicerow->id, 0, dol_now(), '', 0, 0, '', 'HT', 0, 1);
+				$result = $facture->addline($langs->trans("ConferenceAttendeeFee").' for the event : \''.$conference->label.'\' occuring from '.$conference->datep.' to '.$conference->datep2, floatval($project->price_registration), 1, $vattouse, 0, 0, $productforinvoicerow->id, 0, dol_now(), '', 0, 0, '', 'HT', 0, 1);
 				if ($result <= 0) {
 					$confattendee->error = $facture->error;
 					$confattendee->errors = $facture->errors;
