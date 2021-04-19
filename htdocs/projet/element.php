@@ -187,12 +187,14 @@ $hookmanager->initHooks(array('projectOverview'));
  *	View
  */
 
-$title = $langs->trans("ProjectReferers").' - '.$object->ref.' '.$object->name;
+$title = $langs->trans('ProjectReferers').' - '.$object->ref.' '.$object->name;
 if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
-	$title = $object->ref.' '.$object->name.' - '.$langs->trans("ProjectReferers");
+	$title = $object->ref.' '.$object->name.' - '.$langs->trans('ProjectReferers');
 }
-$help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
-llxHeader("", $langs->trans("Referers"), $help_url);
+
+$help_url = 'EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos|DE:Modul_Projekte';
+
+llxHeader('', $title, $help_url);
 
 $form = new Form($db);
 $formproject = new FormProjets($db);
