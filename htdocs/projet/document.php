@@ -37,7 +37,7 @@ $action		= GETPOST('action', 'alpha');
 $confirm	= GETPOST('confirm', 'alpha');
 $id			= GETPOST('id', 'int');
 $ref		= GETPOST('ref', 'alpha');
-$mine = (GETPOST('mode', 'alpha') == 'mine' ? 1 : 0);
+$mine 		= (GETPOST('mode', 'alpha') == 'mine' ? 1 : 0);
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
 // Security check
@@ -57,10 +57,10 @@ if ($id > 0 || !empty($ref)) {
 }
 
 // Get parameters
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$limit 		= GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$sortfield	= GETPOST("sortfield", 'alpha');
+$sortorder	= GETPOST("sortorder", 'alpha');
+$page		= GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -95,11 +95,13 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
  * View
  */
 
-$title = $langs->trans("Project").' - '.$langs->trans("Document").' - '.$object->ref.' '.$object->name;
-if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
-	$title = $object->ref.' '.$object->name.' - '.$langs->trans("Document");
+$title = $langs->trans('Project').' - '.$langs->trans('Document').' - '.$object->ref.' '.$object->name;
+if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) 
+{
+	$title = $object->ref.' '.$object->name.' - '.$langs->trans('Document');
 }
-$help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
+
+$help_url = 'EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos|DE:Modul_Projekte';
 
 llxHeader('', $title, $help_url);
 
