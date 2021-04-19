@@ -193,6 +193,18 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $version;
 
 	/**
+	 * Module last version
+	 * @var string $lastVersion
+	 */
+	public $lastVersion = '';
+
+	/**
+	 * true indicate this module need update
+	 * @var bool $needUpdate
+	 */
+	public $needUpdate = false;
+
+	/**
 	 * @var string Module description (short text)
 	 *
 	 * Only used if Module[ID]Desc translation string is not found.
@@ -2240,7 +2252,11 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		}
 
 		print '
-    	<div class="box-flex-item info-box-module'.(empty($conf->global->$const_name) ? ' info-box-module-disabled' : '').($this->isCoreOrExternalModule() == 'external' ? ' info-box-module-external' : '').'">
+    	<div class="box-flex-item info-box-module'
+			.(empty($conf->global->$const_name) ? ' --disabled' : '')
+			.($this->isCoreOrExternalModule() == 'external' ? ' --external' : '')
+			.($this->needUpdate ? ' --need-update' : '')
+			.'">
 	    <div class="info-box info-box-sm info-box-module">
 	    <div class="info-box-icon'.(empty($conf->global->$const_name) ? '' : ' info-box-icon-module-enabled'.($versiontrans ? ' info-box-icon-module-warning' : '')).'">';
 
@@ -2258,7 +2274,12 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		}
 
 		if ($this->isCoreOrExternalModule() == 'external' || preg_match('/development|experimental|deprecated/i', $version)) {
-			print '<span class="info-box-icon-version'.($versiontrans ? ' '.$versiontrans : '').'" title="'.$langs->trans("Version").' '.$this->getVersion(1).'">';
+			$versionTitle =  $langs->trans("Version").' '.$this->getVersion(1);
+			if ($this->needUpdate) {
+				$versionTitle.= '<br/>'.$langs->trans('ModuleUpdateAvailable').' : '.$this->lastVersion;
+			}
+
+			print '<span class="info-box-icon-version'.($versiontrans ? ' '.$versiontrans : '').' classfortooltip" title="'.dol_escape_js($versionTitle).'" >';
 			print $this->getVersion(1);
 			print '</span>';
 		}
@@ -2286,5 +2307,34 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	    </div><!-- /.info-box-content -->
 	    </div><!-- /.info-box -->
 	    </div>';
+	}
+
+	/**
+	 * check for module update
+	 * TODO : store results for $this->url_last_version and $this->needUpdate
+	 *  Add a cron task to monitor for updates
+	 *
+	 * @return int <0 if Error, 0 == no update needed,  >0 if need update
+	 */
+	public function checkForUpdate()
+	{
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+		if (!empty($this->url_last_version)) {
+			$lastVersion = getURLContent($this->url_last_version, 'GET', '', 1, array(), array('http', 'https'), 0);	// Accept http or https links on external remote server only
+			if (isset($lastVersion['content']) && strlen($lastVersion['content']) < 30) {
+				// Security warning :  be careful with remote data content, the module editor could be hacked (or evil) so limit to a-z A-Z 0-9 _ . -
+				$this->lastVersion = preg_replace("/[^a-zA-Z0-9_\.\-]+/", "", $lastVersion['content']);
+				if (version_compare($this->lastVersion, $this->version) > 0) {
+					$this->needUpdate = true;
+					return 1;
+				} else {
+					$this->needUpdate = false;
+					return 0;
+				}
+			} else {
+				return -1;
+			}
+		}
+		return 0;
 	}
 }
