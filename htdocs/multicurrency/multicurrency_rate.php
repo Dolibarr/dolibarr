@@ -530,7 +530,7 @@ if ($resql) {
 			print $hookmanager->resPrint;
 
 			// Action
-			print '<td class="nowrap " >';
+			print '<td class="nowraponall">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
 				if (in_array($obj->rowid, $arrayofselected)) $selected = 1;
