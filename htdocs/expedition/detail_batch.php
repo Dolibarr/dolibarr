@@ -94,30 +94,29 @@ if ($action == 'add') {
 					}
 					$lineExp->detail_batch = $tmpBatch;
 				} else {
-					    /**
-					     * Check if line or batch with same warehouse exists
-					     */
+						/**
+						 * Check if line or batch with same warehouse exists
+						 */
 
-					    $lineIdToAddLot = 0;
-					    foreach($object->lines as $lineExped) {
-						if($lotStock->fk_product != $lineExped->fk_product) continue;
-						if($lineExped->entrepot_id > 0) {
-						    // single warehouse shipment line
-						    if($lineExped->entrepot_id == $lotStock->warehouseid) {
-						        $lineIdToAddLot = $lineExp->id;
-						        break;
-						    }
+						$lineIdToAddLot = 0;
+					foreach ($object->lines as $lineExped) {
+						if ($lotStock->fk_product != $lineExped->fk_product) continue;
+						if ($lineExped->entrepot_id > 0) {
+							// single warehouse shipment line
+							if ($lineExped->entrepot_id == $lotStock->warehouseid) {
+								$lineIdToAddLot = $lineExp->id;
+								break;
+							}
+						} elseif (! empty($lineExped->details_entrepot) && count($lineExped->details_entrepot) > 1) {
+							// multi warehouse shipment lines
+							foreach ($lineExped->details_entrepot as $detail_entrepot) {
+								if ($detail_entrepot->entrepot_id == $lotStock->warehouseid) {
+									$lineIdToAddLot = $detail_entrepot->line_id;
+									break;
+								}
+							}
 						}
-						else if(! empty($lineExped->details_entrepot) && count($lineExped->details_entrepot) > 1) {
-						    // multi warehouse shipment lines
-						    foreach($lineExped->details_entrepot as $detail_entrepot) {
-						        if($detail_entrepot->entrepot_id == $lotStock->warehouseid) {
-						            $lineIdToAddLot = $detail_entrepot->line_id;
-						            break;
-						        }
-						    }
-						}
-					    }
+					}
 
 					/**
 					 * CASE NEW SERIAL NUMBER FOR EXISTING SHIPPING LINE
