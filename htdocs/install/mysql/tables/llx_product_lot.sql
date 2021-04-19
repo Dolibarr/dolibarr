@@ -28,5 +28,11 @@ CREATE TABLE llx_product_lot (
   tms           timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_user_creat integer,
   fk_user_modif integer,
+  eol_date        datetime,
+  manufacturing_date  datetime,
+  scrapping_date  datetime,
+  commissionning_date datetime,
+  control_periodicity varchar(6),
+  fk_status       integer, -- Link to dictionnary
   import_key    integer
 ) ENGINE=innodb;
