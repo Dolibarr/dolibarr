@@ -73,8 +73,8 @@ $acts = array();
 $actl = array();
 $acts[0] = "activate";
 $acts[1] = "disable";
-$actl[0] = img_picto($langs->trans("Disabled"), 'switch_off');
-$actl[1] = img_picto($langs->trans("Activated"), 'switch_on');
+$actl[0] = img_picto($langs->trans("Disabled"), 'switch_off', 'class="size15x"');
+$actl[1] = img_picto($langs->trans("Activated"), 'switch_on', 'class="size15x"');
 
 $listoffset = GETPOST('listoffset', 'alpha');
 $listlimit = GETPOST('listlimit', 'alpha') > 0 ?GETPOST('listlimit', 'alpha') : 1000;
@@ -1002,7 +1002,7 @@ if ($resql) {
 				print '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';
 
 				$tmpaction = 'view';
-				$parameters = array('var'=>$var, 'fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
+				$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
 				$reshook = $hookmanager->executeHooks('viewEmailTemplateFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
 
 				$error = $hookmanager->error; $errors = $hookmanager->errors;
@@ -1015,6 +1015,7 @@ if ($resql) {
 						$showfield = 1;
 						$align = "";
 						$class = "tddict";
+						$title = '';
 						$valuetoshow = $obj->{$fieldlist[$field]};
 						if ($value == 'label' || $value == 'topic') {
 							if ($langs->trans($valuetoshow) != $valuetoshow) {
@@ -1024,11 +1025,10 @@ if ($resql) {
 						}
 						if ($value == 'label') {
 							$class .= ' tdoverflowmax100';
-							$valuetoshow = '<span title="'.$valuetoshow.'">'.$valuetoshow.'</span>';
 						}
-						/*if ($value == 'topic') {
-							$class .= ' tdoverflowmax300';
-						}*/
+						if ($value == 'topic') {
+							$class .= 'tdoverflowmax200 small';
+						}
 						if ($value == 'type_template') {
 							$valuetoshow = isset($elementList[$valuetoshow]) ? $elementList[$valuetoshow] : $valuetoshow;
 							$align = "center";
@@ -1069,7 +1069,13 @@ if ($resql) {
 						// Show value for field
 						if ($showfield) {
 							print '<!-- '.$fieldlist[$field].' -->';
-							print '<td class="'.$class.'">'.$valuetoshow.'</td>';
+							print '<td class="'.$class.'"';
+							if ($value == 'topic') {
+								print ' title="'.$valuetoshow.'"';
+							}
+							print '>';
+							print $valuetoshow;
+							print '</td>';
 						}
 					}
 				}
@@ -1086,12 +1092,11 @@ if ($resql) {
 				if ($param) {
 					$url .= '&'.$param;
 				}
-				$url .= '&';
 
 				// Status / Active
 				print '<td class="center nowrap">';
 				if ($canbedisabled) {
-					print '<a href="'.$url.'action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
+					print '<a href="'.$url.'&action='.$acts[$obj->active].'&token='.newToken().'">'.$actl[$obj->active].'</a>';
 				} else {
 					print '<span class="opacitymedium">'.$actl[$obj->active].'</span>';
 				}
@@ -1100,10 +1105,10 @@ if ($resql) {
 				// Modify link / Delete link
 				print '<td class="center nowraponall" width="64">';
 				if ($canbemodified) {
-					print '<a class="reposition editfielda" href="'.$url.'action=edit&token='.newToken().'">'.img_edit().'</a>';
+					print '<a class="reposition editfielda" href="'.$url.'&action=edit&token='.newToken().'">'.img_edit().'</a>';
 				}
 				if ($iserasable) {
-					print '<a class="marginleftonly" href="'.$url.'action=delete&token='.newToken().'">'.img_delete().'</a>';
+					print '<a class="marginleftonly" href="'.$url.'&action=delete&token='.newToken().'">'.img_delete().'</a>';
 					//else print '<a href="#">'.img_delete().'</a>';    // Some dictionary can be edited by other profile than admin
 				}
 				print '</td>';
