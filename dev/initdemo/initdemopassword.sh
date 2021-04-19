@@ -149,15 +149,15 @@ then
 fi
 #echo "mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile"
 #mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile
-echo "echo \"UPDATE llx_user SET pass_crypted = MD5('$demopass') WHERE login = '$demologin';\" | mysql -P$port $base"
 
-if [ "x$demopasshash" != "xpassword_hash" ]
+if [ "x${demopasshash}" != "xpassword_hash" ]
 then
-	newpass=`echo '<?php echo md5("$demopass"); ?>' | php`
+	newpass=`echo '<?php echo MD5("$demopass"); ?>' | php`
 else
 	newpass=`echo '<?php echo password_hash("$demopass", PASSWORD_DEFAULT); ?>' | php`
 fi
 
+echo "echo \"UPDATE llx_user SET pass_crypted = '$newpass' WHERE login = '$demologin';\" | mysql -P$port $base"
 echo "UPDATE llx_user SET pass_crypted = '$newpass' WHERE login = '$demologin';" | mysql -P$port $base
 export res=$?
 
