@@ -354,7 +354,7 @@ if ($resql) {
 		$param .= "&sall=".urlencode($sall);
 	}
 
-	if ($search_date_sync) $param = "&search_date_sync=".$search_date_sync;
+	if ($search_date_sync) $param = "&search_date_sync=".urlencode($search_date_sync);
 	if ($search_date_sync_end) $param="&search_date_sync_end=".$search_date_sync_end;
 	if ($search_rate) $param = "&search_rate=".urlencode($search_rate);
 	if ($search_code != '') $param.="&search_code=".urlencode($search_code);
