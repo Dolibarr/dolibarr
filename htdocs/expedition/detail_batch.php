@@ -63,6 +63,7 @@ if ($action == 'add') {
 	$db->begin();
 	if (! empty($TQty) && ! empty($TExpeditionDetIds)) {
 		foreach ($TQty as $fk_productbatch => $qty) {
+			$object->fetch_lines();
 			if ($qty > 0) {
 				$lineExp = new ExpeditionLigne($db);
 				$lotStock = new Productbatch($db);
@@ -93,23 +94,30 @@ if ($action == 'add') {
 					}
 					$lineExp->detail_batch = $tmpBatch;
 				} else {
-					/**
-					 * Check if line or batch with same warehouse exists
-					 */
-					$lineIdToAddLot = 0;
-					if ($lineExp->entrepot_id > 0) {
-						// single warehouse shipment line
-						if ($lineExp->entrepot_id == $lotStock->warehouseid) {
-							$lineIdToAddLot = $lineExp->id;
+					    /**
+					     * Check if line or batch with same warehouse exists
+					     */
+
+					    $lineIdToAddLot = 0;
+					    foreach($object->lines as $lineExped) {
+						if($lotStock->fk_product != $lineExped->fk_product) continue;
+						if($lineExped->entrepot_id > 0) {
+						    // single warehouse shipment line
+						    if($lineExped->entrepot_id == $lotStock->warehouseid) {
+						        $lineIdToAddLot = $lineExp->id;
+						        break;
+						    }
 						}
-					} elseif (!empty($lineExp->details_entrepot) && count($lineExp->details_entrepot) > 1) {
-						// multi warehouse shipment lines
-						foreach ($lineExp->details_entrepot as $detail_entrepot) {
-							if ($detail_entrepot->entrepot_id == $lotStock->warehouseid) {
-								$lineIdToAddLot = $detail_entrepot->line_id;
-							}
+						else if(! empty($lineExped->details_entrepot) && count($lineExped->details_entrepot) > 1) {
+						    // multi warehouse shipment lines
+						    foreach($lineExped->details_entrepot as $detail_entrepot) {
+						        if($detail_entrepot->entrepot_id == $lotStock->warehouseid) {
+						            $lineIdToAddLot = $detail_entrepot->line_id;
+						            break;
+						        }
+						    }
 						}
-					}
+					    }
 
 					/**
 					 * CASE NEW SERIAL NUMBER FOR EXISTING SHIPPING LINE
@@ -251,6 +259,7 @@ if ($action == 'deleteline') {
 	if ($expBatch->qty >= $expLine->qty) {
 		$res = $expLine->delete($user);
 	} else {
+		unset($expLine->detail_batch);
 		$expLine->qty -= $expBatch->qty;
 		$res = $expLine->update($user);
 	}
