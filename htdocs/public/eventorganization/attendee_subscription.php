@@ -366,12 +366,6 @@ if (empty($reshook) && $action == 'add') {
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 
-$conference = new ConferenceOrBooth($db);
-$resultconf = $conference->fetch($id);
-if ($resultconf < 0) {
-	setEventMessages(null, $object->errors, "errors");
-}
-
 llxHeaderVierge($langs->trans("NewSubscription"));
 
 
