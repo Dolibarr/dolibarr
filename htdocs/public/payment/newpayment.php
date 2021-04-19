@@ -363,7 +363,7 @@ if ($action == 'dopayment') {
 
 			// A redirect is added if API call successfull
 			if ($source == 'conferencesubscription') {
-				$PAYPAL_API_OK .= '&conferencesubscription='.dol_encode('subscriptionok'.$ref, $dolibarr_main_instance_unique_id);
+				$PAYPAL_API_OK .= '&conferencesubscription='.dol_encode('subscriptionok'.$ref, $dolibarr_main_instance_unique_id).'&invoice='.dol_encode($invoice->id, $dolibarr_main_instance_unique_id);
 			}
 			$mesg = print_paypal_redirect($PAYPAL_API_PRICE, $PAYPAL_API_DEVISE, $PAYPAL_PAYMENT_TYPE, $PAYPAL_API_OK, $PAYPAL_API_KO, $FULLTAG);
 
@@ -384,7 +384,7 @@ if ($action == 'dopayment') {
 		$urlko = preg_replace('/securekey=[^&]+/', '', $urlko);
 
 		if ($source == 'conferencesubscription') {
-			$urlok .= '&conferencesubscription='.dol_encode('subscriptionok'.$ref, $dolibarr_main_instance_unique_id);
+			$urlok .= '&conferencesubscription='.dol_encode('subscriptionok'.$ref, $dolibarr_main_instance_unique_id).'&invoice='.dol_encode($invoice->id, $dolibarr_main_instance_unique_id);
 		}
 
 		$mesg = '';
@@ -742,7 +742,7 @@ if ($action == 'charge' && !empty($conf->stripe->enabled)) {
 		exit;
 	} else {
 		if ($source == 'conferencesubscription') {
-			$urlok .= '&conferencesubscription='.dol_encode('subscriptionok'.$ref, $dolibarr_main_instance_unique_id);
+			$urlok .= '&conferencesubscription='.dol_encode('subscriptionok'.$ref, $dolibarr_main_instance_unique_id).'&invoice='.dol_encode($invoice->id, $dolibarr_main_instance_unique_id);
 		}
 		header("Location: ".$urlok);
 		exit;

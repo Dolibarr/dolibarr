@@ -103,6 +103,7 @@ if (empty($FULLTAG)) {
 }
 $source = GETPOST('s', 'alpha') ? GETPOST('s', 'alpha') : GETPOST('source', 'alpha');
 $ref = GETPOST('ref');
+$invoiceref = GETPOST('invoice');
 
 $suffix = GETPOST("suffix", 'aZ09');
 $membertypeid = GETPOST("membertypeid", 'int');
@@ -112,15 +113,35 @@ $uncryptedconferencesubscription = dol_decode($conferencesubscription, $dolibarr
 $subscription = substr($uncryptedconferencesubscription, 0, strlen($uncryptedconferencesubscription)-strlen($ref));
 $reffrompayment = substr($uncryptedconferencesubscription, -strlen($ref), strlen($ref));
 
-// Validation of an attendee after his payment
+// After a conference attendee payment
 if ($subscription == 'subscriptionok' && $ref == $reffrompayment) {
-	$attendeetovalidate = new ConferenceOrBoothAttendee($db);
-	$resultattendee = $attendeetovalidate->fetch($ref);
-	if ($resultattendee < 0) {
-		setEventMessages(null, $attendeetovalidate->errors, "errors");
+	// Looking for the invoice to which add a payment
+	$paidinvoice = new Facture($db);
+	$resultinvoice = $paidinvoice->fetch($invoiceref);
+	if ($resultinvoice < 0) {
+		setEventMessages(null, $paidinvoice->errors, "errors");
 	} else {
-		$attendeetovalidate->setStatut(1);
+		// Creation of payment line
+		$paiement = new Paiement($db);
+		$paiement->datepaye     = dol_now();
+		$paiement->amounts      = $amounts; // Array with all payments dispatching with invoice id
+		$paiement->multicurrency_amounts = $multicurrency_amounts; // Array with all payments dispatching
+		$paiement->paiementid   = dol_getIdFromCode($db, GETPOST('paiementcode'), 'c_paiement', 'code', 'id', 1);
+		$paiement->num_payment  = GETPOST('num_paiement', 'alpha');
+		$paiement->note_private = GETPOST('comment', 'alpha');
+
+		// Validating the attendee
+		$attendeetovalidate = new ConferenceOrBoothAttendee($db);
+		$resultattendee = $attendeetovalidate->fetch($ref);
+		if ($resultattendee < 0) {
+			setEventMessages(null, $attendeetovalidate->errors, "errors");
+		} else {
+			$attendeetovalidate->setStatut(1);
+		}
 	}
+
+
+
 }
 
 // Detect $paymentmethod
