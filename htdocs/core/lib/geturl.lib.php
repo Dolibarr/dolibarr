@@ -217,8 +217,10 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 				break;
 			}
 
-			// Set CURLOPT_CONNECT_TO so curl will not try another resolution that may give a different result
-			curl_setopt($ch, CURLOPT_CONNECT_TO, $iptocheck);
+			// Set CURLOPT_CONNECT_TO so curl will not try another resolution that may give a different result. Possible only on PHP v7+
+			if (defined('CURLOPT_CONNECT_TO')) {
+				curl_setopt($ch, CURLOPT_CONNECT_TO, $iptocheck);
+			}
 		}
 
 		// Getting response from server
