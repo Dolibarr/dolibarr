@@ -307,7 +307,7 @@ class PartnershipUtils
 					if (!$backlinkfound) {
 						$tmpcount = $object->count_last_url_check_error + 1;
 
-						if ($tmpcount == 3) { // Send Warning Email
+						if ($tmpcount > 2 && $tmpcount <= 4) { // Send Warning Email
 							if (!empty($obj->email)) {
 								$emailnotfound .= ($emailnotfound ? ', ' : '').'Email not found for id="'.$fk_partner.'"'."\n";
 							} else {
