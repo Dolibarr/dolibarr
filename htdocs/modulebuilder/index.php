@@ -340,7 +340,10 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 	}
 }
 
-if ($dirins && $action == 'initapi' && !empty($module)) {
+
+// init API
+if ($dirins && $action == 'initapi' && !empty($module)) 
+{
 	$modulename = ucfirst($module); // Force first letter in uppercase
 	$objectname = $tabobj;
 
@@ -351,7 +354,8 @@ if ($dirins && $action == 'initapi' && !empty($module)) {
 	//var_dump($srcfile);var_dump($destfile);
 	$result = dol_copy($srcfile, $destfile, 0, 0);
 
-	if ($result > 0) {
+	if ($result > 0) 
+	{
 		//var_dump($phpfileval['fullname']);
 		$arrayreplacement = array(
 			'mymodule'=>strtolower($modulename),
@@ -369,12 +373,18 @@ if ($dirins && $action == 'initapi' && !empty($module)) {
 		);
 
 		dolReplaceInFile($destfile, $arrayreplacement);
-	} else {
+	} 
+	else 
+	{
 		$langs->load("errors");
 		setEventMessages($langs->trans('ErrorFailToCreateFile', $destfile), null, 'errors');
 	}
 }
-if ($dirins && $action == 'initphpunit' && !empty($module)) {
+
+
+// init PHPUnit
+if ($dirins && $action == 'initphpunit' && !empty($module)) 
+{
 	$modulename = ucfirst($module); // Force first letter in uppercase
 	$objectname = $tabobj;
 
@@ -384,7 +394,8 @@ if ($dirins && $action == 'initphpunit' && !empty($module)) {
 	$destfile = $dirins.'/'.strtolower($module).'/test/phpunit/'.strtolower($objectname).'Test.php';
 	$result = dol_copy($srcfile, $destfile, 0, 0);
 
-	if ($result > 0) {
+	if ($result > 0) 
+	{
 		//var_dump($phpfileval['fullname']);
 		$arrayreplacement = array(
 			'mymodule'=>strtolower($modulename),
@@ -402,12 +413,18 @@ if ($dirins && $action == 'initphpunit' && !empty($module)) {
 		);
 
 		dolReplaceInFile($destfile, $arrayreplacement);
-	} else {
+	} 
+	else 
+	{
 		$langs->load("errors");
 		setEventMessages($langs->trans('ErrorFailToCreateFile', $destfile), null, 'errors');
 	}
 }
-if ($dirins && $action == 'initsqlextrafields' && !empty($module)) {
+
+
+// init ExtraFields
+if ($dirins && $action == 'initsqlextrafields' && !empty($module)) 
+{
 	$modulename = ucfirst($module); // Force first letter in uppercase
 	$objectname = $tabobj;
 
@@ -422,7 +439,8 @@ if ($dirins && $action == 'initsqlextrafields' && !empty($module)) {
 	//var_dump($srcfile);var_dump($destfile);
 	$result2 = dol_copy($srcfile2, $destfile2, 0, 0);
 
-	if ($result1 > 0 && $result2 > 0) {
+	if ($result1 > 0 && $result2 > 0) 
+	{
 		$modulename = ucfirst($module); // Force first letter in uppercase
 
 		//var_dump($phpfileval['fullname']);
@@ -444,13 +462,19 @@ if ($dirins && $action == 'initsqlextrafields' && !empty($module)) {
 
 		dolReplaceInFile($destfile1, $arrayreplacement);
 		dolReplaceInFile($destfile2, $arrayreplacement);
-	} else {
+	} 
+	else 
+	{
 		$langs->load("errors");
 		setEventMessages($langs->trans('ErrorFailToCreateFile', ''), null, 'errors');
 	}
 	// TODO Enable in class the property $isextrafieldmanaged = 1
 }
-if ($dirins && $action == 'inithook' && !empty($module)) {
+
+
+// init Hook
+if ($dirins && $action == 'inithook' && !empty($module)) 
+{
 	dol_mkdir($dirins.'/'.strtolower($module).'/class');
 	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
 	$srcfile = $srcdir.'/class/actions_mymodule.class.php';
@@ -458,7 +482,8 @@ if ($dirins && $action == 'inithook' && !empty($module)) {
 	//var_dump($srcfile);var_dump($destfile);
 	$result = dol_copy($srcfile, $destfile, 0, 0);
 
-	if ($result > 0) {
+	if ($result > 0) 
+	{
 		$modulename = ucfirst($module); // Force first letter in uppercase
 
 		//var_dump($phpfileval['fullname']);
@@ -475,12 +500,18 @@ if ($dirins && $action == 'inithook' && !empty($module)) {
 		);
 
 		dolReplaceInFile($destfile, $arrayreplacement);
-	} else {
+	} 
+	else 
+	{
 		$langs->load("errors");
 		setEventMessages($langs->trans('ErrorFailToCreateFile', $destfile), null, 'errors');
 	}
 }
-if ($dirins && $action == 'inittrigger' && !empty($module)) {
+
+
+// init Trigger
+if ($dirins && $action == 'inittrigger' && !empty($module)) 
+{
 	dol_mkdir($dirins.'/'.strtolower($module).'/core/triggers');
 	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
 	$srcfile = $srcdir.'/core/triggers/interface_99_modMyModule_MyModuleTriggers.class.php';
@@ -488,7 +519,8 @@ if ($dirins && $action == 'inittrigger' && !empty($module)) {
 	//var_dump($srcfile);var_dump($destfile);
 	$result = dol_copy($srcfile, $destfile, 0, 0);
 
-	if ($result > 0) {
+	if ($result > 0) 
+	{
 		$modulename = ucfirst($module); // Force first letter in uppercase
 
 		//var_dump($phpfileval['fullname']);
@@ -505,12 +537,18 @@ if ($dirins && $action == 'inittrigger' && !empty($module)) {
 		);
 
 		dolReplaceInFile($destfile, $arrayreplacement);
-	} else {
+	} 
+	else 
+	{
 		$langs->load("errors");
 		setEventMessages($langs->trans('ErrorFailToCreateFile', $destfile), null, 'errors');
 	}
 }
-if ($dirins && $action == 'initwidget' && !empty($module)) {
+
+
+// init Widget
+if ($dirins && $action == 'initwidget' && !empty($module)) 
+{
 	dol_mkdir($dirins.'/'.strtolower($module).'/core/boxes');
 	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
 	$srcfile = $srcdir.'/core/boxes/mymodulewidget1.php';
@@ -518,7 +556,8 @@ if ($dirins && $action == 'initwidget' && !empty($module)) {
 	//var_dump($srcfile);var_dump($destfile);
 	$result = dol_copy($srcfile, $destfile, 0, 0);
 
-	if ($result > 0) {
+	if ($result > 0) 
+	{
 		$modulename = ucfirst($module); // Force first letter in uppercase
 
 		//var_dump($phpfileval['fullname']);
@@ -535,12 +574,18 @@ if ($dirins && $action == 'initwidget' && !empty($module)) {
 		);
 
 		dolReplaceInFile($destfile, $arrayreplacement);
-	} else {
+	} 
+	else 
+	{
 		$langs->load("errors");
 		setEventMessages($langs->trans('ErrorFailToCreateFile', $destfile), null, 'errors');
 	}
 }
-if ($dirins && $action == 'initcss' && !empty($module)) {
+
+
+// init CSS
+if ($dirins && $action == 'initcss' && !empty($module)) 
+{
 	dol_mkdir($dirins.'/'.strtolower($module).'/css');
 	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
 	$srcfile = $srcdir.'/css/mymodule.css.php';
@@ -548,7 +593,8 @@ if ($dirins && $action == 'initcss' && !empty($module)) {
 	//var_dump($srcfile);var_dump($destfile);
 	$result = dol_copy($srcfile, $destfile, 0, 0);
 
-	if ($result > 0) {
+	if ($result > 0) 
+	{
 		$modulename = ucfirst($module); // Force first letter in uppercase
 
 		//var_dump($phpfileval['fullname']);
@@ -570,13 +616,18 @@ if ($dirins && $action == 'initcss' && !empty($module)) {
 		$srcfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
 		$arrayreplacement = array('/\/\/\s*\''.preg_quote('/'.strtolower($module).'/css/'.strtolower($module).'.css.php', '/').'\'/' => '\'/'.strtolower($module).'/css/'.strtolower($module).'.css.php\'');
 		dolReplaceInFile($srcfile, $arrayreplacement, '', 0, 0, 1);
-	} else {
+	} 
+	else 
+	{
 		$langs->load("errors");
 		setEventMessages($langs->trans('ErrorFailToCreateFile', $destfile), null, 'errors');
 	}
 }
 
-if ($dirins && $action == 'initjs' && !empty($module)) {
+
+// init JS
+if ($dirins && $action == 'initjs' && !empty($module)) 
+{
 	dol_mkdir($dirins.'/'.strtolower($module).'/js');
 	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
 	$srcfile = $srcdir.'/js/mymodule.js.php';
@@ -584,7 +635,8 @@ if ($dirins && $action == 'initjs' && !empty($module)) {
 	//var_dump($srcfile);var_dump($destfile);
 	$result = dol_copy($srcfile, $destfile, 0, 0);
 
-	if ($result > 0) {
+	if ($result > 0) 
+	{
 		$modulename = ucfirst($module); // Force first letter in uppercase
 
 		//var_dump($phpfileval['fullname']);
@@ -606,12 +658,18 @@ if ($dirins && $action == 'initjs' && !empty($module)) {
 		$srcfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
 		$arrayreplacement = array('/\/\/\s*\''.preg_quote('/'.strtolower($module).'/js/'.strtolower($module).'.js.php', '/').'\'/' => '\'/'.strtolower($module).'/js/'.strtolower($module).'.js.php\'');
 		dolReplaceInFile($srcfile, $arrayreplacement, '', 0, 0, 1);
-	} else {
+	} 
+	else 
+	{
 		$langs->load("errors");
 		setEventMessages($langs->trans('ErrorFailToCreateFile', $destfile), null, 'errors');
 	}
 }
-if ($dirins && $action == 'initcli' && !empty($module)) {
+
+
+// init CLI
+if ($dirins && $action == 'initcli' && !empty($module)) 
+{
 	dol_mkdir($dirins.'/'.strtolower($module).'/scripts');
 	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
 	$srcfile = $srcdir.'/scripts/mymodule.php';
@@ -641,12 +699,18 @@ if ($dirins && $action == 'initcli' && !empty($module)) {
 		);
 
 		dolReplaceInFile($destfile, $arrayreplacement);
-	} else {
+	} 
+	else 
+	{
 		$langs->load("errors");
 		setEventMessages($langs->trans('ErrorFailToCreateFile', $destfile), null, 'errors');
 	}
 }
-if ($dirins && $action == 'initdoc' && !empty($module)) {
+
+
+// init Doc
+if ($dirins && $action == 'initdoc' && !empty($module)) 
+{
 	dol_mkdir($dirins.'/'.strtolower($module).'/doc');
 	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
 	$srcfile = $srcdir.'/doc/Documentation.asciidoc';
@@ -654,7 +718,8 @@ if ($dirins && $action == 'initdoc' && !empty($module)) {
 	//var_dump($srcfile);var_dump($destfile);
 	$result = dol_copy($srcfile, $destfile, 0, 0);
 
-	if ($result > 0) {
+	if ($result > 0) 
+	{
 		$modulename = ucfirst($module); // Force first letter in uppercase
 		$modulelowercase = strtolower($module);
 
@@ -688,36 +753,50 @@ if ($dirins && $action == 'initdoc' && !empty($module)) {
 
 		dol_delete_file($outputfiledoc, 0, 0, 0, null, false, 0);
 		dol_delete_file($outputfiledocpdf, 0, 0, 0, null, false, 0);
-	} else {
+	} 
+	else 
+	{
 		$langs->load("errors");
 		setEventMessages($langs->trans('ErrorFailToCreateFile', $destfile), null, 'errors');
 	}
 }
 
-if ($dirins && $action == 'addlanguage' && !empty($module)) {
+
+// add Language
+if ($dirins && $action == 'addlanguage' && !empty($module)) 
+{
 	$newlangcode = GETPOST('newlangcode', 'aZ09');
 	$srcfile = $dirins.'/'.strtolower($module).'/langs/en_US';
 	$destfile = $dirins.'/'.strtolower($module).'/langs/'.$newlangcode;
 	$result = dolCopyDir($srcfile, $destfile, 0, 0);
 }
 
-if ($dirins && $action == 'confirm_removefile' && !empty($module)) {
+
+// remove/delete File 
+if ($dirins && $action == 'confirm_removefile' && !empty($module)) 
+{
 	$relativefilename = dol_sanitizePathName(GETPOST('file', 'none'));
-	if ($relativefilename) {
+	if ($relativefilename) 
+	{
 		$dirnametodelete = dirname($relativefilename);
 		$filetodelete = $dirins.'/'.$relativefilename;
 		$dirtodelete  = $dirins.'/'.$dirnametodelete;
 
 		$result = dol_delete_file($filetodelete);
-		if (!$result) {
+		if (!$result) 
+		{
 			setEventMessages($langs->trans("ErrorFailToDeleteFile", basename($filetodelete)), null, 'errors');
-		} else {
-			if (dol_is_dir_empty($dirtodelete)) {
+		} 
+		else 
+		{
+			if (dol_is_dir_empty($dirtodelete)) 
+			{
 				dol_delete_dir($dirtodelete);
 			}
 
 			// Update descriptor file to comment file
-			if (in_array($tab, array('css', 'js'))) {
+			if (in_array($tab, array('css', 'js'))) 
+			{
 				$srcfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
 				$arrayreplacement = array('/^\s*\''.preg_quote('/'.$relativefilename, '/').'\',*/m'=>'                // \'/'.$relativefilename.'\',');
 				dolReplaceInFile($srcfile, $arrayreplacement, '', 0, 0, 1);
@@ -725,6 +804,7 @@ if ($dirins && $action == 'confirm_removefile' && !empty($module)) {
 		}
 	}
 }
+
 
 // Build the $fields array from SQL table (initfromtablename)
 if ($dirins && $action == 'initobject' && $module && GETPOST('createtablearray', 'alpha')) {
