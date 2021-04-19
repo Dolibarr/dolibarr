@@ -247,6 +247,42 @@ if (empty($reshook)) {
 		}
 	}
 
+	// Create external user
+	if ($massaction == 'createexternaluser' && $user->rights->adherent->creer && $user->rights->user->user->creer) {
+		$tmpmember = new Adherent($db);
+		$error = 0;
+		$nbcreated = 0;
+
+		$db->begin();
+
+		foreach ($toselect as $idtoclose) {
+			$tmpmember->fetch($idtoclose);
+
+			if(!empty($tmpmember->fk_soc)){
+				$nuser = new User($db);
+				$tmpuser = dol_clone($tmpmember);
+
+				$result = $nuser->create_from_member($tmpuser, $tmpmember->login);
+
+				if ($result < 0 && !count($tmpmember->errors)) {
+					setEventMessages($tmpmember->error, $tmpmember->errors, 'errors');
+				} else {
+					if ($result > 0) {
+						$nbcreated++;
+					}
+				}
+			}
+		}
+
+		if (!$error) {
+			setEventMessages($langs->trans("XExternalUserCreated", $nbcreated), null, 'mesgs');
+
+			$db->commit();
+		} else {
+			$db->rollback();
+		}
+	}
+
 	// Mass actions
 	$objectclass = 'Adherent';
 	$objectlabel = 'Members';
@@ -554,6 +590,9 @@ if ($user->rights->adherent->supprimer) {
 }
 if ($user->rights->societe->creer) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
+}
+if ($user->rights->adherent->creer && $user->rights->user->user->creer) {
+	$arrayofmassactions['createexternaluser'] = img_picto('', 'user', 'class="pictofixedwidth"').$langs->trans("CreateExternalUser");
 }
 if (in_array($massaction, array('presend', 'predelete','preaffecttag'))) {
 	$arrayofmassactions = array();
