@@ -524,10 +524,15 @@ if ($action == 'export_fileconfirm' && $user->rights->accounting->mouvements->ex
 		$accountancyexport = new AccountancyExport($db);
 		$accountancyexport->export($object->lines, $formatexportset);
 
+		$notifiedexportdate = GETPOST('notifiedexportdate', 'alpha');
+		$notifiedvalidationdate = GETPOST('notifiedvalidationdate', 'alpha');
+
+		dol_syslog("date_export/date_validated=".$notifiedexportdate.'/'.$notifiedvalidationdate, LOG_DEBUG);
+
 		if (!empty($accountancyexport->errors)) {
 			setEventMessages('', $accountancyexport->errors, 'errors');
-		} else {
-			// Specify as export : update field date_export
+		} elseif (!$notifiedexportdate || !$notifiedvalidationdate) {
+			// Specify as export : update field date_export or date_validated
 			$error = 0;
 			$db->begin();
 
@@ -536,8 +541,15 @@ if ($action == 'export_fileconfirm' && $user->rights->accounting->mouvements->ex
 					$now = dol_now();
 
 					$sql = " UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping";
-					$sql .= " SET date_export = '".$db->idate($now)."'";
-					$sql .= " , date_validated = '".$db->idate($now)."'";
+					$sql .= " SET";
+					if (!$notifiedexportdate && !$notifiedvalidationdate) {
+						$sql .= " date_export = '".$db->idate($now)."'";
+						$sql .= ", date_validated = '".$db->idate($now)."'";
+					} elseif (!$notifiedexportdate) {
+						$sql .= " date_export = '".$db->idate($now)."'";
+					} elseif (!$notifiedvalidationdate) {
+						$sql .= " date_validated = '".$db->idate($now)."'";
+					}
 					$sql .= " WHERE rowid = ".((int) $movement->id);
 
 					dol_syslog("/accountancy/bookeeping/list.php Function export_file Specify movements as exported sql=".$sql, LOG_DEBUG);
@@ -551,11 +563,11 @@ if ($action == 'export_fileconfirm' && $user->rights->accounting->mouvements->ex
 
 			if (!$error) {
 				$db->commit();
-				// setEventMessages($langs->trans("AllExportedMovementsWereRecordedAsExported"), null, 'mesgs');
+				// setEventMessages($langs->trans("AllExportedMovementsWereRecordedAsExportedOrValidated"), null, 'mesgs');
 			} else {
 				$error++;
 				$db->rollback();
-				setEventMessages($langs->trans("NotAllExportedMovementsCouldBeRecordedAsExported"), null, 'errors');
+				setEventMessages($langs->trans("NotAllExportedMovementsCouldBeRecordedAsExportedOrValidated"), null, 'errors');
 			}
 		}
 		exit;
@@ -603,6 +615,8 @@ if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords) {
 
 llxHeader('', $title_page);
 
+$formconfirm = '';
+
 if ($action == 'export_file') {
 	$form_question = array();
 
@@ -614,17 +628,15 @@ if ($action == 'export_file') {
 	);
 	$form_question['notifiedvalidationdate'] = array(
 		'name' => 'notifiedvalidationdate',
-		'type' => 'checkbox', // We don't use select here, the journal_array is already a select html component
+		'type' => 'checkbox',
 		'label' => $langs->trans('NotifiedValidationDate'),
 		'value' => (!empty($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_VALIDATION_DATE) ? 'false' : 'true'),
 	);
 
-	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans("ExportFilteredList").' ('.$listofformat[$formatexportset].')', $langs->trans('ConfirmExportFile'), 'export_fileconfirm', $form_question, '', 1, 300);
-	print $formconfirm;
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans("ExportFilteredList").' ('.$listofformat[$formatexportset].')', $langs->trans('ConfirmExportFile'), 'export_fileconfirm', $form_question, '', 1, 300, 600);
 }
 if ($action == 'delmouv') {
 	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?mvt_num='.GETPOST('mvt_num').$param, $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvtPartial'), 'delmouvconfirm', '', 0, 1);
-	print $formconfirm;
 }
 if ($action == 'delbookkeepingyear') {
 	$form_question = array();
@@ -664,8 +676,10 @@ if ($action == 'delbookkeepingyear') {
 	);
 
 	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt', $langs->transnoentitiesnoconv("RegistrationInAccounting")), 'delbookkeepingyearconfirm', $form_question, '', 1, 300);
-	print $formconfirm;
 }
+
+// Print form confirm
+print $formconfirm;
 
 //$param='';	param started before
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {

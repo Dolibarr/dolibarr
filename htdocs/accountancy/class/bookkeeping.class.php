@@ -993,8 +993,8 @@ class BookKeeping extends CommonObject
 		$sql .= " t.date_creation,";
 		$sql .= " t.date_lim_reglement,";
 		$sql .= " t.tms as date_modification,";
-		$sql .= " t.date_export";
-		$sql .= " t.date_validated as date_validation,";
+		$sql .= " t.date_export,";
+		$sql .= " t.date_validated as date_validation";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		// Manage filter
 		$sqlwhere = array();

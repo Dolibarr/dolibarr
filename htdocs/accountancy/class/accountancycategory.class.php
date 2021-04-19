@@ -263,7 +263,7 @@ class AccountancyCategory // extends CommonObject
 		if ($id) {
 			$sql .= " WHERE t.rowid = ".((int) $id);
 		} else {
-			$sql .= " WHERE t.entity IN (".getEntity('c_accounting_category').")"; // Dont't use entity if you use rowid
+			$sql .= " WHERE t.entity IN (".getEntity('c_accounting_category').")"; // Don't use entity if you use rowid
 			if ($code) {
 				$sql .= " AND t.code = '".$this->db->escape($code)."'";
 			} elseif ($label) {
