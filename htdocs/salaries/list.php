@@ -532,6 +532,10 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 	$salstatic->id = $obj->rowid;
 	$salstatic->ref = $obj->rowid;
+	$salstatic->label = $obj->label;
+	$salstatic->paye = $obj->paye;
+	$salstatic->datesp = $db->jdate($obj->datesp);
+	$salstatic->dateep = $db->jdate($obj->dateep);
 
 	// Show here line of result
 	print '<tr class="oddeven">';

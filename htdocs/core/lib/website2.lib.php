@@ -203,10 +203,6 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 	}
 	// Add translation reference (main language)
 	if ($object->isMultiLang()) {
-		// Add myself
-		$tplcontent .= '<?php if ($_SERVER["PHP_SELF"] == "'.(($object->fk_default_home == $objectpage->id) ? '/' : (($shortlangcode != substr($object->lang, 0, 2)) ? '/'.$shortlangcode : '')).'/'.$objectpage->pageurl.'.php") { ?>'."\n";
-		$tplcontent .= '<link rel="alternate" hreflang="'.$shortlangcode.'" href="'.(($object->fk_default_home == $objectpage->id) ? '/' : (($shortlangcode != substr($object->lang, 0, 2)) ? '/'.$shortlangcode : '').'/'.$objectpage->pageurl.'.php').'" />'."\n";
-
 		// Add page "translation of"
 		$translationof = $objectpage->fk_page;
 		if ($translationof) {
@@ -225,6 +221,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 				}
 			}
 		}
+
 		// Add "has translation pages"
 		$sql = 'SELECT rowid as id, lang, pageurl from '.MAIN_DB_PREFIX.'website_page where fk_page IN ('.$db->sanitize($objectpage->id.($translationof ? ', '.$translationof : '')).")";
 		$resql = $db->query($sql);
@@ -244,6 +241,11 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 		} else {
 			dol_print_error($db);
 		}
+
+		// Add myself
+		$tplcontent .= '<?php if ($_SERVER["PHP_SELF"] == "'.(($object->fk_default_home == $objectpage->id) ? '/' : (($shortlangcode != substr($object->lang, 0, 2)) ? '/'.$shortlangcode : '')).'/'.$objectpage->pageurl.'.php") { ?>'."\n";
+		$tplcontent .= '<link rel="alternate" hreflang="'.$shortlangcode.'" href="'.(($object->fk_default_home == $objectpage->id) ? '/' : (($shortlangcode != substr($object->lang, 0, 2)) ? '/'.$shortlangcode : '').'/'.$objectpage->pageurl.'.php').'" />'."\n";
+
 		$tplcontent .= '<?php } ?>'."\n";
 	}
 	// Add manifest.json. Do we have to add it only on home page ?
