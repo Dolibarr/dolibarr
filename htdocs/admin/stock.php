@@ -758,6 +758,21 @@ if ($conf->use_javascript_ajax) {
 }
 print "</td>\n";
 print "</tr>\n";
+
+if (!empty($conf->productbatch->enabled)) {
+	print '<tr class="oddeven">';
+	print '<td>' . $langs->trans("ShowAllBatchByDefault") . '</td>';
+	print '<td class="right">';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('STOCK_SHOW_ALL_BATCH_BY_DEFAULT');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("STOCK_SHOW_ALL_BATCH_BY_DEFAULT", $arrval, $conf->global->STOCK_SHOW_ALL_BATCH_BY_DEFAULT);
+	}
+	print "</td>\n";
+	print "</tr>\n";
+}
+
 print '</table>';
 
 print '</form>';

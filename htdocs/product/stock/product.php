@@ -9,6 +9,7 @@
  * Copyright (C) 2014-2015 Cédric Gross            <c.gross@kreiz-it.fr>
  * Copyright (C) 2015      Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018-2019 Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2021	   Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -522,6 +523,48 @@ if ($id > 0 || $ref)
 
 	llxHeader('', $title, $helpurl);
 
+	?>
+
+	<script type="text/javascript" language="javascript">
+		$(document).ready(function() {
+
+			$(".collapse_batch").click(function() {
+
+				var id_entrepot = $(this).attr('id').replace('ent', '');
+
+				if($(this).text().indexOf('+') > 0) {
+					$(".batch_warehouse" + id_entrepot).show();
+					$(this).html('(-)&nbsp;');
+				}
+				else {
+					$(".batch_warehouse" + id_entrepot).hide();
+					$(this).html('(+)&nbsp;');
+				}
+
+				return false;
+			});
+
+			$("#show_all").click(function() {
+				$(this).hide();
+				$("#hide_all").show();
+				$("[class^=batch_warehouse]").show();
+				$("[class^=collapse_batch]").html('(-)&nbsp;');
+				return false;
+			});
+
+			$("#hide_all").click(function() {
+				$("[class^=batch_warehouse]").hide();
+				$(this).hide();
+				$("#show_all").show();
+				$("[class^=collapse_batch]").html('(+)&nbsp;');
+				return false;
+			});
+
+		});
+	</script>
+
+	<?php
+
 	if ($result > 0)
 	{
 		$head = product_prepare_head($object);
@@ -828,7 +871,10 @@ if (!$variants) {
 	print '</tr>';
 	if ((!empty($conf->productbatch->enabled)) && $object->hasbatch()) {
 		$colspan = 3;
-		print '<tr class="liste_titre"><td width="10%"></td>';
+		print '<tr class="liste_titre"><td width="14%">';
+		print '<a style="display:'.(!empty($conf->global->STOCK_SHOW_ALL_BATCH_BY_DEFAULT) ? 'visible' : 'none').';" id="hide_all" href="#">'.img_picto('', 'folder', 'class="paddingright"').$langs->trans("UndoExpandAll").'</a>';
+		print '<a style="display:'.(!empty($conf->global->STOCK_SHOW_ALL_BATCH_BY_DEFAULT) ? 'none' : 'visible').';" id="show_all" href="#">'.img_picto('', 'folder-open', 'class="paddingright"').$langs->trans("ExpandAll").'</a>';
+		print '</td>';
 		print '<td class="right" width="10%">'.$langs->trans("batch_number").'</td>';
 		if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
 			$colspan--;
@@ -880,7 +926,11 @@ if (!$variants) {
 
 			$stock_real = price2num($obj->reel, 'MS');
 			print '<tr class="oddeven">';
-			print '<td colspan="4">'.$entrepotstatic->getNomUrl(1).'</td>';
+			print '<td colspan="4">';
+			if(!empty($conf->productbatch->enabled)) {
+				print '<a class="collapse_batch" id="ent' . $entrepotstatic->id . '" href="#">' . (empty($conf->global->STOCK_SHOW_ALL_BATCH_BY_DEFAULT) ? '(+)' : '(-)') . '&nbsp;</a>';
+			}
+			print $entrepotstatic->getNomUrl(1).'</td>';
 			print '<td class="right">'.$stock_real.($stock_real < 0 ? ' '.img_warning() : '').'</td>';
 			// PMP
 			print '<td class="right">'.(price2num($object->pmp) ? price2num($object->pmp, 'MU') : '').'</td>';
@@ -934,7 +984,7 @@ if (!$variants) {
 						print '</form>';
 						print '</td></tr>';
 					} else {
-						print "\n".'<tr><td class="right">';
+						print "\n".'<tr style="display:'.(empty($conf->global->STOCK_SHOW_ALL_BATCH_BY_DEFAULT) ? 'none' : 'visible').';" class="batch_warehouse'.$entrepotstatic->id.'"><td class="right">';
 						print img_picto($langs->trans("Tranfer"), 'uparrow', 'class="hideonsmartphone"').' ';
 						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;id_entrepot='.$entrepotstatic->id.'&amp;action=transfert&amp;pdluoid='.$pdluo->id.'">'.$langs->trans("TransferStock").'</a>';
 						// Disabled, because edition of stock content must use the "Correct stock menu".
