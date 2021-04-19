@@ -1661,9 +1661,13 @@ class Setup extends DolibarrApi
 		if (empty($xmlremote)) {
 			$xmlremote = 'https://www.dolibarr.org/files/stable/signatures/filelist-'.DOL_VERSION.'.xml';
 		}
-		if ($xmlremote && !preg_match('/^https?:\/\//', $xmlremote)) {
+		if ($xmlremote && !preg_match('/^https?:\/\//i', $xmlremote)) {
 			$langs->load("errors");
 			throw new RestException(500, $langs->trans("ErrorURLMustStartWithHttp", $xmlremote));
+		}
+		if ($xmlremote && !preg_match('/\.xml$/', $xmlremote)) {
+			$langs->load("errors");
+			throw new RestException(500, $langs->trans("ErrorURLMustEndWith", '.xml'));
 		}
 
 		if ($target == 'local') {
