@@ -927,7 +927,7 @@ if (!$variants) {
 			$stock_real = price2num($obj->reel, 'MS');
 			print '<tr class="oddeven">';
 			print '<td colspan="4">';
-			if(!empty($conf->productbatch->enabled)) {
+			if (!empty($conf->productbatch->enabled)) {
 				print '<a class="collapse_batch" id="ent' . $entrepotstatic->id . '" href="#">' . (empty($conf->global->STOCK_SHOW_ALL_BATCH_BY_DEFAULT) ? '(+)' : '(-)') . '&nbsp;</a>';
 			}
 			print $entrepotstatic->getNomUrl(1).'</td>';
