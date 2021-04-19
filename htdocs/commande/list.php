@@ -812,29 +812,29 @@ if ($resql) {
 
 	// List of mass actions available
 	$arrayofmassactions = array(
-		'generate_doc'=>img_picto('', 'pdf').'&ensp;'.$langs->trans("ReGeneratePDF"),
-		'builddoc'=>img_picto('', 'pdf').'&ensp;'.$langs->trans("PDFMerge"),
+		'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
+		'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	);
 	if ($permissiontovalidate) {
-		$arrayofmassactions['prevalidate'] = img_picto('', 'check').'&ensp;'.$langs->trans("Validate");
+		$arrayofmassactions['prevalidate'] = img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate");
 	}
 	if ($permissiontosendbymail) {
-		$arrayofmassactions['presend'] = img_picto('', 'email').'&ensp;'.$langs->trans("SendByMail");
+		$arrayofmassactions['presend'] = img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail");
 	}
 	if ($permissiontoclose) {
-		$arrayofmassactions['preshipped'] = img_picto('', 'dollyrevert').'&ensp;'.$langs->trans("ClassifyShipped");
+		$arrayofmassactions['preshipped'] = img_picto('', 'dollyrevert', 'class="pictofixedwidth"').$langs->trans("ClassifyShipped");
 	}
 	if ($permissiontocancel) {
-		$arrayofmassactions['cancelorders'] = img_picto('', 'close_title').'&ensp;'.$langs->trans("Cancel");
+		$arrayofmassactions['cancelorders'] = img_picto('', 'close_title', 'class="pictofixedwidth"').$langs->trans("Cancel");
 	}
 	if ($user->rights->facture->creer) {
-		$arrayofmassactions['createbills'] = img_picto('', 'bill').'&ensp;'.$langs->trans("CreateInvoiceForThisCustomer");
+		$arrayofmassactions['createbills'] = img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans("CreateInvoiceForThisCustomer");
 	}
 	if ($permissiontoclose) {
-		$arrayofmassactions['setbilled'] = img_picto('', 'bill').'&ensp;'.$langs->trans("ClassifyBilled");
+		$arrayofmassactions['setbilled'] = img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans("ClassifyBilled");
 	}
 	if ($permissiontodelete) {
-		$arrayofmassactions['predelete'] = img_picto('', 'delete').'&ensp;'.$langs->trans("Delete");
+		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	}
 	if (in_array($massaction, array('presend', 'predelete', 'createbills'))) {
 		$arrayofmassactions = array();
