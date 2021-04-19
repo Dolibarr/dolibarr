@@ -35,16 +35,23 @@ $langs->loadLangs(array("compta", "bills", "other", "accountancy", "loans", "ban
 $hookmanager->initHooks(array('accountancyindex'));
 
 // Security check
-if (empty($conf->accounting->enabled)) {
+if ($user->socid > 0) {
 	accessforbidden();
 }
-if ($user->socid > 0) {
+/*
+if (empty($conf->accounting->enabled)) {
 	accessforbidden();
 }
 if (empty($user->rights->accounting->mouvements->lire)) {
 	accessforbidden();
 }
-
+*/
+if (empty($conf->comptabilite->enabled) && empty($conf->accounting->enabled) && empty($conf->asset->enabled) && empty($conf->intracommreport->enabled)) {
+	accessforbidden();
+}
+if (empty($user->rights->compta->resultat->lire) && empty($user->rights->accounting->mouvements->lire) && empty($user->rights->asset->read) && empty($user->rights->intracommreport->read)) {
+	accessforbidden();
+}
 
 
 /*

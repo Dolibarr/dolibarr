@@ -26,9 +26,13 @@
 -- To set a field as NOT NULL:                 -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET NOT NULL;
 -- To set a field as default NULL:             -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET DEFAULT NULL;
 -- Note: fields with type BLOB/TEXT can't have default value.
+-- To rebuild sequence for postgresql after insert by forcing id autoincrement fields: 
+-- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
 
 -- Missing in v13 or lower
+
+ALTER TABLE llx_recruitment_recruitmentcandidature MODIFY COLUMN email_msgid VARCHAR(175);
 
 ALTER TABLE llx_asset CHANGE COLUMN amount amount_ht double(24,8) DEFAULT NULL;
 ALTER TABLE llx_asset ADD COLUMN amount_vat double(24,8) DEFAULT NULL;
@@ -427,3 +431,6 @@ ALTER TABLE llx_entrepot ADD COLUMN fk_project INTEGER DEFAULT NULL AFTER entity
 
 -- Rebuild sequence for postgres only after query INSERT INTO llx_salary(rowid, ...
 -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
+
+UPDATE llx_const SET value = 'github' WHERE __DECRYPT('name')__ = 'MAIN_BUGTRACK_ENABLELINK' AND __DECRYPT('value')__ = 1;
+

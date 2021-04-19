@@ -213,10 +213,11 @@ if ($action == 'add' && empty($cancel)) {
 	}
 
 	if (!$error) {
+		$db->begin();
+
 		$ret = $object->create($user);
 		if ($ret < 0) $error++;
 		if (!empty($auto_create_paiement) && !$error) {
-			$db->begin();
 			// Create a line of payments
 			$paiement = new PaymentSalary($db);
 			$paiement->chid         = $object->id;
@@ -243,15 +244,11 @@ if ($action == 'add' && empty($cancel)) {
 					setEventMessages($paiement->error, null, 'errors');
 				}
 			}
-
-			if (!$error) {
-				$db->commit();
-			} else {
-				$db->rollback();
-			}
 		}
 
 		if (empty($error)) {
+			$db->commit();
+
 			if (GETPOST('saveandnew', 'alpha')) {
 				setEventMessages($langs->trans("RecordSaved"), '', 'mesgs');
 				header("Location: card.php?action=create&fk_project=" . urlencode($projectid) . "&accountid=" . urlencode($accountid) . '&paymenttype=' . urlencode(GETPOST('paymenttype', 'az09')) . '&datepday=' . GETPOST("datepday", 'int') . '&datepmonth=' . GETPOST("datepmonth", 'int') . '&datepyear=' . GETPOST("datepyear", 'int'));
@@ -260,6 +257,8 @@ if ($action == 'add' && empty($cancel)) {
 				header("Location: " . $_SERVER['PHP_SELF'] . '?id=' . $object->id);
 				exit;
 			}
+		} else {
+			$db->rollback();
 		}
 	}
 
@@ -492,7 +491,7 @@ if ($action == 'create') {
 	// Bank
 	if (!empty($conf->banque->enabled)) {
 		print '<tr><td id="label_fk_account">';
-		print $form->editfieldkey('DefaultBankAccount', 'selectaccountid', '', $object, 0, 'string', '', 1).'</td><td>';
+		print $form->editfieldkey('BankAccount', 'selectaccountid', '', $object, 0, 'string', '', 1).'</td><td>';
 		print img_picto('', 'bank_account', 'class="paddingrighonly"');
 		$form->select_comptes($accountid, "accountid", 0, '', 1); // Affiche liste des comptes courant
 		print '</td></tr>';
@@ -500,7 +499,7 @@ if ($action == 'create') {
 
 	// Type payment
 	print '<tr><td id="label_type_payment">';
-	print $form->editfieldkey('DefaultPaymentMode', 'selectpaymenttype', '', $object, 0, 'string', '', 1).'</td><td>';
+	print $form->editfieldkey('PaymentMode', 'selectpaymenttype', '', $object, 0, 'string', '', 1).'</td><td>';
 	$form->select_types_paiements(GETPOST("paymenttype", 'aZ09'), "paymenttype", '');
 	print '</td></tr>';
 
@@ -526,9 +525,11 @@ if ($action == 'create') {
 	}
 
 	// Bouton Save payment
+	/*
 	print '<tr class="hide_if_no_auto_create_payment"><td>';
 	print $langs->trans("ClosePaidSalaryAutomatically");
 	print '</td><td><input type="checkbox" checked value="1" name="closepaidsalary"></td></tr>';
+	*/
 
 	// Other attributes
 	$parameters = array();
@@ -543,6 +544,12 @@ if ($action == 'create') {
 	print dol_get_fiche_end();
 
 	print '<div class="center">';
+
+	print '<div class="hide_if_no_auto_create_payment paddingbottom">';
+	print '<input type="checkbox" checked value="1" name="closepaidsalary">'.$langs->trans("ClosePaidSalaryAutomatically");
+	print '<br>';
+	print '</div>';
+
 	print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
 	print '&nbsp;&nbsp; &nbsp;&nbsp;';
 	print '<input type="submit" class="button" name="saveandnew" value="'.$langs->trans("SaveAndNew").'">';

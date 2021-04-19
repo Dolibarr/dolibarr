@@ -533,7 +533,7 @@ if ($permissiontoadd) {
 if ($permissiontoadd) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
-//if ($permissiontodelete) $arrayofmassactions['predelete'] = img_picto('', 'delete').$langs->trans("Delete");
+//if ($permissiontodelete) $arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').'&ensp;'.$langs->trans("Delete");
 
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete', 'preaffecttag'))) {
 	$arrayofmassactions = array();
@@ -595,7 +595,7 @@ $moreforfilter = '';
 // Filter on categories
 if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
 	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= $langs->trans('Categories').': ';
+	$moreforfilter .= img_picto($langs->trans("Category"), 'category', 'class="paddingright"');
 	$moreforfilter .= $formother->select_categories(Categorie::TYPE_USER, $search_categ, 'search_categ', 1);
 	$moreforfilter .= '</div>';
 }
@@ -724,7 +724,7 @@ if (!empty($arrayfields['u.gender']['checked'])) {
 	print_liste_field_titre("Gender", $_SERVER['PHP_SELF'], "u.gender", $param, "", "", $sortfield, $sortorder);
 }
 if (!empty($arrayfields['u.employee']['checked'])) {
-	print_liste_field_titre("Employee", $_SERVER['PHP_SELF'], "u.employee", $param, "", "", $sortfield, $sortorder);
+	print_liste_field_titre("Employee", $_SERVER['PHP_SELF'], "u.employee", $param, "", "", $sortfield, $sortorder, 'center ');
 }
 if (!empty($arrayfields['u.fk_user']['checked'])) {
 	print_liste_field_titre("HierarchicalResponsible", $_SERVER['PHP_SELF'], "u.fk_user", $param, "", "", $sortfield, $sortorder);
@@ -822,6 +822,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	$li = $userstatic->getNomUrl(-1, '', 0, 0, 24, 1, 'login', '', 1);
 
 	print '<tr class="oddeven">';
+
 	if (!empty($arrayfields['u.login']['checked'])) {
 		print '<td class="nowraponall">';
 		print $li;
@@ -836,13 +837,13 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		}
 	}
 	if (!empty($arrayfields['u.lastname']['checked'])) {
-		  print '<td class="tdoverflowmax150">'.$obj->lastname.'</td>';
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->lastname).'">'.dol_escape_htmltag($obj->lastname).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	if (!empty($arrayfields['u.firstname']['checked'])) {
-		print '<td class="tdoverflowmax150">'.$obj->firstname.'</td>';
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->lastname).'">'.dol_escape_htmltag($obj->firstname).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -858,7 +859,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		}
 	}
 	if (!empty($arrayfields['u.employee']['checked'])) {
-		print '<td>'.yn($obj->employee).'</td>';
+		print '<td class="center">'.yn($obj->employee).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

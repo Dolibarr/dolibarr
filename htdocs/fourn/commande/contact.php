@@ -78,7 +78,7 @@ if ($action == 'addcontact' && ($user->rights->fournisseur->commande->creer || $
 	if ($object->fetch($id)) {
 		$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
 	} else {
-		dol_print_error($db);
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 } elseif ($action == 'deletecontact' && ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer)) {
 	// Deleting a contact
@@ -89,7 +89,7 @@ if ($action == 'addcontact' && ($user->rights->fournisseur->commande->creer || $
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	} else {
-		dol_print_error($db);
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 

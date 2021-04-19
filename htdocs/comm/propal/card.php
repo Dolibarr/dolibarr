@@ -2633,12 +2633,6 @@ if ($action == 'create') {
 			print showOnlineSignatureUrl('proposal', $object->ref).'<br>';
 		}
 
-		// Show direct download link
-		if ($object->statut != Propal::STATUS_DRAFT && !empty($conf->global->PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD)) {
-			print '<br><!-- Link to download main doc -->'."\n";
-			print showDirectDownloadLink($object).'<br>';
-		}
-
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 		// List of actions on element

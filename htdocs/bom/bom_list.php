@@ -421,7 +421,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 // List of mass actions available
 $arrayofmassactions = array(
-	//'presend'=>img_picto('', 'email').$langs->trans("SendByMail"),
+	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 	'enable'=>img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Enable"),
 	'disable'=>img_picto('', 'close_title', 'class="pictofixedwidth"').$langs->trans("Disable"),
 );
