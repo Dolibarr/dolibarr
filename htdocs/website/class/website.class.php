@@ -1092,8 +1092,8 @@ class Website extends CommonObject
 		}
 
 		$line .= "\n-- For Dolibarr v14+ --\n";
-		$line .= "UPDATE llx_website SET fk_default_lang = '".$this->fk_default_lang."' WHERE rowid = __WEBSITE_ID__;\n";
-		$line .= "UPDATE llx_website SET otherlang = '".$this->otherlang."' WHERE rowid = __WEBSITE_ID__;\n";
+		$line .= "UPDATE llx_website SET fk_default_lang = '".$this->db->escape($this->fk_default_lang)."' WHERE rowid = __WEBSITE_ID__;\n";
+		$line .= "UPDATE llx_website SET otherlang = '".$this->db->escape($this->otherlang)."' WHERE rowid = __WEBSITE_ID__;\n";
 		$line .= "\n";
 		fputs($fp, $line);
 
