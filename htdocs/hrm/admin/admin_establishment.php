@@ -55,7 +55,9 @@ if (empty($permissiontoread)) accessforbidden();
 $form = new Form($db);
 $establishmenttmp = new Establishment($db);
 
-llxHeader('', $langs->trans("Establishments"));
+$title = $langs->trans('Establishments');
+
+llxHeader('', $title, '');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortorder     = GETPOST("sortorder", 'alpha');
