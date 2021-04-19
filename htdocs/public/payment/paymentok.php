@@ -625,11 +625,11 @@ if ($ispaymentok) {
 						$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
 
 						// Create external user
-						if(!empty($conf->global->ADHERENT_CREATE_EXTERNAL_USER_LOGIN)){
+						if (!empty($conf->global->ADHERENT_CREATE_EXTERNAL_USER_LOGIN)) {
 							$infouserlogin = '';
 							$nuser = new User($db);
 							$tmpuser = dol_clone($object);
-							
+
 							$result = $nuser->create_from_member($tmpuser, $object->login);
 							$newpassword = $nuser->setPassword($user, '');
 

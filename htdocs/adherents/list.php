@@ -258,7 +258,7 @@ if (empty($reshook)) {
 		foreach ($toselect as $idtoclose) {
 			$tmpmember->fetch($idtoclose);
 
-			if(!empty($tmpmember->fk_soc)){
+			if (!empty($tmpmember->fk_soc)) {
 				$nuser = new User($db);
 				$tmpuser = dol_clone($tmpmember);
 
