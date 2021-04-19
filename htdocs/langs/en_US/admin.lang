@@ -2123,6 +2123,6 @@ NoWritableFilesFoundIntoRootDir=No writable files or directories of the common p
 RecommendedValueIs=Recommended: %s
 ARestrictedPath=A restricted path
 CheckForModuleUpdate=Check for modules updates
-CheckForModuleUpdateHelp=Check for modules updates.<br/>This action will connect to modules editors to check if a new version is available.
+CheckForModuleUpdateHelp=Check for modules updates.<br>This action will connect to modules editors to check if a new version is available.
 ModuleUpdateAvailable=An update is available for this module
 SwaggerDescriptionFile=Swagger API description file (for use with redoc for example)

@@ -882,7 +882,7 @@ class DolGraph
 			$this->stringtoshow .= '\'+';
 			$this->stringtoshow .= ($showlegend ? '' : 'label+\' \'+'); // Hide label if already shown in legend
 			$this->stringtoshow .= ($showpointvalue ? 'number+' : '');
-			$this->stringtoshow .= ($showpercent ? '\'<br/>\'+percent+\'%\'+' : '');
+			$this->stringtoshow .= ($showpercent ? '\'<br>\'+percent+\'%\'+' : '');
 			$this->stringtoshow .= '\'';
 			if ($urltemp) {
 				$this->stringtoshow .= '</a>';

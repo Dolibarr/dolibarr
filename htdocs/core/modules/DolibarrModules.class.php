@@ -2276,7 +2276,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		if ($this->isCoreOrExternalModule() == 'external' || preg_match('/development|experimental|deprecated/i', $version)) {
 			$versionTitle =  $langs->trans("Version").' '.$this->getVersion(1);
 			if ($this->needUpdate) {
-				$versionTitle.= '<br/>'.$langs->trans('ModuleUpdateAvailable').' : '.$this->lastVersion;
+				$versionTitle.= '<br>'.$langs->trans('ModuleUpdateAvailable').' : '.$this->lastVersion;
 			}
 
 			print '<span class="info-box-icon-version'.($versiontrans ? ' '.$versiontrans : '').' classfortooltip" title="'.dol_escape_js($versionTitle).'" >';
