@@ -254,7 +254,7 @@ $userstatic = new User($db);
 
 $help_url = 'EN:Module_Manufacturing_Orders|FR:Module_Ordres_de_Fabrication';
 
-llxHeader('', $langs->trans('Mo'), '$help_url');
+llxHeader('', $langs->trans('Mo'), $help_url);
 
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
