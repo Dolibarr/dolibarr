@@ -5610,11 +5610,12 @@ class FactureLigne extends CommonInvoiceLine
 	 *  Send reminders by emails for ivoices that are due
 	 *  CAN BE A CRON TASK
 	 *
-	 *  @param	int		$nbdays			Delay after due date (or before if delay is negative)
-	 *  @param	int		$idtemplate		Id or name of of email template (Must be a template of type 'invoice')
-	 *  @return int         			0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
+	 *  @param	int			$nbdays			Delay after due date (or before if delay is negative)
+	 *  @param	string		$paymentmode	'' or 'all' by default (no filter), or 'LIQ', 'CHQ', CB', ...
+	 *  @param	int|string	$idtemplate		Id or name of of email template (Must be a template of type 'invoice')
+	 *  @return int         				0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	public function sendEmailsReminderOnDueDate($nbdays = 0, $idtemplate = 0)
+	public function sendEmailsReminderOnDueDate($nbdays = 0, $paymentmode = 'all', $idtemplate = '')
 	{
 		global $conf, $langs, $user;
 
@@ -5653,10 +5654,16 @@ class FactureLigne extends CommonInvoiceLine
 		$this->db->begin();
 
 		//Select all action comm reminder
-		$sql = "SELECT rowid as id FROM ".MAIN_DB_PREFIX."facture";
-		$sql .= " WHERE paye = 0";
-		$sql .= " AND date_lim_reglement = '".$this->db->idate(dol_time_plus_duree($now, -1 * $nbdays, 'd'))."'";	// TODO Remove hours into filter
-		$sql .= " AND entity IN (".getEntity('facture').")";
+		$sql = "SELECT rowid as id FROM ".MAIN_DB_PREFIX."facture as f";
+		if (!empty($paymentmode) && $paymentmode != 'all') {
+			$sql .= ", ".MAIN_DB_PREFIX."c_paiement as cp";
+		}
+		$sql .= " WHERE f.paye = 0";
+		$sql .= " AND f.date_lim_reglement = '".$this->db->idate(dol_time_plus_duree($now, -1 * $nbdays, 'd'))."'";	// TODO Remove hours into filter
+		$sql .= " AND f.entity IN (".getEntity('facture').")";
+		if (!empty($paymentmode) && $paymentmode != 'all') {
+			$sql .= " AND f.fk_mode_reglement = cp.id AND cp.code = '".$this->db->escape($paymentmode)."'";
+		}
 		// TODO Add filter to check there is no payment started
 		$sql .= $this->db->order("date_lim_reglement", "ASC");
 		$resql = $this->db->query($sql);
