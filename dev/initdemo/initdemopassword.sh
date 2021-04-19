@@ -39,7 +39,7 @@ if [ "x$confirm" != "xconfirm" ]
 then
 	echo "----- $0 -----"
 	echo "Usage: initdemopassword.sh confirm [base port login pass password_hash_algo]"
-	echo "password_hash_algo can be md5 of password_hash"
+	echo "password_hash_algo can be md5 or password_hash"
 	exit
 fi
 
