@@ -152,9 +152,11 @@ fi
 
 if [ "x${demopasshash}" != "xpassword_hash" ]
 then
-	newpass=`echo '<?php echo MD5("$demopass"); ?>' | php`
+	echo '<?php echo MD5("$demopass"); ?>' > /tmp/tmp.php 
+	newpass=`php -f /tmp/tmp.php`
 else
-	newpass=`echo '<?php echo password_hash("$demopass", PASSWORD_DEFAULT); ?>' | php`
+	echo '<?php echo password_hash("'$demopass'", PASSWORD_DEFAULT); ?>' > /tmp/tmp.php
+	newpass=`php -f /tmp/tmp.php`
 fi
 
 echo "echo \"UPDATE llx_user SET pass_crypted = '$newpass' WHERE login = '$demologin';\" | mysql -P$port $base"
