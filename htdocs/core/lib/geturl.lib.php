@@ -204,6 +204,11 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 					$info['content'] = 'Error bad hostname. Must be a local URL.';
 					break;
 				}
+				if (!empty($conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP) && !in_array($iptocheck, explode(',', '127.0.0.1,::1,'.$conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP))) {
+					$info['http_code'] = 400;
+					$info['content'] = 'Error bad hostname IP (IP is not a local IP defined into list MAIN_SECURITY_SERVER_IP). Must be a local URL in allowed list.';
+					break;
+				}
 			}
 			// Common check (local and external)
 			if (in_array($iptocheck, array('100.100.100.200'))) {
