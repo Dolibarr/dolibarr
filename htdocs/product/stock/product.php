@@ -545,8 +545,6 @@ if ($id > 0 || $ref)
 			});
 
 			$("#show_all").click(function() {
-				$(this).hide();
-				$("#hide_all").show();
 				$("[class^=batch_warehouse]").show();
 				$("[class^=collapse_batch]").html('(-)&nbsp;');
 				return false;
@@ -554,8 +552,6 @@ if ($id > 0 || $ref)
 
 			$("#hide_all").click(function() {
 				$("[class^=batch_warehouse]").hide();
-				$(this).hide();
-				$("#show_all").show();
 				$("[class^=collapse_batch]").html('(+)&nbsp;');
 				return false;
 			});
@@ -872,8 +868,8 @@ if (!$variants) {
 	if ((!empty($conf->productbatch->enabled)) && $object->hasbatch()) {
 		$colspan = 3;
 		print '<tr class="liste_titre"><td width="14%">';
-		print '<a style="display:'.(!empty($conf->global->STOCK_SHOW_ALL_BATCH_BY_DEFAULT) ? 'visible' : 'none').';" id="hide_all" href="#">'.img_picto('', 'folder', 'class="paddingright"').$langs->trans("UndoExpandAll").'</a>';
-		print '<a style="display:'.(!empty($conf->global->STOCK_SHOW_ALL_BATCH_BY_DEFAULT) ? 'none' : 'visible').';" id="show_all" href="#">'.img_picto('', 'folder-open', 'class="paddingright"').$langs->trans("ExpandAll").'</a>';
+		print '<a id="show_all" href="#">'.img_picto('', 'folder-open', 'class="paddingright"').$langs->trans("ExpandAll").'</a><br>';
+		print '<a id="hide_all" href="#">'.img_picto('', 'folder', 'class="paddingright"').$langs->trans("UndoExpandAll").'</a>';
 		print '</td>';
 		print '<td class="right" width="10%">'.$langs->trans("batch_number").'</td>';
 		if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
