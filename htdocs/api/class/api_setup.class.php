@@ -1667,7 +1667,7 @@ class Setup extends DolibarrApi
 		}
 		if ($xmlremote && !preg_match('/\.xml$/', $xmlremote)) {
 			$langs->load("errors");
-			throw new RestException(500, $langs->trans("ErrorURLMustEndWith", '.xml'));
+			throw new RestException(500, $langs->trans("ErrorURLMustEndWith", $xmlremote, '.xml'));
 		}
 
 		if ($target == 'local') {
