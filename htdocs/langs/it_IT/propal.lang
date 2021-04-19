@@ -59,6 +59,7 @@ ConfirmClonePropal=Vuoi davvero clonare il preventivo<b>%s</b>?
 ConfirmReOpenProp=Vuoi davvero riaprire il preventivo <b>%s</b>?
 ProposalsAndProposalsLines=Preventivo e righe
 ProposalLine=Riga di preventivo
+ProposalLines=Proposal lines
 AvailabilityPeriod=Tempi di consegna
 SetAvailability=Imposta i tempi di consegna
 AfterOrder=dopo ordine

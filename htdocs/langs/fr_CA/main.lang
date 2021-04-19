@@ -56,7 +56,6 @@ CurrencyRate=Taux de conversion monétaire
 UseLocalTax=Inclure taxe
 UnitPriceTTC=Prix unitaire tx incl.
 PriceUHT=Prix
-PriceUHTCurrency=U.P (devise)
 PriceUTTC=P.U. (tx incl.)
 AmountTTCShort=Montant (tx incl.)
 AmountTTC=Montant (tx incl.)
