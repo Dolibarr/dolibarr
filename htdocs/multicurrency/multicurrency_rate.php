@@ -299,7 +299,7 @@ $sql .= ' FROM '.MAIN_DB_PREFIX.'multicurrency_rate as cr ';
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."multicurrency AS m ON cr.fk_multicurrency = m.rowid";
 if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 if ($search_date_sync && $search_date_sync_end ) {
-	$sql .= " AND (cr.date_sync BETWEEN '".$db->escape($db->idate($search_date_sync))."' AND '".$db->escape($db->idate($search_date_sync_end))."')";
+	$sql .= " AND (cr.date_sync BETWEEN '".$db->idate($search_date_sync)."' AND '".$db->idate($search_date_sync_end)."')";
 } elseif ($search_date_sync && !$search_date_sync_end) {
 	$sql .= natural_search('cr.date_sync', $db->idate($search_date_sync));
 }
