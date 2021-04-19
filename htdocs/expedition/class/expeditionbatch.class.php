@@ -143,6 +143,7 @@ class ExpeditionLineBatch extends CommonObject
 		if (!$resql) {
 			$error++; $this->errors[] = "Error ".$this->db->lasterror();
 		}
+		else $this->fk_expeditiondet = $id_line_expdet;
 		if (!$error && !$notrigger)
 		{
 			// Call trigger
@@ -153,7 +154,6 @@ class ExpeditionLineBatch extends CommonObject
 
 		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.self::$_table_element);
-			$this->fk_expeditiondet = $id_line_expdet;
 			return $this->id;
 		} else {
 			foreach ($this->errors as $errmsg) {
