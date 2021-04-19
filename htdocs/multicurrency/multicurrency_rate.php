@@ -487,8 +487,6 @@ if ($resql) {
             //  var_dump($obj);
 			$form = new Form($db);
 			print '<td>' . $form->selectDate($obj->date_sync, 'dateinput', 0, 0, 1).'</td>';
-
-
             print '<td>' . $form->selectMultiCurrency($obj->code, 'multicurrency_code', 1, " code != '".$conf->currency."'", true) . '</td>';
             print ' <td><input type="number" min ="0" step="any" class="minwidth200" name="rateinput" value="' . dol_escape_htmltag($obj->rate) . '"></td>';
 
