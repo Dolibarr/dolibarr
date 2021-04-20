@@ -281,7 +281,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 			) ? 1 : 0,
 		'perms'=>(!empty($user->rights->facture->lire) || !empty($user->rights->don->contact->lire)
 			|| !empty($user->rights->tax->charges->lire) || !empty($user->rights->salaries->read)
-			|| !empty($user->rights->fournisseur->facture->lire) || !empty($user->rights->supplier_invoice->lire) || !empty($user->rights->loan->read) || !empty($user->rights->margins->liretous)),
+			|| !empty($user->rights->fournisseur->facture->lire) || !empty($user->rights->loan->read) || !empty($user->rights->margins->liretous)),
 		'module'=>'facture|supplier_invoice|don|tax|salaries|loan'
 	);
 	$menu_arr[] = array(

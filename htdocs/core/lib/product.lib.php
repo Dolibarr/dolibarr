@@ -58,7 +58,7 @@ function product_prepare_head($object)
 	}
 
 	if (!empty($object->status_buy) || (!empty($conf->margin->enabled) && !empty($object->status))) {   // If margin is on and product on sell, we may need the cost price even if product os not on purchase
-		if ((((!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (!empty($conf->supplier_order->enabled) && $user->rights->supplier_order->lire) || (!empty($conf->supplier_invoice->enabled) && $user->rights->supplier_invoice->lire)))
+		if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && $user->rights->fournisseur->lire)
 		|| (!empty($conf->margin->enabled) && $user->rights->margin->liretous)
 		) {
 			$head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$object->id;
