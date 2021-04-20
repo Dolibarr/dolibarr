@@ -763,9 +763,9 @@ if ($id > 0 || !empty($ref)) {
 					$nbfreeproduct++;
 				} else {
 					$remaintodispatch = price2num($objp->qty - ((float) $products_dispatched[$objp->rowid]), 5); // Calculation of dispatched
-					if ($remaintodispatch < 0)
+					if ($remaintodispatch < 0 && empty($conf->global->RETROCESSION_ALLOW_NEGATIVE_DISPATCH)) {
 						$remaintodispatch = 0;
-
+					}
 					if ($remaintodispatch || empty($conf->global->SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED)) {
 						$nbproduct++;
 
