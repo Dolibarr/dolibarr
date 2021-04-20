@@ -63,7 +63,7 @@ create table llx_product
   fk_product_type               integer      DEFAULT 0,             -- Type of product: 0 for regular product, 1 for service, 9 for other (used by external module)
   duration                      varchar(6),
   lifetime                      varchar(6),
-  qc_periodicity                varchar(6),                         -- Quality control periodicity
+  qc_frequency                  varchar(6),                         -- Quality control periodicity
   seuil_stock_alerte            float      DEFAULT NULL,
   url                           varchar(255),
   barcode                       varchar(180) DEFAULT NULL,          -- barcode
