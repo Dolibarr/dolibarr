@@ -3820,6 +3820,11 @@ abstract class CommonObject
 						$classpath = 'projet/class';
 						$classfile = 'project';
 						$classname = 'Project';
+					} elseif ($objecttype == 'conferenceorboothattendee') {
+						$classpath = 'eventorganization/class';
+						$classfile = 'conferenceorboothattendee';
+						$classname = 'ConferenceOrBoothAttendee';
+						$module = 'eventorganization';
 					}
 
 					// Here $module, $classfile and $classname are set

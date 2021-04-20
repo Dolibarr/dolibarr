@@ -117,17 +117,30 @@ if ($source == 'conferencesubscription') {
 	$invoice = new Facture($db);
 	$resultinvoice = $invoice->fetch($decodedinvoiceid);
 	if ($resultinvoice <= 0) {
-		$mesg = $invoice->error;
-		$error++;
+		setEventMessages(null, $invoice->errors, "errors");
 	} else {
+		$invoice->fetchObjectLinked();
 		// Finding the thirdparty associated to the Attendee
 		$thirdparty = new Societe($db);
 		$resultthirdparty = $thirdparty->fetch($invoice->socid);
 		if ($resultthirdparty <= 0) {
-			$mesg = $thirdparty->error;
-			$error++;
+			setEventMessages(null, $thirdparty->errors, "errors");
 		}
 		$object = $thirdparty;
+
+		$linkedAttendees = $invoice->linkedObjectsIds['conferenceorboothattendee'];
+
+		if (is_array($linkedAttendees)) {
+			$linkedAttendees = array_values($linkedAttendees);
+
+			$attendee = new ConferenceOrBoothAttendee($db);
+			$resultattendee = $attendee->fetch($linkedAttendees[0]);
+			if ($resultattendee <= 0) {
+				setEventMessages(null, $attendee->errors, "errors");
+			}
+			var_dump($attendee);
+			exit;
+		}
 	}
 }
 
@@ -363,7 +376,7 @@ if ($action == 'dopayment') {
 
 			// A redirect is added if API call successfull
 			if ($source == 'conferencesubscription') {
-				$PAYPAL_API_OK .= '&conferencesubscription='.dol_encode('subscriptionok'.$ref, $dolibarr_main_instance_unique_id).'&invoice='.dol_encode($invoice->id, $dolibarr_main_instance_unique_id);
+				$PAYPAL_API_OK .= '&invoice='.dol_encode($invoice->id, $dolibarr_main_instance_unique_id);
 			}
 			$mesg = print_paypal_redirect($PAYPAL_API_PRICE, $PAYPAL_API_DEVISE, $PAYPAL_PAYMENT_TYPE, $PAYPAL_API_OK, $PAYPAL_API_KO, $FULLTAG);
 
@@ -384,7 +397,7 @@ if ($action == 'dopayment') {
 		$urlko = preg_replace('/securekey=[^&]+/', '', $urlko);
 
 		if ($source == 'conferencesubscription') {
-			$urlok .= '&conferencesubscription='.dol_encode('subscriptionok'.$ref, $dolibarr_main_instance_unique_id).'&invoice='.dol_encode($invoice->id, $dolibarr_main_instance_unique_id);
+			$urlok .= '&invoice='.dol_encode($invoice->id, $dolibarr_main_instance_unique_id);
 		}
 
 		$mesg = '';
@@ -742,7 +755,7 @@ if ($action == 'charge' && !empty($conf->stripe->enabled)) {
 		exit;
 	} else {
 		if ($source == 'conferencesubscription') {
-			$urlok .= '&conferencesubscription='.dol_encode('subscriptionok'.$ref, $dolibarr_main_instance_unique_id).'&invoice='.dol_encode($invoice->id, $dolibarr_main_instance_unique_id);
+			$urlok .= '&invoice='.dol_encode($invoice->id, $dolibarr_main_instance_unique_id);
 		}
 		header("Location: ".$urlok);
 		exit;
@@ -1763,18 +1776,10 @@ if ($source == 'conferencesubscription') {
 	$found = true;
 	$langs->load("members");
 
-	if ($action != 'dopayment') { // Do not change amount if we just click on first dopayment
-		$amount = $project->price_registration;
-		if (GETPOST("amount", 'alpha')) {
-			$amount = GETPOST("amount", 'alpha');
-		}
-		$amount = price2num($amount, 'MT');
-	}
-
 	if (GETPOST('fulltag', 'alpha')) {
 		$fulltag = GETPOST('fulltag', 'alpha');
 	} else {
-		$fulltag = 'MEM='.$member->id.'.DAT='.dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+		$fulltag = 'ATT='.$attendee->id.'.DAT='.dol_print_date(dol_now(), '%Y%m%d%H%M%S');
 		if (!empty($TAG)) {
 			$tag = $TAG; $fulltag .= '.TAG='.$TAG;
 		}

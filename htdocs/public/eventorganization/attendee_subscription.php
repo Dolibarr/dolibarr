@@ -321,12 +321,13 @@ if (empty($reshook) && $action == 'add') {
 						$confattendee->errors[] = $confattendee->error;
 					}
 				}
-
 				$resultfacture = $facture->create($user);
 				if ($resultfacture <= 0) {
 					$confattendee->error = $facture->error;
 					$confattendee->errors = $facture->errors;
 					$error++;
+				} else {
+					$facture->add_object_linked($confattendee->element, $confattendee->id);
 				}
 			}
 
