@@ -1,4 +1,4 @@
-# ProductBATCH language file - en_US - ProductBATCH
+# ProductBATCH language file - Source file is en_US - ProductBATCH
 ManageLotSerial=Utiliser les numéros de lots/série
 ProductStatusOnBatch=Lot (requis)
 ProductStatusOnSerial=Numéro de série (doit être unique pour chaque équipement)
