@@ -243,3 +243,4 @@ UpdateByScaningProductBarcode=Mettre à jour par scan (code-barres produit)
 UpdateByScaningLot=Mise à jour par scan (code barres lot/série)
 DisableStockChangeOfSubProduct=Désactiver les mouvements de stock des composants pour tout mouvement de stock de ce kit
 ShowAllBatchByDefault=Dérouler par défaut le détail des lots dans l'onglet "stock"
+CollapseBatchDetailHelp=Vous pouvez définir l'affichage par défaut du détail des lots dans la configuration du module stocks

@@ -242,3 +242,4 @@ UpdateByScaningProductBarcode=Update by scan (product barcode)
 UpdateByScaningLot=Update by scan (lot|serial barcode)
 DisableStockChangeOfSubProduct=Deactivate the stock change for all the subproducts of this Kit during this movement.
 ShowAllBatchByDefault=By default, show batch details on product "stock" tab
+CollapseBatchDetailHelp=You can set batch detail default display in stocks module configuration
