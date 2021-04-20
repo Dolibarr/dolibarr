@@ -80,6 +80,38 @@ if ($resthirdparty<0) {
 	$errmsg .= $thirdparty->error;
 }
 
+// Send subscription email
+include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+$formmail = new FormMail($db);
+// Set output language
+$outputlangs = new Translate('', $conf);
+$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+// Load traductions files required by page
+$outputlangs->loadLangs(array("main", "members"));
+// Get email content from template
+$arraydefaultmessage = null;
+$labeltouse = $conf->global->EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT;
+
+if (!empty($labeltouse)) {
+	$arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
+}
+
+if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
+	$subject = $arraydefaultmessage->topic;
+	$msg     = $arraydefaultmessage->content;
+}
+
+$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
+complete_substitutions_array($substitutionarray, $outputlangs, $object);
+$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
+$texttosend = make_substitutions($msg, $substitutionarray, $outputlangs);
+
+if ($subjecttosend && $texttosend) {
+	$moreinheader = 'X-Dolibarr-Info: send_an_email by public/members/new.php'."\r\n";
+
+	$result = $object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
+}
+
 /*
  * Actions
  */
