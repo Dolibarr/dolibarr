@@ -2310,9 +2310,9 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	}
 
 	/**
-	 * check for module update
+	 * Check for module update
 	 * TODO : store results for $this->url_last_version and $this->needUpdate
-	 *  Add a cron task to monitor for updates
+	 * Add a cron task to monitor for updates
 	 *
 	 * @return int <0 if Error, 0 == no update needed,  >0 if need update
 	 */

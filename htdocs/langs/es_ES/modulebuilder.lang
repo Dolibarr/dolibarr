@@ -133,7 +133,9 @@ IncludeDocGeneration=Quiero generar algunos documentos del objeto.
 IncludeDocGenerationHelp=Si marca esto, se generará código para agregar  un panel "Generar documento" en el registro.
 ShowOnCombobox=Mostrar valor en el combobox
 KeyForTooltip=Clave para tooltip
-CSSClass=Clase CSS
+CSSClass=CSS para editar / crear formulario
+CSSViewClass=CSS para formulario de lectura
+CSSListClass=CSS para lista
 NotEditable=No editable
 ForeignKey=Foreign key
 TypeOfFieldsHelp=Tipo de campos: <br> varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] ('1' significa que agregamos un botón + después del combo para crear el registro, 'filtro' puede ser 'status=1 AND fk_user = __USER_ID AND entity IN (__SHARED_ENTITIES__)' por ejemplo)

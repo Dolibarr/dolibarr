@@ -179,7 +179,6 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 			$iptocheck = '0'; //
 		}
 
-		//var_dump($_SERVER);
 		if ($iptocheck) {
 			if ($localurl == 0) {	// Only external url allowed (dangerous, may allow to get malware)
 				if (!filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
@@ -188,7 +187,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 					$info['content'] = 'Error bad hostname IP (private or reserved range). Must be an external URL.';
 					break;
 				}
-				if ($iptocheck == $_SERVER["SERVER_ADDR"]) {
+				if (!empty($_SERVER["SERVER_ADDR"]) && $iptocheck == $_SERVER["SERVER_ADDR"]) {
 					$info['http_code'] = 400;
 					$info['content'] = 'Error bad hostname IP (IP is a local IP). Must be an external URL.';
 					break;
@@ -219,7 +218,10 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 			// Set CURLOPT_CONNECT_TO so curl will not try another resolution that may give a different result. Possible only on PHP v7+
 			if (defined('CURLOPT_CONNECT_TO')) {
-				curl_setopt($ch, CURLOPT_CONNECT_TO, $iptocheck);
+				$connect_to = array(sprintf("%s:%d:%s:%d", $newUrlArray['host'], $newUrlArray['port'], $iptocheck, $newUrlArray['port']));
+				//var_dump($newUrlArray);
+				//var_dump($connect_to);
+				curl_setopt($ch, CURLOPT_CONNECT_TO, $connect_to);
 			}
 		}
 

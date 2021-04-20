@@ -133,7 +133,9 @@ IncludeDocGeneration=Saya ingin menghasilkan beberapa dokumen dari objek
 IncludeDocGenerationHelp=Jika Anda mencentang ini, beberapa kode akan dibuat untuk menambahkan kotak "Hasilkan dokumen" pada catatan.
 ShowOnCombobox=Tunjukkan nilai ke dalam kotak kombo
 KeyForTooltip=Kunci untuk tooltip
-CSSClass=Kelas CSS
+CSSClass=CSS for edit/create form
+CSSViewClass=CSS for read form
+CSSListClass=CSS for list
 NotEditable=Tidak dapat diedit
 ForeignKey=Kunci asing
 TypeOfFieldsHelp=Jenis bidang: <br> varchar (99), ganda (24,8), real, teks, html, datetime, timestamp, integer, integer: ClassName: relativepath / to / classfile.class.php [: 1 [: filter]] ('1' berarti kita menambahkan tombol + setelah kombo untuk membuat catatan, 'filter' dapat berupa 'status = 1 DAN fk_user = __USER_ID DAN entitas IN (__SHARED_ENTITIES__)' misalnya)

@@ -59,6 +59,7 @@ ConfirmClonePropal=Weet u zeker dat u offerte <b>%s</b>  wilt kopiëren?
 ConfirmReOpenProp=Weet u zeker dat u offerte <b>%s</b> opnieuw wilt openen?
 ProposalsAndProposalsLines=Offertes en offerteregels
 ProposalLine=Offerteregel
+ProposalLines=Proposal lines
 AvailabilityPeriod=Leveringstermijn
 SetAvailability=Bepaal leveringstermijn
 AfterOrder=na bestelling

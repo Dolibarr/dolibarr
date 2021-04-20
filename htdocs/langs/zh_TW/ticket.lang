@@ -70,6 +70,8 @@ Deleted=已刪除
 # Dict
 Type=類型
 Severity=嚴重程度
+TicketGroupIsPublic=Group is public
+TicketGroupIsPublicDesc=If a ticket group is public, it will be visible in the form when creating a ticket from the public interface
 
 # Email templates
 MailToSendTicketMessage=從服務單訊息發送電子郵件
@@ -114,8 +116,8 @@ TicketsShowModuleLogo=在公共界面中顯示模組的商標
 TicketsShowModuleLogoHelp=啟用此選項可在公共界面的頁面中隱藏商標模組
 TicketsShowCompanyLogo=在公共界面上顯示公司商標
 TicketsShowCompanyLogoHelp=啟用此選項可在公共界面的頁面中隱藏主要公司的商標
-TicketsEmailAlsoSendToMainAddress=同時發送通知到主要電子郵件地址
-TicketsEmailAlsoSendToMainAddressHelp=啟用此選項可將電子郵件發送到“通知電子郵件來源”地址（請參閱下面的設定）
+TicketsEmailAlsoSendToMainAddress=Also send a notification to the main email address
+TicketsEmailAlsoSendToMainAddressHelp=Enable this option to also send an email to the address defined into setup "%s" (see tab "%s")
 TicketsLimitViewAssignedOnly=限制顯示分配給目前用戶的服務單。（對外部用戶無效，始終被限制於他們所依賴的合作方）
 TicketsLimitViewAssignedOnlyHelp=僅顯示分配給目前用戶的服務單。不適用於具有服務單管理權限的用戶。
 TicketsActivatePublicInterface=啟用公共界面
@@ -123,13 +125,13 @@ TicketsActivatePublicInterfaceHelp=公共界面允許任何訪客建立服務單
 TicketsAutoAssignTicket=自動分配建立服務單的用戶
 TicketsAutoAssignTicketHelp=建立服務單時，可以自動將用戶分配給服務單。
 TicketNumberingModules=服務單編號模組
-TicketsModelModule=Document templates for tickets
+TicketsModelModule=服務單的文件範本
 TicketNotifyTiersAtCreation=建立時通知合作方
 TicketsDisableCustomerEmail=從公共界面建立服務單時，始終禁用電子郵件
-TicketsPublicNotificationNewMessage=當有新訊息時寄送電子郵件
+TicketsPublicNotificationNewMessage=Send email(s) when a new message/comment is added to a ticket
 TicketsPublicNotificationNewMessageHelp=當公共界面有新增訊息時寄送電子郵件(給已分配用戶或寄送通知電子郵件給(更新)與/或通知電子郵件給)
 TicketPublicNotificationNewMessageDefaultEmail=通知電子郵件寄送到（更新）
-TicketPublicNotificationNewMessageDefaultEmailHelp=如果沒有分配服務單或用戶沒有電子郵件，請通過電子郵件向此信箱寄送新消息通知。
+TicketPublicNotificationNewMessageDefaultEmailHelp=Send an email to this address for each new message notifications if the ticket doesn't have a user assigned to it or if the user doesn't have any known email.
 #
 # Index & list page
 #
@@ -302,3 +304,13 @@ BoxLastModifiedTicket=最新修改的服務單
 BoxLastModifiedTicketDescription=最新%s張修改的服務單
 BoxLastModifiedTicketContent=
 BoxLastModifiedTicketNoRecordedTickets=沒有最近修改的服務單
+BoxTicketType=Number of open tickets by type
+BoxTicketSeverity=Number of open tickets by severity
+BoxNoTicketSeverity=No tickets opened
+BoxTicketLastXDays=Number of new tickets by days the last %s days
+BoxTicketLastXDayswidget = Number of new tickets by days the last X days
+BoxNoTicketLastXDays=No new tickets the last %s days
+BoxNumberOfTicketByDay=Number of new tickets by day
+BoxNewTicketVSClose=Number of today's new tickets versus today's closed tickets
+TicketCreatedToday=Ticket created today
+TicketClosedToday=Ticket closed today

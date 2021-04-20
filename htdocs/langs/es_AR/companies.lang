@@ -257,7 +257,6 @@ CurrentOutstandingBill=Factura pendiente actual
 OutstandingBill=Max. por factura pendiente
 OutstandingBillReached=Max. alcanzado por factura pendiente
 OrderMinAmount=Monto mínimo por orden
-MonkeyNumRefModelDesc=Devuelve un número con el formato %syymm-nnnn para el código del cliente y %syymm-nnnn para el código del proveedor donde yy es el año, mm es el mes y nnnn es una secuencia sin interrupción ni retorno a 0.
 LeopardNumRefModelDesc=El código es gratis. Este código puede modificarse en cualquier momento.
 ManagingDirectors=Nombre(s) del gerente (CEO, director, presidente...)
 MergeOriginThirdparty=Duplicar el tercero (tercero que quieres eliminar)

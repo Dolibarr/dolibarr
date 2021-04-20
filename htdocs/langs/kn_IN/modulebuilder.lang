@@ -133,7 +133,9 @@ IncludeDocGeneration=I want to generate some documents from the object
 IncludeDocGenerationHelp=If you check this, some code will be generated to add a "Generate document" box on the record.
 ShowOnCombobox=Show value into combobox
 KeyForTooltip=Key for tooltip
-CSSClass=CSS Class
+CSSClass=CSS for edit/create form
+CSSViewClass=CSS for read form
+CSSListClass=CSS for list
 NotEditable=Not editable
 ForeignKey=Foreign key
 TypeOfFieldsHelp=Type of fields:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] ('1' means we add a + button after the combo to create the record, 'filter' can be 'status=1 AND fk_user = __USER_ID AND entity IN (__SHARED_ENTITIES__)' for example)
