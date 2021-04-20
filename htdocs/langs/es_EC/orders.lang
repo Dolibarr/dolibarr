@@ -116,6 +116,7 @@ PDFEratostheneDescription=Un modelo de orden completo
 PDFEdisonDescription=Un modelo de pedido simple
 PDFProformaDescription=Una plantilla completa de factura Proforma
 CreateInvoiceForThisCustomer=Ordenes de factura
+CreateInvoiceForThisSupplier=Ordenes de factura
 NoOrdersToInvoice=No hay pedidos facturables
 CloseProcessedOrdersAutomatically=Clasifique "Procesado" todos los pedidos seleccionados.
 OrderCreation=Creación de órdenes

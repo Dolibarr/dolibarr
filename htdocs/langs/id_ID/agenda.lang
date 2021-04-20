@@ -4,7 +4,7 @@ Actions=Perihal
 Agenda=Agenda
 TMenuAgenda=Agenda
 Agendas=Agenda
-LocalAgenda=Kalender internal
+LocalAgenda=Kalender default
 ActionsOwnedBy=Perihal yang dimiliki oleh
 ActionsOwnedByShort=Pemilik
 AffectedTo=Ditugaskan untuk
@@ -14,13 +14,13 @@ EventsNb=Jumlah kejadian
 ListOfActions=Daftar kejadian
 EventReports=Laporan agenda
 Location=Tempat
-ToUserOfGroup=Agenda yang ditugaskan untuk setiap pengguna dalam grup
+ToUserOfGroup=Event assigned to any user in the group
 EventOnFullDay=Perihal di sepanjang hari (s)
 MenuToDoActions=Semua peristiwa yang tidak lengkap
 MenuDoneActions=Semua agenda dihentikan
 MenuToDoMyActions=Perihal lengkap saya
 MenuDoneMyActions=Perihal saya dihentikan
-ListOfEvents=Daftar agenda (kalender internal)
+ListOfEvents=Daftar acara (kalender default)
 ActionsAskedBy=Perihal yang dilaporkan oleh
 ActionsToDoBy=Perihal ditugaskan untuk
 ActionsDoneBy=Perihal yang dilakukan oleh
@@ -119,6 +119,7 @@ MRP_MO_UNVALIDATEInDolibarr=MO diatur ke konsep status
 MRP_MO_PRODUCEDInDolibarr=MO diproduksi
 MRP_MO_DELETEInDolibarr=MO dihapus
 MRP_MO_CANCELInDolibarr=MO dibatalkan
+PAIDInDolibarr=%s paid
 ##### End agenda events #####
 AgendaModelModule=Templat dokumen untuk agenda
 DateActionStart=Tanggal mulai
@@ -130,7 +131,7 @@ AgendaUrlOptions4=<b>logint = %s</b>untuk membatasi output ke tindakan yang dite
 AgendaUrlOptionsProject=<b>project = __ PROJECT_ID__</b>untuk membatasi output ke tindakan yang terkait dengan proyek<b>__PROJECT_ID__ </b>.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype = systemauto</b>untuk mengecualikan agenda otomatis.
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays = 1</b>untuk memasukkan agenda liburan.
-AgendaShowBirthdayEvents=Tampilkan ulang tahun kontak
+AgendaShowBirthdayEvents=Ulang tahun kontak
 AgendaHideBirthdayEvents=Sembunyikan ulang tahun kontak
 Busy=Sibuk
 ExportDataset_event1=Daftar agenda agenda
@@ -152,6 +153,7 @@ ActionType=Jenis agenda
 DateActionBegin=Mulai tanggal agenda
 ConfirmCloneEvent=Apakah Anda yakin ingin mengkloning agenda<b>%s </b>?
 RepeatEvent=Ulangi agenda
+OnceOnly=Once only
 EveryWeek=Setiap minggu
 EveryMonth=Setiap bulan
 DayOfMonth=Hari dalam sebulan
@@ -165,4 +167,4 @@ TimeType=Duration type
 ReminderType=Callback type
 AddReminder=Create an automatic reminder notification for this event
 ErrorReminderActionCommCreation=Error creating the reminder notification for this event
-BrowserPush=Browser Notification
+BrowserPush=Browser Popup Notification

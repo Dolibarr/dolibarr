@@ -70,6 +70,8 @@ Deleted=Dihapus
 # Dict
 Type=Tipe
 Severity=Kerasnya
+TicketGroupIsPublic=Group is public
+TicketGroupIsPublicDesc=If a ticket group is public, it will be visible in the form when creating a ticket from the public interface
 
 # Email templates
 MailToSendTicketMessage=Untuk mengirim email dari pesan tiket
@@ -114,8 +116,8 @@ TicketsShowModuleLogo=Tampilkan logo modul di antarmuka publik
 TicketsShowModuleLogoHelp=Aktifkan opsi ini untuk menyembunyikan modul logo di halaman-halaman antarmuka publik
 TicketsShowCompanyLogo=Tampilkan logo perusahaan di antarmuka publik
 TicketsShowCompanyLogoHelp=Aktifkan opsi ini untuk menyembunyikan logo perusahaan utama di halaman-halaman antarmuka publik
-TicketsEmailAlsoSendToMainAddress=Juga kirim pemberitahuan ke alamat email utama
-TicketsEmailAlsoSendToMainAddressHelp=Aktifkan opsi ini untuk mengirim email ke alamat "Email pemberitahuan dari" (lihat penyiapan di bawah)
+TicketsEmailAlsoSendToMainAddress=Also send a notification to the main email address
+TicketsEmailAlsoSendToMainAddressHelp=Enable this option to also send an email to the address defined into setup "%s" (see tab "%s")
 TicketsLimitViewAssignedOnly=Batasi tampilan untuk tiket yang ditetapkan untuk pengguna saat ini (tidak berlaku untuk pengguna eksternal, selalu terbatas pada pihak ketiga tempat mereka bergantung)
 TicketsLimitViewAssignedOnlyHelp=Hanya tiket yang ditetapkan untuk pengguna saat ini yang akan terlihat. Tidak berlaku untuk pengguna dengan hak pengelolaan tiket.
 TicketsActivatePublicInterface=Aktifkan antarmuka publik
@@ -126,10 +128,10 @@ TicketNumberingModules=Modul penomoran tiket
 TicketsModelModule=Document templates for tickets
 TicketNotifyTiersAtCreation=Beri tahu pihak ketiga saat membuat
 TicketsDisableCustomerEmail=Selalu nonaktifkan email saat tiket dibuat dari antarmuka publik
-TicketsPublicNotificationNewMessage=Kirim email saat pesan baru ditambahkan
+TicketsPublicNotificationNewMessage=Send email(s) when a new message/comment is added to a ticket
 TicketsPublicNotificationNewMessageHelp=Kirim email ketika pesan baru ditambahkan dari antarmuka publik (ke pengguna yang ditetapkan atau email notifikasi ke (pembaruan) dan/atau email notifikasi ke)
 TicketPublicNotificationNewMessageDefaultEmail=Email pemberitahuan ke (perbarui)
-TicketPublicNotificationNewMessageDefaultEmailHelp=Kirim email pemberitahuan pesan baru ke alamat ini jika tiket tidak memiliki pengguna yang ditugaskan atau pengguna tidak memiliki email.
+TicketPublicNotificationNewMessageDefaultEmailHelp=Send an email to this address for each new message notifications if the ticket doesn't have a user assigned to it or if the user doesn't have any known email.
 #
 # Index & list page
 #
@@ -302,3 +304,13 @@ BoxLastModifiedTicket=Tiket modifikasi terbaru
 BoxLastModifiedTicketDescription=Tiket termodifikasi %s terbaru
 BoxLastModifiedTicketContent=
 BoxLastModifiedTicketNoRecordedTickets=Tidak ada tiket yang dimodifikasi baru-baru ini
+BoxTicketType=Number of open tickets by type
+BoxTicketSeverity=Number of open tickets by severity
+BoxNoTicketSeverity=No tickets opened
+BoxTicketLastXDays=Number of new tickets by days the last %s days
+BoxTicketLastXDayswidget = Number of new tickets by days the last X days
+BoxNoTicketLastXDays=No new tickets the last %s days
+BoxNumberOfTicketByDay=Number of new tickets by day
+BoxNewTicketVSClose=Number of today's new tickets versus today's closed tickets
+TicketCreatedToday=Ticket created today
+TicketClosedToday=Ticket closed today

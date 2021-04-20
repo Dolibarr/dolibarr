@@ -505,7 +505,7 @@ class FormProjets
 		}
 
 		$linkedtothirdparty = false;
-		if (!in_array($table_element, array('don', 'expensereport_det', 'expensereport', 'loan', 'stock_mouvement', 'payment_salary', 'payment_various', 'chargesociales'))) {
+		if (!in_array($table_element, array('don', 'expensereport_det', 'expensereport', 'loan', 'stock_mouvement', 'payment_salary', 'payment_various', 'chargesociales', 'entrepot'))) {
 			$linkedtothirdparty = true;
 		}
 
