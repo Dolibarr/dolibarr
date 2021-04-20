@@ -71,64 +71,6 @@ if ($securekey != $conf->global->EVENTORGANIZATION_SECUREKEY) {
 	exit;
 }
 
-$idthirdparty = dol_decode(GETPOST('idthirdparty'), $dolibarr_main_instance_unique_id);
-
-$thirdparty = new Societe($db);
-$resthirdparty = $thirdparty->fetch($idthirdparty);
-if ($resthirdparty<0) {
-	$error++;
-	$errmsg .= $thirdparty->error;
-}
-
-// Send subscription email
-include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-$formmail = new FormMail($db);
-// Set output language
-$outputlangs = new Translate('', $conf);
-$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
-// Load traductions files required by page
-$outputlangs->loadLangs(array("main", "members"));
-// Get email content from template
-$arraydefaultmessage = null;
-$labeltouse = $conf->global->EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT;
-
-if (!empty($labeltouse)) {
-	$arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
-}
-
-if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
-	$subject = $arraydefaultmessage->topic;
-	$msg     = $arraydefaultmessage->content;
-}
-
-$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
-complete_substitutions_array($substitutionarray, $outputlangs, $object);
-$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
-$texttosend = make_substitutions($msg, $substitutionarray, $outputlangs);
-
-if ($subjecttosend && $texttosend) {
-	$moreinheader = 'X-Dolibarr-Info: send_an_email by public/members/new.php'."\r\n";
-
-	global $conf, $langs;
-
-	// Envoi mail confirmation
-	$from = $conf->email_from;
-	if (!empty($conf->global->ADHERENT_MAIL_FROM)) {
-		$from = $conf->global->ADHERENT_MAIL_FROM;
-	}
-
-	$trackid = 'mem'.$this->id;
-
-	include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-	$mailfile = new CMailFile($subjecttosend, $thirdparty->email, $from, $texttosend, array(), array(), array(), "", "", 0, -1, '', '', $trackid, $moreinheader);
-	if ($mailfile->sendfile()) {
-		return 1;
-	} else {
-		$this->error = $langs->trans("ErrorFailedToSendMail", $from, $this->email).'. '.$mailfile->error;
-		return -1;
-	}
-}
-
 /*
  * Actions
  */

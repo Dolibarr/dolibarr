@@ -783,11 +783,11 @@ if ($ispaymentok) {
 			$postactionmessages[] = 'Invoice paid '.$tmptag['INV'].' was not found';
 			$ispostactionok = -1;
 		}
-	} elseif (array_key_exists('ATT', $tmptag) && $tmptag['INV'] > 0) {
+	} elseif (array_key_exists('ATT', $tmptag) && $tmptag['ATT'] > 0) {
 		// Record payment
 		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$object = new Facture($db);
-		$result = $object->fetch($tmptag['INV']);
+		$result = $object->fetch($tmptag['ATT']);
 		if ($result) {
 			$FinalPaymentAmt = $_SESSION["FinalPaymentAmt"];
 
@@ -888,23 +888,29 @@ if ($ispaymentok) {
 					} else {
 						$attendeetovalidate->setStatut(1);
 					}
-					$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?idthirdparty='.dol_encode($thirdparty->id, $dolibarr_main_instance_unique_id).'&securekey='.dol_encode($conf->global->EVENTORGANIZATION_SECUREKEY, $dolibarr_main_instance_unique_id);
-					Header("Location: ".$redirection);
-					exit;
 
+					// Redirecting to confirmation page
+					$thirdparty = new Societe($db);
+					$resultthirdparty = $thirdparty->fetch($attendeetovalidate->fk_soc);
+					if ($resultthirdparty < 0) {
+						setEventMessages(null, $thirdparty->errors, "errors");
+					} else {
+						$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?idthirdparty='.dol_encode($thirdparty->id, $dolibarr_main_instance_unique_id).'&securekey='.dol_encode($conf->global->EVENTORGANIZATION_SECUREKEY, $dolibarr_main_instance_unique_id);
+						Header("Location: ".$redirection);
+						exit;
+					}
 				} else {
 					$db->rollback();
 				}
 			} else {
-				$postactionmessages[] = 'Failed to get a valid value for "amount paid" ('.$FinalPaymentAmt.') or "payment type" ('.$paymentType.') to record the payment of invoice '.$tmptag['INV'].'. May be payment was already recorded.';
+				$postactionmessages[] = 'Failed to get a valid value for "amount paid" ('.$FinalPaymentAmt.') or "payment type" ('.$paymentType.') to record the payment of invoice '.$tmptag['ATT'].'. May be payment was already recorded.';
 				$ispostactionok = -1;
 			}
-
 		} else {
-			$postactionmessages[] = 'Invoice paid '.$tmptag['INV'].' was not found';
+			$postactionmessages[] = 'Invoice paid '.$tmptag['ATT'].' was not found';
 			$ispostactionok = -1;
 		}
-	} elseif (array_key_exists('BOO', $tmptag) && $tmptag['INV'] > 0) {
+	} elseif (array_key_exists('BOO', $tmptag) && $tmptag['BOO'] > 0) {
 		// BOOTH CASE (to copy and adapt from above)
 	} else {
 		// Nothing done
