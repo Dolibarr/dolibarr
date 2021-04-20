@@ -167,11 +167,7 @@ if ($subscription == 'subscriptionok' && $ref == $reffrompayment) {
 		// Creation of payment line
 		$paiement = new Paiement($db);
 		$paiement->datepaye     = dol_now();
-		$paiement->amounts      = $amounts; // Array with all payments dispatching with invoice id
-		$paiement->multicurrency_amounts = $multicurrency_amounts; // Array with all payments dispatching
-		$paiement->paiementid   = dol_getIdFromCode($db, GETPOST('paiementcode'), 'c_paiement', 'code', 'id', 1);
-		$paiement->num_payment  = GETPOST('num_paiement', 'alpha');
-		$paiement->note_private = GETPOST('comment', 'alpha');
+		$paiement->amounts[]    = $paidinvoice->total_ttc; // Array with all payments dispatching with invoice id
 
 		// Validating the attendee
 		$attendeetovalidate = new ConferenceOrBoothAttendee($db);

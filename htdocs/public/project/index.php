@@ -172,22 +172,10 @@ if ($urllogo) {
 
 print '<table id="dolpaymenttable" summary="Payment form" class="center">'."\n";
 
-// Output introduction text
-$text = '';
-if (!empty($conf->global->PAYMENT_NEWFORM_TEXT)) {
-	$langs->load("members");
-	if (preg_match('/^\((.*)\)$/', $conf->global->PAYMENT_NEWFORM_TEXT, $reg)) {
-		$text .= $langs->trans($reg[1])."<br>\n";
-	} else {
-		$text .= $conf->global->PAYMENT_NEWFORM_TEXT."<br>\n";
-	}
-	$text = '<tr><td align="center"><br>'.$text.'<br></td></tr>'."\n";
-}
-if (empty($text)) {
-	$text .= '<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("EvntOrgRegistrationWelcomeMessage").'</strong></td></tr>'."\n";
-	$text .= '<tr><td class="textpublicpayment">'.$langs->trans("EvntOrgRegistrationHelpMessage").' '.$id.'.<br><br></td></tr>'."\n";
-	$text .= '<tr><td class="textpublicpayment">'.$project->note_public.'<br><br></td></tr>'."\n";;
-}
+$text  = '<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("EvntOrgRegistrationWelcomeMessage").'</strong></td></tr>'."\n";
+$text .= '<tr><td class="textpublicpayment">'.$langs->trans("EvntOrgRegistrationHelpMessage").' '.$id.'.<br><br></td></tr>'."\n";
+$text .= '<tr><td class="textpublicpayment">'.$project->note_public.'<br><br></td></tr>'."\n";;
+
 print $text;
 
 // Output payment summary form
@@ -204,11 +192,17 @@ print "\n";
 
 // Show all action buttons
 print '<br>';
-print '<input type="submit" value="'.$langs->trans("SuggestConference").'" id="suggestconference" class="button">';
-print '<br><br>';
+// Output introduction text
+if($project->accept_conference_suggestions){
+	print '<input type="submit" value="'.$langs->trans("SuggestConference").'" id="suggestconference" class="button">';
+	print '<br><br>';
+}
 print '<input type="submit" value="'.$langs->trans("ViewAndVote").'" id="viewandvote" class="button">';
 print '<br><br>';
-print '<input type="submit" value="'.$langs->trans("SuggestBooth").'" id="suggestbooth" class="button">';
+if($project->accept_booth_suggestions){
+	print '<input type="submit" value="'.$langs->trans("SuggestBooth").'" id="suggestbooth" class="button">';
+}
+
 
 
 print '</td></tr>'."\n";

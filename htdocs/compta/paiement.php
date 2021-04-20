@@ -253,7 +253,7 @@ if (empty($reshook)) {
 		if (!$error) {
 			// Create payment and update this->multicurrency_amounts if this->amounts filled or
 			// this->amounts if this->multicurrency_amounts filled.
-			$paiement_id = $paiement->create($user, (GETPOST('closepaidinvoices') == 'on' ? 1 : 0), $thirdparty); // This include closing invoices and regenerating documents
+			$paiement_id = $paiement->create($user, 1, $thirdparty); // This include closing invoices and regenerating documents
 			if ($paiement_id < 0) {
 				setEventMessages($paiement->error, $paiement->errors, 'errors');
 				$error++;
