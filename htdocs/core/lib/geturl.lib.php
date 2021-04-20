@@ -187,7 +187,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 					$info['content'] = 'Error bad hostname IP (private or reserved range). Must be an external URL.';
 					break;
 				}
-				if ($iptocheck == $_SERVER["SERVER_ADDR"]) {
+				if (!empty($_SERVER["SERVER_ADDR"]) && $iptocheck == $_SERVER["SERVER_ADDR"]) {
 					$info['http_code'] = 400;
 					$info['content'] = 'Error bad hostname IP (IP is a local IP). Must be an external URL.';
 					break;
