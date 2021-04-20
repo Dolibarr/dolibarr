@@ -133,7 +133,9 @@ IncludeDocGeneration=Chci z objektu vygenerovat nějaké dokumenty
 IncludeDocGenerationHelp=Pokud toto zaškrtnete, bude vygenerován nějaký kód pro přidání pole „Generovat dokument“ do záznamu.
 ShowOnCombobox=Zobrazit hodnotu do komboboxu
 KeyForTooltip=Klíč pro popis
-CSSClass=Třída CSS
+CSSClass=CSS for edit/create form
+CSSViewClass=CSS for read form
+CSSListClass=CSS for list
 NotEditable=Nelze upravovat
 ForeignKey=Cizí klíč
 TypeOfFieldsHelp=Typ polí: <br> varchar (99), dvojitý (24,8), reálný, text, html, datetime, timestamp, celé číslo, celé číslo: ClassName: relativní cesta / do / classfile.class.php [: 1 [: filter]] ('1' znamená, že přidáme tlačítko + za kombajn pro vytvoření záznamu, 'filter' může být 'status = 1 AND fk_user = __USER_ID AND entity IN (__SHARED_ENTITIES__))

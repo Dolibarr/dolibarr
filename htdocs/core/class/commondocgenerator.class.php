@@ -1301,7 +1301,7 @@ abstract class CommonDocGenerator
 			),
 
 			'list'         => array(
-				'separator' => '<br/>'
+				'separator' => '<br>'
 			),
 
 			'auto'         => array(
@@ -1392,7 +1392,7 @@ abstract class CommonDocGenerator
 				$itemsInRow = 0;
 				$maxItemsInRow = $params['table']['maxItemsInRow'];
 				foreach ($fields as $field) {
-					//$html.= !empty($html)?'<br/>':'';
+					//$html.= !empty($html)?'<br>':'';
 					if ($itemsInRow >= $maxItemsInRow) {
 						// start a new line
 						$html .= "</tr><tr>";

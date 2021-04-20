@@ -1,11 +1,11 @@
 # Dolibarr language file - Source file is en_US - propal
-Proposals=Orzamentos
-Proposal=Orzamento
+Proposals=Orzamentos a clientes
+Proposal=Orzamento a cliente
 ProposalShort=Orzamento
-ProposalsDraft=Orzamentos borrador
-ProposalsOpened=Orzamentos abertos
-CommercialProposal=Orzamento
-PdfCommercialProposalTitle=Orzamento
+ProposalsDraft=Orzamentos a cliente borrador
+ProposalsOpened=Orzamentos a cliente abertos
+CommercialProposal=Orzamento a cliente
+PdfCommercialProposalTitle=Orzamento a cliente
 ProposalCard=Ficha orzamento
 NewProp=Novo orzamento
 NewPropal=Novo orzamento
@@ -59,6 +59,7 @@ ConfirmClonePropal=¿Está certo de querer clonar o orzamento <b>%s</b>?
 ConfirmReOpenProp=¿Está certo de abrir de novo o orzamento <b>%s</b>?
 ProposalsAndProposalsLines=Orzamentos e liñas de orzamentos
 ProposalLine=Liña de orzamento
+ProposalLines=Liñas do orzamento
 AvailabilityPeriod=Tempo de entrega
 SetAvailability=Definir o tempo de entrega
 AfterOrder=dende a sinatura

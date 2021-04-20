@@ -1351,7 +1351,7 @@ if ($source == 'contractline') {
 }
 
 // Payment on member subscription
-if ($source == 'membersubscription') {
+if ($source == 'member' || $source == 'membersubscription') {
 	$found = true;
 	$langs->load("members");
 
@@ -1448,13 +1448,13 @@ if ($source == 'membersubscription') {
 
 	if (!empty($conf->global->MEMBER_SUBSCRIPTION_AMOUNT_BY_TYPE)) {
 		// Amount by member type
-		$amountbytype = json_decode($conf->global->MEMBER_SUBSCRIPTION_AMOUNT_BY_TYPE, true);
-				// Set the member type
+		$amountbytype = array();		// TODO Read the amount of subscription into table of types
+		// Set the member type
 		$member->typeid = (int) (GETPOSTISSET("typeid") ? GETPOST("typeid", 'int') : $member->typeid);
 		// If we change the type of membership, we set also label of new type
 		$member->type = dol_getIdFromCode($db, $member->typeid, 'adherent_type', 'rowid', 'libelle');
 		// Set amount for the subscription
-		$amount = $amountbytype[$member->typeid] ? $amountbytype[$member->typeid]  : $member->last_subscription_amount;
+		$amount = (!empty($member->last_subscription_amount)) ? $member->last_subscription_amount : $amountbytype[$member->typeid];
 		// list member type
 		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 		$adht = new AdherentType($db);

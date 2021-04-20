@@ -89,6 +89,7 @@ TimeConsumed=Consumed
 ListOfTasks=List of tasks
 GoToListOfTimeConsumed=Go to list of time consumed
 GanttView=Gantt View
+ListWarehouseAssociatedProject=List of warehouses associated to the project
 ListProposalsAssociatedProject=List of the commercial proposals related to the project
 ListOrdersAssociatedProject=List of sales orders related to the project
 ListInvoicesAssociatedProject=List of customer invoices related to the project

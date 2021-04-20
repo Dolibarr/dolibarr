@@ -340,6 +340,8 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 	}
 }
 
+
+// init API
 if ($dirins && $action == 'initapi' && !empty($module)) {
 	$modulename = ucfirst($module); // Force first letter in uppercase
 	$objectname = $tabobj;
@@ -374,6 +376,9 @@ if ($dirins && $action == 'initapi' && !empty($module)) {
 		setEventMessages($langs->trans('ErrorFailToCreateFile', $destfile), null, 'errors');
 	}
 }
+
+
+// init PHPUnit
 if ($dirins && $action == 'initphpunit' && !empty($module)) {
 	$modulename = ucfirst($module); // Force first letter in uppercase
 	$objectname = $tabobj;
@@ -407,6 +412,9 @@ if ($dirins && $action == 'initphpunit' && !empty($module)) {
 		setEventMessages($langs->trans('ErrorFailToCreateFile', $destfile), null, 'errors');
 	}
 }
+
+
+// init ExtraFields
 if ($dirins && $action == 'initsqlextrafields' && !empty($module)) {
 	$modulename = ucfirst($module); // Force first letter in uppercase
 	$objectname = $tabobj;
@@ -450,6 +458,9 @@ if ($dirins && $action == 'initsqlextrafields' && !empty($module)) {
 	}
 	// TODO Enable in class the property $isextrafieldmanaged = 1
 }
+
+
+// init Hook
 if ($dirins && $action == 'inithook' && !empty($module)) {
 	dol_mkdir($dirins.'/'.strtolower($module).'/class');
 	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
@@ -480,6 +491,9 @@ if ($dirins && $action == 'inithook' && !empty($module)) {
 		setEventMessages($langs->trans('ErrorFailToCreateFile', $destfile), null, 'errors');
 	}
 }
+
+
+// init Trigger
 if ($dirins && $action == 'inittrigger' && !empty($module)) {
 	dol_mkdir($dirins.'/'.strtolower($module).'/core/triggers');
 	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
@@ -510,6 +524,9 @@ if ($dirins && $action == 'inittrigger' && !empty($module)) {
 		setEventMessages($langs->trans('ErrorFailToCreateFile', $destfile), null, 'errors');
 	}
 }
+
+
+// init Widget
 if ($dirins && $action == 'initwidget' && !empty($module)) {
 	dol_mkdir($dirins.'/'.strtolower($module).'/core/boxes');
 	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
@@ -540,6 +557,9 @@ if ($dirins && $action == 'initwidget' && !empty($module)) {
 		setEventMessages($langs->trans('ErrorFailToCreateFile', $destfile), null, 'errors');
 	}
 }
+
+
+// init CSS
 if ($dirins && $action == 'initcss' && !empty($module)) {
 	dol_mkdir($dirins.'/'.strtolower($module).'/css');
 	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
@@ -576,6 +596,8 @@ if ($dirins && $action == 'initcss' && !empty($module)) {
 	}
 }
 
+
+// init JS
 if ($dirins && $action == 'initjs' && !empty($module)) {
 	dol_mkdir($dirins.'/'.strtolower($module).'/js');
 	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
@@ -611,6 +633,9 @@ if ($dirins && $action == 'initjs' && !empty($module)) {
 		setEventMessages($langs->trans('ErrorFailToCreateFile', $destfile), null, 'errors');
 	}
 }
+
+
+// init CLI
 if ($dirins && $action == 'initcli' && !empty($module)) {
 	dol_mkdir($dirins.'/'.strtolower($module).'/scripts');
 	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
@@ -646,6 +671,9 @@ if ($dirins && $action == 'initcli' && !empty($module)) {
 		setEventMessages($langs->trans('ErrorFailToCreateFile', $destfile), null, 'errors');
 	}
 }
+
+
+// init Doc
 if ($dirins && $action == 'initdoc' && !empty($module)) {
 	dol_mkdir($dirins.'/'.strtolower($module).'/doc');
 	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
@@ -694,6 +722,8 @@ if ($dirins && $action == 'initdoc' && !empty($module)) {
 	}
 }
 
+
+// add Language
 if ($dirins && $action == 'addlanguage' && !empty($module)) {
 	$newlangcode = GETPOST('newlangcode', 'aZ09');
 	$srcfile = $dirins.'/'.strtolower($module).'/langs/en_US';
@@ -701,6 +731,8 @@ if ($dirins && $action == 'addlanguage' && !empty($module)) {
 	$result = dolCopyDir($srcfile, $destfile, 0, 0);
 }
 
+
+// remove/delete File
 if ($dirins && $action == 'confirm_removefile' && !empty($module)) {
 	$relativefilename = dol_sanitizePathName(GETPOST('file', 'none'));
 	if ($relativefilename) {
@@ -725,6 +757,7 @@ if ($dirins && $action == 'confirm_removefile' && !empty($module)) {
 		}
 	}
 }
+
 
 // Build the $fields array from SQL table (initfromtablename)
 if ($dirins && $action == 'initobject' && $module && GETPOST('createtablearray', 'alpha')) {

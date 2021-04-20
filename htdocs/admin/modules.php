@@ -520,9 +520,11 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 
 	$moreforfilter = '<div class="valignmiddle">';
 
-	$moreforfilter .= '<div class="floatright right pagination"><ul><li>';
-	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=commonkanban'.$param, '', 1, array('morecss'=>'reposition'.($mode == 'common' ? '' : ' btnTitleSelected')));
-	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-list-alt imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.$param, '', 1, array('morecss'=>'reposition'.($mode == 'commonkanban' ? '' : ' btnTitleSelected')));
+	$moreforfilter .= '<div class="floatright right pagination --module-list"><ul><li>';
+	$moreforfilter .= dolGetButtonTitle($langs->trans('CheckForModuleUpdate'), $langs->trans('CheckForModuleUpdateHelp'), 'fa fa-check-double ', $_SERVER["PHP_SELF"].'?action=checklastversion&token='.newToken().'&mode='.$mode.$param, '', 1, array('morecss'=>'reposition'));
+	$moreforfilter .= '</li><li>'.dolGetButtonTitleSeparator();
+	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=commonkanban'.$param, '', ($mode == 'commonkanban' ? 2 : 1), array('morecss'=>'reposition'));
+	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-list-alt imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.$param, '', ($mode == 'common' ? 2 : 1), array('morecss'=>'reposition'));
 	$moreforfilter .= '</li></ul></div>';
 
 	//$moreforfilter .= '<div class="floatright center marginrightonly hideonsmartphone" style="padding-top: 3px"><span class="paddingright">'.$moreinfo.'</span> '.$moreinfo2.'</div>';
@@ -583,7 +585,6 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	// Show list of modules
 	$oldfamily = '';
 	$linenum = 0;
-
 	foreach ($orders as $key => $value) {
 		$linenum++;
 		$tab = explode('_', $value);
@@ -591,6 +592,8 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 		$module_position = $tab[2];
 
 		$modName = $filename[$key];
+
+		/** @var DolibarrModules $objMod */
 		$objMod = $modules[$modName];
 
 		//print $objMod->name." - ".$key." - ".$objMod->version."<br>";
@@ -717,6 +720,22 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 		}
 		if ($objMod->isCoreOrExternalModule() == 'external' || preg_match('/development|experimental|deprecated/i', $version)) {
 			$versiontrans .= $objMod->getVersion(1);
+		}
+
+		if ($objMod->isCoreOrExternalModule() == 'external'
+			&& (
+				$action == 'checklastversion'
+				// This is a bad practice to activate a synch external access during building of a page. 1 external module can hang the application.
+				// Adding a cron job could be a good idea see DolibarrModules::checkForUpdate()
+				|| 	!empty($conf->global->CHECKLASTVERSION_EXTERNALMODULE)
+			)
+		) {
+			$checkRes = $objMod->checkForUpdate();
+			if ($checkRes > 0) {
+				setEventMessage($objMod->getName().' : '.$versiontrans.' -> '.$objMod->lastVersion);
+			} elseif ($checkRes < 0) {
+				setEventMessage($objMod->getName().' '.$langs->trans('CheckVersionFail'), 'warnings');
+			}
 		}
 
 		// Define imginfo
@@ -893,17 +912,11 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 
 			// Version
 			print '<td class="center nowrap" width="120px">';
-			print $versiontrans;
-			if (!empty($conf->global->CHECKLASTVERSION_EXTERNALMODULE)) {	// This is a bad practice to activate a synch external access during building of a page. 1 external module can hang the application.
-				require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
-				if (!empty($objMod->url_last_version)) {
-					$newversion = getURLContent($objMod->url_last_version, 'GET', '', 1, array(), array('http', 'https'), 0);	// Accept http or https links on external remote server only
-					if (isset($newversion['content'])) {
-						if (version_compare($newversion['content'], $versiontrans) > 0) {
-							print "&nbsp;<span class='butAction' title='".$langs->trans('LastStableVersion')."'>".$newversion['content']."</span>";
-						}
-					}
-				}
+			if ($objMod->needUpdate) {
+				$versionTitle = $langs->trans('ModuleUpdateAvailable').' : '.$objMod->lastVersion;
+				print '<span class="badge badge-warning classfortooltip" title="'.dol_escape_htmltag($versionTitle).'">'.$versiontrans.'</span>';
+			} else {
+				print $versiontrans;
 			}
 			print "</td>\n";
 
