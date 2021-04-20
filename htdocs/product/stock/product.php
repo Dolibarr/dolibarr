@@ -900,7 +900,8 @@ if (!$variants) {
 		$colspan = 3;
 		print '<tr class="liste_titre"><td width="14%">';
 		print '<a id="show_all" href="#">'.img_picto('', 'folder-open', 'class="paddingright"').$langs->trans("ExpandAll").'</a><br>';
-		print '<a id="hide_all" href="#">'.img_picto('', 'folder', 'class="paddingright"').$langs->trans("UndoExpandAll").'</a>';
+		print '<a id="hide_all" href="#">'.img_picto('', 'folder', 'class="paddingright"').$langs->trans("UndoExpandAll").'</a>&nbsp;';
+		print $form->textwithpicto('', $langs->trans('CollapseBatchDetailHelp'), 1, 'help', '');
 		print '</td>';
 		print '<td class="right">'.$langs->trans("batch_number").'</td>';
 		if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {

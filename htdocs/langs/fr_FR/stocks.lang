@@ -256,3 +256,4 @@ ObjectNotFound=%s not found
 MakeMovementsAndClose=Generate movements and close
 AutofillWithExpected=Fill real quantity with expected quantity
 ShowAllBatchByDefault=Dérouler par défaut le détail des lots dans l'onglet "stock"
+CollapseBatchDetailHelp=Vous pouvez définir l'affichage par défaut du détail des lots dans la configuration du module stocks
