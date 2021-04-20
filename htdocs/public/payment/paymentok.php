@@ -177,13 +177,11 @@ if ($subscription == 'subscriptionok' && $ref == $reffrompayment) {
 			$paiement->datepaye     = dol_now();
 			$paiement->amount       = $paidinvoice->total_ttc;
 			$paiement->amounts[]    = $paidinvoice->total_ttc;
-
 			$paiement_id = $paiement->create($user, 1, $thirdparty); // This include closing invoices and regenerating documents
 			if ($paiement_id < 0) {
 				setEventMessages($paiement->error, $paiement->errors, 'errors');
 				$error++;
-			}
-			else {
+			} else {
 				// Validating the attendee
 				$attendeetovalidate = new ConferenceOrBoothAttendee($db);
 				$resultattendee = $attendeetovalidate->fetch($ref);
@@ -191,7 +189,6 @@ if ($subscription == 'subscriptionok' && $ref == $reffrompayment) {
 					setEventMessages(null, $attendeetovalidate->errors, "errors");
 				} else {
 					$attendeetovalidate->setStatut(1);
-					// @todo send email
 				}
 			}
 		}

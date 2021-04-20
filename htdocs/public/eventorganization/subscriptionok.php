@@ -109,7 +109,24 @@ $texttosend = make_substitutions($msg, $substitutionarray, $outputlangs);
 if ($subjecttosend && $texttosend) {
 	$moreinheader = 'X-Dolibarr-Info: send_an_email by public/members/new.php'."\r\n";
 
-	$result = $object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
+	global $conf, $langs;
+
+	// Envoi mail confirmation
+	$from = $conf->email_from;
+	if (!empty($conf->global->ADHERENT_MAIL_FROM)) {
+		$from = $conf->global->ADHERENT_MAIL_FROM;
+	}
+
+	$trackid = 'mem'.$this->id;
+
+	include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+	$mailfile = new CMailFile($subjecttosend, $thirdparty->email, $from, $texttosend, array(), array(), array(), "", "", 0, -1, '', '', $trackid, $moreinheader);
+	if ($mailfile->sendfile()) {
+		return 1;
+	} else {
+		$this->error = $langs->trans("ErrorFailedToSendMail", $from, $this->email).'. '.$mailfile->error;
+		return -1;
+	}
 }
 
 /*
