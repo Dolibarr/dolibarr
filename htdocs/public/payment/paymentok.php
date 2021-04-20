@@ -394,7 +394,7 @@ if ($ispaymentok) {
 
 			// Do action only if $FinalPaymentAmt is set (session variable is cleaned after this page to avoid duplicate actions when page is POST a second time)
 			if (!empty($FinalPaymentAmt) && $paymentTypeId > 0) {
-				$result = $object->validate($user);
+				$result = $object->status == -2 ? -1 : object->validate($user); // if membre is excluded (status == -2) the new validation is not possible
 				if ($result < 0 || empty($object->datevalid)) {
 					$error++;
 					$errmsg = $object->error;
@@ -412,7 +412,13 @@ if ($ispaymentok) {
 
 				$datesubend = null;
 				if ($datesubscription && $defaultdelay && $defaultdelayunit) {
-					$datesubend = dol_time_plus_duree(dol_time_plus_duree($datesubscription, $defaultdelay, $defaultdelayunit), -1, 'd');
+					$datesubend = dol_time_plus_duree($datesubscription, $defaultdelay, $defaultdelayunit);
+					// the new end date of subscription must be in futur
+					while (dol_time_plus_duree($datesubend, -1, 'd') < $now) {
+						$datesubend = dol_time_plus_duree($datesubend, $defaultdelay, $defaultdelayunit);
+						$datesubscription = dol_time_plus_duree($datesubscription, $defaultdelay, $defaultdelayunit);
+					}
+					$datesubend = dol_time_plus_duree($datesubend, -1, 'd');
 				}
 
 				$paymentdate = $now;
