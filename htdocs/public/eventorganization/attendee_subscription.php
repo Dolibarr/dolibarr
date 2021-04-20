@@ -71,6 +71,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/paymentterm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
+global $dolibarr_main_instance_unique_id;
+
 // Init vars
 $errmsg = '';
 $num = 0;
