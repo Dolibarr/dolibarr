@@ -384,6 +384,7 @@ WarningInvoiceDateInFuture=Attention, la date de facturation est antérieur à l
 WarningInvoiceDateTooFarInFuture=Attention, la date de facturation est trop éloignée de la date actuelle
 ViewAvailableGlobalDiscounts=Voir les remises disponibles
 GroupPaymentsByModOnReports=Paiements groupés par mode sur les rapports
+Payed=Règlement reçu
 # PaymentConditions
 Statut=État
 PaymentConditionShortRECEP=A réception
