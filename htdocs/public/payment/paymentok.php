@@ -164,18 +164,36 @@ if ($subscription == 'subscriptionok' && $ref == $reffrompayment) {
 	if ($resultinvoice < 0) {
 		setEventMessages(null, $paidinvoice->errors, "errors");
 	} else {
-		// Creation of payment line
-		$paiement = new Paiement($db);
-		$paiement->datepaye     = dol_now();
-		$paiement->amounts[]    = $paidinvoice->total_ttc; // Array with all payments dispatching with invoice id
-
-		// Validating the attendee
-		$attendeetovalidate = new ConferenceOrBoothAttendee($db);
-		$resultattendee = $attendeetovalidate->fetch($ref);
-		if ($resultattendee < 0) {
-			setEventMessages(null, $attendeetovalidate->errors, "errors");
+		// Finding thirdparty
+		$thirdparty = new Societe($db);
+		$resultthirdparty = $thirdparty->fetch($paidinvoice->socid);
+		if ($resultthirdparty <= 0) {
+			$mesg = $thirdparty->error;
+			$error++;
 		} else {
-			$attendeetovalidate->setStatut(1);
+			// Creation of payment line
+			$paiement 				= new Paiement($db);
+			$paiement->facid 		= $paidinvoice->id;
+			$paiement->datepaye     = dol_now();
+			$paiement->amount       = $paidinvoice->total_ttc;
+			$paiement->amounts[]    = $paidinvoice->total_ttc;
+
+			$paiement_id = $paiement->create($user, 1, $thirdparty); // This include closing invoices and regenerating documents
+			if ($paiement_id < 0) {
+				setEventMessages($paiement->error, $paiement->errors, 'errors');
+				$error++;
+			}
+			else {
+				// Validating the attendee
+				$attendeetovalidate = new ConferenceOrBoothAttendee($db);
+				$resultattendee = $attendeetovalidate->fetch($ref);
+				if ($resultattendee < 0) {
+					setEventMessages(null, $attendeetovalidate->errors, "errors");
+				} else {
+					$attendeetovalidate->setStatut(1);
+					// @todo send email
+				}
+			}
 		}
 	}
 }
