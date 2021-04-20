@@ -2437,7 +2437,314 @@ class CommandeFournisseur extends CommonOrder
 		if ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer) {
 			$error = 0;
 
-			$this->db->begin();
+            $localtax1_type = $localtaxes_type[0];
+			$localtax2_type = $localtaxes_type[2];
+
+            $subprice = price2num($pu, 'MU');
+
+            $rangmax = $this->line_max();
+            $rang = $rangmax + 1;
+
+            // Insert line
+            $this->line = new CommandeFournisseurLigne($this->db);
+
+            $this->line->context = $this->context;
+
+            $this->line->fk_commande = $this->id;
+            $this->line->label = $label;
+            $this->line->ref_fourn = $ref_supplier;
+            $this->line->ref_supplier = $ref_supplier;
+            $this->line->desc = $desc;
+            $this->line->qty = $qty;
+            $this->line->tva_tx = $txtva;
+            $this->line->localtax1_tx = ($total_localtax1 ? $localtaxes_type[1] : 0);
+            $this->line->localtax2_tx = ($total_localtax2 ? $localtaxes_type[3] : 0);
+            $this->line->localtax1_type = $localtaxes_type[0];
+            $this->line->localtax2_type = $localtaxes_type[2];
+            $this->line->fk_product = $fk_product;
+            $this->line->product_type = $product_type;
+            $this->line->remise_percent = $remise_percent;
+            $this->line->subprice = $pu_ht;
+            $this->line->rang = $rang;
+            $this->line->info_bits = $info_bits;
+
+            $this->line->vat_src_code = $vat_src_code;
+            $this->line->total_ht = $total_ht;
+            $this->line->total_tva = $total_tva;
+            $this->line->total_localtax1 = $total_localtax1;
+            $this->line->total_localtax2 = $total_localtax2;
+            $this->line->total_ttc = $total_ttc;
+            $this->line->product_type = $type;
+            $this->line->special_code = $this->special_code;
+            $this->line->origin = $origin;
+            $this->line->origin_id = $origin_id;
+            $this->line->fk_unit = $fk_unit;
+
+            $this->line->date_start = $date_start;
+            $this->line->date_end = $date_end;
+
+            // Multicurrency
+            $this->line->fk_multicurrency = $this->fk_multicurrency;
+            $this->line->multicurrency_code = $this->multicurrency_code;
+            $this->line->multicurrency_subprice		= $pu_ht_devise;
+            $this->line->multicurrency_total_ht 	= $multicurrency_total_ht;
+            $this->line->multicurrency_total_tva 	= $multicurrency_total_tva;
+            $this->line->multicurrency_total_ttc 	= $multicurrency_total_ttc;
+
+            $this->line->subprice = $pu_ht;
+            $this->line->price = $this->line->subprice;
+
+            $this->line->remise_percent = $remise_percent;
+
+            if (is_array($array_options) && count($array_options) > 0) {
+                $this->line->array_options = $array_options;
+            }
+
+            $result = $this->line->insert($notrigger);
+            if ($result > 0)
+            {
+                // Reorder if child line
+                if (!empty($fk_parent_line)) $this->line_order(true, 'DESC');
+
+                // Mise a jour informations denormalisees au niveau de la commande meme
+                $result = $this->update_price(1, 'auto', 0, $this->thirdparty); // This method is designed to add line from user input so total calculation must be done using 'auto' mode.
+                if ($result > 0)
+                {
+                    $this->db->commit();
+                    return $this->line->id;
+                } else {
+                    $this->db->rollback();
+                    return -1;
+                }
+            } else {
+                $this->error = $this->line->error;
+                $this->errors = $this->line->errors;
+                dol_syslog(get_class($this)."::addline error=".$this->error, LOG_ERR);
+                $this->db->rollback();
+                return -1;
+            }
+        }
+    }
+
+
+    /**
+     * Save a receiving into the tracking table of receiving (commande_fournisseur_dispatch) and add product into stock warehouse.
+     *
+     * @param 	User		$user					User object making change
+     * @param 	int			$product				Id of product to dispatch
+     * @param 	double		$qty					Qty to dispatch
+     * @param 	int			$entrepot				Id of warehouse to add product
+     * @param 	double		$price					Unit Price for PMP value calculation (Unit price without Tax and taking into account discount)
+     * @param	string		$comment				Comment for stock movement
+	 * @param	integer		$eatby					eat-by date
+	 * @param	integer		$sellby					sell-by date
+	 * @param	string		$batch					Lot number
+	 * @param	int			$fk_commandefourndet	Id of supplier order line
+     * @param	int			$notrigger          	1 = notrigger
+     * @return 	int						<0 if KO, >0 if OK
+     */
+    public function dispatchProduct($user, $product, $qty, $entrepot, $price = 0, $comment = '', $eatby = '', $sellby = '', $batch = '', $fk_commandefourndet = 0, $notrigger = 0)
+    {
+        global $conf, $langs;
+
+        $error = 0;
+        require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+
+        // Check parameters (if test are wrong here, there is bug into caller)
+        if ($entrepot <= 0)
+        {
+            $this->error = 'ErrorBadValueForParameterWarehouse';
+            return -1;
+        }
+        if ($qty == 0)
+        {
+            $this->error = 'ErrorBadValueForParameterQty';
+            return -1;
+        }
+
+        $dispatchstatus = 1;
+        if (!empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) $dispatchstatus = 0; // Setting dispatch status (a validation step after receiving products) will be done manually to 1 or 2 if this option is on
+
+        $now = dol_now();
+
+        if (($this->statut == self::STATUS_ORDERSENT || $this->statut == self::STATUS_RECEIVED_PARTIALLY || $this->statut == self::STATUS_RECEIVED_COMPLETELY))
+        {
+            $this->db->begin();
+
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseur_dispatch";
+            $sql .= " (fk_commande, fk_product, qty, fk_entrepot, fk_user, datec, fk_commandefourndet, status, comment, eatby, sellby, batch) VALUES";
+            $sql .= " ('".$this->id."','".$product."','".$qty."',".($entrepot > 0 ? "'".$entrepot."'" : "null").",'".$user->id."','".$this->db->idate($now)."','".$fk_commandefourndet."', ".$dispatchstatus.", '".$this->db->escape($comment)."', ";
+            $sql .= ($eatby ? "'".$this->db->idate($eatby)."'" : "null").", ".($sellby ? "'".$this->db->idate($sellby)."'" : "null").", ".($batch ? "'".$batch."'" : "null");
+            $sql .= ")";
+
+            dol_syslog(get_class($this)."::dispatchProduct", LOG_DEBUG);
+            $resql = $this->db->query($sql);
+            if ($resql)
+            {
+                if (!$notrigger)
+                {
+                    global $conf, $langs, $user;
+					// Call trigger
+					$result = $this->call_trigger('LINEORDER_SUPPLIER_DISPATCH', $user);
+					if ($result < 0)
+                    {
+                        $error++;
+                    }
+					// End call triggers
+                }
+            } else {
+                $this->error = $this->db->lasterror();
+                $error++;
+            }
+
+            // If module stock is enabled and the stock increase is done on purchase order dispatching
+            if (!$error && $entrepot > 0 && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER))
+            {
+                $mouv = new MouvementStock($this->db);
+                if ($product > 0)
+                {
+                	// $price should take into account discount (except if option STOCK_EXCLUDE_DISCOUNT_FOR_PMP is on)
+                	$mouv->origin = &$this;
+					if(!empty($conf->global->RETROCESSION_ALLOW_NEGATIVE_DISPATCH) && $qty < 0){
+						$result = $mouv->livraison($user, $product, $entrepot, $qty*(-1), $price, $comment, $eatby, $sellby, $batch);
+					}
+					else{
+						$result = $mouv->reception($user, $product, $entrepot, $qty, $price, $comment, $eatby, $sellby, $batch);
+					}                    
+					if ($result < 0)
+                    {
+                        $this->error = $mouv->error;
+                        $this->errors = $mouv->errors;
+                        dol_syslog(get_class($this)."::dispatchProduct ".$this->error." ".join(',', $this->errors), LOG_ERR);
+                        $error++;
+                    }
+                }
+            }
+
+            if ($error == 0)
+            {
+                $this->db->commit();
+                return 1;
+            } else {
+                $this->db->rollback();
+                return -1;
+            }
+        } else {
+            $this->error = 'BadStatusForObject';
+            return -2;
+        }
+    }
+
+    /**
+     * 	Delete line
+     *
+     *	@param	int		$idline		Id of line to delete
+     *	@param	int		$notrigger	1=Disable call to triggers
+     *	@return	int					<0 if KO, >0 if OK
+     */
+    public function deleteline($idline, $notrigger = 0)
+    {
+        if ($this->statut == 0)
+        {
+            $line = new CommandeFournisseurLigne($this->db);
+
+            if ($line->fetch($idline) <= 0)
+            {
+                return 0;
+            }
+
+            if ($line->delete($notrigger) > 0)
+            {
+                $this->update_price();
+                return 1;
+            } else {
+                $this->error = $line->error;
+                $this->errors = $line->errors;
+                return -1;
+            }
+        } else {
+            return -2;
+        }
+    }
+
+    /**
+     *  Delete an order
+     *
+     *	@param	User	$user		Object user
+     *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
+     *	@return	int					<0 if KO, >0 if OK
+     */
+    public function delete(User $user, $notrigger = 0)
+    {
+        global $langs, $conf;
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+        $error = 0;
+
+        $this->db->begin();
+
+        if (empty($notrigger))
+        {
+            // Call trigger
+            $result = $this->call_trigger('ORDER_SUPPLIER_DELETE', $user);
+            if ($result < 0)
+            {
+            	$this->errors[] = 'ErrorWhenRunningTrigger';
+            	dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
+            	$this->db->rollback();
+            	return -1;
+            }
+            // End call triggers
+        }
+
+        $main = MAIN_DB_PREFIX.'commande_fournisseurdet';
+        $ef = $main."_extrafields";
+        $sql = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_commande = ".$this->id.")";
+        dol_syslog(get_class($this)."::delete extrafields lines", LOG_DEBUG);
+        if (!$this->db->query($sql))
+        {
+            $this->error = $this->db->lasterror();
+            $this->errors[] = $this->db->lasterror();
+            $error++;
+        }
+
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseurdet WHERE fk_commande =".$this->id;
+        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+        if (!$this->db->query($sql))
+        {
+            $this->error = $this->db->lasterror();
+            $this->errors[] = $this->db->lasterror();
+            $error++;
+        }
+
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseur WHERE rowid =".$this->id;
+        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+        if ($resql = $this->db->query($sql))
+        {
+            if ($this->db->affected_rows($resql) < 1)
+            {
+                $this->error = $this->db->lasterror();
+                $this->errors[] = $this->db->lasterror();
+                $error++;
+            }
+        } else {
+            $this->error = $this->db->lasterror();
+            $this->errors[] = $this->db->lasterror();
+            $error++;
+        }
+
+        // Remove extrafields
+        if (!$error)
+        {
+        	$result = $this->deleteExtraFields();
+        	if ($result < 0)
+        	{
+        		$this->error = 'FailToDeleteExtraFields';
+        		$this->errors[] = 'FailToDeleteExtraFields';
+        		$error++;
+        		dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
+        	}
+        }
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
 			$sql .= " SET fk_projet = ".($id_projet > 0 ? (int) $id_projet : 'null');
