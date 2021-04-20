@@ -584,7 +584,6 @@ class CMailFile
 			if ($reshook < 0) {
 				$this->error = "Error in hook maildao sendMail ".$reshook;
 				dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
-
 				return $reshook;
 			}
 			if ($reshook == 1) {	// Hook replace standard code

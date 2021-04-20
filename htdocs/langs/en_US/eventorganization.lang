@@ -113,6 +113,10 @@ ConferenceAttendeeFee = Conference attendee fee
 #
 SubscriptionOk = Your subscription to this conference has been validated
 #
+# Subscription validation mail
+#
+ConfAttendeeSubscriptionConfirmation = Confirmation of your subscription to a conference
+#
 # Payment page
 #
 Attendee = Participant

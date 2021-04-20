@@ -350,6 +350,52 @@ if (empty($reshook) && $action == 'add') {
 			// No price has been set
 			// Validating the subscription
 			$confattendee->setStatut(1);
+
+			// Sending mail
+			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+			$formmail = new FormMail($db);
+			// Set output language
+			$outputlangs = new Translate('', $conf);
+			$outputlangs->setDefaultLang(empty($thirdparty->default_lang) ? $mysoc->default_lang : $thirdparty->default_lang);
+			// Load traductions files required by page
+			$outputlangs->loadLangs(array("main", "members"));
+			// Get email content from template
+			$arraydefaultmessage = null;
+
+			$labeltouse = $conf->global->EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT;
+
+			if (!empty($labeltouse)) {
+				$arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
+			}
+
+			if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
+				$subject = $arraydefaultmessage->topic;
+				$msg     = $arraydefaultmessage->content;
+			}
+
+			$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
+			complete_substitutions_array($substitutionarray, $outputlangs, $object);
+			$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
+			$texttosend = $msg;
+
+			$sendto = $thirdparty->email;
+			$from = $conf->global->MAILING_EMAIL_FROM;
+			$urlback = $_SERVER["REQUEST_URI"];
+			$topic = $langs->trans("ConfAttendeeSubscriptionConfirmation");
+
+			$ishtml = dol_textishtml($texttosend); // May contain urls
+
+			$mailfile = new CMailFile($topic, $sendto, $from, $texttosend, array(), array(), array(), '', '', 0, $ishtml);
+
+			$result = $mailfile->sendfile();
+			var_dump($result);
+			if ($result) {
+				dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_payment');
+			} else {
+				dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
+			}
+
 			$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?securekey='.dol_encode($conf->global->EVENTORGANIZATION_SECUREKEY, $dolibarr_main_instance_unique_id);
 			Header("Location: ".$redirection);
 			exit;
