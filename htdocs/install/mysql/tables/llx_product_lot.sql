@@ -18,21 +18,21 @@
 -- ============================================================================
 
 CREATE TABLE llx_product_lot (
-  rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  entity          integer DEFAULT 1,
-  fk_product      integer NOT NULL,				-- Id of product
-  batch           varchar(128) DEFAULT NULL,	-- Lot or serial number
-  eatby           date DEFAULT NULL,			-- Eatby date
-  sellby          date DEFAULT NULL, 			-- Sellby date
-  datec         datetime,
-  tms           timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  fk_user_creat integer,
-  fk_user_modif integer,
-  eol_date        datetime,                     -- End of life
+  rowid               integer AUTO_INCREMENT PRIMARY KEY,
+  entity              integer DEFAULT 1,
+  fk_product          integer NOT NULL,           -- Id of product
+  batch               varchar(128) DEFAULT NULL,  -- Lot or serial number
+  eatby               date DEFAULT NULL,          -- Eatby date
+  sellby              date DEFAULT NULL,          -- Sellby date
+  datec               datetime,
+  tms                 timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  fk_user_creat       integer,
+  fk_user_modif       integer,
+  eol_date            datetime,                   -- End of life
   manufacturing_date  datetime,
-  scrapping_date  datetime,                     -- Put to disposal
-  commissionning_date datetime,                 -- First use
-  control_periodicity varchar(6),
-  fk_status       integer,                      -- Link to dictionnary
-  import_key    integer
+  scrapping_date      datetime,                   -- Put to disposal
+  commissionning_date datetime,                   -- First use
+  qc_periodicity      varchar(6),                 -- Quality control periodicity
+  fk_status           integer,                    -- Link to dictionnary
+  import_key          integer
 ) ENGINE=innodb;
