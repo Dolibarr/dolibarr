@@ -48,6 +48,9 @@ $search_pcgtype = GETPOST('search_pcgtype', 'alpha');
 
 $chartofaccounts = GETPOST('chartofaccounts', 'int');
 
+$permissiontoadd = $user->rights->accounting->chartofaccount;
+$permissiontodelete = $user->rights->accounting->chartofaccount;
+
 // Security check
 if ($user->socid > 0) accessforbidden();
 if (!$user->rights->accounting->chartofaccount) accessforbidden();
@@ -79,7 +82,6 @@ if ($conf->global->MAIN_FEATURES_LEVEL < 2) unset($arrayfields['aa.reconcilable'
 $accounting = new AccountingAccount($db);
 
 
-
 /*
  * Actions
  */
@@ -107,10 +109,8 @@ if (empty($reshook))
 		$search_array_options = array();
 	}
 	if ((GETPOST('valid_change_chart', 'alpha') && GETPOST('chartofaccounts', 'int') > 0)	// explicit click on button 'Change and load' with js on
-		|| (GETPOST('chartofaccounts', 'int') > 0 && GETPOST('chartofaccounts', 'int') != $conf->global->CHARTOFACCOUNTS))	// a submit of form is done and chartofaccounts combo has been modified
-	{
-		if ($chartofaccounts > 0)
-		{
+		|| (GETPOST('chartofaccounts', 'int') > 0 && GETPOST('chartofaccounts', 'int') != $conf->global->CHARTOFACCOUNTS)) {	// a submit of form is done and chartofaccounts combo has been modified
+		if ($chartofaccounts > 0 && $permissiontoadd) {
 			// Get language code for this $chartofaccounts
 			$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'c_country as c, '.MAIN_DB_PREFIX.'accounting_system as a';
 			$sql .= ' WHERE c.rowid = a.fk_country AND a.rowid = '.(int) $chartofaccounts;
@@ -156,7 +156,7 @@ if (empty($reshook))
 		}
 	}
 
-	if ($action == 'disable') {
+	if ($action == 'disable' && $permissiontoadd) {
 		if ($accounting->fetch($id)) {
 			$mode = GETPOST('mode', 'int');
 			$result = $accounting->accountDeactivate($id, $mode);
@@ -166,7 +166,7 @@ if (empty($reshook))
 		if ($result < 0) {
 			setEventMessages($accounting->error, $accounting->errors, 'errors');
 		}
-	} elseif ($action == 'enable') {
+	} elseif ($action == 'enable' && $permissiontoadd) {
 		if ($accounting->fetch($id)) {
 			$mode = GETPOST('mode', 'int');
 			$result = $accounting->account_activate($id, $mode);

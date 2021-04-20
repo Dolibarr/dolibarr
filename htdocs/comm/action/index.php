@@ -321,15 +321,13 @@ if ($action == 'show_day')
 	$next_year  = $next['year'];
 	$next_month = $next['month'];
 	$next_day   = $next['day'];
-
 	// Define firstdaytoshow and lastdaytoshow (warning: lastdaytoshow is last second to show + 1)
 	$firstdaytoshow = dol_mktime(0, 0, 0, $prev_month, $prev_day, $prev_year, 'tzuserrel');
 	$lastdaytoshow = dol_mktime(0, 0, 0, $next_month, $next_day, $next_year, 'tzuserrel');
 }
 //print 'xx'.$prev_year.'-'.$prev_month.'-'.$prev_day;
 //print 'xx'.$next_year.'-'.$next_month.'-'.$next_day;
-//print dol_print_date($firstdaytoshow,'day');
-//print dol_print_date($lastdaytoshow,'day');
+//print dol_print_date($firstdaytoshow,'dayhour').' '.dol_print_date($lastdaytoshow,'dayhour');
 
 /*$title = $langs->trans("DoneAndToDoActions");
 if ($status == 'done') $title = $langs->trans("DoneActions");
@@ -679,6 +677,7 @@ if ($resql)
 
 		$event->datep = $db->jdate($obj->datep); // datep and datef are GMT date. Example: 1970-01-01 01:00:00, jdate will return 0 if TZ of PHP server is Europe/Berlin
 		$event->datef = $db->jdate($obj->datep2);
+		//$event->datep_formated_gmt = dol_print_date($event->datep, 'dayhour', 'gmt');
 		//var_dump($obj->datep);
 		//var_dump($event->datep);
 
@@ -727,14 +726,15 @@ if ($resql)
 			$annee = dol_print_date($daycursor, '%Y', 'tzuserrel');
 			$mois = dol_print_date($daycursor, '%m', 'tzuserrel');
 			$jour = dol_print_date($daycursor, '%d', 'tzuserrel');
-			//var_dump(dol_print_date($event->date_start_in_calendar, 'dayhour', 'gmt'));
+			//var_dump(dol_print_date($event->date_start_in_calendar, 'dayhour', 'gmt'));	// Hour at greenwich
 			//var_dump($annee.'-'.$mois.'-'.$jour);
 
 			// Loop on each day covered by action to prepare an index to show on calendar
 			$loop = true; $j = 0;
 			$daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee, 'gmt');
 			do {
-				//if ($event->id==408) print 'daykey='.$daykey.' '.$event->datep.' '.$event->datef.'<br>';
+				//if ($event->id==408)
+				//print 'daykey='.$daykey.' '.dol_print_date($daykey, 'dayhour', 'gmt').' '.$event->datep.' '.$event->datef.'<br>';
 
 				$eventarray[$daykey][] = $event;
 				$j++;
@@ -751,6 +751,7 @@ if ($resql)
 } else {
 	dol_print_error($db);
 }
+//var_dump($eventarray);
 
 // Complete $eventarray with birthdates
 if ($showbirthday)
@@ -825,15 +826,12 @@ if ($conf->global->AGENDA_SHOW_HOLIDAYS)
 	$sql .= " AND u.statut = '1'"; // Show only active users  (0 = inactive user, 1 = active user)
 	$sql .= " AND (x.statut = '2' OR x.statut = '3')"; // Show only public leaves (2 = leave wait for approval, 3 = leave approved)
 
-	if ($action == 'show_day')
-	{
+	if ($action == 'show_day') {
 		// Request only leaves for the current selected day
-		$sql .= " AND '".$db->escape($year)."-".$db->escape($month)."-".$db->escape($day)."' BETWEEN x.date_debut AND x.date_fin";
-	} elseif ($action == 'show_week')
-	{
+		$sql .= " AND '".$db->escape($year)."-".$db->escape($month)."-".$db->escape($day)."' BETWEEN x.date_debut AND x.date_fin";	// date_debut and date_fin are date without time
+	} elseif ($action == 'show_week') {
 		// TODO: Add filter to reduce database request
-	} elseif ($action == 'show_month')
-	{
+	} elseif ($action == 'show_month') {
 		// TODO: Add filter to reduce database request
 	}
 
@@ -1488,6 +1486,8 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 
 	$dateint = sprintf("%04d", $year).sprintf("%02d", $month).sprintf("%02d", $day);
 
+	//print 'show_day_events day='.$day.' month='.$month.' year='.$year.' dateint='.$dateint;
+
 	print "\n";
 
 	$curtime = dol_mktime(0, 0, 0, $month, $day, $year);
@@ -1538,11 +1538,12 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 	$nextindextouse = is_array($colorindexused) ?count($colorindexused) : 0; // At first run this is 0, so fist user has 0, next 1, ...
 	//var_dump($colorindexused);
 
-	foreach ($eventarray as $daykey => $notused)
-	{
-		$annee = dol_print_date($daykey, '%Y');
-		$mois =  dol_print_date($daykey, '%m');
-		$jour =  dol_print_date($daykey, '%d');
+	foreach ($eventarray as $daykey => $notused) {		// daykey is the 'YYYYMMDD' to show according to user
+		$annee = dol_print_date($daykey, '%Y', 'gmt');	// We use gmt because we want the value represented by string 'YYYYMMDD'
+		$mois =  dol_print_date($daykey, '%m', 'gmt');	// We use gmt because we want the value represented by string 'YYYYMMDD'
+		$jour =  dol_print_date($daykey, '%d', 'gmt');	// We use gmt because we want the value represented by string 'YYYYMMDD'
+
+		//print 'event daykey='.$daykey.' dol_print_date(daykey)='.dol_print_date($daykey, 'dayhour', 'gmt').' jour='.$jour.' mois='.$mois.' annee='.$annee."<br>\n";
 
 		if ($day == $jour && $month == $mois && $year == $annee)
 		{

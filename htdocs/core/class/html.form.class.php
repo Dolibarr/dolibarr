@@ -16,7 +16,7 @@
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2018-2021  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
  * Copyright (C) 2018       Christophe Battarel     <christophe@altairis.fr>
@@ -4295,9 +4295,17 @@ class Form
 						$more .= '<div class="tagtr"><div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">'.$input['label'].'</div><div class="tagtd"><input type="password" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'"'.$moreattr.' /></div></div>'."\n";
 					} elseif ($input['type'] == 'select')
 					{
+						$show_empty = isset($input['select_show_empty']) ? $input['select_show_empty'] : 1;
+						$key_in_label = isset($input['select_key_in_label']) ? $input['select_key_in_label'] : 0;
+						$value_as_key = isset($input['select_value_as_key']) ? $input['select_value_as_key'] : 0;
+						$translate = isset($input['select_translate']) ? $input['select_translate'] : 0;
+						$maxlen = isset($input['select_maxlen']) ? $input['select_maxlen'] : 0;
+						$disabled = isset($input['select_disabled']) ? $input['select_disabled'] : 0;
+						$sort = isset($input['select_sort']) ? $input['select_sort'] : '';
+
 						$more .= '<div class="tagtr"><div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">';
 						if (!empty($input['label'])) $more .= $input['label'].'</div><div class="tagtd left">';
-						$more .= $this->selectarray($input['name'], $input['values'], $input['default'], 1, 0, 0, $moreattr, 0, 0, 0, '', $morecss);
+						$more .= $this->selectarray($input['name'], $input['values'], $input['default'], $show_empty, $key_in_label, $value_as_key, $moreattr, $translate, $maxlen, $disabled, $sort, $morecss);
 						$more .= '</div></div>'."\n";
 					} elseif ($input['type'] == 'checkbox')
 					{
@@ -6255,7 +6263,7 @@ class Form
 			$tmparray = explode('@', $objecttmp->ismultientitymanaged);
 			$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.$tmparray[1].' as parenttable ON parenttable.rowid = t.'.$tmparray[0];
 		}
-		if ($objecttmp->ismultientitymanaged == 'fk_soc@societe')
+		if ($objecttmp->ismultientitymanaged === 'fk_soc@societe')
 			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql .= " WHERE 1=1";
 		if (isset($objecttmp->ismultientitymanaged) && $objecttmp->ismultientitymanaged == 1) $sql .= " AND t.entity IN (".getEntity($objecttmp->table_element).")";
@@ -6267,7 +6275,7 @@ class Form
 			else $sql .= " AND t.fk_soc = ".$user->socid;
 		}
 		if ($searchkey != '') $sql .= natural_search(explode(',', $fieldstoshow), $searchkey);
-		if ($objecttmp->ismultientitymanaged == 'fk_soc@societe') {
+		if ($objecttmp->ismultientitymanaged === 'fk_soc@societe') {
 			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND t.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 		}
 		if ($objecttmp->filter) {	 // Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
@@ -7205,9 +7213,9 @@ class Form
 						print '<input type="radio" name="idtolinkto" value='.$objp->rowid.'>';
 						print '</td>';
 						print '<td class="center">'.$objp->ref.'</td>';
-						print '<td>'.$objp->ref_client.'</td>';
+						print '<td>'.(!empty($objp->ref_client) ? $objp->ref_client : $objp->ref_supplier).'</td>';
 						print '<td class="right">';
-						if ($possiblelink[label] == 'LinkToContract') {
+						if ($possiblelink['label'] == 'LinkToContract') {
 							$form = new Form($db);
 							print $form->textwithpicto('', $langs->trans("InformationOnLinkToContract")).' ';
 						}

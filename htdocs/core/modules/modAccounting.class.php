@@ -285,15 +285,15 @@ class modAccounting extends DolibarrModules
 			//'b.doc_type'=>'Doctype',
 			'b.doc_ref'=>'Piece',
 			'b.code_journal'=>'Codejournal',
-			//'b.journal_label'=>'JournalLabel',
+			'b.journal_label'=>'JournalLabel',
 			'b.numero_compte'=>'AccountAccounting',
-			//'b.label_compte'=>'LabelAccount',
+			'b.label_compte'=>'LabelAccount',
 			'b.subledger_account'=>'SubledgerAccount',
 			'b.subledger_label'=>'SubledgerAccountLabel',
 			'b.label_operation'=>'LabelOperation',
 			'b.debit'=>"Debit",
 			'b.credit'=>"Credit",
-			'b.sens'=>'Direction'	// This field is still used by accounting export. We can remove it once it has been replace into accountancyexport.class.php by a detection using ->debit and ->credit
+			'b.sens'=>'Direction'	// This field is still used by accounting export. We can remove it once it has been replaced into accountancyexport.class.php by a detection using ->debit and ->credit
 		);
 		$this->import_fieldshidden_array[$r] = array('b.doc_type'=>'const-import_from_external', 'b.fk_doc'=>'const-0', 'b.fk_docdet'=>'const-0', 'b.fk_user_author'=>'user->id', 'b.date_creation'=>'const-'.dol_print_date(dol_now(), 'standard')); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 		$this->import_regex_array[$r] = array('b.doc_date'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$');
@@ -303,9 +303,9 @@ class modAccounting extends DolibarrModules
 			//'b.doc_type'=>'import',
 			'b.doc_ref'=>'My document ABC',
 			'b.code_journal'=>"VTE",
-			//'b.journal_label'=>"Sale journal",
+			'b.journal_label'=>"Sale journal",
 			'b.numero_compte'=>"707",
-			//'b.label_compte'=>'Product account 707',
+			'b.label_compte'=>'Product account 707',
 			'b.subledger_account'=>'',
 			'b.subledger_label'=>'',
 			'b.label_operation'=>"Sale of ABC",

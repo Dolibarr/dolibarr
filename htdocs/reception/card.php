@@ -237,8 +237,6 @@ if (empty($reshook))
 		$objectsrc = new $classname($db);
 		$objectsrc->fetch($object->origin_id);
 
-
-
 		$object->socid = $objectsrc->socid;
 		$object->ref_supplier = GETPOST('ref_supplier', 'alpha');
 		$object->model_pdf = GETPOST('model');
@@ -280,10 +278,8 @@ if (empty($reshook))
 			$stockLocation = "ent1".$i."_0";
 			$qty = "qtyl".$i;
 
-
-
-				//var_dump(GETPOST($qty,'int')); var_dump($_POST); var_dump($batch);exit;
-				//reception line for product with no batch management and no multiple stock location
+			//var_dump(GETPOST($qty,'int')); var_dump($_POST); var_dump($batch);exit;
+			//reception line for product with no batch management and no multiple stock location
 			if (GETPOST($qty, 'int') > 0)
 				$totalqty += GETPOST($qty, 'int');
 
@@ -318,9 +314,15 @@ if (empty($reshook))
 
 					$entrepot_id = is_numeric(GETPOST($ent, 'int')) ? GETPOST($ent, 'int') : GETPOST('entrepot_id', 'int');
 
+					if (!empty($lineToTest)) {
+						$fk_product = $lineToTest->fk_product;
+					} else {
+						$fk_product = $linesrc->fk_product;
+					}
+
 					if ($entrepot_id < 0)
 						$entrepot_id = '';
-					if (!($linesrc->fk_product > 0) && empty($conf->global->STOCK_SUPPORTS_SERVICES))
+					if (!($fk_product > 0) && empty($conf->global->STOCK_SUPPORTS_SERVICES))
 						$entrepot_id = 0;
 					$eatby = GETPOST($eatby, 'alpha');
 					$sellby = GETPOST($sellby, 'alpha');
