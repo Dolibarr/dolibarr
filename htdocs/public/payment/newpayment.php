@@ -138,8 +138,6 @@ if ($source == 'conferencesubscription') {
 			if ($resultattendee <= 0) {
 				setEventMessages(null, $attendee->errors, "errors");
 			}
-			var_dump($attendee);
-			exit;
 		}
 	}
 }
