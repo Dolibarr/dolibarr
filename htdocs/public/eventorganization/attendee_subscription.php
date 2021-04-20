@@ -349,7 +349,7 @@ if (empty($reshook) && $action == 'add') {
 			// No price has been set
 			// Validating the subscription
 			$confattendee->setStatut(1);
-			$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php';
+			$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?idthirdparty='.dol_encode($thirdparty->id, $dolibarr_main_instance_unique_id).'&securekey='.dol_encode($conf->global->EVENTORGANIZATION_SECUREKEY, $dolibarr_main_instance_unique_id);
 			Header("Location: ".$redirection);
 			exit;
 		}

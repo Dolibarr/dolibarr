@@ -56,12 +56,29 @@ if (!empty($conf->paypal->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
 }
 
+global $dolibarr_main_instance_unique_id, $dolibarr_main_url_root, $mysoc;
+
 $langs->loadLangs(array("main", "companies", "install", "other", "eventorganization"));
 
 $object = new stdClass(); // For triggers
 
 $error = 0;
 
+// Security check
+$securekey = dol_decode(GETPOST('securekey'), $dolibarr_main_instance_unique_id);
+if ($securekey != $conf->global->EVENTORGANIZATION_SECUREKEY) {
+	print $langs->trans('MissingOrBadSecureKey');
+	exit;
+}
+
+$idthirdparty = dol_decode(GETPOST('idthirdparty'), $dolibarr_main_instance_unique_id);
+
+$thirdparty = new Societe($db);
+$resthirdparty = $thirdparty->fetch($idthirdparty);
+if ($resthirdparty<0) {
+	$error++;
+	$errmsg .= $thirdparty->error;
+}
 
 /*
  * Actions
