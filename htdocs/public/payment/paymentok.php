@@ -889,17 +889,6 @@ if ($ispaymentok) {
 					} else {
 						$attendeetovalidate->setStatut(1);
 					}
-
-					// Redirecting to confirmation page
-					$thirdparty = new Societe($db);
-					$resultthirdparty = $thirdparty->fetch($attendeetovalidate->fk_soc);
-					if ($resultthirdparty < 0) {
-						setEventMessages(null, $thirdparty->errors, "errors");
-					} else {
-						$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?idthirdparty='.dol_encode($thirdparty->id, $dolibarr_main_instance_unique_id).'&securekey='.dol_encode($conf->global->EVENTORGANIZATION_SECUREKEY, $dolibarr_main_instance_unique_id);
-						Header("Location: ".$redirection);
-						exit;
-					}
 				} else {
 					$db->rollback();
 				}
