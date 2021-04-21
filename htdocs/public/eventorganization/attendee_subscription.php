@@ -228,7 +228,7 @@ if (empty($reshook) && $action == 'add') {
 	}
 
 	if (!$error) {
-		// Check if attendee already exists (by email)
+		// Check if attendee already exists (by email and for this event)
 		$confattendee = new ConferenceOrBoothAttendee($db);
 		$resultfetchconfattendee = $confattendee->fetchAll('', '', 0, 0, array('t.fk_actioncomm'=>$id, 't.email'=>$email));
 		if ($resultfetchconfattendee != 0 && count($resultfetchconfattendee)>0) {
@@ -236,15 +236,16 @@ if (empty($reshook) && $action == 'add') {
 			$confattendee = $resultfetchconfattendee[0];
 		} else {
 			// Need to create a confattendee
+			$confattendee->date_subscription = dol_now();
+			$confattendee->email = GETPOST("email");
+			$confattendee->fk_actioncomm = $id;
+			$resultconfattendee = $confattendee->create($user);
+			if ($resultconfattendee < 0) {
+				$error++;
+				$errmsg .= $confattendee->error;
+			}
 		}
-		$confattendee->date_subscription = dol_now();
-		$confattendee->email = GETPOST("email");
-		$confattendee->fk_actioncomm = $id;
-		$resultconfattendee = $confattendee->create($user);
-		if ($resultconfattendee < 0) {
-			$error++;
-			$errmsg .= $confattendee->error;
-		}
+
 		// Getting the thirdparty or creating it
 		$thirdparty = new Societe($db);
 		$resultfetchthirdparty = $thirdparty->fetch($confattendee->fk_soc);
