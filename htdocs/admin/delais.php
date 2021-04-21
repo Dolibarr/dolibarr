@@ -354,21 +354,21 @@ if (empty($conf->global->MAIN_DISABLE_METEO) || $conf->global->MAIN_DISABLE_METE
 
 		print '</div>';
 
-		print '<div id="percentage" '.(empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) ? 'style="display:none;"' : '').'>';
+		print '<div id="percentage" '.getDolGlobalString('MAIN_USE_METEO_WITH_PERCENTAGE').'>';
 
 		print '<div>';
 		print '<div class="inline-block" style="padding-right: 20px">';
 		print img_weather($text, 0, $options);
-		print ' &lt;= <input type="text" size="2" name="MAIN_METEO_PERCENTAGE_LEVEL0" value="'.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL0.'"/>&nbsp;%</td>';
+		print ' &lt;= <input type="text" size="2" name="MAIN_METEO_PERCENTAGE_LEVEL0" value="'.getDolGlobalString('MAIN_METEO_PERCENTAGE_LEVEL0').'"/>&nbsp;%</td>';
 		print '</div><div class="inline-block" style="padding-right: 20px">';
 		print img_weather($text, 1, $options);
-		print ' &lt;= <input type="text" size="2" name="MAIN_METEO_PERCENTAGE_LEVEL1" value="'.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL1.'"/>&nbsp;%</td>';
+		print ' &lt;= <input type="text" size="2" name="MAIN_METEO_PERCENTAGE_LEVEL1" value="'.getDolGlobalString('MAIN_METEO_PERCENTAGE_LEVEL1').'"/>&nbsp;%</td>';
 		print '</div><div class="inline-block" style="padding-right: 20px">';
 		print img_weather($text, 2, $options);
-		print ' &lt;= <input type="text" size="2" name="MAIN_METEO_PERCENTAGE_LEVEL2" value="'.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL2.'"/>&nbsp;%</td>';
+		print ' &lt;= <input type="text" size="2" name="MAIN_METEO_PERCENTAGE_LEVEL2" value="'.getDolGlobalString('MAIN_METEO_PERCENTAGE_LEVEL2').'"/>&nbsp;%</td>';
 		print '</div><div class="inline-block" style="padding-right: 20px">';
 		print img_weather($text, 3, $options);
-		print ' &lt;= <input type="text" size="2" name="MAIN_METEO_PERCENTAGE_LEVEL3" value="'.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL3.'"/>&nbsp;%</td>';
+		print ' &lt;= <input type="text" size="2" name="MAIN_METEO_PERCENTAGE_LEVEL3" value="'.getDolGlobalString('MAIN_METEO_PERCENTAGE_LEVEL3').'"/>&nbsp;%</td>';
 		print '</div>';
 		print '</div>';
 

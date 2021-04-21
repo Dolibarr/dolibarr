@@ -25,7 +25,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-if (!$user->admin) {
+if (empty($user->admin)) {
 	accessforbidden();
 }
 
@@ -164,17 +164,17 @@ foreach ($modules as $key => $module) {
 	$newModule->permission = $permission;
 
 	// pre-filter list
-	if ($search_name && !stristr($newModule->name, $search_name)) {
+	if (!empty($search_name) && !stristr($newModule->name, $search_name)) {
 		continue;
 	}
-	if ($search_version && !stristr($newModule->version, $search_version)) {
+	if (!empty($search_version) && !stristr($newModule->version, $search_version)) {
 		continue;
 	}
-	if ($search_id && !stristr($newModule->id, $search_id)) {
+	if (!empty($search_id) && !stristr($newModule->id, $search_id)) {
 		continue;
 	}
 
-	if ($search_permission) {
+	if (!empty($search_permission)) {
 		$found = false;
 
 		foreach ($newModule->permission as $permission) {
@@ -184,7 +184,7 @@ foreach ($modules as $key => $module) {
 			}
 		}
 
-		if (!$found) {
+		if (empty($found)) {
 			continue;
 		}
 	}
@@ -211,7 +211,7 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print_barre_liste($langs->trans("AvailableModules"), $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $massactionbutton, -1, '', 'title_setup', 0, '', '', 0, 1, 1);
+print_barre_liste($langs->trans("AvailableModules"), empty($page) ? 0 : $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', -1, '', 'title_setup', 0, '', '', 0, 1, 1);
 
 print '<span class="opacitymedium">'.$langs->trans("ToActivateModule").'</span>';
 print '<br>';
