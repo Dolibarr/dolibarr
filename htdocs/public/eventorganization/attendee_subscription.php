@@ -334,14 +334,25 @@ if (empty($reshook) && $action == 'add') {
 			if (!$error) {
 				// Add line to draft invoice
 				$vattouse = get_default_tva($mysoc, $thirdparty, $productforinvoicerow->id);
-				$result = $facture->addline($langs->trans("ConferenceAttendeeFee").' for the event : \''.$conference->label.'\' occuring from '.dol_print_date($conference->datep, '%d/%m/%y %H:%M:%S').' to '.dol_print_date($conference->datep2, '%d/%m/%y %H:%M:%S'), floatval($project->price_registration), 1, $vattouse, 0, 0, $productforinvoicerow->id, 0, dol_now(), '', 0, 0, '', 'HT', 0, 1);
+				$result = $facture->addline($langs->trans("ConferenceAttendeeFee", $conference->label, dol_print_date($conference->datep, '%d/%m/%y %H:%M:%S'), dol_print_date($conference->datep2, '%d/%m/%y %H:%M:%S')), floatval($project->price_registration), 1, $vattouse, 0, 0, $productforinvoicerow->id, 0, dol_now(), '', 0, 0, '', 'HT', 0, 1);
 				if ($result <= 0) {
 					$confattendee->error = $facture->error;
 					$confattendee->errors = $facture->errors;
 					$error++;
 				}
 				if (!$error) {
-					$redirection = $dolibarr_main_url_root.'/public/payment/newpayment.php?source=conferencesubscription&ref='.dol_encode($facture->id, $dolibarr_main_instance_unique_id);
+					$valid = true;
+					$sourcetouse = 'conferencesubscription';
+					$reftouse = dol_encode($facture->id, $dolibarr_main_instance_unique_id);
+					$redirection = $dolibarr_main_url_root.'/public/payment/newpayment.php?source='.$sourcetouse.'&ref='.$reftouse;
+					if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
+						if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
+							$redirection .= '&securekey='.dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . $sourcetouse . $reftouse, 2); // Use the source in the hash to avoid duplicates if the references are identical
+
+						} else {
+							$redirection .= '&securekey='.$conf->global->PAYMENT_SECURITY_TOKEN;
+						}
+					}
 					Header("Location: ".$redirection);
 					exit;
 				}

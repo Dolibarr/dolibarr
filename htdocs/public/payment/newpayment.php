@@ -155,6 +155,7 @@ foreach ($_POST as $key => $val) {
 }
 
 
+
 // Define $urlwithroot
 //$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
 //$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
@@ -168,6 +169,7 @@ $ref = $REF = GETPOST('ref', 'alpha');
 $TAG = GETPOST("tag", 'alpha');
 $FULLTAG = GETPOST("fulltag", 'alpha'); // fulltag is tag with more informations
 $SECUREKEY = GETPOST("securekey"); // Secure key
+
 if ($paymentmethod && !preg_match('/'.preg_quote('PM='.$paymentmethod, '/').'/', $FULLTAG)) {
 	$FULLTAG .= ($FULLTAG ? '.' : '').'PM='.$paymentmethod;
 }
@@ -262,6 +264,7 @@ if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 	} else {
 		$token = $conf->global->PAYMENT_SECURITY_TOKEN;
 	}
+
 	if ($SECUREKEY != $token) {
 		if (empty($conf->global->PAYMENT_SECURITY_ACCEPT_ANY_TOKEN)) {
 			$valid = false; // PAYMENT_SECURITY_ACCEPT_ANY_TOKEN is for backward compatibility
