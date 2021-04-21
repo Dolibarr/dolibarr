@@ -284,14 +284,24 @@ if (empty($reshook) && $action == 'add') {
 		} else {
 			// creation of an attendee
 			$confattendee = new ConferenceOrBoothAttendee($db);
-			$confattendee->fk_soc = $thirdparty->id;
-			$confattendee->date_subscription = dol_now();
-			$confattendee->email = GETPOST("email");
-			$confattendee->fk_actioncomm = $id;
-			$resultconfattendee = $confattendee->create($user);
-			if ($resultconfattendee < 0) {
-				$error++;
-				$errmsg .= $confattendee->error;
+			$resultfetchattendee = $confattendee->fetchAll('','', 1, 0, array('t.fk_soc'=>$thirdparty->id, 't.fk_actioncomm'=>$id));
+			if ($resultfetchattendee == 0 || count($resultfetchattendee) == 0) {
+				// Need to create an attendee
+				$confattendee->fk_soc = $thirdparty->id;
+				$confattendee->date_subscription = dol_now();
+				$confattendee->email = GETPOST("email");
+				$confattendee->fk_actioncomm = $id;
+				$resultconfattendee = $confattendee->create($user);
+				if ($resultconfattendee < 0) {
+					$error++;
+					$errmsg .= $confattendee->error;
+				}
+				print 'created attendee';
+			} else {
+				// Found an attendee
+				print 'found attendee';
+				var_dump($resultfetchattendee);
+				$confattendee = $resultfetchattendee[0];
 			}
 		}
 	}
@@ -312,6 +322,7 @@ if (empty($reshook) && $action == 'add') {
 				$facture->paye = 0;
 				$facture->date = dol_now();
 				$facture->cond_reglement_id = $confattendee->cond_reglement_id;
+
 				if (empty($facture->cond_reglement_id)) {
 					$paymenttermstatic = new PaymentTerm($confattendee->db);
 					$facture->cond_reglement_id = $paymenttermstatic->getDefaultId();
@@ -437,10 +448,7 @@ print '<div class="center subscriptionformhelptext justify">';
 // Welcome message
 print $langs->trans("EvntOrgWelcomeMessage");
 print $id.".".'<br>';
-print $langs->trans("EvntOrgStartDuration");
-print dol_print_date($conference->datep).' ';
-print $langs->trans("EvntOrgEndDuration");
-print ' '.dol_print_date($conference->datef).".";
+print $langs->trans("EvntOrgDuration", dol_print_date($conference->datep), dol_print_date($conference->datef));
 print '</div>';
 
 dol_htmloutput_errors($errmsg);
