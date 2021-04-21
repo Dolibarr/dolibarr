@@ -24,5 +24,5 @@
 --
 
 INSERT INTO llx_c_productbatch_status (code, label, active) VALUES ('OK', 'En état de marche', 1);
-INSERT INTO llx_c_productbatch_status (code, label, active) VALUES ('KO', "Hors d'usage", 1);
+INSERT INTO llx_c_productbatch_status (code, label, active) VALUES ('KO', 'Hors d’usage', 1);
 
