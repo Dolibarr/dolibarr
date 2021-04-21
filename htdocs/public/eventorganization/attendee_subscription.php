@@ -364,9 +364,8 @@ if (empty($reshook) && $action == 'add') {
 			$arraydefaultmessage = null;
 
 			$labeltouse = $conf->global->EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT;
-
 			if (!empty($labeltouse)) {
-				$arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
+				$arraydefaultmessage = $formmail->getEMailTemplate($db, 'eventorganization_send', $user, $outputlangs, $labeltouse, 1, '');
 			}
 
 			if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
@@ -377,16 +376,15 @@ if (empty($reshook) && $action == 'add') {
 			$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
 			complete_substitutions_array($substitutionarray, $outputlangs, $object);
 			$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
-			$texttosend = $msg;
+			$texttosend = make_substitutions($msg, $substitutionarray, $outputlangs);
 
 			$sendto = $thirdparty->email;
 			$from = $conf->global->MAILING_EMAIL_FROM;
 			$urlback = $_SERVER["REQUEST_URI"];
-			$topic = $langs->trans("ConfAttendeeSubscriptionConfirmation");
 
 			$ishtml = dol_textishtml($texttosend); // May contain urls
 
-			$mailfile = new CMailFile($topic, $sendto, $from, $texttosend, array(), array(), array(), '', '', 0, $ishtml);
+			$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, array(), array(), array(), '', '', 0, $ishtml);
 
 			$result = $mailfile->sendfile();
 			var_dump($result);
