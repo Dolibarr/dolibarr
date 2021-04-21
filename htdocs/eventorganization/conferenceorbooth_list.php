@@ -368,7 +368,7 @@ if ($projectid > 0) {
 	$linkregister = $dolibarr_main_url_root.'/public/project/index.php?id='.$encodedid;
 	$encodedsecurekey = dol_encode($conf->global->EVENTORGANIZATION_SECUREKEY.$encodedid, $dolibarr_main_instance_unique_id);
 	$linkregister .= '&securekey='.urlencode($encodedsecurekey);
-	print '<a href="'.$linkregister.'">'.$linkregister.'</a>';
+	print '<a target="_blank" href="'.$linkregister.'">'.$linkregister.'</a>';
 	print '</td></tr>';
 
 	// Other attributes

@@ -376,8 +376,6 @@ if (empty($reshook) && $action == 'add') {
 			$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $thirdparty);
 			complete_substitutions_array($substitutionarray, $outputlangs, $object);
 
-			$substitutionarray['ThisIsContentOfYourOrganizationEventEventSubscriptionWasReceived'] = 'Vous êtes bien enregistré.';
-
 			$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
 			$texttosend = make_substitutions($msg, $substitutionarray, $outputlangs);
 
