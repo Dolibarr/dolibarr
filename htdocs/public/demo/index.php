@@ -24,10 +24,18 @@
  *		\brief      Entry page to access demo
  */
 
-if (!defined('NOLOGIN'))        define('NOLOGIN', '1');
-if (!defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
-if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', 1);
-if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+if (!defined('NOLOGIN')) {
+	define('NOLOGIN', '1');
+}
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', '1');
+}
+if (!defined('NOBROWSERNOTIF')) {
+	define('NOBROWSERNOTIF', 1);
+}
+if (!defined('NOIPCHECK')) {
+	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+}
 
 require '../../main.inc.php';
 require_once '../../core/lib/functions2.lib.php';
@@ -42,7 +50,9 @@ $conf->dol_use_jmobile = GETPOST('dol_use_jmobile', 'int');
 
 // Security check
 global $dolibarr_main_demo;
-if (empty($dolibarr_main_demo)) accessforbidden('Parameter dolibarr_main_demo must be defined in conf file with value "default login,default pass" to enable the demo entry page', 0, 0, 1);
+if (empty($dolibarr_main_demo)) {
+	accessforbidden('Parameter dolibarr_main_demo must be defined in conf file with value "default login,default pass" to enable the demo entry page', 0, 0, 1);
+}
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $res = $hookmanager->initHooks(array('demo'));
@@ -66,8 +76,7 @@ $parameters = array();
 $object = new stdClass();
 $reshook = $hookmanager->executeHooks('addDemoProfile', $parameters, $object, $tmpaction); // Note that $action and $object may have been modified by some hooks
 $error = $hookmanager->error; $errors = $hookmanager->errors;
-if (empty($reshook))
-{
+if (empty($reshook)) {
 	$demoprofiles = array(
 		array('default'=>'1', 'key'=>'profdemoservonly', 'label'=>'DemoCompanyServiceOnly',
 		'disablemodules'=>'adherent,barcode,bom,cashdesk,don,expedition,externalsite,ftp,incoterm,mailmanspip,margin,mrp,prelevement,product,productbatch,stock,takepos',
@@ -131,27 +140,21 @@ $dirmod = array();
 $i = 0; // is a sequencer of modules found
 $j = 0; // j is module number. Automatically affected if module number not defined.
 
-foreach ($modulesdir as $dir)
-{
+foreach ($modulesdir as $dir) {
 	// Charge tableaux modules, nom, numero, orders depuis repertoire dir
 	$handle = @opendir($dir);
-	if (is_resource($handle))
-	{
-		while (($file = readdir($handle)) !== false)
-		{
+	if (is_resource($handle)) {
+		while (($file = readdir($handle)) !== false) {
 			//print "$i ".$file."\n<br>";
-			if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php')
-			{
+			if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php') {
 				$modName = substr($file, 0, dol_strlen($file) - 10);
 
-				if ($modName)
-				{
+				if ($modName) {
 					try {
 						include_once $dir.$file;
 						$objMod = new $modName($db);
 
-						if ($objMod->numero > 0)
-						{
+						if ($objMod->numero > 0) {
 							$j = $objMod->numero;
 						} else {
 							$j = 1000 + $i;
@@ -161,11 +164,14 @@ foreach ($modulesdir as $dir)
 
 						// We discard modules according to features level (PS: if module is activated we always show it)
 						$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
-						if ($objMod->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2 && empty($conf->global->$const_name)) $modulequalified = 0;
-						if ($objMod->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && empty($conf->global->$const_name)) $modulequalified = 0;
+						if ($objMod->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2 && empty($conf->global->$const_name)) {
+							$modulequalified = 0;
+						}
+						if ($objMod->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && empty($conf->global->$const_name)) {
+							$modulequalified = 0;
+						}
 
-						if ($modulequalified)
-						{
+						if ($modulequalified) {
 							$modules[$i] = $objMod;
 							$filename[$i] = $modName;
 							$orders[$i]  = $objMod->family."_".$j; // Tri par famille puis numero module
@@ -174,8 +180,7 @@ foreach ($modulesdir as $dir)
 							$j++;
 							$i++;
 						}
-					} catch (Exception $e)
-					{
+					} catch (Exception $e) {
 						dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
 					}
 				}
@@ -192,37 +197,34 @@ asort($orders);
  * Actions
  */
 
-if (GETPOST('action', 'aZ09') == 'gotodemo')     // Action run when we click on "Start" after selection modules
-{
+if (GETPOST('action', 'aZ09') == 'gotodemo') {     // Action run when we click on "Start" after selection modules
 	//print 'ee'.GETPOST("demochoice");
 	$disablestring = '';
 	// If we disable modules using a profile choice
-	if (GETPOST("demochoice"))
-	{
-		foreach ($demoprofiles as $profilearray)
-		{
-			if ($profilearray['key'] == GETPOST("demochoice"))
-			{
+	if (GETPOST("demochoice")) {
+		foreach ($demoprofiles as $profilearray) {
+			if ($profilearray['key'] == GETPOST("demochoice")) {
 				$disablestring = $profilearray['disablemodules'];
 				break;
 			}
 		}
 	}
 	// If we disable modules using personalized list
-	foreach ($modules as $val)
-	{
+	foreach ($modules as $val) {
 		$modulekeyname = strtolower($val->name);
-		if (empty($_POST[$modulekeyname]) && empty($val->always_enabled) && !in_array($modulekeyname, $alwayscheckedmodules))
-		{
+		if (empty($_POST[$modulekeyname]) && empty($val->always_enabled) && !in_array($modulekeyname, $alwayscheckedmodules)) {
 			$disablestring .= $modulekeyname.',';
-			if ($modulekeyname == 'propale') $disablestring .= 'propal,';
+			if ($modulekeyname == 'propale') {
+				$disablestring .= 'propal,';
+			}
 		}
 	}
 
 	// Do redirect to login page
-	if ($disablestring)
-	{
-		if (GETPOST('urlfrom')) $url .= (preg_match('/\?/', $url) ? '&amp;' : '?').'urlfrom='.urlencode(GETPOST('urlfrom', 'alpha'));
+	if ($disablestring) {
+		if (GETPOST('urlfrom')) {
+			$url .= (preg_match('/\?/', $url) ? '&amp;' : '?').'urlfrom='.urlencode(GETPOST('urlfrom', 'alpha'));
+		}
 		$url .= (preg_match('/\?/', $url) ? '&amp;' : '?').'disablemodules='.$disablestring;
 		//var_dump($url);exit;
 		header("Location: ".$url);
@@ -288,12 +290,12 @@ print '<div class="clearboth"></div>';
 print '<div class="demobanbox">';
 
 $i = 0;
-foreach ($demoprofiles as $profilearray)
-{
-	if ($profilearray['default'] >= 0)
-	{
+foreach ($demoprofiles as $profilearray) {
+	if ($profilearray['default'] >= 0) {
 		//print $profilearray['lang'];
-		if (!empty($profilearray['lang'])) $langs->load($profilearray['lang']);
+		if (!empty($profilearray['lang'])) {
+			$langs->load($profilearray['lang']);
+		}
 
 		$url = $_SERVER["PHP_SELF"].'?action=gotodemo';
 		$urlwithmod = $url.'&amp;demochoice='.$profilearray['key'];
@@ -303,18 +305,15 @@ foreach ($demoprofiles as $profilearray)
 		$urlfrom = preg_replace('/^'.preg_quote(DOL_URL_ROOT, '/').'/i', '', $_SERVER["PHP_SELF"]);
 		//print $urlfrom;
 
-		if (!empty($profilearray['url']))
-		{
+		if (!empty($profilearray['url'])) {
 			$urlwithmod = $profilearray['url'];
 			$urlwithmod = $urlwithmod.(preg_match('/\?/', $urlwithmod) ? '&amp;' : '?').'urlfrom='.urlencode($urlfrom);
-			if (!empty($profilearray['disablemodules']))
-			{
+			if (!empty($profilearray['disablemodules'])) {
 				  $urlwithmod = $urlwithmod.(preg_match('/\?/', $urlwithmod) ? '&amp;' : '?').'disablemodules='.$profilearray['disablemodules'];
 			}
 		}
 
-		if (empty($profilearray['url']))
-		{
+		if (empty($profilearray['url'])) {
 			print '<div class="clearboth"></div>';
 		}
 
@@ -350,8 +349,7 @@ foreach ($demoprofiles as $profilearray)
 
 
 		// Modules (a profile you must choose modules)
-		if (empty($profilearray['url']))
-		{
+		if (empty($profilearray['url'])) {
 			print '<div id="tr1'.$profilearray['key'].'" class="moduleline hidden" style="margin-left: 8px; margin-right: 8px; text-align: justify; font-size:14px; line-height: 130%; padding-bottom: 8px">';
 
 			print $langs->trans("ThisIsListOfModules").'<br><br>';
@@ -362,20 +360,26 @@ foreach ($demoprofiles as $profilearray)
 			$j = 0;
 			$nbcolsmod = empty($conf->dol_optimize_smallscreen) ? 4 : 3;
 			//var_dump($modules);
-			foreach ($orders as $index => $key) // Loop on qualified (enabled) modules
-			{
+			foreach ($orders as $index => $key) { // Loop on qualified (enabled) modules
 				//print $index.' '.$key;
 				$val = $modules[$index];
 				$modulekeyname = strtolower($val->name);
 
 				$modulequalified = 1;
-				if (!empty($val->always_enabled) || in_array($modulekeyname, $alwayshiddenuncheckedmodules)) $modulequalified = 0;
-				if ($val->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2 && !$conf->global->$const_name) $modulequalified = 0;
-				if ($val->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && !$conf->global->$const_name) $modulequalified = 0;
-				if (!$modulequalified) continue;
+				if (!empty($val->always_enabled) || in_array($modulekeyname, $alwayshiddenuncheckedmodules)) {
+					$modulequalified = 0;
+				}
+				if ($val->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2 && !$conf->global->$const_name) {
+					$modulequalified = 0;
+				}
+				if ($val->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && !$conf->global->$const_name) {
+					$modulequalified = 0;
+				}
+				if (!$modulequalified) {
+					continue;
+				}
 
-				if (in_array($modulekeyname, $alwayshiddencheckedmodules))
-				{
+				if (in_array($modulekeyname, $alwayshiddencheckedmodules)) {
 					print "\n".'<!-- Module '.$modulekeyname.' hidden and always checked -->';
 					print '<input type="hidden" name="'.$modulekeyname.'" value="1">';
 				} else {
@@ -384,8 +388,12 @@ foreach ($demoprofiles as $profilearray)
 					print '<!-- id='.$val->numero.' -->';
 					print '<div class="nowrap">';
 					print '<input type="checkbox" class="checkbox" id="id'.$modulekeyname.'" name="'.$modulekeyname.'" value="1" title="'.dol_escape_htmltag($val->getName()).'"';
-					if (in_array($modulekeyname, $alwaysuncheckedmodules)) print ' disabled';
-					if (!in_array($modulekeyname, $alwaysuncheckedmodules) && (!in_array($modulekeyname, $listofdisabledmodules) || in_array($modulekeyname, $alwayscheckedmodules))) print ' checked';
+					if (in_array($modulekeyname, $alwaysuncheckedmodules)) {
+						print ' disabled';
+					}
+					if (!in_array($modulekeyname, $alwaysuncheckedmodules) && (!in_array($modulekeyname, $listofdisabledmodules) || in_array($modulekeyname, $alwayscheckedmodules))) {
+						print ' checked';
+					}
 					print '> <label for="id'.$modulekeyname.'" class="inline-block demomaxoveflow" title="'.dol_escape_htmltag($val->getName()).'">'.$val->getName().'</label><br>';
 					print '</div>';
 					//if ($modulo == ($nbcolsmod - 1)) print '</tr>';
@@ -414,10 +422,8 @@ print '</div>';
 
 // TODO Replace this with a hook
 // Google Adsense (need Google module)
-if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && !empty($conf->global->MAIN_GOOGLE_AD_SLOT))
-{
-	if (empty($conf->dol_use_jmobile))
-	{
+if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && !empty($conf->global->MAIN_GOOGLE_AD_SLOT)) {
+	if (empty($conf->dol_use_jmobile)) {
 		print '<div align="center">'."\n";
 		print '<script><!--'."\n";
 		print 'google_ad_client = "'.$conf->global->MAIN_GOOGLE_AD_CLIENT.'";'."\n";

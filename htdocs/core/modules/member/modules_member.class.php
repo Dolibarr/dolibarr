@@ -26,7 +26,7 @@
  */
 
 /**
- *  \file       htdocs/core/modules/member/modules_member.php
+ *  \file       htdocs/core/modules/member/modules_member.class.php
  *  \ingroup    members
  *  \brief      File with parent class for generating members to PDF
  */

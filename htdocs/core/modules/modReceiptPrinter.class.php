@@ -23,7 +23,7 @@
 /**
  *  \file       htdocs/core/modules/modReceiptPrinter.class.php
  *  \ingroup    printing
- *  \brief      File of class to describe and activate module Receipt Printer
+ *  \brief      Description and activation file for the module Receipt Printer
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -71,7 +71,7 @@ class modReceiptPrinter extends DolibarrModules
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(3, 9, -2); // Minimum version of Dolibarr required by module
 		$this->conflictwith = array();
 		$this->langfiles = array("receiptprinter");
@@ -95,7 +95,7 @@ class modReceiptPrinter extends DolibarrModules
 		// $this->rights[$r][5]     Niveau 2 pour nommer permission dans code
 
 		$r++;
-		$this->rights[$r][0] = 67000;
+		$this->rights[$r][0] = 67001;
 		$this->rights[$r][1] = 'ReceiptPrinter';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;

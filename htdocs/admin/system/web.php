@@ -26,7 +26,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 
 $langs->load("admin");
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 
 /*
@@ -56,16 +58,21 @@ print '<tr><td>'.$langs->trans("DataRootServer")."</td><td>".DOL_DATA_ROOT."</td
 // Web user group by default
 $labeluser = dol_getwebuser('user');
 $labelgroup = dol_getwebuser('group');
-if ($labeluser && $labelgroup)
-{
-	print '<tr><td>'.$langs->trans("WebUserGroup")." (env vars)</td><td>".$labeluser.'/'.$labelgroup."</td></tr>\n";
+if ($labeluser && $labelgroup) {
+	print '<tr><td>'.$langs->trans("WebUserGroup")." (env vars)</td><td>".$labeluser.':'.$labelgroup;
+	if (function_exists('posix_geteuid') && function_exists('posix_getpwuid')) {
+		$arrayofinfoofuser = posix_getpwuid(posix_geteuid());
+		print ' <span class="opacitymedium">(POSIX '.$arrayofinfoofuser['name'].':'.$arrayofinfoofuser['gecos'].':'.$arrayofinfoofuser['dir'].':'.$arrayofinfoofuser['shell'].')</span>';
+	}
+	print "</td></tr>\n";
 }
 // Web user group real (detected by 'id' external command)
-$arrayout = array(); $varout = 0;
-exec('id', $arrayout, $varout);
-if (empty($varout))	// Test command is ok. Work only on Linux OS.
-{
-	print '<tr><td>'.$langs->trans("WebUserGroup")." (real, 'id' command)</td><td>".join(',', $arrayout)."</td></tr>\n";
+if (function_exists('exec')) {
+	$arrayout = array(); $varout = 0;
+	exec('id', $arrayout, $varout);
+	if (empty($varout)) {	// Test command is ok. Work only on Linux OS.
+		print '<tr><td>'.$langs->trans("WebUserGroup")." (real, 'id' command)</td><td>".join(',', $arrayout)."</td></tr>\n";
+	}
 }
 print '</table>';
 print '</div>';

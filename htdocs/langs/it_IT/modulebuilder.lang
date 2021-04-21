@@ -133,7 +133,9 @@ IncludeDocGeneration=Desidero generare alcuni documenti da questo oggetto
 IncludeDocGenerationHelp=Se selezioni questa opzione, verrà generato del codice per aggiungere una casella "Genera documento" al record.
 ShowOnCombobox=Mostra il valore dentro il combobox
 KeyForTooltip=Chiave per tooltip
-CSSClass=Classe CSS
+CSSClass=CSS for edit/create form
+CSSViewClass=CSS for read form
+CSSListClass=CSS for list
 NotEditable=Non modificabile
 ForeignKey=Chiave esterna
 TypeOfFieldsHelp=Tipo di campi: <br> varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]("1" significa che aggiungiamo un pulsante + dopo la combinazione per creare il record, "filtro" può essere "status=1 AND fk_user = __USER_ID AND entity IN (__SHARED_ENTITIES__)" per esempio)

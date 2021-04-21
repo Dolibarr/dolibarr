@@ -21,7 +21,7 @@
  *
  *  \file       htdocs/core/modules/modDebugBar.class.php
  *  \ingroup    debugbar
- *  \brief      Description and activation file for module debugbar
+ *  \brief     Description and activation file for the module debugbar
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -79,7 +79,7 @@ class modDebugBar extends DolibarrModules
 		// Permissions
 		$this->rights = array();
 
-		$this->rights[1][0] = 430; // id de la permission
+		$this->rights[1][0] = 431; // id de la permission
 		$this->rights[1][1] = 'Use Debug Bar'; // libelle de la permission
 		$this->rights[1][2] = 'u'; // type de la permission (deprecie a ce jour)
 		$this->rights[1][3] = 1; // La permission est-elle une permission par defaut

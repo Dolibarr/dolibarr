@@ -19,7 +19,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/delivery/mod_livraison_saphir.php
+ *	\file       htdocs/core/modules/delivery/mod_delivery_saphir.php
  *	\ingroup    expedition
  *	\brief      Fichier contenant la classe du modele de numerotation de reference de livraison Saphir
  */
@@ -102,15 +102,14 @@ class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 	 */
 	public function getExample()
 	{
-	 	global $conf, $langs, $mysoc;
+		global $conf, $langs, $mysoc;
 
 		$old_code_client = $mysoc->code_client;
 		$mysoc->code_client = 'CCCCCCCCCC';
 		$numExample = $this->getNextValue($mysoc, '');
 		$mysoc->code_client = $old_code_client;
 
-		if (!$numExample)
-		{
+		if (!$numExample) {
 			$numExample = $langs->trans('NotConfigured');
 		}
 		return $numExample;
@@ -133,8 +132,7 @@ class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 		// On defini critere recherche compteur
 		$mask = $conf->global->DELIVERY_SAPHIR_MASK;
 
-		if (!$mask)
-		{
+		if (!$mask) {
 			$this->error = 'NotConfigured';
 			return 0;
 		}

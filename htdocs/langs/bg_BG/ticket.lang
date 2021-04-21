@@ -70,6 +70,8 @@ Deleted=Изтрит
 # Dict
 Type=Вид
 Severity=Приоритет
+TicketGroupIsPublic=Group is public
+TicketGroupIsPublicDesc=If a ticket group is public, it will be visible in the form when creating a ticket from the public interface
 
 # Email templates
 MailToSendTicketMessage=За да изпратите имейл с това съобщение
@@ -114,8 +116,8 @@ TicketsShowModuleLogo=Показване на логото на модула в 
 TicketsShowModuleLogoHelp=Активирайте тази опция, за да скриете логото на модула от страниците на публичния интерфейс
 TicketsShowCompanyLogo=Показване на логото на фирмата в публичния интерфейс
 TicketsShowCompanyLogoHelp=Активирайте тази опция, за да скриете логото на основната фирма от страниците на публичния интерфейс
-TicketsEmailAlsoSendToMainAddress=Изпращане на известие до основния имейл адрес
-TicketsEmailAlsoSendToMainAddressHelp=Активирайте тази опция, за да изпратите имейл до "Известяващ имейл от" (вижте настройката по-долу)
+TicketsEmailAlsoSendToMainAddress=Also send a notification to the main email address
+TicketsEmailAlsoSendToMainAddressHelp=Enable this option to also send an email to the address defined into setup "%s" (see tab "%s")
 TicketsLimitViewAssignedOnly=Ограничаване на показването на тикети до такива, които са възложени на текущия потребител (не е приложимо за външни потребители, винаги ще бъдат ограничени до контрагента, от който зависят)
 TicketsLimitViewAssignedOnlyHelp=Само тикети, възложени на текущия потребител ще бъдат показвани. Не важи за потребител с права за управление на тикети.
 TicketsActivatePublicInterface=Активиране на публичния интерфейс
@@ -126,10 +128,10 @@ TicketNumberingModules=Модул за номериране на тикети
 TicketsModelModule=Document templates for tickets
 TicketNotifyTiersAtCreation=Уведомяване на контрагента при създаване
 TicketsDisableCustomerEmail=Деактивиране на имейлите, когато тикетът е създаден от публичния интерфейс
-TicketsPublicNotificationNewMessage=Send email(s) when a new message is added
+TicketsPublicNotificationNewMessage=Send email(s) when a new message/comment is added to a ticket
 TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
 TicketPublicNotificationNewMessageDefaultEmail=Notifications email to (update)
-TicketPublicNotificationNewMessageDefaultEmailHelp=Send email new message notifications to this address if the ticket don't have a user assigned or the user don't have a email.
+TicketPublicNotificationNewMessageDefaultEmailHelp=Send an email to this address for each new message notifications if the ticket doesn't have a user assigned to it or if the user doesn't have any known email.
 #
 # Index & list page
 #
@@ -302,3 +304,13 @@ BoxLastModifiedTicket=Последно променени тикети
 BoxLastModifiedTicketDescription=Тикети: %s последно променени
 BoxLastModifiedTicketContent=
 BoxLastModifiedTicketNoRecordedTickets=Няма скорошни променени тикети
+BoxTicketType=Number of open tickets by type
+BoxTicketSeverity=Number of open tickets by severity
+BoxNoTicketSeverity=No tickets opened
+BoxTicketLastXDays=Number of new tickets by days the last %s days
+BoxTicketLastXDayswidget = Number of new tickets by days the last X days
+BoxNoTicketLastXDays=No new tickets the last %s days
+BoxNumberOfTicketByDay=Number of new tickets by day
+BoxNewTicketVSClose=Number of today's new tickets versus today's closed tickets
+TicketCreatedToday=Ticket created today
+TicketClosedToday=Ticket closed today

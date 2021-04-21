@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2020		Tobias Sekan		<tobias.sekan@startmail.com>
- * Copyright (C) 2020		Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2020-2021	Frédéric France		<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,9 +20,9 @@
  */
 
 /**
- *	    \file       htdocs/adherent/vcard.php
+ *	    \file       htdocs/adherents/vcard.php
  *      \ingroup    societe
- *		\brief      Onglet vcard d'un adherent
+ *		\brief      Vcard tab of a member
  */
 
 require '../main.inc.php';
@@ -30,71 +30,100 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/vcard.class.php';
 
-$adherent = new adherent($db);
-
-
 $id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alphanohtml');
+
+$object = new adherent($db);
+
+// Fetch object
+if ($id > 0 || !empty($ref)) {
+	// Load member
+	$result = $object->fetch($id, $ref);
+
+	// Define variables to know what current user can do on users
+	$canadduser = ($user->admin || $user->rights->user->user->creer);
+	// Define variables to know what current user can do on properties of user linked to edited member
+	if ($object->user_id) {
+		// $User is the user who edits, $object->user_id is the id of the related user in the edited member
+		$caneditfielduser = ((($user->id == $object->user_id) && $user->rights->user->self->creer)
+			|| (($user->id != $object->user_id) && $user->rights->user->user->creer));
+		$caneditpassworduser = ((($user->id == $object->user_id) && $user->rights->user->self->password)
+			|| (($user->id != $object->user_id) && $user->rights->user->user->password));
+	}
+}
+
+// Define variables to determine what the current user can do on the members
+$canaddmember = $user->rights->adherent->creer;
+// Define variables to determine what the current user can do on the properties of a member
+if ($id) {
+	$caneditfieldmember = $user->rights->adherent->creer;
+}
 
 // Security check
-$result = restrictedArea($user, 'adherent', $id, '', '', 'socid', 'rowid', $objcanvas);
+$result = restrictedArea($user, 'adherent', $object->id, '', '', 'socid', 'rowid', 0);
 
 
-$result = $adherent->fetch($id);
-if ($result <= 0) {
-	dol_print_error($adherent->error);
-	exit;
-}
+/*
+ * Actions
+ */
 
-$physicalperson = 1;
+// None
+
+
+/*
+ * View
+ */
 
 $company = new Societe($db);
-if ($adherent->socid) {
-	$result = $company->fetch($adherent->socid);
+if ($object->socid) {
+	$result = $company->fetch($object->socid);
 }
+
+
 
 // We create VCard
 $v = new vCard();
 $v->setProdId('Dolibarr '.DOL_VERSION);
 
-$v->setUid('DOLIBARR-ADHERENTID-'.$adherent->id);
-$v->setName($adherent->lastname, $adherent->firstname, "", $adherent->civility, "");
-$v->setFormattedName($adherent->getFullName($langs, 1));
+$v->setUid('DOLIBARR-ADHERENTID-'.$object->id);
+$v->setName($object->lastname, $object->firstname, "", $object->civility, "");
+$v->setFormattedName($object->getFullName($langs, 1));
 
-$v->setPhoneNumber($adherent->phone_pro, "TYPE=WORK;VOICE");
-//$v->setPhoneNumber($adherent->phone_perso,"TYPE=HOME;VOICE");
-$v->setPhoneNumber($adherent->phone_mobile, "TYPE=CELL;VOICE");
-$v->setPhoneNumber($adherent->fax, "TYPE=WORK;FAX");
+$v->setPhoneNumber($object->phone_pro, "TYPE=WORK;VOICE");
+//$v->setPhoneNumber($object->phone_perso,"TYPE=HOME;VOICE");
+$v->setPhoneNumber($object->phone_mobile, "TYPE=CELL;VOICE");
+$v->setPhoneNumber($object->fax, "TYPE=WORK;FAX");
 
-$country = $adherent->country_code ? $adherent->country : '';
+$country = $object->country_code ? $object->country : '';
 
-$v->setAddress("", "", $adherent->address, $adherent->town, $adherent->state, $adherent->zip, $country, "TYPE=WORK;POSTAL");
-$v->setLabel("", "", $adherent->address, $adherent->town, $adherent->state, $adherent->zip, $country, "TYPE=WORK");
+$v->setAddress("", "", $object->address, $object->town, $object->state, $object->zip, $country, "TYPE=WORK;POSTAL");
+$v->setLabel("", "", $object->address, $object->town, $object->state, $object->zip, $country, "TYPE=WORK");
 
-$v->setEmail($adherent->email);
-$v->setNote($adherent->note_public);
-$v->setTitle($adherent->poste);
+$v->setEmail($object->email);
+$v->setNote($object->note_public);
+$v->setTitle($object->poste);
 
 // Data from linked company
 if ($company->id) {
 	$v->setURL($company->url, "TYPE=WORK");
-	if (!$adherent->phone_pro) {
+	if (!$object->phone_pro) {
 		$v->setPhoneNumber($company->phone, "TYPE=WORK;VOICE");
 	}
-	if (!$adherent->fax) {
+	if (!$object->fax) {
 		$v->setPhoneNumber($company->fax, "TYPE=WORK;FAX");
 	}
-	if (!$adherent->zip) {
+	if (!$object->zip) {
 		$v->setAddress("", "", $company->address, $company->town, $company->state, $company->zip, $company->country, "TYPE=WORK;POSTAL");
 	}
 	// when company e-mail is empty, use only adherent e-mail
 	if (empty(trim($company->email))) {
 		// was set before, don't set twice
-	} elseif (empty(trim($adherent->email))) {
+	} elseif (empty(trim($object->email))) {
 		// when adherent e-mail is empty, use only company e-mail
 		$v->setEmail($company->email);
-	} elseif (strtolower(end(explode("@", $adherent->email))) == strtolower(end(explode("@", $company->email)))) {
+	} elseif (strtolower(end(explode("@", $object->email))) == strtolower(end(explode("@", $company->email)))) {
 		// when e-mail domain of adherent and company are the same, use adherent e-mail at first (and company e-mail at second)
-		$v->setEmail($adherent->email);
+		$v->setEmail($object->email);
 
 		// support by Microsoft Outlook (2019 and possible earlier)
 		$v->setEmail($company->email, 'INTERNET');
@@ -103,7 +132,7 @@ if ($company->id) {
 		$v->setEmail($company->email);
 
 		// support by Microsoft Outlook (2019 and possible earlier)
-		$v->setEmail($adherent->email, 'INTERNET');
+		$v->setEmail($object->email, 'INTERNET');
 	}
 
 	// Si adherent lie a un tiers non de type "particulier"
@@ -113,9 +142,9 @@ if ($company->id) {
 }
 
 // Personal informations
-$v->setPhoneNumber($adherent->phone_perso, "TYPE=HOME;VOICE");
-if ($adherent->birth) {
-	$v->setBirthday($adherent->birth);
+$v->setPhoneNumber($object->phone_perso, "TYPE=HOME;VOICE");
+if ($object->birth) {
+	$v->setBirthday($object->birth);
 }
 
 $db->close();

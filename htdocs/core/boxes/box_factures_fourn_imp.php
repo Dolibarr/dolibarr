@@ -80,8 +80,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleOldestUnpaidSupplierBills", $max));
 
-		if ($user->rights->fournisseur->facture->lire)
-		{
+		if ($user->rights->fournisseur->facture->lire) {
 			$langs->load("bills");
 
 			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
@@ -95,19 +94,24 @@ class box_factures_fourn_imp extends ModeleBoxes
 			$sql .= ", f.paye, f.fk_statut as status, f.type";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= ",".MAIN_DB_PREFIX."facture_fourn as f";
-			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			if (!$user->rights->societe->client->voir && !$user->socid) {
+				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			}
 			$sql .= " WHERE f.fk_soc = s.rowid";
 			$sql .= " AND f.entity = ".$conf->entity;
 			$sql .= " AND f.paye = 0";
 			$sql .= " AND fk_statut = 1";
-			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-			if ($user->socid) $sql .= " AND s.rowid = ".$user->socid;
+			if (!$user->rights->societe->client->voir && !$user->socid) {
+				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+			}
+			if ($user->socid) {
+				$sql .= " AND s.rowid = ".$user->socid;
+			}
 			$sql .= " ORDER BY datelimite DESC, f.ref_supplier DESC ";
 			$sql .= $this->db->plimit($max, 0);
 
 			$result = $this->db->query($sql);
-			if ($result)
-			{
+			if ($result) {
 				$num = $this->db->num_rows($result);
 
 				$line = 0;
@@ -115,8 +119,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 
 				$facturestatic = new FactureFournisseur($this->db);
 
-				while ($line < $num)
-				{
+				while ($line < $num) {
 					$objp = $this->db->fetch_object($result);
 					$datelimite = $this->db->jdate($objp->datelimite);
 					$date = $this->db->jdate($objp->df);
@@ -182,11 +185,12 @@ class box_factures_fourn_imp extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num == 0)
+				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center"',
 						'text'=>$langs->trans("NoUnpaidSupplierBills"),
 					);
+				}
 
 				$this->db->free($result);
 			} else {

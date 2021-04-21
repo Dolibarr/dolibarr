@@ -31,7 +31,7 @@ class Warehouses extends DolibarrApi
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
-	static $FIELDS = array(
+	public static $FIELDS = array(
 		'label',
 	);
 
@@ -115,10 +115,8 @@ class Warehouses extends DolibarrApi
 			$sql .= " AND c.fk_warehouse = t.rowid ";
 		}
 		// Add sql filters
-		if ($sqlfilters)
-		{
-			if (!DolibarrApi::_checkFilters($sqlfilters))
-			{
+		if ($sqlfilters) {
+			if (!DolibarrApi::_checkFilters($sqlfilters)) {
 				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
 			}
 			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
@@ -127,8 +125,7 @@ class Warehouses extends DolibarrApi
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
-			if ($page < 0)
-			{
+			if ($page < 0) {
 				$page = 0;
 			}
 			$offset = $limit * $page;
@@ -137,13 +134,11 @@ class Warehouses extends DolibarrApi
 		}
 
 		$result = $this->db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			$i = 0;
 			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
-			while ($i < $min)
-			{
+			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$warehouse_static = new Entrepot($this->db);
 				if ($warehouse_static->fetch($obj->rowid)) {
@@ -208,12 +203,15 @@ class Warehouses extends DolibarrApi
 		}
 
 		foreach ($request_data as $field => $value) {
-			if ($field == 'id') continue;
+			if ($field == 'id') {
+				continue;
+			}
 			$this->warehouse->$field = $value;
 		}
 
-		if ($this->warehouse->update($id, DolibarrApiAccess::$user))
+		if ($this->warehouse->update($id, DolibarrApiAccess::$user)) {
 			return $this->get($id);
+		}
 
 		return false;
 	}
@@ -282,8 +280,9 @@ class Warehouses extends DolibarrApi
 	{
 		$warehouse = array();
 		foreach (Warehouses::$FIELDS as $field) {
-			if (!isset($data[$field]))
+			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
+			}
 			$warehouse[$field] = $data[$field];
 		}
 		return $warehouse;

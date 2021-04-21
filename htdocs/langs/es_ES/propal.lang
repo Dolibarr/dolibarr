@@ -59,6 +59,7 @@ ConfirmClonePropal=¿Está seguro de querer clonar el presupuesto <b>%s</b>?
 ConfirmReOpenProp=¿Está seguro de querer reabrir el presupuesto <b>%s</b>?
 ProposalsAndProposalsLines=Presupuestos a clientes y líneas de presupuestos
 ProposalLine=Línea de presupuesto
+ProposalLines=Líneas de presupuesto
 AvailabilityPeriod=Tiempo de entrega
 SetAvailability=Definir el tiempo de entrega
 AfterOrder=desde la firma

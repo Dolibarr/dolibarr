@@ -133,7 +133,9 @@ IncludeDocGeneration=Tôi muốn tạo một số tài liệu từ đối tượ
 IncludeDocGenerationHelp=Nếu bạn kiểm tra điều này, một số mã sẽ được tạo để thêm hộp "Tạo tài liệu" trong hồ sơ.
 ShowOnCombobox=Hiển thị giá trị vào combobox
 KeyForTooltip=Khóa cho tooltip
-CSSClass=Lớp CSS
+CSSClass=CSS for edit/create form
+CSSViewClass=CSS for read form
+CSSListClass=CSS for list
 NotEditable=Không thể chỉnh sửa
 ForeignKey=Khóa ngoại
 TypeOfFieldsHelp=Kiểu trường: <br> varchar (99), double (24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] ('1' có nghĩa là chúng ta thêm nút + sau khi kết hợp để tạo bản ghi, ví dụ 'bộ lọc' có thể là 'status=1 AND fk_user = __USER_ID AND entity IN (__SHARED_ENTEER__)')

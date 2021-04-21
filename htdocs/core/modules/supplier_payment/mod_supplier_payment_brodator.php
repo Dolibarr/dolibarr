@@ -101,15 +101,14 @@ class mod_supplier_payment_brodator extends ModeleNumRefSupplierPayments
 	 */
 	public function getExample()
 	{
-	 	global $conf, $langs, $mysoc;
+		global $conf, $langs, $mysoc;
 
 		$old_code_client = $mysoc->code_client;
 		$mysoc->code_client = 'CCCCCCCCCC';
-	 	$numExample = $this->getNextValue($mysoc, '');
+		$numExample = $this->getNextValue($mysoc, '');
 		$mysoc->code_client = $old_code_client;
 
-		if (!$numExample)
-		{
+		if (!$numExample) {
 			$numExample = $langs->trans('NotConfigured');
 		}
 		return $numExample;
@@ -131,8 +130,7 @@ class mod_supplier_payment_brodator extends ModeleNumRefSupplierPayments
 		// We get cursor rule
 		$mask = $conf->global->SUPPLIER_PAYMENT_BRODATOR_MASK;
 
-		if (!$mask)
-		{
+		if (!$mask) {
 			$this->error = 'NotConfigured';
 			return 0;
 		}

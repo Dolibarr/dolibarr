@@ -84,10 +84,8 @@ class LignePrelevement
 		$sql .= " AND p.entity = ".$conf->entity;
 
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			if ($this->db->num_rows($resql))
-			{
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id              = $obj->rowid;
@@ -135,24 +133,32 @@ class LignePrelevement
 		// phpcs:enable
 		global $langs;
 
-		if ($mode == 0)
-		{
+		if ($mode == 0) {
 			return $langs->trans($this->statuts[$status]);
-		} elseif ($mode == 1)
-		{
-			if ($status == 0) return img_picto($langs->trans($this->statuts[$status]), 'statut1').' '.$langs->trans($this->statuts[$status]); // Waiting
-			elseif ($status == 2) return img_picto($langs->trans($this->statuts[$status]), 'statut6').' '.$langs->trans($this->statuts[$status]); // Credited
-			elseif ($status == 3) return img_picto($langs->trans($this->statuts[$status]), 'statut8').' '.$langs->trans($this->statuts[$status]); // Refused
-		} elseif ($mode == 2)
-		{
-			if ($status == 0) return img_picto($langs->trans($this->statuts[$status]), 'statut1');
-			elseif ($status == 2) return img_picto($langs->trans($this->statuts[$status]), 'statut6');
-			elseif ($status == 3) return img_picto($langs->trans($this->statuts[$status]), 'statut8');
-		} elseif ($mode == 3)
-		{
-			if ($status == 0) return $langs->trans($this->statuts[$status]).' '.img_picto($langs->trans($this->statuts[$status]), 'statut1');
-			elseif ($status == 2) return $langs->trans($this->statuts[$status]).' '.img_picto($langs->trans($this->statuts[$status]), 'statut6');
-			elseif ($status == 3) return $langs->trans($this->statuts[$status]).' '.img_picto($langs->trans($this->statuts[$status]), 'statut8');
+		} elseif ($mode == 1) {
+			if ($status == 0) {
+				return img_picto($langs->trans($this->statuts[$status]), 'statut1').' '.$langs->trans($this->statuts[$status]); // Waiting
+			} elseif ($status == 2) {
+				return img_picto($langs->trans($this->statuts[$status]), 'statut6').' '.$langs->trans($this->statuts[$status]); // Credited
+			} elseif ($status == 3) {
+				return img_picto($langs->trans($this->statuts[$status]), 'statut8').' '.$langs->trans($this->statuts[$status]); // Refused
+			}
+		} elseif ($mode == 2) {
+			if ($status == 0) {
+				return img_picto($langs->trans($this->statuts[$status]), 'statut1');
+			} elseif ($status == 2) {
+				return img_picto($langs->trans($this->statuts[$status]), 'statut6');
+			} elseif ($status == 3) {
+				return img_picto($langs->trans($this->statuts[$status]), 'statut8');
+			}
+		} elseif ($mode == 3) {
+			if ($status == 0) {
+				return $langs->trans($this->statuts[$status]).' '.img_picto($langs->trans($this->statuts[$status]), 'statut1');
+			} elseif ($status == 2) {
+				return $langs->trans($this->statuts[$status]).' '.img_picto($langs->trans($this->statuts[$status]), 'statut6');
+			} elseif ($status == 3) {
+				return $langs->trans($this->statuts[$status]).' '.img_picto($langs->trans($this->statuts[$status]), 'statut8');
+			}
 		}
 	}
 

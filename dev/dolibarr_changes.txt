@@ -133,17 +133,15 @@ with
 			}
 		}
 		elseif (($imgsrc[0] === '/') AND !empty($_SERVER['DOCUMENT_ROOT']) AND ($_SERVER['DOCUMENT_ROOT'] != '/')) {
-					
 
 
-* In tecnickcom/tcpdf/include/tcpdf_static, in function fopenLocal, replace
+* In tecnickcom/tcpdf/include/tcpdf_static.php, in function fopenLocal, replace
 
 		if (strpos($filename, '://') === false) {
 
 with
 
-        if (strpos($filename, '//') === 0)
-        {
+        if (strpos($filename, '//') === 0) {
             // Share folder on a (windows) server
             // e.g.: "//[MyServerName]/[MySharedFolder]/"
             //
@@ -175,17 +173,17 @@ In htdocs/includes/tecnickcom/tcpdf/tcpdf.php
 
 TCPDI:
 ------
-Add fpdf_tpl.php 1.2
+Add file fpdf_tpl.php 1.2
 
-Add tcpdi.php
+Add file tcpdi.php
 
-Add tcpdi_parser.php and replace:
-require_once(dirname(__FILE__).'/include/tcpdf_filters.php');
+Add file tcpdi_parser.php and replace:
+    require_once(dirname(__FILE__).'/include/tcpdf_filters.php');
 with:
-require_once(dirname(__FILE__).'/../tecnickcom/tcpdf/include/tcpdf_filters.php');
+    require_once(dirname(__FILE__).'/../tecnickcom/tcpdf/include/tcpdf_filters.php');
 
 
-* Fix by replacing
+* Fix syntax error by replacing
 	} elseif (($key == '/Index') AND ($v[0] == PDF_TYPE_ARRAY AND count($v[1] >= 2))) {
 with
 	} elseif (($key == '/Index') AND ($v[0] == PDF_TYPE_ARRAY AND count($v[1]) >= 2)) {
@@ -195,23 +193,23 @@ with
 JSGANTT:
 --------
 * Replace in function JSGantt.taskLink
-var OpenWindow=window.open(pRef, "newwin", "height="+vHeight+",width="+vWidth);
+    var OpenWindow=window.open(pRef, "newwin", "height="+vHeight+",width="+vWidth);
 with
-// LDR To open in same window
-//var OpenWindow=window.open(pRef, "newwin", "height="+vHeight+",width="+vWidth);
-window.location.href=pRef
+    // LDR To open in same window
+    //var OpenWindow=window.open(pRef, "newwin", "height="+vHeight+",width="+vWidth);
+    window.location.href=pRef
 
 * Replace
-vTmpDiv=this.newNode(vTmpCell, 'div', null, null, vTaskList[i].getResource());
+    vTmpDiv=this.newNode(vTmpCell, 'div', null, null, vTaskList[i].getResource());
 with                       
-var vTmpNode=this.newNode(vTmpCell, 'div', null, '');
-vTmpNode=this.newNode(vTmpNode, 'a', null, '', vLangs[vLang]['moreinfo']);
-vTmpNode.setAttribute('href',vTaskList[i].getLink());
+    var vTmpNode=this.newNode(vTmpCell, 'div', null, '');
+    vTmpNode=this.newNode(vTmpNode, 'a', null, '', vLangs[vLang]['moreinfo']);
+    vTmpNode.setAttribute('href',vTaskList[i].getLink());
                         
 * Replace '% Comp.' to have a smaller text column header
-'comp':'% Comp.'
+    'comp':'% Comp.'
 with
-'comp':'%'
+    'comp':'%'
 
 
 

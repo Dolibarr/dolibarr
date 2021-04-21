@@ -103,15 +103,14 @@ class mod_arctic extends ModeleNumRefFicheinter
 	 */
 	public function getExample()
 	{
-	 	global $conf, $langs, $mysoc;
+		global $conf, $langs, $mysoc;
 
 		$old_code_client = $mysoc->code_client;
 		$mysoc->code_client = 'CCCCCCCCCC';
-	 	$numExample = $this->getNextValue($mysoc, '');
+		$numExample = $this->getNextValue($mysoc, '');
 		$mysoc->code_client = $old_code_client;
 
-		if (!$numExample)
-		{
+		if (!$numExample) {
 			$numExample = $langs->trans('NotConfigured');
 		}
 		return $numExample;
@@ -133,8 +132,7 @@ class mod_arctic extends ModeleNumRefFicheinter
 		// We define the search criteria of the counter
 		$mask = $conf->global->FICHINTER_ARTIC_MASK;
 
-		if (!$mask)
-		{
+		if (!$mask) {
 			$this->error = 'NotConfigured';
 			return 0;
 		}

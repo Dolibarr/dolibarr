@@ -101,15 +101,14 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 	 */
 	public function getExample()
 	{
-	 	global $conf, $langs, $user;
+		global $conf, $langs, $user;
 
 		$old_login = $user->login;
 		$user->login = 'UUUUUUU';
-	 	$numExample = $this->getNextValue($user, '');
+		$numExample = $this->getNextValue($user, '');
 		$user->login = $old_login;
 
-		if (!$numExample)
-		{
+		if (!$numExample) {
 			$numExample = $langs->trans('NotConfigured');
 		}
 		return $numExample;
@@ -130,8 +129,7 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 
 		$mask = $conf->global->HOLIDAY_IMMACULATE_MASK;
 
-		if (!$mask)
-		{
+		if (!$mask) {
 			$this->error = 'NotConfigured';
 			return 0;
 		}
