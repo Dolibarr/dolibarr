@@ -1463,7 +1463,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		$sortparam = (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT); // NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on label.
 		print $form->selectarray("typent_id", $formcompany->typent_array(0), $object->typent_id, 0, 0, 0, '', 0, 0, 0, $sortparam, '', 1);
 		if ($user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-		if (empty($conf->global->SOCIETE_DISABLE_WORKFORCE)) 
+		if (empty($conf->global->SOCIETE_DISABLE_WORKFORCE))
 		{
 			print '</td>';
 			if ($conf->browser->layout == 'phone') print '</tr><tr>';
@@ -1471,8 +1471,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			print $form->selectarray("effectif_id", $formcompany->effectif_array(0), $object->effectif_id, 0, 0, 0, '', 0, 0, 0, '', '', 1);
 			if ($user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
-		else 
-		{
+		else {
 			print '<input type="hidden" name="effectif_id" id="effectif_id" value="'.$object->effectif_id.'">';
 		}
 		print '</td></tr>';
@@ -2091,7 +2090,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			print '<tr><td>'.$form->editfieldkey('ThirdPartyType', 'typent_id', '', $object, 0).'</td><td class="maxwidthonsmartphone"'.( ($conf->browser->layout == 'phone' || !empty($conf->global->SOCIETE_DISABLE_WORKFORCE)) ? ' colspan="3"' : '').'>';
 			print $form->selectarray("typent_id", $formcompany->typent_array(0), $object->typent_id, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), '', 1);
 			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-			if (empty($conf->global->SOCIETE_DISABLE_WORKFORCE)) 
+			if (empty($conf->global->SOCIETE_DISABLE_WORKFORCE))
 			{
 				print '</td>';
 				if ($conf->browser->layout == 'phone') print '</tr><tr>';
@@ -2099,8 +2098,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 				print $form->selectarray("effectif_id", $formcompany->effectif_array(0), $object->effectif_id, 0, 0, 0, '', 0, 0, 0, '', '', 1);
 				if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 			}
-			else 
-			{
+			else {
 				print '<input type="hidden" name="effectif_id" id="effectif_id" value="'.$object->effectif_id.'">';
 			}
 			print '</td></tr>';
@@ -2508,7 +2506,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		print '</td></tr>';
 
 		// Workforce/Staff
-		if (empty($conf->global->SOCIETE_DISABLE_WORKFORCE)) 
+		if (empty($conf->global->SOCIETE_DISABLE_WORKFORCE))
 		{
 			print '<tr><td>'.$langs->trans("Workforce").'</td><td>'.$object->effectif.'</td></tr>';
 		}
