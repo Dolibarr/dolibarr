@@ -59,6 +59,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -113,30 +114,31 @@ if (!$action) {
 
 if ($source == 'conferencesubscription') {
 	// Finding the Attendee
-	$invoiceid = GETPOST('ref');
-	$invoice = new Facture($db);
-	$resultinvoice = $invoice->fetch($invoiceid);
-	if ($resultinvoice <= 0) {
-		setEventMessages(null, $invoice->errors, "errors");
+	$attendeeid = GETPOST('ref');
+	$attendee = new ConferenceOrBoothAttendee($db);
+	$resultattendee = $attendee->fetch($attendeeid);
+	if ($resultattendee <= 0) {
+		setEventMessages(null, $attendee->errors, "errors");
 	} else {
-		$invoice->fetchObjectLinked();
-		// Finding the thirdparty associated to the Attendee
-		$thirdparty = new Societe($db);
-		$resultthirdparty = $thirdparty->fetch($invoice->socid);
-		if ($resultthirdparty <= 0) {
-			setEventMessages(null, $thirdparty->errors, "errors");
-		}
-		$object = $thirdparty;
 
-		$linkedAttendees = $invoice->linkedObjectsIds['conferenceorboothattendee'];
+		$attendee->fetchObjectLinked();
+		$linkedInvoices = $attendee->linkedObjectsIds['facture'];
 
-		if (is_array($linkedAttendees)) {
-			$linkedAttendees = array_values($linkedAttendees);
+		if (is_array($linkedInvoices)) {
+			$linkedInvoices = array_values($linkedInvoices);
 
-			$attendee = new ConferenceOrBoothAttendee($db);
-			$resultattendee = $attendee->fetch($linkedAttendees[0]);
-			if ($resultattendee <= 0) {
-				setEventMessages(null, $attendee->errors, "errors");
+			$invoice = new Facture($db);
+			$resultinvoice = $invoice->fetch($linkedInvoices[0]);
+			if ($resultinvoice <= 0) {
+				setEventMessages(null, $invoice->errors, "errors");
+			} else {
+				// Finding the associated thirdparty
+				$thirdparty = new Societe($db);
+				$resultthirdparty = $thirdparty->fetch($invoice->socid);
+				if ($resultthirdparty <= 0) {
+					setEventMessages(null, $thirdparty->errors, "errors");
+				}
+				$object = $thirdparty;
 			}
 		}
 	}
@@ -1808,7 +1810,7 @@ if ($source == 'conferencesubscription') {
 	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow'.($var ? '1' : '2').'">'.$text;
 	print '<input type="hidden" name="source" value="'.dol_escape_htmltag($source).'">';
-	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($invoice->id).'">';
+	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($attendee->id).'">';
 	print '</td></tr>'."\n";
 
 	// Amount
