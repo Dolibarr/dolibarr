@@ -113,9 +113,9 @@ if (!$action) {
 
 if ($source == 'conferencesubscription') {
 	// Finding the Attendee
-	$decodedinvoiceid = dol_decode(GETPOST('ref'), $dolibarr_main_instance_unique_id);
+	$invoiceid = GETPOST('ref');
 	$invoice = new Facture($db);
-	$resultinvoice = $invoice->fetch($decodedinvoiceid);
+	$resultinvoice = $invoice->fetch($invoiceid);
 	if ($resultinvoice <= 0) {
 		setEventMessages(null, $invoice->errors, "errors");
 	} else {
@@ -1808,7 +1808,7 @@ if ($source == 'conferencesubscription') {
 	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow'.($var ? '1' : '2').'">'.$text;
 	print '<input type="hidden" name="source" value="'.dol_escape_htmltag($source).'">';
-	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($attendee->ref).'">';
+	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($invoice->id).'">';
 	print '</td></tr>'."\n";
 
 	// Amount
