@@ -373,8 +373,11 @@ if (empty($reshook) && $action == 'add') {
 				$msg     = $arraydefaultmessage->content;
 			}
 
-			$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
+			$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $thirdparty);
 			complete_substitutions_array($substitutionarray, $outputlangs, $object);
+
+			$substitutionarray['ThisIsContentOfYourOrganizationEventEventSubscriptionWasReceived'] = 'Vous êtes bien enregistré.';
+
 			$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
 			$texttosend = make_substitutions($msg, $substitutionarray, $outputlangs);
 
@@ -387,7 +390,6 @@ if (empty($reshook) && $action == 'add') {
 			$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, array(), array(), array(), '', '', 0, $ishtml);
 
 			$result = $mailfile->sendfile();
-			var_dump($result);
 			if ($result) {
 				dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_payment');
 			} else {
