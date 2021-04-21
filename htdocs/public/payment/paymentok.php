@@ -50,6 +50,7 @@ if (is_numeric($entity)) {
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
 
 if (!empty($conf->paypal->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
