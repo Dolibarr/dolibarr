@@ -1516,8 +1516,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		if ($user->admin) {
 			print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
-		if (empty($conf->global->SOCIETE_DISABLE_WORKFORCE))
-		{
+		if (empty($conf->global->SOCIETE_DISABLE_WORKFORCE)) {
 			print '</td>';
 			if ($conf->browser->layout == 'phone') {
 				print '</tr><tr>';
@@ -1527,8 +1526,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if ($user->admin) {
 				print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 			}
-		}
-		else {
+		} else {
 			print '<input type="hidden" name="effectif_id" id="effectif_id" value="'.$object->effectif_id.'">';
 		}
 		print '</td></tr>';
@@ -2207,8 +2205,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if ($user->admin) {
 				print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 			}
-			if (empty($conf->global->SOCIETE_DISABLE_WORKFORCE))
-			{
+			if (empty($conf->global->SOCIETE_DISABLE_WORKFORCE)) {
 				print '</td>';
 				if ($conf->browser->layout == 'phone') {
 					print '</tr><tr>';
@@ -2218,8 +2215,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				if ($user->admin) {
 					print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 				}
-			}
-			else {
+			} else {
 				print '<input type="hidden" name="effectif_id" id="effectif_id" value="'.$object->effectif_id.'">';
 			}
 			print '</td></tr>';
@@ -2658,8 +2654,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</td></tr>';
 
 		// Workforce/Staff
-		if (empty($conf->global->SOCIETE_DISABLE_WORKFORCE))
-		{
+		if (empty($conf->global->SOCIETE_DISABLE_WORKFORCE)) {
 			print '<tr><td>'.$langs->trans("Workforce").'</td><td>'.$object->effectif.'</td></tr>';
 		}
 
