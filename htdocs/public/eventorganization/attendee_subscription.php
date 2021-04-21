@@ -228,10 +228,26 @@ if (empty($reshook) && $action == 'add') {
 	}
 
 	if (!$error) {
-		// Vérifier si client existe par l'email
+		// Check if attendee already exists (by email)
+		$confattendee = new ConferenceOrBoothAttendee($db);
+		$resultfetchconfattendee = $confattendee->fetchAll('', '', 0, 0, array('t.fk_actioncomm'=>$id, 't.email'=>$email));
+		if ($resultfetchconfattendee != 0 && count($resultfetchconfattendee)>0) {
+			// Found confattendee
+			$confattendee = $resultfetchconfattendee[0];
+		} else {
+			// Need to create a confattendee
+		}
+		$confattendee->date_subscription = dol_now();
+		$confattendee->email = GETPOST("email");
+		$confattendee->fk_actioncomm = $id;
+		$resultconfattendee = $confattendee->create($user);
+		if ($resultconfattendee < 0) {
+			$error++;
+			$errmsg .= $confattendee->error;
+		}
+		// Getting the thirdparty or creating it
 		$thirdparty = new Societe($db);
-		$resultfetchthirdparty = $thirdparty->fetch('', '', '', '', '', '', '', '', '', '', $email);
-
+		$resultfetchthirdparty = $thirdparty->fetch($confattendee->fk_soc);
 		if ($resultfetchthirdparty<0) {
 			$error++;
 			$errmsg .= $thirdparty->error;
@@ -277,33 +293,8 @@ if (empty($reshook) && $action == 'add') {
 			// We have an existing thirdparty ready to use
 			$readythirdparty = 1;
 		}
-
-		if ($readythirdparty < 0) {
-			$error++;
-			$errmsg .= $thirdparty->error;
-		} else {
-			// creation of an attendee
-			$confattendee = new ConferenceOrBoothAttendee($db);
-			$resultfetchattendee = $confattendee->fetchAll('','', 1, 0, array('t.fk_soc'=>$thirdparty->id, 't.fk_actioncomm'=>$id));
-			if ($resultfetchattendee == 0 || count($resultfetchattendee) == 0) {
-				// Need to create an attendee
-				$confattendee->fk_soc = $thirdparty->id;
-				$confattendee->date_subscription = dol_now();
-				$confattendee->email = GETPOST("email");
-				$confattendee->fk_actioncomm = $id;
-				$resultconfattendee = $confattendee->create($user);
-				if ($resultconfattendee < 0) {
-					$error++;
-					$errmsg .= $confattendee->error;
-				}
-				print 'created attendee';
-			} else {
-				// Found an attendee
-				print 'found attendee';
-				var_dump($resultfetchattendee);
-				$confattendee = $resultfetchattendee[0];
-			}
-		}
+		// Updating the fk_soc associated to the confattendee to match the ready to use thirdparty we have got
+		$confattendee->fk_soc = $thirdparty->id;
 	}
 
 	if (!$error) {
