@@ -32,25 +32,18 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "other", "main", "accountancy"));
 
-// Security check
-if (empty($conf->accounting->enabled)) {
-	accessforbidden();
-}
-if ($user->socid > 0)
-	accessforbidden();
-if (!$user->rights->accounting->bind->write)
-	accessforbidden();
-
 $month_start = ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
-if (GETPOST("year", 'int')) $year_start = GETPOST("year", 'int');
-else {
+if (GETPOST("year", 'int')) {
+	$year_start = GETPOST("year", 'int');
+} else {
 	$year_start = dol_print_date(dol_now(), '%Y');
-	if (dol_print_date(dol_now(), '%m') < $month_start) $year_start--; // If current month is lower that starting fiscal month, we start last year
+	if (dol_print_date(dol_now(), '%m') < $month_start) {
+		$year_start--; // If current month is lower that starting fiscal month, we start last year
+	}
 }
 $year_end = $year_start + 1;
 $month_end = $month_start - 1;
-if ($month_end < 1)
-{
+if ($month_end < 1) {
 	$month_end = 12;
 	$year_end--;
 }
@@ -61,14 +54,23 @@ $year_current = $year_start;
 // Validate History
 $action = GETPOST('action', 'aZ09');
 
+// Security check
+if (empty($conf->accounting->enabled)) {
+	accessforbidden();
+}
+if ($user->socid > 0) {
+	accessforbidden();
+}
+if (empty($user->rights->accounting->mouvements->lire)) {
+	accessforbidden();
+}
 
 
 /*
  * Actions
  */
 
-if ($action == 'clean' || $action == 'validatehistory')
-{
+if (($action == 'clean' || $action == 'validatehistory') && $user->rights->accounting->bind->write) {
 	// Clean database
 	$db->begin();
 	$sql1 = "UPDATE ".MAIN_DB_PREFIX."expensereport_det as erd";
@@ -156,7 +158,9 @@ print '<tr class="liste_titre"><td width="200">'.$langs->trans("Account").'</td>
 print '<td width="200" class="left">'.$langs->trans("Label").'</td>';
 for ($i = 1; $i <= 12; $i++) {
 	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
-	if ($j > 12) $j -= 12;
+	if ($j > 12) {
+		$j -= 12;
+	}
 	print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad($j, 2, '0', STR_PAD_LEFT)).'</td>';
 }
 print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>';
@@ -165,7 +169,9 @@ $sql = "SELECT ".$db->ifsql('aa.account_number IS NULL', "'tobind'", 'aa.account
 $sql .= "  ".$db->ifsql('aa.label IS NULL', "'tobind'", 'aa.label')." AS intitule,";
 for ($i = 1; $i <= 12; $i++) {
 	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
-	if ($j > 12) $j -= 12;
+	if ($j > 12) {
+		$j -= 12;
+	}
 	$sql .= "  SUM(".$db->ifsql('MONTH(er.date_debut)='.$j, 'erd.total_ht', '0').") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
 }
 $sql .= " SUM(erd.total_ht) as total";
@@ -190,16 +196,18 @@ if ($resql) {
 
 	while ($row = $db->fetch_row($resql)) {
 		print '<tr class="oddeven"><td>';
-		if ($row[0] == 'tobind')
-		{
+		if ($row[0] == 'tobind') {
 			print $langs->trans("Unknown");
-		} else print length_accountg($row[0]);
+		} else {
+			print length_accountg($row[0]);
+		}
 		print '</td>';
 		print '<td class="left">';
-		if ($row[0] == 'tobind')
-		{
+		if ($row[0] == 'tobind') {
 			print $langs->trans("UseMenuToSetBindindManualy", DOL_URL_ROOT.'/accountancy/expensereport/list.php?search_year='.$y, $langs->transnoentitiesnoconv("ToBind"));
-		} else print $row[1];
+		} else {
+			print $row[1];
+		}
 		print '</td>';
 		for ($i = 2; $i <= 12; $i++) {
 			print '<td class="nowrap right">'.price($row[$i]).'</td>';
@@ -229,7 +237,9 @@ print '<tr class="liste_titre"><td width="200">'.$langs->trans("Account").'</td>
 print '<td width="200" class="left">'.$langs->trans("Label").'</td>';
 for ($i = 1; $i <= 12; $i++) {
 	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
-	if ($j > 12) $j -= 12;
+	if ($j > 12) {
+		$j -= 12;
+	}
 	print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad($j, 2, '0', STR_PAD_LEFT)).'</td>';
 }
 print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>';
@@ -238,7 +248,9 @@ $sql = "SELECT ".$db->ifsql('aa.account_number IS NULL', "'tobind'", 'aa.account
 $sql .= "  ".$db->ifsql('aa.label IS NULL', "'tobind'", 'aa.label')." AS intitule,";
 for ($i = 1; $i <= 12; $i++) {
 	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
-	if ($j > 12) $j -= 12;
+	if ($j > 12) {
+		$j -= 12;
+	}
 	$sql .= "  SUM(".$db->ifsql('MONTH(er.date_debut)='.$j, 'erd.total_ht', '0').") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
 }
 $sql .= " ROUND(SUM(erd.total_ht),2) as total";
@@ -263,17 +275,19 @@ if ($resql) {
 
 	while ($row = $db->fetch_row($resql)) {
 		print '<tr class="oddeven"><td>';
-		if ($row[0] == 'tobind')
-		{
+		if ($row[0] == 'tobind') {
 			print $langs->trans("Unknown");
-		} else print length_accountg($row[0]);
+		} else {
+			print length_accountg($row[0]);
+		}
 		print '</td>';
 
 		print '<td class="left">';
-		if ($row[0] == 'tobind')
-		{
+		if ($row[0] == 'tobind') {
 			print $langs->trans("UseMenuToSetBindindManualy", DOL_URL_ROOT.'/accountancy/expensereport/list.php?search_year='.$y, $langs->transnoentitiesnoconv("ToBind"));
-		} else print $row[1];
+		} else {
+			print $row[1];
+		}
 		print '</td>';
 		for ($i = 2; $i <= 12; $i++) {
 			print '<td class="nowrap right">'.price($row[$i]).'</td>';
@@ -291,8 +305,7 @@ print '</div>';
 
 
 
-if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. Why showing a report where results depends on next step (so not yet available) ?
-{
+if ($conf->global->MAIN_FEATURES_LEVEL > 0) { // This part of code looks strange. Why showing a report where results depends on next step (so not yet available) ?
 	print '<br>';
 	print '<br>';
 
@@ -304,7 +317,9 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
 	print '<tr class="liste_titre"><td width="400" class="left">'.$langs->trans("Total").'</td>';
 	for ($i = 1; $i <= 12; $i++) {
 		$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
-		if ($j > 12) $j -= 12;
+		if ($j > 12) {
+			$j -= 12;
+		}
 		print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad($j, 2, '0', STR_PAD_LEFT)).'</td>';
 	}
 	print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>';
@@ -312,7 +327,9 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
 	$sql = "SELECT '".$db->escape($langs->trans("TotalExpenseReport"))."' AS label,";
 	for ($i = 1; $i <= 12; $i++) {
 		$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
-		if ($j > 12) $j -= 12;
+		if ($j > 12) {
+			$j -= 12;
+		}
 		$sql .= " SUM(".$db->ifsql('MONTH(er.date_create)='.$j, 'erd.total_ht', '0').") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
 	}
 	$sql .= " SUM(erd.total_ht) as total";

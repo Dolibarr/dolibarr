@@ -29,7 +29,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 // Load translation files required by the page
 $langs->load("admin");
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 $action = GETPOST('action', 'aZ09');
 
@@ -42,13 +44,11 @@ if (!in_array('clicktodial', $conf->modules)) {
  *	Actions
  */
 
-if ($action == 'setvalue' && $user->admin)
-{
+if ($action == 'setvalue' && $user->admin) {
 	$result1 = dolibarr_set_const($db, "CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS", GETPOST("CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS"), 'chaine', 0, '', $conf->entity);
 	$result2 = dolibarr_set_const($db, "CLICKTODIAL_URL", GETPOST("CLICKTODIAL_URL"), 'chaine', 0, '', $conf->entity);
 
-	if ($result1 >= 0 && $result2 >= 0)
-	{
+	if ($result1 >= 0 && $result2 >= 0) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
@@ -117,12 +117,13 @@ print '<div class="center"><br><input type="submit" class="button" value="'.$lan
 print '</form><br><br>';
 
 
-if (!empty($conf->global->CLICKTODIAL_URL))
-{
+if (!empty($conf->global->CLICKTODIAL_URL)) {
 	$user->fetch_clicktodial();
 
 	$phonefortest = $mysoc->phone;
-	if (GETPOST('phonefortest')) $phonefortest = GETPOST('phonefortest');
+	if (GETPOST('phonefortest')) {
+		$phonefortest = GETPOST('phonefortest');
+	}
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -132,12 +133,17 @@ if (!empty($conf->global->CLICKTODIAL_URL))
 	print '</form>';
 
 	$setupcomplete = 1;
-	if (preg_match('/__LOGIN__/', $conf->global->CLICKTODIAL_URL) && empty($user->clicktodial_login)) $setupcomplete = 0;
-	if (preg_match('/__PASSWORD__/', $conf->global->CLICKTODIAL_URL) && empty($user->clicktodial_password)) $setupcomplete = 0;
-	if (preg_match('/__PHONEFROM__/', $conf->global->CLICKTODIAL_URL) && empty($user->clicktodial_poste)) $setupcomplete = 0;
+	if (preg_match('/__LOGIN__/', $conf->global->CLICKTODIAL_URL) && empty($user->clicktodial_login)) {
+		$setupcomplete = 0;
+	}
+	if (preg_match('/__PASSWORD__/', $conf->global->CLICKTODIAL_URL) && empty($user->clicktodial_password)) {
+		$setupcomplete = 0;
+	}
+	if (preg_match('/__PHONEFROM__/', $conf->global->CLICKTODIAL_URL) && empty($user->clicktodial_poste)) {
+		$setupcomplete = 0;
+	}
 
-	if ($setupcomplete)
-	{
+	if ($setupcomplete) {
 		print $langs->trans("LinkToTest", $user->login).': '.dol_print_phone($phonefortest, '', 0, 0, 'AC_TEL');
 	} else {
 		$langs->load("errors");

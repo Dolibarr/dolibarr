@@ -117,11 +117,11 @@ foreach ($listofnetworks as $key => $value) {
 		$networkconstname = 'MAIN_INFO_SOCIETE_'.strtoupper($key).'_URL';
 		$networkconstid = 'MAIN_INFO_SOCIETE_'.strtoupper($key);
 		print '<td><span class="fa paddingright '.($value['icon'] ? $value['icon'] : 'fa-link').'"></span>';
-		print '<input name="'.$key.'url" id="'.$key.'url" class="minwidth300" value="'.dol_escape_htmltag($conf->global->$networkconstname).'">';
+		print '<input name="'.$key.'url" id="'.$key.'url" class="minwidth300" value="'.(!empty($conf->global->$networkconstname) ? dol_escape_htmltag($conf->global->$networkconstname) : '').'">';
 		print '</td><td>';
-		print '<input name="'.$key.'" id="'.$key.'" class="minwidth300" value="'.dol_escape_htmltag($conf->global->$networkconstid).'">';
+		print '<input name="'.$key.'" id="'.$key.'" class="minwidth300" value="'.(!empty($conf->global->$networkconstid) ? dol_escape_htmltag($conf->global->$networkconstid) : '').'">';
 		print '</td>';
-		print '<td>'.dol_print_socialnetworks($conf->global->$networkconstid, 0, 0, $key, $listofnetworks).'</td>';
+		print '<td>'.dol_print_socialnetworks((!empty($conf->global->$networkconstid) ? dol_escape_htmltag($conf->global->$networkconstid) : ''), 0, 0, $key, $listofnetworks).'</td>';
 		print '</tr>'."\n";
 	}
 }

@@ -22,7 +22,7 @@ ProductService=產品或服務
 AllProducts=所有產品和服務
 ChooseProduct/Service=選擇產品或服務
 ForceBuyingPriceIfNull=如果未定義，強制將買入/成本價轉換為賣價
-ForceBuyingPriceIfNullDetails=如果未定義購買/成本價格，並且此選項為“ ON”，則利潤為零上架（購買/成本價格=售價），否則（“ OFF”），利潤等於建議的默認值。
+ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0 on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100% if no default value can be found).
 MARGIN_METHODE_FOR_DISCOUNT=全球折扣的利潤規則
 UseDiscountAsProduct=作為產品
 UseDiscountAsService=作為服務

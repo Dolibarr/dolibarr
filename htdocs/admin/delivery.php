@@ -37,7 +37,9 @@ require_once DOL_DOCUMENT_ROOT.'/delivery/class/delivery.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "sendings", "deliveries", "other"));
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 $action  = GETPOST('action', 'alpha');
 $value   = GETPOST('value', 'alpha');
@@ -52,39 +54,40 @@ $type = 'delivery';
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
-if ($action == 'updateMask')
-{
+if ($action == 'updateMask') {
 	$maskconstdelivery = GETPOST('maskconstdelivery', 'alpha');
 	$maskdelivery = GETPOST('maskdelivery', 'alpha');
-	if ($maskconstdelivery)  $res = dolibarr_set_const($db, $maskconstdelivery, $maskdelivery, 'chaine', 0, '', $conf->entity);
+	if ($maskconstdelivery) {
+		$res = dolibarr_set_const($db, $maskconstdelivery, $maskdelivery, 'chaine', 0, '', $conf->entity);
+	}
 
-	if (!($res > 0)) $error++;
+	if (!($res > 0)) {
+		$error++;
+	}
 
- 	if (!$error)
-	{
+	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
-if ($action == 'set_DELIVERY_FREE_TEXT')
-{
+if ($action == 'set_DELIVERY_FREE_TEXT') {
 	$free = GETPOST('DELIVERY_FREE_TEXT', 'restricthtml'); // No alpha here, we want exact string
 	$res = dolibarr_set_const($db, "DELIVERY_FREE_TEXT", $free, 'chaine', 0, '', $conf->entity);
 
-	if (!($res > 0)) $error++;
+	if (!($res > 0)) {
+		$error++;
+	}
 
- 	if (!$error)
-	{
+	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
-if ($action == 'specimen')
-{
+if ($action == 'specimen') {
 	$modele = GETPOST('module', 'alpha');
 
 	$sending = new Delivery($db);
@@ -93,25 +96,21 @@ if ($action == 'specimen')
 	// Search template files
 	$file = ''; $classname = ''; $filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-	foreach ($dirmodels as $reldir)
-	{
+	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/delivery/doc/pdf_".$modele.".modules.php", 0);
-		if (file_exists($file))
-		{
+		if (file_exists($file)) {
 			$filefound = 1;
 			$classname = "pdf_".$modele;
 			break;
 		}
 	}
 
-	if ($filefound)
-	{
+	if ($filefound) {
 		require_once $file;
 
 		$module = new $classname($db);
 
-		if ($module->write_file($sending, $langs) > 0)
-		{
+		if ($module->write_file($sending, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=delivery&file=SPECIMEN.pdf");
 			return;
 		} else {
@@ -124,24 +123,21 @@ if ($action == 'specimen')
 	}
 }
 
-if ($action == 'set')
-{
+if ($action == 'set') {
 	$ret = addDocumentModel($value, $type, $label, $scandir);
 }
 
-if ($action == 'del')
-{
+if ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
-	if ($ret > 0)
-	{
-		if ($conf->global->DELIVERY_ADDON_PDF == "$value") dolibarr_del_const($db, 'DELIVERY_ADDON_PDF', $conf->entity);
+	if ($ret > 0) {
+		if ($conf->global->DELIVERY_ADDON_PDF == "$value") {
+			dolibarr_del_const($db, 'DELIVERY_ADDON_PDF', $conf->entity);
+		}
 	}
 }
 
-if ($action == 'setdoc')
-{
-	if (dolibarr_set_const($db, "DELIVERY_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity))
-	{
+if ($action == 'setdoc') {
+	if (dolibarr_set_const($db, "DELIVERY_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity)) {
 		// La constante qui a ete lue en avant du nouveau set
 		// on passe donc par une variable pour avoir un affichage coherent
 		$conf->global->DELIVERY_ADDON_PDF = $value;
@@ -149,14 +145,12 @@ if ($action == 'setdoc')
 
 	// On active le modele
 	$ret = delDocumentModel($value, $type);
-	if ($ret > 0)
-	{
+	if ($ret > 0) {
 		$ret = addDocumentModel($value, $type, $label, $scandir);
 	}
 }
 
-if ($action == 'setmod')
-{
+if ($action == 'setmod') {
 	// TODO Verifier si module numerotation choisi peut etre active
 	// par appel methode canBeActivated
 
@@ -197,17 +191,13 @@ print '</tr>'."\n";
 
 clearstatcache();
 
-foreach ($dirmodels as $reldir)
-{
+foreach ($dirmodels as $reldir) {
 	$dir = dol_buildpath($reldir."core/modules/delivery/");
 
-	if (is_dir($dir))
-	{
+	if (is_dir($dir)) {
 		$handle = opendir($dir);
-		if (is_resource($handle))
-		{
-			while (($file = readdir($handle)) !== false)
-			{
+		if (is_resource($handle)) {
+			while (($file = readdir($handle)) !== false) {
 				if (preg_match('/^mod_delivery_([a-z0-9_]*)\.php$/', $file)) {
 					$file = substr($file, 0, dol_strlen($file) - 4);
 
@@ -215,11 +205,14 @@ foreach ($dirmodels as $reldir)
 
 					$module = new $file;
 
-					if ($module->isEnabled())
-					{
+					if ($module->isEnabled()) {
 						// Show modules according to features level
-						if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+						if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+							continue;
+						}
+						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+							continue;
+						}
 
 						print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
 						print $module->info();
@@ -231,13 +224,15 @@ foreach ($dirmodels as $reldir)
 						if (preg_match('/^Error/', $tmp)) {
 							$langs->load("errors");
 							print '<div class="error">'.$langs->trans($tmp).'</div>';
-						} elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
-						else print $tmp;
+						} elseif ($tmp == 'NotConfigured') {
+							print $langs->trans($tmp);
+						} else {
+							print $tmp;
+						}
 						print '</td>'."\n";
 
 						print '<td class="center">';
-						if ($conf->global->DELIVERY_ADDON_NUMBER == "$file")
-						{
+						if ($conf->global->DELIVERY_ADDON_NUMBER == "$file") {
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
 							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;token='.newToken().'&amp;value='.urlencode($file).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
@@ -254,8 +249,9 @@ foreach ($dirmodels as $reldir)
 						if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
 							$htmltooltip .= ''.$langs->trans("NextValue").': ';
 							if ($nextval) {
-								if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured')
+								if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
 									$nextval = $langs->trans($nextval);
+								}
 								$htmltooltip .= $nextval.'<br>';
 							} else {
 								$htmltooltip .= $langs->trans($module->error).'<br>';
@@ -294,12 +290,10 @@ $sql .= " WHERE type = '".$db->escape($type)."'";
 $sql .= " AND entity = ".$conf->entity;
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$i = 0;
 	$num_rows = $db->num_rows($resql);
-	while ($i < $num_rows)
-	{
+	while ($i < $num_rows) {
 		$array = $db->fetch_array($resql);
 		array_push($def, $array[0]);
 		$i++;
@@ -320,28 +314,21 @@ print "</tr>\n";
 
 clearstatcache();
 
-foreach ($dirmodels as $reldir)
-{
+foreach ($dirmodels as $reldir) {
 	$dir = dol_buildpath($reldir."core/modules/delivery/doc/");
 
-	if (is_dir($dir))
-	{
+	if (is_dir($dir)) {
 		$handle = opendir($dir);
-		if (is_resource($handle))
-		{
-			while (($file = readdir($handle)) !== false)
-			{
+		if (is_resource($handle)) {
+			while (($file = readdir($handle)) !== false) {
 				$filelist[] = $file;
 			}
 			closedir($handle);
 			arsort($filelist);
 
-			foreach ($filelist as $file)
-			{
-				if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file))
-				{
-					if (file_exists($dir.'/'.$file))
-					{
+			foreach ($filelist as $file) {
+				if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
+					if (file_exists($dir.'/'.$file)) {
 						$name = substr($file, 4, dol_strlen($file) - 16);
 						$classname = substr($file, 0, dol_strlen($file) - 12);
 
@@ -349,21 +336,26 @@ foreach ($dirmodels as $reldir)
 						$module = new $classname($db);
 
 						$modulequalified = 1;
-						if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified = 0;
-						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) $modulequalified = 0;
+						if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+							$modulequalified = 0;
+						}
+						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+							$modulequalified = 0;
+						}
 
-						if ($modulequalified)
-						{
+						if ($modulequalified) {
 							print '<tr class="oddeven"><td width="100">';
 							print (empty($module->name) ? $name : $module->name);
 							print "</td><td>\n";
-							if (method_exists($module, 'info')) print $module->info($langs);
-							else print $module->description;
+							if (method_exists($module, 'info')) {
+								print $module->info($langs);
+							} else {
+								print $module->description;
+							}
 							print '</td>';
 
 							// Active
-							if (in_array($name, $def))
-							{
+							if (in_array($name, $def)) {
 								print "<td align=\"center\">\n";
 								print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
 								print img_picto($langs->trans("Enabled"), 'switch_on');
@@ -377,8 +369,7 @@ foreach ($dirmodels as $reldir)
 
 							// Default
 							print "<td align=\"center\">";
-							if ($conf->global->DELIVERY_ADDON_PDF == "$name")
-							{
+							if ($conf->global->DELIVERY_ADDON_PDF == "$name") {
 								print img_picto($langs->trans("Default"), 'on');
 							} else {
 								print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
@@ -396,8 +387,7 @@ foreach ($dirmodels as $reldir)
 
 							// Preview
 							print '<td class="center">';
-							if ($module->type == 'pdf')
-							{
+							if ($module->type == 'pdf') {
 								print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 							} else {
 								print img_object($langs->trans("PreviewNotAvailable"), 'generic');
@@ -430,7 +420,9 @@ print "</tr>\n";
 $substitutionarray = pdf_getSubstitutionArray($langs, null, null, 2);
 $substitutionarray['__(AnyTranslationKey)__'] = $langs->trans("Translation");
 $htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
-foreach ($substitutionarray as $key => $val)	$htmltext .= $key.'<br>';
+foreach ($substitutionarray as $key => $val) {
+	$htmltext .= $key.'<br>';
+}
 $htmltext .= '</i>';
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
@@ -439,8 +431,7 @@ print '<input type="hidden" name="action" value="set_DELIVERY_FREE_TEXT">';
 print '<tr class="oddeven"><td colspan="2">';
 print $form->textwithpicto($langs->trans("FreeLegalTextOnDeliveryReceipts"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
 $variablename = 'DELIVERY_FREE_TEXT';
-if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
-{
+if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
 	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
 } else {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';

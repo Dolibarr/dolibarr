@@ -1,21 +1,20 @@
 <?php
 
-if (empty($keyforclass) || empty($keyforclassfile) || empty($keyforelement))
-{
+if (empty($keyforclass) || empty($keyforclassfile) || empty($keyforelement)) {
 	//print $keyforclass.' - '.$keyforclassfile.' - '.$keyforelement;
 	dol_print_error('', 'include of file commonfieldsinexport.inc.php was done but var $keyforclass or $keyforclassfile or $keyforelement was not set');
 	exit;
 }
-if (empty($keyforalias)) $keyforalias = 't';
+if (empty($keyforalias)) {
+	$keyforalias = 't';
+}
 
 dol_include_once($keyforclassfile);
-if (class_exists($keyforclass))
-{
+if (class_exists($keyforclass)) {
 	$tmpobject = new $keyforclass($this->db);
 
 	// Add common fields
-	foreach ($tmpobject->fields as $keyfield => $valuefield)
-	{
+	foreach ($tmpobject->fields as $keyfield => $valuefield) {
 		$fieldname = $keyforalias.'.'.$keyfield;
 		$fieldlabel = ucfirst($valuefield['label']);
 		$typeFilter = "Text";

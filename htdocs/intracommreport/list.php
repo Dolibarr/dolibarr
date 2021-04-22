@@ -39,8 +39,6 @@ $toselect = GETPOST('toselect', 'array');
 $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_ref = GETPOST("search_ref", 'alpha');
 $search_type = GETPOST("search_type", 'int');
-$fourn_id = GETPOST("fourn_id", 'int');
-$catid = GETPOST('catid', 'int');
 $optioncss = GETPOST('optioncss', 'alpha');
 $type = GETPOST("type", "int");
 
@@ -139,6 +137,14 @@ if (is_array($extrafields->attributes[$object->table_element]['label']) && count
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
+// Security check
+if ($search_type == '0') {
+	$result = restrictedArea($user, 'produit', '', '', '', '', '', 0);
+} elseif ($search_type == '1') {
+	$result = restrictedArea($user, 'service', '', '', '', '', '', 0);
+} else {
+	$result = restrictedArea($user, 'produit|service', '', '', '', '', '', 0);
+}
 
 
 /*
@@ -192,6 +198,7 @@ if (empty($reshook)) {
 /*
  * View
  */
+
 $formother = new FormOther($db);
 
 $title = $langs->trans('IntracommReportList'.$type);
@@ -309,12 +316,12 @@ if ($resql) {
 
 	// List of mass actions available
 	$arrayofmassactions = array(
-		'generate_doc'=>$langs->trans("ReGeneratePDF"),
+		'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
 		//'builddoc'=>$langs->trans("PDFMerge"),
 		//'presend'=>$langs->trans("SendByMail"),
 	);
 	if ($user->rights->intracommreport->delete) {
-		$arrayofmassactions['predelete'] = "<span class='fa fa-trash paddingrightonly'></span>".$langs->trans("Delete");
+		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	}
 	if (in_array($massaction, array('presend', 'predelete'))) {
 		$arrayofmassactions = array();

@@ -117,7 +117,7 @@ class ActionsDatapolicy
 				$object->state_id = '';
 				$object->skype = '';
 				$object->country_id = '';
-				$object->note_private = $object->note_private.'<br/>'.$langs->trans('ANONYMISER_AT', dol_print_date(time()));
+				$object->note_private = $object->note_private.'<br>'.$langs->trans('ANONYMISER_AT', dol_print_date(time()));
 
 				if ($object->update($object->id, $user, 0)) {
 					// On supprime les contacts associé
@@ -332,8 +332,7 @@ class ActionsDatapolicy
 		global $conf, $user, $langs;
 		$langs->load('datapolicy@datapolicy');
 
-		if (!empty($conf->global->DATAPOLICIES_ENABLE_EMAILS))
-		{
+		if (!empty($conf->global->DATAPOLICIES_ENABLE_EMAILS)) {
 			$dialog = '<div id="dialogdatapolicy" style="display:none;" title="'.$langs->trans('DATAPOLICIES_PORTABILITE_TITLE').'">';
 			$dialog .= '<div class="confirmmessage">'.img_help('', '').' '.$langs->trans('DATAPOLICIES_PORTABILITE_CONFIRMATION').'</div>';
 			$dialog .= "</div>";

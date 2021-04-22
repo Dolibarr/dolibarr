@@ -1,2 +1,4 @@
 # Dolibarr language file - Source file is en_US - website
 PageNameAliasHelp=Name or alias of the page.<br>This alias is also used to forge an SEO URL when the website is run from a Virtual host of a Web server (like Apache, Nginx, ...). Use the button "<strong>%s</strong>" to edit this alias.
+ErrorFaviconSize=Favicon must be of size 32x32
+FaviconTooltip=Upload an image which needs to be a png of 32x32

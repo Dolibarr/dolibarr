@@ -262,14 +262,15 @@ class ActionsTicket
 
 		// Load logs in cache
 		$ret = $this->dao->loadCacheMsgsTicket();
-		if ($ret < 0) dol_print_error($this->dao->db);
+		if ($ret < 0) {
+			dol_print_error($this->dao->db);
+		}
 
 		$action = GETPOST('action', 'aZ09');
 
 		$this->viewTicketOriginalMessage($user, $action, $object);
 
-		if (is_array($this->dao->cache_msgs_ticket) && count($this->dao->cache_msgs_ticket) > 0)
-		{
+		if (is_array($this->dao->cache_msgs_ticket) && count($this->dao->cache_msgs_ticket) > 0) {
 			print '<table class="border" style="width:100%;">';
 
 			print '<tr class="liste_titre">';

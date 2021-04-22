@@ -109,8 +109,7 @@ class mod_project_universal extends ModeleNumRefProjects
 		$numExample = $this->getNextValue($mysoc, '');
 		$mysoc->code_client = $old_code_client;
 
-		if (!$numExample)
-		{
+		if (!$numExample) {
 			$numExample = $langs->trans('NotConfigured');
 		}
 		return $numExample;
@@ -132,8 +131,7 @@ class mod_project_universal extends ModeleNumRefProjects
 		// On defini critere recherche compteur
 		$mask = $conf->global->PROJECT_UNIVERSAL_MASK;
 
-		if (!$mask)
-		{
+		if (!$mask) {
 			$this->error = 'NotConfigured';
 			return 0;
 		}

@@ -4,7 +4,7 @@ Actions=Eventos
 Agenda=Axenda
 TMenuAgenda=Axenda
 Agendas=Axendas
-LocalAgenda=Calendario interno
+LocalAgenda=Calendario por defecto
 ActionsOwnedBy=Evento propiedade de
 ActionsOwnedByShort=Propietario
 AffectedTo=Asignada a
@@ -14,13 +14,13 @@ EventsNb=Número de eventos
 ListOfActions=Listaxe de eventos
 EventReports=Informes de evento
 Location=Localización
-ToUserOfGroup=Enento asignado a calquera usuario do grupo
+ToUserOfGroup=Evento asignado a calquera usuario do grupo
 EventOnFullDay=Evento para todo o(s) día(s)
 MenuToDoActions=Todos os eventos incompletos
 MenuDoneActions=Todos os eventos rematados
 MenuToDoMyActions=Meus eventos incompletos
 MenuDoneMyActions=Meus eventos rematados
-ListOfEvents=Listaxe de acontecementos (calendario interno)
+ListOfEvents=Listaxe de eventos (calendario por defecto)
 ActionsAskedBy=Eventos rexistrados por
 ActionsToDoBy=Eventos asignados a
 ActionsDoneBy=Eventos realizados por
@@ -31,7 +31,7 @@ ViewWeek=Vista semanal
 ViewPerUser=Vista por usuario
 ViewPerType=Vista por tipo
 AutoActions= Inclusión automática na axenda
-AgendaAutoActionDesc= Aquí podes definir os eventos que queras que Dolibarr cre automáticamente in Agenda. Se non sinalas nada,  só as accións manuais serán visualizadas na axenda. O seguemento automático de accións comerciais sobre obxectos (validación, cambio de estado, non será gardado.
+AgendaAutoActionDesc= Aquí podes definir os eventos que queras que Dolibarr cre automáticamente en Axenda. Se non sinalas nada,  só as accións manuais serán visualizadas na axenda. O seguemento automático de accións comerciais sobre obxectos (validación, cambio de estado), non será gardado.
 AgendaSetupOtherDesc= Esta páxina ten opcións que permiten a configuración da exportación dos eventos de Dolibarr a un calendario externo (Thunderbird, Google Calendar etc...)
 AgendaExtSitesDesc=Esta páxina permite configurar fontes externas de calendarios para ver os seus eventos dentro da axenda Dolibarr.
 ActionsEvents=Eventos para que Dolibarr cre unha acción na axenda automáticamente
@@ -119,6 +119,7 @@ MRP_MO_UNVALIDATEInDolibarr=OF establecida a borrador
 MRP_MO_PRODUCEDInDolibarr=OF producida
 MRP_MO_DELETEInDolibarr=OF eliminada
 MRP_MO_CANCELInDolibarr=OF cancelada
+PAIDInDolibarr=%s xa pago
 ##### End agenda events #####
 AgendaModelModule=Prantillas de documentos para eventos
 DateActionStart=Data de inicio
@@ -130,7 +131,7 @@ AgendaUrlOptions4=<b>logint=%s</b>para restrinxir saída as accións asignadas a
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> para restrinxir saída de accións asociadas ao proxecto <b>__PROJECT_ID__</b>.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype = systemauto</b> para excluir o evento automáticamente.
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> a incluir eventos de vacacións.
-AgendaShowBirthdayEvents=Amosar cumpreanos dos contactos
+AgendaShowBirthdayEvents=Aniversarios dos contactos
 AgendaHideBirthdayEvents=Ocultar cumpreanos dos contactos
 Busy=Ocupado
 ExportDataset_event1=Listaxe de eventos da axenda

@@ -38,10 +38,16 @@ $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all',
 
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-if (!$sortfield) $sortfield = "e.ref";
-if (!$sortorder) $sortorder = "ASC";
+if (!$sortfield) {
+	$sortfield = "e.ref";
+}
+if (!$sortorder) {
+	$sortorder = "ASC";
+}
 $page = $_GET["page"];
-if ($page < 0) $page = 0;
+if ($page < 0) {
+	$page = 0;
+}
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $offset = $limit * $page;
 
@@ -58,9 +64,10 @@ $sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON e.rowid = ps.fk_entrepot";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON ps.fk_product = p.rowid";
 $sql .= " WHERE e.entity IN (".getEntity('stock').")";
-if ($sref) $sql .= natural_search("e.ref", $sref);
-if ($sall)
-{
+if ($sref) {
+	$sql .= natural_search("e.ref", $sref);
+}
+if ($sall) {
 	$sql .= " AND (e.ref LIKE '%".$db->escape($sall)."%'";
 	$sql .= " OR e.description LIKE '%".$db->escape($sall)."%'";
 	$sql .= " OR e.lieu LIKE '%".$db->escape($sall)."%'";
@@ -72,8 +79,7 @@ $sql .= $db->order($sortfield, $sortorder);
 $sql .= $db->plimit($limit + 1, $offset);
 
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
 	$num = $db->num_rows($result);
 
 	$i = 0;
@@ -92,26 +98,30 @@ if ($result)
 	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "e.statut", '', '', '', $sortfield, $sortorder, 'right ');
 	print "</tr>\n";
 
-	if ($num)
-	{
+	if ($num) {
 		$entrepot = new Entrepot($db);
 		$total = $totalsell = 0;
 		$var = false;
-		while ($i < min($num, $limit))
-		{
+		while ($i < min($num, $limit)) {
 			$objp = $db->fetch_object($result);
 			print '<tr class="oddeven">';
 			print '<td><a href="card.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowWarehouse"), 'stock').' '.$objp->ref.'</a></td>';
 			print '<td>'.$objp->lieu.'</td>';
 			// PMP value
 			print '<td class="right">';
-			if (price2num($objp->estimatedvalue, 'MT')) print price(price2num($objp->estimatedvalue, 'MT'), 1);
-			else print '';
+			if (price2num($objp->estimatedvalue, 'MT')) {
+				print price(price2num($objp->estimatedvalue, 'MT'), 1);
+			} else {
+				print '';
+			}
 			print '</td>';
 			// Selling value
 			print '<td class="right">';
-			if (empty($conf->global->PRODUIT_MULTIPRICES)) print price(price2num($objp->sellvalue, 'MT'), 1);
-			else print $langs->trans("Variable");
+			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+				print price(price2num($objp->sellvalue, 'MT'), 1);
+			} else {
+				print $langs->trans("Variable");
+			}
 			print '</td>';
 			// Status
 			print '<td class="right">'.$entrepot->LibStatut($objp->statut, 5).'</td>';
@@ -137,15 +147,13 @@ if ($result)
 	print '<br>';
 
 	$file = 'entrepot-'.$year.'.png';
-	if (file_exists($conf->stock->dir_temp.'/'.$file))
-	{
+	if (file_exists($conf->stock->dir_temp.'/'.$file)) {
 		$url = DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file='.$file;
 		print '<img src="'.$url.'">';
 	}
 
 	$file = 'entrepot-'.($year - 1).'.png';
-	if (file_exists($conf->stock->dir_temp.'/'.$file))
-	{
+	if (file_exists($conf->stock->dir_temp.'/'.$file)) {
 		$url = DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file='.$file;
 		print '<br><img src="'.$url.'">';
 	}
