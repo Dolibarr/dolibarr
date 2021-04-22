@@ -212,7 +212,7 @@ if (empty($reshook) && $action == 'add') {
 		$error++;
 		$errmsg .= $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Email'))."<br>\n";
 	} elseif (GETPOST("email") && !isValidEmail(GETPOST("email"))) {
-+		$langs->load('errors');
+		+		$langs->load('errors');
 		$error++;
 		$errmsg .= $langs->trans("ErrorBadEMail", GETPOST("email"))."<br>\n";
 	}
