@@ -171,7 +171,7 @@ if ($action == 'create') {
 
 	// Owner
 	print '<tr><td>'.$langs->trans("Owner").'</td><td>';
-	print img_picto('', 'user').' '.$form->select_dolusers(GETPOSTISSET('userid') ? GETPOST('userid', 'int') : $user->id, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+	print img_picto('', 'user').' '.$form->select_dolusers(GETPOSTISSET('userid') ? GETPOST('userid', 'int') : $user->id, 'userid', 0, '', 0, GETPOSTISSET('userid') ? GETPOST('userid', 'int') : array($user->id), '', 0, 0, 0, '', ($user->admin) ? 1 : 0, '', 'maxwidth300');
 	print '</td><td class="hideonsmartphone">&nbsp;</td></tr>';
 
 	// Position
