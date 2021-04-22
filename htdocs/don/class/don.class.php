@@ -1109,8 +1109,7 @@ class Don extends CommonObject
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		if (empty($this->id))
-		{
+		if (empty($this->id)) {
 			$this->error = 'Missing object id';
 			$this->errors[] = $this->error;
 			dol_syslog(__METHOD__.' : '.$this->error, LOG_ERR);
@@ -1126,6 +1125,5 @@ class Don extends CommonObject
 			$sum_amount = (float) $this->db->fetch_object($resql)->sum_amount;
 			return (float) $this->amount - $sum_amount;
 		}
-
 	}
 }

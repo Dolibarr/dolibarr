@@ -777,7 +777,6 @@ if ($ispaymentok) {
 			$postactionmessages[] = 'Invoice paid '.$tmptag['INV'].' was not found';
 			$ispostactionok = -1;
 		}
-
 	} elseif (array_key_exists('DON', $tmptag) && $tmptag['DON'] > 0) {
 		include_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 		$don = new Don($db);
@@ -815,7 +814,6 @@ if ($ispaymentok) {
 
 				if ($currencyCodeType == $conf->currency) {
 					$paiement->amounts = array($object->id => $FinalPaymentAmt); // Array with all payments dispatching with donation
-
 				} else {
 					// PaymentDonation does not support multi currency
 					$postactionmessages[] = 'Payment donation can\'t be payed with diffent currency than '.$conf->currency;
