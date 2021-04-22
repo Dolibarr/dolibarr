@@ -138,7 +138,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 }
 
 // Purge audit events
-if ($action == 'confirm_purge' && $confirm == 'yes' && $user->admin) {
+if ($action == 'confirm_purge' && $confirm == 'yes' && $user->admin && empty($conf->global->MAIN_DISABLE_SECURITY_EVENTS_PURGE)) {
 	$error = 0;
 
 	$db->begin();
@@ -286,7 +286,7 @@ if ($result) {
 	}
 
 	$langs->load('withdrawals');
-	if ($num) {
+	if ($num && empty($conf->global->MAIN_DISABLE_SECURITY_EVENTS_PURGE)) {
 		$center = '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=purge">'.$langs->trans("Purge").'</a>';
 	}
 
@@ -296,8 +296,12 @@ if ($result) {
 	print_barre_liste($langs->trans("ListOfSecurityEvents"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $nbtotalofrecords, 'setup', 0, '', '', $limit);
 
 	if ($action == 'purge') {
-		$formquestion = array();
-		print $form->formconfirm($_SERVER["PHP_SELF"].'?noparam=noparam', $langs->trans('PurgeAuditEvents'), $langs->trans('ConfirmPurgeAuditEvents'), 'confirm_purge', $formquestion, 'no', 1);
+		if (!empty($conf->global->MAIN_DISABLE_SECURITY_EVENTS_PURGE)) {
+			setEventMessages('Purge not allowed', null, 'errors');
+		} else {
+			$formquestion = array();
+			print $form->formconfirm($_SERVER["PHP_SELF"].'?noparam=noparam', $langs->trans('PurgeAuditEvents'), $langs->trans('ConfirmPurgeAuditEvents'), 'confirm_purge', $formquestion, 'no', 1);
+		}
 	}
 
 	// Check some parameters
