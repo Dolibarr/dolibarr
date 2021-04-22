@@ -81,6 +81,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
 $email = GETPOST("email");
+$societe = GETPOST("societe");
 
 // Getting id from Post and decoding it
 $encodedid = GETPOST('id');
@@ -230,14 +231,14 @@ if (empty($reshook) && $action == 'add') {
 	if (!$error) {
 		// Check if attendee already exists (by email and for this event)
 		$confattendee = new ConferenceOrBoothAttendee($db);
-		$resultfetchconfattendee = $confattendee->fetchAll('', '', 0, 0, array('t.fk_actioncomm'=>$id, 't.email'=>$email));
-		if ($resultfetchconfattendee != 0 && count($resultfetchconfattendee)>0) {
+		$resultfetchconfattendee = $confattendee->fetchAll('', '', 0, 0, array('t.fk_actioncomm'=>$id, 'customsql'=>'t.email="'.$email.'"'));
+		if ($resultfetchconfattendee > 0 && count($resultfetchconfattendee)>0) {
 			// Found confattendee
-			$confattendee = $resultfetchconfattendee[0];
+			$confattendee = array_shift($resultfetchconfattendee);
 		} else {
 			// Need to create a confattendee
 			$confattendee->date_subscription = dol_now();
-			$confattendee->email = GETPOST("email");
+			$confattendee->email = $email;
 			$confattendee->fk_actioncomm = $id;
 			$resultconfattendee = $confattendee->create($user);
 			if ($resultconfattendee < 0) {
@@ -248,17 +249,36 @@ if (empty($reshook) && $action == 'add') {
 
 		// Getting the thirdparty or creating it
 		$thirdparty = new Societe($db);
-		$resultfetchthirdparty = $thirdparty->fetch($confattendee->fk_soc);
+		// Fetch using fk_soc of the existing attendee
+		if (!empty($confattendee->fk_soc)) {
+			$resultfetchthirdparty = $thirdparty->fetch($confattendee->fk_soc);
+		} else {
+			// Fetch using the input field by user
+			if (!empty($societe)) {
+				$resultfetchthirdparty = $thirdparty->fetch('', $societe);
+				var_dump($resultfetchthirdparty);
+				if ($resultfetchthirdparty<=0) {
+					// Need to create a new one
+					$resultfetchthirdparty = 0;
+				} else {
+					$confattendee->fk_soc = $thirdparty->id;
+					$confattendee->update($user);
+				}
+			} else {
+				// Need to create a thirdparty
+				$resultfetchthirdparty = 0;
+			}
+		}
+		var_dump($resultfetchthirdparty);
 		if ($resultfetchthirdparty<0) {
 			$error++;
 			$errmsg .= $thirdparty->error;
-			$readythirdparty = -1;
 		} elseif ($resultfetchthirdparty==0) {
 			// creation of a new thirdparty
-			if (!empty(GETPOST("societe"))) {
-				$thirdparty->name        = GETPOST("societe");
+			if (!empty($societe)) {
+				$thirdparty->name     = $societe;
 			} else {
-				$thirdparty->name        = $email;
+				$thirdparty->name     = $email;
 			}
 			$thirdparty->address      = GETPOST("address");
 			$thirdparty->zip          = GETPOST("zipcode");
@@ -288,14 +308,16 @@ if (empty($reshook) && $action == 'add') {
 			}
 			$thirdparty->code_client = $tmpcode;
 			$readythirdparty = $thirdparty->create($user);
-			$thirdparty->country_code = getCountry($thirdparty->country_id, 2, $db, $langs);
-			$thirdparty->country      = getCountry($thirdparty->country_code, 0, $db, $langs);
-		} else {
-			// We have an existing thirdparty ready to use
-			$readythirdparty = 1;
+			if ($readythirdparty <0) {
+				$error++;
+				$errmsg .= $thirdparty->error;
+			} else {
+				$thirdparty->country_code = getCountry($thirdparty->country_id, 2, $db, $langs);
+				$thirdparty->country      = getCountry($thirdparty->country_code, 0, $db, $langs);
+				$confattendee->fk_soc = $thirdparty->id;
+				$confattendee->update($user);
+			}
 		}
-		// Updating the fk_soc associated to the confattendee to match the ready to use thirdparty we have got
-		$confattendee->fk_soc = $thirdparty->id;
 	}
 
 	if (!$error) {
@@ -316,6 +338,7 @@ if (empty($reshook) && $action == 'add') {
 				$facture->cond_reglement_id = $confattendee->cond_reglement_id;
 
 				if (empty($facture->cond_reglement_id)) {
+					var_dump($confattendee->db);
 					$paymenttermstatic = new PaymentTerm($confattendee->db);
 					$facture->cond_reglement_id = $paymenttermstatic->getDefaultId();
 					if (empty($facture->cond_reglement_id)) {
