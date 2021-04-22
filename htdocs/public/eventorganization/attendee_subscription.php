@@ -256,7 +256,6 @@ if (empty($reshook) && $action == 'add') {
 			// Fetch using the input field by user
 			if (!empty($societe)) {
 				$resultfetchthirdparty = $thirdparty->fetch('', $societe);
-				var_dump($resultfetchthirdparty);
 				if ($resultfetchthirdparty<=0) {
 					// Need to create a new one
 					$resultfetchthirdparty = 0;
@@ -269,7 +268,6 @@ if (empty($reshook) && $action == 'add') {
 				$resultfetchthirdparty = 0;
 			}
 		}
-		var_dump($resultfetchthirdparty);
 		if ($resultfetchthirdparty<0) {
 			$error++;
 			$errmsg .= $thirdparty->error;
@@ -314,7 +312,7 @@ if (empty($reshook) && $action == 'add') {
 			} else {
 				$thirdparty->country_code = getCountry($thirdparty->country_id, 2, $db, $langs);
 				$thirdparty->country      = getCountry($thirdparty->country_code, 0, $db, $langs);
-				$confattendee->fk_soc = $thirdparty->id;
+				$confattendee->fk_soc     = $thirdparty->id;
 				$confattendee->update($user);
 			}
 		}
@@ -338,7 +336,6 @@ if (empty($reshook) && $action == 'add') {
 				$facture->cond_reglement_id = $confattendee->cond_reglement_id;
 
 				if (empty($facture->cond_reglement_id)) {
-					var_dump($confattendee->db);
 					$paymenttermstatic = new PaymentTerm($confattendee->db);
 					$facture->cond_reglement_id = $paymenttermstatic->getDefaultId();
 					if (empty($facture->cond_reglement_id)) {
