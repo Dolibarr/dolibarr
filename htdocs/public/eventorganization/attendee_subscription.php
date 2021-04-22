@@ -247,6 +247,9 @@ if (empty($reshook) && $action == 'add') {
 				$errmsg .= $confattendee->error;
 			}
 		}
+		// At this point, we have an attendee. It may not be linked to a thirdparty if we just created it
+
+		// If the attendee has already paid
 		if($confattendee->status == 1) {
 			$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?securekey='.dol_encode($conf->global->EVENTORGANIZATION_SECUREKEY, $dolibarr_main_instance_unique_id);
 			Header("Location: ".$redirection);
@@ -254,22 +257,23 @@ if (empty($reshook) && $action == 'add') {
 		}
 		// Getting the thirdparty or creating it
 		$thirdparty = new Societe($db);
-		// Fetch using fk_soc of the existing attendee
+		// Fetch using fk_soc if the attendee was already existing
 		if (!empty($confattendee->fk_soc)) {
 			$resultfetchthirdparty = $thirdparty->fetch($confattendee->fk_soc);
 		} else {
-			// Fetch using the input field by user
+			// Fetch using the input field by user if we just created the attendee
 			if (!empty($societe)) {
 				$resultfetchthirdparty = $thirdparty->fetch('', $societe);
 				if ($resultfetchthirdparty<=0) {
-					// Need to create a new one
+					// Need to create a new one (not found or multiple with the same name)
 					$resultfetchthirdparty = 0;
 				} else {
+					// We found an unique result with that name, so we put in in fk_soc of attendee
 					$confattendee->fk_soc = $thirdparty->id;
 					$confattendee->update($user);
 				}
 			} else {
-				// Need to create a thirdparty
+				// Need to create a thirdparty (put number>0 if we do not want to create a thirdparty for free-conferences)
 				$resultfetchthirdparty = 0;
 			}
 		}
