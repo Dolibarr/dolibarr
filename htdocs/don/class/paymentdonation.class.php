@@ -137,10 +137,9 @@ class PaymentDonation extends CommonObject
 		// Clean parameters
 		if (isset($this->chid)) {
 			$this->chid = (int) $this->chid;
-		}
-		// NOTE : The property used in INSERT for fk_donation is not fk_donation but chid
-		//        (keep priority to chid property)
-		elseif (isset($this->fk_donation)) {
+		} elseif (isset($this->fk_donation)) {
+			// NOTE : The property used in INSERT for fk_donation is not fk_donation but chid
+			//        (keep priority to chid property)
 			$this->chid = (int) $this->fk_donation;
 		}
 		if (isset($this->fk_donation)) {
