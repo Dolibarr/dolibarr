@@ -109,12 +109,6 @@ $invoiceref = GETPOST('invoice');
 $suffix = GETPOST("suffix", 'aZ09');
 $membertypeid = GETPOST("membertypeid", 'int');
 
-$conferencesubscription = GETPOST('conferencesubscription');
-$uncryptedconferencesubscription = dol_decode($conferencesubscription, $dolibarr_main_instance_unique_id);
-$subscription = substr($uncryptedconferencesubscription, 0, strlen($uncryptedconferencesubscription)-strlen($ref));
-$reffrompayment = substr($uncryptedconferencesubscription, -strlen($ref), strlen($ref));
-
-
 // Detect $paymentmethod
 $paymentmethod = '';
 $reg = array();
