@@ -944,7 +944,7 @@ if ($ispaymentok) {
 			$ispostactionok = -1;
 		}
 	} elseif (array_key_exists('BOO', $tmptag) && $tmptag['BOO'] > 0) {
-		// BOOTH CASE (to copy and adapt from above)
+		// @todo BOOTH CASE (to copy and adapt from above)
 	} else {
 		// Nothing done
 	}

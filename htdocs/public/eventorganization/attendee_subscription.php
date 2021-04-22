@@ -72,6 +72,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/paymentterm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 global $dolibarr_main_instance_unique_id;
+global $dolibarr_main_url_root;
 
 // Init vars
 $errmsg = '';
@@ -246,7 +247,11 @@ if (empty($reshook) && $action == 'add') {
 				$errmsg .= $confattendee->error;
 			}
 		}
-
+		if($confattendee->status == 1) {
+			$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?securekey='.dol_encode($conf->global->EVENTORGANIZATION_SECUREKEY, $dolibarr_main_instance_unique_id);
+			Header("Location: ".$redirection);
+			exit;
+		}
 		// Getting the thirdparty or creating it
 		$thirdparty = new Societe($db);
 		// Fetch using fk_soc of the existing attendee
@@ -320,7 +325,6 @@ if (empty($reshook) && $action == 'add') {
 
 	if (!$error) {
 		$db->commit();
-		global $dolibarr_main_url_root;
 		if (!empty(floatval($project->price_registration))) {
 			$productforinvoicerow = new Product($db);
 			$resultprod = $productforinvoicerow->fetch($conf->global->SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION);
