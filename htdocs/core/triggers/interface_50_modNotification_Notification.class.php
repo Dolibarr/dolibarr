@@ -132,9 +132,9 @@ class InterfaceNotification extends DolibarrTriggers
 					$element = $obj->elementtype;
 
 					// Exclude events if related module is disabled
-					if ($element == 'order_supplier' && empty($conf->fournisseur->enabled)) {
+					if ($element == 'order_supplier' && ((empty($conf->fournisseur->enabled) && !empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || empty($conf->supplier_order->enabled))) {
 						$qualified = 0;
-					} elseif ($element == 'invoice_supplier' && empty($conf->fournisseur->enabled)) {
+					} elseif ($element == 'invoice_supplier' && ((empty($conf->fournisseur->enabled) && !empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || empty($conf->supplier_invoice->enabled))) {
 						$qualified = 0;
 					} elseif ($element == 'withdraw' && empty($conf->prelevement->enabled)) {
 						$qualified = 0;

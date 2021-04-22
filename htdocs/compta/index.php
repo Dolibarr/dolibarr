@@ -258,7 +258,7 @@ if (!empty($conf->facture->enabled) && !empty($user->rights->facture->lire)) {
 
 
 // Last modified supplier invoices
-if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_invoice->enabled)) && $user->rights->fournisseur->facture->lire) {
+if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->facture->lire) || (!empty($conf->supplier_invoice->enabled) && $user->rights->supplier_invoice->lire)) {
 	$langs->load("boxes");
 	$facstatic = new FactureFournisseur($db);
 

@@ -131,7 +131,7 @@ InvoiceLinesDone=Δεσμευμένες γραμμές τιμολογίων
 ExpenseReportLines=Γραμμές εκθέσεων δαπανών που δεσμεύουν
 ExpenseReportLinesDone=Δεσμευμένες αναφορές δαπανών
 IntoAccount=Συνδέστε τη γραμμή με τον λογαριασμό λογιστικής
-TotalForAccount=Total for accounting account
+TotalForAccount=Total accounting account
 
 
 Ventilate=Δένω
@@ -209,7 +209,7 @@ Codejournal=Ημερολόγιο
 JournalLabel=Ετικέτα περιοδικών
 NumPiece=Αριθμός τεμαχίου
 TransactionNumShort=Αριθ. συναλλαγή
-AccountingCategory=Προσωποποιημένες ομάδες
+AccountingCategory=Custom group
 GroupByAccountAccounting=Group by general ledger account
 GroupBySubAccountAccounting=Group by subledger account
 AccountingAccountGroupsDesc=Μπορείτε να ορίσετε εδώ ορισμένες ομάδες λογιστικού λογαριασμού. Θα χρησιμοποιηθούν για εξατομικευμένες λογιστικές εκθέσεις.
@@ -402,7 +402,29 @@ UseMenuToSetBindindManualy=Οι γραμμές που δεν έχουν ακόμ
 
 ## Import
 ImportAccountingEntries=Λογιστικές εγγραφές
+ImportAccountingEntriesFECFormat=Accounting entries - FEC format
+FECFormatJournalCode=Code journal (JournalCode)
+FECFormatJournalLabel=Label journal (JournalLib)
+FECFormatEntryNum=Piece number (EcritureNum)
+FECFormatEntryDate=Piece date (EcritureDate)
+FECFormatGeneralAccountNumber=General account number (CompteNum)
+FECFormatGeneralAccountLabel=General account label (CompteLib)
+FECFormatSubledgerAccountNumber=Subledger account number (CompAuxNum)
+FECFormatSubledgerAccountLabel=Subledger account number (CompAuxLib)
+FECFormatPieceRef=Piece ref (PieceRef)
+FECFormatPieceDate=Piece date creation (PieceDate)
+FECFormatLabelOperation=Label operation (EcritureLib)
+FECFormatDebit=Debit (Debit)
+FECFormatCredit=Credit (Credit)
+FECFormatReconcilableCode=Reconcilable code (EcritureLet)
+FECFormatReconcilableDate=Reconcilable date (DateLet)
+FECFormatValidateDate=Piece date validated (ValidDate)
+FECFormatMulticurrencyAmount=Multicurrency amount (Montantdevise)
+FECFormatMulticurrencyCode=Multicurrency code (Idevise)
+
 DateExport=Ημερομηνία εξαγωγής
 WarningReportNotReliable=Προειδοποίηση, αυτή η αναφορά δεν βασίζεται στον Καθολικό, επομένως δεν περιέχει συναλλαγή που τροποποιείται χειροκίνητα στο Ledger. Εάν η περιοδική σας έκδοση είναι ενημερωμένη, η προβολή της λογιστικής είναι πιο ακριβής.
 ExpenseReportJournal=Ενημερωτικό Δελτίο Έκθεσης
 InventoryJournal=Απογραφή Αποθέματος
+
+NAccounts=%s accounts

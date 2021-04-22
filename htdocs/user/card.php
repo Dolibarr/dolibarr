@@ -2250,7 +2250,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 
 			// Address
-			print '<tr><td class="tdtop titlefield">'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
+			print '<tr><td class="tdtop titlefieldcreate">'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
 			print '<td>';
 			if ($caneditfield) {
 				print '<textarea name="address" id="address" class="quatrevingtpercent" rows="3" wrap="soft">';
@@ -2391,7 +2391,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// Accountancy code
 			if ($conf->accounting->enabled) {
 				print "<tr>";
-				print '<td class="titlefield">'.$langs->trans("AccountancyCode").'</td>';
+				print '<td class="titlefieldcreate">'.$langs->trans("AccountancyCode").'</td>';
 				print '<td>';
 				if ($caneditfield) {
 					print '<input size="30" type="text" class="flat" name="accountancy_code" value="'.$object->accountancy_code.'">';
@@ -2405,7 +2405,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			// User color
 			if (!empty($conf->agenda->enabled)) {
-				print '<tr><td>'.$langs->trans("ColorUser").'</td>';
+				print '<tr><td class="titlefieldcreate">'.$langs->trans("ColorUser").'</td>';
 				print '<td>';
 				if ($caneditfield) {
 					print $formother->selectColor(GETPOSTISSET('color') ?GETPOST('color', 'alphanohtml') : $object->color, 'color', null, 1, '', 'hideifnotset');
@@ -2417,7 +2417,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			// Photo
 			print '<tr>';
-			print '<td>'.$langs->trans("Photo").'</td>';
+			print '<td class="titlefieldcreate">'.$langs->trans("Photo").'</td>';
 			print '<td>';
 			print $form->showphoto('userphoto', $object, 60, 0, $caneditfield, 'photowithmargin', 'small', 1, 0, 'user', 1);
 			print '</td>';
@@ -2535,21 +2535,26 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</td></tr>';
 
 
-			print '</table><hr><table class="border centpercent">';
+			print '</table>';
+
+			print '<hr>';
+
+
+			print '<table class="border centpercent">';
 
 
 			// TODO Move this into tab RH (HierarchicalResponsible must be on both tab)
 
 			// Default warehouse
 			if (!empty($conf->stock->enabled) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) {
-				print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
+				print '<tr><td class="titlefield">'.$langs->trans("DefaultWarehouse").'</td><td>';
 				print $formproduct->selectWarehouses($object->fk_warehouse, 'fk_warehouse', 'warehouseopen', 1);
 				print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddWarehouse").'"></span></a>';
 				print '</td></tr>';
 			}
 
 			// Position/Job
-			print '<tr><td class="titlefield">'.$langs->trans("PostOrFunction").'</td>';
+			print '<tr><td class="titlefieldcreate">'.$langs->trans("PostOrFunction").'</td>';
 			print '<td>';
 			if ($caneditfield) {
 				print '<input size="30" type="text" name="job" value="'.dol_escape_htmltag($object->job).'">';

@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - productbatch
 ManageLotSerial=Use número de lote/serie
-ProductStatusOnBatch=Si (lote/serie requerido)
 ProductStatusNotOnBatch=No (lote/serie no usado)
 atleast1batchfield=Fecha de consumo o fecha de venta o número de lote/serie
 batch_number=Número de lote/serie
