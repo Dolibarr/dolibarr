@@ -1587,9 +1587,10 @@ if ($source == 'donation') {
 	$object = $don;
 
 	if ($action != 'dopayment') { // Do not change amount if we just click on first dopayment
-		$amount = $subscription->total_ttc;
 		if (GETPOST("amount", 'alpha')) {
 			$amount = GETPOST("amount", 'alpha');
+		} else {
+			$amount = $don->getRemainToPay();
 		}
 		$amount = price2num($amount);
 	}
