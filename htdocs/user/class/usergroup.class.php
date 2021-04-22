@@ -237,7 +237,7 @@ class UserGroup extends CommonObject
 
 		$ret = array();
 
-		$sql = "SELECT u.rowid";
+		$sql = "SELECT u.*";
 		if (!empty($this->id)) {
 			$sql .= ", ug.entity as usergroup_entity";
 		}
