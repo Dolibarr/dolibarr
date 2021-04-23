@@ -611,7 +611,7 @@ if ($action == 'create') {
 			// Add fields from hooks
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
-			if($reshook > 0){			//Note that $sql is replaced if reshook > 0
+			if ($reshook > 0) {			//Note that $sql is replaced if reshook > 0
 				$sql = "";
 			}
 			$sql .= $hookmanager->resPrint;
