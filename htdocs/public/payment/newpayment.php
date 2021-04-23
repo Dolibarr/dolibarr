@@ -157,7 +157,6 @@ foreach ($_POST as $key => $val) {
 }
 
 
-
 // Define $urlwithroot
 //$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
 //$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
@@ -206,6 +205,8 @@ if (!empty($entity)) {
 }
 $urlok = preg_replace('/&$/', '', $urlok); // Remove last &
 $urlko = preg_replace('/&$/', '', $urlko); // Remove last &
+
+
 
 // Make special controls
 
@@ -264,7 +265,6 @@ if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 	} else {
 		$token = $conf->global->PAYMENT_SECURITY_TOKEN;
 	}
-
 	if ($SECUREKEY != $token) {
 		if (empty($conf->global->PAYMENT_SECURITY_ACCEPT_ANY_TOKEN)) {
 			$valid = false; // PAYMENT_SECURITY_ACCEPT_ANY_TOKEN is for backward compatibility

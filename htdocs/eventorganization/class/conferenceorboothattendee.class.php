@@ -438,7 +438,6 @@ class ConferenceOrBoothAttendee extends CommonObject
 		}
 
 		$resql = $this->db->query($sql);
-
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$i = 0;

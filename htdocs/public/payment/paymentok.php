@@ -109,6 +109,7 @@ $invoiceref = GETPOST('invoice');
 $suffix = GETPOST("suffix", 'aZ09');
 $membertypeid = GETPOST("membertypeid", 'int');
 
+
 // Detect $paymentmethod
 $paymentmethod = '';
 $reg = array();
@@ -150,6 +151,7 @@ $ErrorCode = $ErrorShortMsg = $ErrorLongMsg = $ErrorSeverityCode = '';
 $object = new stdClass(); // For triggers
 
 $error = 0;
+
 
 /*
  * Actions
