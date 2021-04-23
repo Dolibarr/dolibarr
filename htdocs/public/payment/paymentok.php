@@ -784,7 +784,7 @@ if ($ispaymentok) {
 		// Record payment
 		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$object = new Facture($db);
-		$result = $object->fetch($tmptag['ATT']);
+		$result = $object->fetch($ref);
 		if ($result) {
 			$FinalPaymentAmt = $_SESSION["FinalPaymentAmt"];
 
@@ -810,6 +810,14 @@ if ($ispaymentok) {
 
 			// Do action only if $FinalPaymentAmt is set (session variable is cleaned after this page to avoid duplicate actions when page is POST a second time)
 			if (!empty($FinalPaymentAmt) && $paymentTypeId > 0) {
+				$resultvalidate = $object->validate($user); 
+ 				if ($resultvalidate < 0) {
+					$postactionmessages[] = 'Cannot validate invoice';
+                                        $ispostactionok = -1;
+                                        $error++; // Not yet supported
+				} else {
+				
+				}
 				$db->begin();
 
 				// Creation of payment line
@@ -879,7 +887,7 @@ if ($ispaymentok) {
 
 					// Validating the attendee
 					$attendeetovalidate = new ConferenceOrBoothAttendee($db);
-					$resultattendee = $attendeetovalidate->fetch($ref);
+					$resultattendee = $attendeetovalidate->fetch($tmptag['ATT']);
 					if ($resultattendee < 0) {
 						setEventMessages(null, $attendeetovalidate->errors, "errors");
 					} else {

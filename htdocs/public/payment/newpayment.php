@@ -114,23 +114,23 @@ if (!$action) {
 
 if ($source == 'conferencesubscription') {
 	// Finding the Attendee
-	$attendeeid = GETPOST('ref');
-	$attendee = new ConferenceOrBoothAttendee($db);
-	$resultattendee = $attendee->fetch($attendeeid);
-	if ($resultattendee <= 0) {
-		setEventMessages(null, $attendee->errors, "errors");
+	$invoiceid = GETPOST('ref');
+	$invoice = new Facture($db);
+	$resultinvoice = $invoice->fetch($invoiceid);
+	if ($resultinvoice <= 0) {
+		setEventMessages(null, $invoice->errors, "errors");
 	} else {
 
-		$attendee->fetchObjectLinked();
-		$linkedInvoices = $attendee->linkedObjectsIds['facture'];
+		$invoice->fetchObjectLinked();
+		$linkedAttendees = $invoice->linkedObjectsIds['conferenceorboothattendee'];
 
-		if (is_array($linkedInvoices)) {
-			$linkedInvoices = array_values($linkedInvoices);
+		if (is_array($linkedAttendees)) {
+			$linkedAttendees = array_values($linkedAttendees);
 
-			$invoice = new Facture($db);
-			$resultinvoice = $invoice->fetch($linkedInvoices[0]);
-			if ($resultinvoice <= 0) {
-				setEventMessages(null, $invoice->errors, "errors");
+			$attendee = new ConferenceOrBoothAttendee($db);
+			$resultattendee = $attendee->fetch($linkedAttendees[0]);
+			if ($resultattendee <= 0) {
+				setEventMessages(null, $attendee->errors, "errors");
 			} else {
 				$amount = price2num($invoice->total_ttc);
 				// Finding the associated thirdparty
@@ -1809,7 +1809,7 @@ if ($source == 'conferencesubscription') {
 	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow'.($var ? '1' : '2').'">'.$text;
 	print '<input type="hidden" name="source" value="'.dol_escape_htmltag($source).'">';
-	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($attendee->id).'">';
+	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($invoice->id).'">';
 	print '</td></tr>'."\n";
 
 	// Amount

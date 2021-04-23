@@ -374,7 +374,7 @@ if (empty($reshook) && $action == 'add') {
 				if (!$error) {
 					$valid = true;
 					$sourcetouse = 'conferencesubscription';
-					$reftouse = $confattendee->id;
+					$reftouse = $facture->id;
 					$redirection = $dolibarr_main_url_root.'/public/payment/newpayment.php?source='.$sourcetouse.'&ref='.$reftouse;
 					if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 						if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
