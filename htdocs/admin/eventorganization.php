@@ -283,6 +283,8 @@ if ($action == 'edit') {
 					$selected = (empty($conf->global->$constname) ? '' : $conf->global->$constname);
 					$form->select_produits($selected, $constname, '', 0);
 				}
+			} else {
+				print '<input name="' . $constname . '"  class="flat ' . (empty($val['css']) ? 'minwidth200' : $val['css']) . '" value="' . $conf->global->{$constname} . '">';
 			}
 			print '</td></tr>';
 		}
