@@ -250,7 +250,7 @@ if (empty($reshook) && $action == 'add') {
 		// At this point, we have an attendee. It may not be linked to a thirdparty if we just created it
 
 		// If the attendee has already paid
-		if($confattendee->status == 1) {
+		if ($confattendee->status == 1) {
 			$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?securekey='.dol_encode($conf->global->EVENTORGANIZATION_SECUREKEY, $dolibarr_main_instance_unique_id);
 			Header("Location: ".$redirection);
 			exit;
@@ -379,7 +379,6 @@ if (empty($reshook) && $action == 'add') {
 					if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 						if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
 							$redirection .= '&securekey='.dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . $sourcetouse . $reftouse, 2); // Use the source in the hash to avoid duplicates if the references are identical
-
 						} else {
 							$redirection .= '&securekey='.$conf->global->PAYMENT_SECURITY_TOKEN;
 						}

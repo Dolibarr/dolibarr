@@ -120,7 +120,6 @@ if ($source == 'conferencesubscription') {
 	if ($resultinvoice <= 0) {
 		setEventMessages(null, $invoice->errors, "errors");
 	} else {
-
 		$invoice->fetchObjectLinked();
 		$linkedAttendees = $invoice->linkedObjectsIds['conferenceorboothattendee'];
 

@@ -193,13 +193,13 @@ print "\n";
 // Show all action buttons
 print '<br>';
 // Output introduction text
-if($project->accept_conference_suggestions){
+if ($project->accept_conference_suggestions) {
 	print '<input type="submit" value="'.$langs->trans("SuggestConference").'" id="suggestconference" class="button">';
 	print '<br><br>';
 }
 print '<input type="submit" value="'.$langs->trans("ViewAndVote").'" id="viewandvote" class="button">';
 print '<br><br>';
-if($project->accept_booth_suggestions){
+if ($project->accept_booth_suggestions) {
 	print '<input type="submit" value="'.$langs->trans("SuggestBooth").'" id="suggestbooth" class="button">';
 }
 
