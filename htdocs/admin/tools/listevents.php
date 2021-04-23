@@ -234,7 +234,7 @@ $nbtotalofrecords = '';
 $sql .= $db->plimit($conf->liste_limit + 1, $offset);
 //print $sql;
 $result = $db->query($sql);
-if ($result) {
+if (!empty($result)) {
 	$num = $db->num_rows($result);
 	$i = 0;
 
@@ -245,55 +245,55 @@ if ($result) {
 	if ($limit > 0 && $limit != $conf->liste_limit) {
 		$param .= '&limit='.urlencode($limit);
 	}
-	if ($optioncss != '') {
+	if (!empty($optioncss) && $optioncss != '') {
 		$param .= '&optioncss='.urlencode($optioncss);
 	}
-	if ($search_code) {
+	if (!empty($search_code)) {
 		$param .= '&search_code='.urlencode($search_code);
 	}
-	if ($search_ip) {
+	if (!empty($search_ip)) {
 		$param .= '&search_ip='.urlencode($search_ip);
 	}
-	if ($search_user) {
+	if (!empty($search_user)) {
 		$param .= '&search_user='.urlencode($search_user);
 	}
-	if ($search_desc) {
+	if (!empty($search_desc)) {
 		$param .= '&search_desc='.urlencode($search_desc);
 	}
-	if ($search_ua) {
+	if (!empty($search_ua)) {
 		$param .= '&search_ua='.urlencode($search_ua);
 	}
-	if ($search_prefix_session) {
+	if (!empty($search_prefix_session)) {
 		$param .= '&search_prefix_session='.urlencode($search_prefix_session);
 	}
-	if ($date_startmonth) {
+	if (!empty($date_startmonth)) {
 		$param .= "&date_startmonth=".urlencode($date_startmonth);
 	}
-	if ($date_startday) {
+	if (!empty($date_startday)) {
 		$param .= "&date_startday=".urlencode($date_startday);
 	}
-	if ($date_startyear) {
+	if (!empty($date_startyear)) {
 		$param .= "&date_startyear=".urlencode($date_startyear);
 	}
-	if ($date_endmonth) {
+	if (!empty($date_endmonth)) {
 		$param .= "&date_endmonth=".urlencode($date_endmonth);
 	}
-	if ($date_endday) {
+	if (!empty($date_endday)) {
 		$param .= "&date_endday=".urlencode($date_endday);
 	}
-	if ($date_endyear) {
+	if (!empty($date_endyear)) {
 		$param .= "&date_endyear=".urlencode($date_endyear);
 	}
 
 	$langs->load('withdrawals');
-	if ($num) {
+	if (!empty($num)) {
 		$center = '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=purge">'.$langs->trans("Purge").'</a>';
 	}
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 
-	print_barre_liste($langs->trans("ListOfSecurityEvents"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $nbtotalofrecords, 'setup', 0, '', '', $limit);
+	print_barre_liste($langs->trans("ListOfSecurityEvents"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, empty($center) ? '' : $center, $num, $nbtotalofrecords, 'setup', 0, '', '', $limit);
 
 	if ($action == 'purge') {
 		$formquestion = array();
