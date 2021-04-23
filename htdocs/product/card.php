@@ -1294,6 +1294,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			print '</tr>';
 		}
+		// Traceability
+		if (empty($conf->global->PRODUCT_DISABLE_TRACEABILITY)) {
+			print '<tr><td>'.$langs->trans("LifeTime").'</td><td><input name="lifetime" class="maxwidth100onsmartphone" value="'.GETPOST('lifetime').'"></td></tr>';
+			print '<tr><td>'.$langs->trans("QCFrequency").'</td><td><input name="qc_frequency" class="maxwidth100onsmartphone" value="'.GETPOST('qc_frequency').'"></td></tr>';
+		}
 
 		// Other attributes
 		$parameters = array('colspan' => 3, 'cols' => '3');

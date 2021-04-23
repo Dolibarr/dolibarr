@@ -428,6 +428,48 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '</tr>';
 	}
 
+	// Traceability info
+	if (empty($conf->global->PRODUCT_DISABLE_TRACEABILITY)) {
+		print '<tr><td>';
+		print $form->editfieldkey($langs->trans('EndOfLife'), 'eol_date', $object->eol_date, $object, $user->rights->stock->creer, 'datepicker');
+		print '</td><td>';
+		print $form->editfieldval($langs->trans('EndOfLife'), 'eol_date', $object->eol_date, $object, $user->rights->stock->creer, 'datepicker');
+		print '</td>';
+		print '</tr>';
+		print '<tr><td>';
+		print $form->editfieldkey($langs->trans('ManufacturingDate'), 'manufacturing_date', $object->manufacturing_date, $object, $user->rights->stock->creer, 'datepicker');
+		print '</td><td>';
+		print $form->editfieldval($langs->trans('ManufacturingDate'), 'manufacturing_date', $object->manufacturing_date, $object, $user->rights->stock->creer, 'datepicker');
+		print '</td>';
+		print '</tr>';
+		print '<tr><td>';
+		print $form->editfieldkey($langs->trans('DestructionDate'), 'destruction_date', $object->destruction_date, $object, $user->rights->stock->creer, 'datepicker');
+		print '</td><td>';
+		print $form->editfieldval($langs->trans('DestructionDate'), 'destruction_date', $object->destruction_date, $object, $user->rights->stock->creer, 'datepicker');
+		print '</td>';
+		print '</tr>';
+		print '<tr><td>';
+		print $form->editfieldkey($langs->trans('FirstUseDate'), 'first_use_date', $object->first_use_date, $object, $user->rights->stock->creer, 'datepicker');
+		print '</td><td>';
+		print $form->editfieldval($langs->trans('FirstUseDate'), 'first_use_date', $object->first_use_date, $object, $user->rights->stock->creer, 'datepicker');
+		print '</td>';
+		print '</tr>';
+		print '<tr><td>';
+		print $form->editfieldkey($langs->trans('QCFrequency'), 'qc_frequency', $object->qc_frequency, $object, $user->rights->stock->creer, 'string');
+		print '</td><td>';
+		print $form->editfieldval($langs->trans('QCFrequency'), 'qc_frequency', $object->qc_frequency, $object, $user->rights->stock->creer, 'string');
+		print '</td>';
+		print '</tr>';
+		$form->load_cache_productbatch_status();
+		print '<tr><td>';
+		print $form->editfieldkey($langs->trans('Status'), 'fk_status', $form->cache_productbatch_status[$object->status], $object, $user->rights->stock->creer, 'select:productbatch_status');
+		print '</td><td>';
+		print $form->editfieldval($langs->trans('Status'), 'fk_status', $form->cache_productbatch_status[$object->status], $object, $user->rights->stock->creer, 'select:productbatch_status');
+		print '</td>';
+		print '</tr>';
+		/*print '<tr><td>'.$langs->trans("Status").'</td><td>select à voir</td></tr>';*/
+	}
+
 	// Other attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
