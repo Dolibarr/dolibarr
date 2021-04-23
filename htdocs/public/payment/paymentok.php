@@ -884,6 +884,9 @@ if ($ispaymentok) {
 						$attendeetovalidate->setStatut(1);
 
 						// Sending mail
+						$thirdparty = new Societe($db);
+						$thirdparty->fetch($attendeetovalidate->fk_soc);
+
 						require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 						include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 						$formmail = new FormMail($db);
