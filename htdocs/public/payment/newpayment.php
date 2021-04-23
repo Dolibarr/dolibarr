@@ -132,6 +132,7 @@ if ($source == 'conferencesubscription') {
 			if ($resultinvoice <= 0) {
 				setEventMessages(null, $invoice->errors, "errors");
 			} else {
+				$amount = price2num($invoice->total_ttc);
 				// Finding the associated thirdparty
 				$thirdparty = new Societe($db);
 				$resultthirdparty = $thirdparty->fetch($invoice->socid);
@@ -1814,7 +1815,7 @@ if ($source == 'conferencesubscription') {
 	// Amount
 	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("Amount");
 	print '</td><td class="CTableRow'.($var ? '1' : '2').'">';
-	$valtoshow = $invoice->total_ttc;
+	$valtoshow = $amount;
 	print '<b>'.price($valtoshow).'</b>';
 	print '<input type="hidden" name="amount" value="'.$valtoshow.'">';
 	print '<input type="hidden" name="newamount" value="'.$valtoshow.'">';
