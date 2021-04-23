@@ -466,7 +466,7 @@ input:-webkit-autofill {
 }
 
 /* CSS for placeholder */
-.placeholder { color: #ccc; }
+.placeholder { color: #666; }
 ::-webkit-input-placeholder { color: #ccc; }
 input:-moz-placeholder { color: #ccc; }
 
