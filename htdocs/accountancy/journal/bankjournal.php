@@ -1323,42 +1323,42 @@ function getSourceDocRef($val, $typerecord)
 	} elseif ($typerecord == 'payment_supplier') {
 		$sqlmid = 'SELECT payfac.fk_facturefourn as id, f.ref';
 		$sqlmid .= " FROM ".MAIN_DB_PREFIX."paiementfourn_facturefourn as payfac, ".MAIN_DB_PREFIX."facture_fourn as f";
-		$sqlmid .= " WHERE payfac.fk_facturefourn = f.rowid AND payfac.fk_paiementfourn=".$val["paymentsupplierid"];
+		$sqlmid .= " WHERE payfac.fk_facturefourn = f.rowid AND payfac.fk_paiementfourn=".((int) $val["paymentsupplierid"]);
 		$ref = $langs->transnoentitiesnoconv("SupplierInvoice");
 	} elseif ($typerecord == 'payment_expensereport') {
 		$sqlmid = 'SELECT e.rowid as id, e.ref';
 		$sqlmid .= " FROM ".MAIN_DB_PREFIX."payment_expensereport as pe, ".MAIN_DB_PREFIX."expensereport as e";
-		$sqlmid .= " WHERE pe.rowid=".$val["paymentexpensereport"]." AND pe.fk_expensereport = e.rowid";
+		$sqlmid .= " WHERE pe.rowid=".((int) $val["paymentexpensereport"])." AND pe.fk_expensereport = e.rowid";
 		$ref = $langs->transnoentitiesnoconv("ExpenseReport");
 	} elseif ($typerecord == 'payment_salary') {
 		$sqlmid = 'SELECT s.rowid as ref';
 		$sqlmid .= " FROM ".MAIN_DB_PREFIX."payment_salary as s";
-		$sqlmid .= " WHERE s.rowid=".$val["paymentsalid"];
+		$sqlmid .= " WHERE s.rowid=".((int) $val["paymentsalid"]);
 		$ref = $langs->transnoentitiesnoconv("SalaryPayment");
 	} elseif ($typerecord == 'sc') {
 		$sqlmid = 'SELECT sc.rowid as ref';
 		$sqlmid .= " FROM ".MAIN_DB_PREFIX."paiementcharge as sc";
-		$sqlmid .= " WHERE sc.rowid=".$val["paymentscid"];
+		$sqlmid .= " WHERE sc.rowid=".((int) $val["paymentscid"]);
 		$ref = $langs->transnoentitiesnoconv("SocialContribution");
 	} elseif ($typerecord == 'payment_vat') {
 		$sqlmid = 'SELECT v.rowid as ref';
 		$sqlmid .= " FROM ".MAIN_DB_PREFIX."tva as v";
-		$sqlmid .= " WHERE v.rowid=".$val["paymentvatid"];
+		$sqlmid .= " WHERE v.rowid=".((int) $val["paymentvatid"]);
 		$ref = $langs->transnoentitiesnoconv("PaymentVat");
 	} elseif ($typerecord == 'payment_donation') {
 		$sqlmid = 'SELECT payd.fk_donation as ref';
 		$sqlmid .= " FROM ".MAIN_DB_PREFIX."payment_donation as payd";
-		$sqlmid .= " WHERE payd.fk_donation=".$val["paymentdonationid"];
+		$sqlmid .= " WHERE payd.fk_donation=".((int) $val["paymentdonationid"]);
 		$ref = $langs->transnoentitiesnoconv("Donation");
 	} elseif ($typerecord == 'payment_loan') {
 		$sqlmid = 'SELECT l.rowid as ref';
 		$sqlmid .= " FROM ".MAIN_DB_PREFIX."payment_loan as l";
-		$sqlmid .= " WHERE l.rowid=".$val["paymentloanid"];
+		$sqlmid .= " WHERE l.rowid=".((int) $val["paymentloanid"]);
 		$ref = $langs->transnoentitiesnoconv("LoanPayment");
 	} elseif ($typerecord == 'payment_various') {
 		$sqlmid = 'SELECT v.rowid as ref';
 		$sqlmid .= " FROM ".MAIN_DB_PREFIX."payment_various as v";
-		$sqlmid .= " WHERE v.rowid=".$val["paymentvariousid"];
+		$sqlmid .= " WHERE v.rowid=".((int) $val["paymentvariousid"]);
 		$ref = $langs->transnoentitiesnoconv("VariousPayment");
 	}
 	// Add warning

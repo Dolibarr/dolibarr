@@ -268,7 +268,7 @@ $sql = "SELECT b.rowid,b.dateo as do,b.datev as dv, b.amount, b.label, b.rappro,
 $sql .= " b.num_releve, b.fk_user_author, b.num_chq, b.fk_type, b.fk_account, b.fk_bordereau as receiptid,";
 $sql .= " b.emetteur,b.banque";
 $sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
-$sql .= " WHERE rowid=".$rowid;
+$sql .= " WHERE rowid=".((int) $rowid);
 $sql .= " ORDER BY dateo ASC";
 $result = $db->query($sql);
 if ($result) {

@@ -219,7 +219,7 @@ if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposa
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	}
 	if ($socid) {
-		$sql .= " AND s.rowid = ".$socid;
+		$sql .= " AND s.rowid = ".((int) $socid);
 	}
 
 	$resql = $db->query($sql);
@@ -605,7 +605,7 @@ if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_S
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	}
 	if ($socid) {
-		$sql .= " AND s.rowid = ".$socid;
+		$sql .= " AND s.rowid = ".((int) $socid);
 	}
 	$sql .= " ORDER BY s.datec DESC";
 	$sql .= $db->plimit($max, 0);
@@ -711,7 +711,7 @@ if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) { // T
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	}
 	if ($socid) {
-		$sql .= " AND s.rowid = ".$socid;
+		$sql .= " AND s.rowid = ".((int) $socid);
 	}
 	$sql .= " ORDER BY c.tms DESC";
 	$sql .= $db->plimit($max + 1, 0);
@@ -786,7 +786,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	}
 	if ($socid) {
-		$sql .= " AND s.rowid = ".$socid;
+		$sql .= " AND s.rowid = ".((int) $socid);
 	}
 	$sql .= " ORDER BY p.rowid DESC";
 
@@ -902,7 +902,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	}
 	if ($socid) {
-		$sql .= " AND s.rowid = ".$socid;
+		$sql .= " AND s.rowid = ".((int) $socid);
 	}
 	$sql .= " ORDER BY c.rowid DESC";
 

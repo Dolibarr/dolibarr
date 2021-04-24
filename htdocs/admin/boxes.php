@@ -156,7 +156,7 @@ if ($action == 'delete') {
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes";
 		$sql .= " WHERE entity = ".$conf->entity;
-		$sql .= " AND box_id=".$obj->box_id;
+		$sql .= " AND box_id=".((int) $obj->box_id);
 
 		$resql = $db->query($sql);
 
@@ -255,7 +255,7 @@ if ($resql) {
 		// We renumber the order of the boxes if one of them is in ''
 		// This occurs just after an insert.
 		if ($decalage) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX."boxes SET box_order='".$db->escape($decalage)."' WHERE rowid=".$obj->rowid;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."boxes SET box_order='".$db->escape($decalage)."' WHERE rowid=".((int) $obj->rowid);
 			$db->query($sql);
 		}
 	}

@@ -167,7 +167,7 @@ if (GETPOST('exportcsv', 'int')) {
 
 if ($action == 'delete') {
 	// Ici, rowid indique le destinataire et id le mailing
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE rowid=".$rowid;
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE rowid = ".((int) $rowid);
 	$resql = $db->query($sql);
 	if ($resql) {
 		if (!empty($id)) {

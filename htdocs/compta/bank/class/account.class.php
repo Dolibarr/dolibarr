@@ -509,6 +509,7 @@ class Account extends CommonObject
 		}
 
 		// Clean parameters
+		$label =
 		$emetteur = trim($emetteur);
 		$banque = trim($banque);
 
@@ -516,7 +517,7 @@ class Account extends CommonObject
 
 		if (is_numeric($oper)) {    // Clean operation to have a code instead of a rowid
 			$sql = "SELECT code FROM ".MAIN_DB_PREFIX."c_paiement";
-			$sql .= " WHERE id=".$oper;
+			$sql .= " WHERE id = ".((int) $oper);
 			$sql .= " AND entity IN (".getEntity('c_paiement').")";
 			$resql = $this->db->query($sql);
 			if ($resql) {
@@ -1223,7 +1224,7 @@ class Account extends CommonObject
 		$sql .= " AND (ba.rappro = 1 AND ba.courant != 2)"; // Compte rapprochable
 		$sql .= " AND clos = 0";
 		if ($filteraccountid) {
-			$sql .= " AND ba.rowid = ".$filteraccountid;
+			$sql .= " AND ba.rowid = ".((int) $filteraccountid);
 		}
 
 		$resql = $this->db->query($sql);
@@ -1278,7 +1279,7 @@ class Account extends CommonObject
 		$sql .= " AND (ba.rappro = 1 AND ba.courant != 2)"; // Compte rapprochable
 		$sql .= " AND clos = 0";
 		if ($filteraccountid) {
-			$sql .= " AND ba.rowid = ".$filteraccountid;
+			$sql .= " AND ba.rowid = ".((int) $filteraccountid);
 		}
 
 		$resql = $this->db->query($sql);

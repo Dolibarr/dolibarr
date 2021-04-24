@@ -217,7 +217,7 @@ class Subscription extends CommonObject
 		$sql .= " datef,";
 		$sql .= " subscription, note, fk_bank";
 		$sql .= " FROM ".MAIN_DB_PREFIX."subscription";
-		$sql .= "	WHERE rowid=".$rowid;
+		$sql .= "	WHERE rowid=".((int) $rowid);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);

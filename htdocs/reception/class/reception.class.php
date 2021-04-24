@@ -384,7 +384,7 @@ class Reception extends CommonObject
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON e.fk_incoterms = i.rowid';
 		$sql .= " WHERE e.entity IN (".getEntity('reception').")";
 		if ($id) {
-			$sql .= " AND e.rowid=".$id;
+			$sql .= " AND e.rowid=".((int) $id);
 		}
 		if ($ref) {
 			$sql .= " AND e.ref='".$this->db->escape($ref)."'";
@@ -1356,7 +1356,7 @@ class Reception extends CommonObject
 			$sql .= ",libelle='".$this->db->escape($this->update['libelle'])."'";
 			$sql .= ",description='".$this->db->escape($this->update['description'])."'";
 			$sql .= ",tracking='".$this->db->escape($this->update['tracking'])."'";
-			$sql .= " WHERE rowid=".$id;
+			$sql .= " WHERE rowid=".((int) $id);
 			$resql = $this->db->query($sql);
 		}
 		if ($resql < 0) {
