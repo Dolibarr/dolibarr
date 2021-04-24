@@ -114,8 +114,8 @@ if ($action == 'add') {
 						if (empty($arrayofexistingboxid[$boxid['value']])) {
 							$sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (";
 							$sql .= "box_id, position, box_order, fk_user, entity";
-							$sql .= ") values (";
-							$sql .= $boxid['value'].", ".$pos.", '".(($nbboxonleft > $nbboxonright) ? 'B01' : 'A01')."', ".$fk_user.", ".$conf->entity;
+							$sql .= ") VALUES (";
+							$sql .= $boxid['value'].", ".((int) $pos).", '".(($nbboxonleft > $nbboxonright) ? 'B01' : 'A01')."', ".$fk_user.", ".$conf->entity;
 							$sql .= ")";
 
 							dol_syslog("boxes.php activate box", LOG_DEBUG);

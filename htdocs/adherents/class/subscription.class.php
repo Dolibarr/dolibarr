@@ -165,7 +165,7 @@ class Subscription extends CommonObject
 		} else {
 			$type = $this->fk_type;
 		}
-		$sql .= " VALUES (".$this->fk_adherent.", '".$this->db->escape($type)."', '".$this->db->idate($now)."',";
+		$sql .= " VALUES (".((int) $this->fk_adherent).", '".$this->db->escape($type)."', '".$this->db->idate($now)."',";
 		$sql .= " '".$this->db->idate($this->dateh)."',";
 		$sql .= " '".$this->db->idate($this->datef)."',";
 		$sql .= " ".$this->amount.",";

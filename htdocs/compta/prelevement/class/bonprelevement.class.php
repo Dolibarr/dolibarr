@@ -229,9 +229,9 @@ class BonPrelevement extends CommonObject
 			$sql .= ", cle_rib";
 			$sql .= ") VALUES (";
 			$sql .= $this->id;
-			$sql .= ", ".$client_id;
+			$sql .= ", ".((int) $client_id);
 			$sql .= ", '".$this->db->escape($client_nom)."'";
-			$sql .= ", '".price2num($amount)."'";
+			$sql .= ", ".((float) price2num($amount));
 			$sql .= ", '".$this->db->escape($code_banque)."'";
 			$sql .= ", '".$this->db->escape($code_guichet)."'";
 			$sql .= ", '".$this->db->escape($number)."'";
