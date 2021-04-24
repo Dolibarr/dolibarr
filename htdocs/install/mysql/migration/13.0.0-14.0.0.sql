@@ -52,6 +52,8 @@ UPDATE llx_c_country SET eec = 1 WHERE code IN ('AT','BE','BG','CY','CZ','DE','D
 
 -- For v14
 
+ALTER TABLE llx_export_model MODIFY COLUMN type varchar(64);
+
 create table llx_accounting_groups_account
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
