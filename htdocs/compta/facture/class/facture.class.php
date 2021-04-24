@@ -1387,7 +1387,7 @@ class Facture extends CommonInvoice
 
 			if (!$error)
 			{
-				return 1;
+				return $ret;
 			} else return -1;
 		} else return -1;
 	}
