@@ -509,9 +509,9 @@ class Account extends CommonObject
 		}
 
 		// Clean parameters
-		$label =
 		$emetteur = trim($emetteur);
 		$banque = trim($banque);
+		$label = trim($label);
 
 		$now = dol_now();
 

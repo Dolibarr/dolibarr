@@ -249,6 +249,10 @@ class BankAccounts extends DolibarrApi
 			$typeto = 'LIQ';
 		}
 
+		// Clean data
+		$description = checkVal($description, 'alphanohtml');
+
+
 		/**
 		 * Creating bank line records
 		 */
@@ -295,7 +299,9 @@ class BankAccounts extends DolibarrApi
 			return array(
 				'success' => array(
 					'code' => 201,
-					'message' => 'Internal wire transfer created successfully.'
+					'message' => 'Internal wire transfer created successfully.',
+					'bank_id_from' => $bank_line_id_from,
+					'bank_id_to' => $bank_line_id_to,
 				)
 			);
 		} else {
