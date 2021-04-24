@@ -55,6 +55,3 @@ yarn.lock
 package-lock.json
 
 doc/install.lock
-
-/htdocs/cyber*
-/htdocs/mycyber*
