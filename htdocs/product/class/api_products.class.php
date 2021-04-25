@@ -188,7 +188,7 @@ class Products extends DolibarrApi
 		}
 		$sql .= ' WHERE t.entity IN ('.getEntity('product').')';
 
-      	if($without_variants){
+		if ($without_variants) {
 			$sql .= ' AND t.rowid in (select distinct fk_product_parent from '.MAIN_DB_PREFIX.'product_attribute_combination)';
 		}
 
