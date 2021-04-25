@@ -3969,7 +3969,7 @@ abstract class CommonObject
 			$sql = "DELETE FROM " . MAIN_DB_PREFIX . "element_element";
 			$sql .= " WHERE";
 			if ($rowid > 0) {
-				$sql .= " rowid = " . $rowid;
+				$sql .= " rowid = " . ((int) $rowid);
 			} else {
 				if ($deletesource) {
 					$sql .= " fk_source = " . $sourceid . " AND sourcetype = '" . $this->db->escape($sourcetype) . "'";
@@ -5012,7 +5012,7 @@ abstract class CommonObject
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_resources";
-		$sql .= " WHERE rowid=".$rowid;
+		$sql .= " WHERE rowid = ".((int) $rowid);
 
 		dol_syslog(get_class($this)."::delete_resource", LOG_DEBUG);
 

@@ -71,7 +71,7 @@ if ($action == 'activate_encrypt') {
 			if (dol_hash($obj->pass)) {
 				$sql = "UPDATE ".MAIN_DB_PREFIX."user";
 				$sql .= " SET pass_crypted = '".dol_hash($obj->pass)."', pass = NULL";
-				$sql .= " WHERE rowid=".$obj->rowid;
+				$sql .= " WHERE rowid=".((int) $obj->rowid);
 				//print $sql;
 
 				$resql2 = $db->query($sql);
@@ -254,9 +254,13 @@ foreach ($arrayhandler as $key => $module) {
 
 		print '<td width="100" align="center">';
 		if ($conf->global->USER_PASSWORD_GENERATED == $key) {
-			print img_picto('', 'tick');
+			//print img_picto('', 'tick');
+			print img_picto($langs->trans("Enabled"), 'switch_on');
 		} else {
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=setgeneraterule&amp;token='.newToken().'&amp;value='.$key.'">'.$langs->trans("Activate").'</a>';
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=setgeneraterule&amp;token='.newToken().'&amp;value='.$key.'">';
+			//print $langs->trans("Activate");
+			print img_picto($langs->trans("Disabled"), 'switch_off');
+			print '</a>';
 		}
 		print "</td></tr>\n";
 	}

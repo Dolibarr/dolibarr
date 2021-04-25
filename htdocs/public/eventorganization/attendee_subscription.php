@@ -66,6 +66,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class.php';
 require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 // Init vars
@@ -80,6 +81,19 @@ $email = GETPOST("email");
 // Getting id from Post and decoding it
 $encodedid = GETPOST('id');
 $id = dol_decode($encodedid, $dolibarr_main_instance_unique_id);
+
+$conference = new ConferenceOrBooth($db);
+$resultconf = $conference->fetch($id);
+if ($resultconf < 0) {
+	setEventMessages(null, $object->errors, "errors");
+}
+
+$project = new Project($db);
+$resultproject = $project->fetch($conference->fk_project);
+if ($resultproject < 0) {
+	$error++;
+	$errmsg .= $project->error;
+}
 
 // Getting 'securekey'.'id' from Post and decoding it
 $encodedsecurekeyandid = GETPOST('securekey', 'alpha');
@@ -193,10 +207,11 @@ if (empty($reshook) && $action == 'add') {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Email"))."<br>\n";
 	}
-	/*if (!GETPOST("societe")) {
+	// If the price has been set, name is required for the invoice
+	if (!GETPOST("societe") && !empty(floatval($project->price_registration))) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Societe"))."<br>\n";
-	}*/
+	}
 	if (GETPOST("email") && !isValidEmail(GETPOST("email"))) {
 		$error++;
 		$langs->load("errors");
@@ -350,7 +365,11 @@ print '<table class="border" summary="form to subscribe" id="tablesubscribe">'."
 // Email
 print '<tr><td>'.$langs->trans("Email").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="email" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
 // Company
-print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company").' </td><td><input type="text" name="societe" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
+print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company");
+if (!empty(floatval($project->price_registration))) {
+	print '<FONT COLOR="red">*</FONT>';
+}
+print ' </td><td><input type="text" name="societe" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
 // Address
 print '<tr><td>'.$langs->trans("Address").'</td><td>'."\n";
 print '<textarea name="address" id="address" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('address', 'restricthtml'), 0, 1).'</textarea></td></tr>'."\n";

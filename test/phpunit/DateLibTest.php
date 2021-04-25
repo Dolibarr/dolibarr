@@ -36,6 +36,10 @@ if (empty($user->id)) {
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
+print "\n".$langs->trans("CurrentTimeZone").' : '.getServerTimeZoneString();
+print "\n".$langs->trans("CurrentHour").' : '.dol_print_date(dol_now('gmt'), 'dayhour', 'tzserver');
+print "\n";
+
 
 /**
  * Class for PHPUnit tests
@@ -71,9 +75,6 @@ class DateLibTest extends PHPUnit\Framework\TestCase
 		$langs->load("admin");
 
 		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-
-		print "\n".$langs->trans("CurrentTimeZone").' : '.getServerTimeZoneString();
-		print "\n".$langs->trans("CurrentHour").' : '.dol_print_date(dol_now('gmt'), 'dayhour', 'tzserver');
 
 		//print " - db ".$db->db;
 		print "\n";
@@ -490,5 +491,30 @@ class DateLibTest extends PHPUnit\Framework\TestCase
 		$conf->global->MAIN_START_WEEK = 0;	// start on sunday
 		$prev = dol_get_first_day_week($day, $month, $year);
 		$this->assertEquals(1, (int) $prev['first_day']);		// sunday for month 2, year 2015 is the 1st
+
+		return 1;
+	}
+
+
+	/**
+	 * testDolGetFirstHour
+	 *
+	 * @return int
+	 */
+	public function testDolGetFirstHour()
+	{
+		global $conf;
+
+		$now = 1800 + (24 * 3600 * 10);	// The 11th of january 1970 at 0:30 in UTC
+		$result = dol_get_first_hour($now, 'gmt');
+		print __METHOD__." now = ".$now.", dol_print_date(now, 'dayhourrfc', 'gmt') = ".dol_print_date($now, 'dayhourrfc', 'gmt').", result = ".$result.", dol_print_date(result, 'dayhourrfc', 'gmt') = ".dol_print_date($result, 'dayhourrfc', 'gmt')."\n";
+		$this->assertEquals('1970-01-11T00:00:00Z', dol_print_date($result, 'dayhourrfc', 'gmt'));		// monday for month 2, year 2014 is the 2
+
+		$now = 23.5 * 3600 + (24 * 3600 * 10);	// The 11th of january 1970 at 23:30 in UTC
+		$result = dol_get_first_hour($now, 'gmt');
+		print __METHOD__." now = ".$now.", dol_print_date(now, 'dayhourrfc', 'gmt') = ".dol_print_date($now, 'dayhourrfc', 'gmt').", result = ".$result.", dol_print_date(result, 'dayhourrfc', 'gmt') = ".dol_print_date($result, 'dayhourrfc', 'gmt')."\n";
+		$this->assertEquals('1970-01-11T00:00:00Z', dol_print_date($result, 'dayhourrfc', 'gmt'));		// monday for month 2, year 2014 is the 2
+
+		return 1;
 	}
 }

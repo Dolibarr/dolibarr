@@ -424,7 +424,7 @@ if ($search_public != '') {
 	$sql .= " AND p.public = ".$db->escape($search_public);
 }
 // For external user, no check is done on company permission because readability is managed by public status of project and assignement.
-//if ($socid > 0) $sql.= " AND s.rowid = ".$socid;
+//if ($socid > 0) $sql.= " AND s.rowid = ".((int) $socid);
 if ($search_sale > 0) {
 	$sql .= " AND sc.fk_user = ".((int) $search_sale);
 }
@@ -612,8 +612,8 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // List of mass actions available
 $arrayofmassactions = array(
 	'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
-	//'builddoc'=>img_picto('', 'pdf').$langs->trans("PDFMerge"),
-	//'presend'=>img_picto('', 'email').$langs->trans("SendByMail"),
+	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
+	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
 //if($user->rights->societe->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
 if ($user->rights->projet->creer) {

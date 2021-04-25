@@ -159,9 +159,12 @@ function showDirectPublicLink($object)
 	if (empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
 		$out .= '<span class="opacitymedium">'.$langs->trans("PublicInterfaceNotEnabled").'</span>';
 	} else {
-		$out .= img_picto('', 'object_globe.png').' '.$langs->trans("TicketPublicAccess").':<br>';
+		$out .= img_picto('', 'object_globe.png').' <span class="opacitymedium">'.$langs->trans("TicketPublicAccess").'</span><br>';
 		if ($url) {
+			$out .= '<div class="urllink">';
 			$out .= '<input type="text" id="directpubliclink" class="quatrevingtpercent" value="'.$url.'">';
+			$out .= '<a href="'.$url.'" target="_blank" rel="noopener">'.img_picto('', 'object_globe.png', 'class="paddingleft"').'</a>';
+			$out .= '</div>';
 			$out .= ajax_autoselect("directpubliclink", 0);
 		} else {
 			$out .= '<span class="opacitymedium">'.$langs->trans("TicketNotCreatedFromPublicInterface").'</span>';
@@ -239,7 +242,7 @@ function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $
 		}
 		print '</div>';
 		if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
-			print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref?utm_medium=website&utm_source=poweredby" href="https://www.dolibarr.org" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
+			print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
 		}
 		print '</div>';
 	}

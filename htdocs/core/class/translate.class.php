@@ -735,7 +735,7 @@ class Translate
 	 *  @param	string	$str            string root to translate
 	 *  @param  string	$countrycode    country code (FR, ...)
 	 *  @return	string         			translated string
-	 *  @see transcountrynoentities()
+	 *  @see transcountrynoentities(), picto_from_langcode()
 	 */
 	public function transcountry($str, $countrycode)
 	{
@@ -753,7 +753,7 @@ class Translate
 	 *  @param	string	$str            string root to translate
 	 *  @param  string	$countrycode    country code (FR, ...)
 	 *  @return string         			translated string
-	 *  @see transcountry()
+	 *  @see transcountry(), picto_from_langcode()
 	 */
 	public function transcountrynoentities($str, $countrycode)
 	{

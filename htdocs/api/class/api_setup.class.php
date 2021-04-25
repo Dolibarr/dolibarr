@@ -1661,9 +1661,13 @@ class Setup extends DolibarrApi
 		if (empty($xmlremote)) {
 			$xmlremote = 'https://www.dolibarr.org/files/stable/signatures/filelist-'.DOL_VERSION.'.xml';
 		}
-		if ($xmlremote && !preg_match('/^https?:\/\//', $xmlremote)) {
+		if ($xmlremote && !preg_match('/^https?:\/\//i', $xmlremote)) {
 			$langs->load("errors");
 			throw new RestException(500, $langs->trans("ErrorURLMustStartWithHttp", $xmlremote));
+		}
+		if ($xmlremote && !preg_match('/\.xml$/', $xmlremote)) {
+			$langs->load("errors");
+			throw new RestException(500, $langs->trans("ErrorURLMustEndWith", $xmlremote, '.xml'));
 		}
 
 		if ($target == 'local') {
@@ -1673,7 +1677,7 @@ class Setup extends DolibarrApi
 				throw new RestException(500, $langs->trans('XmlNotFound').': '.$xmlfile);
 			}
 		} else {
-			$xmlarray = getURLContent($xmlremote, 'GET', '', 1, array(), array('http', 'https'), 0);	// Accept http or https links on external remote server only
+			$xmlarray = getURLContent($xmlremote, 'GET', '', 1, array(), array('http', 'https'), 0);	// Accept http or https links on external remote server only. Same is used into filecheck.php.
 
 			// Return array('content'=>response,'curl_error_no'=>errno,'curl_error_msg'=>errmsg...)
 			if (!$xmlarray['curl_error_no'] && $xmlarray['http_code'] != '400' && $xmlarray['http_code'] != '404') {
@@ -1681,7 +1685,7 @@ class Setup extends DolibarrApi
 				//print "xmlfilestart".$xmlfile."endxmlfile";
 				$xml = simplexml_load_string($xmlfile);
 			} else {
-				$errormsg = $langs->trans('XmlNotFound').': '.$xmlremote.' - '.$xmlarray['http_code'].' '.$xmlarray['curl_error_no'].' '.$xmlarray['curl_error_msg'];
+				$errormsg = $langs->trans('XmlNotFound').': '.$xmlremote.' - '.$xmlarray['http_code'].(($xmlarray['http_code'] == 400 && $xmlarray['content']) ? ' '.$xmlarray['content'] : '').' '.$xmlarray['curl_error_no'].' '.$xmlarray['curl_error_msg'];
 				throw new RestException(500, $errormsg);
 			}
 		}

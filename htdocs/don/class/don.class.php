@@ -612,7 +612,7 @@ class Don extends CommonObject
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON d.fk_country = c.rowid";
 		$sql .= " WHERE d.entity IN (".getEntity('donation').")";
 		if (!empty($id)) {
-			$sql .= " AND d.rowid=".$id;
+			$sql .= " AND d.rowid=".((int) $id);
 		} elseif (!empty($ref)) {
 			$sql .= " AND d.ref='".$this->db->escape($ref)."'";
 		}

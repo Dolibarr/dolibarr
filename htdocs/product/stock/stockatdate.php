@@ -266,7 +266,7 @@ $reshook = $hookmanager->executeHooks('printFieldListJoin', $parameters); // Not
 $sql .= $hookmanager->resPrint;
 $sql .= ' WHERE p.entity IN ('.getEntity('product').')';
 if ($productid > 0) {
-	$sql .= " AND p.rowid = ".$productid;
+	$sql .= " AND p.rowid = ".((int) $productid);
 }
 if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 	$sql .= " AND p.fk_product_type = 0";

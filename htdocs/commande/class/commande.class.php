@@ -1807,7 +1807,7 @@ class Commande extends CommonOrder
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON c.fk_incoterms = i.rowid';
 
 		if ($id) {
-			$sql .= " WHERE c.rowid=".$id;
+			$sql .= " WHERE c.rowid=".((int) $id);
 		} else {
 			$sql .= " WHERE c.entity IN (".getEntity('commande').")"; // Dont't use entity if you use rowid
 		}
@@ -2687,7 +2687,7 @@ class Commande extends CommonOrder
 			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 		}
 		if ($socid) {
-			$sql .= " AND s.rowid = ".$socid;
+			$sql .= " AND s.rowid = ".((int) $socid);
 		}
 		if ($draft) {
 			$sql .= " AND c.fk_statut = ".self::STATUS_DRAFT;

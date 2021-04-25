@@ -26,9 +26,13 @@
 -- To set a field as NOT NULL:                 -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET NOT NULL;
 -- To set a field as default NULL:             -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET DEFAULT NULL;
 -- Note: fields with type BLOB/TEXT can't have default value.
+-- To rebuild sequence for postgresql after insert by forcing id autoincrement fields: 
+-- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
 
 -- Missing in v13 or lower
+
+ALTER TABLE llx_recruitment_recruitmentcandidature MODIFY COLUMN email_msgid VARCHAR(175);
 
 ALTER TABLE llx_asset CHANGE COLUMN amount amount_ht double(24,8) DEFAULT NULL;
 ALTER TABLE llx_asset ADD COLUMN amount_vat double(24,8) DEFAULT NULL;
@@ -47,6 +51,8 @@ UPDATE llx_c_country SET eec = 1 WHERE code IN ('AT','BE','BG','CY','CZ','DE','D
 
 
 -- For v14
+
+ALTER TABLE llx_export_model MODIFY COLUMN type varchar(64);
 
 create table llx_accounting_groups_account
 (
@@ -273,15 +279,15 @@ create table llx_salary
   fk_user_modif   integer                     -- user making last change
 ) ENGINE=innodb;
 
-ALTER TABLE llx_payment_salary CHANGE COLUMN fk_user fk_user integer NULL;
+-- VMYSQL4.1 ALTER TABLE llx_payment_salary CHANGE COLUMN fk_user fk_user integer NULL;
+-- VPGSQL8.2 ALTER TABLE llx_payment_salary ALTER COLUMN fk_user DROP NOT NULL;
 ALTER TABLE llx_payment_salary ADD COLUMN fk_salary integer;
 
 INSERT INTO llx_salary (rowid, ref, fk_user, amount, fk_projet, fk_typepayment, label, datesp, dateep, entity, note, fk_bank, paye) SELECT ps.rowid, ps.rowid, ps.fk_user, ps.amount, ps.fk_projet, ps.fk_typepayment, ps.label, ps.datesp, ps.dateep, ps.entity, ps.note, ps.fk_bank, 1 FROM llx_payment_salary ps WHERE ps.fk_salary IS NULL;
 UPDATE llx_payment_salary SET fk_salary = rowid WHERE fk_salary IS NULL;
 UPDATE llx_payment_salary SET ref = rowid WHERE ref IS NULL;
 
-ALTER TABLE llx_salary CHANGE paye paye smallint default 0 NOT NULL;
-
+ALTER TABLE llx_salary ALTER COLUMN paye set default 0;
 
 DELETE FROM llx_boxes WHERE box_id IN (SELECT rowid FROM llx_boxes_def WHERE file IN ('box_graph_ticket_by_severity', 'box_ticket_by_severity.php', 'box_nb_ticket_last_x_days.php', 'box_nb_tickets_type.php', 'box_new_vs_close_ticket.php'));
 DELETE FROM llx_boxes_def WHERE file IN ('box_graph_ticket_by_severity', 'box_ticket_by_severity.php', 'box_nb_ticket_last_x_days.php', 'box_nb_tickets_type.php', 'box_new_vs_close_ticket.php');
@@ -424,3 +430,9 @@ ALTER TABLE llx_facture_fourn ADD COLUMN date_closing datetime DEFAULT NULL afte
 ALTER TABLE llx_facture_fourn ADD COLUMN fk_user_closing integer DEFAULT NULL after fk_user_valid;
 
 ALTER TABLE llx_entrepot ADD COLUMN fk_project INTEGER DEFAULT NULL AFTER entity; -- project associated to warehouse if any
+
+-- Rebuild sequence for postgres only after query INSERT INTO llx_salary(rowid, ...
+-- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
+
+UPDATE llx_const SET value = 'github' WHERE __DECRYPT('name')__ = 'MAIN_BUGTRACK_ENABLELINK' AND __DECRYPT('value')__ = 1;
+

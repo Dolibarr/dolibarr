@@ -504,11 +504,11 @@ function getCountry($searchkey, $withcode = '', $dbtouse = 0, $outputlangs = '',
 
 	$sql = "SELECT rowid, code, label FROM ".MAIN_DB_PREFIX."c_country";
 	if (is_numeric($searchkey)) {
-		$sql .= " WHERE rowid=".$searchkey;
+		$sql .= " WHERE rowid = ".((int) $searchkey);
 	} elseif (!empty($searchkey)) {
-		$sql .= " WHERE code='".$db->escape($searchkey)."'";
+		$sql .= " WHERE code = '".$db->escape($searchkey)."'";
 	} else {
-		$sql .= " WHERE label='".$db->escape($searchlabel)."'";
+		$sql .= " WHERE label = '".$db->escape($searchlabel)."'";
 	}
 
 	$resql = $dbtouse->query($sql);

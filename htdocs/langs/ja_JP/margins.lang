@@ -22,7 +22,7 @@ ProductService=製品やサービス
 AllProducts=すべての製品とサービス
 ChooseProduct/Service=製品またはサービスを選択すること
 ForceBuyingPriceIfNull=定義されていない場合、購入/原価を販売価格に強制する
-ForceBuyingPriceIfNullDetails=購入/原価が定義されておらず、このオプションが「オン」の場合、利益はオンラインでゼロになる(購入/原価=販売価格)。それ以外の場合(「オフ」)、利益は提案されたデフォルトと等しくなる。
+ForceBuyingPriceIfNullDetails=新規行を追加するときに購入/原価が提供されておらず、このオプションが「オン」の場合、新規行のマージンは0になる（購入/原価=販売価格）。このオプションが「オフ」（推奨）の場合、マージンはデフォルトで提案されている値と等しくなる（デフォルト値が見つからない場合は100%%になる可能性がある）。
 MARGIN_METHODE_FOR_DISCOUNT=グローバル割引の利益方式
 UseDiscountAsProduct=製品として
 UseDiscountAsService=サービスとして
