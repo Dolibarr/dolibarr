@@ -314,7 +314,7 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 //var_dump($api->r->apiVersionMap);
 //exit;
 
-// We do not want that restler output data if we use native compression (default behaviour) but we want to have it returned into a string.
+// We do not want that restler outputs data if we use native compression (default behaviour) but we want to have it returned into a string.
 Luracast\Restler\Defaults::$returnResponse = (empty($conf->global->API_DISABLE_COMPRESSION) && !empty($_SERVER['HTTP_ACCEPT_ENCODING']));
 
 // Call API (we suppose we found it).
