@@ -2397,9 +2397,9 @@ class Commande extends CommonOrder
 	}
 
 	/**
-	 * 	Applique une remise relative
+	 * 	Set a percentage discount
 	 *
-	 * 	@param     	User		$user		User qui positionne la remise
+	 * 	@param     	User		$user		User setting the discount
 	 * 	@param     	float		$remise		Discount (percent)
 	 * 	@param     	int			$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return		int 					<0 if KO, >0 if OK
@@ -2458,7 +2458,7 @@ class Commande extends CommonOrder
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * 		Applique une remise absolue
+	 * 		Set a fixed amount discount
 	 *
 	 * 		@param     	User		$user 		User qui positionne la remise
 	 * 		@param     	float		$remise		Discount
@@ -3156,7 +3156,9 @@ class Commande extends CommonOrder
 					$langs->load("errors");
 					$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnOrder', $product->ref);
 					$this->errors[] = $this->error;
+
 					dol_syslog(get_class($this)."::addline error=Product ".$product->ref.": ".$this->error, LOG_ERR);
+
 					$this->db->rollback();
 					return self::STOCK_NOT_ENOUGH_FOR_ORDER;
 				}

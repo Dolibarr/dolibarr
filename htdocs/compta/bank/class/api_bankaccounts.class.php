@@ -481,7 +481,7 @@ class BankAccounts extends DolibarrApi
 	 * @param string $accountancycode  Accountancy code {@from body}
 	 * @param int    $datev            Payment date value (timestamp) {@from body} {@type timestamp}
 	 * @param string $num_releve       Bank statement numero {@from body}
-	 * @return int  ID of line
+	 * @return int  				   ID of line
 	 *
 	 * @url POST {id}/lines
 	 */
@@ -496,6 +496,14 @@ class BankAccounts extends DolibarrApi
 		if (!$result) {
 			throw new RestException(404, 'account not found');
 		}
+
+		$type = checkVal($type);
+		$label = checkVal($label);
+		$cheque_number = checkVal($cheque_number);
+		$cheque_writer = checkVal($cheque_writer);
+		$cheque_bank = checkVal($cheque_bank);
+		$accountancycode = checkVal($accountancycode);
+		$num_releve = checkVal($num_releve);
 
 		$result = $account->addline(
 			$date,
@@ -547,6 +555,10 @@ class BankAccounts extends DolibarrApi
 		if (!$result) {
 			throw new RestException(404, 'account line not found');
 		}
+
+		$url = checkVal($url);
+		$label = checkVal($label);
+		$type = checkVal($type);
 
 		$result = $account->add_url_line($line_id, $url_id, $url, $label, $type);
 		if ($result < 0) {

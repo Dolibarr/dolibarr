@@ -247,7 +247,12 @@ class ExpenseReports extends DolibarrApi
 		  if( ! DolibarrApi::_checkAccessToResource('expensereport',$this->expensereport->id)) {
 			  throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 	  }
-			$request_data = (object) $request_data;
+
+	  $request_data = (object) $request_data;
+
+      $request_data->desc = checkVal($request_data->desc, 'restricthtml');
+	  $request_data->label = checkVal($request_data->label);
+
 	  $updateRes = $this->expensereport->addline(
 						$request_data->desc,
 						$request_data->subprice,
@@ -310,7 +315,12 @@ class ExpenseReports extends DolibarrApi
 		if( ! DolibarrApi::_checkAccessToResource('expensereport',$this->expensereport->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
+
 		$request_data = (object) $request_data;
+
+		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
+		$request_data->label = checkVal($request_data->label);
+
 		$updateRes = $this->expensereport->updateline(
 						$lineid,
 						$request_data->desc,
