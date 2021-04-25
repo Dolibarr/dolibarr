@@ -1151,7 +1151,7 @@ if ($id) {
 		$sql .= " WHERE 1 = 1";
 	}
 	if ($search_country_id > 0) {
-		$sql .= " AND c.rowid = ".$search_country_id;
+		$sql .= " AND c.rowid = ".((int) $search_country_id);
 	}
 	if ($search_code != '' && $id == 9) {
 		$sql .= natural_search("code_iso", $search_code);

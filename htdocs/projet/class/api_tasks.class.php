@@ -330,7 +330,11 @@ class Tasks extends DolibarrApi
 		if( ! DolibarrApi::_checkAccessToResource('project',$this->project->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
+
 		$request_data = (object) $request_data;
+
+		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
+
 		$updateRes = $this->project->addline(
 						$request_data->desc,
 						$request_data->subprice,
@@ -393,7 +397,11 @@ class Tasks extends DolibarrApi
 		if( ! DolibarrApi::_checkAccessToResource('project',$this->project->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
+
 		$request_data = (object) $request_data;
+
+		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
+
 		$updateRes = $this->project->updateline(
 						$lineid,
 						$request_data->desc,

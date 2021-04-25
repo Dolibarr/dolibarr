@@ -686,11 +686,11 @@ function GETPOSTINT($paramname, $method = 0, $filter = null, $options = null, $n
 /**
  *  Return a value after checking on a rule.
  *
- *  @param  string  $out	     Value to get/check
- *  @param  string  $check	     Type of check
+ *  @param  string  $out	     Value to check/clear.
+ *  @param  string  $check	     Type of check/sanitizing
  *  @param  int     $filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
  *  @param  mixed   $options     Options to pass to filter_var when $check is set to 'custom'
- *  @return string|array         Value found (string or array), or '' if check fails
+ *  @return string|array         Value sanitized (string or array). It may be '' if format check fails.
  */
 function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = null)
 {

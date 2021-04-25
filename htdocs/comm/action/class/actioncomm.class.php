@@ -2436,7 +2436,7 @@ class ActionComm extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm ";
 		$sql .= " SET percent = ".(int) $percent;
-		$sql .= " WHERE id=".$id;
+		$sql .= " WHERE id = ".((int) $id);
 
 		if ($this->db->query($sql)) {
 			$this->db->commit();

@@ -441,7 +441,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$sql .= " WHERE m.fk_product = p.rowid";
 	$sql .= " AND m.origintype = 'mo' AND m.fk_origin = ".(int) $object->id;
 	if ($msid > 0) {
-		$sql .= " AND m.rowid = ".$msid;
+		$sql .= " AND m.rowid = ".((int) $msid);
 	}
 	$sql .= " AND m.fk_entrepot = e.rowid";
 	$sql .= " AND e.entity IN (".getEntity('stock').")";

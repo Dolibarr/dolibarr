@@ -120,7 +120,7 @@ if ($action == 'confirm_reopen' && $confirm == 'yes' && $permissiontoadd) {
 
 if ($action == 'update') {
 	if (!empty($cancel)) {
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+		header("Location: ".$_SERVER['PHP_SELF']."?id=".urlencode($id));
 		exit;
 	}
 

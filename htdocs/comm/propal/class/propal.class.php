@@ -1477,7 +1477,7 @@ class Propal extends CommonObject
 			$sql .= " WHERE p.entity IN (".getEntity('propal').")"; // Dont't use entity if you use rowid
 			$sql .= " AND p.ref='".$this->db->escape($ref)."'";
 		} else {
-			$sql .= " WHERE p.rowid=".$rowid;
+			$sql .= " WHERE p.rowid = ".((int) $rowid);
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
