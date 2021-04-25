@@ -291,7 +291,7 @@ if ($result) {
 
 		// Confirmations
 		if ($action == 'delete_categ') {
-			print $form->formconfirm($_SERVER['PHP_SELF']."?rowid=".$rowid."&cat1=".GETPOST("fk_categ")."&orig_account=".$orig_account, $langs->trans("RemoveFromRubrique"), $langs->trans("RemoveFromRubriqueConfirm"), "confirm_delete_categ", '', 'yes', 1);
+			print $form->formconfirm($_SERVER['PHP_SELF']."?rowid=".urlencode($rowid)."&cat1=".urlencode(GETPOST("fk_categ", 'int'))."&orig_account=".urlencode($orig_account), $langs->trans("RemoveFromRubrique"), $langs->trans("RemoveFromRubriqueConfirm"), "confirm_delete_categ", '', 'yes', 1);
 		}
 
 		print '<form name="update" method="POST" action="'.$_SERVER['PHP_SELF'].'?rowid='.$rowid.'">';

@@ -765,7 +765,7 @@ class FactureRec extends CommonInvoice
 	{
 		$rowid = $this->id;
 
-		dol_syslog(get_class($this)."::delete rowid=".$rowid, LOG_DEBUG);
+		dol_syslog(get_class($this)."::delete rowid=".((int) $rowid), LOG_DEBUG);
 
 		$error = 0;
 		$this->db->begin();

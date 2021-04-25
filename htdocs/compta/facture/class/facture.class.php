@@ -3657,7 +3657,7 @@ class Facture extends CommonInvoice
 	{
 		global $user;
 
-		dol_syslog(get_class($this)."::deleteline rowid=".$rowid, LOG_DEBUG);
+		dol_syslog(get_class($this)."::deleteline rowid=".((int) $rowid), LOG_DEBUG);
 
 		if ($this->statut != self::STATUS_DRAFT) {
 			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';

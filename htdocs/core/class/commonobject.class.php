@@ -8893,7 +8893,7 @@ abstract class CommonObject
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element_line;
-		$sql .= " WHERE rowid=".$idline;
+		$sql .= " WHERE rowid = ".((int) $idline);
 
 		dol_syslog(get_class($this)."::deleteLineCommon", LOG_DEBUG);
 		$resql = $this->db->query($sql);

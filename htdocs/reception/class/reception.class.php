@@ -1317,7 +1317,7 @@ class Reception extends CommonObject
 		$sql = "SELECT em.rowid, em.code, em.libelle, em.description, em.tracking, em.active";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as em";
 		if ($id != '') {
-			$sql .= " WHERE em.rowid=".$id;
+			$sql .= " WHERE em.rowid = ".((int) $id);
 		}
 
 		$resql = $this->db->query($sql);

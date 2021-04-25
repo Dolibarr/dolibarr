@@ -4206,11 +4206,15 @@ class OrderLine extends CommonOrderLine
 
 		$error = 0;
 
+		if (empty($this->id) && !empty($this->rowid)) {		// For backward compatibility
+			$this->id = $this->rowid;
+		}
+
 		// check if order line is not in a shipment line before deleting
 		$sqlCheckShipmentLine  = "SELECT";
 		$sqlCheckShipmentLine .= " ed.rowid";
 		$sqlCheckShipmentLine .= " FROM ".MAIN_DB_PREFIX."expeditiondet ed";
-		$sqlCheckShipmentLine .= " WHERE ed.fk_origin_line = ".$this->rowid;
+		$sqlCheckShipmentLine .= " WHERE ed.fk_origin_line = ".((int) $this->id);
 
 		$resqlCheckShipmentLine = $this->db->query($sqlCheckShipmentLine);
 		if (!$resqlCheckShipmentLine) {
@@ -4235,7 +4239,7 @@ class OrderLine extends CommonOrderLine
 
 		$this->db->begin();
 
-		$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commandedet WHERE rowid=".$this->rowid;
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commandedet WHERE rowid = ".((int) $this->id);
 
 		dol_syslog("OrderLine::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
