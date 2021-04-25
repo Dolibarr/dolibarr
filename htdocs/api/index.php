@@ -296,6 +296,29 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 
 	$classname = ucwords($moduleobject);
 
+	// Test rules on endpoints. For example:
+	// $conf->global->API_ENDPOINT_RULES = 'endpoint1:1,endpoint2:1,...'
+	if (!empty($conf->global->API_ENDPOINT_RULES)) {
+		$listofendpoints = explode(',', $conf->global->API_ENDPOINT_RULES);
+		$endpointisallowed = false;
+
+		foreach($listofendpoints as $endpointrule) {
+			$tmparray = explode(':', $endpointrule);
+			if ($classfile == $tmparray[0] && $tmparray[1] == 1) {
+				$endpointisallowed = true;
+				break;
+			}
+		}
+
+		if (! $endpointisallowed) {
+			dol_syslog('The API with endpoint /'.$classfile.' is forbidden by config API_ENDPOINT_RULES', LOG_WARNING);
+			print 'The API with endpoint /'.$classfile.' is forbidden by config API_ENDPOINT_RULES';
+			header('HTTP/1.1 501 API is forbidden by API_ENDPOINT_RULES');
+			//session_destroy();
+			exit(0);
+		}
+	}
+
 	dol_syslog('Search api file /'.$moduledirforclass.'/class/api_'.$classfile.'.class.php => dir_part_file='.$dir_part_file.' classname='.$classname);
 
 	$res = false;
