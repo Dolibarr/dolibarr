@@ -290,3 +290,11 @@ PopuCom=Products/Services by popularity in Orders
 ProductStatistics=Products/Services Statistics
 NbOfQtyInOrders=Qty in orders
 SelectTheTypeOfObjectToAnalyze=Select the type of object to analyze...
+
+##### Doctemplate Options #####
+doctemplateoption=Doctemplate Options
+AddPDFPictureInline=Add picture in line
+AddPDFPictureInlineDescription=Add picture in line description
+AddPDFElectronicSigning=Add electronic sign
+AddPDFElectronicSigningDescription= Add an electronic signature box
+

@@ -147,7 +147,12 @@ function propal_admin_prepare_head()
 	$head[$h][1] = $langs->trans("ExtraFieldsLines");
 	$head[$h][2] = 'attributeslines';
 	$h++;
-
+	
+	$head[$h][0] = DOL_URL_ROOT.'/comm/admin/propal_doctemplate.php';
+	$head[$h][1] = $langs->trans("doctemplateoption");
+	$head[$h][2] = 'doctemplateoption';
+	$h++;
+	
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'propal_admin', 'remove');
 
 	return $head;
