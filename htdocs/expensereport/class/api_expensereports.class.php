@@ -250,7 +250,7 @@ class ExpenseReports extends DolibarrApi
 
 	  $request_data = (object) $request_data;
 
-      $request_data->desc = checkVal($request_data->desc, 'restricthtml');
+	  $request_data->desc = checkVal($request_data->desc, 'restricthtml');
 	  $request_data->label = checkVal($request_data->label);
 
 	  $updateRes = $this->expensereport->addline(
