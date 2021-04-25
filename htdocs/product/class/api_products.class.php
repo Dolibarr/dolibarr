@@ -166,9 +166,10 @@ class Products extends DolibarrApi
 	 * @param  int    $category   Use this param to filter list by category
 	 * @param  string $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.tobuy:=:0) and (t.tosell:=:1)"
 	 * @param  bool   $ids_only   Return only IDs of product instead of all properties (faster, above all if list is long)
+	 * @param  bool   $without_variants   Return only products, not variants
 	 * @return array                Array of product objects
 	 */
-	public function index($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '', $ids_only = false)
+	public function index($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '', $ids_only = false, $without_variants = false)
 	{
 		global $db, $conf;
 
@@ -186,6 +187,11 @@ class Products extends DolibarrApi
 			$sql .= ", ".MAIN_DB_PREFIX."categorie_product as c";
 		}
 		$sql .= ' WHERE t.entity IN ('.getEntity('product').')';
+
+      	if($without_variants){
+			$sql .= ' AND t.rowid in (select distinct fk_product_parent from '.MAIN_DB_PREFIX.'product_attribute_combination)';
+		}
+
 		// Select products of given category
 		if ($category > 0) {
 			$sql .= " AND c.fk_categorie = ".$this->db->escape($category);
