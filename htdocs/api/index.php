@@ -218,6 +218,11 @@ if (!empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $
 									continue;
 								}
 
+								//$conf->global->MAIN_MODULE_API_LOGIN_DISABLED = 1;
+								if ($file_searched == 'api_login.class.php' && !empty($conf->global->MAIN_MODULE_API_LOGIN_DISABLED)) {
+									continue;
+								}
+
 								$regapi = array();
 								if (is_readable($dir_part.$file_searched) && preg_match("/^api_(.*)\.class\.php$/i", $file_searched, $regapi)) {
 									$classname = ucwords($regapi[1]);
