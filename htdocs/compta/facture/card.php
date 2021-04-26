@@ -196,7 +196,8 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = '';
 		}
-	} // Change status of invoice
+	}
+	// Change status of invoice
 	elseif ($action == 'reopen' && $usercanreopen) {
 		$result = $object->fetch($id);
 
