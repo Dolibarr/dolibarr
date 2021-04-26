@@ -2185,7 +2185,7 @@ class Product extends CommonObject
 		$separatedEntityPMP = false;
 		if (!empty($conf->global->MULTICOMPANY_PRODUCT_SHARING_ENABLED) && !empty($conf->global->MULTICOMPANY_PMP_PER_ENTITY_ENABLED)) {
 			$checkPMPPerEntity = $this->db->query("SELECT pmp FROM " . MAIN_DB_PREFIX . "entity_product_pmp WHERE fk_product  = ".((int) $id)." AND entity = ".(int) $conf->entity);
-			if( $this->db->num_rows($checkPMPPerEntity)>0 ){
+			if ($this->db->num_rows($checkPMPPerEntity)>0) {
 				$separatedEntityPMP = true;
 			}
 		}
@@ -2196,18 +2196,18 @@ class Product extends CommonObject
 			$separatedStock = true;
 			$visibleWarehousesEntities = $conf->entity;
 			if (isset($mc->sharings['stock']) && !empty($mc->sharings['stock'])) {
-				$visibleWarehousesEntities .= "," . implode( ",", $mc->sharings['stock'] );
+				$visibleWarehousesEntities .= "," . implode(",", $mc->sharings['stock']);
 			}
 		}
 		if ($separatedStock) {
 			$sql .= " SUM(sp.reel) as stock,";
-		}
+		} 
 		else {
 			$sql .= " p.stock,";
 		}
 		if ($separatedEntityPMP) {
 			$sql .= " ppe.pmp, p.datec, p.tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.batch_mask, p.fk_unit,";
-		}
+		} 
 		else {
 			$sql .= " p.pmp, p.datec, p.tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.batch_mask, p.fk_unit,";
 		}
@@ -2235,7 +2235,7 @@ class Product extends CommonObject
 			}
 		}
 		if ($separatedEntityPMP) {
-		$sql .= " AND ppe.entity = " . (int) $conf->entity;
+			$sql .= " AND ppe.entity = " . (int) $conf->entity;
 		}
 		if ($separatedStock) {
 			$sql .= " AND sp.fk_entrepot IN (

@@ -627,9 +627,7 @@ class Entrepot extends CommonObject
 			$sql = "SELECT sum(ps.reel) as nb, sum(ps.reel * p.pmp) as value";
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
-		
 		$sql .= ", ".MAIN_DB_PREFIX."product as p";
-		
 		if ($separatedPMP) {
 			$sql .= ", ".MAIN_DB_PREFIX."entity_product_pmp as ppe";
 		} 

@@ -609,7 +609,6 @@ if ($action == 'create') {
 			else {
 				$sql .= " p.pmp as ppmp,";
 			}
-
 			$sql .= " ps.reel as value";
 			if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 				$sql .= ",fk_unit";
