@@ -84,6 +84,10 @@ $action = GETPOST('action', 'aZ09');
 
 $email = GETPOST("email");
 $societe = GETPOST("societe");
+$label = GETPOST("label");
+$note = GETPOST("note");
+$datestart = GETPOST("datestart");
+$dateend = GETPOST("dateend");
 
 // Getting id from Post and decoding it
 $encodedid = GETPOST('id');
@@ -209,6 +213,26 @@ if (empty($reshook) && $action == 'add') {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Email"))."<br>\n";
 	}
+	if (!GETPOST("label")) {
+		$error++;
+		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label"))."<br>\n";
+	}
+	if (!GETPOST("note")) {
+		$error++;
+		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Note"))."<br>\n";
+	}
+	if (!GETPOST("datestart")) {
+		$error++;
+		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateStart"))."<br>\n";
+	}
+	if (!GETPOST("dateend")) {
+		$error++;
+		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateEnd"))."<br>\n";
+	}
+	if (!GETPOST("email")) {
+		$error++;
+		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Email"))."<br>\n";
+	}
 	if (!GETPOST("lastname")) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Name"))."<br>\n";
@@ -295,9 +319,9 @@ if (empty($reshook) && $action == 'add') {
 				}
 			}
 		}
-		// Only if we created the contact
-		if (!$error && $resultcontact<=0) {
-			// Adding supplier tag
+
+		if (!$error) {
+			// Adding supplier tag and tag from setup to thirdparty
 			$category = new Categorie($db);
 			if (GETPOST("suggestconference")) {
 				// Conference case
@@ -311,18 +335,58 @@ if (empty($reshook) && $action == 'add') {
 				$error++;
 				$errmsg .= $category->error;
 			} else {
-				$resultsetcategory = $contact->setCategoriesCommon(array($category->id), CATEGORIE::TYPE_CONTACT, false);
+				$resultsetcategory = $thirdparty->setCategoriesCommon(array($category->id), CATEGORIE::TYPE_CUSTOMER, false);
 				if ($resultsetcategory <=0) {
 					$error++;
-					$errmsg .= $contact->error;
+					$errmsg .= $thirdparty->error;
 				}
+				$thirdparty->fournisseur = 1;
+				// Load object modCodeFournisseur
+				$module = (!empty($conf->global->SOCIETE_CODECLIENT_ADDON) ? $conf->global->SOCIETE_CODECLIENT_ADDON : 'mod_codeclient_leopard');
+				if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php') {
+					$module = substr($module, 0, dol_strlen($module) - 4);
+				}
+				$dirsociete = array_merge(array('/core/modules/societe/'), $conf->modules_parts['societe']);
+				foreach ($dirsociete as $dirroot) {
+					$res = dol_include_once($dirroot.$module.'.php');
+					if ($res) {
+						break;
+					}
+				}
+				$modCodeFournisseur = new $module;
+				if (empty($tmpcode) && !empty($modCodeFournisseur->code_auto)) {
+					$tmpcode = $modCodeFournisseur->getNextValue($thirdparty, 0);
+				}
+				$thirdparty->code_fournisseur = $tmpcode;
+
+				$res = $thirdparty->update(0);
 			}
 		}
 
 		if (!$error) {
+			/*
 			// We have the contact and the thirdparty
-
-
+			$conforbooth = new ConferenceOrBooth($db);
+			$conforbooth->label = $label;
+			$conforbooth->fk_soc = $thirdparty->id;
+			$conforbooth->fk_project = $project->id;
+			$conforbooth->note = $note;
+			//$conforbooth->fk_action =
+			$conforbooth->datep =$datestart;
+			$conforbooth->datep2 = $dateend;
+			$conforbooth->datec = dol_now();
+			$conforbooth->tms = dol_now();
+			//$conforbooth->fk_user_author =
+			//$conforbooth->fk_user_mod =
+			$conforbooth->status = CONFERENCEORBOOTH::STATUS_SUGGESTED;
+			$resultconforbooth = $conforbooth->create($user);
+			if ($resultconforbooth<=0) {
+				$error++;
+				$errmsg .= $conforbooth->error;
+			} else {
+				//conforbooth created
+				var_dump('gg');
+			}*/
 
 			$db->commit();
 		}
@@ -392,6 +456,18 @@ print '<td colspan="3"><input name="lastname" id="lastname" type="text" class="m
 print '</tr>';
 // Email
 print '<tr><td>'.$langs->trans("Email").'<FONT COLOR="red">*</FONT></td><td><input type="text" name="email" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
+// Label
+print '<tr><td>'.$langs->trans("Label").'</td>'."\n";
+print '</td><td><input type="text" name="label" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('label')).'"></td></tr>'."\n";
+// Note
+print '<tr><td>'.$langs->trans("Note").'</td>'."\n";
+print '<td><input type="text" name="note" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('note')).'"></td></tr>'."\n";
+// Start Date
+print '<tr><td>'.$langs->trans("DateStart").'</td>'."\n";
+print '<td><input type="date" name="datestart" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('note')).'"></td></tr>'."\n";
+// End Date
+print '<tr><td>'.$langs->trans("DateEnd").'</td>'."\n";
+print '<td><input type="date" name="dateend" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('note')).'"></td></tr>'."\n";
 // Company
 print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company");
 if (!empty(floatval($project->price_registration))) {
