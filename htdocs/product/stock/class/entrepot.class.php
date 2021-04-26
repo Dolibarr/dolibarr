@@ -629,11 +629,11 @@ class Entrepot extends CommonObject
 		$sql .= ", ".MAIN_DB_PREFIX."product as p";
 		if ($separatedPMP) {
 			$sql .= ", ".MAIN_DB_PREFIX."entity_product_pmp as ppe";
-		} 
+		}
 		$sql .= " WHERE ps.fk_entrepot = ".$this->id;
 		if ($separatedPMP) {
 			$sql .= " AND ppe.fk_product = p.rowid AND ppe.entity = ". (int) $conf->entity;
-		} 
+		}
 		$sql .= " AND ps.fk_product = p.rowid";
 		//print $sql;
 		$result = $this->db->query($sql);
