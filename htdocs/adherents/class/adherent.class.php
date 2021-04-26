@@ -1597,8 +1597,8 @@ class Adherent extends CommonObject
 				$inserturlid = $acct->add_url_line($insertid, $this->id, DOL_URL_ROOT.'/adherents/card.php?rowid=', $this->getFullname($langs), 'member');
 				if ($inserturlid > 0) {
 					// Update table subscription
-					$sql = "UPDATE ".MAIN_DB_PREFIX."subscription SET fk_bank=".$insertid;
-					$sql .= " WHERE rowid=".$subscriptionid;
+					$sql = "UPDATE ".MAIN_DB_PREFIX."subscription SET fk_bank=".((int) $insertid);
+					$sql .= " WHERE rowid=".((int) $subscriptionid);
 
 					dol_syslog("subscription::subscription", LOG_DEBUG);
 					$resql = $this->db->query($sql);

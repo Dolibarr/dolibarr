@@ -137,7 +137,7 @@ if (empty($reshook)) {
 						header("Location: ".$backtopage);
 						exit;
 					} else {
-						header("Location: card.php?id=".$id);
+						header("Location: card.php?id=".urlencode($id));
 						exit;
 					}
 				} else {

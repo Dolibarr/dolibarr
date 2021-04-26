@@ -229,9 +229,9 @@ class BonPrelevement extends CommonObject
 			$sql .= ", cle_rib";
 			$sql .= ") VALUES (";
 			$sql .= $this->id;
-			$sql .= ", ".$client_id;
+			$sql .= ", ".((int) $client_id);
 			$sql .= ", '".$this->db->escape($client_nom)."'";
-			$sql .= ", '".price2num($amount)."'";
+			$sql .= ", ".((float) price2num($amount));
 			$sql .= ", '".$this->db->escape($code_banque)."'";
 			$sql .= ", '".$this->db->escape($code_guichet)."'";
 			$sql .= ", '".$this->db->escape($number)."'";
@@ -290,7 +290,7 @@ class BonPrelevement extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 		$sql .= " WHERE p.entity IN (".getEntity('invoice').")";
 		if ($rowid > 0) {
-			$sql .= " AND p.rowid = ".$rowid;
+			$sql .= " AND p.rowid = ".((int) $rowid);
 		} else {
 			$sql .= " AND p.ref = '".$this->db->escape($ref)."'";
 		}

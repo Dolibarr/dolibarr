@@ -220,7 +220,7 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	$param = "&id=".$id;
+	$param = "&id=".urlencode($id);
 
 	// Lines of title fields
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';

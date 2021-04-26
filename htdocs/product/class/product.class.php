@@ -1681,11 +1681,11 @@ class Product extends CommonObject
 	{
 		// phpcs:enable
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price_by_qty";
-		$sql .= " WHERE fk_product_price=".$rowid;
+		$sql .= " WHERE fk_product_price=".((int) $rowid);
 		$resql = $this->db->query($sql);
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price";
-		$sql .= " WHERE rowid=".$rowid;
+		$sql .= " WHERE rowid=".((int) $rowid);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			return 1;
@@ -4537,8 +4537,8 @@ class Product extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."product as p,";
 		$sql .= " ".MAIN_DB_PREFIX."product_association as pa";
 		$sql .= " WHERE p.rowid = pa.fk_product_fils";
-		$sql .= " AND pa.fk_product_pere = ".$id;
-		$sql .= " AND pa.fk_product_fils != ".$id; // This should not happens, it is to avoid infinite loop if it happens
+		$sql .= " AND pa.fk_product_pere = ".((int) $id);
+		$sql .= " AND pa.fk_product_fils <> ".((int) $id); // This should not happens, it is to avoid infinite loop if it happens
 
 		dol_syslog(get_class($this).'::getChildsArbo id='.$id.' level='.$level, LOG_DEBUG);
 

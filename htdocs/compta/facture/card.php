@@ -238,13 +238,13 @@ if (empty($reshook)) {
 		$object->fetch($id);
 		$object->fetch_thirdparty();
 
-		$result = $object->deleteline(GETPOST('lineid'));
+		$result = $object->deleteline(GETPOST('lineid', 'int'));
 		if ($result > 0) {
 			// Define output language
 			$outputlangs = $langs;
 			$newlang = '';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && !empty($_REQUEST['lang_id'])) {
-				$newlang = $_REQUEST['lang_id'];
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) {
+				$newlang = GETPOST('lang_id');
 			}
 			if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
 				$newlang = $object->thirdparty->default_lang;
@@ -2416,7 +2416,7 @@ if (empty($reshook)) {
 		if (!$error) {
 			if (empty($usercancreatemargin)) {
 				foreach ($object->lines as &$line) {
-					if ($line->id == GETPOST('lineid')) {
+					if ($line->id == GETPOST('lineid', 'int')) {
 						$fournprice = $line->fk_fournprice;
 						$buyingprice = $line->pa_ht;
 						break;
@@ -5168,7 +5168,7 @@ if ($action == 'create') {
 		}
 	}
 
-	print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#addline' : '#line_'.GETPOST('lineid')).'" method="POST">
+	print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#addline' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">
 	<input type="hidden" name="token" value="' . newToken().'">
 	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
 	<input type="hidden" name="mode" value="">

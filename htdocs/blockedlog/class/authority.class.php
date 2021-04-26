@@ -148,7 +148,7 @@ class BlockedLogAuthority
 
 		global $langs;
 
-		dol_syslog(get_class($this)."::fetch id=".$id, LOG_DEBUG);
+		dol_syslog(get_class($this)."::fetch id=".((int) $id), LOG_DEBUG);
 
 		if (empty($id) && empty($signature)) {
 			$this->error = 'BadParameter';

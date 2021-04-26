@@ -104,8 +104,6 @@ if ($action == 'add') {
 	}
 	if ($result > 0) {
 		setEventMessages($langs->trans("XTargetsAdded", $result), null, 'mesgs');
-		//header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
-		//exit;
 		$action = '';
 	}
 	if ($result == 0) {
@@ -167,7 +165,7 @@ if (GETPOST('exportcsv', 'int')) {
 
 if ($action == 'delete') {
 	// Ici, rowid indique le destinataire et id le mailing
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE rowid=".$rowid;
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE rowid = ".((int) $rowid);
 	$resql = $db->query($sql);
 	if ($resql) {
 		if (!empty($id)) {

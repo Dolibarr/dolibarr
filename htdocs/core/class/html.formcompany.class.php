@@ -312,9 +312,9 @@ class FormCompany extends Form
 						$out .= '<option value="0">&nbsp;</option>';
 					} else {
 						if (!$country || $country != $obj->country) {
-							// Affiche la rupture si on est en mode liste multipays
+							// Show break if we are in list with multiple countries
 							if (!$country_codeid && $obj->country_code) {
-								$out .= '<option value="-1" disabled>----- '.$obj->country." -----</option>\n";
+								$out .= '<option value="-1" disabled data-html="----- '.$obj->country.' -----">----- '.$obj->country." -----</option>\n";
 								$country = $obj->country;
 							}
 						}

@@ -315,7 +315,8 @@ function getCustomerInvoicePieChart($socid = 0)
 		$dolgraph->setShowLegend(2);
 		$dolgraph->setShowPercent(1);
 		$dolgraph->SetType(['pie']);
-		$dolgraph->setHeight('200');
+		$dolgraph->setHeight('150');
+		$dolgraph->setWidth('300');
 		$dolgraph->draw('idgraphcustomerinvoices');
 
 		$result .= '<tr>';
@@ -435,7 +436,8 @@ function getPurchaseInvoicePieChart($socid = 0)
 		$dolgraph->setShowLegend(2);
 		$dolgraph->setShowPercent(1);
 		$dolgraph->SetType(['pie']);
-		$dolgraph->setHeight('200');
+		$dolgraph->setHeight('150');
+		$dolgraph->setWidth('300');
 		$dolgraph->draw('idgraphpurchaseinvoices');
 
 		$result .= '<tr>';
@@ -465,6 +467,8 @@ function getCustomerInvoiceDraftTable($maxCount = 500, $socid = 0)
 {
 	global $conf, $db, $langs, $user, $hookmanager;
 
+	$maxofloop = (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD);
+
 	$result = '';
 	$tmpinvoice = new Facture($db);
 
@@ -488,7 +492,7 @@ function getCustomerInvoiceDraftTable($maxCount = 500, $socid = 0)
 	}
 
 	if ($socid) {
-		$sql .= " AND f.fk_soc = $socid";
+		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
 	// Add where from hooks
 	$parameters = array();
@@ -511,6 +515,7 @@ function getCustomerInvoiceDraftTable($maxCount = 500, $socid = 0)
 
 	if ($resql) {
 		$num = $db->num_rows($resql);
+		$nbofloop = min($num, $maxofloop);
 
 		$result .= '<div class="div-table-responsive-no-min">';
 		$result .= '<table class="noborder centpercent">';
@@ -530,7 +535,7 @@ function getCustomerInvoiceDraftTable($maxCount = 500, $socid = 0)
 			$i = 0;
 			$othernb = 0;
 			$tot_ttc = 0;
-			while ($i < $num) {
+			while ($i < $nbofloop) {
 				$obj = $db->fetch_object($resql);
 
 				if ($i >= $maxCount) {
@@ -577,7 +582,7 @@ function getCustomerInvoiceDraftTable($maxCount = 500, $socid = 0)
 			if ($othernb) {
 				$result .= '<tr class="oddeven">';
 				$result .= '<td class="nowrap" colspan="3">';
-				$result .= '<span class="opacitymedium">'.$langs->trans("More").'... ('.$othernb.')</span>';
+				$result .= '<span class="opacitymedium">'.$langs->trans("More").'...'.($othernb < $maxofloop ? ' ('.$othernb.')' : '').'</span>';
 				$result .= '</td>';
 				$result .= "</tr>\n";
 			}
@@ -608,6 +613,8 @@ function getDraftSupplierTable($maxCount = 500, $socid = 0)
 {
 	global $conf, $db, $langs, $user, $hookmanager;
 
+	$maxofloop = (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD);
+
 	$result = '';
 	$facturesupplierstatic = new FactureFournisseur($db);
 
@@ -637,6 +644,7 @@ function getDraftSupplierTable($maxCount = 500, $socid = 0)
 
 	if ($resql) {
 		$num = $db->num_rows($resql);
+		$nbofloop = min($num, $maxofloop);
 
 		$result .= '<div class="div-table-responsive-no-min">';
 		$result .= '<table class="noborder centpercent">';
@@ -656,7 +664,7 @@ function getDraftSupplierTable($maxCount = 500, $socid = 0)
 			$i = 0;
 			$othernb = 0;
 			$tot_ttc = 0;
-			while ($i < $num) {
+			while ($i < $nbofloop) {
 				$obj = $db->fetch_object($resql);
 
 				if ($i >= $maxCount) {
@@ -702,7 +710,7 @@ function getDraftSupplierTable($maxCount = 500, $socid = 0)
 			if ($othernb) {
 				$result .= '<tr class="oddeven">';
 				$result .= '<td class="nowrap" colspan="3">';
-				$result .= '<span class="opacitymedium">'.$langs->trans("More").'... ('.$othernb.')</span>';
+				$result .= '<span class="opacitymedium">'.$langs->trans("More").'...'.($othernb < $maxofloop ? ' ('.$othernb.')' : '').'</span>';
 				$result .= '</td>';
 				$result .= "</tr>\n";
 			}
