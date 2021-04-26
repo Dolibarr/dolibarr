@@ -26,7 +26,9 @@
  * \brief 	Script to send a prepared and validated emaling from command line
  */
 
-if (!defined('NOSESSION')) define('NOSESSION', '1');
+if (!defined('NOSESSION')) {
+	define('NOSESSION', '1');
+}
 
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
@@ -45,12 +47,17 @@ if (!isset($argv[1]) || !$argv[1]) {
 
 $id = $argv[1];
 
-if (isset($argv[2]) || !empty($argv[2])) $login = $argv[2];
-else $login = '';
+if (isset($argv[2]) || !empty($argv[2])) {
+	$login = $argv[2];
+} else {
+	$login = '';
+}
 
 $max = 0;
 
-if (isset($argv[3]) || !empty($argv[3])) $max = $argv[3];
+if (isset($argv[3]) || !empty($argv[3])) {
+	$max = $argv[3];
+}
 
 
 require_once $path."../../htdocs/master.inc.php";
@@ -61,8 +68,7 @@ require_once DOL_DOCUMENT_ROOT."/comm/mailing/class/mailing.class.php";
 $version = DOL_VERSION;
 $error = 0;
 
-if (empty($conf->global->MAILING_LIMIT_SENDBYCLI))
-{
+if (empty($conf->global->MAILING_LIMIT_SENDBYCLI)) {
 	$conf->global->MAILING_LIMIT_SENDBYCLI = 0;
 }
 
@@ -78,12 +84,14 @@ if (!empty($conf->global->MAILING_DELAY)) {
 	print 'A delay of '.((float) $conf->global->MAILING_DELAY * 1000000).' millisecond has been set between each email'."\n";
 }
 
-if ($conf->global->MAILING_LIMIT_SENDBYCLI == '-1') {}
+if ($conf->global->MAILING_LIMIT_SENDBYCLI == '-1') {
+}
 
 $user = new User($db);
 // for signature, we use user send as parameter
-if (!empty($login))
+if (!empty($login)) {
 	$user->fetch('', $login);
+}
 
 // We get list of emailing id to process
 $sql = "SELECT m.rowid";
@@ -119,8 +127,9 @@ if ($resql) {
 			$errorsto = $emailing->email_errorsto;
 			// Le message est-il en html
 			$msgishtml = - 1; // Unknown by default
-			if (preg_match('/[\s\t]*<html>/i', $message))
+			if (preg_match('/[\s\t]*<html>/i', $message)) {
 				$msgishtml = 1;
+			}
 
 			$nbok = 0;
 			$nbko = 0;
@@ -202,12 +211,15 @@ if ($resql) {
 						$substitutionarray['__UNSUBSCRIBE__'] = '<a href="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-unsubscribe.php?tag='.$obj->tag.'&unsuscrib=1&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>';
 
 						$onlinepaymentenabled = 0;
-						if (!empty($conf->paypal->enabled))
+						if (!empty($conf->paypal->enabled)) {
 							$onlinepaymentenabled++;
-						if (!empty($conf->paybox->enabled))
+						}
+						if (!empty($conf->paybox->enabled)) {
 							$onlinepaymentenabled++;
-						if (!empty($conf->stripe->enabled))
+						}
+						if (!empty($conf->stripe->enabled)) {
 							$onlinepaymentenabled++;
+						}
 						if ($onlinepaymentenabled && !empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 							$substitutionarray['__SECUREKEYPAYMENT__'] = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
 							if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
@@ -226,21 +238,29 @@ if ($resql) {
 						if (!empty($conf->paypal->enabled) && !empty($conf->global->PAYPAL_SECURITY_TOKEN)) {
 							$substitutionarray['__SECUREKEYPAYPAL__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
 
-							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE))
+							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) {
 								$substitutionarray['__SECUREKEYPAYPAL_MEMBER__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
-							else $substitutionarray['__SECUREKEYPAYPAL_MEMBER__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN.'membersubscription'.$obj->source_id, 2);
+							} else {
+								$substitutionarray['__SECUREKEYPAYPAL_MEMBER__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN.'membersubscription'.$obj->source_id, 2);
+							}
 
-							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE))
+							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) {
 								$substitutionarray['__SECUREKEYPAYPAL_ORDER__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
-							else $substitutionarray['__SECUREKEYPAYPAL_ORDER__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN.'order'.$obj->source_id, 2);
+							} else {
+								$substitutionarray['__SECUREKEYPAYPAL_ORDER__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN.'order'.$obj->source_id, 2);
+							}
 
-							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE))
+							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) {
 								$substitutionarray['__SECUREKEYPAYPAL_INVOICE__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
-							else $substitutionarray['__SECUREKEYPAYPAL_INVOICE__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN.'invoice'.$obj->source_id, 2);
+							} else {
+								$substitutionarray['__SECUREKEYPAYPAL_INVOICE__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN.'invoice'.$obj->source_id, 2);
+							}
 
-							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE))
+							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) {
 								$substitutionarray['__SECUREKEYPAYPAL_CONTRACTLINE__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
-							else $substitutionarray['__SECUREKEYPAYPAL_CONTRACTLINE__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN.'contractline'.$obj->source_id, 2);
+							} else {
+								$substitutionarray['__SECUREKEYPAYPAL_CONTRACTLINE__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN.'contractline'.$obj->source_id, 2);
+							}
 						}
 
 						complete_substitutions_array($substitutionarray, $langs);
@@ -256,10 +276,8 @@ if ($resql) {
 
 						$listofpaths = dol_dir_list($upload_dir, 'all', 0, '', '', 'name', SORT_ASC, 0);
 
-						if (count($listofpaths))
-						{
-							foreach ($listofpaths as $key => $val)
-							{
+						if (count($listofpaths)) {
+							foreach ($listofpaths as $key => $val) {
 								$arr_file[] = $listofpaths[$key]['fullname'];
 								$arr_mime[] = dol_mimetype($listofpaths[$key]['name']);
 								$arr_name[] = $listofpaths[$key]['name'];
@@ -364,8 +382,9 @@ if ($resql) {
 
 				// Loop finished, set global statut of mail
 				$statut = 2;
-				if (!$nbko)
+				if (!$nbko) {
 					$statut = 3;
+				}
 
 				$sqlenddate = "UPDATE ".MAIN_DB_PREFIX."mailing SET statut=".$statut." WHERE rowid=".$id;
 

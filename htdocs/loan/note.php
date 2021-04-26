@@ -44,7 +44,9 @@ $id = GETPOST('id', 'int');
 $result = restrictedArea($user, 'loan', $id, '&loan');
 
 $object = new Loan($db);
-if ($id > 0) $object->fetch($id);
+if ($id > 0) {
+	$object->fetch($id);
+}
 
 $permissionnote = $user->rights->loan->write; // Used by the include of actions_setnotes.inc.php
 
@@ -66,11 +68,10 @@ $title = $langs->trans("Loan").' - '.$langs->trans("Notes");
 $help_url = 'EN:Module_Loan|FR:Module_Emprunt';
 llxHeader("", $title, $help_url);
 
-if ($id > 0)
-{
+if ($id > 0) {
 	/*
-     * Affichage onglets
-     */
+	 * Affichage onglets
+	 */
 	$totalpaid = $object->getSumPayment();
 
 	$head = loan_prepare_head($object);

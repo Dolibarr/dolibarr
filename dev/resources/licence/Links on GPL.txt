@@ -1,5 +1,6 @@
 * Page with license compatibility
-https://www.gnu.org/licenses/quick-guide-gplv3.fr.html
+[EN] https://www.gnu.org/licenses/quick-guide-gplv3.en.html
+[FR] https://www.gnu.org/licenses/quick-guide-gplv3.fr.html
 
 * FAQ on GPL license
 https://www.fsf.org/licensing/licenses/gpl-faq.html

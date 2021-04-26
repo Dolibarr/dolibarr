@@ -25,7 +25,9 @@
  * \brief		Page to detect empty accounting account
  */
 
-if (!defined('NOSESSION')) define('NOSESSION', '1');
+if (!defined('NOSESSION')) {
+	define('NOSESSION', '1');
+}
 
 $path = __DIR__.'/';
 
@@ -36,8 +38,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 $langs->loadLangs(array("companies", "compta", "main", "accountancy"));
 
 // Security check
-if (!$user->admin)
+if (!$user->admin) {
 	accessforbidden();
+}
 
 // Date range
 $year = GETPOST("year");
@@ -54,8 +57,7 @@ $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_starty
 $date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
 
 // Quarter
-if (empty($date_start) || empty($date_end)) // We define date_start and date_end
-{
+if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
 	$q = GETPOST("q") ? GETPOST("q") : 0;
 	if ($q == 0) {
 		// We define date_start and date_end
@@ -67,10 +69,14 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 				$year_end--;
 			}
 			$month_end = $month_start - 1;
-			if ($month_end < 1)
+			if ($month_end < 1) {
 				$month_end = 12;
-			else $year_end++;
-		} else $month_end = $month_start;
+			} else {
+				$year_end++;
+			}
+		} else {
+			$month_end = $month_start;
+		}
 		$date_start = dol_get_first_day($year_start, $month_start, false);
 		$date_end = dol_get_last_day($year_end, $month_end, false);
 	}
@@ -128,11 +134,13 @@ $sql .= ", ".MAIN_DB_PREFIX."facture as f";
 $sql .= ", ".MAIN_DB_PREFIX."c_country as cp";
 $sql .= " WHERE f.fk_soc = s.rowid";
 $sql .= " AND s.fk_pays = cp.rowid";
-if (!empty($date_start) && !empty($date_end))
+if (!empty($date_start) && !empty($date_end)) {
 	$sql .= " AND f.datec >= '".$db->idate($date_start)."' AND f.datec <= '".$db->idate($date_end)."'";
+}
 $sql .= " AND f.entity IN (".getEntity('invoice', 0).")";
-if ($socid)
+if ($socid) {
 	$sql .= " AND f.fk_soc = ".$socid;
+}
 $sql .= " GROUP BY name";
 $sql .= ")";
 $sql .= "UNION (SELECT s.rowid, s.nom as name , s.address, s.zip , s.town, s.code_compta_fournisseur as compta , ";
@@ -142,11 +150,13 @@ $sql .= ", ".MAIN_DB_PREFIX."facture_fourn as ff";
 $sql .= ", ".MAIN_DB_PREFIX."c_country as cp";
 $sql .= " WHERE ff.fk_soc = s.rowid";
 $sql .= " AND s.fk_pays = cp.rowid";
-if (!empty($date_start) && !empty($date_end))
+if (!empty($date_start) && !empty($date_end)) {
 	$sql .= " AND ff.datec >= '".$db->idate($date_start)."' AND ff.datec <= '".$db->idate($date_end)."'";
+}
 $sql .= " AND ff.entity = ".$conf->entity;
-if ($socid)
+if ($socid) {
 	$sql .= " AND f.fk_soc = ".$socid;
+}
 $sql .= " GROUP BY name";
 $sql .= ")";
 
@@ -200,8 +210,7 @@ if ($resql) {
 	print '<td class="left">'.$langs->trans("Phone").'</td>';
 	print '<td class="left">'.$langs->trans("Fax").'</td></tr>';
 
-	while ($obj = $db->fetch_object($resql))
-	{
+	while ($obj = $db->fetch_object($resql)) {
 		print '<tr class="oddeven">';
 		print '<td>';
 		$thirdpartystatic->id = $obj->rowid;

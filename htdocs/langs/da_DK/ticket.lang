@@ -70,6 +70,8 @@ Deleted=Slettet
 # Dict
 Type=Type
 Severity=Alvorlighed
+TicketGroupIsPublic=Gruppen er offentlig
+TicketGroupIsPublicDesc=Hvis en billetgruppe er offentlig, vil den være synlig i formen, når du opretter en billet fra den offentlige grænseflade
 
 # Email templates
 MailToSendTicketMessage=At sende Email fra opgave besked
@@ -114,8 +116,8 @@ TicketsShowModuleLogo=Vis modulets logo i den offentlige grænseflade
 TicketsShowModuleLogoHelp=Aktivér denne mulighed for at skjule logo-modulet på siderne i den offentlige grænseflade
 TicketsShowCompanyLogo=Vis firmaets logo i den offentlige grænseflade
 TicketsShowCompanyLogoHelp=Aktivér denne mulighed for at skjule logoet for hovedvirksomheden på siderne i den offentlige grænseflade
-TicketsEmailAlsoSendToMainAddress=Send også besked til hoved e-mail-adresse
-TicketsEmailAlsoSendToMainAddressHelp=Aktivér denne mulighed for at sende en email til "Meddelelses email fra" adresse (se opsætning nedenfor)
+TicketsEmailAlsoSendToMainAddress=Send også en underretning til den primære e-mail-adresse
+TicketsEmailAlsoSendToMainAddressHelp=Aktivér denne mulighed for også at sende en e-mail til den adresse, der er defineret i opsætningen "%s" (se fanen "%s")
 TicketsLimitViewAssignedOnly=Begræns skærmen til opgaver, der er tildelt den aktuelle bruger (ikke effektiv for eksterne brugere, skal du altid begrænse til den tredjepart, de er afhængige af)
 TicketsLimitViewAssignedOnlyHelp=Kun opgaver tildelt den aktuelle bruger vil være synlige. Gælder ikke for en bruger med billetforvaltningsrettigheder.
 TicketsActivatePublicInterface=Aktivér den offentlige grænseflade
@@ -126,10 +128,10 @@ TicketNumberingModules=Opgave nummerering modul
 TicketsModelModule=Dokumentskabeloner til billetter
 TicketNotifyTiersAtCreation=Underret tredjepart ved oprettelsen
 TicketsDisableCustomerEmail=Deaktiver altid Emails, når en opgave oprettes fra den offentlige grænseflade
-TicketsPublicNotificationNewMessage=Send e-mail (s), når en ny besked tilføjes
+TicketsPublicNotificationNewMessage=Send e-mail (r), når en ny besked / kommentar føjes til en billet
 TicketsPublicNotificationNewMessageHelp=Send e-mail (s), når en ny meddelelse tilføjes fra den offentlige grænseflade (til den tildelte bruger eller meddelelses-e-mailen til (opdatering) og / eller meddelelses-e-mailen til)
 TicketPublicNotificationNewMessageDefaultEmail=Underretnings-e-mail til (opdatering)
-TicketPublicNotificationNewMessageDefaultEmailHelp=Send e-mail-meddelelser om ny meddelelse til denne adresse, hvis billetten ikke har en bruger tildelt, eller brugeren ikke har en e-mail.
+TicketPublicNotificationNewMessageDefaultEmailHelp=Send en e-mail til denne adresse for hver meddelelse om nye meddelelser, hvis billetten ikke har en bruger tildelt den, eller hvis brugeren ikke har nogen kendt e-mail.
 #
 # Index & list page
 #
@@ -302,3 +304,13 @@ BoxLastModifiedTicket=Seneste ændrede opgaver
 BoxLastModifiedTicketDescription=Seneste %s ændrede opgaver
 BoxLastModifiedTicketContent=
 BoxLastModifiedTicketNoRecordedTickets=Ingen nyligt ændrede opgaver
+BoxTicketType=Antal åbne opgaver efter type
+BoxTicketSeverity=Antal åbne opgaver efter sværhedsgrad
+BoxNoTicketSeverity=Ingen opgaver åbnet
+BoxTicketLastXDays=Antal nye opgaver efter dage de sidste %s dage
+BoxTicketLastXDayswidget = Antal nye opgaver efter dage de sidste X dage
+BoxNoTicketLastXDays=Ingen nye opgaver de sidste %s dage
+BoxNumberOfTicketByDay=Antal nye opgaver om dagen
+BoxNewTicketVSClose=Antal af dagens nye opgaver versus dagens lukkede opgaver
+TicketCreatedToday=Opgave oprettet i dag
+TicketClosedToday=Opgave lukket i dag

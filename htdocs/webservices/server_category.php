@@ -21,7 +21,9 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
-if (!defined("NOCSRFCHECK"))    define("NOCSRFCHECK", '1');
+if (!defined("NOCSRFCHECK")) {
+	define("NOCSRFCHECK", '1');
+}
 
 require "../master.inc.php";
 require_once NUSOAP_PATH.'/nusoap.php'; // Include SOAP
@@ -32,8 +34,7 @@ require_once DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php";
 dol_syslog("Call Dolibarr webservices interfaces");
 
 // Enable and test if module web services is enabled
-if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
-{
+if (empty($conf->global->MAIN_MODULE_WEBSERVICES)) {
 	$langs->load("admin");
 	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
 	print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
@@ -109,12 +110,12 @@ $server->wsdl->addComplexType(
   * Image of product
  */
 $server->wsdl->addComplexType(
-		'PhotosArray',
-		'complexType',
-		'array',
-		'sequence',
-		'',
-		array(
+	'PhotosArray',
+	'complexType',
+	'array',
+	'sequence',
+	'',
+	array(
 				'image' => array(
 						'name' => 'image',
 						'type' => 'tns:image',
@@ -128,12 +129,12 @@ $server->wsdl->addComplexType(
   * An image
  */
 $server->wsdl->addComplexType(
-		'image',
-		'complexType',
-		'struct',
-		'all',
-		'',
-		array(
+	'image',
+	'complexType',
+	'struct',
+	'all',
+	'',
+	array(
 				'photo' => array('name'=>'photo', 'type'=>'xsd:string'),
 				'photo_vignette' => array('name'=>'photo_vignette', 'type'=>'xsd:string'),
 				'imgWidth' => array('name'=>'imgWidth', 'type'=>'xsd:string'),
@@ -194,30 +195,28 @@ function getCategory($authentication, $id)
 
 	dol_syslog("Function: getCategory login=".$authentication['login']." id=".$id);
 
-	if ($authentication['entity']) $conf->entity = $authentication['entity'];
+	if ($authentication['entity']) {
+		$conf->entity = $authentication['entity'];
+	}
 
 	$objectresp = array();
 	$errorcode = ''; $errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 
-	if (!$error && !$id)
-	{
+	if (!$error && !$id) {
 		$error++;
 		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id must be provided.";
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$fuser->getrights();
 
 		$nbmax = 10;
-		if ($fuser->rights->categorie->lire)
-		{
+		if ($fuser->rights->categorie->lire) {
 			$categorie = new Categorie($db);
 			$result = $categorie->fetch($id);
-			if ($result > 0)
-			{
+			if ($result > 0) {
 				$dir = (!empty($conf->categorie->dir_output) ? $conf->categorie->dir_output : $conf->service->dir_output);
 				$pdir = get_exdir($categorie->id, 2, 0, 0, $categorie, 'category').$categorie->id."/photos/";
 				$dir = $dir.'/'.$pdir;
@@ -235,10 +234,8 @@ function getCategory($authentication, $id)
 				);
 
 				$cats = $categorie->get_filles();
-				if (count($cats) > 0)
-				{
-				 	foreach ($cats as $fille)
-					{
+				if (count($cats) > 0) {
+					foreach ($cats as $fille) {
 						$dir = (!empty($conf->categorie->dir_output) ? $conf->categorie->dir_output : $conf->service->dir_output);
 						$pdir = get_exdir($fille->id, 2, 0, 0, $categorie, 'category').$fille->id."/photos/";
 						$dir = $dir.'/'.$pdir;
@@ -261,20 +258,17 @@ function getCategory($authentication, $id)
 					'result'=>array('result_code'=>'OK', 'result_label'=>''),
 					'categorie'=> $cat
 				);
-			}
-			else {
+			} else {
 				$error++;
 				$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id;
 			}
-		}
-		else {
+		} else {
 			$error++;
 			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
 		}
 	}
 
-	if ($error)
-	{
+	if ($error) {
 		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 

@@ -60,9 +60,15 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
 
 		$out = '';
 
-		if ($action == 'view') 		$out .= (!empty($conf->global->ADHERENT_ADDRESSES_MANAGEMENT) ? $langs->trans("Adherent") : $langs->trans("ContactAddress"));
-		if ($action == 'edit') 		$out .= (!empty($conf->global->ADHERENT_ADDRESSES_MANAGEMENT) ? $langs->trans("EditAdherent") : $langs->trans("EditAdherentAddress"));
-		if ($action == 'create')	$out .= (!empty($conf->global->ADHERENT_ADDRESSES_MANAGEMENT) ? $langs->trans("NewAdherent") : $langs->trans("NewAdherentAddress"));
+		if ($action == 'view') {
+			$out .= (!empty($conf->global->ADHERENT_ADDRESSES_MANAGEMENT) ? $langs->trans("Adherent") : $langs->trans("ContactAddress"));
+		}
+		if ($action == 'edit') {
+			$out .= (!empty($conf->global->ADHERENT_ADDRESSES_MANAGEMENT) ? $langs->trans("EditAdherent") : $langs->trans("EditAdherentAddress"));
+		}
+		if ($action == 'create') {
+			$out .= (!empty($conf->global->ADHERENT_ADDRESSES_MANAGEMENT) ? $langs->trans("NewAdherent") : $langs->trans("NewAdherentAddress"));
+		}
 
 		return $out;
 	}

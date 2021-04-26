@@ -7,9 +7,10 @@
  * Copyright (C) 2013-2019  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
- * Copyright (C) 2017-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2017-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018		Ferran Marcet	        <fmarcet@2byte.es>
  * Copyright (C) 2018		Eric Seigne	            <eric.seigne@cap-rel.fr>
+ * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,7 +83,13 @@ $now = dol_now();
 $action = GETPOST('action', 'aZ09');
 
 // Security check
-if ($user->socid > 0 && empty($id_journal)) {
+if (empty($conf->accounting->enabled)) {
+	accessforbidden();
+}
+if ($user->socid > 0) {
+	accessforbidden();
+}
+if (empty($user->rights->accounting->mouvements->lire)) {
 	accessforbidden();
 }
 
@@ -123,7 +130,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu3 ON bu3.fk_bank = b.rowid A
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu4 ON bu4.fk_bank = b.rowid AND bu4.type='payment_supplier'";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as soc on bu1.url_id=soc.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on bu2.url_id=u.rowid";
-$sql .= " WHERE ba.fk_accountancy_journal=".$id_journal;
+$sql .= " WHERE ba.fk_accountancy_journal=".((int) $id_journal);
 $sql .= ' AND b.amount != 0 AND ba.entity IN ('.getEntity('bank_account', 0).')'; // We don't share object for accountancy
 if ($date_start && $date_end) {
 	$sql .= " AND b.dateo >= '".$db->idate($date_start)."' AND b.dateo <= '".$db->idate($date_end)."'";
@@ -150,7 +157,7 @@ $userstatic = new User($db);
 $bankaccountstatic = new Account($db);
 $chargestatic = new ChargeSociales($db);
 $paymentdonstatic = new PaymentDonation($db);
-$paymentvatstatic = new TVA($db);
+$paymentvatstatic = new Tva($db);
 $paymentsalstatic = new PaymentSalary($db);
 $paymentexpensereportstatic = new PaymentExpenseReport($db);
 $paymentvariousstatic = new PaymentVarious($db);
@@ -414,7 +421,7 @@ if ($result) {
 					//$tabtp[$obj->rowid][$account_pay_loan] += $obj->amount;
 					$sqlmid = 'SELECT pl.amount_capital, pl.amount_insurance, pl.amount_interest, l.accountancy_account_capital, l.accountancy_account_insurance, l.accountancy_account_interest';
 					$sqlmid .= ' FROM '.MAIN_DB_PREFIX.'payment_loan as pl, '.MAIN_DB_PREFIX.'loan as l';
-					$sqlmid .= ' WHERE l.rowid = pl.fk_loan AND pl.fk_bank = '.$obj->rowid;
+					$sqlmid .= ' WHERE l.rowid = pl.fk_loan AND pl.fk_bank = '.((int) $obj->rowid);
 
 					dol_syslog("accountancy/journal/bankjournal.php:: sqlmid=".$sqlmid, LOG_DEBUG);
 					$resultmid = $db->query($sqlmid);
@@ -945,7 +952,7 @@ if (empty($action) || $action == 'view') {
 	$vatstatic = new Tva($db);
 	$donationstatic = new Don($db);
 	$loanstatic = new Loan($db);
-	$salarystatic = new PaymentSalary($db);
+	$salarystatic = new Salary($db);
 	$variousstatic = new PaymentVarious($db);
 
 	llxHeader('', $langs->trans("FinanceJournal"));
@@ -953,13 +960,18 @@ if (empty($action) || $action == 'view') {
 	$nom = $langs->trans("FinanceJournal").' | '.$accountingjournalstatic->getNomUrl(0, 1, 1, '', 1);
 	$builddate = dol_now();
 	//$description = $langs->trans("DescFinanceJournal") . '<br>';
-	$description .= $langs->trans("DescJournalOnlyBindedVisible").'<br>';
+	$description = $langs->trans("DescJournalOnlyBindedVisible").'<br>';
 
-	$listofchoices = array('notyet'=>$langs->trans("NotYetInGeneralLedger"), 'already'=>$langs->trans("AlreadyInGeneralLedger"));
+	$listofchoices = array(
+		'notyet'=>$langs->trans("NotYetInGeneralLedger"),
+		'already'=>$langs->trans("AlreadyInGeneralLedger")
+	);
 	$period = $form->selectDate($date_start ? $date_start : -1, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end ? $date_end : -1, 'date_end', 0, 0, 0, '', 1, 0);
 	$period .= ' -  '.$langs->trans("JournalizationInLedgerStatus").' '.$form->selectarray('in_bookkeeping', $listofchoices, $in_bookkeeping, 1);
 
 	$varlink = 'id_journal='.$id_journal;
+	$periodlink = '';
+	$exportlink = '';
 
 	journalHead($nom, '', $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''), '', $varlink);
 
@@ -1311,42 +1323,42 @@ function getSourceDocRef($val, $typerecord)
 	} elseif ($typerecord == 'payment_supplier') {
 		$sqlmid = 'SELECT payfac.fk_facturefourn as id, f.ref';
 		$sqlmid .= " FROM ".MAIN_DB_PREFIX."paiementfourn_facturefourn as payfac, ".MAIN_DB_PREFIX."facture_fourn as f";
-		$sqlmid .= " WHERE payfac.fk_facturefourn = f.rowid AND payfac.fk_paiementfourn=".$val["paymentsupplierid"];
+		$sqlmid .= " WHERE payfac.fk_facturefourn = f.rowid AND payfac.fk_paiementfourn=".((int) $val["paymentsupplierid"]);
 		$ref = $langs->transnoentitiesnoconv("SupplierInvoice");
 	} elseif ($typerecord == 'payment_expensereport') {
 		$sqlmid = 'SELECT e.rowid as id, e.ref';
 		$sqlmid .= " FROM ".MAIN_DB_PREFIX."payment_expensereport as pe, ".MAIN_DB_PREFIX."expensereport as e";
-		$sqlmid .= " WHERE pe.rowid=".$val["paymentexpensereport"]." AND pe.fk_expensereport = e.rowid";
+		$sqlmid .= " WHERE pe.rowid=".((int) $val["paymentexpensereport"])." AND pe.fk_expensereport = e.rowid";
 		$ref = $langs->transnoentitiesnoconv("ExpenseReport");
 	} elseif ($typerecord == 'payment_salary') {
 		$sqlmid = 'SELECT s.rowid as ref';
 		$sqlmid .= " FROM ".MAIN_DB_PREFIX."payment_salary as s";
-		$sqlmid .= " WHERE s.rowid=".$val["paymentsalid"];
+		$sqlmid .= " WHERE s.rowid=".((int) $val["paymentsalid"]);
 		$ref = $langs->transnoentitiesnoconv("SalaryPayment");
 	} elseif ($typerecord == 'sc') {
 		$sqlmid = 'SELECT sc.rowid as ref';
 		$sqlmid .= " FROM ".MAIN_DB_PREFIX."paiementcharge as sc";
-		$sqlmid .= " WHERE sc.rowid=".$val["paymentscid"];
+		$sqlmid .= " WHERE sc.rowid=".((int) $val["paymentscid"]);
 		$ref = $langs->transnoentitiesnoconv("SocialContribution");
 	} elseif ($typerecord == 'payment_vat') {
 		$sqlmid = 'SELECT v.rowid as ref';
 		$sqlmid .= " FROM ".MAIN_DB_PREFIX."tva as v";
-		$sqlmid .= " WHERE v.rowid=".$val["paymentvatid"];
+		$sqlmid .= " WHERE v.rowid=".((int) $val["paymentvatid"]);
 		$ref = $langs->transnoentitiesnoconv("PaymentVat");
 	} elseif ($typerecord == 'payment_donation') {
 		$sqlmid = 'SELECT payd.fk_donation as ref';
 		$sqlmid .= " FROM ".MAIN_DB_PREFIX."payment_donation as payd";
-		$sqlmid .= " WHERE payd.fk_donation=".$val["paymentdonationid"];
+		$sqlmid .= " WHERE payd.fk_donation=".((int) $val["paymentdonationid"]);
 		$ref = $langs->transnoentitiesnoconv("Donation");
 	} elseif ($typerecord == 'payment_loan') {
 		$sqlmid = 'SELECT l.rowid as ref';
 		$sqlmid .= " FROM ".MAIN_DB_PREFIX."payment_loan as l";
-		$sqlmid .= " WHERE l.rowid=".$val["paymentloanid"];
+		$sqlmid .= " WHERE l.rowid=".((int) $val["paymentloanid"]);
 		$ref = $langs->transnoentitiesnoconv("LoanPayment");
 	} elseif ($typerecord == 'payment_various') {
 		$sqlmid = 'SELECT v.rowid as ref';
 		$sqlmid .= " FROM ".MAIN_DB_PREFIX."payment_various as v";
-		$sqlmid .= " WHERE v.rowid=".$val["paymentvariousid"];
+		$sqlmid .= " WHERE v.rowid=".((int) $val["paymentvariousid"]);
 		$ref = $langs->transnoentitiesnoconv("VariousPayment");
 	}
 	// Add warning

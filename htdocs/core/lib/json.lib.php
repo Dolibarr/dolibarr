@@ -23,8 +23,7 @@
  * 		\ingroup	core
  */
 
-if (!function_exists('json_encode'))
-{
+if (!function_exists('json_encode')) {
 	/**
 	 * Implement json_encode for PHP that does not have module enabled.
 	 *
@@ -50,26 +49,32 @@ function dol_json_encode($elements)
 	dol_syslog("For better performance, enable the native json in your PHP", LOG_WARNING);
 
 	$num = 0;
-	if (is_object($elements))	// Count number of properties for an object
-	{
-		foreach ($elements as $key => $value) $num++;
+	if (is_object($elements)) {	// Count number of properties for an object
+		foreach ($elements as $key => $value) {
+			$num++;
+		}
 	} else {
 		$num = count($elements);
 	}
 	//var_dump($num);
 
 	// determine type
-	if (is_numeric(key($elements)) && key($elements) == 0)
-	{
+	if (is_numeric(key($elements)) && key($elements) == 0) {
 		// indexed (list)
 		$keysofelements = array_keys($elements); // Elements array mus have key that does not start with 0 and end with num-1, so we will use this later.
 		$output = '[';
-		for ($i = 0, $last = ($num - 1); $i < $num; $i++)
-		{
-			if (!isset($elements[$keysofelements[$i]])) continue;
-			if (is_array($elements[$keysofelements[$i]]) || is_object($elements[$keysofelements[$i]])) $output .= json_encode($elements[$keysofelements[$i]]);
-			else $output .= _val($elements[$keysofelements[$i]]);
-			if ($i !== $last) $output .= ',';
+		for ($i = 0, $last = ($num - 1); $i < $num; $i++) {
+			if (!isset($elements[$keysofelements[$i]])) {
+				continue;
+			}
+			if (is_array($elements[$keysofelements[$i]]) || is_object($elements[$keysofelements[$i]])) {
+				$output .= json_encode($elements[$keysofelements[$i]]);
+			} else {
+				$output .= _val($elements[$keysofelements[$i]]);
+			}
+			if ($i !== $last) {
+				$output .= ',';
+			}
 		}
 		$output .= ']';
 	} else {
@@ -78,14 +83,22 @@ function dol_json_encode($elements)
 		$last = $num - 1;
 		$i = 0;
 		$tmpelements = array();
-		if (is_array($elements)) $tmpelements = $elements;
-		if (is_object($elements)) $tmpelements = get_object_vars($elements);
-		foreach ($tmpelements as $key => $value)
-		{
+		if (is_array($elements)) {
+			$tmpelements = $elements;
+		}
+		if (is_object($elements)) {
+			$tmpelements = get_object_vars($elements);
+		}
+		foreach ($tmpelements as $key => $value) {
 			$output .= '"'.$key.'":';
-			if (is_array($value)) $output .= json_encode($value);
-			else $output .= _val($value);
-			if ($i !== $last) $output .= ',';
+			if (is_array($value)) {
+				$output .= json_encode($value);
+			} else {
+				$output .= _val($value);
+			}
+			if ($i !== $last) {
+				$output .= ',';
+			}
 			++$i;
 		}
 		$output .= '}';
@@ -109,9 +122,9 @@ function _val($val)
 		$strlen_var = strlen($val);
 
 		/*
-	     * Iterate over every character in the string,
-	     * escaping with a slash or encoding to UTF-8 where necessary
-	     */
+		 * Iterate over every character in the string,
+		 * escaping with a slash or encoding to UTF-8 where necessary
+		 */
 		for ($c = 0; $c < $strlen_var; ++$c) {
 			$ord_var_c = ord($val[$c]);
 
@@ -192,14 +205,18 @@ function _val($val)
 		}
 
 		return '"'.$ascii.'"';
-	} elseif (is_int($val)) return sprintf('%d', $val);
-	elseif (is_float($val)) return sprintf('%F', $val);
-	elseif (is_bool($val)) return ($val ? 'true' : 'false');
-	else return 'null';
+	} elseif (is_int($val)) {
+		return sprintf('%d', $val);
+	} elseif (is_float($val)) {
+		return sprintf('%F', $val);
+	} elseif (is_bool($val)) {
+		return ($val ? 'true' : 'false');
+	} else {
+		return 'null';
+	}
 }
 
-if (!function_exists('json_decode'))
-{
+if (!function_exists('json_decode')) {
 	/**
 	 * Implement json_decode for PHP that does not support it
 	 *
@@ -230,16 +247,23 @@ function dol_json_decode($json, $assoc = false)
 
 	$out = '';
 	$strLength = strlen($json); // Must stay strlen and not dol_strlen because we want technical length, not visible length
-	for ($i = 0; $i < $strLength; $i++)
-	{
-		if (!$comment)
-		{
-			if (($json[$i] == '{') || ($json[$i] == '[')) $out .= 'array(';
-			elseif (($json[$i] == '}') || ($json[$i] == ']')) $out .= ')';
-			elseif ($json[$i] == ':') $out .= ' => ';
-			else $out .= $json[$i];
-		} else $out .= $json[$i];
-		if ($json[$i] == '"' && $json[($i - 1)] != "\\") $comment = !$comment;
+	for ($i = 0; $i < $strLength; $i++) {
+		if (!$comment) {
+			if (($json[$i] == '{') || ($json[$i] == '[')) {
+				$out .= 'array(';
+			} elseif (($json[$i] == '}') || ($json[$i] == ']')) {
+				$out .= ')';
+			} elseif ($json[$i] == ':') {
+				$out .= ' => ';
+			} else {
+				$out .= $json[$i];
+			}
+		} else {
+			$out .= $json[$i];
+		}
+		if ($json[$i] == '"' && $json[($i - 1)] != "\\") {
+			$comment = !$comment;
+		}
 	}
 
 	$out = _unval($out);
@@ -256,17 +280,16 @@ function dol_json_decode($json, $assoc = false)
 	}
 
 	// Return an object
-	if (!$assoc)
-	{
-		if (!empty($array))
-		{
+	if (!$assoc) {
+		if (!empty($array)) {
 			$object = false;
 			if (count($array) > 0) {
 				$object = (object) array();
 			}
-			foreach ($array as $key => $value)
-			{
-				if ($key) $object->{$key} = $value;
+			foreach ($array as $key => $value) {
+				if ($key) {
+					$object->{$key} = $value;
+				}
 			}
 
 			return $object;
@@ -287,8 +310,7 @@ function dol_json_decode($json, $assoc = false)
 function _unval($val)
 {
 	$reg = array();
-	while (preg_match('/\\\u([0-9A-F]{2})([0-9A-F]{2})/i', $val, $reg))
-	{
+	while (preg_match('/\\\u([0-9A-F]{2})([0-9A-F]{2})/i', $val, $reg)) {
 		// single, escaped unicode character
 		$utf16 = chr(hexdec($reg[1])).chr(hexdec($reg[2]));
 		$utf8  = utf162utf8($utf16);
@@ -320,18 +342,18 @@ function utf162utf8($utf16)
 		case ((0x7F & $bytes) == $bytes):
 			// this case should never be reached, because we are in ASCII range
 			// see: http://www.cl.cam.ac.uk/~mgk25/unicode.html#utf-8
-		return chr($bytes);
+			return chr($bytes);
 
 		case (0x07FF & $bytes) == $bytes:
 			// return a 2-byte UTF-8 character
 			// see: http://www.cl.cam.ac.uk/~mgk25/unicode.html#utf-8
-		return chr(0xC0 | (($bytes >> 6) & 0x1F))
+			return chr(0xC0 | (($bytes >> 6) & 0x1F))
 		. chr(0x80 | ($bytes & 0x3F));
 
 		case (0xFFFF & $bytes) == $bytes:
 			// return a 3-byte UTF-8 character
 			// see: http://www.cl.cam.ac.uk/~mgk25/unicode.html#utf-8
-		return chr(0xE0 | (($bytes >> 12) & 0x0F))
+			return chr(0xE0 | (($bytes >> 12) & 0x0F))
 		. chr(0x80 | (($bytes >> 6) & 0x3F))
 		. chr(0x80 | ($bytes & 0x3F));
 	}

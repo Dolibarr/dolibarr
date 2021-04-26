@@ -21,10 +21,18 @@
  *       \brief      File to return Ajax response on file upload
  */
 
-if (!defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
-if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');
-if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1'); // If there is no menu to show
-if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', '1');
+}
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1');
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1'); // If there is no menu to show
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
+}
 
 
 require '../../main.inc.php';

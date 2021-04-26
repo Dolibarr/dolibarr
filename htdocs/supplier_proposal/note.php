@@ -40,7 +40,9 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
 // Security check
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'supplier_proposal', $id, 'supplier_proposal');
 
 $object = new SupplierProposal($db);
@@ -64,19 +66,18 @@ llxHeader('', $langs->trans('CommRequest'), 'EN:Ask_Price_Supplier|FR:Demande_de
 
 $form = new Form($db);
 
-if ($id > 0 || !empty($ref))
-{
-	if ($mesg) print $mesg;
+if ($id > 0 || !empty($ref)) {
+	if ($mesg) {
+		print $mesg;
+	}
 
 	$now = dol_now();
 
-	if ($object->fetch($id, $ref))
-	{
+	if ($object->fetch($id, $ref)) {
 		$object->fetch_thirdparty();
 
 		$societe = new Societe($db);
-		if ($societe->fetch($object->socid))
-		{
+		if ($societe->fetch($object->socid)) {
 			$head = supplier_proposal_prepare_head($object);
 			print dol_get_fiche_head($head, 'note', $langs->trans('CommRequest'), -1, 'supplier_proposal');
 
@@ -92,12 +93,10 @@ if ($id > 0 || !empty($ref))
 			// Thirdparty
 			$morehtmlref .= $langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
 			// Project
-			if (!empty($conf->projet->enabled))
-			{
+			if (!empty($conf->projet->enabled)) {
 				$langs->load("projects");
 				$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-				if ($user->rights->supplier_proposal->creer)
-				{
+				if ($user->rights->supplier_proposal->creer) {
 					if ($action != 'classify') {
 						//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 						$morehtmlref .= ' : ';

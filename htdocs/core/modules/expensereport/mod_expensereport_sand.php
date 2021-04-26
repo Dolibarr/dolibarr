@@ -101,16 +101,15 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 	 */
 	public function getExample()
 	{
-	 	global $db, $conf, $langs, $user;
+		global $db, $conf, $langs, $user;
 
-	 	$exp = new ExpenseReport($db);
-	 	$exp->initAsSpecimen();
-	 	$exp->fk_user_author = $user->id;
+		$exp = new ExpenseReport($db);
+		$exp->initAsSpecimen();
+		$exp->fk_user_author = $user->id;
 
-	 	$numExample = $this->getNextValue($exp);
+		$numExample = $this->getNextValue($exp);
 
-		if (!$numExample)
-		{
+		if (!$numExample) {
 			$numExample = $langs->trans('NotConfigured');
 		}
 		return $numExample;
@@ -131,22 +130,19 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 		// We get cursor rule
 		$mask = $conf->global->EXPENSEREPORT_SAND_MASK;
 
-		if (!$mask)
-		{
+		if (!$mask) {
 			$this->error = 'NotConfigured';
 			return 0;
 		}
 
 		$date = $object->date_valid; // $object->date does not exists
-		if (empty($date))
-		{
+		if (empty($date)) {
 			$this->error = 'Date valid not defined';
 			return 0;
 		}
 
 		$fuser = null;
-		if ($object->fk_user_author > 0)
-		{
+		if ($object->fk_user_author > 0) {
 			$fuser = new User($db);
 			$fuser->fetch($object->fk_user_author);
 		}

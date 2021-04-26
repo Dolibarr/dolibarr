@@ -26,8 +26,9 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $langs->load("admin");
 
-if (!$user->admin)
+if (!$user->admin) {
 	accessforbidden();
+}
 
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -36,8 +37,7 @@ $choice = GETPOST('choice', 'aZ09');
 
 // Define filelog to discard it from purge
 $filelog = '';
-if (!empty($conf->syslog->enabled))
-{
+if (!empty($conf->syslog->enabled)) {
 	$filelog = $conf->global->SYSLOG_FILE;
 	$filelog = preg_replace('/DOL_DATA_ROOT/i', DOL_DATA_ROOT, $filelog);
 }
@@ -46,12 +46,10 @@ if (!empty($conf->syslog->enabled))
 /*
  *	Actions
  */
-if ($action == 'purge' && !preg_match('/^confirm/i', $choice) && ($choice != 'allfiles' || $confirm == 'yes'))
-{
+if ($action == 'purge' && !preg_match('/^confirm/i', $choice) && ($choice != 'allfiles' || $confirm == 'yes')) {
 	// Increase limit of time. Works only if we are not in safe mode
 	$ExecTimeLimit = 600;
-	if (!empty($ExecTimeLimit))
-	{
+	if (!empty($ExecTimeLimit)) {
 		$err = error_reporting();
 		error_reporting(0); // Disable all errors
 		//error_reporting(E_ALL);

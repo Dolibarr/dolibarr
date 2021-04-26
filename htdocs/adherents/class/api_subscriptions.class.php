@@ -30,7 +30,7 @@ class Subscriptions extends DolibarrApi
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
-	static $FIELDS = array(
+	public static $FIELDS = array(
 		'fk_adherent',
 		'dateh',
 		'datef',
@@ -87,7 +87,7 @@ class Subscriptions extends DolibarrApi
 	 */
 	public function index($sortfield = "dateadh", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
 	{
-		global $db, $conf;
+		global $conf;
 
 		$obj_ret = array();
 
@@ -183,7 +183,9 @@ class Subscriptions extends DolibarrApi
 		}
 
 		foreach ($request_data as $field => $value) {
-			if ($field == 'id') continue;
+			if ($field == 'id') {
+				continue;
+			}
 			$subscription->$field = $value;
 		}
 
@@ -236,8 +238,9 @@ class Subscriptions extends DolibarrApi
 	{
 		$subscription = array();
 		foreach (Subscriptions::$FIELDS as $field) {
-			if (!isset($data[$field]))
+			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
+			}
 			$subscription[$field] = $data[$field];
 		}
 		return $subscription;

@@ -32,8 +32,12 @@ if (!defined('NOREQUIREMENU')) {
 if (!defined("NOLOGIN")) {
 	define("NOLOGIN", '1');
 }
-if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
-if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', '1');
+if (!defined('NOIPCHECK')) {
+	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+}
+if (!defined('NOBROWSERNOTIF')) {
+	define('NOBROWSERNOTIF', '1');
+}
 // If this page is public (can be called outside logged session)
 
 require '../../main.inc.php';
@@ -174,8 +178,7 @@ llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 
 print '<div class="ticketpublicarealist">';
 
-if ($action == "view_ticketlist")
-{
+if ($action == "view_ticketlist") {
 	print '<br>';
 	if ($display_ticket_list) {
 		// Filters
@@ -295,7 +298,9 @@ if ($action == "view_ticketlist")
 		$limit = $conf->liste_limit;
 
 		$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-		if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+		if (empty($page) || $page == -1) {
+			$page = 0;
+		}     // If $page is not defined, or '' or -1
 		$offset = $limit * $page;
 		$pageprev = $page - 1;
 		$pagenext = $page + 1;
@@ -326,8 +331,9 @@ if ($action == "view_ticketlist")
 		$sql .= " type.label as type_label, category.label as category_label, severity.label as severity_label";
 		// Add fields for extrafields
 		if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
-			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
+			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 				$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+			}
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_type as type ON type.code=t.type_code";
@@ -358,7 +364,7 @@ if ($action == "view_ticketlist")
 					$sql .= " AND ".$key." = '".$db->escape($value)."'";
 				} elseif ($key == 't.fk_statut') {
 					if (is_array($value) && count($value) > 0) {
-						$sql .= 'AND '.$key.' IN ('.implode(',', $value).')';
+						$sql .= 'AND '.$key.' IN ('.$db->sanitize(implode(',', $value)).')';
 					} else {
 						$sql .= ' AND '.$key.' = '.$db->escape($value);
 					}
@@ -426,7 +432,7 @@ if ($action == "view_ticketlist")
 
 				if (!empty($arrayfields['category.code']['checked'])) {
 					print '<td class="liste_titre">';
-					$formTicket->selectGroupTickets($search_category, 'search_category', '', 2, 1, 1);
+					$formTicket->selectGroupTickets($search_category, 'search_category', 'public=1', 2, 1, 1);
 					print '</td>';
 				}
 
@@ -528,8 +534,7 @@ if ($action == "view_ticketlist")
 				print_liste_field_titre($selectedfields, $url_page_current, "", '', '', 'align="right"', $sortfield, $sortorder, 'center maxwidthsearch ');
 				print '</tr>';
 
-				while ($obj = $db->fetch_object($resql))
-				{
+				while ($obj = $db->fetch_object($resql)) {
 					print '<tr class="oddeven">';
 
 					// Date ticket

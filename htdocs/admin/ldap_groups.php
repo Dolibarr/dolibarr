@@ -36,8 +36,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "errors"));
 
-if (!$user->admin)
-  accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 $action = GETPOST('action', 'aZ09');
 
@@ -46,28 +47,44 @@ $action = GETPOST('action', 'aZ09');
  * Actions
  */
 
-if ($action == 'setvalue' && $user->admin)
-{
+if ($action == 'setvalue' && $user->admin) {
 	$error = 0;
 	$db->begin();
 
-	if (!dolibarr_set_const($db, 'LDAP_GROUP_DN', GETPOST("group", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) $error++;
-	if (!dolibarr_set_const($db, 'LDAP_GROUP_OBJECT_CLASS', GETPOST("objectclass", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) $error++;
-
-	if (!dolibarr_set_const($db, 'LDAP_GROUP_FIELD_FULLNAME', GETPOST("fieldfullname", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) $error++;
+	if (!dolibarr_set_const($db, 'LDAP_GROUP_DN', GETPOST("group", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
+	if (!dolibarr_set_const($db, 'LDAP_GROUP_OBJECT_CLASS', GETPOST("objectclass", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
+	if (!dolibarr_set_const($db, 'LDAP_GROUP_FILTER', GETPOST("filter"), 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
+	if (!dolibarr_set_const($db, 'LDAP_GROUP_FIELD_FULLNAME', GETPOST("fieldfullname", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
 	//if (! dolibarr_set_const($db, 'LDAP_GROUP_FIELD_NAME',GETPOST("fieldname", 'alphanohtml'),'chaine',0,'',$conf->entity)) $error++;
-	if (!dolibarr_set_const($db, 'LDAP_GROUP_FIELD_DESCRIPTION', GETPOST("fielddescription", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) $error++;
-	if (!dolibarr_set_const($db, 'LDAP_GROUP_FIELD_GROUPMEMBERS', GETPOST("fieldgroupmembers", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) $error++;
-	if (!dolibarr_set_const($db, 'LDAP_GROUP_FIELD_GROUPID', GETPOST("fieldgroupid", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) $error++;
+	if (!dolibarr_set_const($db, 'LDAP_GROUP_FIELD_DESCRIPTION', GETPOST("fielddescription", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
+	if (!dolibarr_set_const($db, 'LDAP_GROUP_FIELD_GROUPMEMBERS', GETPOST("fieldgroupmembers", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
+	if (!dolibarr_set_const($db, 'LDAP_GROUP_FIELD_GROUPID', GETPOST("fieldgroupid", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
 
 	// This one must be after the others
 	$valkey = '';
 	$key = GETPOST("key");
-	if ($key) $valkey = $conf->global->$key;
-	if (!dolibarr_set_const($db, 'LDAP_KEY_GROUPS', $valkey, 'chaine', 0, '', $conf->entity)) $error++;
+	if ($key) {
+		$valkey = $conf->global->$key;
+	}
+	if (!dolibarr_set_const($db, 'LDAP_KEY_GROUPS', $valkey, 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
@@ -90,8 +107,7 @@ print load_fiche_titre($langs->trans("LDAPSetup"), $linkback, 'title_setup');
 $head = ldap_prepare_head();
 
 // Test si fonction LDAP actives
-if (!function_exists("ldap_connect"))
-{
+if (!function_exists("ldap_connect")) {
 	setEventMessages($langs->trans("LDAPFunctionsNotAvailableOnPHP"), null, 'errors');
 }
 
@@ -125,6 +141,13 @@ print '<tr class="oddeven"><td width="25%"><span class="fieldrequired">'.$langs-
 print '<input size="48" type="text" name="objectclass" value="'.$conf->global->LDAP_GROUP_OBJECT_CLASS.'">';
 print '</td><td>'.$langs->trans("LDAPGroupObjectClassListExample").'</td>';
 print '<td>&nbsp;</td>';
+print '</tr>';
+
+// Filter, used to filter search
+print '<tr class="oddeven"><td>'.$langs->trans("LDAPFilterConnection").'</td><td>';
+print '<input size="48" type="text" name="filter" value="'.$conf->global->LDAP_GROUP_FILTER.'">';
+print '</td><td>'.$langs->trans("LDAPGroupFilterExample").'</td>';
+print '<td></td>';
 print '</tr>';
 
 print '</table>';
@@ -190,8 +213,7 @@ print '</form>';
 /*
  * Test de la connexion
  */
-if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
-{
+if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap') {
 	$butlabel = $langs->trans("LDAPTestSynchroGroup");
 	$testlabel = 'testgroup';
 	$key = $conf->global->LDAP_KEY_GROUPS;
@@ -199,12 +221,17 @@ if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
 	$objectclass = $conf->global->LDAP_GROUP_OBJECT_CLASS;
 
 	show_ldap_test_button($butlabel, $testlabel, $key, $dn, $objectclass);
+} elseif ($conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr') {
+	$butlabel = $langs->trans("LDAPTestSearch");
+	$testlabel = 'testsearchgroup';
+	$key = $conf->global->LDAP_KEY_GROUPS;
+	$dn = $conf->global->LDAP_GROUP_DN;
+	$objectclass = $conf->global->LDAP_GROUP_OBJECT_CLASS;
+	show_ldap_test_button($butlabel, $testlabel, $key, $dn, $objectclass);
 }
 
-if (function_exists("ldap_connect"))
-{
-	if ($_GET["action"] == 'testgroup')
-	{
+if (function_exists("ldap_connect")) {
+	if ($action == 'testgroup') {
 		// Creation objet
 		$object = new UserGroup($db);
 		$object->initAsSpecimen();
@@ -213,8 +240,7 @@ if (function_exists("ldap_connect"))
 		$ldap = new Ldap();
 		$result = $ldap->connect_bind();
 
-		if ($result > 0)
-		{
+		if ($result > 0) {
 			$info = $object->_load_ldap_info();
 			$dn = $object->_load_ldap_dn($info);
 
@@ -227,8 +253,7 @@ if (function_exists("ldap_connect"))
 			$result2 = $ldap->add($dn, $info, $user); // Now the test
 			$result3 = $ldap->delete($dn); // Clean what we did
 
-			if ($result2 > 0)
-			{
+			if ($result2 > 0) {
 				print img_picto('', 'info').' ';
 				print '<font class="ok">'.$langs->trans("LDAPSynchroOK").'</font><br>';
 			} else {
@@ -242,6 +267,62 @@ if (function_exists("ldap_connect"))
 			print "<br>\n";
 			print "LDAP input file used for test:<br><br>\n";
 			print nl2br($ldap->dump_content($dn, $info));
+			print "\n<br>";
+		} else {
+			print img_picto('', 'error').' ';
+			print '<font class="error">'.$langs->trans("LDAPSynchroKO");
+			print ': '.$ldap->error;
+			print '</font><br>';
+			print $langs->trans("ErrorLDAPMakeManualTest", $conf->ldap->dir_temp).'<br>';
+		}
+	}
+
+	if ($action == 'testsearchgroup') {
+		// TODO Mutualize code following with other ldap_xxxx.php pages
+
+		// Test synchro
+		$ldap = new Ldap();
+		$result = $ldap->connect_bind();
+
+		if ($result > 0) {
+			$required_fields = array(
+				$conf->global->LDAP_KEY_GROUPS,
+				// $conf->global->LDAP_GROUP_FIELD_NAME,
+				$conf->global->LDAP_GROUP_FIELD_DESCRIPTION,
+				$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS,
+				$conf->global->LDAP_GROUP_FIELD_GROUPID
+			);
+
+			// Remove from required_fields all entries not configured in LDAP (empty) and duplicated
+			$required_fields = array_unique(array_values(array_filter($required_fields, "dol_validElement")));
+
+			// Get from LDAP database an array of results
+			$ldapgroups = $ldap->getRecords('*', $conf->global->LDAP_GROUP_DN, $conf->global->LDAP_KEY_GROUPS, $required_fields, 'group');
+			//$ldapgroups = $ldap->getRecords('*', $conf->global->LDAP_GROUP_DN, $conf->global->LDAP_KEY_GROUPS, '', 'group');
+
+			if (is_array($ldapgroups)) {
+				$liste = array();
+				foreach ($ldapgroups as $key => $ldapgroup) {
+					// Define the label string for this group
+					$label = '';
+					foreach ($required_fields as $value) {
+						if ($value) {
+							$label .= $value."=".$ldapgroup[$value]." ";
+						}
+					}
+					$liste[$key] = $label;
+				}
+			} else {
+				setEventMessages($ldap->error, $ldap->errors, 'errors');
+			}
+
+			print "<br>\n";
+			print "LDAP search for group:<br>\n";
+			print "search: *<br>\n";
+			print "userDN: ".$conf->global->LDAP_GROUP_DN."<br>\n";
+			print "useridentifier: ".$conf->global->LDAP_KEY_GROUPS."<br>\n";
+			print "required_fields: ".implode(',', $required_fields)."<br>\n";
+			print "=> ".count($liste)." records<br>\n";
 			print "\n<br>";
 		} else {
 			print img_picto('', 'error').' ';
