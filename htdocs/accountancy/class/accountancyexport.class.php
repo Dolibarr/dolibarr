@@ -555,7 +555,7 @@ class AccountancyExport
 			$Tab['signe_montant'] = '+';
 
 			// The amount must be in centimes without decimal points.
-			$Tab['montant'] = str_pad(abs(($data->debit - $abs->credit) * 100), 12, '0', STR_PAD_LEFT);
+			$Tab['montant'] = str_pad(abs(($data->debit - $data->credit) * 100), 12, '0', STR_PAD_LEFT);
 			$Tab['contrepartie'] = str_repeat(' ', 8);
 
 			// Force date format : %d%m%y
