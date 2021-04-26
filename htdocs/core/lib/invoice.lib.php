@@ -315,7 +315,8 @@ function getCustomerInvoicePieChart($socid = 0)
 		$dolgraph->setShowLegend(2);
 		$dolgraph->setShowPercent(1);
 		$dolgraph->SetType(['pie']);
-		$dolgraph->setHeight('200');
+		$dolgraph->setHeight('150');
+		$dolgraph->setWidth('300');
 		$dolgraph->draw('idgraphcustomerinvoices');
 
 		$result .= '<tr>';
@@ -435,7 +436,8 @@ function getPurchaseInvoicePieChart($socid = 0)
 		$dolgraph->setShowLegend(2);
 		$dolgraph->setShowPercent(1);
 		$dolgraph->SetType(['pie']);
-		$dolgraph->setHeight('200');
+		$dolgraph->setHeight('150');
+		$dolgraph->setWidth('300');
 		$dolgraph->draw('idgraphpurchaseinvoices');
 
 		$result .= '<tr>';
