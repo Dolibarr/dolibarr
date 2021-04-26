@@ -78,7 +78,23 @@ $langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors",
 // No check on module enabled. Done later according to $validpaymentmethod
 
 $action = GETPOST('action', 'aZ09');
-$id = dol_decode(GETPOST('id'), $dolibarr_main_instance_unique_id);
+
+$encodedid = GETPOST('id');
+$id = dol_decode($encodedid, $dolibarr_main_instance_unique_id);
+
+// Getting 'securekey'.'id' from Post and decoding it
+$encodedsecurekeyandid = GETPOST('securekey', 'alpha');
+$securekeyandid = dol_decode($encodedsecurekeyandid, $dolibarr_main_instance_unique_id);
+
+// Securekey decomposition into pure securekey and id added at the end
+$securekey = substr($securekeyandid, 0, strlen($securekeyandid)-strlen($encodedid));
+$idgotfromsecurekey = dol_decode(substr($securekeyandid, -strlen($encodedid), strlen($encodedid)), $dolibarr_main_instance_unique_id);
+
+// We check if the securekey collected is OK and if the id collected is the same than the id in the securekey
+if ($securekey != $conf->global->EVENTORGANIZATION_SECUREKEY || $idgotfromsecurekey != $id) {
+	print $langs->trans('MissingOrBadSecureKey');
+	exit;
+}
 
 // Define $urlwithroot
 //$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
@@ -111,15 +127,6 @@ $conf->dol_hide_leftmenu = 1;
 
 $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
 llxHeader($head, $langs->trans("PaymentForm"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea);
-
-
-// Show sandbox warning
-if ((empty($paymentmethod) || $paymentmethod == 'paypal') && !empty($conf->paypal->enabled) && (!empty($conf->global->PAYPAL_API_SANDBOX) || GETPOST('forcesandbox', 'int'))) {		// We can force sand box with param 'forcesandbox'
-	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Paypal'), '', 'warning');
-}
-if ((empty($paymentmethod) || $paymentmethod == 'stripe') && !empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'int'))) {
-	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
-}
 
 
 print '<span id="dolpaymentspan"></span>'."\n";
