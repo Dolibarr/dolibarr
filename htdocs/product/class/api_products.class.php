@@ -1577,7 +1577,7 @@ class Products extends DolibarrApi
 			$combinations[$key] = $this->_cleanObjectDatas($combinations[$key]);
 
 			$productModel = new Product($this->db);
-			$productModel->fetch((int)$combination->fk_product_child);
+			$productModel->fetch((int) $combination->fk_product_child);
 			$productModel->load_stock();
 			$combinations[$key]->stock_warehouse = $this->_cleanObjectDatas($productModel)->stock_warehouse;
 		}
