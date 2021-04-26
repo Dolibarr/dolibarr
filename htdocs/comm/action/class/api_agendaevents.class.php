@@ -400,7 +400,9 @@ class AgendaEvents extends DolibarrApi
 		unset($object->civility_id);
 		unset($object->contact);
 		unset($object->societe);
-
+		unset($object->demand_reason_id);
+		unset($object->transport_mode_id);
+		unset($object->region_id);
 		unset($object->actions);
 		unset($object->lines);
 
