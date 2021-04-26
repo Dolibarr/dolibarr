@@ -1222,7 +1222,7 @@ if (empty($reshook)) {
 		// Edit line
 		$db->begin();
 
-		$object->fetch($id);
+		if (! $object->fetch($id) > 0)	dol_print_error($db);
 		$object->fetch_thirdparty();
 
 		$tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
@@ -1271,7 +1271,7 @@ if (empty($reshook)) {
 		$localtax2_tx = get_localtax($tva_tx, 2, $mysoc, $object->thirdparty);
 
 		$remise_percent = price2num(GETPOST('remise_percent'), 2);
-		$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), 'CU');
+		$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), 'MU');
 
 		// Extrafields Lines
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -1337,7 +1337,7 @@ if (empty($reshook)) {
 
 		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS');
 		$remise_percent = price2num(GETPOST('remise_percent'.$predef), 2);
-		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CU', 2);
+		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'MU', 2);
 
 		// Extrafields
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
