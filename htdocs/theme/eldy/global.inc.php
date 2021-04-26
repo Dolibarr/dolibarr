@@ -143,6 +143,7 @@ input {
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
 	background-color: var(--inputbackgroundcolor);
 	color: var(--colortext);
+	border-radius: 2px;
 }
 select.vmenusearchselectcombo {
 	background-color: unset;
