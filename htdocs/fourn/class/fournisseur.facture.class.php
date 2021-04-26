@@ -3618,50 +3618,38 @@ class SupplierInvoiceLine extends CommonObjectLine
 
 			// Si fk_remise_except defini, on lie la remise a la facture
 			// ce qui la flague comme "consommee".
-			if ($this->fk_remise_except)
-			{
-				$discount=new DiscountAbsolute($this->db);
-				$result=$discount->fetch($this->fk_remise_except);
-				if ($result >= 0)
-				{
+			if ($this->fk_remise_except) {
+				$discount = new DiscountAbsolute($this->db);
+				$result = $discount->fetch($this->fk_remise_except);
+				if ($result >= 0) {
 					// Check if discount was found
-					if ($result > 0)
-					{
+					if ($result > 0) {
 						// Check if discount not already affected to another invoice
-						if ($discount->fk_facture_line > 0)
-						{
-							if (empty($noerrorifdiscountalreadylinked))
-							{
-								$this->error=$langs->trans("ErrorDiscountAlreadyUsed", $discount->id);
-								dol_syslog(get_class($this)."::insert Error ".$this->error, LOG_ERR);
+						if ($discount->fk_facture_line > 0) {
+							if (empty($noerrorifdiscountalreadylinked)) {
+								$this->error = $langs->trans("ErrorDiscountAlreadyUsed", $discount->id);
+								dol_syslog(get_class($this) . "::insert Error " . $this->error, LOG_ERR);
+								$this->db->rollback();
+								return -3;
+							}
+						} else {
+							$result = $discount->link_to_invoice($this->rowid, 0);
+							if ($result < 0) {
+								$this->error = $discount->error;
+								dol_syslog(get_class($this) . "::insert Error " . $this->error, LOG_ERR);
 								$this->db->rollback();
 								return -3;
 							}
 						}
-						else
-						{
-							$result=$discount->link_to_invoice($this->rowid, 0);
-							if ($result < 0)
-							{
-								$this->error=$discount->error;
-								dol_syslog(get_class($this)."::insert Error ".$this->error, LOG_ERR);
-								$this->db->rollback();
-								return -3;
-							}
-						}
-					}
-					else
-					{
-						$this->error=$langs->trans("ErrorADiscountThatHasBeenRemovedIsIncluded");
-						dol_syslog(get_class($this)."::insert Error ".$this->error, LOG_ERR);
+					} else {
+						$this->error = $langs->trans("ErrorADiscountThatHasBeenRemovedIsIncluded");
+						dol_syslog(get_class($this) . "::insert Error " . $this->error, LOG_ERR);
 						$this->db->rollback();
 						return -3;
 					}
-				}
-				else
-				{
-					$this->error=$discount->error;
-					dol_syslog(get_class($this)."::insert Error ".$this->error, LOG_ERR);
+				} else {
+					$this->error = $discount->error;
+					dol_syslog(get_class($this) . "::insert Error " . $this->error, LOG_ERR);
 					$this->db->rollback();
 					return -3;
 				}
