@@ -802,7 +802,7 @@ if ($urllogo) {
 
 
 print '<!-- Form to send a payment -->'."\n";
-print '<!-- creditor = '.$creditor.' -->'."\n";
+print '<!-- creditor = '.dol_escape_htmltag($creditor).' -->'."\n";
 // Additionnal information for each payment system
 if (!empty($conf->paypal->enabled)) {
 	print '<!-- PAYPAL_API_SANDBOX = '.$conf->global->PAYPAL_API_SANDBOX.' -->'."\n";

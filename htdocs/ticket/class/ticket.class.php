@@ -719,10 +719,10 @@ class Ticket extends CommonObject
 					if (is_array($value) && count($value) > 0) {
 						$sql .= 'AND '.$key.' IN ('.$this->db->sanitize(implode(',', $value)).')';
 					} else {
-						$sql .= ' AND '.$key.' = '.$this->db->escape($value);
+						$sql .= ' AND '.$key.' = '.((int) $value);
 					}
 				} else {
-					$sql .= ' AND '.$key.' LIKE \'%'.$value.'%\'';
+					$sql .= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
 				}
 			}
 		}
