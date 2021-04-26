@@ -340,7 +340,9 @@ if (empty($reshook) && $action == 'add') {
 					$error++;
 					$errmsg .= $thirdparty->error;
 				}
+
 				$thirdparty->fournisseur = 1;
+
 				// Load object modCodeFournisseur
 				$module = (!empty($conf->global->SOCIETE_CODECLIENT_ADDON) ? $conf->global->SOCIETE_CODECLIENT_ADDON : 'mod_codeclient_leopard');
 				if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php') {
@@ -464,10 +466,10 @@ print '<tr><td>'.$langs->trans("Note").'</td>'."\n";
 print '<td><input type="text" name="note" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('note')).'"></td></tr>'."\n";
 // Start Date
 print '<tr><td>'.$langs->trans("DateStart").'</td>'."\n";
-print '<td><input type="date" name="datestart" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('note')).'"></td></tr>'."\n";
+print '<td><input type="date" name="datestart" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('datestart')).'"></td></tr>'."\n";
 // End Date
 print '<tr><td>'.$langs->trans("DateEnd").'</td>'."\n";
-print '<td><input type="date" name="dateend" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('note')).'"></td></tr>'."\n";
+print '<td><input type="date" name="dateend" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('dateend')).'"></td></tr>'."\n";
 // Company
 print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company");
 if (!empty(floatval($project->price_registration))) {

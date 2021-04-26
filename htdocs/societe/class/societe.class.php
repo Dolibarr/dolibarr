@@ -1322,7 +1322,7 @@ class Societe extends CommonObject
 				}
 			}
 		}
-		var_dump($result);
+
 		if ($result >= 0) {
 			dol_syslog(get_class($this)."::update verify ok or not done");
 
