@@ -158,16 +158,16 @@ class Products extends DolibarrApi
 	 *
 	 * Get a list of products
 	 *
-	 * @param  string $sortfield  Sort field
-	 * @param  string $sortorder  Sort order
-	 * @param  int    $limit      Limit for list
-	 * @param  int    $page       Page number
-	 * @param  int    $mode       Use this param to filter list (0 for all, 1 for only product, 2 for only service)
-	 * @param  int    $category   Use this param to filter list by category
-	 * @param  string $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.tobuy:=:0) and (t.tosell:=:1)"
-	 * @param  bool   $ids_only   Return only IDs of product instead of all properties (faster, above all if list is long)
-	 * @param  bool   $without_variants   Return only products, not variants
-	 * @return array                Array of product objects
+	 * @param  string $sortfield  			Sort field
+	 * @param  string $sortorder  			Sort order
+	 * @param  int    $limit      			Limit for list
+	 * @param  int    $page       			Page number
+	 * @param  int    $mode       			Use this param to filter list (0 for all, 1 for only product, 2 for only service)
+	 * @param  int    $category   			Use this param to filter list by category
+	 * @param  string $sqlfilters 			Other criteria to filter answers separated by a comma. Syntax example "(t.tobuy:=:0) and (t.tosell:=:1)"
+	 * @param  bool   $ids_only   			Return only IDs of product instead of all properties (faster, above all if list is long)
+	 * @param  bool   $without_variants   	Return only parent products, not variants
+	 * @return array                		Array of product objects
 	 */
 	public function index($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '', $ids_only = false, $without_variants = false)
 	{
