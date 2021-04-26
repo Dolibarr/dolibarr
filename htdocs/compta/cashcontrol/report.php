@@ -342,7 +342,7 @@ if ($resql) {
 	$sql .= "SET";
 	$sql .= " cash='".$db->escape($cash)."'";
 	$sql .= ", card='".$db->escape($bank)."'";
-	$sql .= " where rowid=".$id;
+	$sql .= " where rowid = ".((int) $id);
 	$db->query($sql);
 	*/
 

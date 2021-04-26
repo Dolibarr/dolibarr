@@ -460,7 +460,7 @@ if ($search_status <> '' && $search_status >= 0) {
 	$sql .= " AND e.fk_statut = ".$search_status;
 }
 if ($search_billed != '' && $search_billed >= 0) {
-	$sql .= ' AND e.billed = '.$search_billed;
+	$sql .= ' AND e.billed = '.((int) $search_billed);
 }
 if ($search_town) {
 	$sql .= natural_search('s.town', $search_town);

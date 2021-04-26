@@ -129,7 +129,7 @@ if (!empty($numref)) {
 	$object->fetch_thirdparty();
 	$upload_dir = $conf->bank->dir_output."/".$id."/statement/".dol_sanitizeFileName($numref);
 }
-$backtopage = $_SERVER['PHP_SELF']."?account=".$id."&num=".$numref;
+$backtopage = $_SERVER['PHP_SELF']."?account=".urlencode($id)."&num=".urlencode($numref);
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 

@@ -508,15 +508,20 @@ class Account extends CommonObject
 			dol_syslog(__METHOD__.": using numeric operations is deprecated", LOG_WARNING);
 		}
 
+		if (empty($this->id) && !empty($this->rowid)) {	// For backward compatibility
+			$this->id = $this->rowid;
+		}
+
 		// Clean parameters
 		$emetteur = trim($emetteur);
 		$banque = trim($banque);
+		$label = trim($label);
 
 		$now = dol_now();
 
 		if (is_numeric($oper)) {    // Clean operation to have a code instead of a rowid
 			$sql = "SELECT code FROM ".MAIN_DB_PREFIX."c_paiement";
-			$sql .= " WHERE id=".$oper;
+			$sql .= " WHERE id = ".((int) $oper);
 			$sql .= " AND entity IN (".getEntity('c_paiement').")";
 			$resql = $this->db->query($sql);
 			if ($resql) {
@@ -533,8 +538,8 @@ class Account extends CommonObject
 			$this->error = "oper not defined";
 			return -1;
 		}
-		if (!$this->rowid) {
-			$this->error = "this->rowid not defined";
+		if (!$this->id) {
+			$this->error = "this->id not defined";
 			return -2;
 		}
 		if ($this->courant == Account::TYPE_CASH && $oper != 'LIQ') {
@@ -555,7 +560,7 @@ class Account extends CommonObject
 		$accline->label = $label;
 		$accline->amount = $amount;
 		$accline->fk_user_author = $user->id;
-		$accline->fk_account = $this->rowid;
+		$accline->fk_account = $this->id;
 		$accline->fk_type = $oper;
 		$accline->numero_compte = $accountancycode;
 		$accline->num_releve = $num_releve;
@@ -574,10 +579,10 @@ class Account extends CommonObject
 
 		if ($accline->insert() > 0) {
 			if ($categorie > 0) {
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (";
+				$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class(";
 				$sql .= "lineid, fk_categ";
 				$sql .= ") VALUES (";
-				$sql .= $accline->id.", ".$categorie;
+				$sql .= ((int) $accline->id).", '".$this->db->escape($categorie)."'";
 				$sql .= ")";
 
 				$result = $this->db->query($sql);
@@ -610,7 +615,7 @@ class Account extends CommonObject
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
-		global $langs, $conf, $hookmanager;
+		global $langs, $conf;
 
 		$error = 0;
 
@@ -769,7 +774,7 @@ class Account extends CommonObject
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
-		global $langs, $conf, $hookmanager;
+		global $langs, $conf;
 
 		$error = 0;
 
@@ -795,9 +800,9 @@ class Account extends CommonObject
 		$sql .= " ref   = '".$this->db->escape($this->ref)."'";
 		$sql .= ",label = '".$this->db->escape($this->label)."'";
 
-		$sql .= ",courant = ".$this->courant;
-		$sql .= ",clos = ".$this->clos;
-		$sql .= ",rappro = ".$this->rappro;
+		$sql .= ",courant = ".((int) $this->courant);
+		$sql .= ",clos = ".((int) $this->clos);
+		$sql .= ",rappro = ".((int) $this->rappro);
 		$sql .= ",url = ".($this->url ? "'".$this->db->escape($this->url)."'" : "null");
 		$sql .= ",account_number = '".$this->db->escape($this->account_number)."'";
 		$sql .= ",fk_accountancy_journal = ".($this->fk_accountancy_journal > 0 ? $this->db->escape($this->fk_accountancy_journal) : "null");
@@ -823,7 +828,7 @@ class Account extends CommonObject
 		$sql .= ",ics = '".$this->db->escape($this->ics)."'";
 		$sql .= ",ics_transfer = '".$this->db->escape($this->ics_transfer)."'";
 
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -1223,7 +1228,7 @@ class Account extends CommonObject
 		$sql .= " AND (ba.rappro = 1 AND ba.courant != 2)"; // Compte rapprochable
 		$sql .= " AND clos = 0";
 		if ($filteraccountid) {
-			$sql .= " AND ba.rowid = ".$filteraccountid;
+			$sql .= " AND ba.rowid = ".((int) $filteraccountid);
 		}
 
 		$resql = $this->db->query($sql);
@@ -1278,7 +1283,7 @@ class Account extends CommonObject
 		$sql .= " AND (ba.rappro = 1 AND ba.courant != 2)"; // Compte rapprochable
 		$sql .= " AND clos = 0";
 		if ($filteraccountid) {
-			$sql .= " AND ba.rowid = ".$filteraccountid;
+			$sql .= " AND ba.rowid = ".((int) $filteraccountid);
 		}
 
 		$resql = $this->db->query($sql);

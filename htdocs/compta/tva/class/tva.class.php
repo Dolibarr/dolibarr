@@ -585,7 +585,7 @@ class Tva extends CommonObject
 		$sql .= " '".$this->db->idate($this->datec)."'";
 		$sql .= ", '".$this->db->idate($this->datep)."'";
 		$sql .= ", '".$this->db->idate($this->datev)."'";
-		$sql .= ", ".$this->amount;
+		$sql .= ", ".((float) $this->amount);
 		$sql .= ", '".$this->db->escape($this->type_payment)."'";
 		$sql .= ", '".$this->db->escape($this->num_payment)."'";
 		if ($this->note) {

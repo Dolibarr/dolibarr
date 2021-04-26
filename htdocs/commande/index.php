@@ -30,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
 
 if (!$user->rights->commande->lire) {
 	accessforbidden();
@@ -76,113 +77,8 @@ print load_fiche_titre($langs->trans("OrdersArea"), '', 'order');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-/*
- * Statistics
- */
-
-$sql = "SELECT count(c.rowid) as nb, c.fk_statut as status";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-$sql .= ", ".MAIN_DB_PREFIX."commande as c";
-if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-}
-$sql .= " WHERE c.fk_soc = s.rowid";
-$sql .= " AND c.entity IN (".getEntity('societe').")";
-if ($user->socid) {
-	$sql .= ' AND c.fk_soc = '.$user->socid;
-}
-if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-}
-$sql .= " GROUP BY c.fk_statut";
-
-$resql = $db->query($sql);
-if ($resql) {
-	$num = $db->num_rows($resql);
-	$i = 0;
-
-	$total = 0;
-	$totalinprocess = 0;
-	$dataseries = array();
-	$colorseries = array();
-	$vals = array();
-	// -1=Canceled, 0=Draft, 1=Validated, 2=Accepted/On process, 3=Closed (Sent/Received, billed or not)
-	while ($i < $num) {
-		$row = $db->fetch_row($resql);
-		if ($row) {
-			//if ($row[1]!=-1 && ($row[1]!=3 || $row[2]!=1))
-			{
-			if (!isset($vals[$row[1]])) {
-				$vals[$row[1]] = 0;
-			}
-				$vals[$row[1]] += $row[0];
-				$totalinprocess += $row[0];
-			}
-			$total += $row[0];
-		}
-		$i++;
-	}
-	$db->free($resql);
-
-	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
-
-	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder nohover centpercent">';
-	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("CustomersOrders").'</th></tr>'."\n";
-	$listofstatus = array(0, 1, 2, 3, -1);
-	foreach ($listofstatus as $status) {
-		$dataseries[] = array($commandestatic->LibStatut($status, 0, 1, 1), (isset($vals[$status]) ? (int) $vals[$status] : 0));
-		if ($status == Commande::STATUS_DRAFT) {
-			$colorseries[$status] = '-'.$badgeStatus0;
-		}
-		if ($status == Commande::STATUS_VALIDATED) {
-			$colorseries[$status] = $badgeStatus1;
-		}
-		if ($status == Commande::STATUS_SHIPMENTONPROCESS) {
-			$colorseries[$status] = $badgeStatus4;
-		}
-		if ($status == Commande::STATUS_CLOSED && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)) {
-			$colorseries[$status] = $badgeStatus6;
-		}
-		if ($status == Commande::STATUS_CLOSED && (!empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) {
-			$colorseries[$status] = $badgeStatus6;
-		}
-		if ($status == Commande::STATUS_CANCELED) {
-			$colorseries[$status] = $badgeStatus9;
-		}
-
-		if (empty($conf->use_javascript_ajax)) {
-			print '<tr class="oddeven">';
-			print '<td>'.$commandestatic->LibStatut($status, 0, 0, 1).'</td>';
-			print '<td class="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status]) ? $vals[$status] : 0).' ';
-			print $commandestatic->LibStatut($status, 0, 3, 1);
-			print '</a></td>';
-			print "</tr>\n";
-		}
-	}
-	if ($conf->use_javascript_ajax) {
-		print '<tr class="impair"><td align="center" colspan="2">';
-
-		include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-		$dolgraph = new DolGraph();
-		$dolgraph->SetData($dataseries);
-		$dolgraph->SetDataColor(array_values($colorseries));
-		$dolgraph->setShowLegend(2);
-		$dolgraph->setShowPercent(1);
-		$dolgraph->SetType(array('pie'));
-		$dolgraph->setHeight('200');
-		$dolgraph->draw('idgraphstatus');
-		print $dolgraph->show($total ? 0 : 1);
-
-		print '</td></tr>';
-	}
-
-	//if ($totalinprocess != $total)
-	print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">'.$total.'</td></tr>';
-	print "</table></div><br>";
-} else {
-	dol_print_error($db);
-}
+print getCustomerOrderPieChart($socid);
+print '<br>';
 
 
 /*

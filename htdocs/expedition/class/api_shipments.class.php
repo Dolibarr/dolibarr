@@ -275,7 +275,12 @@ class Shipments extends DolibarrApi
 		if( ! DolibarrApi::_checkAccessToResource('expedition',$this->shipment->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
+
 		$request_data = (object) $request_data;
+
+		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
+		$request_data->label = checkVal($request_data->label);
+
 		$updateRes = $this->shipment->addline(
 						$request_data->desc,
 						$request_data->subprice,
@@ -338,7 +343,12 @@ class Shipments extends DolibarrApi
 		if( ! DolibarrApi::_checkAccessToResource('expedition',$this->shipment->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
+
 		$request_data = (object) $request_data;
+
+		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
+		$request_data->label = checkVal($request_data->label);
+
 		$updateRes = $this->shipment->updateline(
 						$lineid,
 						$request_data->desc,
@@ -403,7 +413,6 @@ class Shipments extends DolibarrApi
 
 		// TODO Check the lineid $lineid is a line of ojbect
 
-		$request_data = (object) $request_data;
 		$updateRes = $this->shipment->deleteline(DolibarrApiAccess::$user, $lineid);
 		if ($updateRes > 0) {
 			return $this->get($id);
