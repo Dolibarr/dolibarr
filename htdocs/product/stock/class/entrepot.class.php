@@ -610,13 +610,36 @@ class Entrepot extends CommonObject
 	 */
 	public function nb_products()
 	{
+		global $conf;
 		// phpcs:enable
 		$ret = array();
 
-		$sql = "SELECT sum(ps.reel) as nb, sum(ps.reel * p.pmp) as value";
+		//For MultiCompany PMP per entity
+		$separatedPMP = false;
+		if (!empty($conf->global->MULTICOMPANY_PRODUCT_SHARING_ENABLED) && !empty($conf->global->MULTICOMPANY_PMP_PER_ENTITY_ENABLED)) {
+			$separatedPMP = true;
+		}
+
+		if ($separatedPMP) {
+			$sql = "SELECT sum(ps.reel) as nb, sum(ps.reel * ppe.pmp) as value";
+		}
+		else{
+			$sql = "SELECT sum(ps.reel) as nb, sum(ps.reel * p.pmp) as value";
+		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
+		
 		$sql .= ", ".MAIN_DB_PREFIX."product as p";
+		
+		if ($separatedPMP) {
+			$sql .= ", ".MAIN_DB_PREFIX."entity_product_pmp as ppe";
+		}
+
 		$sql .= " WHERE ps.fk_entrepot = ".$this->id;
+
+		if ($separatedPMP) {
+			$sql .= " AND ppe.fk_product = p.rowid AND ppe.entity = ". (int) $conf->entity;
+		}
+		
 		$sql .= " AND ps.fk_product = p.rowid";
 
 		//print $sql;
