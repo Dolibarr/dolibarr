@@ -29,7 +29,6 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
  */
 class BankAccounts extends DolibarrApi
 {
-
 	/**
 	 * array $FIELDS Mandatory fields, checked when creating an object
 	 */
@@ -158,7 +157,7 @@ class BankAccounts extends DolibarrApi
 
 		$account = new Account($this->db);
 		foreach ($request_data as $field => $value) {
-			$account->$field = $value;
+			$account->$field = $this->checkValForAPI($field, $value, $account);
 		}
 		// Date of the initial balance (required to create an account).
 		$account->date_solde = time();
@@ -333,7 +332,7 @@ class BankAccounts extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
-			$account->$field = $value;
+			$account->$field = $this->checkValForAPI($field, $value, $account);
 		}
 
 		if ($account->update(DolibarrApiAccess::$user) > 0) {
