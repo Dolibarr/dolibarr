@@ -98,6 +98,7 @@ if (empty($reshook))
 		$object->ref         = GETPOST("ref");
 		$object->fk_parent   = GETPOST("fk_parent");
 		$object->libelle     = GETPOST("libelle");
+		$object->label     	 = GETPOST("libelle");
 		$object->description = GETPOST("desc");
 		$object->statut      = GETPOST("statut");
 		$object->lieu        = GETPOST("lieu");
@@ -105,8 +106,8 @@ if (empty($reshook))
 		$object->zip         = GETPOST("zipcode");
 		$object->town        = GETPOST("town");
 		$object->country_id  = GETPOST("country_id");
-		$object->phone = GETPOST("phone");
-		$object->fax = GETPOST("fax");
+		$object->phone 		 = GETPOST("phone");
+		$object->fax 		 = GETPOST("fax");
 
 		if (!empty($object->libelle))
 		{
@@ -168,6 +169,7 @@ if (empty($reshook))
 		if ($object->fetch($id))
 		{
 			$object->libelle     = GETPOST("libelle");
+			$object->label 		 = GETPOST("libelle");
 			$object->fk_parent   = GETPOST("fk_parent");
 			$object->description = GETPOST("desc");
 			$object->statut      = GETPOST("statut");
@@ -176,8 +178,8 @@ if (empty($reshook))
 			$object->zip         = GETPOST("zipcode");
 			$object->town        = GETPOST("town");
 			$object->country_id  = GETPOST("country_id");
-			$object->phone = GETPOST("phone");
-			$object->fax = GETPOST("fax");
+			$object->phone 		 = GETPOST("phone");
+			$object->fax 		 = GETPOST("fax");
 
 	        // Fill array 'array_options' with data from add form
 	        $ret = $extrafields->setOptionalsFromPost(null, $object);
