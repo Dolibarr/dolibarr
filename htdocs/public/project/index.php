@@ -255,6 +255,7 @@ if (empty($reshook) && $action == 'add') {
 		// Getting the thirdparty or creating it
 		$thirdparty = new Societe($db);
 		$resultfetchthirdparty = $thirdparty->fetch('', $societe);
+
 		if ($resultfetchthirdparty<=0) {
 			// Need to create a new one (not found or multiple with the same name)
 			$thirdparty->name     = $societe;
@@ -331,37 +332,41 @@ if (empty($reshook) && $action == 'add') {
 				$resultcategory = $category->fetch($conf->global->EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH);
 			}
 
-			if ($resultcategory<0) {
+			if ($resultcategory<=0) {
 				$error++;
 				$errmsg .= $category->error;
 			} else {
 				$resultsetcategory = $thirdparty->setCategoriesCommon(array($category->id), CATEGORIE::TYPE_CUSTOMER, false);
-				if ($resultsetcategory <=0) {
+				if ($resultsetcategory < 0) {
 					$error++;
 					$errmsg .= $thirdparty->error;
-				}
+				} else {
+					$thirdparty->fournisseur = 1;
 
-				$thirdparty->fournisseur = 1;
+					// Load object modCodeFournisseur
+					$module = (!empty($conf->global->SOCIETE_CODECLIENT_ADDON) ? $conf->global->SOCIETE_CODECLIENT_ADDON : 'mod_codeclient_leopard');
+					if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php') {
+						$module = substr($module, 0, dol_strlen($module) - 4);
+					}
+					$dirsociete = array_merge(array('/core/modules/societe/'), $conf->modules_parts['societe']);
+					foreach ($dirsociete as $dirroot) {
+						$res = dol_include_once($dirroot.$module.'.php');
+						if ($res) {
+							break;
+						}
+					}
+					$modCodeFournisseur = new $module;
+					if (empty($tmpcode) && !empty($modCodeFournisseur->code_auto)) {
+						$tmpcode = $modCodeFournisseur->getNextValue($thirdparty, 1);
+					}
+					$thirdparty->code_fournisseur = $tmpcode;
 
-				// Load object modCodeFournisseur
-				$module = (!empty($conf->global->SOCIETE_CODECLIENT_ADDON) ? $conf->global->SOCIETE_CODECLIENT_ADDON : 'mod_codeclient_leopard');
-				if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php') {
-					$module = substr($module, 0, dol_strlen($module) - 4);
-				}
-				$dirsociete = array_merge(array('/core/modules/societe/'), $conf->modules_parts['societe']);
-				foreach ($dirsociete as $dirroot) {
-					$res = dol_include_once($dirroot.$module.'.php');
-					if ($res) {
-						break;
+					$res = $thirdparty->update(0, $user, 1, 1, 1);
+
+					if ($res <= 0) {
+						$error++;
 					}
 				}
-				$modCodeFournisseur = new $module;
-				if (empty($tmpcode) && !empty($modCodeFournisseur->code_auto)) {
-					$tmpcode = $modCodeFournisseur->getNextValue($thirdparty, 0);
-				}
-				$thirdparty->code_fournisseur = $tmpcode;
-
-				$res = $thirdparty->update(0);
 			}
 		}
 

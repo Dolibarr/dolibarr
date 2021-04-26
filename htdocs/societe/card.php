@@ -2468,6 +2468,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if ($tmpcheck != 0 && $tmpcheck != -5) {
 				print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
 			}
+			var_dump($tmpcheck);
 			print '</td>';
 			print '</tr>';
 		}
