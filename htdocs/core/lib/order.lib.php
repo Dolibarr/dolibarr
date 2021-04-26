@@ -228,9 +228,9 @@ function getCustomerOrderPieChart($socid = 0)
 			if ($row) {
 				//if ($row[1]!=-1 && ($row[1]!=3 || $row[2]!=1))
 				{
-					if (!isset($vals[$row[1]])) {
-						$vals[$row[1]] = 0;
-					}
+				if (!isset($vals[$row[1]])) {
+					$vals[$row[1]] = 0;
+				}
 					$vals[$row[1]] += $row[0];
 					$totalinprocess += $row[0];
 				}
