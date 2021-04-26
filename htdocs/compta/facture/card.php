@@ -189,12 +189,12 @@ if (empty($reshook)) {
 		$objectutil->socid = $socid;
 		$result = $objectutil->createFromClone($user, $id);
 		if ($result > 0) {
-	   		header("Location: ".$_SERVER['PHP_SELF'].'?facid='.$result);
-	   		exit();
-	   	} else {
-	   		$langs->load("errors");
-	   		setEventMessages($object->error, $object->errors, 'errors');
-	   		$action = '';
+			header("Location: ".$_SERVER['PHP_SELF'].'?facid='.$result);
+			exit();
+		} else {
+			$langs->load("errors");
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = '';
 		}
 	} // Change status of invoice
 	elseif ($action == 'reopen' && $usercanreopen) {
