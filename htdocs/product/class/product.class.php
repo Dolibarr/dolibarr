@@ -2238,7 +2238,7 @@ class Product extends CommonObject
 		if ($separatedStock) {
 			$sql .= " AND sp.fk_entrepot IN (
 				SELECT rowid
-				FROM ".MAIN_DB_PREFIX."entrepot	WHERE entity IN (" . $visibleWarehousesEntities	."))";
+				FROM ".MAIN_DB_PREFIX."entrepot	WHERE entity IN (" . $this->db->sanitize($visibleWarehousesEntities)	."))";
 		}
 
 
