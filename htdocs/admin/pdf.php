@@ -161,6 +161,10 @@ if (class_exists('TCPDI')) {
 
 print load_fiche_titre($langs->trans("PDF"), '', 'title_setup');
 
+$head = pdf_admin_prepare_head();
+
+print dol_get_fiche_head($head, 'general', $langs->trans("PDF"), -1, 'pdf');
+
 print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("PDFDesc"), $s)."</span><br>\n";
 print "<br>\n";
 
