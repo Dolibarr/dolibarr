@@ -896,7 +896,7 @@ if (empty($reshook)) {
 				$result = $facture->addline(
 					$desc,
 					$pu_ht,
-					price2nm(GETPOST('qty'), 'MS'),
+					price2num(GETPOST('qty'), 'MS'),
 					$tva_tx,
 					$localtax1_tx,
 					$localtax2_tx,
