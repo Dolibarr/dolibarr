@@ -274,9 +274,55 @@ if (empty($reshook) && $action == 'add') {
 		$resultcontact = $contact->fetch('', $user, '', $email);
 		if ($resultcontact<=0) {
 			// Need to create a contact
+			$contact->socid = $thirdparty->id;
+			$contact->lastname = (string) GETPOST("lastname", 'alpha');
+			$contact->firstname = (string) GETPOST("firstname", 'alpha');
+			$contact->address = (string) GETPOST("address", 'alpha');
+			$contact->zip = (string) GETPOST("zipcode", 'alpha');
+			$contact->town = (string) GETPOST("town", 'alpha');
+			$contact->country_id = (int) GETPOST("country_id", 'int');
+			$contact->state_id = (int) GETPOST("state_id", 'int');
+			$contact->email = $email;
+			$contact->statut = 1; //Default status to Actif
+
+			$resultcreatecontact = $contact->create($user);
+			if ($resultcreatecontact<0) {
+				$error++;
+				$errmsg .= $contact->error;
+			}
 		}
-		// We have the contact and the thirdparty
-		$db->commit();
+
+		if (!$error) {
+			// Adding supplier tag
+			$category = new Categorie($db);
+			if (GETPOST("suggestconference")) {
+				// Conference case
+				$resultcategory = $category->fetch($conf->global->EVENTORGANIZATION_CATEG_THIRDPARTY_CONF);
+			} else {
+				// Booth case
+				$resultcategory = $category->fetch($conf->global->EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH);
+			}
+
+			if ($resultcategory<0) {
+				$error++;
+				$errmsg .= $category->error;
+			} else {
+				$contact->setCategoriesCommon($category->id, Categorie::TYPE_CONTACT, false);
+				$resultupdate  = $contact->update($contact->id);
+				if ($resultupdate <= 0) {
+					$error++;
+					$errmsg .= $contact->error;
+				}
+			}
+		}
+
+		if (!$error) {
+			// We have the contact and the thirdparty
+
+
+
+			$db->commit();
+		}
 	} else {
 		$db->rollback();
 	}
