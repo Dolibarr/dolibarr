@@ -88,7 +88,7 @@ function pdf_admin_prepare_head()
 	$head[$h][1] = $langs->trans("Intervention");
 	$head[$h][2] = 'intervention';
 	$h++;
-	
+
 	$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_supplierproposal.php';
 	$head[$h][1] = $langs->trans("SupplierProposal");
 	$head[$h][2] = 'supplierproposal';

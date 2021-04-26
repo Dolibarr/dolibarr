@@ -53,8 +53,6 @@ if ($cancel) {
 }
 
 if ($action == 'update') {
-	
-
 	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
