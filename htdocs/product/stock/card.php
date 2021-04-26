@@ -605,8 +605,7 @@ if ($action == 'create') {
 			$sql = "SELECT p.rowid as rowid, p.ref, p.label as produit, p.tobatch, p.fk_product_type as type, p.price, p.price_ttc, p.entity,";
 			if ($separatedPMP) {
 				$sql .= " ppe.pmp as ppmp,";
-			} 
-			else {
+			} else {
 				$sql .= " p.pmp as ppmp,";
 			}
 			$sql .= " ps.reel as value";

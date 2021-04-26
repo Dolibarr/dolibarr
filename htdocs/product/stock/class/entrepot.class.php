@@ -622,8 +622,7 @@ class Entrepot extends CommonObject
 
 		if ($separatedPMP) {
 			$sql = "SELECT sum(ps.reel) as nb, sum(ps.reel * ppe.pmp) as value";
-		} 
-		else {
+		} else {
 			$sql = "SELECT sum(ps.reel) as nb, sum(ps.reel * p.pmp) as value";
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
@@ -634,7 +633,7 @@ class Entrepot extends CommonObject
 		$sql .= " WHERE ps.fk_entrepot = ".$this->id;
 		if ($separatedPMP) {
 			$sql .= " AND ppe.fk_product = p.rowid AND ppe.entity = ". (int) $conf->entity;
-		}
+		} 
 		$sql .= " AND ps.fk_product = p.rowid";
 		//print $sql;
 		$result = $this->db->query($sql);

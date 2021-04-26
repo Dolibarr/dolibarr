@@ -2201,14 +2201,12 @@ class Product extends CommonObject
 		}
 		if ($separatedStock) {
 			$sql .= " SUM(sp.reel) as stock,";
-		} 
-		else {
+		} else {
 			$sql .= " p.stock,";
 		}
 		if ($separatedEntityPMP) {
 			$sql .= " ppe.pmp, p.datec, p.tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.batch_mask, p.fk_unit,";
-		} 
-		else {
+		} else {
 			$sql .= " p.pmp, p.datec, p.tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.batch_mask, p.fk_unit,";
 		}
 		$sql .= " p.fk_price_expression, p.price_autogen, p.model_pdf";
