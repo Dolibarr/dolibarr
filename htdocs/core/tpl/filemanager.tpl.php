@@ -87,10 +87,25 @@ if ($module == 'ecm') {
 	print '</a>';
 }
 if ($permtoadd && GETPOSTISSET('website')) {	// If on file manager to manage medias of a web site
-	print '<a href="'.$_SERVER["PHP_SELF"].'?action=confirmconvertimgwebp&website='.$website->ref.'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans("GenerateImgWebp")).'">';
+	print '<a id="generateimgwebp" href="'.$_SERVER["PHP_SELF"].'?action=confirmconvertimgwebp&website='.$website->ref.'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans("GenerateImgWebp")).'">';
 	print img_picto('', 'images', '', false, 0, 0, '', 'size15x flip marginrightonly');
 	print '</a>';
 }
+if ($permtoadd && $module == 'ecm') {	// If on file manager medias in ecm
+	print '<a id="generateimgwebp" href="'.$_SERVER["PHP_SELF"].'?action=confirmconvertimgwebp" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans("GenerateImgWebp")).'">';
+	print img_picto('', 'images', '', false, 0, 0, '', 'size15x flip marginrightonly');
+	print '</a>';
+}
+print "<script>
+$(\"#generateimgwebp\").on(\"click\",function(){
+	try{
+		param = $(\".directory.expanded\")[$(\".directory.expanded\").length-1].children[0].rel
+	}catch{
+		param = '/'
+	}
+	$(\"#generateimgwebp\").attr(\"href\",$(\"#generateimgwebp\").attr(\"href\")+'&dir='+param)
+  })
+</script>";
 
 // Start "Add new file" area
 $nameforformuserfile = 'formuserfileecm';
@@ -139,22 +154,26 @@ if ($action == 'delete_section') {
 // End confirm
 
 if ($action == 'confirmconvertimgwebp') {
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?website='.$website->ref, $langs->trans('ConfirmImgWebpCreation'), $langs->trans('ConfirmGenerateImgWebp', $object->ref), 'convertimgwebp', '', "yes", 1);
+	if ($module == 'medias') {
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?website='.$website->ref.'&dir='.$_GET['dir'], $langs->trans('ConfirmImgWebpCreation'), $langs->trans('ConfirmGenerateImgWebp', $object->ref), 'convertimgwebp', '', "yes", 1);
+	} else {
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?dir='.$_GET['dir'], $langs->trans('ConfirmImgWebpCreation'), $langs->trans('ConfirmGenerateImgWebp', $object->ref), 'convertimgwebp', '', "yes", 1);
+	}
 	$action = 'file_manager';
 }
 
 if ($action == 'convertimgwebp' && $permtoadd) {
 	if ($module == 'medias') {
-		$imagefolder = $conf->website->dir_output.'/'.$websitekey.'/medias/image/'.$websitekey.'/';
+		$imagefolder = $conf->website->dir_output.'/'.$websitekey.'/medias/'.$_GET['dir'];
 	} else {
-		$imagefolder = $conf->ecm->dir_output;
+		$imagefolder = $conf->ecm->dir_output.'/'.$_GET['dir'];
 	}
 
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
 	$regeximgext = getListOfPossibleImageExt();
 
-	$filelist = dol_dir_list($imagefolder, "all", 1, $regeximgext);
+	$filelist = dol_dir_list($imagefolder, "all", 0, $regeximgext);
 
 	foreach ($filelist as $filename) {
 		$filepath = $filename['fullname'];
