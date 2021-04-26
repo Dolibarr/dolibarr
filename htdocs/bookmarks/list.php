@@ -269,10 +269,10 @@ while ($i < min($num, $limit)) {
 
 	// Actions
 	print '<td class="nowrap right">';
-	if ($canedit)
+	if ($canedit) {
 		print '<a class="editfielda" href="'.DOL_URL_ROOT.'/bookmarks/card.php?action=edit&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.img_edit()."</a>";
 	}
-	if ($candelete)
+	if ($candelete) {
 		print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$obj->rowid.'">'.img_delete().'</a>';
 	} else {
 		print "&nbsp;";
