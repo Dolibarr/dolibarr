@@ -405,6 +405,7 @@ class AgendaEvents extends DolibarrApi
 		unset($object->region_id);
 		unset($object->actions);
 		unset($object->lines);
+		unset($object->modelpdf);
 
 		return $object;
 	}
