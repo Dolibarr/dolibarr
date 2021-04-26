@@ -3,6 +3,7 @@
  * Copyright (C) 2006-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2021		Waël Almoman			<info@almoman.com>
+ * Copyright (C) 2021		Maxime Demarest			<maxime@indelog.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -776,6 +777,115 @@ if ($ispaymentok) {
 			$postactionmessages[] = 'Invoice paid '.$tmptag['INV'].' was not found';
 			$ispostactionok = -1;
 		}
+	} elseif (array_key_exists('DON', $tmptag) && $tmptag['DON'] > 0) {
+		include_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
+		$don = new Don($db);
+		$result = $don->fetch($tmptag['DON']);
+		if ($result) {
+			$FinalPaymentAmt = $_SESSION["FinalPaymentAmt"];
+
+			$paymentTypeId = 0;
+			if ($paymentmethod == 'paybox') {
+				$paymentTypeId = $conf->global->PAYBOX_PAYMENT_MODE_FOR_PAYMENTS;
+			}
+			if ($paymentmethod == 'paypal') {
+				$paymentTypeId = $conf->global->PAYPAL_PAYMENT_MODE_FOR_PAYMENTS;
+			}
+			if ($paymentmethod == 'stripe') {
+				$paymentTypeId = $conf->global->STRIPE_PAYMENT_MODE_FOR_PAYMENTS;
+			}
+			if (empty($paymentTypeId)) {
+				$paymentType = $_SESSION["paymentType"];
+				if (empty($paymentType)) {
+					$paymentType = 'CB';
+				}
+				$paymentTypeId = dol_getIdFromCode($db, $paymentType, 'c_paiement', 'code', 'id', 1);
+			}
+
+			$currencyCodeType = $_SESSION['currencyCodeType'];
+
+			// Do action only if $FinalPaymentAmt is set (session variable is cleaned after this page to avoid duplicate actions when page is POST a second time)
+			if (!empty($FinalPaymentAmt) && $paymentTypeId > 0) {
+				$db->begin();
+
+				// Creation of paiement line for donation
+				include_once DOL_DOCUMENT_ROOT.'/don/class/paymentdonation.class.php';
+				$paiement = new PaymentDonation($db);
+
+				if ($currencyCodeType == $conf->currency) {
+					$paiement->amounts = array($object->id => $FinalPaymentAmt); // Array with all payments dispatching with donation
+				} else {
+					// PaymentDonation does not support multi currency
+					$postactionmessages[] = 'Payment donation can\'t be payed with diffent currency than '.$conf->currency;
+					$ispostactionok = -1;
+					$error++; // Not yet supported
+				}
+
+				$paiement->fk_donation = $don->id;
+				$paiement->datepaid = $now;
+				$paiement->paymenttype = $paymentTypeId;
+				$paiement->num_payment = '';
+				$paiement->note_public  = 'Online payment '.dol_print_date($now, 'standard').' from '.$ipaddress;
+				$paiement->ext_payment_id = $TRANSACTIONID;
+				$paiement->ext_payment_site = $service;
+
+				if (!$error) {
+					$paiement_id = $paiement->create($user, 1);
+					if ($paiement_id < 0) {
+						$postactionmessages[] = $paiement->error.' '.join("<br>\n", $paiement->errors);
+						$ispostactionok = -1;
+						$error++;
+					} else {
+						$postactionmessages[] = 'Payment created';
+						$ispostactionok = 1;
+
+						if ($totalpayed >= $don->getRemainToPay()) $don->setPaid($don->id);
+					}
+				}
+
+				if (!$error && !empty($conf->banque->enabled)) {
+					$bankaccountid = 0;
+					if ($paymentmethod == 'paybox') {
+						$bankaccountid = $conf->global->PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS;
+					} elseif ($paymentmethod == 'paypal') {
+						$bankaccountid = $conf->global->PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS;
+					} elseif ($paymentmethod == 'stripe') {
+						$bankaccountid = $conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS;
+					}
+
+					if ($bankaccountid > 0) {
+						$result = $paiement->addPaymentToBank($user, 'payment_donation', '(DonationPayment)', $bankaccountid, '', '');
+						if ($result < 0) {
+							$postactionmessages[] = $paiement->error.' '.join("<br>\n", $paiement->errors);
+							$ispostactionok = -1;
+							$error++;
+						} else {
+							$postactionmessages[] = 'Bank transaction of payment created';
+							$ispostactionok = 1;
+						}
+					} else {
+						$postactionmessages[] = 'Setup of bank account to use in module '.$paymentmethod.' was not set. No way to record the payment.';
+						$ispostactionok = -1;
+						$error++;
+					}
+				}
+
+				if (!$error) {
+					$db->commit();
+				} else {
+					$db->rollback();
+				}
+			} else {
+				$postactionmessages[] = 'Failed to get a valid value for "amount paid" ('.$FinalPaymentAmt.') or "payment type" ('.$paymentType.') to record the payment of donation '.$tmptag['DON'].'. May be payment was already recorded.';
+				$ispostactionok = -1;
+			}
+		} else {
+			$postactionmessages[] = 'Donation paid '.$tmptag['DON'].' was not found';
+			$ispostactionok = -1;
+		}
+
+		// TODO send email with acknowledgment for the donation
+		//      (need that the donation module can gen a pdf document for the cerfa with pre filled content)
 	} else {
 		// Nothing done
 	}
@@ -902,6 +1012,7 @@ if ($ispaymentok) {
 		if (!empty($ErrorSeverityCode)) {
 			$content .= "ErrorSeverityCode = ".$ErrorSeverityCode."<br>\n";
 		}
+
 
 		$ishtml = dol_textishtml($content); // May contain urls
 
