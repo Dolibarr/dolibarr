@@ -9156,6 +9156,7 @@ abstract class CommonObject
 			if ($c->fetch($add) > 0) {
 				$result = $c->add_type($this, $type_categ);
 				if ($result < 0) {
+					var_dump($result);
 					$error++;
 					$this->error = $c->error;
 					$this->errors = $c->errors;
@@ -9165,7 +9166,6 @@ abstract class CommonObject
 				}
 			}
 		}
-
 		return $error ? -1 * $error : $ok;
 	}
 

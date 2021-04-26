@@ -65,8 +65,9 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class.php';
-require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/paymentterm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -270,29 +271,32 @@ if (empty($reshook) && $action == 'add') {
 			}
 		}
 		// From there we have a thirdparty, now looking for the contact
-		$contact = new Contact($db);
-		$resultcontact = $contact->fetch('', $user, '', $email);
-		if ($resultcontact<=0) {
-			// Need to create a contact
-			$contact->socid = $thirdparty->id;
-			$contact->lastname = (string) GETPOST("lastname", 'alpha');
-			$contact->firstname = (string) GETPOST("firstname", 'alpha');
-			$contact->address = (string) GETPOST("address", 'alpha');
-			$contact->zip = (string) GETPOST("zipcode", 'alpha');
-			$contact->town = (string) GETPOST("town", 'alpha');
-			$contact->country_id = (int) GETPOST("country_id", 'int');
-			$contact->state_id = (int) GETPOST("state_id", 'int');
-			$contact->email = $email;
-			$contact->statut = 1; //Default status to Actif
-
-			$resultcreatecontact = $contact->create($user);
-			if ($resultcreatecontact<0) {
-				$error++;
-				$errmsg .= $contact->error;
-			}
-		}
 
 		if (!$error) {
+			$contact = new Contact($db);
+			$resultcontact = $contact->fetch('', '', '', $email);
+			if ($resultcontact<=0) {
+				// Need to create a contact
+				$contact->socid = $thirdparty->id;
+				$contact->lastname = (string) GETPOST("lastname", 'alpha');
+				$contact->firstname = (string) GETPOST("firstname", 'alpha');
+				$contact->address = (string) GETPOST("address", 'alpha');
+				$contact->zip = (string) GETPOST("zipcode", 'alpha');
+				$contact->town = (string) GETPOST("town", 'alpha');
+				$contact->country_id = (int) GETPOST("country_id", 'int');
+				$contact->state_id = (int) GETPOST("state_id", 'int');
+				$contact->email = $email;
+				$contact->statut = 1; //Default status to Actif
+
+				$resultcreatecontact = $contact->create($user);
+				if ($resultcreatecontact<0) {
+					$error++;
+					$errmsg .= $contact->error;
+				}
+			}
+		}
+		// Only if we created the contact
+		if (!$error && $resultcontact<=0) {
 			// Adding supplier tag
 			$category = new Categorie($db);
 			if (GETPOST("suggestconference")) {
@@ -307,9 +311,8 @@ if (empty($reshook) && $action == 'add') {
 				$error++;
 				$errmsg .= $category->error;
 			} else {
-				$contact->setCategoriesCommon($category->id, Categorie::TYPE_CONTACT, false);
-				$resultupdate  = $contact->update($contact->id);
-				if ($resultupdate <= 0) {
+				$resultsetcategory = $contact->setCategoriesCommon(array($category->id), CATEGORIE::TYPE_CONTACT, false);
+				if ($resultsetcategory <=0) {
 					$error++;
 					$errmsg .= $contact->error;
 				}
@@ -454,16 +457,8 @@ if ($project->accept_booth_suggestions) {
 	print '<input type="submit" value="'.$langs->trans("SuggestBooth").'" name="suggestbooth" id="suggestbooth" class="button">';
 }
 print '</div>';
-
 print '<br><br>';
 
-// Save
-print '<div class="center">';
-print '<input type="submit" value="'.$langs->trans("Submit").'" id="submitsave" class="button">';
-if (!empty($backtopage)) {
-	print ' &nbsp; &nbsp; <input type="submit" value="'.$langs->trans("Cancel").'" id="submitcancel" class="button button-cancel">';
-}
-print '</div>';
 
 
 print "</form>\n";
