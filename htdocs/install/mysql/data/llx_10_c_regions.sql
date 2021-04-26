@@ -100,7 +100,7 @@ insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 0
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 13, 1301, '', 0, 'Algerie');
 
 
--- Andorra Regions (id country=18)
+-- Andorra Regions (id country=34)
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 34, 34000, 'AD', NULL, 'Andorra');
 
 
