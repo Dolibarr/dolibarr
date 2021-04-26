@@ -153,7 +153,7 @@ if ($action == 'create') {
 
 	print load_fiche_titre($langs->trans("NewBookmark"));
 
-	print dol_get_fiche_head($head, $hselected, $langs->trans("Bookmark"), 0, 'bookmark');
+	print dol_get_fiche_head($head, $hselected, $langs->trans("Bookmark"), -1, 'bookmark');
 
 	print '<table class="border centpercent tableforfieldcreate">';
 
@@ -171,7 +171,7 @@ if ($action == 'create') {
 
 	// Owner
 	print '<tr><td>'.$langs->trans("Owner").'</td><td>';
-	print img_picto('', 'user').' '.$form->select_dolusers(GETPOSTISSET('userid') ? GETPOST('userid', 'int') : $user->id, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+	print img_picto('', 'user').' '.$form->select_dolusers(GETPOSTISSET('userid') ? GETPOST('userid', 'int') : $user->id, 'userid', 0, '', 0, ($user->admin ? '' : array($user->id)), '', 0, 0, 0, '', ($user->admin) ? 1 : 0, '', 'maxwidth300');
 	print '</td><td class="hideonsmartphone">&nbsp;</td></tr>';
 
 	// Position
@@ -193,19 +193,7 @@ if ($action == 'create') {
 
 
 if ($id > 0 && !preg_match('/^add/i', $action)) {
-	/*
-	 * Fact bookmark mode or visually edition
-	 */
 	$object->fetch($id);
-
-	$hselected = 'card';
-	$head = array(
-		array(
-			'',
-			$langs->trans('Card'),
-			'card'
-		)
-	);
 
 	if ($action == 'edit') {
 		print '<form name="edit" method="POST" action="'.$_SERVER["PHP_SELF"].'" enctype="multipart/form-data">';
@@ -215,7 +203,6 @@ if ($id > 0 && !preg_match('/^add/i', $action)) {
 		print '<input type="hidden" name="urlsource" value="'.DOL_URL_ROOT.'/bookmarks/card.php?id='.$object->id.'">';
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	}
-
 
 	print dol_get_fiche_head($head, $hselected, $langs->trans("Bookmark"), -1, 'bookmark');
 

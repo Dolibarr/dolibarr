@@ -431,6 +431,10 @@ ALTER TABLE llx_facture_fourn ADD COLUMN fk_user_closing integer DEFAULT NULL af
 
 ALTER TABLE llx_entrepot ADD COLUMN fk_project INTEGER DEFAULT NULL AFTER entity; -- project associated to warehouse if any
 
+-- Add external payement suport for donation
+ALTER TABLE llx_payment_donation ADD COLUMN ext_payment_site  varchar(128) AFTER note;
+ALTER TABLE llx_payment_donation ADD COLUMN ext_payment_id  varchar(128) AFTER note;
+
 -- Rebuild sequence for postgres only after query INSERT INTO llx_salary(rowid, ...
 -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 

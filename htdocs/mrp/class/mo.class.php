@@ -500,7 +500,7 @@ class Mo extends CommonObject
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$mostatic->table_element.' as t';
 		$sql .= " WHERE t.role = '".$this->db->escape($role)."'";
 		if ($lineid > 0) {
-			$sql .= ' AND t.fk_mrp_production = '.$lineid;
+			$sql .= ' AND t.fk_mrp_production = '.((int) $lineid);
 		} else {
 			$sql .= 'AND t.fk_mo = '.$this->id;
 		}

@@ -119,7 +119,7 @@ if (preg_match('/api\/index\.php\/explorer/', $url) && !empty($conf->global->API
 
 // Analyze URLs
 // index.php/explorer                           do a redirect to index.php/explorer/
-// index.php/explorer/                          called by swagger to build explorer page
+// index.php/explorer/                          called by swagger to build explorer page index.php/explorer/index.html
 // index.php/explorer/.../....png|.css|.js      called by swagger for resources to build explorer page
 // index.php/explorer/resources.json            called by swagger to get list of all services
 // index.php/explorer/resources.json/xxx        called by swagger to get detail of services xxx

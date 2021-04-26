@@ -802,7 +802,7 @@ if ($urllogo) {
 
 
 print '<!-- Form to send a payment -->'."\n";
-print '<!-- creditor = '.$creditor.' -->'."\n";
+print '<!-- creditor = '.dol_escape_htmltag($creditor).' -->'."\n";
 // Additionnal information for each payment system
 if (!empty($conf->paypal->enabled)) {
 	print '<!-- PAYPAL_API_SANDBOX = '.$conf->global->PAYPAL_API_SANDBOX.' -->'."\n";
@@ -1587,9 +1587,10 @@ if ($source == 'donation') {
 	$object = $don;
 
 	if ($action != 'dopayment') { // Do not change amount if we just click on first dopayment
-		$amount = $subscription->total_ttc;
 		if (GETPOST("amount", 'alpha')) {
 			$amount = GETPOST("amount", 'alpha');
+		} else {
+			$amount = $don->getRemainToPay();
 		}
 		$amount = price2num($amount);
 	}

@@ -897,6 +897,8 @@ class Categorie extends CommonObject
 
 		$categories = array();
 
+		$type = checkVal($type, 'aZ09');
+
 		$sub_type = $type;
 		$subcol_name = "fk_".$type;
 		if ($type == "customer") {
@@ -917,9 +919,9 @@ class Categorie extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie as s";
 		$sql .= " , ".MAIN_DB_PREFIX."categorie_".$sub_type." as sub ";
 		$sql .= ' WHERE s.entity IN ('.getEntity('category').')';
-		$sql .= ' AND s.type='.$idoftype;
+		$sql .= ' AND s.type='.((int) $idoftype);
 		$sql .= ' AND s.rowid = sub.fk_categorie';
-		$sql .= ' AND sub.'.$subcol_name.' = '.$id;
+		$sql .= ' AND sub.'.$subcol_name.' = '.((int) $id);
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 
