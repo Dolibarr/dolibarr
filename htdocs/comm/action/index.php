@@ -874,10 +874,10 @@ if ($showbirthday) {
 	$sql .= ' WHERE (priv=0 OR (priv=1 AND fk_user_creat='.$user->id.'))';
 	$sql .= " AND sp.entity IN (".getEntity('socpeople').")";
 	if ($action == 'show_day') {
-		$sql .= ' AND MONTH(birthday) = '.$month;
-		$sql .= ' AND DAY(birthday) = '.$day;
+		$sql .= ' AND MONTH(birthday) = '.((int) $month);
+		$sql .= ' AND DAY(birthday) = '.((int) $day);
 	} else {
-		$sql .= ' AND MONTH(birthday) = '.$month;
+		$sql .= ' AND MONTH(birthday) = '.((int) $month);
 	}
 	$sql .= ' ORDER BY birthday';
 
