@@ -567,6 +567,9 @@ print '<td colspan="3"><input name="lastname" id="lastname" type="text" class="m
 print '</tr>';
 // Email
 print '<tr><td>'.$langs->trans("Email").'<FONT COLOR="red">*</FONT></td><td><input type="text" name="email" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
+// Company
+print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company").'<FONT COLOR="red">*</FONT>';
+print ' </td><td><input type="text" name="societe" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
 // Type of event
 print '<tr><td>'.$langs->trans("EventType").'<FONT COLOR="red">*</FONT></td>'."\n";
 print '<td>'.FORM::selectarray('eventtype', $arrayofeventtype, $eventtype).'</td>';
@@ -582,12 +585,6 @@ print '<td><input type="date" name="datestart" class="minwidth150" value="'.dol_
 // End Date
 print '<tr><td>'.$langs->trans("DateEnd").'</td>'."\n";
 print '<td><input type="date" name="dateend" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('dateend')).'"></td></tr>'."\n";
-// Company
-print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company");
-if (!empty(floatval($project->price_registration))) {
-	print '<FONT COLOR="red">*</FONT>';
-}
-print ' </td><td><input type="text" name="societe" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
 // Address
 print '<tr><td>'.$langs->trans("Address").'</td><td>'."\n";
 print '<textarea name="address" id="address" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('address', 'restricthtml'), 0, 1).'</textarea></td></tr>'."\n";
