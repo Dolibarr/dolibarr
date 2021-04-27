@@ -986,7 +986,7 @@ if (empty($reshook)) {
 						$result = $srcobject->fetch(GETPOST('originid', 'int'));
 
 						// If deposit invoice - down payment with 1 line (fixed amount or percent)
-						if (GETPOST('type') == Facture::TYPE_DEPOSIT && in_array($typeamount, array('amount', 'variable'))) {
+						if (GETPOST('type') == FactureFournisseur::TYPE_DEPOSIT && in_array($typeamount, array('amount', 'variable'))) {
 							// Define the array $amountdeposit
 							$amountdeposit = array();
 							if (!empty($conf->global->MAIN_DEPOSIT_MULTI_TVA)) {
