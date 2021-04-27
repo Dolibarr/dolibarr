@@ -107,6 +107,7 @@ MissingOrBadSecureKey = The security key is invalid or missing
 EvntOrgWelcomeMessage = This form allows you to register as a new participant to the conference 
 EvntOrgDuration = This conference starts on %s and ends on %s
 ConferenceAttendeeFee = Conference attendee fee for the event : '%s' occurring from %s to %s
+BoothLocationFee = Booth location for the event : '%s' occurring from %s to %s
 #
 # SubscriptionOk page
 #

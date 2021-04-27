@@ -371,7 +371,6 @@ if (empty($reshook) && $action == 'add') {
 		}
 
 		if (!$error) {
-			/*
 			// We have the contact and the thirdparty
 			$conforbooth = new ConferenceOrBooth($db);
 			$conforbooth->label = $label;
@@ -383,17 +382,123 @@ if (empty($reshook) && $action == 'add') {
 			$conforbooth->datep2 = $dateend;
 			$conforbooth->datec = dol_now();
 			$conforbooth->tms = dol_now();
-			//$conforbooth->fk_user_author =
-			//$conforbooth->fk_user_mod =
-			$conforbooth->status = CONFERENCEORBOOTH::STATUS_SUGGESTED;
 			$resultconforbooth = $conforbooth->create($user);
 			if ($resultconforbooth<=0) {
 				$error++;
 				$errmsg .= $conforbooth->error;
 			} else {
-				//conforbooth created
-				var_dump('gg');
-			}*/
+				// If this is a paying booth, we have to redirect to payment page and create an invoice
+				if (GETPOST("suggestbooth") && !empty(floatval($project->price_booth))) {
+					$productforinvoicerow = new Product($db);
+					$resultprod = $productforinvoicerow->fetch($conf->global->SERVICE_BOOTH_LOCATION);
+					if ($resultprod < 0) {
+						$error++;
+						$errmsg .= $productforinvoicerow->error;
+					} else {
+						$facture = new Facture($db);
+						$facture->type = Facture::TYPE_STANDARD;
+						$facture->socid = $thirdparty->id;
+						$facture->paye = 0;
+						$facture->date = dol_now();
+						$facture->cond_reglement_id = $contact->cond_reglement_id;
+
+						if (empty($facture->cond_reglement_id)) {
+							$paymenttermstatic = new PaymentTerm($contact->db);
+							$facture->cond_reglement_id = $paymenttermstatic->getDefaultId();
+							if (empty($facture->cond_reglement_id)) {
+								$error++;
+								$contact->error = 'ErrorNoPaymentTermRECEPFound';
+								$contact->errors[] = $contact->error;
+							}
+						}
+						$resultfacture = $facture->create($user);
+						if ($resultfacture <= 0) {
+							$contact->error = $facture->error;
+							$contact->errors = $facture->errors;
+							$error++;
+						} else {
+							$facture->add_object_linked($contact->element, $contact->id);
+						}
+					}
+
+					if (!$error) {
+						// Add line to draft invoice
+						$vattouse = get_default_tva($mysoc, $thirdparty, $productforinvoicerow->id);
+						$result = $facture->addline($langs->trans("BoothLocationFee", $conforbooth->label, dol_print_date($conforbooth->datep, '%d/%m/%y %H:%M:%S'), dol_print_date($conforbooth->datep2, '%d/%m/%y %H:%M:%S')), floatval($project->price_booth), 1, $vattouse, 0, 0, $productforinvoicerow->id, 0, dol_now(), '', 0, 0, '', 'HT', 0, 1);
+						if ($result <= 0) {
+							$contact->error = $facture->error;
+							$contact->errors = $facture->errors;
+							$error++;
+						}
+						if (!$error) {
+							$valid = true;
+							$sourcetouse = 'boothlocation';
+							$reftouse = $facture->id;
+							$redirection = $dolibarr_main_url_root.'/public/payment/newpayment.php?source='.$sourcetouse.'&ref='.$reftouse;
+							if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
+								if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
+									$redirection .= '&securekey='.dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . $sourcetouse . $reftouse, 2); // Use the source in the hash to avoid duplicates if the references are identical
+								} else {
+									$redirection .= '&securekey='.$conf->global->PAYMENT_SECURITY_TOKEN;
+								}
+							}
+							Header("Location: ".$redirection);
+							exit;
+						}
+					}
+				} else {
+					// If no price has been set for the booth or this is a conference, we confirm it as suggested and we update
+					$conforbooth->setStatut(CONFERENCEORBOOTH::STATUS_SUGGESTED);
+					$conforbooth->update($user);
+
+					// Sending mail
+					require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+					$formmail = new FormMail($db);
+					// Set output language
+					$outputlangs = new Translate('', $conf);
+					$outputlangs->setDefaultLang(empty($thirdparty->default_lang) ? $mysoc->default_lang : $thirdparty->default_lang);
+					// Load traductions files required by page
+					$outputlangs->loadLangs(array("main", "members"));
+					// Get email content from template
+					$arraydefaultmessage = null;
+
+					$labeltouse = $conf->global->EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT;
+					if (!empty($labeltouse)) {
+						$arraydefaultmessage = $formmail->getEMailTemplate($db, 'eventorganization_send', $user, $outputlangs, $labeltouse, 1, '');
+					}
+
+					if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
+						$subject = $arraydefaultmessage->topic;
+						$msg     = $arraydefaultmessage->content;
+					}
+
+					$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $thirdparty);
+					complete_substitutions_array($substitutionarray, $outputlangs, $object);
+
+					$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
+					$texttosend = make_substitutions($msg, $substitutionarray, $outputlangs);
+
+					$sendto = $thirdparty->email;
+					$from = $conf->global->MAILING_EMAIL_FROM;
+					$urlback = $_SERVER["REQUEST_URI"];
+
+					$ishtml = dol_textishtml($texttosend); // May contain urls
+
+					$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, array(), array(), array(), '', '', 0, $ishtml);
+
+					$result = $mailfile->sendfile();
+					if ($result) {
+						dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_payment');
+					} else {
+						dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
+					}
+
+					$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?securekey='.dol_encode($conf->global->EVENTORGANIZATION_SECUREKEY, $dolibarr_main_instance_unique_id);
+					Header("Location: ".$redirection);
+					exit;
+				}
+			}
 
 			$db->commit();
 		}
