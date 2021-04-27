@@ -2260,7 +2260,7 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 
 	$domtree->formatOutput = true;
 
-	$xmlname = 'sitemap.'.$websitekey.'.xml';
+	$xmlname = 'sitemap.xml';
 
 	$sql = "SELECT wp.rowid, wp.type_container , wp.pageurl, wp.lang, wp.fk_page, wp.tms as tms,";
 	$sql .= " w.virtualhost, w.fk_default_home";
@@ -2396,7 +2396,7 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 				if (!empty($conf->global->MAIN_UMASK)) {
 					@chmod($tempdir.$xmlname, octdec($conf->global->MAIN_UMASK));
 				}
-				setEventMessages($langs->trans("SitemapGenerated"), null, 'mesgs');
+				setEventMessages($langs->trans("SitemapGenerated", $xmlname), null, 'mesgs');
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
