@@ -1403,9 +1403,9 @@ class SupplierProposal extends CommonObject
 
 			// Numbering module definition
 			$soc = new Societe($this->db);
-			$soc->fetch($this->socid);
+			$result = $soc->fetch($this->socid);
 
-			if ($soc < 0) return -1;
+			if ($result < 0) return -1;
 
 			// Define new ref
 			if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
