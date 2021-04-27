@@ -284,7 +284,7 @@ class PaiementFourn extends Paiement
 
 									// Set invoice to paid
 									if (!$error) {
-										$result = $invoice->set_paid($user, '', '');
+										$result = $invoice->setPaid($user, '', '');
 										if ($result < 0) {
 											$this->error = $invoice->error;
 											$error++;
