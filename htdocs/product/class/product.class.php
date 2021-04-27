@@ -2181,17 +2181,20 @@ class Product extends CommonObject
 		} else {
 			$sql .= " pa.accountancy_code_buy, pa.accountancy_code_buy_intra, pa.accountancy_code_buy_export, pa.accountancy_code_sell, pa.accountancy_code_sell_intra, pa.accountancy_code_sell_export,";
 		}
-		//For MultiCompany PMP per entity
+		
+		//For MultiCompany 
+		//PMP per entity & Stocks Sharings stock_reel includes only stocks shared with this entity
+		//TODO : Add to Dolibarr update : SQL ;
+
 		$separatedEntityPMP = false;
-		if (!empty($conf->global->MULTICOMPANY_PRODUCT_SHARING_ENABLED) && !empty($conf->global->MULTICOMPANY_PMP_PER_ENTITY_ENABLED)) {
-			$checkPMPPerEntity = $this->db->query("SELECT pmp FROM " . MAIN_DB_PREFIX . "entity_product_pmp WHERE fk_product  = ".((int) $id)." AND entity = ".(int) $conf->entity);
-			if ($this->db->num_rows($checkPMPPerEntity)>0) {
-				$separatedEntityPMP = true;
-			}
-		}
-		//For MultiCompany Stocks Sharings stock_reel includes only stocks shared with this entity
 		$separatedStock = false;
-		if (!empty($conf->global->MULTICOMPANY_STOCK_SHARING_ENABLED)) {
+		if (!empty($conf->global->MULTICOMPANY_PRODUCT_SHARING_ENABLED)) {
+			if (!empty($conf->global->MULTICOMPANY_PMP_PER_ENTITY_ENABLED)) {
+				$checkPMPPerEntity = $this->db->query("SELECT pmp FROM " . MAIN_DB_PREFIX . "product_perentity WHERE fk_product  = ".((int) $id)." AND entity = ".(int) $conf->entity);
+				if ($this->db->num_rows($checkPMPPerEntity)>0) {
+					$separatedEntityPMP = true;
+				}
+			}
 			global $mc;
 			$separatedStock = true;
 			$visibleWarehousesEntities = $conf->entity;
@@ -2199,23 +2202,21 @@ class Product extends CommonObject
 				$visibleWarehousesEntities .= "," . implode(",", $mc->sharings['stock']);
 			}
 		}
+		
 		if ($separatedStock) {
 			$sql .= " SUM(sp.reel) as stock,";
 		} else {
 			$sql .= " p.stock,";
 		}
 		if ($separatedEntityPMP) {
-			$sql .= " ppe.pmp, p.datec, p.tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.batch_mask, p.fk_unit,";
+			$sql .= " pa.pmp, p.datec, p.tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.batch_mask, p.fk_unit,";
 		} else {
 			$sql .= " p.pmp, p.datec, p.tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.batch_mask, p.fk_unit,";
 		}
 		$sql .= " p.fk_price_expression, p.price_autogen, p.model_pdf";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
-		if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+		if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) || $separatedEntityPMP) {
 			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as pa ON pa.fk_product = p.rowid AND pa.entity = " . ((int) $conf->entity);
-		}
-		if ($separatedEntityPMP) {
-			$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "entity_product_pmp as ppe ON ppe.fk_product = p.rowid";
 		}
 		if ($separatedStock) {
 			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_stock as sp ON sp.fk_product = p.rowid";
@@ -2231,9 +2232,6 @@ class Product extends CommonObject
 			} elseif ($barcode) {
 				$sql .= " AND p.barcode = '".$this->db->escape($barcode)."'";
 			}
-		}
-		if ($separatedEntityPMP) {
-			$sql .= " AND ppe.entity = " . (int) $conf->entity;
 		}
 		if ($separatedStock) {
 			$sql .= " AND sp.fk_entrepot IN (
