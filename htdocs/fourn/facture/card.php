@@ -986,7 +986,10 @@ if (empty($reshook)) {
 						$result = $srcobject->fetch(GETPOST('originid', 'int'));
 
 						// If deposit invoice - down payment with 1 line (fixed amount or percent)
+						$typeamount = GETPOST('typedeposit', 'alpha');
 						if (GETPOST('type') == FactureFournisseur::TYPE_DEPOSIT && in_array($typeamount, array('amount', 'variable'))) {
+							$valuedeposit = price2num(GETPOST('valuedeposit', 'alpha'), 'MU');
+
 							// Define the array $amountdeposit
 							$amountdeposit = array();
 							if (!empty($conf->global->MAIN_DEPOSIT_MULTI_TVA)) {
@@ -1099,9 +1102,7 @@ if (empty($reshook)) {
 								$subprice_diff = $object->lines[0]->subprice - $diff / (1 + $object->lines[0]->tva_tx / 100);
 								$object->updateline($object->lines[0]->id, $object->lines[0]->desc, $subprice_diff, $object->lines[0]->qty, $object->lines[0]->remise_percent, $object->lines[0]->date_start, $object->lines[0]->date_end, $object->lines[0]->tva_tx, 0, 0, 'HT', $object->lines[0]->info_bits, $object->lines[0]->product_type, 0, 0, 0, $object->lines[0]->pa_ht, $object->lines[0]->label, 0, array(), 100);
 							}
-						}
-
-						if ($result > 0) {
+						} elseif ($result > 0) {
 							$lines = $srcobject->lines;
 							if (empty($lines) && method_exists($srcobject, 'fetch_lines')) {
 								$srcobject->fetch_lines();
