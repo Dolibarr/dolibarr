@@ -99,11 +99,13 @@ if ($permtoadd && $module == 'ecm') {	// If on file manager medias in ecm
 print "<script>
 $(\"#generateimgwebp\").on(\"click\",function(){
 	try{
-		param = $(\".directory.expanded\")[$(\".directory.expanded\").length-1].children[0].rel
+		section_dir = $(\".directory.expanded\")[$(\".directory.expanded\").length-1].children[0].rel
+		section=$(\".directory.expanded\")[$(\".directory.expanded\").length-1].children[0].id.split('_')[2]
 	}catch{
-		param = '/'
+		section_dir = '/'
+		section=0
 	}
-	$(\"#generateimgwebp\").attr(\"href\",$(\"#generateimgwebp\").attr(\"href\")+'&dir='+param)
+	$(\"#generateimgwebp\").attr(\"href\",$(\"#generateimgwebp\").attr(\"href\")+'&section_dir='+section_dir+'&section='+section)
   })
 </script>";
 
@@ -154,19 +156,23 @@ if ($action == 'delete_section') {
 // End confirm
 
 if ($action == 'confirmconvertimgwebp') {
+	$section_dir=GETPOST('section_dir', 'alpha');
+	$section=GETPOST('section', 'alpha');
+	$form = new Form($db);
+	$formquestion['section_dir']=array('type'=>'hidden', 'value'=>$section_dir, 'name'=>'section_dir');
+	$formquestion['section']=array('type'=>'hidden', 'value'=>$section, 'name'=>'section');
 	if ($module == 'medias') {
-		print $form->formconfirm($_SERVER["PHP_SELF"].'?website='.$website->ref.'&dir='.$_GET['dir'], $langs->trans('ConfirmImgWebpCreation'), $langs->trans('ConfirmGenerateImgWebp', $object->ref), 'convertimgwebp', '', "yes", 1);
-	} else {
-		print $form->formconfirm($_SERVER["PHP_SELF"].'?dir='.$_GET['dir'], $langs->trans('ConfirmImgWebpCreation'), $langs->trans('ConfirmGenerateImgWebp', $object->ref), 'convertimgwebp', '', "yes", 1);
+		$formquestion['website']=array('type'=>'hidden', 'value'=>$website->ref, 'name'=>'website');
 	}
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans('ConfirmImgWebpCreation'), $langs->trans('ConfirmGenerateImgWebp', $object->ref), 'convertimgwebp', $formquestion, "yes", 1);
 	$action = 'file_manager';
 }
 
 if ($action == 'convertimgwebp' && $permtoadd) {
 	if ($module == 'medias') {
-		$imagefolder = $conf->website->dir_output.'/'.$websitekey.'/medias/'.$_GET['dir'];
+		$imagefolder = $conf->website->dir_output.'/'.$websitekey.'/medias/'.GETPOST('section_dir', 'alpha');
 	} else {
-		$imagefolder = $conf->ecm->dir_output.'/'.$_GET['dir'];
+		$imagefolder = $conf->ecm->dir_output.'/'.GETPOST('section_dir', 'alpha');
 	}
 
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
