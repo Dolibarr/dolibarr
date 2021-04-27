@@ -141,6 +141,17 @@ CREATE TABLE llx_workstation_workstation_usergroup(
 	fk_workstation integer
 ) ENGINE=innodb;
 
+CREATE TABLE llx_c_producbatch_status(
+  rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+  code     varchar(16)        NOT NULL,
+  label    varchar(50)        NOT NULL,
+  active   integer  DEFAULT 1 NOT NULL
+) ENGINE=innodb;
+
+ALTER TABLE llx_c_productbatch_status ADD UNIQUE INDEX uk_c_productbatch_status(code);
+
+INSERT INTO llx_c_productbatch_status (code, label, active) VALUES ('OK', 'InWorkingOrder', 1);
+INSERT INTO llx_c_productbatch_status (code, label, active) VALUES ('KO', 'OutOfOrder', 1);
 
 ALTER TABLE llx_product_customer_price ADD COLUMN ref_customer varchar(30);
 ALTER TABLE llx_product_customer_price_log ADD COLUMN ref_customer varchar(30);
