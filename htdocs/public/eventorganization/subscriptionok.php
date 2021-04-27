@@ -65,8 +65,12 @@ $object = new stdClass(); // For triggers
 $error = 0;
 
 // Security check
-$securekey = dol_decode(GETPOST('securekey'), $dolibarr_main_instance_unique_id);
-if ($securekey != $conf->global->EVENTORGANIZATION_SECUREKEY) {
+$encodedid = GETPOST("id");
+$id = dol_decode($encodedid, $dolibarr_main_instance_unique_id);
+$securekeyreceived = GETPOST("securekey");
+$securekeytocompare = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 2);
+
+if ($securekeyreceived != $securekeytocompare) {
 	print $langs->trans('MissingOrBadSecureKey');
 	exit;
 }

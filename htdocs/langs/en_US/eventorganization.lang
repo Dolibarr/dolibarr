@@ -104,9 +104,9 @@ SuggestBooth = Suggest a booth
 ViewAndVote = View and vote for suggested events
 PublicAttendeeSubscriptionPage = Public link of registration to a conference
 MissingOrBadSecureKey = The security key is invalid or missing
-EvntOrgWelcomeMessage = This form allows you to register as a new participant to the conference 
-EvntOrgDuration = This conference starts on %s and ends on %s
-ConferenceAttendeeFee = Conference attendee fee for the event : '%s' occurring from %s to %s
+EvntOrgWelcomeMessage = This form allows you to register as a new participant to the conference : '%s'
+EvntOrgDuration = This conference starts on %s and ends on %s.
+ConferenceAttendeeFee = Conference attendee fee for the event : '%s' occurring from %s to %s.
 BoothLocationFee = Booth location for the event : '%s' occurring from %s to %s
 #
 # SubscriptionOk page
