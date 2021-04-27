@@ -4902,7 +4902,7 @@ class Facture extends CommonInvoice
 	 *  @param	int|string	$template		Name (or id) of email template (Must be a template of type 'facture_send')
 	 *  @return int         				0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	public function sendEmailsReminderOnDueDate($nbdays = 0, $paymentmode = 'all', $template = '')
+	public function sendEmailsRemindersOnInvoiceDueDate($nbdays = 0, $paymentmode = 'all', $template = '')
 	{
 		global $conf, $langs, $user;
 
@@ -4914,12 +4914,12 @@ class Facture extends CommonInvoice
 
 		if (empty($conf->facture->enabled)) {	// Should not happen. If module disabled, cron job should not be visible.
 			$langs->load("bills");
-			$this->output = $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Facture"));
+			$this->output .= $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Facture"));
 			return 0;
 		}
 		/*if (empty($conf->global->FACTURE_REMINDER_EMAIL)) {
 			$langs->load("bills");
-			$this->output = $langs->trans('EventRemindersByEmailNotEnabled', $langs->transnoentitiesnoconv("Facture"));
+			$this->output .= $langs->trans('EventRemindersByEmailNotEnabled', $langs->transnoentitiesnoconv("Facture"));
 			return 0;
 		}
 		*/
@@ -4941,7 +4941,7 @@ class Facture extends CommonInvoice
 			$sql .= ", ".MAIN_DB_PREFIX."c_paiement as cp";
 		}
 		$sql .= " WHERE f.paye = 0";
-		$sql .= " AND f.date_lim_reglement = '".$this->db->idate(dol_get_first_hour(dol_time_plus_duree(dol_now(), -1 * $nbdays, 'd'), 'gmt'), 'gmt')."'";
+		$sql .= " AND f.date_lim_reglement = '".$this->db->idate(dol_get_first_hour(dol_time_plus_duree($now, -1 * $nbdays, 'd'), 'gmt'), 'gmt')."'";
 		$sql .= " AND f.entity IN (".getEntity('facture').")";
 		if (!empty($paymentmode) && $paymentmode != 'all') {
 			$sql .= " AND f.fk_mode_reglement = cp.id AND cp.code = '".$this->db->escape($paymentmode)."'";
@@ -4949,6 +4949,8 @@ class Facture extends CommonInvoice
 		// TODO Add filter to check there is no payment started
 		$sql .= $this->db->order("date_lim_reglement", "ASC");
 		$resql = $this->db->query($sql);
+
+		$this->output .= 'Search unpaid invoices with due date = '.$this->db->idate(dol_get_first_hour(dol_time_plus_duree($now, -1 * $nbdays, 'd'), 'gmt'), 'gmt').'<br>';
 
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
@@ -4969,7 +4971,7 @@ class Facture extends CommonInvoice
 						$arraymessage = $formmail->getEMailTemplate($this->db, 'facture_send', $user, $outputlangs, (is_numeric($template) ? $template : 0), 1, (is_numeric($template) ? '' : $template));
 						if (is_numeric($arraymessage) && $arraymessage <= 0) {
 							$langs->load("bills");
-							$this->output = $langs->trans('FailedToFindEmailTemplate', $template);
+							$this->output .= $langs->trans('FailedToFindEmailTemplate', $template);
 							return 0;
 						}
 
@@ -5040,7 +5042,7 @@ class Facture extends CommonInvoice
 		}
 
 		if (!$error) {
-			$this->output = 'Nb of emails sent : '.$nbMailSend;
+			$this->output .= 'Nb of emails sent : '.$nbMailSend;
 			$this->db->commit();
 			return 0;
 		} else {
