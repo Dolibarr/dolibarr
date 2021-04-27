@@ -110,61 +110,58 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->facture
 		$db->commit();
 
 		// Loop on each invoice linked to this payment to rebuild PDF
-        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-            $outputlangs = $langs;
-            if (GETPOST('lang_id', 'aZ09')) {
-                $outputlangs = new Translate("", $conf);
-                $outputlangs->setDefaultLang(GETPOST('lang_id', 'aZ09'));
-            }
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			$outputlangs = $langs;
+			if (GETPOST('lang_id', 'aZ09')) {
+				$outputlangs = new Translate("", $conf);
+				$outputlangs->setDefaultLang(GETPOST('lang_id', 'aZ09'));
+			}
 
-            $hidedetails = ! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0;
-            $hidedesc = ! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0;
-            $hideref = !empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0;
+			$hidedetails = ! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0;
+			$hidedesc = ! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0;
+			$hideref = !empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0;
 
-            $sql = 'SELECT f.rowid as facid';
-            $sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf,'.MAIN_DB_PREFIX.'facture as f,'.MAIN_DB_PREFIX.'societe as s';
-            $sql .= ' WHERE pf.fk_facture = f.rowid';
-            $sql .= ' AND f.fk_soc = s.rowid';
-            $sql .= ' AND f.entity IN ('.getEntity('invoice').')';
-            $sql .= ' AND pf.fk_paiement = '.$object->id;
-            $resql = $db->query($sql);
-            if ($resql)
-            {
-                $i = 0;
-                $num = $db->num_rows($resql);
+			$sql = 'SELECT f.rowid as facid';
+			$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf,'.MAIN_DB_PREFIX.'facture as f,'.MAIN_DB_PREFIX.'societe as s';
+			$sql .= ' WHERE pf.fk_facture = f.rowid';
+			$sql .= ' AND f.fk_soc = s.rowid';
+			$sql .= ' AND f.entity IN ('.getEntity('invoice').')';
+			$sql .= ' AND pf.fk_paiement = '.$object->id;
+			$resql = $db->query($sql);
+			if ($resql) {
+				$i = 0;
+				$num = $db->num_rows($resql);
 
-                if ($num > 0)
-                {
-                    while ($i < $num)
-                    {
-                        $objp = $db->fetch_object($resql);
+				if ($num > 0) {
+					while ($i < $num) {
+						$objp = $db->fetch_object($resql);
 
-                        $invoice = new Facture($db);
+						$invoice = new Facture($db);
 
-                        if ($invoice->fetch($objp->facid) <= 0) {
-                            $errors++;
-                            setEventMessages($invoice->error, $invoice->errors, 'errors');
-                            break;
-                        }
+						if ($invoice->fetch($objp->facid) <= 0) {
+							$errors++;
+							setEventMessages($invoice->error, $invoice->errors, 'errors');
+							break;
+						}
 
-                        if ($invoice->generateDocument($invoice->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref) < 0) {
-                            $errors++;
-                            setEventMessages($invoice->error, $invoice->errors, 'errors');
-                            break;
-                        }
+						if ($invoice->generateDocument($invoice->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref) < 0) {
+							$errors++;
+							setEventMessages($invoice->error, $invoice->errors, 'errors');
+							break;
+						}
 
-                        $i++;
-                    }
-                }
+						$i++;
+					}
+				}
 
-                $db->free($resql);
-            } else {
-                $errors++;
-                setEventMessages($db->error, $db->errors, 'errors');
-            }
+				$db->free($resql);
+			} else {
+				$errors++;
+				setEventMessages($db->error, $db->errors, 'errors');
+			}
 		}
 
-        if (! $errors) {
+		if (! $errors) {
 			header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);
 			exit;
 		}

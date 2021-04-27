@@ -414,9 +414,9 @@ class Paiement extends CommonObject
 								$outputlangs->setDefaultLang($newlang);
 							}
 
-                            $hidedetails = ! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0;
-                            $hidedesc = ! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0;
-                            $hideref = !empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0;
+							$hidedetails = ! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0;
+							$hidedesc = ! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0;
+							$hideref = !empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0;
 
 							$ret = $invoice->fetch($facid); // Reload to get new records
 
