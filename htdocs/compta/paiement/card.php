@@ -148,7 +148,7 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->facture
                             break;
                         }
 
-                        if ($invoice->generateDocument($fac->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref) < 0) {
+                        if ($invoice->generateDocument($invoice->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref) < 0) {
                             $errors++;
                             setEventMessages($invoice->error, $invoice->errors, 'errors');
                             break;
