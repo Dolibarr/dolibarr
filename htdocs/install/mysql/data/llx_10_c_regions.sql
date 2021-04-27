@@ -67,6 +67,7 @@
 -- Germany -> for Departmements
 -- Greece
 -- Honduras -> for Departmements
+-- Hungary
 -- India -> for Departmements
 -- Indonesia -> for Departmements
 -- Italy
@@ -76,6 +77,7 @@
 -- Morocco
 -- Netherlands -> for Departmements
 -- Panama -> for Departmements
+-- Peru
 -- Portugal
 -- Romania -> for Departmements
 -- San Salvador
@@ -98,7 +100,7 @@ insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 0
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 13, 1301, '', 0, 'Algerie');
 
 
--- Andorra Regions (id country=18)
+-- Andorra Regions (id country=34)
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 34, 34000, 'AD', NULL, 'Andorra');
 
 
@@ -228,6 +230,16 @@ INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 1
 insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 114, 11401, '', 0, 'Honduras');
 
 
+-- Hungary Regions (rowid country=18)
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 18, 183100, 'HU31', NULL, 'Northern Hungary');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 18, 183200, 'HU32', NULL, 'Northern Great Plain');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 18, 183300, 'HU33', NULL, 'Southern Great Plain');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 18, 180100, 'HU1',  NULL, 'Central Hungary');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 18, 182100, 'HU21', NULL, 'Central Transdanubia');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 18, 182200, 'HU22', NULL, 'Western Transdanubia');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 18, 182300, 'HU23', NULL, 'Southern Transdanubia');
+
+
 -- India Regions (id country=117)
 insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 117, 11701, '', 0, 'India');
 
@@ -309,6 +321,35 @@ INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 1
 
 -- Panama Regions (id country=178)
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 178, 17801, '', 0, 'Panama');
+
+
+-- Peru Regions (id country=181)
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 181, 18101, '', 0, 'Amazonas');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 181, 18102, '', 0, 'Ancash');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 181, 18103, '', 0, 'Apurimac');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 181, 18104, '', 0, 'Arequipa');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 181, 18105, '', 0, 'Ayacucho');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 181, 18106, '', 0, 'Cajamarca');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 181, 18107, '', 0, 'Callao');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 181, 18108, '', 0, 'Cuzco');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 181, 18109, '', 0, 'Huancavelica');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 181, 18110, '', 0, 'Huanuco');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 181, 18111, '', 0, 'Ica');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 181, 18112, '', 0, 'Junin');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 181, 18113, '', 0, 'La Libertad');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 181, 18114, '', 0, 'Lambayeque');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 181, 18115, '', 0, 'Lima Metropolitana');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 181, 18116, '', 0, 'Lima');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 181, 18117, '', 0, 'Loreto');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 181, 18118, '', 0, 'Madre de Dios');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 181, 18119, '', 0, 'Moquegua');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 181, 18120, '', 0, 'Pasco');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 181, 18121, '', 0, 'Piura');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 181, 18122, '', 0, 'Puno');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 181, 18123, '', 0, 'San Martín');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 181, 18124, '', 0, 'Tacna');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 181, 18125, '', 0, 'Tumbes');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 181, 18126, '', 0, 'Ucayali');
 
 
 -- Portugal Regions (rowid country=25)
@@ -414,84 +455,41 @@ INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 2
 
 
 
-
-
--- Regions Peru (id country=181)
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18101, '', 0, 'Amazonas', 1);
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18102, '', 0, 'Ancash', 1);
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18103, '', 0, 'Apurimac', 1);
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18104, '', 0, 'Arequipa', 1);
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18105, '', 0, 'Ayacucho', 1);
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18106, '', 0, 'Cajamarca', 1);
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18107, '', 0, 'Callao', 1);
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18108, '', 0, 'Cuzco', 1);
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18109, '', 0, 'Huancavelica', 1);
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18110, '', 0, 'Huanuco', 1);
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18111, '', 0, 'Ica', 1);
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18112, '', 0, 'Junin', 1);
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18113, '', 0, 'La Libertad', 1);
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18114, '', 0, 'Lambayeque', 1);
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18115, '', 0, 'Lima Metropolitana', 1);
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18116, '', 0, 'Lima', 1);
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18117, '', 0, 'Loreto', 1);
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18118, '', 0, 'Madre de Dios', 1);
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18119, '', 0, 'Moquegua', 1);
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18120, '', 0, 'Pasco', 1);
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18121, '', 0, 'Piura', 1);
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18122, '', 0, 'Puno', 1);
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18123, '', 0, 'San Martín', 1);
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18124, '', 0, 'Tacna', 1);
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18125, '', 0, 'Tumbes', 1);
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18126, '', 0, 'Ucayali', 1);
-
-
-
--- Regions Hungary (rowid country=18)
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES (18, 183100, 'HU31', NULL, 'Northern Hungary');
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES (18, 183200, 'HU32', NULL, 'Northern Great Plain');
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES (18, 183300, 'HU33', NULL, 'Southern Great Plain');
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES (18, 180100, 'HU1',  NULL, 'Central Hungary');
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES (18, 182100, 'HU21', NULL, 'Central Transdanubia');
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES (18, 182200, 'HU22', NULL, 'Western Transdanubia');
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES (18, 182300, 'HU23', NULL, 'Southern Transdanubia');
-
-
-
 -- Regions China (rowid country=9)
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 901, '京',0,'北京市');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 902, '津',0,'天津市');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 903, '沪',0,'上海市');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 904, '渝',0,'重庆市');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 905, '冀',0,'河北省');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 906, '晋',0,'山西省');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 907, '辽',0,'辽宁省');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 908, '吉',0,'吉林省');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 909, '黑',0,'黑龙江省');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 910, '苏',0,'江苏省');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 911, '浙',0,'浙江省');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 912, '皖',0,'安徽省');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 913, '闽',0,'福建省');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 914, '赣',0,'江西省');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 915, '鲁',0,'山东省');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 916, '豫',0,'河南省');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 917, '鄂',0,'湖北省');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 918, '湘',0,'湖南省');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 919, '粤',0,'广东省');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 920, '琼',0,'海南省');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 921, '川',0,'四川省');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 922, '贵',0,'贵州省');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 923, '云',0,'云南省');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 924, '陕',0,'陕西省');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 925, '甘',0,'甘肃省');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 926, '青',0,'青海省');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 927, '台',0,'台湾省');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 928, '蒙',0,'内蒙古自治区');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 929, '桂',0,'广西壮族自治区');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 930, '藏',0,'西藏自治区');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 931, '宁',0,'宁夏回族自治区');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 932, '新',0,'新疆维吾尔自治区');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 933, '港',0,'香港特别行政区');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9, 934, '澳',0,'澳门特别行政区');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values (9, 901, '京',0,'北京市');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values (9, 902, '津',0,'天津市');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values (9, 903, '沪',0,'上海市');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values (9, 904, '渝',0,'重庆市');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values (9, 905, '冀',0,'河北省');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values (9, 906, '晋',0,'山西省');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values (9, 907, '辽',0,'辽宁省');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values (9, 908, '吉',0,'吉林省');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values (9, 909, '黑',0,'黑龙江省');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values (9, 910, '苏',0,'江苏省');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values (9, 911, '浙',0,'浙江省');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values (9, 912, '皖',0,'安徽省');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values (9, 913, '闽',0,'福建省');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values (9, 914, '赣',0,'江西省');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values (9, 915, '鲁',0,'山东省');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values (9, 916, '豫',0,'河南省');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values (9, 917, '鄂',0,'湖北省');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values (9, 918, '湘',0,'湖南省');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values (9, 919, '粤',0,'广东省');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values (9, 920, '琼',0,'海南省');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values (9, 921, '川',0,'四川省');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values (9, 922, '贵',0,'贵州省');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values (9, 923, '云',0,'云南省');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values (9, 924, '陕',0,'陕西省');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values (9, 925, '甘',0,'甘肃省');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values (9, 926, '青',0,'青海省');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values (9, 927, '台',0,'台湾省');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values (9, 928, '蒙',0,'内蒙古自治区');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values (9, 929, '桂',0,'广西壮族自治区');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values (9, 930, '藏',0,'西藏自治区');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values (9, 931, '宁',0,'宁夏回族自治区');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values (9, 932, '新',0,'新疆维吾尔自治区');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values (9, 933, '港',0,'香港特别行政区');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values (9, 934, '澳',0,'澳门特别行政区');
 
 
 -- Regions Taiwan (rowid country=213)

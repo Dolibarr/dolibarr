@@ -241,8 +241,8 @@ $formfile = new FormFile($db);
 
 
 $title = $langs->trans('BOM');
-
-llxHeader('', $title, '');
+$help_url ='EN:Module_BOM';
+llxHeader('', $title, $help_url);
 
 // Example : Adding jquery code
 print '<script type="text/javascript" language="javascript">

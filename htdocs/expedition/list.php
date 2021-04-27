@@ -295,13 +295,13 @@ if ($socid) {
 	$sql .= " AND e.fk_soc = ".$socid;
 }
 if ($search_status <> '' && $search_status >= 0) {
-	$sql .= " AND e.fk_statut = ".$search_status;
+	$sql .= " AND e.fk_statut = ".((int) $search_status);
 }
 if ($search_ref_customer != '') {
 	$sql .= natural_search('e.ref_customer', $search_ref_customer);
 }
 if ($search_billed != '' && $search_billed >= 0) {
-	$sql .= ' AND e.billed = '.$search_billed;
+	$sql .= ' AND e.billed = '.((int) $search_billed);
 }
 if ($search_town) {
 	$sql .= natural_search('s.town', $search_town);

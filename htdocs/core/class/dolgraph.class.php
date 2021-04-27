@@ -1165,8 +1165,31 @@ class DolGraph
 				if (!empty($legendMaxLines)) {
 					$this->stringtoshow .= ', maxLines: ' . $legendMaxLines . '';
 				}
+				/* This has no effect on chartjs version with dol v14
+				$this->stringtoshow .= ', labels: {
+					color: \'rgb(255, 0, 0)\',
+					// This more specific font property overrides the global property
+					font: {
+						size: 24
+					}
+				}';
+				*/
 				$this->stringtoshow .= ' }, ' . "\n";
 			}
+
+			/* This has no effect on chartjs version with dol v14
+			$this->stringtoshow .= 'plugins: {
+				legend: {
+					display: true,
+					labels: {
+						color: \'rgb(255, 0, 0)\',
+						// This more specific font property overrides the global property
+						font: {
+							size: 24
+						}
+					}
+				}
+			},'."\n"; */
 
 			if ($this->type[$firstlot] == 'piesemicircle') {
 				$this->stringtoshow .= 'circumference: Math.PI,' . "\n";
@@ -1236,7 +1259,7 @@ class DolGraph
 				if ($i > 0) {
 					$this->stringtoshow .= ', ';
 				}
-				$this->stringtoshow .= "'" . dol_escape_js(dol_trunc($val, 32)) . "'";
+				$this->stringtoshow .= "'" . dol_escape_js(dol_trunc($val, 22)) . "'";
 				$i++;
 			}
 

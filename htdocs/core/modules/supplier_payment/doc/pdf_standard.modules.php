@@ -220,7 +220,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 			$sql .= ', f.fk_statut, s.nom as name, s.rowid as socid';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf,'.MAIN_DB_PREFIX.'facture_fourn as f,'.MAIN_DB_PREFIX.'societe as s';
 			$sql .= ' WHERE pf.fk_facturefourn = f.rowid AND f.fk_soc = s.rowid';
-			$sql .= ' AND pf.fk_paiementfourn = '.$object->id;
+			$sql .= ' AND pf.fk_paiementfourn = '.((int) $object->id);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				if ($this->db->num_rows($resql) > 0) {
