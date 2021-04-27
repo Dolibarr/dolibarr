@@ -102,7 +102,7 @@ if ($resultproject < 0) {
 }
 
 
-// Getting 'securekey'.'id' from Post and decoding it
+// Security check
 $securekeyreceived = GETPOST('securekey', 'alpha');
 $securekeytocompare = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 2);
 
