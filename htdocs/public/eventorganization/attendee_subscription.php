@@ -106,7 +106,7 @@ if ($resultproject < 0) {
 $securekeyreceived = GETPOST('securekey', 'alpha');
 $securekeytocompare = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 2);
 
-// We check if the securekey collected is OK and if the id collected is the same than the id in the securekey
+// We check if the securekey collected is OK
 if ($securekeytocompare != $securekeyreceived) {
 	print $langs->trans('MissingOrBadSecureKey');
 	exit;
