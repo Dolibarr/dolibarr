@@ -2181,11 +2181,9 @@ class Product extends CommonObject
 		} else {
 			$sql .= " pa.accountancy_code_buy, pa.accountancy_code_buy_intra, pa.accountancy_code_buy_export, pa.accountancy_code_sell, pa.accountancy_code_sell_intra, pa.accountancy_code_sell_export,";
 		}
-		
-		//For MultiCompany 
-		//PMP per entity & Stocks Sharings stock_reel includes only stocks shared with this entity
-		//TODO : Add to Dolibarr update : SQL ;
 
+		//For MultiCompany
+		//PMP per entity & Stocks Sharings stock_reel includes only stocks shared with this entity
 		$separatedEntityPMP = false;
 		$separatedStock = false;
 		if (!empty($conf->global->MULTICOMPANY_PRODUCT_SHARING_ENABLED)) {
