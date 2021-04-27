@@ -205,8 +205,8 @@ INSERT INTO llx_payment_vat (rowid, fk_tva, datec, datep, amount, fk_typepaiemen
 --ALTER TABLE llx_tva DROP COLUMN fk_bank;
 
 ALTER TABLE llx_tva ALTER COLUMN paye SET DEFAULT 0;
--- VMYSQL4.3 UPDATE llx_tva tva INNER JOIN llx_bank b ON (b.rowid = tva.fk_bank) SET tva.fk_account = b.fk_account WHERE tva.fk_account IS NULL;
--- VPGSQL8.2 UPDATE llx_tva tva SET fk_account = b.fk_account FROM llx_bank b WHERE b.rowid = tva.fk_bank AND tva.fk_account IS NULL;
+-- VMYSQL4.3 UPDATE llx_tva as tva INNER JOIN llx_bank b ON (b.rowid = tva.fk_bank) SET tva.fk_account = b.fk_account WHERE tva.fk_account IS NULL;
+-- VPGSQL8.2 UPDATE llx_tva as tva SET fk_account = b.fk_account FROM llx_bank b WHERE b.rowid = tva.fk_bank AND tva.fk_account IS NULL;
 
 
 INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, tms, label, position, active, topic, content, content_lines, enabled, joinfiles) values (0, '', 'eventorganization_send', '', 0, null, null, '2021-02-14 14:42:41', 'EventOrganizationEmailAskConf', 10, 1, '[__[MAIN_INFO_SOCIETE_NOM]__] __(EventOrganizationEmailAskConf)__', '__(Hello)__ __THIRDPARTY_NAME__,<br /><br />__(ThisIsContentOfYourOrganizationEventConfRequestWasReceived)__<br /><br />__ONLINE_PAYMENT_TEXT_AND_URL__<br /><br /><br />__(Sincerely)__<br />__USER_SIGNATURE__', null, '1', null);
@@ -288,8 +288,8 @@ ALTER TABLE llx_payment_salary ADD COLUMN fk_salary integer;
 INSERT INTO llx_salary (rowid, ref, fk_user, amount, fk_projet, fk_typepayment, label, datesp, dateep, entity, note, fk_bank, paye) SELECT ps.rowid, ps.rowid, ps.fk_user, ps.amount, ps.fk_projet, ps.fk_typepayment, ps.label, ps.datesp, ps.dateep, ps.entity, ps.note, ps.fk_bank, 1 FROM llx_payment_salary ps WHERE ps.fk_salary IS NULL;
 UPDATE llx_payment_salary SET fk_salary = rowid WHERE fk_salary IS NULL;
 UPDATE llx_payment_salary SET ref = rowid WHERE ref IS NULL;
--- VMYSQL4.3 UPDATE llx_salary s INNER JOIN llx_bank b ON (b.rowid = s.fk_bank) SET s.fk_account = b.fk_account WHERE s.fk_account IS NULL;
--- VPGSQL8.2 UPDATE llx_salary s SET fk_account = b.fk_account FROM llx_bank b WHERE b.rowid = s.fk_bank AND s.fk_account IS NULL;
+-- VMYSQL4.3 UPDATE llx_salary as s INNER JOIN llx_bank b ON (b.rowid = s.fk_bank) SET s.fk_account = b.fk_account WHERE s.fk_account IS NULL;
+-- VPGSQL8.2 UPDATE llx_salary as s SET fk_account = b.fk_account FROM llx_bank b WHERE b.rowid = s.fk_bank AND s.fk_account IS NULL;
 
 ALTER TABLE llx_salary ALTER COLUMN paye set default 0;
 
