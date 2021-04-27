@@ -166,10 +166,10 @@ class Products extends DolibarrApi
 	 * @param  int    $category   			Use this param to filter list by category
 	 * @param  string $sqlfilters 			Other criteria to filter answers separated by a comma. Syntax example "(t.tobuy:=:0) and (t.tosell:=:1)"
 	 * @param  bool   $ids_only   			Return only IDs of product instead of all properties (faster, above all if list is long)
-	 * @param  bool   $without_variants   	Return only parent products, not variants
+	 * @param  int    $variant_filter   	Use this param to filter list (0 = all, 1=products without variants, 2=parent of variants, 3=variants only)
 	 * @return array                		Array of product objects
 	 */
-	public function index($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '', $ids_only = false, $without_variants = false)
+	public function index($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '', $ids_only = false, $variant_filter = 0)
 	{
 		global $db, $conf;
 
@@ -188,8 +188,15 @@ class Products extends DolibarrApi
 		}
 		$sql .= ' WHERE t.entity IN ('.getEntity('product').')';
 
-		if ($without_variants) {
+		if ($variant_filter == 1) {
+			$sql .= ' AND t.rowid not in (select distinct fk_product_parent from '.MAIN_DB_PREFIX.'product_attribute_combination)';
+			$sql .= ' AND t.rowid not in (select distinct fk_product_child from '.MAIN_DB_PREFIX.'product_attribute_combination)';
+		}
+		if ($variant_filter == 2) {
 			$sql .= ' AND t.rowid in (select distinct fk_product_parent from '.MAIN_DB_PREFIX.'product_attribute_combination)';
+		}
+		if ($variant_filter == 3) {
+			$sql .= ' AND t.rowid in (select distinct fk_product_child from '.MAIN_DB_PREFIX.'product_attribute_combination)';
 		}
 
 		// Select products of given category
