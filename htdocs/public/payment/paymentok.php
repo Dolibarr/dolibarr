@@ -414,7 +414,7 @@ if ($ispaymentok) {
 				if ($datesubscription && $defaultdelay && $defaultdelayunit) {
 					$datesubend = dol_time_plus_duree($datesubscription, $defaultdelay, $defaultdelayunit);
 					// the new end date of subscription must be in futur
-					while (dol_time_plus_duree($datesubend, -1, 'd') < $now) {
+					while ($datesubend < $now) {
 						$datesubend = dol_time_plus_duree($datesubend, $defaultdelay, $defaultdelayunit);
 						$datesubscription = dol_time_plus_duree($datesubscription, $defaultdelay, $defaultdelayunit);
 					}
