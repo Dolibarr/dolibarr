@@ -159,9 +159,7 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->facture
                 }
 
                 $db->free($resql);
-            }
-            else
-            {
+            } else {
                 $errors++;
                 setEventMessages($db->error, $db->errors, 'errors');
             }
