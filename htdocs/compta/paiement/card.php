@@ -109,14 +109,13 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->facture
 	if ($object->validate($user) > 0)
 	{
 		$db->commit();
-		
+
 		// Loop on each invoice linked to this payment to rebuild PDF
         if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
             $outputlangs = $langs;
-            if (!empty($_REQUEST['lang_id']))
-            {
+            if (GETPOST('lang_id', 'aZ09')) {
                 $outputlangs = new Translate("", $conf);
-                $outputlangs->setDefaultLang($_REQUEST['lang_id']);
+                $outputlangs->setDefaultLang(GETPOST('lang_id', 'aZ09'));
             }
 
             $hidedetails = ! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0;
