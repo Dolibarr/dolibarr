@@ -32,7 +32,7 @@ CREATE TABLE llx_product_lot (
   manufacturing_date  datetime,
   scrapping_date      datetime,                   -- Put to disposal
   commissionning_date datetime,                   -- First use
-  qc_frequency      varchar(6),                   -- Quality control periodicity
-  fk_status           integer,                    -- Link to dictionnary
+  qc_frequency        varchar(6),                 -- Quality control periodicity
+  fk_status           varchar(16),                -- Link to dictionnary
   import_key          integer
 ) ENGINE=innodb;
