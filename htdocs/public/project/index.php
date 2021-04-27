@@ -100,16 +100,12 @@ if ($resultproject < 0) {
 	$errmsg .= $project->error;
 }
 
-// Getting 'securekey'.'id' from Post and decoding it
-$encodedsecurekeyandid = GETPOST('securekey', 'alpha');
-$securekeyandid = dol_decode($encodedsecurekeyandid, $dolibarr_main_instance_unique_id);
+// Security check
+$id = dol_decode($encodedid, $dolibarr_main_instance_unique_id);
+$securekeyreceived = GETPOST("securekey");
+$securekeytocompare = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 2);
 
-// Securekey decomposition into pure securekey and id added at the end
-$securekey = substr($securekeyandid, 0, strlen($securekeyandid)-strlen($encodedid));
-$idgotfromsecurekey = dol_decode(substr($securekeyandid, -strlen($encodedid), strlen($encodedid)), $dolibarr_main_instance_unique_id);
-
-// We check if the securekey collected is OK and if the id collected is the same than the id in the securekey
-if ($securekey != $conf->global->EVENTORGANIZATION_SECUREKEY || $idgotfromsecurekey != $id) {
+if ($securekeytocompare != $securekeyreceived) {
 	print $langs->trans('MissingOrBadSecureKey');
 	exit;
 }
@@ -377,12 +373,13 @@ if (empty($reshook) && $action == 'add') {
 			$conforbooth->fk_soc = $thirdparty->id;
 			$conforbooth->fk_project = $project->id;
 			$conforbooth->note = $note;
-			//$conforbooth->fk_action =
+			$conforbooth->fk_action = 63;
 			$conforbooth->datep =$datestart;
 			$conforbooth->datep2 = $dateend;
 			$conforbooth->datec = dol_now();
 			$conforbooth->tms = dol_now();
 			$resultconforbooth = $conforbooth->create($user);
+			var_dump($conforbooth);
 			if ($resultconforbooth<=0) {
 				$error++;
 				$errmsg .= $conforbooth->error;
@@ -494,14 +491,17 @@ if (empty($reshook) && $action == 'add') {
 						dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
 					}
 
-					$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?securekey='.dol_encode($conf->global->EVENTORGANIZATION_SECUREKEY, $dolibarr_main_instance_unique_id);
+					$encodedid = dol_encode($id, $dolibarr_main_instance_unique_id);
+					$securekeyurl = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 2);
+					$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?id='.$encodedid.'&securekey='.$securekeyurl;
 					Header("Location: ".$redirection);
 					exit;
 				}
 			}
-
-			$db->commit();
 		}
+	}
+	if (!$error) {
+		$db->commit();
 	} else {
 		$db->rollback();
 	}
@@ -540,7 +540,7 @@ print '<input type="hidden" name="token" value="'.newToken().'" / >';
 print '<input type="hidden" name="entity" value="'.$entity.'" />';
 print '<input type="hidden" name="action" value="add" />';
 print '<input type="hidden" name="id" value="'.$encodedid.'" />';
-print '<input type="hidden" name="securekey" value="'.$encodedsecurekeyandid.'" />';
+print '<input type="hidden" name="securekey" value="'.$securekeyreceived.'" />';
 
 print '<br>';
 
