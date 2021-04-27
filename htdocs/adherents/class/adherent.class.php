@@ -1862,7 +1862,7 @@ class Adherent extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
-		$sql .= " statut = ".STATUS_VALIDATED;
+		$sql .= " statut = ".self::STATUS_VALIDATED;
 		$sql .= ", datevalid = '".$this->db->idate($now)."'";
 		$sql .= ", fk_user_valid=".$user->id;
 		$sql .= " WHERE rowid = ".$this->id;
@@ -1914,7 +1914,7 @@ class Adherent extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
-		$sql .= " statut = ".STATUS_RESILIATED;
+		$sql .= " statut = ".self::STATUS_RESILIATED;
 		$sql .= ", fk_user_valid=".$user->id;
 		$sql .= " WHERE rowid = ".$this->id;
 
@@ -1964,7 +1964,7 @@ class Adherent extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
-		$sql .= " statut = ".STATUS_EXCLUDED;
+		$sql .= " statut = ".self::STATUS_EXCLUDED;
 		$sql .= ", fk_user_valid=".$user->id;
 		$sql .= " WHERE rowid = ".$this->id;
 
@@ -2275,11 +2275,11 @@ class Adherent extends CommonObject
 		$labelStatus = '';
 		$labelStatusShort = '';
 
-		if ($status == STATUS_DRAFT) {
+		if ($status == self::STATUS_DRAFT) {
 			$statusType = 'status0';
 			$labelStatus = $langs->trans("MemberStatusDraft");
 			$labelStatusShort = $langs->trans("MemberStatusDraftShort");
-		} elseif ($status >= STATUS_VALIDATED) {
+		} elseif ($status >= self::STATUS_VALIDATED) {
 			if ($need_subscription == 0) {
 				$statusType = 'status4';
 				$labelStatus = $langs->trans("MemberStatusNoSubscription");
@@ -2297,11 +2297,11 @@ class Adherent extends CommonObject
 				$labelStatus = $langs->trans("MemberStatusPaid");
 				$labelStatusShort = $langs->trans("MemberStatusPaidShort");
 			}
-		} elseif ($status == STATUS_RESILIATED) {
+		} elseif ($status == self::STATUS_RESILIATED) {
 			$statusType = 'status6';
 			$labelStatus = $langs->trans("MemberStatusResiliated");
 			$labelStatusShort = $langs->trans("MemberStatusResiliatedShort");
-		} elseif ($status == STATUS_EXCLUDED) {
+		} elseif ($status == self::STATUS_EXCLUDED) {
 			$statusType = 'status10';
 			$labelStatus = $langs->trans("MemberStatusExcluded");
 			$labelStatusShort = $langs->trans("MemberStatusExcludedShort");
