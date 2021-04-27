@@ -2504,7 +2504,7 @@ class Adherent extends CommonObject
 		$this->birth = $now;
 		$this->photo = '';
 		$this->public = 1;
-		$this->statut = self::STATUS_DARFT;
+		$this->statut = self::STATUS_DRAFT;
 
 		$this->datefin = $now;
 		$this->datevalid = $now;
