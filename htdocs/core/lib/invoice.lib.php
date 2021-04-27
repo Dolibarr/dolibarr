@@ -457,6 +457,121 @@ function getPurchaseInvoicePieChart($socid = 0)
 }
 
 /**
+ * Return an HTML table that contains a pie chart of the number of customers or supplier invoices
+ * @param string $mode Can be customer or fourn
+ * @return string A HTML table that contains a pie chart of customers or supplier invoices
+ */
+function getNumberInvoicesPieChart($mode)
+{
+	global $conf, $db, $langs, $user;
+	if (!empty($conf->facture->enabled) && !empty($user->rights->facture->lire)) {
+		include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+		$langs->load("boxes");
+		$tmpinvoice = new Facture($db);
+		$sql = "SELECT f.rowid, f.ref, f.fk_statut as status, f.type, f.total_ht, f.total_tva, f.total_ttc, f.paye, f.datef";
+		if ($mode == 'customers') {
+			$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
+		} elseif ($mode == 'fourn') {
+			$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
+		} else {
+			return '';
+		}
+		$sql .= " WHERE f.type <> 2";
+		$sql .= " AND f.fk_statut = 1";
+		$resql = $db->query($sql);
+		if ($resql) {
+			$num = $db->num_rows($resql);
+			$i = 0;
+			$now = date_create(date('Y-m-d', dol_now()));
+			$datenowsub30 = date_create(date('Y-m-d', dol_now()));
+			$datenowsub15 = date_create(date('Y-m-d', dol_now()));
+			$datenowadd30 = date_create(date('Y-m-d', dol_now()));
+			$datenowadd15 = date_create(date('Y-m-d', dol_now()));
+			$interval30days = date_interval_create_from_date_string('30 days');
+			$interval15days = date_interval_create_from_date_string('15 days');
+			date_sub($datenowsub30, $interval30days);
+			date_sub($datenowsub15, $interval15days);
+			date_add($datenowadd30, $interval30days);
+			date_add($datenowadd15, $interval15days);
+			$numberinvoices = array('late30'=>0,'late15'=>0,'late'=>0,'notlate'=>0,'notlate15'=>0,'notlate30'=>0);
+			$labelnumberinvoices = array('late30'=>'InvoiceLate30Days',
+			'late15'=>'InvoiceLate15Days',
+			'late'=>'InvoiceLateMinus15Days',
+			'notlate'=>'InvoiceNotLate',
+			'notlate15'=>'InvoiceNotLate15Days',
+			'notlate30'=>'InvoiceNotLate30Days');
+			$total = 0;
+			while ($i < $num) {
+				$obj = $db->fetch_object($resql);
+				$datef = date_create($obj->datef);
+				if ($datef < $datenowsub30) {
+					$numberinvoices['late30']++;
+				} elseif ($datef < $datenowsub15) {
+					$numberinvoices['late15']++;
+				} elseif ($datef < $now) {
+					$numberinvoices['late']++;
+				} elseif ($datef > $datenowadd30) {
+					$numberinvoices['notlate30']++;
+				} elseif ($datef > $datenowadd15) {
+					$numberinvoices['notlate15']++;
+				} else {
+					$numberinvoices['notlate']++;
+				}
+				$total++;
+				$i++;
+			}
+			$dataseries = array();
+			$colorseries = array();
+			foreach ($numberinvoices as $key => $nbinvoice) {
+				$dataseries[] = array($langs->trans($labelnumberinvoices[$key]),$nbinvoice);
+			}
+			$colorseries[] = $badgeStatus8;
+			$colorseries[] = $badgeStatus1;
+			$colorseries[] = $badgeStatus3;
+			$colorseries[] = $badgeStatus2;
+			$colorseries[] = $badgeStatus4;
+			$colorseries[] = $badgeStatus0;
+			if ($conf->use_javascript_ajax) {
+				$result = '<div class="div-table-responsive-no-min">';
+				$result .= '<table class="noborder nohover centpercent">';
+				$result .= '<tr class="liste_titre">';
+				$result .= '<td colspan="2">'.$langs->trans("Statistics").' - ';
+				if ($mode == 'customers') {
+					$result .= $langs->trans("CustomerInvoice").'</td>';
+				} elseif ($mode == 'fourn') {
+					$result .= $langs->trans("SupplierInvoice").'</td>';
+				} else {
+					return '';
+				}
+				$result .= '</tr>';
+
+				$dolgraph = new DolGraph();
+				$dolgraph->SetData($dataseries);
+				$dolgraph->SetDataColor(array_values($colorseries));
+				$dolgraph->setShowLegend(2);
+				$dolgraph->setShowPercent(1);
+				$dolgraph->SetType(['pie']);
+				$dolgraph->setHeight('150');
+				$dolgraph->setWidth('300');
+				if ($mode == 'customers') {
+					$dolgraph->draw('idgraphcustomerinvoices');
+				} elseif ($mode == 'fourn') {
+					$dolgraph->draw('idgraphfourninvoices');
+				} else {
+					return '';
+				}
+
+				$result .= '<tr maxwidth="255">';
+				$result .= '<td align="center" colspan="2">'.$dolgraph->show($total ? 0 : 1).'</td>';
+				$result .= '</tr>';
+				$result .= '</table>';
+				$result .= '</div>';
+			}
+			print $result;
+		}
+	}
+}
+/**
  * Return a HTML table that contains a list with customer invoice drafts
  *
  * @param	int		$maxCount	(Optional) The maximum count of elements inside the table
