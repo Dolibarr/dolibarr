@@ -342,7 +342,7 @@ if (empty($reshook) && $action == 'add') {
 				$facture->paye = 0;
 				$facture->date = dol_now();
 				$facture->cond_reglement_id = $confattendee->cond_reglement_id;
-
+				$facture->fk_project = $project->id;
 				if (empty($facture->cond_reglement_id)) {
 					$paymenttermstatic = new PaymentTerm($confattendee->db);
 					$facture->cond_reglement_id = $paymenttermstatic->getDefaultId();
