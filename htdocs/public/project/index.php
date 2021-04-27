@@ -295,7 +295,6 @@ if (empty($reshook) && $action == 'add') {
 			}
 		}
 		// From there we have a thirdparty, now looking for the contact
-
 		if (!$error) {
 			$contact = new Contact($db);
 			$resultcontact = $contact->fetch('', '', '', $email);
@@ -447,9 +446,8 @@ if (empty($reshook) && $action == 'add') {
 					}
 				} else {
 					// If no price has been set for the booth or this is a conference, we confirm it as suggested and we update
-					$conforbooth->setStatut(CONFERENCEORBOOTH::STATUS_SUGGESTED);
+					$conforbooth->status = CONFERENCEORBOOTH::STATUS_SUGGESTED;
 					$conforbooth->update($user);
-
 					// Sending mail
 					require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
@@ -492,18 +490,17 @@ if (empty($reshook) && $action == 'add') {
 					} else {
 						dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
 					}
-
-					$encodedid = dol_encode($id, $dolibarr_main_instance_unique_id);
-					$securekeyurl = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 2);
-					$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?id='.$encodedid.'&securekey='.$securekeyurl;
-					Header("Location: ".$redirection);
-					exit;
 				}
 			}
 		}
 	}
 	if (!$error) {
 		$db->commit();
+		$encodedid = dol_encode($id, $dolibarr_main_instance_unique_id);
+		$securekeyurl = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 2);
+		$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?id='.$encodedid.'&securekey='.$securekeyurl;
+		Header("Location: ".$redirection);
+		exit;
 	} else {
 		$db->rollback();
 	}
