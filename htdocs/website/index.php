@@ -2414,7 +2414,7 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 	$robotsitemap = "Sitemap: ".$domainname."/".$xmlname;
 	$result = strpos($robotcontent, 'Sitemap: ');
 	if ($result) {
-		$result = preg_replace("/Sitemap.*\n/", $robotsitemap, $robotcontent);
+		$result = preg_replace('/Sitemap:.*/', $robotsitemap, $robotcontent);
 		$robotcontent = $result ? $result : $robotcontent;
 	} else {
 		$robotcontent .= $robotsitemap."\n";
