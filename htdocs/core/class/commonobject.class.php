@@ -3117,7 +3117,7 @@ abstract class CommonObject
 	public function getRangOfLine($rowid)
 	{
 		$sql = 'SELECT rang FROM '.MAIN_DB_PREFIX.$this->table_element_line;
-		$sql .= ' WHERE rowid ='.$rowid;
+		$sql .= ' WHERE rowid ='.((int) $rowid);
 
 		dol_syslog(get_class($this)."::getRangOfLine", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -3137,7 +3137,7 @@ abstract class CommonObject
 	{
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 		$sql .= ' WHERE '.$this->fk_element.' = '.$this->id;
-		$sql .= ' AND rang = '.$rang;
+		$sql .= ' AND rang = '.((int) $rang);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$row = $this->db->fetch_row($resql);
@@ -5236,6 +5236,9 @@ abstract class CommonObject
 								$setsharekey = true;
 							}
 							if ($this->element == 'contrat' && !empty($conf->global->CONTRACT_ALLOW_EXTERNAL_DOWNLOAD)) {
+								$setsharekey = true;
+							}
+							if ($this->element == 'supplier_proposal' && !empty($conf->global->SUPPLIER_PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD)) {
 								$setsharekey = true;
 							}
 

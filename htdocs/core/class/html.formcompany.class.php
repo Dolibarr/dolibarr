@@ -1007,6 +1007,9 @@ class FormCompany extends Form
 	{
 
 		global $conf, $langs;
+		if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && !empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->fournisseur->enabled)) {
+			return '' ;
+		}
 
 		$out = '<select class="flat '.$morecss.'" name="'.$htmlname.'" id="'.$htmlidname.'">';
 		if ($typeinput == 'form') {
@@ -1031,7 +1034,9 @@ class FormCompany extends Form
 			if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) {
 				$out .= '<option value="1,3"'.($selected == '1,3' ? ' selected' : '').'>'.$langs->trans('Customer').'</option>';
 			}
-			$out .= '<option value="4"'.($selected == '4' ? ' selected' : '').'>'.$langs->trans('Supplier').'</option>';
+			if (!empty($conf->fournisseur->enabled)) {
+				$out .= '<option value="4"'.($selected == '4' ? ' selected' : '').'>'.$langs->trans('Supplier').'</option>';
+			}
 			$out .= '<option value="0"'.($selected == '0' ? ' selected' : '').'>'.$langs->trans('Other').'</option>';
 		} elseif ($typeinput == 'admin') {
 			if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS)) {

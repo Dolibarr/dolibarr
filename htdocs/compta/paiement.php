@@ -873,7 +873,7 @@ if (!GETPOST('action', 'aZ09')) {
 	$sql .= ' WHERE p.fk_facture = f.rowid';
 	$sql .= ' AND f.entity IN ('.getEntity('invoice').')';
 	if ($socid) {
-		$sql .= ' AND f.fk_soc = '.$socid;
+		$sql .= ' AND f.fk_soc = '.((int) $socid);
 	}
 
 	$sql .= ' ORDER BY '.$sortfield.' '.$sortorder;

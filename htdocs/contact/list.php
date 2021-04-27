@@ -722,7 +722,8 @@ if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
 		$moreforfilter .= $formother->select_categories(Categorie::TYPE_CUSTOMER, $search_categ_thirdparty, 'search_categ_thirdparty', 1, $tmptitle);
 		$moreforfilter .= '</div>';
 	}
-	if (empty($type) || $type == 'f') {
+
+	if (!empty($conf->fournisseur->enabled) && (empty($type) || $type == 'f')) {
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('SuppliersCategoriesShort');
 		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');

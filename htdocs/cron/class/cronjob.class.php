@@ -553,11 +553,11 @@ class Cronjob extends CommonObject
 		} elseif ($status == 2) {
 			$sql .= " AND t.status = 2";
 		}
-		//Manage filter
+		// Manage filter
 		if (is_array($filter) && count($filter) > 0) {
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid') {
-					$sql .= ' AND '.$key.' = '.$this->db->escape($value);
+					$sql .= ' AND '.$key.' = '.((int) $value);
 				} else {
 					$sql .= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
 				}

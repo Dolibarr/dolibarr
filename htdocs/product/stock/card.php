@@ -571,6 +571,9 @@ if ($action == 'create') {
 
 			print '<table class="noborder centpercent">';
 			print "<tr class=\"liste_titre\">";
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
+			print $hookmanager->resPrint;
 			print_liste_field_titre("Product", "", "p.ref", "&amp;id=".$id, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("Label", "", "p.label", "&amp;id=".$id, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("NumberOfUnit", "", "ps.reel", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
@@ -591,6 +594,10 @@ if ($action == 'create') {
 			if ($user->rights->stock->creer) {
 				print_liste_field_titre('');
 			}
+			// Hook fields
+			$parameters = array('sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+			$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
+			print $hookmanager->resPrint;
 			print "</tr>\n";
 
 			$totalunit = 0;
@@ -601,6 +608,13 @@ if ($action == 'create') {
 			if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 				$sql .= ",fk_unit";
 			}
+			// Add fields from hooks
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
+			if ($reshook > 0) {			//Note that $sql is replaced if reshook > 0
+				$sql = "";
+			}
+			$sql .= $hookmanager->resPrint;
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_stock as ps, ".MAIN_DB_PREFIX."product as p";
 			$sql .= " WHERE ps.fk_product = p.rowid";
 			$sql .= " AND ps.reel <> 0"; // We do not show if stock is 0 (no product in this warehouse)
@@ -635,6 +649,9 @@ if ($action == 'create') {
 
 					//print '<td>'.dol_print_date($objp->datem).'</td>';
 					print '<tr class="oddeven">';
+					$parameters = array('obj'=>$objp);
+					$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
+					print $hookmanager->resPrint;
 					print "<td>";
 					$productstatic->id = $objp->rowid;
 					$productstatic->ref = $objp->ref;
