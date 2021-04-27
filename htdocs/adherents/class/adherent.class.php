@@ -206,7 +206,7 @@ class Adherent extends CommonObject
 
 	public $public;
 
-	// -2:exclu, -1:brouillon, 0:resilie, >=1:valide,paye
+	// -2:excluded, -1:draft, 0:resiliated, >=1:valided,payed
 	// def in common object
 	//public $status;
 
@@ -334,7 +334,7 @@ class Adherent extends CommonObject
 	/**
 	 * Draft status
 	 */
-	const STATUS_DRAFT = 0;
+	const STATUS_DRAFT = -1;
 	/**
 	 * Validated status
 	 */
@@ -342,7 +342,7 @@ class Adherent extends CommonObject
 	/**
 	 * Resiliated
 	 */
-	const STATUS_RESILIATED = -1;
+	const STATUS_RESILIATED = 0;
 	/**
 	 * Excluded
 	 */
