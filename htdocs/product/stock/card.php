@@ -604,7 +604,7 @@ if ($action == 'create') {
 
 			$sql = "SELECT p.rowid as rowid, p.ref, p.label as produit, p.tobatch, p.fk_product_type as type, p.price, p.price_ttc, p.entity,";
 			if ($separatedPMP) {
-				$sql .= " ppe.pmp as ppmp,";
+				$sql .= " pa.pmp as ppmp,";
 			} else {
 				$sql .= " p.pmp as ppmp,";
 			}
@@ -615,7 +615,7 @@ if ($action == 'create') {
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_stock as ps, ".MAIN_DB_PREFIX."product as p";
 
 			if ($separatedPMP) {
-				$sql .= ", ".MAIN_DB_PREFIX."entity_product_pmp as ppe";
+				$sql .= ", ".MAIN_DB_PREFIX."product_perentity as pa";
 			}
 
 			$sql .= " WHERE ps.fk_product = p.rowid";
@@ -623,7 +623,7 @@ if ($action == 'create') {
 			$sql .= " AND ps.fk_entrepot = ".$object->id;
 
 			if ($separatedPMP) {
-				$sql .= " AND ppe.fk_product = p.rowid AND ppe.entity = ". (int) $conf->entity;
+				$sql .= " AND pa.fk_product = p.rowid AND pa.entity = ". (int) $conf->entity;
 			}
 
 			$sql .= $db->order($sortfield, $sortorder);

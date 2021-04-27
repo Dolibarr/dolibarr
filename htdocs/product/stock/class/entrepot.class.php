@@ -621,18 +621,18 @@ class Entrepot extends CommonObject
 		}
 
 		if ($separatedPMP) {
-			$sql = "SELECT sum(ps.reel) as nb, sum(ps.reel * ppe.pmp) as value";
+			$sql = "SELECT sum(ps.reel) as nb, sum(ps.reel * pa.pmp) as value";
 		} else {
 			$sql = "SELECT sum(ps.reel) as nb, sum(ps.reel * p.pmp) as value";
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
 		$sql .= ", ".MAIN_DB_PREFIX."product as p";
 		if ($separatedPMP) {
-			$sql .= ", ".MAIN_DB_PREFIX."entity_product_pmp as ppe";
+			$sql .= ", ".MAIN_DB_PREFIX."product_perentity as pa";
 		}
 		$sql .= " WHERE ps.fk_entrepot = ".$this->id;
 		if ($separatedPMP) {
-			$sql .= " AND ppe.fk_product = p.rowid AND ppe.entity = ". (int) $conf->entity;
+			$sql .= " AND pa.fk_product = p.rowid AND pa.entity = ". (int) $conf->entity;
 		}
 		$sql .= " AND ps.fk_product = p.rowid";
 		//print $sql;
