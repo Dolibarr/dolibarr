@@ -64,6 +64,20 @@ $draftorder = GETPOST('draftorder', 'alpha');
 $fourn_id = GETPOST('fourn_id', 'int');
 $fk_supplier = GETPOST('fk_supplier', 'int');
 $fk_entrepot = GETPOST('fk_entrepot', 'int');
+
+//MultiCompany : If only 1 Warehouse is visible, filter will automatically be set to it.
+if ($fk_entrepot == "-1" && !empty($conf->global->MULTICOMPANY_PRODUCT_SHARING_ENABLED)) {
+	global $mc;
+	$visibleWarehousesEntities = $conf->entity;
+	if (isset($mc->sharings['stock']) && !empty($mc->sharings['stock'])) {
+		$visibleWarehousesEntities .= "," . implode(",", $mc->sharings['stock']);
+	}
+	$resWar = $db->query ("SELECT rowid FROM " . MAIN_DB_PREFIX . "entrepot WHERE entity IN (" . $db->sanitize($visibleWarehousesEntities) .")");
+	if($db->num_rows($resWar) == 1){
+		$fk_entrepot = $db->fetch_object($resWar)->rowid;
+	}
+};
+
 $texte = '';
 
 $sortfield = GETPOST('sortfield', 'aZ09comma');
