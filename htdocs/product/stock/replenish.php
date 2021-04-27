@@ -75,7 +75,8 @@ if ($fk_entrepot == "-1" && !empty($conf->global->MULTICOMPANY_PRODUCT_SHARING_E
 	}
 	$resWar = $db->query("SELECT rowid FROM " . MAIN_DB_PREFIX . "entrepot WHERE entity IN (" . $db->sanitize($visibleWarehousesEntities) .")");
 	if ($db->num_rows($resWar) == 1) {
-		$fk_entrepot = $db->fetch_object($resWar)->rowid;
+		$tmpobj = $db->fetch_object($resWar);
+		$fk_entrepot = $tmpobj->rowid;
 	}
 };
 
