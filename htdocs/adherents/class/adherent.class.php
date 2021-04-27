@@ -1862,7 +1862,7 @@ class Adherent extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
-		$sql .= " statut = 1";
+		$sql .= " statut = ".STATUS_VALIDATED;
 		$sql .= ", datevalid = '".$this->db->idate($now)."'";
 		$sql .= ", fk_user_valid=".$user->id;
 		$sql .= " WHERE rowid = ".$this->id;
@@ -1914,7 +1914,7 @@ class Adherent extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
-		$sql .= " statut = 0";
+		$sql .= " statut = ".STATUS_RESILIATED;
 		$sql .= ", fk_user_valid=".$user->id;
 		$sql .= " WHERE rowid = ".$this->id;
 
@@ -1964,7 +1964,7 @@ class Adherent extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
-		$sql .= " statut = -2";
+		$sql .= " statut = ".STATUS_EXCLUDED;
 		$sql .= ", fk_user_valid=".$user->id;
 		$sql .= " WHERE rowid = ".$this->id;
 
@@ -2275,11 +2275,11 @@ class Adherent extends CommonObject
 		$labelStatus = '';
 		$labelStatusShort = '';
 
-		if ($status == -1) {
+		if ($status == STATUS_DRAFT) {
 			$statusType = 'status0';
 			$labelStatus = $langs->trans("MemberStatusDraft");
 			$labelStatusShort = $langs->trans("MemberStatusDraftShort");
-		} elseif ($status >= 1) {
+		} elseif ($status >= STATUS_VALIDATED) {
 			if ($need_subscription == 0) {
 				$statusType = 'status4';
 				$labelStatus = $langs->trans("MemberStatusNoSubscription");
@@ -2297,11 +2297,11 @@ class Adherent extends CommonObject
 				$labelStatus = $langs->trans("MemberStatusPaid");
 				$labelStatusShort = $langs->trans("MemberStatusPaidShort");
 			}
-		} elseif ($status == 0) {
+		} elseif ($status == STATUS_RESILIATED) {
 			$statusType = 'status6';
 			$labelStatus = $langs->trans("MemberStatusResiliated");
 			$labelStatusShort = $langs->trans("MemberStatusResiliatedShort");
-		} elseif ($status == -2) {
+		} elseif ($status == STATUS_EXCLUDED)  {
 			$statusType = 'status10';
 			$labelStatus = $langs->trans("MemberStatusExcluded");
 			$labelStatusShort = $langs->trans("MemberStatusExcludedShort");
