@@ -1794,7 +1794,7 @@ class Products extends DolibarrApi
 	}
 
 	/**
-	 * Get stock data for the product id given. 
+	 * Get stock data for the product id given.
 	 * Optionaly with $selected_warehouse_id parameter user can get stock of specific warehouse
 	 *
 	 * @param  int $id ID of Product
@@ -1807,7 +1807,8 @@ class Products extends DolibarrApi
 	 *
 	 * @url GET {id}/stock
 	 */
-	public function getStock($id,$selected_warehouse_id=null){
+	public function getStock($id, $selected_warehouse_id = null)
+	{
 
 		if (!DolibarrApiAccess::$user->rights->produit->lire) {
 			throw new RestException(401);
@@ -1815,22 +1816,22 @@ class Products extends DolibarrApi
 
 		if (!DolibarrApi::_checkAccessToResource('product', $id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}		
+		}
 
 		$product_model = new Product($this->db);
 		$product_model->fetch($id);
 		$product_model->load_stock();
 
 		$stockData = $this->_cleanObjectDatas($product_model)->stock_warehouse;
-		if($selected_warehouse_id){
-			foreach($stockData as $warehouse_id => $warehouse){
-				if($warehouse_id != $selected_warehouse_id){
+		if ($selected_warehouse_id) {
+			foreach ($stockData as $warehouse_id => $warehouse) {
+				if ($warehouse_id != $selected_warehouse_id) {
 					unset($stockData[$warehouse_id]);
 				}
 			}
 		}
 
-		if(empty($stockData)){
+		if (empty($stockData)) {
 			throw new RestException(404, 'No stock found');
 		}
 
