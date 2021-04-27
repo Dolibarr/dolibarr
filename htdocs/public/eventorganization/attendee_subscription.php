@@ -466,8 +466,8 @@ print '<div id="divsubscribe">';
 print '<div class="center subscriptionformhelptext justify">';
 
 // Welcome message
-print $langs->trans("EvntOrgWelcomeMessage");
-print $id.".".'<br>';
+print $langs->trans("EvntOrgWelcomeMessage", $conference->label);
+print '<br>';
 print $langs->trans("EvntOrgDuration", dol_print_date($conference->datep), dol_print_date($conference->datef));
 print '</div>';
 
