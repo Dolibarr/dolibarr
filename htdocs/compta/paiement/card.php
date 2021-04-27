@@ -165,7 +165,6 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->facture->
                 $errors++;
                 setEventMessage($db->error, $db->errors, 'errors');
             }
-
 		}
 
         if (! $errors) {
