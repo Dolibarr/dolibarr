@@ -672,4 +672,129 @@ class FormProduct
 			}
 		}
 	}
+        // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
+     *  Return select list of productbatch status
+     *
+     *  @param	string	$selected       		Id or Code of preselected incoterm
+     *  @param	string	$page       			Defined the form action
+     *  @param  string	$htmlname       		Name of html select object
+     *  @param  string	$htmloption     		Options html on select object
+     * 	@param	int		$forcecombo				Force to load all values and output a standard combobox (with no beautification)
+     *  @param	array	$events					Event options to run on change. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+     *  @return string           				HTML string with select and input
+     */
+    public function select_productbatch_status($selected = '', $page = '', $htmlname = 'fk_status', $htmloption = '', $forcecombo = 1, $events = array())
+    {
+        // phpcs:enable
+        global $conf, $langs;
+
+        $langs->load("dict");
+
+        $out = '';
+        $statusArray = array();
+
+        $sql = "SELECT code, label";
+        $sql .= " FROM ".MAIN_DB_PREFIX."c_productbatch_status";
+        $sql .= " WHERE active > 0";
+        $sql .= " ORDER BY code ASC";
+
+        dol_syslog(get_class($this)."::select_productbatch_status", LOG_DEBUG);
+        $resql = $this->db->query($sql);
+        if ($resql) {
+            if ($conf->use_javascript_ajax && !$forcecombo) {
+                include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+                $out .= ajax_combobox($htmlname, $events);
+            }
+
+            if (!empty($page)) {
+                $out .= '<form method="post" action="'.$page.'">';
+                $out .= '<input type="hidden" name="action" value="setfk_status">';
+                $out .= '<input type="hidden" name="token" value="'.newToken().'">';
+            }
+
+            $out .= '<select id="'.$htmlname.'" class="flat selectfkstatus minwidth100imp noenlargeonsmartphone" name="'.$htmlname.'" '.$htmloption.'>';
+            $out .= '<option value="0">&nbsp;</option>';
+            $num = $this->db->num_rows($resql);
+            $i = 0;
+            if ($num) {
+                // $foundselected = false;
+
+                while ($i < $num) {
+                    $obj = $this->db->fetch_object($resql);
+                    $statusArray[$i]['code'] = $obj->code;
+                    $statusArray[$i]['label'] = $obj->label;
+                    $i++;
+                }
+
+                foreach ($statusArray as $row) {
+                    if ($selected && ($selected == $row['code'] || $selected == $row['label'])) {
+                        $out .= '<option value="'.$row['code'].'" selected>';
+                    } else {
+                        $out .= '<option value="'.$row['code'].'">';
+                    }
+
+                    if ($row['label']) {
+                        $out .= $row['label'];
+                    }
+
+                    $out .= '</option>';
+                }
+            }
+            $out .= '</select>';
+
+			// if ($user->admin) {
+				$out .= ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+			// }
+
+            if (!empty($page)) {
+                $out .= '<input type="submit" class="button valignmiddle smallpaddingimp nomargintop nomarginbottom" value="'.$langs->trans("Modify").'"></form>';
+            }
+        } else {
+            dol_print_error($this->db);
+        }
+
+        return $out;
+    }
+		// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Load into the cache productbatch status
+	 *
+	 *  @return	int							Nb of loaded lines, 0 if already loaded, <0 if KO
+	 */
+	public function load_cache_productbatch_status()
+	{
+		// phpcs:enable
+		global $langs;
+
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		$sql = "SELECT s.rowid, s.code, s.label";
+		$sql .= " FROM ".MAIN_DB_PREFIX."c_productbatch_status as s";
+		$sql .= " WHERE s.active > 0";
+		$sql .= " ORDER BY s.code ASC";
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+
+			while ($i < $num) {
+				$obj = $this->db->fetch_object($resql);
+
+				// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
+				$label = ($obj->code != $langs->trans($obj->code) ? $langs->trans($obj->code) : $langs->trans($obj->label));
+				$this->cache_productbatch_status[$obj->code] = $label;
+				$i++;
+			}
+
+			asort($this->cache_productbatch_status);
+
+			return $num;
+		} else {
+			dol_print_error($this->db);
+			return -1;
+		}
+	}
+
 }

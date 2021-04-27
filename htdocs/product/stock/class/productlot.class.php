@@ -91,6 +91,12 @@ class Productlot extends CommonObject
 		'batch'         => array('type'=>'varchar(30)', 'label'=>'Batch', 'enabled'=>1, 'visible'=>1, 'notnull'=>0, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'comment'=>'Batch', 'searchall'=>1),
 		'entity'        => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'default'=>1, 'notnull'=>1, 'index'=>1, 'position'=>20),
 		'sellby'        => array('type'=>'date', 'label'=>'SellByDate', 'enabled'=>'empty($conf->global->PRODUCT_DISABLE_SELLBY)?1:0', 'visible'=>5, 'position'=>60),
+		'eol_date'        => array('type'=>'date', 'label'=>'EndOfLife', 'enabled'=>'empty($conf->global->PRODUCT_DISABLE_TRACEABILITY)?1:0', 'visible'=>5, 'position'=>70),
+		'manufacturing_date'        => array('type'=>'date', 'label'=>'ManufacturingDate', 'enabled'=>'empty($conf->global->PRODUCT_DISABLE_TRACEABILITY)?1:0', 'visible'=>5, 'position'=>80),
+		'scrapping_date'        => array('type'=>'date', 'label'=>'DestructionDate', 'enabled'=>'empty($conf->global->PRODUCT_DISABLE_TRACEABILITY)?1:0', 'visible'=>5, 'position'=>90),
+		'commissionning_date'        => array('type'=>'date', 'label'=>'FirstUseDate', 'enabled'=>'empty($conf->global->PRODUCT_DISABLE_TRACEABILITY)?1:0', 'visible'=>5, 'position'=>100),
+		'qc_frequency'        => array('type'=>'varchar(6)', 'label'=>'QCFrequency', 'enabled'=>'empty($conf->global->PRODUCT_DISABLE_TRACEABILITY)?1:0', 'visible'=>5, 'position'=>110),
+		'fk_status'        => array('type'=>'varchar(6)', 'label'=>'Status', 'enabled'=>'empty($conf->global->PRODUCT_DISABLE_TRACEABILITY)?1:0', 'visible'=>5, 'position'=>120),
 		'eatby'         => array('type'=>'date', 'label'=>'EatByDate', 'enabled'=>'empty($conf->global->PRODUCT_DISABLE_EATBY)?1:0', 'visible'=>5, 'position'=>62),
 		'datec'         => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>500),
 		'tms'           => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>501),
@@ -112,6 +118,12 @@ class Productlot extends CommonObject
 	public $batch;
 	public $eatby = '';
 	public $sellby = '';
+	public $eol_date = '';
+	public $manufacturing_date = '';
+	public $scrapping_date = '';
+	public $commissionning_date = '';
+	public $qc_frequency = '';
+	public $fk_status = '';
 	public $datec = '';
 	public $tms = '';
 
@@ -186,6 +198,12 @@ class Productlot extends CommonObject
 		$sql .= 'batch,';
 		$sql .= 'eatby,';
 		$sql .= 'sellby,';
+		$sql .= 'eol_date,';
+		$sql .= 'manufacturing_date,';
+		$sql .= 'scrapping_date,';
+		$sql .= 'commissionning_date,';
+		$sql .= 'qc_frequency,';
+		$sql .= 'fk_status,';
 		$sql .= 'datec,';
 		$sql .= 'fk_user_creat,';
 		$sql .= 'fk_user_modif,';
@@ -196,6 +214,13 @@ class Productlot extends CommonObject
 		$sql .= ' '.(!isset($this->batch) ? 'NULL' : "'".$this->db->escape($this->batch)."'").',';
 		$sql .= ' '.(!isset($this->eatby) || dol_strlen($this->eatby) == 0 ? 'NULL' : "'".$this->db->idate($this->eatby)."'").',';
 		$sql .= ' '.(!isset($this->sellby) || dol_strlen($this->sellby) == 0 ? 'NULL' : "'".$this->db->idate($this->sellby)."'").',';
+		$sql .= ' '.(!isset($this->eol_date) || dol_strlen($this->eol_date) == 0 ? 'NULL' : "'".$this->db->idate($this->eol_date)."'").',';
+		$sql .= ' '.(!isset($this->manufacturing_date) || dol_strlen($this->manufacturing_date) == 0 ? 'NULL' : "'".$this->db->idate($this->manufacturing_date)."'").',';
+		$sql .= ' '.(!isset($this->scrapping_date) || dol_strlen($this->scrapping_date) == 0 ? 'NULL' : "'".$this->db->idate($this->scrapping_date)."'").',';
+		$sql .= ' '.(!isset($this->commissionning_date) || dol_strlen($this->commissionning_date) == 0 ? 'NULL' : "'".$this->db->idate($this->commissionning_date)."'").',';
+		$sql .= ' '.(!isset($this->qc_frequency) ? 'NULL' : $this->qc_frequency).',';
+		$sql .= ' '.(!isset($this->fk_status) || dol_strlen($this->fk_status) == 0 ? 'NULL' : $this->fk_status).',';
+
 		$sql .= ' '."'".$this->db->idate(dol_now())."'".',';
 		$sql .= ' '.(!isset($this->fk_user_creat) ? 'NULL' : $this->fk_user_creat).',';
 		$sql .= ' '.(!isset($this->fk_user_modif) ? 'NULL' : $this->fk_user_modif).',';
@@ -268,6 +293,12 @@ class Productlot extends CommonObject
 		$sql .= " t.batch,";
 		$sql .= " t.eatby,";
 		$sql .= " t.sellby,";
+		$sql .= " t.eol_date,";
+		$sql .= " t.manufacturing_date,";
+		$sql .= " t.scrapping_date,";
+		$sql .= " t.commissionning_date,";
+		$sql .= " t.qc_frequency,";
+		$sql .= " t.fk_status,";
 		$sql .= " t.datec,";
 		$sql .= " t.tms,";
 		$sql .= " t.fk_user_creat,";
@@ -295,6 +326,14 @@ class Productlot extends CommonObject
 				$this->fk_product = $obj->fk_product;
 				$this->eatby = $this->db->jdate($obj->eatby);
 				$this->sellby = $this->db->jdate($obj->sellby);
+				$this->eol_date = $this->db->jdate($obj->eol_date);
+
+				$this->manufacturing_date = $this->db->jdate($obj->manufacturing_date);
+				$this->scrapping_date = $this->db->jdate($obj->scrapping_date);
+				$this->commissionning_date = $this->db->jdate($obj->commissionning_date);
+				$this->qc_frequency = $obj->qc_frequency;
+				$this->fk_status = $obj->fk_status;
+
 				$this->datec = $this->db->jdate($obj->datec);
 				$this->tms = $this->db->jdate($obj->tms);
 				$this->fk_user_creat = $obj->fk_user_creat;
@@ -371,6 +410,12 @@ class Productlot extends CommonObject
 		$sql .= ' batch = '.(isset($this->batch) ? "'".$this->db->escape($this->batch)."'" : "null").',';
 		$sql .= ' eatby = '.(!isset($this->eatby) || dol_strlen($this->eatby) != 0 ? "'".$this->db->idate($this->eatby)."'" : 'null').',';
 		$sql .= ' sellby = '.(!isset($this->sellby) || dol_strlen($this->sellby) != 0 ? "'".$this->db->idate($this->sellby)."'" : 'null').',';
+		$sql .= ' eol_date = '.(!isset($this->eol_date) || dol_strlen($this->eol_date) != 0 ? "'".$this->db->idate($this->eol_date)."'" : 'null').',';
+		$sql .= ' manufacturing_date = '.(!isset($this->manufacturing_date) || dol_strlen($this->manufacturing_date) != 0 ? "'".$this->db->idate($this->manufacturing_date)."'" : 'null').',';
+		$sql .= ' scrapping_date = '.(!isset($this->destruction_date) || dol_strlen($this->destruction_date) != 0 ? "'".$this->db->idate($this->destruction_date)."'" : 'null').',';
+		$sql .= ' commissionning_date = '.(!isset($this->first_use_date) || dol_strlen($this->first_use_date) != 0 ? "'".$this->db->idate($this->first_use_date)."'" : 'null').',';
+		$sql .= ' qc_frequency = '.(!isset($this->qc_frequency) || dol_strlen($this->qc_frequency) != 0 ? "'".$this->db->escape($this->qc_frequency)."'" : 'null').',';
+		$sql .= ' fk_status = '.(!isset($this->fk_status) || dol_strlen($this->fk_status) != 0 ? "'".$this->db->escape($this->fk_status)."'" : 'null').',';
 		$sql .= ' datec = '.(!isset($this->datec) || dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').',';
 		$sql .= ' tms = '.(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : "'".$this->db->idate(dol_now())."'").',';
 		$sql .= ' fk_user_creat = '.(isset($this->fk_user_creat) ? $this->fk_user_creat : "null").',';

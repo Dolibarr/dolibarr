@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018      All-3kcis       		 <contact@all-3kcis.fr>
+ * Copyright (C) 2021      Noé Cendrier         <noe.cendrier@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('stocks', 'other', 'productbatch'));
@@ -138,7 +140,7 @@ if (empty($reshook)) {
 
 	$backurlforlist = dol_buildpath('/product/stock/productlot_list.php', 1);
 
-	if ($action == 'seteatby' && $user->rights->stock->creer) {
+	if ($action == 'seteatby' && $user->rights->stock->creer && !GETPOST('cancel', 'alpha')) {
 		$newvalue = dol_mktime(12, 0, 0, GETPOST('eatbymonth', 'int'), GETPOST('eatbyday', 'int'), GETPOST('eatbyyear', 'int'));
 		$result = $object->setValueFrom('eatby', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
 		if ($result < 0) {
@@ -149,12 +151,76 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'setsellby' && $user->rights->stock->creer) {
+	if ($action == 'setsellby' && $user->rights->stock->creer && !GETPOST('cancel', 'alpha')) {
 		$newvalue = dol_mktime(12, 0, 0, GETPOST('sellbymonth', 'int'), GETPOST('sellbyday', 'int'), GETPOST('sellbyyear', 'int'));
 		$result = $object->setValueFrom('sellby', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
 		if ($result < 0) {
 			setEventMessages($object->error, null, 'errors');
 			$action == 'editsellby';
+		} else {
+			$action = 'view';
+		}
+	}
+
+	if ($action == 'seteol_date' && $user->rights->stock->creer && !GETPOST('cancel', 'alpha')) {
+		$newvalue = dol_mktime(12, 0, 0, GETPOST('eol_datemonth', 'int'), GETPOST('eol_dateday', 'int'), GETPOST('eol_dateyear', 'int'));
+		$result = $object->setValueFrom('eol_date', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
+		if ($result < 0) {
+			setEventMessages($object->error, null, 'errors');
+			$action == 'editeol_date';
+		} else {
+			$action = 'view';
+		}
+	}
+
+	if ($action == 'setmanufacturing_date' && $user->rights->stock->creer && !GETPOST('cancel', 'alpha')) {
+		$newvalue = dol_mktime(12, 0, 0, GETPOST('manufacturing_datemonth', 'int'), GETPOST('manufacturing_dateday', 'int'), GETPOST('manufacturing_dateyear', 'int'));
+		$result = $object->setValueFrom('manufacturing_date', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
+		if ($result < 0) {
+			setEventMessages($object->error, null, 'errors');
+			$action == 'editmanufacturing_date';
+		} else {
+			$action = 'view';
+		}
+	}
+
+	if ($action == 'setscrapping_date' && $user->rights->stock->creer && !GETPOST('cancel', 'alpha')) {
+		$newvalue = dol_mktime(12, 0, 0, GETPOST('scrapping_datemonth', 'int'), GETPOST('scrapping_dateday', 'int'), GETPOST('scrapping_dateyear', 'int'));
+		$result = $object->setValueFrom('scrapping_date', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
+		if ($result < 0) {
+			setEventMessages($object->error, null, 'errors');
+			$action == 'editscrapping_date';
+		} else {
+			$action = 'view';
+		}
+	}
+
+	if ($action == 'setcommissionning_date' && $user->rights->stock->creer && !GETPOST('cancel', 'alpha')) {
+		$newvalue = dol_mktime(12, 0, 0, GETPOST('commissionning_datemonth', 'int'), GETPOST('commissionning_dateday', 'int'), GETPOST('commissionning_dateyear', 'int'));
+		$result = $object->setValueFrom('commissionning_date', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
+		if ($result < 0) {
+			setEventMessages($object->error, null, 'errors');
+			$action == 'editcommissionning_date';
+		} else {
+			$action = 'view';
+		}
+	}
+
+	if ($action == 'setqc_frequency' && $user->rights->stock->creer && !GETPOST('cancel', 'alpha')) {
+		$result = $object->setValueFrom('qc_frequency', GETPOST('qc_frequency'), '', null, 'text', '', $user, 'PRODUCT_MODIFY');
+		if ($result < 0) { // Prévoir un test de format de durée
+			setEventMessages($object->error, null, 'errors');
+			$action == 'editqc_frequency';
+		} else {
+			$action = 'view';
+		}
+	}
+
+	if ($action == 'setfk_status' && $user->rights->stock->creer && !GETPOST('cancel', 'alpha')) {
+		$result = $object->setValueFrom('fk_status', GETPOST('fk_status') ? GETPOST('fk_status') : null, '', null, 'text', '', $user, 'PRODUCT_MODIFY');
+		if ($result < 0) {
+			setEventMessages($object->error, null, 'errors');
+			$action == 'editfk_status';
 		} else {
 			$action = 'view';
 		}
@@ -308,6 +374,7 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 $formfile = new FormFile($db);
+$formproduct = new FormProduct($db);
 
 $title = $langs->trans("ProductLot");
 $help_url = '';
@@ -430,45 +497,57 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Traceability info
 	if (empty($conf->global->PRODUCT_DISABLE_TRACEABILITY)) {
-		print '<tr><td>';
-		print $form->editfieldkey($langs->trans('EndOfLife'), 'eol_date', $object->eol_date, $object, $user->rights->stock->creer, 'datepicker');
-		print '</td><td>';
-		print $form->editfieldval($langs->trans('EndOfLife'), 'eol_date', $object->eol_date, $object, $user->rights->stock->creer, 'datepicker');
-		print '</td>';
+		print '<tr><td>'.$form->editfieldkey($langs->trans('EndOfLife'), 'eol_date', $object->eol_date, $object, $user->rights->stock->creer).'</td>';
+		print '<td>'.$form->editfieldval($langs->trans('EndOfLife'), 'eol_date', $object->eol_date, $object, $user->rights->stock->creer, 'datepicker').'</td>';
 		print '</tr>';
-		print '<tr><td>';
-		print $form->editfieldkey($langs->trans('ManufacturingDate'), 'manufacturing_date', $object->manufacturing_date, $object, $user->rights->stock->creer, 'datepicker');
-		print '</td><td>';
-		print $form->editfieldval($langs->trans('ManufacturingDate'), 'manufacturing_date', $object->manufacturing_date, $object, $user->rights->stock->creer, 'datepicker');
-		print '</td>';
+		print '<tr><td>'.$form->editfieldkey($langs->trans('ManufacturingDate'), 'manufacturing_date', $object->manufacturing_date, $object, $user->rights->stock->creer).'</td>';
+		print '<td>'.$form->editfieldval($langs->trans('ManufacturingDate'), 'manufacturing_date', $object->manufacturing_date, $object, $user->rights->stock->creer, 'datepicker').'</td>';
 		print '</tr>';
-		print '<tr><td>';
-		print $form->editfieldkey($langs->trans('DestructionDate'), 'destruction_date', $object->destruction_date, $object, $user->rights->stock->creer, 'datepicker');
-		print '</td><td>';
-		print $form->editfieldval($langs->trans('DestructionDate'), 'destruction_date', $object->destruction_date, $object, $user->rights->stock->creer, 'datepicker');
-		print '</td>';
+		print '<tr><td>'.$form->editfieldkey($langs->trans('DestructionDate'), 'scrapping_date', $object->scrapping_date, $object, $user->rights->stock->creer).'</td>';
+		print '<td>'.$form->editfieldval($langs->trans('DestructionDate'), 'scrapping_date', $object->scrapping_date, $object, $user->rights->stock->creer, 'datepicker').'</td>';
 		print '</tr>';
-		print '<tr><td>';
-		print $form->editfieldkey($langs->trans('FirstUseDate'), 'first_use_date', $object->first_use_date, $object, $user->rights->stock->creer, 'datepicker');
-		print '</td><td>';
-		print $form->editfieldval($langs->trans('FirstUseDate'), 'first_use_date', $object->first_use_date, $object, $user->rights->stock->creer, 'datepicker');
-		print '</td>';
+		print '<tr><td>'.$form->editfieldkey($langs->trans('FirstUseDate'), 'commissionning_date', $object->commissionning_date, $object, $user->rights->stock->creer).'</td>';
+		print '<td>'.$form->editfieldval($langs->trans('FirstUseDate'), 'commissionning_date', $object->commissionning_date, $object, $user->rights->stock->creer, 'datepicker').'</td>';
 		print '</tr>';
-		print '<tr><td>';
-		print $form->editfieldkey($langs->trans('QCFrequency'), 'qc_frequency', $object->qc_frequency, $object, $user->rights->stock->creer, 'string');
-		print '</td><td>';
-		print $form->editfieldval($langs->trans('QCFrequency'), 'qc_frequency', $object->qc_frequency, $object, $user->rights->stock->creer, 'string');
-		print '</td>';
+		print '<tr><td>'.$form->editfieldkey($langs->trans('QCFrequency'), 'qc_frequency', $object->qc_frequency, $object, $user->rights->stock->creer).'</td>';
+		print '<td>'.$form->editfieldval($langs->trans('QCFrequency'), 'qc_frequency', $object->qc_frequency, $object, $user->rights->stock->creer, 'string').'</td>';
 		print '</tr>';
-		$form->load_cache_productbatch_status();
-		print '<tr><td>';
-		print $form->editfieldkey($langs->trans('Status'), 'fk_status', $form->cache_productbatch_status[$object->status], $object, $user->rights->stock->creer, 'select:productbatch_status');
-		print '</td><td>';
-		print $form->editfieldval($langs->trans('Status'), 'fk_status', $form->cache_productbatch_status[$object->status], $object, $user->rights->stock->creer, 'select:productbatch_status');
+		print '<tr>';
+		print '<td class="maxwidthonsmartphone">';
+		print $form->editfieldkey("Status", 'fk_status', $object->fk_status, $object, $user->rights->stock->creer);
 		print '</td>';
-		print '</tr>';
-		/*print '<tr><td>'.$langs->trans("Status").'</td><td>select à voir</td></tr>';*/
-	}
+		print '<td class="valuefield">';
+		if ($action != 'editfk_status') {
+			$formproduct->load_cache_productbatch_status();
+			print $formproduct->cache_productbatch_status[$object->fk_status];
+		} else {
+	// $fk_status = GETPOST('fk_status');
+		if (empty($fk_status)) {
+			$fk_status = $object->fk_status;
+		}
+		print $formproduct->select_productbatch_status($fk_status,'?id='.$object->id);
+		}
+		print '</td></tr>';
+
+
+		/* print '<tr><td>'.$form->editfieldkey('Status', 'fk_status', '', $object, 0);
+		// print_r($formproductlot->productbatch_status_array(0));
+		print '</td>';
+		print '<td>'.$form->selectarray('fk_status', $formproductlot->productbatch_status_array(0), $object->fk_status, 1, 0, 0, '', 0, 0, 0, $sortparam, '', 1);
+		if ($user->admin) {
+			print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+		}
+		print '</td></tr>'; */
+		/* $form->load_cache_productbatch_status();
+		print '<tr><td>';
+		print implode(',',$form->cache_productbatch_status);
+		print $form->editfieldkey($langs->trans('Status'), 'fk_status', $langs->trans($object->laberl), $object, $user->rights->stock->creer, 'select;'.implode(',', $form->cache_productbatch_status));
+		print '</td><td>';
+		print $form->editfieldval($langs->trans('Status'), 'fk_status', $form->cache_productbatch_status[$object->label], $object, $user->rights->stock->creer, 'select;'.implode(',', $form->cache_productbatch_status));
+		// print $form->editfieldval("Type", 'type', $form->cache_types_fees[$object->type], $object, $user->rights->deplacement->creer, 'select:types_fees');
+		print '</td>';
+		print '</tr>'; */
+}
 
 	// Other attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';

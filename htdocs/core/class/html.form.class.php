@@ -5744,47 +5744,6 @@ class Form
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Load into the cache productbatch status
-	 *
-	 *  @return	int							Nb of loaded lines, 0 if already loaded, <0 if KO
-	 */
-	public function load_cache_productbatch_status()
-	{
-		// phpcs:enable
-		global $langs;
-
-		$num = count($this->cache_vatrates);
-		if ($num > 0) {
-			return $num; // Cache already loaded
-		}
-
-		dol_syslog(__METHOD__, LOG_DEBUG);
-
-		$sql = "SELECT s.rowid, s.code, s.label";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_productbatch_status as c";
-		$sql .= " WHERE t.active > 0";
-		$sql .= " ORDER BY c.code ASC";
-
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$num = $this->db->num_rows($resql);
-			if ($num) {
-				for ($i = 0; $i < $num; $i++) {
-					$obj = $this->db->fetch_object($resql);
-					$this->cache_status[$i]['rowid']	= $obj->rowid;
-					$this->cache_status[$i]['code'] = $obj->code;
-					$this->cache_status[$i]['label'] = $obj->taux.'%'.($obj->code ? ' ('.$obj->code.')' : ''); // Label must contains only 0-9 , . % or *
-				}
-				return $num;
-			}
-		} else {
-			$this->error = '<font class="error">'.$this->db->error().'</font>';
-			return -2;
-		}
-	}
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
 	 *  Output an HTML select vat rate.
 	 *  The name of this function should be selectVat. We keep bad name for compatibility purpose.
 	 *
