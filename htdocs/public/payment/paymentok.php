@@ -394,7 +394,7 @@ if ($ispaymentok) {
 
 			// Do action only if $FinalPaymentAmt is set (session variable is cleaned after this page to avoid duplicate actions when page is POST a second time)
 			if (!empty($FinalPaymentAmt) && $paymentTypeId > 0) {
-				$result = $object->status < $object::STATUS_DRAFT ? -1 : $object->validate($user); // if membre is excluded (status == -2) the new validation is not possible
+				$result = ($object->status == $object::STATUS_EXCLUDED) ? -1 : $object->validate($user); // if membre is excluded (status == -2) the new validation is not possible
 				if ($result < 0 || empty($object->datevalid)) {
 					$error++;
 					$errmsg = $object->error;
