@@ -464,10 +464,10 @@ print '</tr>';
 // Email
 print '<tr><td>'.$langs->trans("Email").'<FONT COLOR="red">*</FONT></td><td><input type="text" name="email" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
 // Label
-print '<tr><td>'.$langs->trans("Label").'</td>'."\n";
+print '<tr><td>'.$langs->trans("Label").'<FONT COLOR="red">*</FONT></td>'."\n";
 print '</td><td><input type="text" name="label" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('label')).'"></td></tr>'."\n";
 // Note
-print '<tr><td>'.$langs->trans("Note").'</td>'."\n";
+print '<tr><td>'.$langs->trans("Note").'<FONT COLOR="red">*</FONT></td>'."\n";
 print '<td><input type="text" name="note" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('note')).'"></td></tr>'."\n";
 // Start Date
 print '<tr><td>'.$langs->trans("DateStart").'</td>'."\n";
