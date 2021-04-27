@@ -119,5 +119,6 @@ ConfAttendeeSubscriptionConfirmation = Confirmation of your subscription to a co
 #
 # Payment page
 #
-Attendee = Participant
-PaymentConferenceAttendee = Paiement de participation à une conférence
+Attendee = Attendee
+PaymentConferenceAttendee = Conference attendee payment
+PaymentBoothLocation = Booth location payment

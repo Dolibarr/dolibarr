@@ -434,7 +434,7 @@ if (empty($reshook) && $action == 'add') {
 							$valid = true;
 							$sourcetouse = 'boothlocation';
 							$reftouse = $facture->id;
-							$redirection = $dolibarr_main_url_root.'/public/payment/newpayment.php?source='.$sourcetouse.'&ref='.$reftouse;
+							$redirection = $dolibarr_main_url_root.'/public/payment/newpayment.php?source='.$sourcetouse.'&ref='.$reftouse.'&booth='.$conforbooth->id;
 							if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 								if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
 									$redirection .= '&securekey='.dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . $sourcetouse . $reftouse, 2); // Use the source in the hash to avoid duplicates if the references are identical
