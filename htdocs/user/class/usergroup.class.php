@@ -504,7 +504,7 @@ class UserGroup extends CommonObject
 					}
 
 					$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_rights";
-					$sql .= " WHERE fk_usergroup = $this->id AND fk_id=".$nid;
+					$sql .= " WHERE fk_usergroup = $this->id AND fk_id=".((int) $nid);
 					$sql .= " AND entity = ".$entity;
 					if (!$this->db->query($sql)) {
 						$error++;

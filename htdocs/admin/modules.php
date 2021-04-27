@@ -521,8 +521,8 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	$moreforfilter = '<div class="valignmiddle">';
 
 	$moreforfilter .= '<div class="floatright right pagination --module-list"><ul><li>';
-	$moreforfilter .= dolGetButtonTitle($langs->trans('CheckForModuleUpdate'), $langs->trans('CheckForModuleUpdateHelp'), 'fa fa-check-double ', $_SERVER["PHP_SELF"].'?action=checklastversion&token='.newToken().'&mode='.$mode.$param, '', 1, array('morecss'=>'reposition'));
-	$moreforfilter .= '</li><li>'.dolGetButtonTitleSeparator();
+	$moreforfilter .= dolGetButtonTitle($langs->trans('CheckForModuleUpdate'), $langs->trans('CheckForModuleUpdate').'<br>'.$langs->trans('CheckForModuleUpdateHelp'), 'fa fa-sync', $_SERVER["PHP_SELF"].'?action=checklastversion&token='.newToken().'&mode='.$mode.$param, '', 1, array('morecss'=>'reposition'));
+	$moreforfilter .= dolGetButtonTitleSeparator();
 	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=commonkanban'.$param, '', ($mode == 'commonkanban' ? 2 : 1), array('morecss'=>'reposition'));
 	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-list-alt imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.$param, '', ($mode == 'common' ? 2 : 1), array('morecss'=>'reposition'));
 	$moreforfilter .= '</li></ul></div>';
@@ -584,6 +584,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 
 	// Show list of modules
 	$oldfamily = '';
+	$foundoneexternalmodulewithupdate = 0;
 	$linenum = 0;
 	foreach ($orders as $key => $value) {
 		$linenum++;
@@ -915,6 +916,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			if ($objMod->needUpdate) {
 				$versionTitle = $langs->trans('ModuleUpdateAvailable').' : '.$objMod->lastVersion;
 				print '<span class="badge badge-warning classfortooltip" title="'.dol_escape_htmltag($versionTitle).'">'.$versiontrans.'</span>';
+				$foundoneexternalmodulewithupdate++;
 			} else {
 				print $versiontrans;
 			}
@@ -931,6 +933,14 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			print '</td>';
 
 			print "</tr>\n";
+		}
+	}
+
+	if ($action == 'checklastversion') {
+		if ($foundoneexternalmodulewithupdate) {
+			setEventMessages($langs->trans("ModuleUpdateAvailable"), null, 'mesgs');
+		} else {
+			setEventMessages($langs->trans("NoExternalModuleWithUpdate"), null, 'mesgs');
 		}
 	}
 

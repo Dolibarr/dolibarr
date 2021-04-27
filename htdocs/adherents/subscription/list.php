@@ -170,7 +170,7 @@ if (isset($date_select) && $date_select != '') {
 }
 if ($search_ref) {
 	if (is_numeric($search_ref)) {
-		$sql .= " AND (c.rowid = ".$db->escape($search_ref).")";
+		$sql .= " AND c.rowid = ".((int) $search_ref);
 	} else {
 		$sql .= " AND 1 = 2"; // Always wrong
 	}

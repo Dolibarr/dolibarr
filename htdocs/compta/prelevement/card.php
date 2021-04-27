@@ -380,7 +380,7 @@ if ($id > 0 || $ref) {
 		$num = $db->num_rows($result);
 		$i = 0;
 
-		$urladd = "&amp;id=".$id;
+		$urladd = "&id=".urlencode($id);
 
 		print '<form method="get" action="'.$_SERVER ['PHP_SELF'].'" name="search_form">'."\n";
 		print '<input type="hidden" name="id" value="'.$id.'"/>';

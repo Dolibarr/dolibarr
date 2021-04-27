@@ -17,7 +17,7 @@
 
 /**
  *	\file       htdocs/admin/accountant.php
- *	\ingroup    accountant
+ *	\ingroup    core
  *	\brief      Setup page to configure accountant / auditor
  */
 

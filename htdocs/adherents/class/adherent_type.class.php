@@ -365,7 +365,7 @@ class AdherentType extends CommonObject
 		$sql .= "note = '".$this->db->escape($this->note)."',";
 		$sql .= "vote = ".(integer) $this->db->escape($this->vote).",";
 		$sql .= "mail_valid = '".$this->db->escape($this->mail_valid)."'";
-		$sql .= " WHERE rowid =".$this->id;
+		$sql .= " WHERE rowid =".((int) $this->id);
 
 		$result = $this->db->query($sql);
 		if ($result) {

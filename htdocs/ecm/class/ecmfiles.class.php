@@ -428,7 +428,7 @@ class EcmFiles extends CommonObject
 			$sql .= " AND t.src_object_type ='".$this->db->escape($src_object_type)."' AND t.src_object_id = ".$this->db->escape($src_object_id);
 			$sql .= " AND t.entity = ".$conf->entity;
 		} else {
-			$sql .= ' AND t.rowid = '.$this->db->escape($id); // rowid already unique
+			$sql .= ' AND t.rowid = '.((int) $id); // rowid already unique
 		}
 
 		$this->db->plimit(1); // When we search on src or on hash of content (hashforfile) to solve hash conflict when several files has same content, we take first one only

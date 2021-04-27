@@ -331,7 +331,7 @@ class CommandeFournisseur extends CommonOrder
 		if (empty($id)) {
 			$sql .= " WHERE c.entity IN (".getEntity('supplier_order').")";
 		} else {
-			$sql .= " WHERE c.rowid=".$id;
+			$sql .= " WHERE c.rowid=".((int) $id);
 		}
 
 		if ($ref) {

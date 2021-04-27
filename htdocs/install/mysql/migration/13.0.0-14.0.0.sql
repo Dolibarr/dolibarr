@@ -52,6 +52,8 @@ UPDATE llx_c_country SET eec = 1 WHERE code IN ('AT','BE','BG','CY','CZ','DE','D
 
 -- For v14
 
+ALTER TABLE llx_export_model MODIFY COLUMN type varchar(64);
+
 create table llx_accounting_groups_account
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
@@ -428,6 +430,10 @@ ALTER TABLE llx_facture_fourn ADD COLUMN date_closing datetime DEFAULT NULL afte
 ALTER TABLE llx_facture_fourn ADD COLUMN fk_user_closing integer DEFAULT NULL after fk_user_valid;
 
 ALTER TABLE llx_entrepot ADD COLUMN fk_project INTEGER DEFAULT NULL AFTER entity; -- project associated to warehouse if any
+
+-- Add external payement suport for donation
+ALTER TABLE llx_payment_donation ADD COLUMN ext_payment_site  varchar(128) AFTER note;
+ALTER TABLE llx_payment_donation ADD COLUMN ext_payment_id  varchar(128) AFTER note;
 
 -- Rebuild sequence for postgres only after query INSERT INTO llx_salary(rowid, ...
 -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();

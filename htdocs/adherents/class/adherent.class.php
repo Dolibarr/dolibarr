@@ -1570,9 +1570,11 @@ class Adherent extends CommonObject
 	 *	@param	string		$emetteur_nom			Name of cheque writer
 	 *	@param	string		$emetteur_banque		Name of bank of cheque
 	 *  @param	string		$autocreatethirdparty	Auto create new thirdparty if member not yet linked to a thirdparty and we request an option that generate invoice.
+	 *  @param  string      $ext_payment_id         External id of payment (for example Stripe charge id)
+	 *  @param  string      $ext_payment_site       Name of external paymentmode (for example 'stripe')
 	 *	@return int									<0 if KO, >0 if OK
 	 */
-	public function subscriptionComplementaryActions($subscriptionid, $option, $accountid, $datesubscription, $paymentdate, $operation, $label, $amount, $num_chq, $emetteur_nom = '', $emetteur_banque = '', $autocreatethirdparty = 0)
+	public function subscriptionComplementaryActions($subscriptionid, $option, $accountid, $datesubscription, $paymentdate, $operation, $label, $amount, $num_chq, $emetteur_nom = '', $emetteur_banque = '', $autocreatethirdparty = 0, $ext_payment_id = '', $ext_payment_site = '')
 	{
 		global $conf, $langs, $user, $mysoc;
 
@@ -1597,8 +1599,8 @@ class Adherent extends CommonObject
 				$inserturlid = $acct->add_url_line($insertid, $this->id, DOL_URL_ROOT.'/adherents/card.php?rowid=', $this->getFullname($langs), 'member');
 				if ($inserturlid > 0) {
 					// Update table subscription
-					$sql = "UPDATE ".MAIN_DB_PREFIX."subscription SET fk_bank=".$insertid;
-					$sql .= " WHERE rowid=".$subscriptionid;
+					$sql = "UPDATE ".MAIN_DB_PREFIX."subscription SET fk_bank=".((int) $insertid);
+					$sql .= " WHERE rowid=".((int) $subscriptionid);
 
 					dol_syslog("subscription::subscription", LOG_DEBUG);
 					$resql = $this->db->query($sql);
@@ -1752,6 +1754,8 @@ class Adherent extends CommonObject
 				$paiement->paiementid = dol_getIdFromCode($this->db, $operation, 'c_paiement', 'code', 'id', 1);
 				$paiement->num_payment = $num_chq;
 				$paiement->note_public = $label;
+				$paiement->ext_payment_id = $ext_payment_id;
+				$paiement->ext_payment_site = $ext_payment_site;
 
 				if (!$error) {
 					// Create payment line for invoice
