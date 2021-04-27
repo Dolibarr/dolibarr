@@ -376,9 +376,6 @@ if ($action == 'dopayment') {
 			dol_syslog("SCRIPT_URI: ".(empty($_SERVER["SCRIPT_URI"]) ? '' : $_SERVER["SCRIPT_URI"]), LOG_DEBUG); // If defined script uri must match domain of PAYPAL_API_OK and PAYPAL_API_KO
 
 			// A redirect is added if API call successfull
-			if ($source == 'conferencesubscription') {
-				$PAYPAL_API_OK .= '&invoice='.dol_encode($invoice->id, $dolibarr_main_instance_unique_id);
-			}
 			$mesg = print_paypal_redirect($PAYPAL_API_PRICE, $PAYPAL_API_DEVISE, $PAYPAL_PAYMENT_TYPE, $PAYPAL_API_OK, $PAYPAL_API_KO, $FULLTAG);
 
 			// If we are here, it means the Paypal redirect was not done, so we show error message
@@ -396,10 +393,6 @@ if ($action == 'dopayment') {
 		// Securekey into back url useless for back url and we need an url lower than 150.
 		$urlok = preg_replace('/securekey=[^&]+/', '', $urlok);
 		$urlko = preg_replace('/securekey=[^&]+/', '', $urlko);
-
-		if ($source == 'conferencesubscription') {
-			$urlok .= '&invoice='.dol_encode($invoice->id, $dolibarr_main_instance_unique_id);
-		}
 
 		$mesg = '';
 		if (empty($PRICE) || !is_numeric($PRICE)) {
@@ -755,9 +748,6 @@ if ($action == 'charge' && !empty($conf->stripe->enabled)) {
 		header("Location: ".$urlko);
 		exit;
 	} else {
-		if ($source == 'conferencesubscription') {
-			$urlok .= '&invoice='.dol_encode($invoice->id, $dolibarr_main_instance_unique_id);
-		}
 		header("Location: ".$urlok);
 		exit;
 	}

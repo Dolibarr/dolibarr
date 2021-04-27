@@ -104,7 +104,6 @@ if (empty($FULLTAG)) {
 }
 $source = GETPOST('s', 'alpha') ? GETPOST('s', 'alpha') : GETPOST('source', 'alpha');
 $ref = GETPOST('ref');
-$invoiceref = GETPOST('invoice');
 
 $suffix = GETPOST("suffix", 'aZ09');
 $membertypeid = GETPOST("membertypeid", 'int');
