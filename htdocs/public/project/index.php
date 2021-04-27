@@ -82,6 +82,7 @@ $error = 0;
 $backtopage = GETPOST('backtopage', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
+$eventtype = GETPOST("eventtype");
 $email = GETPOST("email");
 $societe = GETPOST("societe");
 $label = GETPOST("label");
@@ -120,6 +121,8 @@ $extrafields = new ExtraFields($db);
 
 $user->loadDefaultValues();
 
+$cactioncomm = new CActionComm($db);
+$arrayofeventtype = $cactioncomm->liste_array('', 'id', '', 0, 'module=\'conference@eventorganization\' OR module=\'booth@eventorganization\'');
 
 /**
  * Show header for new member
@@ -373,13 +376,12 @@ if (empty($reshook) && $action == 'add') {
 			$conforbooth->fk_soc = $thirdparty->id;
 			$conforbooth->fk_project = $project->id;
 			$conforbooth->note = $note;
-			$conforbooth->fk_action = 63;
+			$conforbooth->fk_action = $eventtype;
 			$conforbooth->datep =$datestart;
 			$conforbooth->datep2 = $dateend;
 			$conforbooth->datec = dol_now();
 			$conforbooth->tms = dol_now();
 			$resultconforbooth = $conforbooth->create($user);
-			var_dump($conforbooth);
 			if ($resultconforbooth<=0) {
 				$error++;
 				$errmsg .= $conforbooth->error;
@@ -568,6 +570,9 @@ print '<td colspan="3"><input name="lastname" id="lastname" type="text" class="m
 print '</tr>';
 // Email
 print '<tr><td>'.$langs->trans("Email").'<FONT COLOR="red">*</FONT></td><td><input type="text" name="email" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
+// Type of event
+print '<tr><td>'.$langs->trans("EventType").'<FONT COLOR="red">*</FONT></td>'."\n";
+print '<td>'.FORM::selectarray('eventtype', $arrayofeventtype, $eventtype).'</td>';
 // Label
 print '<tr><td>'.$langs->trans("Label").'<FONT COLOR="red">*</FONT></td>'."\n";
 print '</td><td><input type="text" name="label" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('label')).'"></td></tr>'."\n";
