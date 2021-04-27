@@ -354,7 +354,7 @@ if (empty($conf->global->MAIN_DISABLE_METEO) || $conf->global->MAIN_DISABLE_METE
 
 		print '</div>';
 
-		print '<div id="percentage" '.getDolGlobalString('MAIN_USE_METEO_WITH_PERCENTAGE').'>';
+		print '<div id="percentage" '.(empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) ? 'style="display:none;"' : '').'>';
 
 		print '<div>';
 		print '<div class="inline-block" style="padding-right: 20px">';
