@@ -2200,7 +2200,6 @@ class Product extends CommonObject
 				$visibleWarehousesEntities .= "," . implode(",", $mc->sharings['stock']);
 			}
 		}
-		
 		if ($separatedStock) {
 			$sql .= " SUM(sp.reel) as stock,";
 		} else {
