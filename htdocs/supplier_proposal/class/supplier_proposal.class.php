@@ -1404,7 +1404,7 @@ class SupplierProposal extends CommonObject
 			// Numbering module definition
 			$soc = new Societe($this->db);
 			$soc->fetch($this->socid);
-			
+
 			if ($soc < 0) return -1;
 
 			// Define new ref
