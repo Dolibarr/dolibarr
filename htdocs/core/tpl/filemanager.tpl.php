@@ -99,12 +99,14 @@ if ($permtoadd && $module == 'ecm') {	// If on file manager medias in ecm
 print "<script>
 $(\"#generateimgwebp\").on(\"click\",function(){
 	try{
+		console.log(\"We click to generate webp image, we set current dir into hidden vars\");
 		section_dir = $(\".directory.expanded\")[$(\".directory.expanded\").length-1].children[0].rel
 		section=$(\".directory.expanded\")[$(\".directory.expanded\").length-1].children[0].id.split('_')[2]
 	}catch{
 		section_dir = '/'
 		section=0
 	}
+	console.log(\"We add hiden vars in href of button to create webp \");
 	$(\"#generateimgwebp\").attr(\"href\",$(\"#generateimgwebp\").attr(\"href\")+'&section_dir='+section_dir+'&section='+section)
   })
 </script>";
@@ -170,9 +172,9 @@ if ($action == 'confirmconvertimgwebp') {
 
 if ($action == 'convertimgwebp' && $permtoadd) {
 	if ($module == 'medias') {
-		$imagefolder = $conf->website->dir_output.'/'.$websitekey.'/medias/'.GETPOST('section_dir', 'alpha');
+		$imagefolder = $conf->website->dir_output.'/'.$websitekey.'/medias/'.dol_sanitizeFileName(GETPOST('section_dir', 'alpha'));
 	} else {
-		$imagefolder = $conf->ecm->dir_output.'/'.GETPOST('section_dir', 'alpha');
+		$imagefolder = $conf->ecm->dir_output.'/'.dol_sanitizePathName(GETPOST('section_dir', 'alpha'));
 	}
 
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
