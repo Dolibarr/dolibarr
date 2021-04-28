@@ -146,7 +146,7 @@ class Salary extends CommonObject
 		$sql .= " note='".$this->db->escape($this->note)."',";
 		$sql .= " fk_bank=".($this->fk_bank > 0 ? (int) $this->fk_bank : "null").",";
 		$sql .= " fk_user_author=".((int) $this->fk_user_author).",";
-		$sql .= " fk_user_modif=".($this->fk_user_modif > 0 ? (int)$this->fk_user_modif : (int)$user->id);
+		$sql .= " fk_user_modif=".($this->fk_user_modif > 0 ? (int) $this->fk_user_modif : (int) $user->id);
 
 		$sql .= " WHERE rowid=".((int) $this->id);
 

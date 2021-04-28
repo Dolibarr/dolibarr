@@ -144,7 +144,7 @@ class Tva extends CommonObject
 		$sql .= " '".$this->db->escape($this->note)."',";
 		$sql .= " '".$this->db->escape($this->fk_account)."',";
 		$sql .= " '".$this->db->escape($this->type_payment)."',";
-		$sql .= " '".($this->fk_user_creat > 0 ? (int)$this->fk_user_creat : (int)$user->id)."',";
+		$sql .= " '".($this->fk_user_creat > 0 ? (int) $this->fk_user_creat : (int) $user->id)."',";
 		$sql .= " '".$this->db->escape($this->fk_user_modif)."'";
 		$sql .= ")";
 
