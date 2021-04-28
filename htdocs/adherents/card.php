@@ -937,17 +937,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 							document.formsoc.action.value="create";
 							document.formsoc.submit();
 						});
-						function initfieldrequired()
-						{
+						function initfieldrequired() {
 							jQuery("#tdcompany").removeClass("fieldrequired");
 							jQuery("#tdlastname").removeClass("fieldrequired");
 							jQuery("#tdfirstname").removeClass("fieldrequired");
-							if (jQuery("#morphy").val() == \'mor\')
-							{
+							if (jQuery("#morphy").val() == \'mor\') {
 								jQuery("#tdcompany").addClass("fieldrequired");
 							}
-							if (jQuery("#morphy").val() == \'phy\')
-							{
+							if (jQuery("#morphy").val() == \'phy\') {
 								jQuery("#tdlastname").addClass("fieldrequired");
 								jQuery("#tdfirstname").addClass("fieldrequired");
 							}
@@ -1167,17 +1164,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					document.formsoc.action.value="edit";
 					document.formsoc.submit();
 				});
-				function initfieldrequired()
-				{
+				function initfieldrequired() {
 					jQuery("#tdcompany").removeClass("fieldrequired");
 					jQuery("#tdlastname").removeClass("fieldrequired");
 					jQuery("#tdfirstname").removeClass("fieldrequired");
-					if (jQuery("#morphy").val() == \'mor\')
-					{
+					if (jQuery("#morphy").val() == \'mor\') {
 						jQuery("#tdcompany").addClass("fieldrequired");
 					}
-					if (jQuery("#morphy").val() == \'phy\')
-					{
+					if (jQuery("#morphy").val() == \'phy\') {
 						jQuery("#tdlastname").addClass("fieldrequired");
 						jQuery("#tdfirstname").addClass("fieldrequired");
 					}
@@ -2004,7 +1998,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Show links to link elements
 			/*$linktoelem = $form->showLinkToObjectBlock($object,array('order'));
-			 if ($linktoelem) print ($somethingshown?'':'<br>').$linktoelem;
+			 if ($linktoelem) {
+				print ($somethingshown?'':'<br>').$linktoelem;
+			}
 			 */
 
 			// Show online payment link
