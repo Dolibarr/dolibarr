@@ -87,10 +87,29 @@ if ($module == 'ecm') {
 	print '</a>';
 }
 if ($permtoadd && GETPOSTISSET('website')) {	// If on file manager to manage medias of a web site
-	print '<a href="'.$_SERVER["PHP_SELF"].'?action=confirmconvertimgwebp&website='.$website->ref.'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans("GenerateImgWebp")).'">';
+	print '<a id="generateimgwebp" href="'.$_SERVER["PHP_SELF"].'?action=confirmconvertimgwebp&website='.$website->ref.'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans("GenerateImgWebp")).'">';
 	print img_picto('', 'images', '', false, 0, 0, '', 'size15x flip marginrightonly');
 	print '</a>';
 }
+if ($permtoadd && $module == 'ecm') {	// If on file manager medias in ecm
+	print '<a id="generateimgwebp" href="'.$_SERVER["PHP_SELF"].'?action=confirmconvertimgwebp" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans("GenerateImgWebp")).'">';
+	print img_picto('', 'images', '', false, 0, 0, '', 'size15x flip marginrightonly');
+	print '</a>';
+}
+print "<script>
+$(\"#generateimgwebp\").on(\"click\",function(){
+	try{
+		console.log(\"We click to generate webp image, we set current dir into hidden vars\");
+		section_dir = $(\".directory.expanded\")[$(\".directory.expanded\").length-1].children[0].rel
+		section=$(\".directory.expanded\")[$(\".directory.expanded\").length-1].children[0].id.split('_')[2]
+	}catch{
+		section_dir = '/'
+		section=0
+	}
+	console.log(\"We add hiden vars in href of button to create webp \");
+	$(\"#generateimgwebp\").attr(\"href\",$(\"#generateimgwebp\").attr(\"href\")+'&section_dir='+section_dir+'&section='+section)
+  })
+</script>";
 
 // Start "Add new file" area
 $nameforformuserfile = 'formuserfileecm';
@@ -139,22 +158,30 @@ if ($action == 'delete_section') {
 // End confirm
 
 if ($action == 'confirmconvertimgwebp') {
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?website='.$website->ref, $langs->trans('ConfirmImgWebpCreation'), $langs->trans('ConfirmGenerateImgWebp', $object->ref), 'convertimgwebp', '', "yes", 1);
+	$section_dir=GETPOST('section_dir', 'alpha');
+	$section=GETPOST('section', 'alpha');
+	$form = new Form($db);
+	$formquestion['section_dir']=array('type'=>'hidden', 'value'=>$section_dir, 'name'=>'section_dir');
+	$formquestion['section']=array('type'=>'hidden', 'value'=>$section, 'name'=>'section');
+	if ($module == 'medias') {
+		$formquestion['website']=array('type'=>'hidden', 'value'=>$website->ref, 'name'=>'website');
+	}
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans('ConfirmImgWebpCreation'), $langs->trans('ConfirmGenerateImgWebp', $object->ref), 'convertimgwebp', $formquestion, "yes", 1);
 	$action = 'file_manager';
 }
 
 if ($action == 'convertimgwebp' && $permtoadd) {
 	if ($module == 'medias') {
-		$imagefolder = $conf->website->dir_output.'/'.$websitekey.'/medias/image/'.$websitekey.'/';
+		$imagefolder = $conf->website->dir_output.'/'.$websitekey.'/medias/'.dol_sanitizeFileName(GETPOST('section_dir', 'alpha'));
 	} else {
-		$imagefolder = $conf->ecm->dir_output;
+		$imagefolder = $conf->ecm->dir_output.'/'.dol_sanitizePathName(GETPOST('section_dir', 'alpha'));
 	}
 
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
 	$regeximgext = getListOfPossibleImageExt();
 
-	$filelist = dol_dir_list($imagefolder, "all", 1, $regeximgext);
+	$filelist = dol_dir_list($imagefolder, "all", 0, $regeximgext);
 
 	foreach ($filelist as $filename) {
 		$filepath = $filename['fullname'];

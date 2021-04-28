@@ -6,6 +6,7 @@
  * Copyright (C) 2016		ATM Consulting		<support@atm-consulting.fr>
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2021		Ferran Marcet		<fmarcet@2byte.es>
+ * Copyright (C) 2021		Antonin MARCHAL		<antonin@letempledujeu.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,6 +65,25 @@ $draftorder = GETPOST('draftorder', 'alpha');
 $fourn_id = GETPOST('fourn_id', 'int');
 $fk_supplier = GETPOST('fk_supplier', 'int');
 $fk_entrepot = GETPOST('fk_entrepot', 'int');
+
+//List all visible warehouses
+$resWar = $db->query("SELECT rowid FROM " . MAIN_DB_PREFIX . "entrepot WHERE entity IN (" . $db->sanitize(getEntity('stock')) .")");
+$listofqualifiedwarehousesid = "";
+$count = 0;
+while ($tmpobj = $db->fetch_object($resWar)) {
+	if (!empty($listofqualifiedwarehousesid)) {
+		$listofqualifiedwarehousesid .= ",";
+	}
+	$listofqualifiedwarehousesid .= $tmpobj->rowid;
+	$lastWarehouseID = $tmpobj->rowid;
+	$count++;
+};
+
+//MultiCompany : If only 1 Warehouse is visible, filter will automatically be set to it.
+if ($count == 1 && (empty($fk_entrepot) || $fk_entrepot <= 0) && !empty($conf->global->MULTICOMPANY_PRODUCT_SHARING_ENABLED)) {
+	$fk_entrepot = $lastWarehouseID;
+};
+
 $texte = '';
 
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -324,8 +344,8 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // N
 $sql .= $hookmanager->resPrint;
 
 $sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
-$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as s ON p.rowid = s.fk_product';
-$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'entrepot AS ent ON s.fk_entrepot = ent.rowid AND ent.entity IN('.getEntity('stock').')';
+$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as s ON p.rowid = s.fk_product AND s.fk_entrepot IN ('.$db->sanitize($listofqualifiedwarehousesid).')';
+//$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'entrepot AS ent ON s.fk_entrepot = ent.rowid AND ent.entity IN('.getEntity('stock').')';
 if ($fk_supplier > 0) {
 	$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'product_fournisseur_price pfp ON (pfp.fk_product = p.rowid AND pfp.fk_soc = '.$fk_supplier.')';
 }

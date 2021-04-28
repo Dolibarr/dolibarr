@@ -986,7 +986,10 @@ if (empty($reshook)) {
 						$result = $srcobject->fetch(GETPOST('originid', 'int'));
 
 						// If deposit invoice - down payment with 1 line (fixed amount or percent)
-						if (GETPOST('type') == Facture::TYPE_DEPOSIT && in_array($typeamount, array('amount', 'variable'))) {
+						$typeamount = GETPOST('typedeposit', 'alpha');
+						if (GETPOST('type') == FactureFournisseur::TYPE_DEPOSIT && in_array($typeamount, array('amount', 'variable'))) {
+							$valuedeposit = price2num(GETPOST('valuedeposit', 'alpha'), 'MU');
+
 							// Define the array $amountdeposit
 							$amountdeposit = array();
 							if (!empty($conf->global->MAIN_DEPOSIT_MULTI_TVA)) {
@@ -1099,9 +1102,7 @@ if (empty($reshook)) {
 								$subprice_diff = $object->lines[0]->subprice - $diff / (1 + $object->lines[0]->tva_tx / 100);
 								$object->updateline($object->lines[0]->id, $object->lines[0]->desc, $subprice_diff, $object->lines[0]->qty, $object->lines[0]->remise_percent, $object->lines[0]->date_start, $object->lines[0]->date_end, $object->lines[0]->tva_tx, 0, 0, 'HT', $object->lines[0]->info_bits, $object->lines[0]->product_type, 0, 0, 0, $object->lines[0]->pa_ht, $object->lines[0]->label, 0, array(), 100);
 							}
-						}
-
-						if ($result > 0) {
+						} elseif ($result > 0) {
 							$lines = $srcobject->lines;
 							if (empty($lines) && method_exists($srcobject, 'fetch_lines')) {
 								$srcobject->fetch_lines();
@@ -1222,7 +1223,7 @@ if (empty($reshook)) {
 		// Edit line
 		$db->begin();
 
-		$object->fetch($id);
+		if (! $object->fetch($id) > 0)	dol_print_error($db);
 		$object->fetch_thirdparty();
 
 		$tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
@@ -1271,7 +1272,7 @@ if (empty($reshook)) {
 		$localtax2_tx = get_localtax($tva_tx, 2, $mysoc, $object->thirdparty);
 
 		$remise_percent = price2num(GETPOST('remise_percent'), 2);
-		$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), 'CU');
+		$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), 'MU');
 
 		// Extrafields Lines
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -1337,7 +1338,7 @@ if (empty($reshook)) {
 
 		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS');
 		$remise_percent = price2num(GETPOST('remise_percent'.$predef), 2);
-		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CU', 2);
+		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'MU', 2);
 
 		// Extrafields
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -1964,7 +1965,7 @@ if ($action == 'create') {
 	print $desc;
 	print '</div></div>';
 
-	if ((empty($origin)) || ((($origin == 'propal') || ($origin == 'commande')) && (! empty($originid)))) {
+	if (empty($origin) || ($origin == 'order_supplier' && !empty($originid))) {
 		// Deposit - Down payment
 		if (empty($conf->global->INVOICE_DISABLE_DEPOSIT)) {
 			print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
@@ -2004,7 +2005,7 @@ if ($action == 'create') {
 			print '<td>';
 			print $desc;
 			print '</td>';
-			if (($origin == 'propal') || ($origin == 'commande')) {
+			if ($origin == 'order_supplier') {
 				print '<td class="nowrap" style="padding-left: 15px">';
 				$arraylist = array(
 					'amount' => $langs->transnoentitiesnoconv('FixAmount', $langs->transnoentitiesnoconv('Deposit')),

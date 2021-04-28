@@ -141,7 +141,7 @@ class DiscountAbsolute
 		$sql .= " fsup.ref as ref_invoice_supplier_source, fsup.type as type_invoice_supplier_source";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as sr";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON sr.fk_facture_source = f.rowid";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as fsup ON sr.fk_invoice_supplier_source = fsup.rowid";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as fsup ON sr.fk_invoice_supplier_source = fsup.rowid";
 		$sql .= " WHERE sr.entity IN (".getEntity('invoice').")";
 		if ($rowid) {
 			$sql .= " AND sr.rowid=".((int) $rowid);

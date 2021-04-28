@@ -5238,6 +5238,9 @@ abstract class CommonObject
 							if ($this->element == 'contrat' && !empty($conf->global->CONTRACT_ALLOW_EXTERNAL_DOWNLOAD)) {
 								$setsharekey = true;
 							}
+							if ($this->element == 'supplier_proposal' && !empty($conf->global->SUPPLIER_PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD)) {
+								$setsharekey = true;
+							}
 
 							if ($setsharekey) {
 								if (empty($ecmfile->share)) {	// Because object not found or share not set yet
