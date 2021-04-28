@@ -150,7 +150,7 @@ print '</table>';
 print '</div>';
 
 
-print load_fiche_titre($langs->trans("Setup"), '', '');
+print load_fiche_titre($langs->trans("Receipt"), '', '');
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';

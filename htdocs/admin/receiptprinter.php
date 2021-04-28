@@ -431,7 +431,9 @@ if ($mode == 'template' && $user->admin) {
 				print '<td>';
 				print '<textarea name="template" wrap="soft" cols="120" rows="12">'.$printer->listprinterstemplates[$line]['template'].'</textarea>';
 				print '</td>';
-				print '<td></td>';
+				print '<td>';
+				print '<div class="center"><input type="submit" class="button button-save" value="'.dol_escape_htmltag($langs->trans("Save")).'"></div>';
+				print '</td>';
 			} else {
 				print '<td>'.$printer->listprinterstemplates[$line]['name'].'</td>';
 				print '<td>'.dol_htmlentitiesbr($printer->listprinterstemplates[$line]['template']).'</td>';
@@ -459,18 +461,15 @@ if ($mode == 'template' && $user->admin) {
 		print '<textarea name="template" wrap="soft" cols="120" rows="12">';
 		print '</textarea>';
 		print '</td>';
-		print '<td></td>';
+		print '<td>';
+		print '<input type="hidden" name="templateid" value="'.$printer->listprinterstemplates[$line]['rowid'].'">';
+		print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Add")).'">';
+		print '</td>';
 		print '</tr>';
 	}
 
 	print '</table>';
 
-	if ($action != 'edittemplate') {
-		print '<input type="hidden" name="templateid" value="'.$printer->listprinterstemplates[$line]['rowid'].'">';
-		print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Add")).'"></div>';
-	} else {
-		print '<div class="center"><input type="submit" class="button button-save" value="'.dol_escape_htmltag($langs->trans("Save")).'"></div>';
-	}
 	print '</form>';
 
 	print dol_get_fiche_end();
