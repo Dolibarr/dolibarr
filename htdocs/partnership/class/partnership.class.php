@@ -61,7 +61,7 @@ class Partnership extends CommonObject
 	/**
 	 * @var string String with name of icon for partnership. Must be the part after the 'object_' into object_partnership.png
 	 */
-	public $picto = 'partnership@partnership';
+	public $picto = 'partnership';
 
 
 	const STATUS_DRAFT = 0;
@@ -969,7 +969,7 @@ class Partnership extends CommonObject
 		// phpcs:enable
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
-			//$langs->load("partnership@partnership");
+			//$langs->load("partnership");
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
 			$this->labelStatus[self::STATUS_ACCEPTED] = $langs->trans('Accepted');
 			$this->labelStatus[self::STATUS_REFUSED] = $langs->trans('Refused');
@@ -1076,7 +1076,7 @@ class Partnership extends CommonObject
 	public function getNextNumRef()
 	{
 		global $langs, $conf;
-		$langs->load("partnership@partnership");
+		$langs->load("partnership");
 
 		if (empty($conf->global->PARTNERSHIP_ADDON)) {
 			$conf->global->PARTNERSHIP_ADDON = 'mod_partnership_standard';
@@ -1141,7 +1141,7 @@ class Partnership extends CommonObject
 		$result = 0;
 		$includedocgeneration = 0;
 
-		$langs->load("partnership@partnership");
+		$langs->load("partnership");
 
 		if (!dol_strlen($modele)) {
 			$modele = 'standard_partnership';
