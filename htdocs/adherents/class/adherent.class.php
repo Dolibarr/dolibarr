@@ -208,7 +208,7 @@ class Adherent extends CommonObject
 
 	// -2:excluded, -1:draft, 0:resiliated, >=1:valided,payed
 	// def in common object
-	public $statut = $this->status; // TODO modify to set statut as deprecated
+	public $statut; // TODO modify to set statut as deprecated
 
 	/**
 	 * @var string photo of member
