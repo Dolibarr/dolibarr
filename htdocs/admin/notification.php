@@ -204,16 +204,32 @@ print '</td>';
 print '</tr>';
 
 $arrayofnotifto = array(
-'',
-$langs->trans('notiftouser'),
-$langs->trans('notiftofixedemail'),
-$langs->trans('notiftouserandtofixedemail')
+-1 => '',
+1 => $langs->trans('notiftouser'),
+2 => $langs->trans('notiftofixedemail'),
+3 => $langs->trans('notiftouserandtofixedemail')
 );
 
 print '<tr class="oddeven"><td>';
-print $langs->trans("NotificationDisableConfirmMessage").'</td>';
+print $langs->trans("NotificationDisableConfirmMessageUser").'</td>';
 print '<td>';
-print $form->selectarray("notif_disable", $arrayofnotifto, $conf->global->NOTIFICATION_EMAIL_DISABLE_CONFIRM_MESSAGE, 0, 0, 0, '', 1, 0, 0, '', 'maxwidth400', 1);
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('NOTIFICATION_EMAIL_DISABLE_CONFIRM_MESSAGE_USER');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("NOTIFICATION_EMAIL_DISABLE_CONFIRM_MESSAGE_USER", $arrval, $conf->global->NOTIFICATION_EMAIL_DISABLE_CONFIRM_MESSAGE_USER);
+}
+print '</td>';
+print '</tr>';
+print '<tr class="oddeven"><td>';
+print $langs->trans("NotificationDisableConfirmMessageFix").'</td>';
+print '<td>';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('NOTIFICATION_EMAIL_DISABLE_CONFIRM_MESSAGE_FIX');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("NOTIFICATION_EMAIL_DISABLE_CONFIRM_MESSAGE_FIX", $arrval, $conf->global->NOTIFICATION_EMAIL_DISABLE_CONFIRM_MESSAGE_FIX);
+}
 print '</td>';
 print '</tr>';
 print '</table>';
