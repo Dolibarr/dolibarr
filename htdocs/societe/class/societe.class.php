@@ -879,8 +879,10 @@ class Societe extends CommonObject
 			$sql .= ", import_key";
 			$sql .= ", fk_multicurrency";
 			$sql .= ", multicurrency_code";
-			$sql .= ", accountancy_code_buy";
-			$sql .= ", accountancy_code_sell";
+			if (empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+				$sql .= ", accountancy_code_buy";
+				$sql .= ", accountancy_code_sell";
+			}
 			$sql .= ") VALUES ('".$this->db->escape($this->name)."', '".$this->db->escape($this->name_alias)."', ".$this->db->escape($this->entity).", '".$this->db->idate($now)."'";
 			$sql .= ", ".(!empty($user->id) ? ((int) $user->id) : "null");
 			$sql .= ", ".(!empty($this->typent_id) ? ((int) $this->typent_id) : "null");
@@ -893,8 +895,10 @@ class Societe extends CommonObject
 			$sql .= ", ".(!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 			$sql .= ", ".(int) $this->fk_multicurrency;
 			$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
-			$sql .= ", '".$this->db->escape($this->accountancy_code_buy)."'";
-			$sql .= ", '".$this->db->escape($this->accountancy_code_sell)."'";
+			if (empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+				$sql .= ", '" . $this->db->escape($this->accountancy_code_buy) . "'";
+				$sql .= ", '" . $this->db->escape($this->accountancy_code_sell) . "'";
+			}
 			$sql .= ")";
 
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -903,6 +907,28 @@ class Societe extends CommonObject
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."societe");
 
 				$ret = $this->update($this->id, $user, 0, 1, 1, 'add');
+
+				// update accountancy for this entity
+				if (!$error && !empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+					$this->db->query("DELETE FROM " . MAIN_DB_PREFIX . "societe_perentity WHERE fk_soc = " . $this->id . " AND entity = " . $conf->entity);
+
+					$sql = "INSERT INTO " . MAIN_DB_PREFIX . "societe_perentity (";
+					$sql .= " fk_soc";
+					$sql .= ", entity";
+					$sql .= ", accountancy_code_buy";
+					$sql .= ", accountancy_code_sell";
+					$sql .= ") VALUES (";
+					$sql .= $this->id;
+					$sql .= ", " . $conf->entity;
+					$sql .= ", '" . $this->db->escape($this->accountancy_code_buy) . "'";
+					$sql .= ", '" . $this->db->escape($this->accountancy_code_sell) . "'";
+					$sql .= ")";
+					$result = $this->db->query($sql);
+					if (!$result) {
+						$error++;
+						$this->error = 'ErrorFailedToUpdateAccountancyForEntity';
+					}
+				}
 
 				// Ajout du commercial affecte
 				if ($this->commercial_id != '' && $this->commercial_id != -1) {
@@ -1414,10 +1440,10 @@ class Societe extends CommonObject
 			$sql .= ",order_min_amount= ".($this->order_min_amount != '' ? $this->order_min_amount : 'null');
 			$sql .= ",supplier_order_min_amount= ".($this->supplier_order_min_amount != '' ? $this->supplier_order_min_amount : 'null');
 			$sql .= ",fk_prospectlevel='".$this->db->escape($this->fk_prospectlevel)."'";
-
-			$sql.= ", accountancy_code_buy = '" . $this->db->escape($this->accountancy_code_buy)."'";
-			$sql.= ", accountancy_code_sell= '" . $this->db->escape($this->accountancy_code_sell)."'";
-
+			if (empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+				$sql .= ", accountancy_code_buy = '" . $this->db->escape($this->accountancy_code_buy) . "'";
+				$sql .= ", accountancy_code_sell= '" . $this->db->escape($this->accountancy_code_sell) . "'";
+			}
 			$sql .= ",webservices_url = ".(!empty($this->webservices_url) ? "'".$this->db->escape($this->webservices_url)."'" : "null");
 			$sql .= ",webservices_key = ".(!empty($this->webservices_key) ? "'".$this->db->escape($this->webservices_key)."'" : "null");
 
@@ -1498,6 +1524,28 @@ class Societe extends CommonObject
 				}
 
 				$action = 'update';
+
+				// update accountancy for this entity
+				if (!$error && !empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+					$this->db->query("DELETE FROM " . MAIN_DB_PREFIX . "societe_perentity WHERE fk_soc = " . $this->id . " AND entity = " . $conf->entity);
+
+					$sql = "INSERT INTO " . MAIN_DB_PREFIX . "societe_perentity (";
+					$sql .= " fk_soc";
+					$sql .= ", entity";
+					$sql .= ", accountancy_code_buy";
+					$sql .= ", accountancy_code_sell";
+					$sql .= ") VALUES (";
+					$sql .= $this->id;
+					$sql .= ", " . $conf->entity;
+					$sql .= ", '" . $this->db->escape($this->accountancy_code_buy) . "'";
+					$sql .= ", '" . $this->db->escape($this->accountancy_code_sell) . "'";
+					$sql .= ")";
+					$result = $this->db->query($sql);
+					if (!$result) {
+						$error++;
+						$this->error = 'ErrorFailedToUpdateAccountancyForEntity';
+					}
+				}
 
 				// Actions on extra fields
 				if (!$error) {
@@ -1589,7 +1637,11 @@ class Societe extends CommonObject
 		$sql .= ', s.fk_effectif as effectif_id';
 		$sql .= ', s.fk_forme_juridique as forme_juridique_code';
 		$sql .= ', s.webservices_url, s.webservices_key';
-		$sql .= ', s.accountancy_code_buy, s.accountancy_code_sell';
+		if (empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+			$sql .= ', s.accountancy_code_buy, s.accountancy_code_sell';
+		} else {
+			$sql .= ', spe.accountancy_code_buy, spe.accountancy_code_sell';
+		}
 		$sql .= ', s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.parent, s.barcode';
 		$sql .= ', s.fk_departement as state_id, s.fk_pays as country_id, s.fk_stcomm, s.remise_supplier, s.mode_reglement, s.cond_reglement, s.transport_mode';
 		$sql .= ', s.fk_account, s.tva_assuj';
@@ -1609,6 +1661,9 @@ class Societe extends CommonObject
 		$sql .= ', i.libelle as label_incoterms';
 		$sql .= ', sr.remise_client, model_pdf';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
+		if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
+		}
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_effectif as e ON s.fk_effectif = e.id';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_stcomm as st ON s.fk_stcomm = st.id';
