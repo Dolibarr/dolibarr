@@ -180,7 +180,7 @@ if ($id > 0 || !empty($ref)) {
 
 
 		print '<table class="border centpercent tableforfield">';
-		// type
+		// Type
 		print '<tr><td class="titlefield">'.$langs->trans('Type').'</td><td>';
 		print $object->getLibType();
 		if ($object->type == FactureFournisseur::TYPE_REPLACEMENT) {
