@@ -1598,7 +1598,7 @@ class Form
 	 * @return	int								<0 if KO, Nb of contact in list if OK
 	 * @deprected								You can use selectcontacts directly (warning order of param was changed)
 	 */
-	public function select_contacts($socid, $selected = '', $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $moreclass = '', $showsoc = 0, $forcecombo = 0, $events = array(), $options_only = false, $moreparam = '', $htmlid = '', $multiple = false, $disableifempty = 0, $new_ajax = false, $thirdparty_htmlname = '', $limit = 20, $hidelabel = 1, $ajaxurl = DOL_URL_ROOT . '/contact/ajax/contact.php', $ajaxparameters = array(), $ajaxoptions = array())
+	public function select_contacts($socid, $selected = '', $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $moreclass = '', $showsoc = 0, $forcecombo = 0, $events = array(), $options_only = false, $moreparam = '', $htmlid = '', $multiple = false, $disableifempty = 0, $new_ajax = false, $thirdparty_htmlname = '', $limit = 20, $hidelabel = 1, $ajaxurl = '', $ajaxparameters = array(), $ajaxoptions = array())
 	{
 		// phpcs:enable
 		print $this->selectcontacts($socid, $selected, $htmlname, $showempty, $exclude, $limitto, $showfunction,
@@ -1635,11 +1635,15 @@ class Form
 	 * @param	array				$ajaxoptions			Options for ajax_autocompleter // Not used for this moment todo add ajaxoptions to ajax_combobox()
 	 * @return	string										HTML string with select box for contact
 	 */
-	public function selectcontacts($socid, $selected = '', $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $moreclass = '', $options_only = false, $showsoc = 0, $forcecombo = 0, $events = array(), $moreparam = '', $htmlid = '', $multiple = false, $disableifempty = 0, $new_ajax = false, $thirdparty_htmlname = '', $limit = 20, $hidelabel = 1, $ajaxurl = DOL_URL_ROOT . '/contact/ajax/contact.php', $ajaxparameters = array(), $ajaxoptions = array())
+	public function selectcontacts($socid, $selected = '', $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $moreclass = '', $options_only = false, $showsoc = 0, $forcecombo = 0, $events = array(), $moreparam = '', $htmlid = '', $multiple = false, $disableifempty = 0, $new_ajax = false, $thirdparty_htmlname = '', $limit = 20, $hidelabel = 1, $ajaxurl = '', $ajaxparameters = array(), $ajaxoptions = array())
 	{
 		global $conf, $user, $langs;
 
 		$out = '';
+
+		if (empty($ajaxurl)) {
+			$ajaxurl = DOL_URL_ROOT . '/contact/ajax/contact.php';
+		}
 
 		if (preg_match('/(\S|^)multiple(\S|$)/', $moreparam)) {
 			$moreparam = trim(preg_replace('/(\S|^)multiple(\S|$)/', '', $moreparam));
