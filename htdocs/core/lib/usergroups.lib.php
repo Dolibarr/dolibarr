@@ -409,9 +409,9 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 						print '<img class="img-skinthumb shadow" src="'.$url.'" alt="'.$title.'" title="'.$title.'" style="border: none; margin-bottom: 5px;">';
 						print '</a><br>';
 						if ($subdir == $selected_theme) {
-							print '<input '.($edit ? '' : 'disabled').' type="radio" class="themethumbs" style="border: 0px;" checked name="main_theme" value="'.$subdir.'"> <b>'.$subdir.'</b>';
+							print '<input '.($edit ? '' : 'disabled').' type="radio" class="themethumbs" style="border: 0px;" id="main_theme'.$subdir.'" checked name="main_theme" value="'.$subdir.'"><label for="main_theme'.$subdir.'"> <b>'.$subdir.'</b></label>';
 						} else {
-							print '<input '.($edit ? '' : 'disabled').' type="radio" class="themethumbs" style="border: 0px;" name="main_theme" value="'.$subdir.'"> '.$subdir;
+							print '<input '.($edit ? '' : 'disabled').' type="radio" class="themethumbs" style="border: 0px;" id="main_theme'.$subdir.'" name="main_theme" value="'.$subdir.'"><label for="main_theme'.$subdir.'"> '.$subdir.'</label>';
 						}
 						print '</div>';
 

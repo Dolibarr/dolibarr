@@ -410,9 +410,12 @@ if ($result) {
 
 	print "</table>";
 	print '</div>';
+
+	print '<br>';
 } else {
 	dol_print_error($db);
 }
+
 
 print $resultboxes['boxlistb'];
 

@@ -100,7 +100,7 @@ PermissionsDefDescTooltip=モジュール/アプリケーションによって�
 HooksDefDesc=定義する：管理したいフックのコンテキストを <b>module_parts['hooks']</b> プロパティのモジュール記述子の中に。 (コンテキストのリストは、コアコードで '<b>initHooks(</b>' を検索すると見つかる).<br>編集する：フックされた関数のコードを追加するためのフックファイルを。 (フック可能な関数は、コアコードで '<b>executeHooks</b>' を検索すると見つかる).
 TriggerDefDesc=実行されるビジネスイベントごとに実行するコードをトリガーファイルで定義する。
 SeeIDsInUse=インストールで使用されているIDを確認する
-SeeReservedIDsRangeHere=予約済みIDの範囲を参照すること
+SeeReservedIDsRangeHere=予約済IDの範囲を参照すること
 ToolkitForDevelopers=Dolibarr開発者向けのツールキット
 TryToUseTheModuleBuilder=SQLとPHPの知識がある場合は、ネイティブモジュールビルダーウィザードを使用できる。 <br>モジュール<strong>%s </strong>を有効にし、右上のメニューで<span class="fa fa-bug"></span>をクリックしてウィザードを使用する。 <br>警告：これは高度な開発者機能。本番サイトで</b>実験ではなく<b>を実行すること。
 SeeTopRightMenu=右上のメニューの<span class="fa fa-bug"></span>を参照すること
@@ -133,7 +133,9 @@ IncludeDocGeneration=オブジェクトからいくつかのドキュメント�
 IncludeDocGenerationHelp=これをチェックすると、レコードに「ドキュメントの生成」ボックスを追加するためのコードが生成される。
 ShowOnCombobox=コンボボックスに値を表示する
 KeyForTooltip=ツールチップのキー
-CSSClass=CSSクラス
+CSSClass=フォーム 編集/作成 用のCSS
+CSSViewClass=読取フォーム用CSS
+CSSListClass=リストのCSS
 NotEditable=編集不可
 ForeignKey=外部キー
 TypeOfFieldsHelp=フィールドの種別:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] ('1' は、コンボの後に+ボタンを追加してレコードを作成することを意味する、 'filter' は例えば、 'status=1 AND fk_user = __USER_ID AND entity IN (__SHARED_ENTITIES__)' )

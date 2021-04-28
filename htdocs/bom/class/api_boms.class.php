@@ -99,6 +99,10 @@ class Boms extends DolibarrApi
 	{
 		global $db, $conf;
 
+		if (!DolibarrApiAccess::$user->rights->bom->read) {
+			throw new RestException(401);
+		}
+
 		$obj_ret = array();
 		$tmpobject = new BOM($this->db);
 

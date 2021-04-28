@@ -57,7 +57,6 @@ ProposalSentByEMail=Proposta comercial 1%s enviada por e-mail
 ContractSentByEMail=Contrato%s enviado por e-mail
 OrderSentByEMail=Ped. de venda 1%s enviado por e-mail
 InvoiceSentByEMail=Fat. %s do cliente enviada por e-mail
-SupplierOrderSentByEMail=Pedido de compra %s enviado por e-mail
 ORDER_SUPPLIER_DELETEInDolibarr=Pedido de compra %s excluído
 SupplierInvoiceSentByEMail=Fatura %s do fornec. enviada por e-mail
 ShippingSentByEMail=Embarque %s enviado por e-mail

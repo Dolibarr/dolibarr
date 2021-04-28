@@ -40,6 +40,7 @@ if (!empty($conf->expensereport->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 }
 if (!empty($conf->salaries->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 }
 
@@ -354,16 +355,18 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 
 	// Latest payments of salaries
 	if (!empty($conf->salaries->enabled) &&
-		$user->rights->salaries->read && (in_array($object->id, $childids) || $object->id == $user->id)
+		(($user->rights->salaries->read && (in_array($object->id, $childids) || $object->id == $user->id)) || (!empty($user->rights->salaries->readall)))
 		) {
 		$payment_salary = new PaymentSalary($db);
+		$salary = new Salary($db);
 
-		$sql = "SELECT ps.rowid, s.datesp, s.dateep, ps.amount";
-		$sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as ps";
-		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."salary as s ON (s.rowid = ps.fk_salary)";
+		$sql = "SELECT s.rowid as sid, s.ref as sref, s.label, s.datesp, s.dateep, s.paye, SUM(ps.amount) as alreadypaid";
+		$sql .= " FROM ".MAIN_DB_PREFIX."salary as s";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."payment_salary as ps ON (s.rowid = ps.fk_salary)";
 		$sql .= " WHERE s.fk_user = ".$object->id;
-		$sql .= " AND ps.entity = ".$conf->entity;
-		$sql .= " ORDER BY ps.rowid DESC";
+		$sql .= " AND s.entity IN (".getEntity('salary').")";
+		$sql .= " GROUP BY s.rowid, s.ref, s.label, s.datesp, s.dateep, s.paye";
+		$sql .= " ORDER BY s.dateep DESC";
 
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -372,7 +375,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 			print '<table class="noborder centpercent">';
 
 			print '<tr class="liste_titre">';
-			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastSalaries", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/salaries/payments.php?search_user='.$object->login.'">'.$langs->trans("AllSalaries").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
+			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastSalaries", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/salaries/list.php?search_user='.$object->login.'">'.$langs->trans("AllSalaries").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
 			print '</tr></table></td>';
 			print '</tr>';
 
@@ -380,16 +383,26 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 			while ($i < $num && $i < $MAXLIST) {
 				$objp = $db->fetch_object($resql);
 
+				$payment_salary->id = $objp->rowid;
+				$payment_salary->ref = $objp->ref;
+				$payment_salary->datep = $db->jdate($objp->datep);
+
+				$salary->id = $objp->sid;
+				$salary->ref = $objp->sref ? $objp->sref : $objp->sid;
+				$salary->label = $objp->label;
+				$salary->datesp = $db->jdate($objp->datesp);
+				$salary->dateep = $db->jdate($objp->dateep);
+				$salary->paye = $objp->paye;
+
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">';
-				$payment_salary->id = $objp->rowid;
-				$payment_salary->ref = $objp->rowid;
-				print $payment_salary->getNomUrl(1);
+				print $salary->getNomUrl(1);
 				print '</td>';
 
 				print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->datesp), 'day')."</td>\n";
 				print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->dateep), 'day')."</td>\n";
-				print '<td class="right" style="min-width: 60px">'.price($objp->amount).'</td>';
+				//print '<td class="right" class="nowraponall"><span class="ampount">'.price($objp->amount).'</span></td>';
+				print '<td class="right" class="nowraponall">'.$salary->getLibStatut(5, $objp->alreadypaid).'</td>';
 
 				print '</tr>';
 				$i++;

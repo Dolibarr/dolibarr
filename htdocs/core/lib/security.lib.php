@@ -371,7 +371,7 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 					$nbko++;
 				}
 			} elseif ($feature == 'commande_fournisseur') {
-				if (!$user->rights->fournisseur->commande->creer) {
+				if (!$user->rights->fournisseur->commande->creer || !$user->rights->supplier_order->creer) {
 					$createok = 0;
 					$nbko++;
 				}

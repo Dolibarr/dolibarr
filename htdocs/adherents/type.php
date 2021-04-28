@@ -500,7 +500,7 @@ if ($rowid > 0) {
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
 		$sql .= " WHERE d.fk_adherent_type = t.rowid ";
 		$sql .= " AND d.entity IN (".getEntity('adherent').")";
-		$sql .= " AND t.rowid = ".$object->id;
+		$sql .= " AND t.rowid = ".((int) $object->id);
 		if ($sall) {
 			$sql .= natural_search(array("f.firstname", "d.lastname", "d.societe", "d.email", "d.login", "d.address", "d.town", "d.note_public", "d.note_private"), $sall);
 		}

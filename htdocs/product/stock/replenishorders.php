@@ -154,7 +154,7 @@ if ($sall) {
 	$sql .= natural_search(array('cf.ref', 'cf.note'), $sall);
 }
 if (!empty($socid)) {
-	$sql .= ' AND s.rowid = '.$socid;
+	$sql .= ' AND s.rowid = '.((int) $socid);
 }
 if (GETPOST('statut', 'int')) {
 	$sql .= ' AND fk_statut = '.GETPOST('statut', 'int');

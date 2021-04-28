@@ -70,6 +70,8 @@ Deleted=Eliminado
 # Dict
 Type=Tasa
 Severity=Gravedad
+TicketGroupIsPublic=El grupo es público
+TicketGroupIsPublicDesc=Si un grupo de tickets es público, será visible en el formulario al crear un ticket desde la interfaz pública.
 
 # Email templates
 MailToSendTicketMessage=Enviar e-mail desde ticket
@@ -114,8 +116,8 @@ TicketsShowModuleLogo=Mostrar el logotipo del módulo en la interfaz pública
 TicketsShowModuleLogoHelp=Active esta opción para ocultar el logotipo en las páginas de la interfaz pública
 TicketsShowCompanyLogo=Mostrar el logotipo de la empresa en la interfaz pública
 TicketsShowCompanyLogoHelp=Active esta opción para ocultar el logotipo de la empresa principal en las páginas de la interfaz pública
-TicketsEmailAlsoSendToMainAddress=También envíe notificaciones a la dirección de e-mail principal
-TicketsEmailAlsoSendToMainAddressHelp=Active esta opción para enviar un e-mail a la dirección "E-mail de notificación de" (consulte la configuración a continuación)
+TicketsEmailAlsoSendToMainAddress=También envíe una notificación a la dirección de correo electrónico principal
+TicketsEmailAlsoSendToMainAddressHelp=Habilite esta opción para enviar también un correo electrónico a la dirección definida en la configuración "%s" (consulte la pestaña "%s")
 TicketsLimitViewAssignedOnly=Restringir la visualización de los tickets asignados al usuario actual (no aplicable para usuarios externos, siempre estará limitada al tercero del que dependen)
 TicketsLimitViewAssignedOnlyHelp=Solo los tickets asignados al usuario actual serán visibles. No se aplica a un usuario con derechos de gestión de tickets.
 TicketsActivatePublicInterface=Activar interfaz pública.
@@ -126,10 +128,10 @@ TicketNumberingModules=Módulo de numeración de tickets
 TicketsModelModule=Plantillas de documentos para tickets
 TicketNotifyTiersAtCreation=Notificar a los terceros en la creación
 TicketsDisableCustomerEmail=Desactivar siempre los e-mails al crear tickets desde la interfaz pública
-TicketsPublicNotificationNewMessage=Enviar e-mail(s) cuando se añade un nuevo mensaje
+TicketsPublicNotificationNewMessage=Enviar correo electrónico (s) cuando se agrega un nuevo mensaje / comentario a un ticket
 TicketsPublicNotificationNewMessageHelp=Enviar e-mail(s) cuando se añade un nuevo mensaje desde la interfaz pública (al usuario asignado o al e-mail de notificaciones (actualización) y o el e-mail de notificaciones a)
 TicketPublicNotificationNewMessageDefaultEmail=Notificaciones por e-mail a (actualización)
-TicketPublicNotificationNewMessageDefaultEmailHelp=Envíe notificaciones de mensajes nuevos por e-mail a esta dirección si el ticket no tiene un usuario asignado o si el usuario no tiene un e-mail.
+TicketPublicNotificationNewMessageDefaultEmailHelp=Envíe un correo electrónico a esta dirección para cada notificación de mensaje nuevo si el ticket no tiene un usuario asignado o si el usuario no tiene ningún correo electrónico conocido.
 #
 # Index & list page
 #
@@ -302,3 +304,13 @@ BoxLastModifiedTicket=Últimos tickets modificados
 BoxLastModifiedTicketDescription=Últimos %s tickets modificados
 BoxLastModifiedTicketContent=
 BoxLastModifiedTicketNoRecordedTickets=No hay tickets modificados recientemente
+BoxTicketType=Número de tickets abiertos por tipo
+BoxTicketSeverity=Número de tickets abiertos por gravedad
+BoxNoTicketSeverity=No hay tickets abiertos
+BoxTicketLastXDays=Número de tickets nuevos por días los últimos %s días
+BoxTicketLastXDayswidget = Número de tickets nuevos por días los últimos X días
+BoxNoTicketLastXDays=No hay entradas nuevas los últimos días %s
+BoxNumberOfTicketByDay=Número de tickets nuevos por día
+BoxNewTicketVSClose=Número de tickets nuevos de hoy en comparación con los tickets cerrados de hoy
+TicketCreatedToday=Ticket creado hoy
+TicketClosedToday=Ticket cerrado hoy

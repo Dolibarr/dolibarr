@@ -265,22 +265,9 @@ if (empty($reshook)) {
 $form = new Form($db);
 $formproduct = new FormProduct($db);
 
-llxHeader('', $langs->trans('Inventory'), '');
+$help_url = '';
 
-// Example : Adding jquery code
-print '<script type="text/javascript" language="javascript">
-jQuery(document).ready(function() {
-	function init_myfunc()
-	{
-		jQuery("#myid").removeAttr(\'disabled\');
-		jQuery("#myid").attr(\'disabled\',\'disabled\');
-	}
-	init_myfunc();
-	jQuery("#mybutton").click(function() {
-		init_myfunc();
-	});
-});
-</script>';
+llxHeader('', $langs->trans('Inventory'), $help_url);
 
 
 // Part to show record
@@ -335,7 +322,7 @@ if ($object->id > 0) {
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href="'.DOL_URL_ROOT.'/product/inventory/list.php'.(!empty($socid) ? '?socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/product/inventory/list.php">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
 	/*
@@ -461,10 +448,26 @@ if ($object->id > 0) {
 			 print '<a href="#" class="butAction">'.$langs->trans('UpdateByScaningLot').'</a>';
 			 }*/
 			if (!empty($conf->barcode->enabled) || !empty($conf->productbatch->enabled)) {
-				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=updatebyscaning" class="">'.$langs->trans("UpdateByScaning").'</a>';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=updatebyscaning" class="">'.img_picto('', 'barcode', 'class="paddingrightonly"').$langs->trans("UpdateByScaning").'</a>';
 			}
 		} else {
-			print '<a class="classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Save").'</a>'."\n";
+			print '<a class="classfortooltip marginrightonly paddingright marginleftonly paddingleft" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Save").'</a>'."\n";
+		}
+		if ($permissiontoadd && $conf->use_javascript_ajax) {
+			print '<a id="fillwithexpected" class="marginrightonly paddingright marginleftonly paddingleft" href="#">'.img_picto('', 'autofill', 'class="paddingrightonly"').$langs->trans('AutofillWithExpected').'</a>';
+
+			print '<script>';
+			print '$( document ).ready(function() {';
+			print ' $("#fillwithexpected").on("click",function fillWithExpected(){
+					  $(".expectedqty").each(function(){
+						var object = $(this)[0];
+						var objecttofill = $("#"+object.id+"_input")[0];
+						objecttofill.value = object.innerText;
+						})
+						console.log("Values filled");
+			         });';
+			print '});';
+			print '</script>';
 		}
 		print '<br>';
 		print '<br>';
@@ -472,26 +475,37 @@ if ($object->id > 0) {
 	}
 
 
+	// Popup for mass barcode scanning
 	if ($action == 'updatebyscaning') {
+		print '<form name="barcodescanner" method="POST">';
+		print '<!-- Popup for mass barcode scanning -->'."\n";
 		print '<div class="div-for-modal-topright" style="padding: 15px">';
 		print '<center><strong>Barcode scanner tool...</strong></center><br>';
 
-		print 'Scan a product barcode<br>';
-		print '<input type="text" name="barcodeproduct" class="width200" autofocus> &nbsp; &nbsp; Qty <input type="text" name="barcodeproductqty" class="width50 right" value="1"><br>';
+		print '<input type="checkbox" name="barcodeforautodetect" checked="checked"> Autodetect if we scan a product barcode or a lot/serial barcode<br>';
+		print '<input type="checkbox" name="barcodeforproduct"> Scan a product barcode<br>';
+		print '<input type="checkbox" name="barcodeforlotserial"> Scan a product lot or serial number<br>';
 
-		print '<br>'.$langs->trans("or").'<br>';
+		print $langs->trans("QtyToAddAfterBarcodeScan").' <input type="text" name="barcodeproductqty" class="width50 right" value="1"><br>';
+		print '<textarea type="text" name="barcodelist" class="centpercent" autofocus rows="'.ROWS_3.'"></textarea>';
+
+		/*print '<br>'.$langs->trans("or").'<br>';
 
 		print '<br>';
 
-		print 'Scan a product lot or serial number<br>';
 		print '<input type="text" name="barcodelotserial" class="width200"> &nbsp; &nbsp; Qty <input type="text" name="barcodelotserialqty" class="width50 right" value="1"><br>';
-
+		*/
 		print '<br>';
+		print '<center>';
+		print '<input type="submit" class="button" value="'.$langs->trans("Add").'"><br>';
+
 		print '<span class="opacitymedium">'.$langs->trans("FeatureNotYetAvailable").'</span>';
 
 		// TODO Add javascript so each scan will add qty into the inventory page + an ajax save.
 
+		print '</center>';
 		print '</div>';
+		print '</form>';
 	}
 
 
@@ -603,13 +617,13 @@ if ($object->id > 0) {
 				print '</td>';
 			}
 
-			print '<td class="right">';
+			print '<td class="right expectedqty" id="id_'.$obj->rowid.'">';
 			print $obj->qty_stock;
 			print '</td>';
 			print '<td class="center">';
 			if ($object->status == $object::STATUS_VALIDATED) {
 				$qty_view = GETPOST("id_".$obj->rowid) ? GETPOST("id_".$obj->rowid) : $obj->qty_view;
-				print '<input type="text" class="maxwidth75 right" name="id_'.$obj->rowid.'" value="'.$qty_view.'">';
+				print '<input type="text" class="maxwidth75 right" name="id_'.$obj->rowid.'" id="id_'.$obj->rowid.'_input" value="'.$qty_view.'">';
 				print '</td>';
 				print '<td class="right">';
 				print '<a class="reposition" href="'.DOL_URL_ROOT.'/product/inventory/inventory.php?id='.$object->id.'&lineid='.$obj->rowid.'&action=deleteline&token='.newToken().'">'.img_delete().'</a>';

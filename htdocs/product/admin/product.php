@@ -682,7 +682,7 @@ if (!empty($conf->global->MAIN_MULTILANGS)) {
 	print '</tr>';
 }
 
-if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("UseProductFournDesc").'</td>';
 	print '<td class="right">';

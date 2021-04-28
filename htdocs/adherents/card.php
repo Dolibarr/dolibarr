@@ -937,17 +937,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 							document.formsoc.action.value="create";
 							document.formsoc.submit();
 						});
-						function initfieldrequired()
-						{
+						function initfieldrequired() {
 							jQuery("#tdcompany").removeClass("fieldrequired");
 							jQuery("#tdlastname").removeClass("fieldrequired");
 							jQuery("#tdfirstname").removeClass("fieldrequired");
-							if (jQuery("#morphy").val() == \'mor\')
-							{
+							if (jQuery("#morphy").val() == \'mor\') {
 								jQuery("#tdcompany").addClass("fieldrequired");
 							}
-							if (jQuery("#morphy").val() == \'phy\')
-							{
+							if (jQuery("#morphy").val() == \'phy\') {
 								jQuery("#tdlastname").addClass("fieldrequired");
 								jQuery("#tdfirstname").addClass("fieldrequired");
 							}
@@ -1167,17 +1164,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					document.formsoc.action.value="edit";
 					document.formsoc.submit();
 				});
-				function initfieldrequired()
-				{
+				function initfieldrequired() {
 					jQuery("#tdcompany").removeClass("fieldrequired");
 					jQuery("#tdlastname").removeClass("fieldrequired");
 					jQuery("#tdfirstname").removeClass("fieldrequired");
-					if (jQuery("#morphy").val() == \'mor\')
-					{
+					if (jQuery("#morphy").val() == \'mor\') {
 						jQuery("#tdcompany").addClass("fieldrequired");
 					}
-					if (jQuery("#morphy").val() == \'phy\')
-					{
+					if (jQuery("#morphy").val() == \'phy\') {
 						jQuery("#tdlastname").addClass("fieldrequired");
 						jQuery("#tdfirstname").addClass("fieldrequired");
 					}
@@ -1747,12 +1741,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print $langs->trans("SubscriptionNotNeeded");
 			} elseif (!$adht->subscription) {
 				print $langs->trans("SubscriptionNotRecorded");
-				if ($object->statut > 0) {
+				if (Adherent::STATUS_VALIDATED == $object->statut) {
 					print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft, not excluded and not resiliated
 				}
 			} else {
 				print $langs->trans("SubscriptionNotReceived");
-				if ($object->statut > 0) {
+				if (Adherent::STATUS_VALIDATED == $object->statut) {
 					print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft, not excluded and not resiliated
 				}
 			}
@@ -1862,7 +1856,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if ($action != 'editlogin' && $action != 'editthirdparty') {
 				// Send
 				if (empty($user->socid)) {
-					if ($object->statut == 1) {
+					if (Adherent::STATUS_VALIDATED == $object->statut) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>'."\n";
 					}
 				}
@@ -1870,20 +1864,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				// Send card by email
 				// TODO Remove this to replace with a template
 				/*
-				if ($user->rights->adherent->creer)
-				{
-					if ($object->statut >= 1)
-					{
+				if ($user->rights->adherent->creer) {
+					if (Adherent::STATUS_VALIDATED == $object->statut) {
 						if ($object->email) print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$object->id.'&action=sendinfo">'.$langs->trans("SendCardByMail")."</a></div>\n";
 						else print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans("SendCardByMail")."</a></div>\n";
-					}
-					else
-					{
+					} else {
 						print '<div class="inline-block divButAction"><font class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("SendCardByMail")."</font></div>";
 					}
-				}
-				else
-				{
+				} else {
 					print '<div class="inline-block divButAction"><font class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("SendCardByMail")."</font></div>";
 				}*/
 
@@ -1895,7 +1883,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}
 
 				// Validate
-				if ($object->statut == -1) {
+				if (Adherent::STATUS_DRAFT == $object->statut) {
 					if ($user->rights->adherent->creer) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$id.'&action=valid">'.$langs->trans("Validate").'</a></div>'."\n";
 					} else {
@@ -1904,7 +1892,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}
 
 				// Reactivate
-				if ($object->statut == 0 || $object->statut == -2) {
+				if (Adherent::STATUS_RESILIATED == $object->statut || Adherent::STATUS_EXCLUDED == $Object->statut) {
 					if ($user->rights->adherent->creer) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$id.'&action=valid">'.$langs->trans("Reenable")."</a></div>\n";
 					} else {
@@ -1913,7 +1901,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}
 
 				// Resiliate
-				if ($object->statut >= 1) {
+				if (Adherent::STATUS_VALIDATED == $object->statut) {
 					if ($user->rights->adherent->supprimer) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$id.'&action=resiliate">'.$langs->trans("Resiliate")."</a></div>\n";
 					} else {
@@ -1922,7 +1910,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}
 
 				// Exclude
-				if ($object->statut >= 1) {
+				if (Adherent::STATUS_VALIDATED == $object->statut) {
 					if ($user->rights->adherent->supprimer) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$id.'&action=exclude">'.$langs->trans("Exclude")."</a></div>\n";
 					} else {
@@ -1933,7 +1921,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				// Create third party
 				if (!empty($conf->societe->enabled) && !$object->socid) {
 					if ($user->rights->societe->creer) {
-						if ($object->statut != -1) {
+						if (Adherent::STATUS_DRAFT != $object->statut) {
 							print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&amp;action=create_thirdparty">'.$langs->trans("CreateDolibarrThirdParty").'</a></div>'."\n";;
 						} else {
 							print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("CreateDolibarrThirdParty").'</a></div>'."\n";
@@ -1946,7 +1934,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				// Create user
 				if (!$user->socid && !$object->user_id) {
 					if ($user->rights->user->user->creer) {
-						if ($object->statut != -1) {
+						if (Adherent::STATUS_DRAFT != $object->statut) {
 							print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&amp;action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a></div>'."\n";
 						} else {
 							print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("CreateDolibarrLogin").'</a></div>'."\n";
@@ -2010,7 +1998,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Show links to link elements
 			/*$linktoelem = $form->showLinkToObjectBlock($object,array('order'));
-			 if ($linktoelem) print ($somethingshown?'':'<br>').$linktoelem;
+			 if ($linktoelem) {
+				print ($somethingshown?'':'<br>').$linktoelem;
+			}
 			 */
 
 			// Show online payment link

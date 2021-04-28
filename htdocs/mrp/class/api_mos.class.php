@@ -98,6 +98,10 @@ class Mos extends DolibarrApi
 	{
 		global $db, $conf;
 
+		if (!DolibarrApiAccess::$user->rights->mrp->read) {
+			throw new RestException(401);
+		}
+
 		$obj_ret = array();
 		$tmpobject = new Mo($this->db);
 

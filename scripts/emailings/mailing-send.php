@@ -25,7 +25,6 @@
  * \ingroup mailing
  * \brief 	Script to send a prepared and validated emaling from command line
  */
-
 if (!defined('NOSESSION')) {
 	define('NOSESSION', '1');
 }
@@ -98,7 +97,7 @@ $sql = "SELECT m.rowid";
 $sql .= " FROM ".MAIN_DB_PREFIX."mailing as m";
 $sql .= " WHERE m.statut IN (1,2)";
 if ($id != 'all') {
-	$sql .= " AND m.rowid= ".$id;
+	$sql .= " AND m.rowid= ".((int) $id);
 	$sql .= " LIMIT 1";
 }
 
@@ -144,7 +143,7 @@ if ($resql) {
 			} elseif ($conf->global->MAILING_LIMIT_SENDBYCLI > 0 && $max > 0) {
 				$sql2 .= " LIMIT ".min($conf->global->MAILING_LIMIT_SENDBYCLI, $max);
 			} elseif ($max > 0) {
-				$sql2 .= " LIMIT ".$max;
+				$sql2 .= " LIMIT ".((int) $max);
 			}
 
 			$resql2 = $db->query($sql2);
@@ -386,7 +385,7 @@ if ($resql) {
 					$statut = 3;
 				}
 
-				$sqlenddate = "UPDATE ".MAIN_DB_PREFIX."mailing SET statut=".$statut." WHERE rowid=".$id;
+				$sqlenddate = "UPDATE ".MAIN_DB_PREFIX."mailing SET statut=".((int) $statut)." WHERE rowid=".((int) $id);
 
 				dol_syslog("update global status", LOG_DEBUG);
 				print "Update status of emailing id ".$id." to ".$statut."\n";

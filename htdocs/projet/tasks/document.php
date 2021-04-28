@@ -327,7 +327,7 @@ if ($object->id > 0) {
 	$permission = $user->rights->projet->creer;
 	$permtoedit = $user->rights->projet->creer;
 	$relativepathwithnofile = dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName($object->ref).'/';
-	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {
 	header('Location: index.php');
 	exit;

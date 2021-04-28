@@ -711,7 +711,7 @@ if (empty($reshook)) {
 			$db->rollback();
 		}
 	} elseif ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->contrat->creer) {
-		$result = $object->deleteline(GETPOST('lineid'), $user);
+		$result = $object->deleteline(GETPOST('lineid', 'int'), $user);
 
 		if ($result >= 0) {
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
@@ -1963,7 +1963,7 @@ if ($action == 'create') {
 			$dateSelector = 1;
 
 			print "\n";
-			print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#add' : '#line_'.GETPOST('lineid')).'" method="POST">
+			print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#add' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">
 			<input type="hidden" name="token" value="'.newToken().'">
 			<input type="hidden" name="action" value="'.(($action != 'editline') ? 'addline' : 'updateline').'">
 			<input type="hidden" name="mode" value="">
@@ -2123,12 +2123,6 @@ if ($action == 'create') {
 			// Show links to link elements
 			$linktoelem = $form->showLinkToObjectBlock($object, null, array('contrat'));
 			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
-
-			// Show direct download link
-			if ($object->statut != Contrat::STATUS_DRAFT && !empty($conf->global->CONTRACT_ALLOW_EXTERNAL_DOWNLOAD)) {
-				print '<br><!-- Link to download main doc -->'."\n";
-				print showDirectDownloadLink($object).'<br>';
-			}
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 

@@ -22,7 +22,7 @@ ProductService=Producte o servei
 AllProducts=Tots els productes i serveis
 ChooseProduct/Service=Tria el producte o servei
 ForceBuyingPriceIfNull=Forçar preu de cost/compra al preu de venda si no s'ha definit
-ForceBuyingPriceIfNullDetails=Si el preu de cost/compra no està definit, i aquesta opció en "ON", el marge serà zero en la línia (preu de cost/compra = preu de venda), en cas contrari ("OFF"), marge serà igual al suggerit per defecte.
+ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0 on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100% if no default value can be found).
 MARGIN_METHODE_FOR_DISCOUNT=Mètode de gestió de descomptes globals
 UseDiscountAsProduct=Com un producte
 UseDiscountAsService=Com un servei
@@ -42,4 +42,4 @@ rateMustBeNumeric=El marge ha de ser un valor numèric
 markRateShouldBeLesserThan100=El marge té que ser menor que 100
 ShowMarginInfos=Mostrar info de marges
 CheckMargins=Detall de marges
-MarginPerSaleRepresentativeWarning=L'informe de marge per usuari utilitza el vincle entre tercers i representants de vendes per calcular el marge de cada representant de venda. Com que algunes terceres parts no poden tenir cap representant de vendes dedicat i alguns tercers poden estar vinculats a diversos, alguns imports podrien no incloure's en aquest informe (si no hi ha representant de venda) i alguns podrien aparèixer en diferents línies (per a cada representant de venda) .
+MarginPerSaleRepresentativeWarning=L'informe de marge per usuari utilitza l'enllaç entre tercers i representants de vendes per a calcular el marge de cada representant de venda. Com que és possible que algunes terceres parts no tinguin cap representant de venda dedicat i que hi hagi tercers que estiguin vinculats a diversos, és possible que algunes quantitats no s'incloguin a aquest informe (si no hi ha cap representant de vendes) i que algunes puguin aparèixer en línies diferents (per a cada representant de venda) .

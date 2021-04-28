@@ -160,19 +160,31 @@ $getentity = ($conf->entity > 1 ? "&entity=".$conf->entity : "");
 
 // Show message
 $message = '';
+
 $urlvcal = '<a href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=vcal'.$getentity.'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...').'" target="_blank">';
 $urlvcal .= $urlwithroot.'/public/agenda/agendaexport.php?format=vcal'.$getentity.'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : 'KEYNOTDEFINED').'</a>';
-$message .= img_picto('', 'globe').' '.$langs->trans("WebCalUrlForVCalExport", 'vcal', $urlvcal);
+$message .= img_picto('', 'globe').' '.str_replace('{url}', $urlvcal, '<span class="opacitymedium">'.$langs->trans("WebCalUrlForVCalExport", 'vcal', '').'</span>');
+$message .= '<div class="urllink">';
+$message .= '<input type="text" id="onlinepaymenturl" class="quatrevingtpercent" value="'.$urlwithroot.'/public/agenda/agendaexport.php?format=vcal'.$getentity.'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...').'">';
+$message .= '</div>';
 $message .= '<br>';
+
 $urlical = '<a href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical&type=event'.$getentity.'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...').'" target="_blank">';
 $urlical .= $urlwithroot.'/public/agenda/agendaexport.php?format=ical&type=event'.$getentity.'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : 'KEYNOTDEFINED').'</a>';
-$message .= img_picto('', 'globe').' '.$langs->trans("WebCalUrlForVCalExport", 'ical/ics', $urlical);
+$message .= img_picto('', 'globe').' '.str_replace('{url}', $urlical, '<span class="opacitymedium">'.$langs->trans("WebCalUrlForVCalExport", 'ical/ics', '').'</span>');
+$message .= '<div class="urllink">';
+$message .= '<input type="text" id="onlinepaymenturl" class="quatrevingtpercent" value="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical'.$getentity.'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...').'">';
+$message .= '</div>';
 $message .= '<br>';
+
 $urlrss = '<a href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=rss'.$getentity.'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...').'" target="_blank">';
 $urlrss .= $urlwithroot.'/public/agenda/agendaexport.php?format=rss'.$getentity.'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : 'KEYNOTDEFINED').'</a>';
-$message .= img_picto('', 'globe').' '.$langs->trans("WebCalUrlForVCalExport", 'rss', $urlrss);
+$message .= img_picto('', 'globe').' '.str_replace('{url}', $urlrss, '<span class="opacitymedium">'.$langs->trans("WebCalUrlForVCalExport", 'rss', '').'</span>');
+$message .= '<div class="urllink">';
+$message .= '<input type="text" id="onlinepaymenturl" class="quatrevingtpercent" value="'.$urlwithroot.'/public/agenda/agendaexport.php?format=rss'.$getentity.'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...').'">';
+$message .= '</div>';
 $message .= '<br>';
-$message .= '<br>';
+
 print $message;
 
 $message = $langs->trans("AgendaUrlOptions1", $user->login, $user->login).'<br>';

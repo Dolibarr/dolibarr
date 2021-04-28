@@ -4,7 +4,7 @@ Actions=Événements
 Agenda=Agenda
 TMenuAgenda=Agenda
 Agendas=Agendas
-LocalAgenda=Calendrier interne
+LocalAgenda=Calendrier par défaut
 ActionsOwnedBy=Propriétaire de l'événement
 ActionsOwnedByShort=Propriétaire
 AffectedTo=Affecté à
@@ -20,7 +20,7 @@ MenuToDoActions=Événements incomplets
 MenuDoneActions=Événements terminés
 MenuToDoMyActions=Mes événem. incomplets
 MenuDoneMyActions=Mes événem. terminés
-ListOfEvents=Liste des événements (calendrier interne)
+ListOfEvents=Liste des événements (calendrier par défaut)
 ActionsAskedBy=Événements enregistrés par
 ActionsToDoBy=Événements affectés à
 ActionsDoneBy=Événements réalisés par
@@ -119,6 +119,7 @@ MRP_MO_UNVALIDATEInDolibarr=OF mis à l'état de brouillon
 MRP_MO_PRODUCEDInDolibarr=OF réalisé
 MRP_MO_DELETEInDolibarr=OF supprimé
 MRP_MO_CANCELInDolibarr=OF annulé
+PAIDInDolibarr=%s payé
 ##### End agenda events #####
 AgendaModelModule=Modèle de document pour les événements
 DateActionStart=Date de début
@@ -130,7 +131,7 @@ AgendaUrlOptions4=<b>logint=%s</b>pour limiter l'export aux actions assignées �
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> pour restreindre aux événements associés au projet <b>__PROJECT_ID__</b>.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> pour exclure les événements automatiques.
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> pour inclure les événements de type congé.
-AgendaShowBirthdayEvents=Anniversaires de contacts
+AgendaShowBirthdayEvents=Anniversaires des contacts
 AgendaHideBirthdayEvents=Masquer les anniversaires de contacts
 Busy=Occupé
 ExportDataset_event1=Liste des événements de l'agenda

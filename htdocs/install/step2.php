@@ -572,7 +572,7 @@ dolibarr_install_syslog("- step2: end");
 
 
 $out  = '<input type="checkbox" name="dolibarrpingno" id="dolibarrpingno" value="checked" checked="true"> ';
-$out .= $langs->trans("MakeAnonymousPing");
+$out .= '<label for="dolibarrpingno">'.$langs->trans("MakeAnonymousPing").'</label>';
 
 $out .= '<!-- Add js script to manage the uncheck of option to not send the ping -->';
 $out .= '<script type="text/javascript">';
