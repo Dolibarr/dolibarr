@@ -1568,7 +1568,7 @@ class Products extends DolibarrApi
 	 * Get product variants.
 	 *
 	 * @param  int 	$id 			ID of Product
-	 * @param  int  $includestock  	Default value 0. If parameter is set to 1 the response will contain stock data of each variant 
+	 * @param  int  $includestock   Default value 0. If parameter is set to 1 the response will contain stock data of each variant
 	 * @return array
 	 *
 	 * @throws RestException 500
@@ -1576,7 +1576,7 @@ class Products extends DolibarrApi
 	 *
 	 * @url GET {id}/variants
 	 */
-	public function getVariants($id,$includestock=0)
+	public function getVariants($id, $includestock = 0)
 	{
 		if (!DolibarrApiAccess::$user->rights->produit->lire) {
 			throw new RestException(401);
@@ -1590,9 +1590,9 @@ class Products extends DolibarrApi
 			$combinations[$key]->attributes = $prodc2vp->fetchByFkCombination((int) $combination->id);
 			$combinations[$key] = $this->_cleanObjectDatas($combinations[$key]);
 
-			if($includestock==1){
+			if ($includestock==1) {
 				$productModel = new Product($this->db);
-				$productModel->fetch((int)$combination->fk_product_child);
+				$productModel->fetch((int) $combination->fk_product_child);
 				$productModel->load_stock();
 				$combinations[$key]->stock_warehouse = $this->_cleanObjectDatas($productModel)->stock_warehouse;
 			}
