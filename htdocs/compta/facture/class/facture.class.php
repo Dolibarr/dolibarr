@@ -157,10 +157,17 @@ class Facture extends CommonInvoice
 	public $total_ttc = 0;
 	public $revenuestamp;
 
-	//! Fermeture apres paiement partiel: discount_vat, badcustomer, abandon
-	//! Fermeture alors que aucun paiement: replaced (si remplace), abandon
+	/**
+	 * ! Closing after partial payment: discount_vat, badsupplier, abandon
+	 * ! Closing when no payment: replaced, abandoned
+	 * @var string Close code
+	 */
 	public $close_code;
-	//! Commentaire si mis a paye sans paiement complet
+
+	/**
+	 * ! Comment if paid without full payment
+	 * @var string Close note
+	 */
 	public $close_note;
 
 	/**
@@ -303,8 +310,8 @@ class Facture extends CommonInvoice
 		//'remise' =>array('type'=>'double', 'label'=>'Remise', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
 		'close_code' =>array('type'=>'varchar(16)', 'label'=>'EarlyClosingReason', 'enabled'=>1, 'visible'=>-1, 'position'=>92),
 		'close_note' =>array('type'=>'varchar(128)', 'label'=>'EarlyClosingComment', 'enabled'=>1, 'visible'=>-1, 'position'=>93),
-		'total' =>array('type'=>'double(24,8)', 'label'=>'AmountHT', 'enabled'=>1, 'visible'=>-1, 'position'=>95, 'isameasure'=>1),
-		'tva' =>array('type'=>'double(24,8)', 'label'=>'AmountVAT', 'enabled'=>1, 'visible'=>-1, 'position'=>100, 'isameasure'=>1),
+		'total_ht' =>array('type'=>'double(24,8)', 'label'=>'AmountHT', 'enabled'=>1, 'visible'=>-1, 'position'=>95, 'isameasure'=>1),
+		'total_tva' =>array('type'=>'double(24,8)', 'label'=>'AmountVAT', 'enabled'=>1, 'visible'=>-1, 'position'=>100, 'isameasure'=>1),
 		'localtax1' =>array('type'=>'double(24,8)', 'label'=>'LT1', 'enabled'=>1, 'visible'=>-1, 'position'=>110, 'isameasure'=>1),
 		'localtax2' =>array('type'=>'double(24,8)', 'label'=>'LT2', 'enabled'=>1, 'visible'=>-1, 'position'=>120, 'isameasure'=>1),
 		'revenuestamp' =>array('type'=>'double(24,8)', 'label'=>'RevenueStamp', 'enabled'=>1, 'visible'=>-1, 'position'=>115, 'isameasure'=>1),
@@ -1572,7 +1579,7 @@ class Facture extends CommonInvoice
 		}
 
 		$sql = 'SELECT f.rowid,f.entity,f.ref,f.ref_client,f.ref_ext,f.ref_int,f.type,f.fk_soc';
-		$sql .= ', f.tva, f.localtax1, f.localtax2, f.total, f.total_ttc, f.revenuestamp';
+		$sql .= ', f.total_tva, f.localtax1, f.localtax2, f.total_ht, f.total_ttc, f.revenuestamp';
 		$sql .= ', f.remise_percent, f.remise_absolue, f.remise';
 		$sql .= ', f.datef as df, f.date_pointoftax';
 		$sql .= ', f.date_lim_reglement as dlr';
@@ -1597,7 +1604,7 @@ class Facture extends CommonInvoice
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON f.fk_incoterms = i.rowid';
 
 		if ($rowid) {
-			$sql .= " WHERE f.rowid=".$rowid;
+			$sql .= " WHERE f.rowid=".((int) $rowid);
 		} else {
 			$sql .= ' WHERE f.entity IN ('.getEntity('invoice').')'; // Dont't use entity if you use rowid
 			if ($ref) {
@@ -1632,8 +1639,8 @@ class Facture extends CommonInvoice
 				$this->datem = $this->db->jdate($obj->datem);
 				$this->remise_percent		= $obj->remise_percent;
 				$this->remise_absolue		= $obj->remise_absolue;
-				$this->total_ht				= $obj->total;
-				$this->total_tva			= $obj->tva;
+				$this->total_ht				= $obj->total_ht;
+				$this->total_tva			= $obj->total_tva;
 				$this->total_localtax1		= $obj->localtax1;
 				$this->total_localtax2		= $obj->localtax2;
 				$this->total_ttc			= $obj->total_ttc;
@@ -1961,10 +1968,10 @@ class Facture extends CommonInvoice
 		$sql .= " remise_absolue=".(isset($this->remise_absolue) ? $this->db->escape($this->remise_absolue) : "null").",";
 		$sql .= " close_code=".(isset($this->close_code) ? "'".$this->db->escape($this->close_code)."'" : "null").",";
 		$sql .= " close_note=".(isset($this->close_note) ? "'".$this->db->escape($this->close_note)."'" : "null").",";
-		$sql .= " tva=".(isset($this->total_tva) ? $this->total_tva : "null").",";
+		$sql .= " total_tva=".(isset($this->total_tva) ? $this->total_tva : "null").",";
 		$sql .= " localtax1=".(isset($this->total_localtax1) ? $this->total_localtax1 : "null").",";
 		$sql .= " localtax2=".(isset($this->total_localtax2) ? $this->total_localtax2 : "null").",";
-		$sql .= " total=".(isset($this->total_ht) ? $this->total_ht : "null").",";
+		$sql .= " total_ht=".(isset($this->total_ht) ? $this->total_ht : "null").",";
 		$sql .= " total_ttc=".(isset($this->total_ttc) ? $this->total_ttc : "null").",";
 		$sql .= " revenuestamp=".((isset($this->revenuestamp) && $this->revenuestamp != '') ? $this->db->escape($this->revenuestamp) : "null").",";
 		$sql .= " fk_statut=".(isset($this->statut) ? $this->db->escape($this->statut) : "null").",";
@@ -2237,14 +2244,14 @@ class Facture extends CommonInvoice
 			$sql .= ' AND fk_facture_line IS NULL';
 			$resql = $this->db->query($sql);
 
-			// If invoice has consumned discounts
+			// If invoice has consumed discounts
 			$this->fetch_lines();
 			$list_rowid_det = array();
 			foreach ($this->lines as $key => $invoiceline) {
 				$list_rowid_det[] = $invoiceline->id;
 			}
 
-			// Consumned discounts are freed
+			// Consumed discounts are freed
 			if (count($list_rowid_det)) {
 				$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
 				$sql .= ' SET fk_facture = NULL, fk_facture_line = NULL';
@@ -2536,8 +2543,8 @@ class Facture extends CommonInvoice
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			// On desaffecte de la facture les remises liees
-			// car elles n'ont pas ete utilisees vu que la facture est abandonnee.
+			// Bound discounts are deducted from the invoice
+			// as they have not been used since the invoice is abandoned.
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
 			$sql .= ' SET fk_facture = NULL';
 			$sql .= ' WHERE fk_facture = '.$this->id;
@@ -3650,7 +3657,7 @@ class Facture extends CommonInvoice
 	{
 		global $user;
 
-		dol_syslog(get_class($this)."::deleteline rowid=".$rowid, LOG_DEBUG);
+		dol_syslog(get_class($this)."::deleteline rowid=".((int) $rowid), LOG_DEBUG);
 
 		if ($this->statut != self::STATUS_DRAFT) {
 			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
@@ -3659,7 +3666,7 @@ class Facture extends CommonInvoice
 
 		$this->db->begin();
 
-		// Libere remise liee a ligne de facture
+		// Free discount linked to invoice line
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
 		$sql .= ' SET fk_facture_line = NULL';
 		$sql .= ' WHERE fk_facture_line = '.((int) $rowid);
@@ -4207,7 +4214,7 @@ class Facture extends CommonInvoice
 
 		$clause = " WHERE";
 
-		$sql = "SELECT f.rowid, f.date_lim_reglement as datefin,f.fk_statut, f.total";
+		$sql = "SELECT f.rowid, f.date_lim_reglement as datefin,f.fk_statut, f.total_ht";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 		if (!$user->rights->societe->client->voir && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON f.fk_soc = sc.fk_soc";
@@ -4882,6 +4889,166 @@ class Facture extends CommonInvoice
 			dol_syslog(get_class($this).'::setRetainedWarrantyDateLimit, status of the object is incompatible');
 			$this->error = 'Status of the object is incompatible '.$this->statut;
 			return -2;
+		}
+	}
+
+
+	/**
+	 *  Send reminders by emails for ivoices that are due
+	 *  CAN BE A CRON TASK
+	 *
+	 *  @param	int			$nbdays			Delay after due date (or before if delay is negative)
+	 *  @param	string		$paymentmode	'' or 'all' by default (no filter), or 'LIQ', 'CHQ', CB', ...
+	 *  @param	int|string	$template		Name (or id) of email template (Must be a template of type 'facture_send')
+	 *  @return int         				0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
+	 */
+	public function sendEmailsRemindersOnInvoiceDueDate($nbdays = 0, $paymentmode = 'all', $template = '')
+	{
+		global $conf, $langs, $user;
+
+		$error = 0;
+		$this->output = '';
+		$this->error = '';
+		$nbMailSend = 0;
+		$errorsMsg = array();
+
+		if (empty($conf->facture->enabled)) {	// Should not happen. If module disabled, cron job should not be visible.
+			$langs->load("bills");
+			$this->output .= $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Facture"));
+			return 0;
+		}
+		/*if (empty($conf->global->FACTURE_REMINDER_EMAIL)) {
+			$langs->load("bills");
+			$this->output .= $langs->trans('EventRemindersByEmailNotEnabled', $langs->transnoentitiesnoconv("Facture"));
+			return 0;
+		}
+		*/
+
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+		$formmail = new FormMail($this->db);
+
+		$now = dol_now();
+		$tmpinvoice = new Facture($this->db);
+
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		$this->db->begin();
+
+		//Select all action comm reminder
+		$sql = "SELECT rowid as id FROM ".MAIN_DB_PREFIX."facture as f";
+		if (!empty($paymentmode) && $paymentmode != 'all') {
+			$sql .= ", ".MAIN_DB_PREFIX."c_paiement as cp";
+		}
+		$sql .= " WHERE f.paye = 0";
+		$sql .= " AND f.date_lim_reglement = '".$this->db->idate(dol_get_first_hour(dol_time_plus_duree($now, -1 * $nbdays, 'd'), 'gmt'), 'gmt')."'";
+		$sql .= " AND f.entity IN (".getEntity('facture').")";
+		if (!empty($paymentmode) && $paymentmode != 'all') {
+			$sql .= " AND f.fk_mode_reglement = cp.id AND cp.code = '".$this->db->escape($paymentmode)."'";
+		}
+		// TODO Add filter to check there is no payment started
+		$sql .= $this->db->order("date_lim_reglement", "ASC");
+		$resql = $this->db->query($sql);
+		$tmpidate=$this->db->idate(dol_get_first_hour(dol_time_plus_duree($now, -1 * $nbdays, 'd'), 'gmt'), 'gmt');
+		$this->output .= 'Search unpaid invoices with due date = '.$tmpidate.'<br>';
+
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				if (!$error) {
+					// Load event
+					$res = $tmpinvoice->fetch($obj->id);
+					if ($res > 0) {
+						$tmpinvoice->fetch_thirdparty();
+
+						$outputlangs = new Translate('', $conf);
+						if ($tmpinvoice->thirdparty->default_lang) {
+							$outputlangs->setDefaultLang($tmpinvoice->thirdparty->default_lang);
+						} else {
+							$outputlangs = $langs;
+						}
+
+						// Select email template
+						$arraymessage = $formmail->getEMailTemplate($this->db, 'facture_send', $user, $outputlangs, (is_numeric($template) ? $template : 0), 1, (is_numeric($template) ? '' : $template));
+						if (is_numeric($arraymessage) && $arraymessage <= 0) {
+							$langs->load("bills");
+							$this->output .= $langs->trans('FailedToFindEmailTemplate', $template);
+							return 0;
+						}
+
+						// PREPARE EMAIL
+						$errormesg = '';
+
+						// Make substitution in email content
+						$substitutionarray = getCommonSubstitutionArray($langs, 0, '', $this);
+
+						complete_substitutions_array($substitutionarray, $langs, $this);
+
+						// Content
+						$sendContent = make_substitutions($langs->trans($arraymessage->content), $substitutionarray);
+
+						//Topic
+						$sendTopic = (!empty($arraymessage->topic)) ? $arraymessage->topic : html_entity_decode($langs->trans('EventReminder'));
+
+						// Recipient
+						$res = $tmpinvoice->fetch_thirdparty();
+						$recipient = $tmpinvoice->thirdparty;
+						if ($res > 0) {
+							if (!empty($recipient->email)) {
+								$to = $recipient->email;
+							} else {
+								$errormesg = "Failed to send remind to thirdparty id=".$tmpinvoice->fk_soc.". No email defined for user.";
+								$error++;
+							}
+						} else {
+							$errormesg = "Failed to load recipient with thirdparty id=".$tmpinvoice->fk_soc;
+							$error++;
+						}
+
+						// Sender
+						$from = $conf->global->MAIN_MAIL_EMAIL_FROM;
+						if (empty($from)) {
+							$errormesg = "Failed to get sender into global setup MAIN_MAIL_EMAIL_FROM";
+							$error++;
+						}
+
+						if (!$error) {
+							// Errors Recipient
+							$errors_to = $conf->global->MAIN_MAIL_ERRORS_TO;
+
+							$trackid = 'inv'.$tmpinvoice->id;
+							// Mail Creation
+							$cMailFile = new CMailFile($sendTopic, $to, $from, $sendContent, array(), array(), array(), '', "", 0, 1, $errors_to, '', $trackid, '', '', '');
+
+							// Sending Mail
+							if ($cMailFile->sendfile()) {
+								$nbMailSend++;
+							} else {
+								$errormesg = $cMailFile->error.' : '.$to;
+								$error++;
+							}
+						}
+
+						if ($errormesg) {
+							$errorsMsg[] = $errormesg;
+						}
+					} else {
+						$errorsMsg[] = 'Failed to fetch record invoice with ID = '.$obj->id;
+						$error++;
+					}
+				}
+			}
+		} else {
+			$error++;
+		}
+
+		if (!$error) {
+			$this->output .= 'Nb of emails sent : '.$nbMailSend;
+			$this->db->commit();
+			return 0;
+		} else {
+			$this->db->commit(); // We commit also on error, to have the error message recorded.
+			$this->error = 'Nb of emails sent : '.$nbMailSend.', '.(!empty($errorsMsg)) ? join(', ', $errorsMsg) : $error;
+			return $error;
 		}
 	}
 }
@@ -5574,8 +5741,8 @@ class FactureLigne extends CommonInvoiceLine
 				if ($include_credit_note) {
 					$sql = 'SELECT fd.situation_percent FROM '.MAIN_DB_PREFIX.'facturedet fd';
 					$sql .= ' JOIN '.MAIN_DB_PREFIX.'facture f ON (f.rowid = fd.fk_facture) ';
-					$sql .= ' WHERE fd.fk_prev_id ='.$this->fk_prev_id;
-					$sql .= ' AND f.situation_cycle_ref = '.$invoicecache[$invoiceid]->situation_cycle_ref; // Prevent cycle outed
+					$sql .= ' WHERE fd.fk_prev_id = '.((int) $this->fk_prev_id);
+					$sql .= ' AND f.situation_cycle_ref = '.((int) $invoicecache[$invoiceid]->situation_cycle_ref); // Prevent cycle outed
 					$sql .= ' AND f.type = '.Facture::TYPE_CREDIT_NOTE;
 
 					$res = $this->db->query($sql);

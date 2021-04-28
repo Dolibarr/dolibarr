@@ -504,8 +504,10 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 				templateResult: function (data, container) {	/* Format visible output into combo list */
 					/* Code to add class of origin OPTION propagated to the new select2 <li> tag */
 					if (data.element) { jQuery(container).addClass(jQuery(data.element).attr(\"class\")); }
-					//console.log(data.html);
-					//if (data.id == -1) return '&nbsp;';
+				    //console.log(jQuery(data.element).attr(\"data-html\"));
+				    if (data.id == -1 && jQuery(data.element).attr(\"data-html\") == undefined) {
+						return '&nbsp;';
+					}
 					if (jQuery(data.element).attr(\"data-html\") != undefined) return htmlEntityDecodeJs(jQuery(data.element).attr(\"data-html\"));		// If property html set, we decode html entities and use this
 					return data.text;
 				},

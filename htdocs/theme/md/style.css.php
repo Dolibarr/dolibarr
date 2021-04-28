@@ -1057,6 +1057,33 @@ if ($conf->browser->layout == 'phone') {
 }
 
 
+div.div-for-modal {
+	/* display: none; */
+	position:absolute;
+	top:calc(50% - 200px);
+	left:calc(50% - 250px);
+	width:500px;  /* adjust as per your needs */
+	height:400px;   /* adjust as per your needs */
+	background: #fff;
+	border: 1px solid #bbb;
+	box-shadow: 2px 2px 20px #ddd;
+	z-index: 100;
+}
+
+div.div-for-modal-topright {
+	/* display: none; */
+	position: fixed;
+	top: 0;
+	right: 0;
+	width:50%;  /* adjust as per your needs */
+	height:250px;   /* adjust as per your needs */
+	background: #fff;
+	border: 1px solid #bbb;
+	box-shadow: 2px 2px 20px #ddd;
+	z-index: 1100;
+}
+
+
 div.confirmmessage {
 	padding-top: 6px;
 }
@@ -1363,6 +1390,9 @@ table[summary="list_of_modules"] .fa-cog {
 .width125 { width: 125px; }
 .width150 { width: 150px; }
 .width200 { width: 200px; }
+.width300 { width: 300px; }
+.width400 { width: 400px; }
+.width500 { width: 500px; }
 .maxwidth25  { max-width: 25px; }
 .maxwidth50  { max-width: 50px; }
 .maxwidth75  { max-width: 75px; }
@@ -2257,8 +2287,8 @@ li.tmenu, li.tmenusel {
 li.tmenu:hover {
 	opacity: .50; /* show only a slight shadow */
 }
-li.tmenusel {
-	text-decoration: underline;
+li.tmenusel a.tmenusel {
+	text-decoration: underline !important;
 }
 .tmenuend .tmenuleft { width: 0px; }
 .tmenuend { display: none; }
@@ -2620,7 +2650,7 @@ table.login_table_securitycode tr td {
 }
 
 div.login_block {
-	border-right: 1px solid rgba(0,0,0,0.3);
+	/* border-right: 1px solid rgba(0,0,0,0.3); */
 	padding-top: 3px;
 	padding-bottom: 3px;
 	<?php print $left; ?>: 0;
@@ -3111,12 +3141,6 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	background-image: none !important;
 }
 
-
-.tabunactive {	/* We add some border on tabunactive to avoid change of position of title when switching tabs (border of tabunactive = border of tabactive) */
-	border-right: 1px solid rgb(<?php echo $colorbackbody; ?>);
-	border-left: 1px solid rgb(<?php echo $colorbackbody; ?>);
-}
-
 .tabactive, a.tab#active {
 	color: #<?php echo $colortextbacktab; ?> !important;
 	background: rgb(<?php echo $colorbacktabcard1; ?>) !important;
@@ -3125,6 +3149,13 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	border-left: 1px solid #AAA !important;
 	border-top: 2px solid #111 !important;
 }
+.tabunactive, a.tab#unactive {
+	border-right: 1px solid transparent;
+	border-left: 1px solid transparent;
+	border-top: 1px solid transparent;
+	border-bottom: 0px !important;*/
+}
+
 a.tab:hover
 {
 	/*

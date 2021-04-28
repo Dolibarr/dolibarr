@@ -200,7 +200,7 @@ class BookKeeping extends CommonObject
 
 		$error = 0;
 
-		// Clean parameters
+		// Clean parameters</center>
 		if (isset($this->doc_type)) {
 			$this->doc_type = trim($this->doc_type);
 		}
@@ -295,7 +295,10 @@ class BookKeeping extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " WHERE doc_type = '".$this->db->escape($this->doc_type)."'";
 		$sql .= " AND fk_doc = ".$this->fk_doc;
-		//$sql .= " AND fk_docdet = " . $this->fk_docdet;					// This field can be 0 if record is for several lines
+		if (!empty($conf->global->ACCOUNTANCY_ENABLE_FKDOCDET)) {
+			// DO NOT USE THIS IN PRPDUCTION. This will generate a lot of trouble into reports and will corrupt database (by generating duplicate entries.
+			$sql .= " AND fk_docdet = " . $this->fk_docdet;					// This field can be 0 if record is for several lines
+		}
 		$sql .= " AND numero_compte = '".$this->db->escape($this->numero_compte)."'";
 		$sql .= " AND label_operation = '".$this->db->escape($this->label_operation)."'";
 		$sql .= " AND entity IN (".getEntity('accountancy').")";
@@ -368,8 +371,8 @@ class BookKeeping extends CommonObject
 				$sql .= ", ".(!isset($this->date_lim_reglement) || dol_strlen($this->date_lim_reglement) == 0 ? 'NULL' : "'".$this->db->idate($this->date_lim_reglement)."'");
 				$sql .= ", '".$this->db->escape($this->doc_type)."'";
 				$sql .= ", '".$this->db->escape($this->doc_ref)."'";
-				$sql .= ", ".$this->fk_doc;
-				$sql .= ", ".$this->fk_docdet;
+				$sql .= ", ".((int) $this->fk_doc);
+				$sql .= ", ".((int) $this->fk_docdet);
 				$sql .= ", ".(!empty($this->thirdparty_code) ? ("'".$this->db->escape($this->thirdparty_code)."'") : "NULL");
 				$sql .= ", ".(!empty($this->subledger_account) ? ("'".$this->db->escape($this->subledger_account)."'") : "NULL");
 				$sql .= ", ".(!empty($this->subledger_label) ? ("'".$this->db->escape($this->subledger_label)."'") : "NULL");
@@ -629,8 +632,8 @@ class BookKeeping extends CommonObject
 		$sql .= ' '.(!isset($this->date_lim_reglement) || dol_strlen($this->date_lim_reglement) == 0 ? 'NULL' : "'".$this->db->idate($this->date_lim_reglement)."'").',';
 		$sql .= ' '.(!isset($this->doc_type) ? 'NULL' : "'".$this->db->escape($this->doc_type)."'").',';
 		$sql .= ' '.(!isset($this->doc_ref) ? 'NULL' : "'".$this->db->escape($this->doc_ref)."'").',';
-		$sql .= ' '.(empty($this->fk_doc) ? '0' : $this->fk_doc).',';
-		$sql .= ' '.(empty($this->fk_docdet) ? '0' : $this->fk_docdet).',';
+		$sql .= ' '.(empty($this->fk_doc) ? '0' : (int) $this->fk_doc).',';
+		$sql .= ' '.(empty($this->fk_docdet) ? '0' : (int) $this->fk_docdet).',';
 		$sql .= ' '.(!isset($this->thirdparty_code) ? 'NULL' : "'".$this->db->escape($this->thirdparty_code)."'").',';
 		$sql .= ' '.(!isset($this->subledger_account) ? 'NULL' : "'".$this->db->escape($this->subledger_account)."'").',';
 		$sql .= ' '.(!isset($this->subledger_label) ? 'NULL' : "'".$this->db->escape($this->subledger_label)."'").',';
@@ -1857,7 +1860,7 @@ class BookKeeping extends CommonObject
 		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.account_number = ab.numero_compte";
 		$sql .= " AND aa.active = 1";
 		$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
-		$sql .= " AND asy.rowid = " . $pcgver;
+		$sql .= " AND asy.rowid = " . ((int) $pcgver);
 		$sql .= " AND ab.entity IN (" . getEntity('accountancy') . ")";
 		$sql .= " ORDER BY account_number ASC";
 		*/
@@ -1890,7 +1893,7 @@ class BookKeeping extends CommonObject
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.account_number = ab.numero_compte";
 		$sql .= " AND aa.active = 1";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
-		$sql .= " AND asy.rowid = ".$pcgver;
+		$sql .= " AND asy.rowid = ".((int) $pcgver);
 		$sql .= " AND ab.entity IN (".getEntity('accountancy').")";
 		$sql .= " ORDER BY account_number ASC";
 

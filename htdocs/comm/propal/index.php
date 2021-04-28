@@ -28,6 +28,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager = new HookManager($db);
@@ -45,6 +46,7 @@ if (isset($user->socid) && $user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
+
 restrictedArea($user, 'propal');
 
 
@@ -65,146 +67,8 @@ print load_fiche_titre($langs->trans("ProspectionArea"), '', 'propal');
 print '<div class="fichecenter">';
 print '<div class="fichethirdleft">';
 
-// This is useless due to the global search combo
-if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {
-	print '<form method="post" action="'.DOL_URL_ROOT.'/comm/propal/list.php">';
-	print '<div class="div-table-responsive-no-min">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<table class="noborder nohover centpercent">';
-
-	print '<tr class="liste_titre">';
-	print '<td colspan="3">'.$langs->trans("Search").'</td>';
-	print '</tr>';
-
-	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("Proposal").':</td>';
-	print '<td><input type="text" class="flat" name="sall" size=18></td>';
-	print '<td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
-	print '</tr>';
-
-	print '</table>';
-	print '</div>';
-	print '</form>';
-	print '<br>';
-}
-
-/*
- * Statistics
- */
-$listofstatus = array(Propal::STATUS_DRAFT, Propal::STATUS_VALIDATED, Propal::STATUS_SIGNED, Propal::STATUS_NOTSIGNED, Propal::STATUS_BILLED);
-
-$sql = "SELECT count(p.rowid) as nb, p.fk_statut as status";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-$sql .= ", ".MAIN_DB_PREFIX."propal as p";
-if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-}
-$sql .= " WHERE p.entity IN (".getEntity($propalstatic->element).")";
-$sql .= " AND p.fk_soc = s.rowid";
-if ($user->socid) {
-	$sql .= ' AND p.fk_soc = '.$user->socid;
-}
-if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-}
-$sql .= " AND p.fk_statut IN (".$db->sanitize(implode(" ,", $listofstatus)).")";
-$sql .= " GROUP BY p.fk_statut";
-$resql = $db->query($sql);
-if ($resql) {
-	$num = $db->num_rows($resql);
-	$i = 0;
-	$total = 0;
-	$totalinprocess = 0;
-	$dataseries = array();
-	$colorseries = array();
-	$vals = array();
-
-	while ($i < $num) {
-		$obj = $db->fetch_object($resql);
-		if ($obj) {
-			$vals[$obj->status] = $obj->nb;
-			$totalinprocess += $obj->nb;
-
-			$total += $obj->nb;
-		}
-		$i++;
-	}
-	$db->free($resql);
-
-	include_once DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
-
-	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder nohover centpercent">';
-
-	print '<tr class="liste_titre">';
-	print '<td colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("Proposals").'</td>';
-	print '</tr>';
-
-	foreach ($listofstatus as $status) {
-		$dataseries[] = array($propalstatic->LibStatut($status, 1), (isset($vals[$status]) ? (int) $vals[$status] : 0));
-		if ($status == Propal::STATUS_DRAFT) {
-			$colorseries[$status] = '-'.$badgeStatus0;
-		}
-		if ($status == Propal::STATUS_VALIDATED) {
-			$colorseries[$status] = $badgeStatus1;
-		}
-		if ($status == Propal::STATUS_SIGNED) {
-			$colorseries[$status] = $badgeStatus4;
-		}
-		if ($status == Propal::STATUS_NOTSIGNED) {
-			$colorseries[$status] = $badgeStatus9;
-		}
-		if ($status == Propal::STATUS_BILLED) {
-			$colorseries[$status] = $badgeStatus6;
-		}
-
-		if (empty($conf->use_javascript_ajax)) {
-			print '<tr class="oddeven">';
-			print '<td>'.$propalstatic->LibStatut($status, 0).'</td>';
-			print '<td class="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status]) ? $vals[$status] : 0).'</a></td>';
-			print "</tr>\n";
-		}
-	}
-
-	if ($conf->use_javascript_ajax) {
-		print '<tr>';
-		print '<td align="center" colspan="2">';
-
-		include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-		$dolgraph = new DolGraph();
-		$dolgraph->SetData($dataseries);
-		$dolgraph->SetDataColor(array_values($colorseries));
-		$dolgraph->setShowLegend(2);
-		$dolgraph->setShowPercent(1);
-		$dolgraph->SetType(array('pie'));
-		$dolgraph->setHeight('200');
-		$dolgraph->draw('idgraphthirdparties');
-		print $dolgraph->show($total ? 0 : 1);
-
-		print '</td>';
-		print '</tr>';
-	}
-
-	//if ($totalinprocess != $total)
-	//{
-	//	print '<tr class="liste_total">';
-	//	print '<td>'.$langs->trans("Total").' ('.$langs->trans("CustomersOrdersRunning").')</td>';
-	//	print '<td class="right">'.$totalinprocess.'</td>';
-	//	print '</tr>';
-	//}
-
-	print '<tr class="liste_total">';
-	print '<td>'.$langs->trans("Total").'</td>';
-	print '<td class="right">'.$total.'</td>';
-	print '</tr>';
-
-	print '</table>';
-	print '</div>';
-	print '<br>';
-} else {
-	dol_print_error($db);
-}
-
+print getCustomerProposalPieChart($socid);
+print '<br>';
 
 /*
  * Draft proposals

@@ -37,6 +37,8 @@ require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager = new HookManager($db);
@@ -66,6 +68,8 @@ if ($user->socid > 0) {
 }
 restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid', 0);
 
+$maxofloop = (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD);
+
 
 /*
  * Actions
@@ -90,7 +94,7 @@ if (!empty($conf->supplier_proposal->enabled)) {
 if (!empty($conf->commande->enabled)) {
 	$orderstatic = new Commande($db);
 }
-if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled)) {
+if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled)) {
 	$supplierorderstatic = new CommandeFournisseur($db);
 }
 
@@ -100,58 +104,10 @@ print load_fiche_titre($langs->trans("CommercialArea"), '', 'commercial');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-// This is useless due to the global search combo
-if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {
-	// Search proposal
-	if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
-		$listofsearchfields['search_proposal'] = array('text'=>'Proposal');
-	}
-	// Search customer order
-	if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
-		$listofsearchfields['search_customer_order'] = array('text'=>'CustomerOrder');
-	}
-	// Search supplier proposal
-	if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire) {
-		$listofsearchfields['search_supplier_proposal'] = array('text'=>'SupplierProposalShort');
-	}
-	// Search supplier order
-	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled)) && $user->rights->fournisseur->commande->lire) {
-		$listofsearchfields['search_supplier_order'] = array('text'=>'SupplierOrder');
-	}
-	// Search intervention
-	if (!empty($conf->ficheinter->enabled) && $user->rights->ficheinter->lire) {
-		$listofsearchfields['search_intervention'] = array('text'=>'Intervention');
-	}
-	// Search contract
-	if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire) {
-		$listofsearchfields['search_contract'] = array('text'=>'Contract');
-	}
-
-	if (count($listofsearchfields)) {
-		print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
-		print '<input type="hidden" name="token" value="'.newToken().'">';
-		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder nohover centpercent">';
-		$i = 0;
-		foreach ($listofsearchfields as $key => $value) {
-			if ($i == 0) {
-				print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-			}
-			print '<tr '.$bc[false].'>';
-			print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
-			if ($i == 0) {
-				print '<td class="noborderbottom" rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button "></td>';
-			}
-			print '</tr>';
-			$i++;
-		}
-		print '</table>';
-		print '</div>';
-		print '</form>';
-		print '<br>';
-	}
-}
-
+print getCustomerProposalPieChart($socid);
+print '<br>';
+print getCustomerOrderPieChart($socid);
+print '<br>';
 
 /*
  * Draft customer proposals
@@ -182,14 +138,14 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 	if ($resql) {
 		$total = 0;
 		$num = $db->num_rows($resql);
-		$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
+		$nbofloop = min($num, $maxofloop);
 		startSimpleTable("ProposalsDraft", "comm/propal/list.php", "search_status=".Propal::STATUS_DRAFT, 2, $num);
 
 		if ($num > 0) {
 			$i = 0;
 			$othernb = 0;
 
-			while ($i < $num && $i < $conf->liste_limit) {
+			while ($i < $nbofloop) {
 				$obj = $db->fetch_object($resql);
 
 				if ($i >= $max) {
@@ -234,7 +190,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 			if ($othernb) {
 				print '<tr class="oddeven">';
 				print '<td class="nowrap" colspan="5">';
-				print '<span class="opacitymedium">'.$langs->trans("More").'... ('.$othernb.')</span>';
+				print '<span class="opacitymedium">'.$langs->trans("More").'...'.($othernb < $maxofloop ? ' ('.$othernb.')' : '').'</span>';
 				print '</td>';
 				print "</tr>\n";
 			}
@@ -272,21 +228,21 @@ if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposa
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	}
 	if ($socid) {
-		$sql .= " AND s.rowid = ".$socid;
+		$sql .= " AND s.rowid = ".((int) $socid);
 	}
 
 	$resql = $db->query($sql);
 	if ($resql) {
 		$total = 0;
 		$num = $db->num_rows($resql);
-		$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
+		$nbofloop = min($num, $maxofloop);
 		startSimpleTable("SupplierProposalsDraft", "supplier_proposal/list.php", "search_status=".SupplierProposal::STATUS_DRAFT, 2, $num);
 
 		if ($num > 0) {
 			$i = 0;
 			$othernb = 0;
 
-			while ($i < $num && $i < $conf->liste_limit) {
+			while ($i < $nbofloop) {
 				$obj = $db->fetch_object($resql);
 
 				if ($i >= $max) {
@@ -330,7 +286,7 @@ if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposa
 			if ($othernb) {
 				print '<tr class="oddeven">';
 				print '<td class="nowrap" colspan="5">';
-				print '<span class="opacitymedium">'.$langs->trans("More").'... ('.$othernb.')</span>';
+				print '<span class="opacitymedium">'.$langs->trans("More").'...'.($othernb < $maxofloop ? ' ('.$othernb.')' : '').'</span>';
 				print '</td>';
 				print "</tr>\n";
 			}
@@ -368,21 +324,21 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	}
 	if ($socid) {
-		$sql .= " AND c.fk_soc = ".$socid;
+		$sql .= " AND c.fk_soc = ".((int) $socid);
 	}
 
 	$resql = $db->query($sql);
 	if ($resql) {
 		$total = 0;
 		$num = $db->num_rows($resql);
-		$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
+		$nbofloop = min($num, $maxofloop);
 		startSimpleTable("DraftOrders", "commande/list.php", "search_status=".Commande::STATUS_DRAFT, 2, $num);
 
 		if ($num > 0) {
 			$i = 0;
 			$othernb = 0;
 
-			while ($i < $num && $i < $conf->liste_limit) {
+			while ($i < $nbofloop) {
 				$obj = $db->fetch_object($resql);
 
 				if ($i >= $max) {
@@ -427,7 +383,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 			if ($othernb) {
 				print '<tr class="oddeven">';
 				print '<td class="nowrap" colspan="5">';
-				print '<span class="opacitymedium">'.$langs->trans("More").'... ('.$othernb.')</span>';
+				print '<span class="opacitymedium">'.$langs->trans("More").'...'.($othernb < $maxofloop ? ' ('.$othernb.')' : '').'</span>';
 				print '</td>';
 				print "</tr>\n";
 			}
@@ -446,7 +402,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 /*
  * Draft purchase orders
  */
-if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled)) && $user->rights->fournisseur->commande->lire) {
+if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->commande->lire) || (!empty($conf->supplier_order->enabled) && $user->rights->supplier_order->lire)) {
 	$sql = "SELECT cf.rowid, cf.ref, cf.ref_supplier, cf.total_ht, cf.total_tva, cf.total_ttc, cf.fk_statut as status";
 	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta, s.client";
@@ -472,14 +428,14 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 	if ($resql) {
 		$total = 0;
 		$num = $db->num_rows($resql);
-		$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
+		$nbofloop = min($num, $maxofloop);
 		startSimpleTable("DraftSuppliersOrders", "fourn/commande/list.php", "search_status=".CommandeFournisseur::STATUS_DRAFT, 2, $num);
 
 		if ($num > 0) {
 			$i = 0;
 			$othernb = 0;
 
-			while ($i < $num && $i < $conf->liste_limit) {
+			while ($i < $nbofloop) {
 				$obj = $db->fetch_object($resql);
 
 				if ($i >= $max) {
@@ -524,7 +480,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 			if ($othernb) {
 				print '<tr class="oddeven">';
 				print '<td class="nowrap" colspan="5">';
-				print '<span class="opacitymedium">'.$langs->trans("More").'... ('.$othernb.')</span>';
+				print '<span class="opacitymedium">'.$langs->trans("More").'...'.($othernb < $maxofloop ? ' ('.$othernb.')' : '').'</span>';
 				print '</td>';
 				print "</tr>\n";
 			}
@@ -641,7 +597,7 @@ if (!empty($conf->societe->enabled) && $user->rights->societe->lire) {
 /*
  * Last suppliers
  */
-if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && $user->rights->societe->lire) {
+if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && $user->rights->societe->lire) {
 	$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta, s.client";
 	$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
@@ -658,7 +614,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	}
 	if ($socid) {
-		$sql .= " AND s.rowid = ".$socid;
+		$sql .= " AND s.rowid = ".((int) $socid);
 	}
 	$sql .= " ORDER BY s.datec DESC";
 	$sql .= $db->plimit($max, 0);
@@ -700,7 +656,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 				{
 					$s .= '<a class="customer-back" title="'.$langs->trans("Customer").'" href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$companystatic->id.'">'.dol_substr($langs->trans("Customer"), 0, 1).'</a>';
 				}*/
-				if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && $obj->fournisseur) {
+				if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && $obj->fournisseur) {
 					$s .= '<a class="vendor-back" title="'.$langs->trans("Supplier").'" href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$companystatic->id.'">'.dol_substr($langs->trans("Supplier"), 0, 1).'</a>';
 				}
 				print $s;
@@ -764,7 +720,7 @@ if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) { // T
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	}
 	if ($socid) {
-		$sql .= " AND s.rowid = ".$socid;
+		$sql .= " AND s.rowid = ".((int) $socid);
 	}
 	$sql .= " ORDER BY c.tms DESC";
 	$sql .= $db->plimit($max + 1, 0);
@@ -839,7 +795,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	}
 	if ($socid) {
-		$sql .= " AND s.rowid = ".$socid;
+		$sql .= " AND s.rowid = ".((int) $socid);
 	}
 	$sql .= " ORDER BY p.rowid DESC";
 
@@ -955,7 +911,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	}
 	if ($socid) {
-		$sql .= " AND s.rowid = ".$socid;
+		$sql .= " AND s.rowid = ".((int) $socid);
 	}
 	$sql .= " ORDER BY c.rowid DESC";
 
@@ -984,6 +940,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 				$orderstatic->id = $obj->commandeid;
 				$orderstatic->ref = $obj->ref;
 				$orderstatic->ref_client = $obj->ref_client;
+				$orderstatic->statut = $obj->fk_statut;
 				$orderstatic->total_ht = $obj->total_ht;
 				$orderstatic->total_tva = $obj->total_tva;
 				$orderstatic->total_ttc = $obj->total_ttc;

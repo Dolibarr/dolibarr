@@ -13,7 +13,6 @@ ErrorWarehouseRefRequired=Le nom de référence de l'entrepôt est requis
 StockMovementForId=ID de mouvement %d
 ListMouvementStockProject=Liste des mouvements de stock associés au projet
 StocksArea=Zone d'entrepôts
-LocationSummary=Nom abrégé
 MassStockTransferShort=Transfert de stock de masse
 NumberOfUnit=Nombre d'unités
 UnitPurchaseValue=Prix ​​unitaire d'achat

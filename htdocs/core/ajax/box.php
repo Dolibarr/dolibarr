@@ -42,7 +42,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
 
 $boxid = GETPOST('boxid', 'int');
 $boxorder = GETPOST('boxorder');
-$userid = GETPOST('userid');
 $zone = GETPOST('zone', 'int');
 $userid = GETPOST('userid', 'int');
 

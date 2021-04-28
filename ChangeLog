@@ -10,8 +10,10 @@ For users:
 NEW: Several security issues after a second private bug bounty campaign. 
 
 
+
 For developers:
 ---------------
+* start new module EventOrganization
 
 
 
@@ -20,6 +22,7 @@ WARNING:
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * The ICS value for direct debit or credit transfer is now store on each bank account instead of into the global setup.
 * API /setup/shipment_methods has been replaced with API /setup/shipping_methods
+* Field "total" renamed into to "total_ht" for table llx_facture, llx_facture_rec for better field name consistency
 * Field "tva" renamed into "total_tva" for table llx_propal, llx_supplier_proposal, llx_commande, llx_commande_fournisseur for better field name consistency
 * Field "total" renamed into "total_ttc" for table lx_propal, llx_supplier_proposal for better field name consistency
 * If your database is PostgreSql, you must use version 9.1.0 or more (Dolibarr need the SQL function CONCAT)

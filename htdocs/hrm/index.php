@@ -84,7 +84,9 @@ if (!empty($conf->holiday->enabled) && !empty($setupcompanynotcomplete)) {
 $childids = $user->getAllChildIds();
 $childids[] = $user->id;
 
-llxHeader('', $langs->trans('HRMArea'));
+$title = $langs->trans('HRMArea');
+
+llxHeader('', $title, '');
 
 print load_fiche_titre($langs->trans("HRMArea"), '', 'hrm');
 

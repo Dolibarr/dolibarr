@@ -279,6 +279,11 @@ div.pagination li:first-child a.btnTitle{
 	margin-left: 10px;
 }
 
+.button-title-separator{
+	display: inline-block;
+	clear: both;
+	width: 20px;
+}
 
 .imgforviewmode {
 	color: #aaa;

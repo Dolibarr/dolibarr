@@ -22,7 +22,7 @@ ProductService=Trainning of Dienst
 AllProducts=Alle Trainingen en Diensten
 ChooseProduct/Service=Kies Training of Dienst
 ForceBuyingPriceIfNull=Forceren inkoop/kostprijs naar verkoopprijs als dit niet is gedefinieerd
-ForceBuyingPriceIfNullDetails=Als inkoop / kostprijs niet is gedefinieerd en deze optie staat op "AAN", zal de marge nul zijn (inkoop / kostprijs = verkoopprijs). Indien ("UIT"), zal marge gelijk zijn aan de voorgestelde standaard.
+ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0 on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100% if no default value can be found).
 MARGIN_METHODE_FOR_DISCOUNT=Marge methode voor globale discounts
 UseDiscountAsProduct=Als een training
 UseDiscountAsService=Als een dienst

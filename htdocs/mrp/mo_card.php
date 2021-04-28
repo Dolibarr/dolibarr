@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -194,7 +194,9 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $formproject = new FormProjets($db);
 
-llxHeader('', $langs->trans('Mo'), '');
+$title = $langs->trans('Mo')." - ".$langs->trans("Card");
+
+llxHeader('', $title, '');
 
 // Example : Adding jquery code
 print '<script type="text/javascript" language="javascript">

@@ -273,7 +273,11 @@ class MyObject extends CommonObject
 	 */
 	public function create(User $user, $notrigger = false)
 	{
-		return $this->createCommon($user, $notrigger);
+		$resultcreate = $this->createCommon($user, $notrigger);
+
+		//$resultvalidate = $this->validate($user, $notrigger);
+
+		return $resultcreate;
 	}
 
 	/**

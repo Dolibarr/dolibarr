@@ -1397,7 +1397,7 @@ if ($id > 0) {
 
 	// Confirmation suppression action
 	if ($action == 'delete') {
-		print $form->formconfirm("card.php?id=".$id, $langs->trans("DeleteAction"), $langs->trans("ConfirmDeleteAction"), "confirm_delete", '', '', 1);
+		print $form->formconfirm("card.php?id=".urlencode($id), $langs->trans("DeleteAction"), $langs->trans("ConfirmDeleteAction"), "confirm_delete", '', '', 1);
 	}
 
 	if ($action == 'edit') {

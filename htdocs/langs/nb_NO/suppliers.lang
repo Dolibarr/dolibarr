@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - vendors
 Suppliers=Leverandører
 SuppliersInvoice=Leverandørfaktura
+SupplierInvoices=Leverandørfakturaer
 ShowSupplierInvoice=Vis leverandørfaktura
 NewSupplier=Ny leverandør
 History=Historikk

@@ -296,7 +296,7 @@ if (!empty($search_town)) {
 	$sql .= natural_search('s.town', $search_town);
 }
 if ($search_country > 0) {
-	$sql .= ' AND s.fk_pays = '.$search_country.'';
+	$sql .= ' AND s.fk_pays = '.((int) $search_country);
 }
 $sql .= " AND f.entity IN (".getEntity('supplier_invoice').")";
 if ($socid) {
@@ -588,10 +588,10 @@ if (count($amount)) {
 		if (!empty($conf->supplier_proposal->enabled) && $key > 0) {
 			print '&nbsp;<a href="'.DOL_URL_ROOT.'/comm/propal/stats/index.php?socid='.$key.'">'.img_picto($langs->trans("ProposalStats"), "stats").'</a>&nbsp;';
 		}
-		if (!empty($conf->fournisseur->enabled) && $key > 0) {
+		if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled)) && $key > 0) {
 			print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/stats/index.php?mode=supplier&socid='.$key.'">'.img_picto($langs->trans("OrderStats"), "stats").'</a>&nbsp;';
 		}
-		if (!empty($conf->fournisseur->enabled) && $key > 0) {
+		if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_invoice->enabled)) && $key > 0) {
 			print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/facture/stats/index.php?mode=supplier&socid='.$key.'">'.img_picto($langs->trans("InvoiceStats"), "stats").'</a>&nbsp;';
 		}
 		print '</td>';

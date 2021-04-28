@@ -4098,6 +4098,11 @@ function migrate_delete_old_dir($db, $langs, $conf)
 		DOL_DOCUMENT_ROOT.'/core/modules/facture/mercure',
 	);
 
+	// On linux, we can also removed old directory with a different case than new directory.
+	if (!empty($_SERVER["WINDIR"])) {
+		$filetodeletearray[] = DOL_DOCUMENT_ROOT.'/includes/phpoffice/PhpSpreadsheet';
+	}
+
 	foreach ($filetodeletearray as $filetodelete) {
 		//print '<b>'.$filetodelete."</b><br>\n";
 		if (file_exists($filetodelete)) {

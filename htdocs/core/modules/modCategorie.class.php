@@ -130,7 +130,7 @@ class modCategorie extends DolibarrModules
 		if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
 			$typeexample .= ($typeexample ? " / " : "")."0=Product-Service";
 		}
-		if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+		if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
 			$typeexample .= ($typeexample ? "/" : "")."1=Supplier";
 		}
 		if (!empty($conf->societe->enabled)) {
@@ -484,7 +484,7 @@ class modCategorie extends DolibarrModules
 		}
 
 		// 1 Suppliers
-		if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+		if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
 			$r++;
 			$this->import_code[$r] = $this->rights_class.'_1_'.Categorie::$MAP_ID_TO_CODE[1];
 			$this->import_label[$r] = "CatSupLinks"; // Translation key

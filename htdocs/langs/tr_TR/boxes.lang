@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - boxes
+BoxDolibarrStateBoard=Statistics on main business objects in database
 BoxLoginInformation=Oturum açma bilgileri
 BoxLastRssInfos=RSS Bilgisi
 BoxLastProducts=Son %s Ürün/Hizmet
@@ -17,9 +18,13 @@ BoxLastActions=Son eylemler
 BoxLastContracts=Son sözleşmeler
 BoxLastContacts=Son kişiler/adresler
 BoxLastMembers=Son üyeler
+BoxLastModifiedMembers=Latest modified members
+BoxLastMembersSubscriptions=Latest member subscriptions
 BoxFicheInter=Son müdahaleler
 BoxCurrentAccounts=Açık hesaplar bakiyesi
 BoxTitleMemberNextBirthdays=Bu ayın doğum günleri (üyeler)
+BoxTitleMembersByType=Members by type
+BoxTitleMembersSubscriptionsByYear=Members Subscriptions by year
 BoxTitleLastRssInfos=%s'dan en son %s haber
 BoxTitleLastProducts=Ürünler/Hizmetler: değiştirilen son %s
 BoxTitleProductsAlertStock=Ürünler: stok uyarısı
@@ -107,5 +112,9 @@ BoxTitleLastCustomerShipments=Son %s müşteri gönderileri
 NoRecordedShipments=Kayıtlı müşteri gönderimi yok
 BoxCustomersOutstandingBillReached=Customers with oustanding limit reached
 # Pages
-AccountancyHome=Muhasebe
+UsersHome=Home users and groups
+MembersHome=Home Membership
+ThirdpartiesHome=Home Thirdparties
+TicketsHome=Home Tickets
+AccountancyHome=Home Accountancy
 ValidatedProjects=Doğrulanmış projeler

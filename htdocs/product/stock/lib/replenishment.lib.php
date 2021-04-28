@@ -126,7 +126,7 @@ function ordered($product_id)
 	} else {
 		$sql .= ' cf.fk_statut < 5';
 	}
-	$sql .= ' AND cfd.fk_product = '.$product_id;
+	$sql .= ' AND cfd.fk_product = '.((int) $product_id);
 	$sql .= ' GROUP BY cfd.fk_product';
 
 	$resql = $db->query($sql);

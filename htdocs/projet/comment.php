@@ -80,8 +80,9 @@ include DOL_DOCUMENT_ROOT.'/core/actions_comments.inc.php';
  * View
 */
 
+$title = $langs->trans('CommentPage');
 
-llxHeader('', $langs->trans("CommentPage"));
+llxHeader('', $title, '');
 
 $form = new Form($db);
 $formother = new FormOther($db);

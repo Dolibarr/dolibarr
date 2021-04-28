@@ -371,7 +371,7 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 					$nbko++;
 				}
 			} elseif ($feature == 'commande_fournisseur') {
-				if (!$user->rights->fournisseur->commande->creer) {
+				if (!$user->rights->fournisseur->commande->creer || !$user->rights->supplier_order->creer) {
 					$createok = 0;
 					$nbko++;
 				}
@@ -534,7 +534,7 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 
 /**
  * Check access by user to object.
- * This function is also called by restrictedArea
+ * This function is also called by restrictedArea that check before if module is enabled and permissions of user compared to $action.
  *
  * @param User			$user					User to check
  * @param array			$featuresarray			Features/modules to check. Example: ('user','service','member','project','task',...)

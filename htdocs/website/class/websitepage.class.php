@@ -413,7 +413,7 @@ class WebsitePage extends CommonObject
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid' || $key == 't.fk_website' || $key == 'status') {
-					$sqlwhere[] = $key.' = '.$value;
+					$sqlwhere[] = $key.' = '.((int) $value);
 				} elseif ($key == 'type_container') {
 					$sqlwhere[] = $key." = '".$this->db->escape($value)."'";
 				} elseif ($key == 'lang' || $key == 't.lang') {
@@ -426,7 +426,7 @@ class WebsitePage extends CommonObject
 						}
 						$listoflang[] = "'".$this->db->escape(substr(str_replace("'", '', $tmpvalue), 0, 2))."'";
 					}
-					$stringtouse = $key." IN (".$this->db->sanitize(join(',', $listoflang)).")";
+					$stringtouse = $key." IN (".$this->db->sanitize(join(',', $listoflang), 1).")";
 					if ($foundnull) {
 						$stringtouse = '('.$stringtouse.' OR '.$key.' IS NULL)';
 					}
@@ -515,7 +515,7 @@ class WebsitePage extends CommonObject
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid' || $key == 't.fk_website' || $key == 'status') {
-					$sqlwhere[] = $key.' = '.$value;
+					$sqlwhere[] = $key.' = '.((int) $value);
 				} elseif ($key == 'type_container') {
 					$sqlwhere[] = $key." = '".$this->db->escape($value)."'";
 				} elseif ($key == 'lang' || $key == 't.lang') {
@@ -528,7 +528,7 @@ class WebsitePage extends CommonObject
 						}
 						$listoflang[] = "'".$this->db->escape(substr(str_replace("'", '', $tmpvalue), 0, 2))."'";
 					}
-					$stringtouse = $key." IN (".$this->db->sanitize(join(',', $listoflang)).")";
+					$stringtouse = $key." IN (".$this->db->sanitize(join(',', $listoflang), 1).")";
 					if ($foundnull) {
 						$stringtouse = '('.$stringtouse.' OR '.$key.' IS NULL)';
 					}

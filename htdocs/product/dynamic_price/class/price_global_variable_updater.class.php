@@ -487,7 +487,7 @@ class PriceGlobalVariableUpdater
 			if ($this->type == 0) {
 				// Call JSON request
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
-				$tmpresult = getURLContent($url);
+				$tmpresult = getURLContent($url, 'GET', '', 1, array(), array('http', 'https'), 0);
 				$code = $tmpresult['http_code'];
 				$result = $tmpresult['content'];
 
