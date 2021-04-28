@@ -1883,7 +1883,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}
 
 				// Validate
-				if (Adherent::STATUS_DRAFT == object->statut) {
+				if (Adherent::STATUS_DRAFT == $object->statut) {
 					if ($user->rights->adherent->creer) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$id.'&action=valid">'.$langs->trans("Validate").'</a></div>'."\n";
 					} else {
