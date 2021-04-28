@@ -82,7 +82,7 @@ dol_include_once('/knowledgemanagement/lib/knowledgemanagement_knowledgerecord.l
 
 
 // Load translation files required by the page
-$langs->loadLangs(array("knowledgemanagement@knowledgemanagement", "other"));
+$langs->loadLangs(array("knowledgemanagement", "other"));
 
 // Get parameters
 $id = GETPOST('id', 'int');

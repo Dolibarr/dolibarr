@@ -44,21 +44,21 @@ if (!$res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i + 1)))."/main.inc
 	$res = @include dirname(substr($tmp, 0, ($i + 1)))."/main.inc.php";
 }
 // Try main.inc.php using relative path
+if (!$res && file_exists("../main.inc.php")) {
+	$res = @include "../main.inc.php";
+}
 if (!$res && file_exists("../../main.inc.php")) {
 	$res = @include "../../main.inc.php";
-}
-if (!$res && file_exists("../../../main.inc.php")) {
-	$res = @include "../../../main.inc.php";
 }
 if (!$res) {
 	die("Include of main fails");
 }
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-require_once '../lib/knowledgemanagement.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/knowledgemanagement/lib/knowledgemanagement.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('knowledgemanagement@knowledgemanagement', 'admin'));
+$langs->loadLangs(array('knowledgemanagement', 'admin'));
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);

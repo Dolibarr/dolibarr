@@ -31,7 +31,7 @@ function knowledgerecordPrepareHead($object)
 {
 	global $db, $langs, $conf;
 
-	$langs->load("knowledgemanagement@knowledgemanagement");
+	$langs->load("knowledgemanagement");
 
 	$h = 0;
 	$head = array();

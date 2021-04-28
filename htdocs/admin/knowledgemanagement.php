@@ -40,25 +40,23 @@ if (!$res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i + 1)))."/main.inc
 	$res = @include dirname(substr($tmp, 0, ($i + 1)))."/main.inc.php";
 }
 // Try main.inc.php using relative path
+if (!$res && file_exists("../main.inc.php")) {
+	$res = @include "../main.inc.php";
+}
 if (!$res && file_exists("../../main.inc.php")) {
 	$res = @include "../../main.inc.php";
-}
-if (!$res && file_exists("../../../main.inc.php")) {
-	$res = @include "../../../main.inc.php";
 }
 if (!$res) {
 	die("Include of main fails");
 }
-
 global $langs, $user;
 
 // Libraries
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
-require_once '../lib/knowledgemanagement.lib.php';
-//require_once "../class/myclass.class.php";
+require_once DOL_DOCUMENT_ROOT."/knowledgemanagement/lib/knowledgemanagement.lib.php";
 
 // Translations
-$langs->loadLangs(array("admin", "knowledgemanagement@knowledgemanagement"));
+$langs->loadLangs(array("admin", "knowledgemanagement"));
 
 // Access control
 if (!$user->admin) {
@@ -212,7 +210,7 @@ print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 
 // Configuration header
 $head = knowledgemanagementAdminPrepareHead();
-print dol_get_fiche_head($head, 'settings', '', -1, "knowledgemanagement@knowledgemanagement");
+print dol_get_fiche_head($head, 'knowledgemanagement', $langs->trans('ModuleKnowledgeManagementName'), -1, "knowledgemanagement");
 
 // Setup page goes here
 echo '<span class="opacitymedium">'.$langs->trans("KnowledgeManagementSetupPage").'</span><br><br>';

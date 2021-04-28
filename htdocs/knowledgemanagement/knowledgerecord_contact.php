@@ -59,7 +59,7 @@ dol_include_once('/knowledgemanagement/class/knowledgerecord.class.php');
 dol_include_once('/knowledgemanagement/lib/knowledgemanagement_knowledgerecord.lib.php');
 
 // Load translation files required by the page
-$langs->loadLangs(array("knowledgemanagement@knowledgemanagement", "companies", "other", "mails"));
+$langs->loadLangs(array("knowledgemanagement", "companies", "other", "mails"));
 
 $id     = (GETPOST('id') ?GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
 $ref    = GETPOST('ref', 'alpha');

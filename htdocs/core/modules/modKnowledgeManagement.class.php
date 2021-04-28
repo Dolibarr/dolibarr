@@ -45,7 +45,7 @@ class modKnowledgeManagement extends DolibarrModules
 
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
-		$this->numero = 500000; // TODO Go on page https://wiki.dolibarr.org/index.php/List_of_modules_id to reserve an id number for your module
+		$this->numero = 80000; // TODO Go on page https://wiki.dolibarr.org/index.php/List_of_modules_id to reserve an id number for your module
 
 		// Key text used to identify module (for permissions, menus, etc...)
 		$this->rights_class = 'knowledgemanagement';
@@ -79,7 +79,7 @@ class modKnowledgeManagement extends DolibarrModules
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
 		// To use a supported fa-xxx css style of font awesome, use this->picto='xxx'
-		$this->picto = 'knowledgemanagement@knowledgemanagement';
+		$this->picto = 'generic';
 
 		// Define some features supported by module (triggers, login, substitutions, menus, css, etc...)
 		$this->module_parts = array(
@@ -126,7 +126,7 @@ class modKnowledgeManagement extends DolibarrModules
 		$this->dirs = array("/knowledgemanagement/temp");
 
 		// Config pages. Put here list of php page, stored into knowledgemanagement/admin directory, to use to setup module.
-		$this->config_page_url = array("setup.php@knowledgemanagement");
+		$this->config_page_url = array("knowledgemanagement.php");
 
 		// Dependencies
 		// A condition to hide module
@@ -137,7 +137,7 @@ class modKnowledgeManagement extends DolibarrModules
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
 
 		// The language file dedicated to your module
-		$this->langfiles = array("knowledgemanagement@knowledgemanagement");
+		$this->langfiles = array("knowledgemanagement");
 
 		// Prerequisites
 		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
@@ -291,11 +291,11 @@ class modKnowledgeManagement extends DolibarrModules
 			'fk_menu'=>'', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'top', // This is a Top menu entry
 			'titre'=>'ModuleKnowledgeManagementName',
-			'prefix' => img_picto('', 'knowledgemanagement@knowledgemanagement', 'class="paddingright pictofixedwidth"'),
+			'prefix' => img_picto('', 'mrp', 'class="paddingright pictofixedwidth"'),
 			'mainmenu'=>'knowledgemanagement',
 			'leftmenu'=>'',
 			'url'=>'/knowledgemanagement/knowledgerecord_list.php',
-			'langs'=>'knowledgemanagement@knowledgemanagement', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'langs'=>'knowledgemanagement', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000 + $r,
 			'enabled'=>'$conf->knowledgemanagement->enabled', // Define condition to show or hide menu entry. Use '$conf->knowledgemanagement->enabled' if entry must be visible if module is enabled.
 			'perms'=>'1', // Use 'perms'=>'$user->rights->knowledgemanagement->knowledgerecord->read' if you want your menu with a permission rules
@@ -359,7 +359,7 @@ class modKnowledgeManagement extends DolibarrModules
 			'leftmenu'=>'knowledgemanagement_knowledgerecord',
 			'url'=>'/knowledgemanagement/knowledgerecord_list.php',
 			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'langs'=>'knowledgemanagement@knowledgemanagement',
+			'langs'=>'knowledgemanagement',
 			'position'=>101,
 			// Define condition to show or hide menu entry. Use '$conf->knowledgemanagement->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 			'enabled'=>'$conf->knowledgemanagement->enabled',
@@ -379,7 +379,7 @@ class modKnowledgeManagement extends DolibarrModules
 			'leftmenu'=>'knowledgemanagement_list',
 			'url'=>'/knowledgemanagement/knowledgerecord_list.php',
 			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'langs'=>'knowledgemanagement@knowledgemanagement',
+			'langs'=>'knowledgemanagement',
 			'position'=>111,
 			// Define condition to show or hide menu entry. Use '$conf->knowledgemanagement->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 			'enabled'=>'$conf->knowledgemanagement->enabled',
@@ -399,7 +399,7 @@ class modKnowledgeManagement extends DolibarrModules
 			'leftmenu'=>'knowledgemanagement_new',
 			'url'=>'/knowledgemanagement/knowledgerecord_card.php?action=create',
 			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'langs'=>'knowledgemanagement@knowledgemanagement',
+			'langs'=>'knowledgemanagement',
 			'position'=>110,
 			// Define condition to show or hide menu entry. Use '$conf->knowledgemanagement->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 			'enabled'=>'$conf->knowledgemanagement->enabled',
@@ -415,7 +415,7 @@ class modKnowledgeManagement extends DolibarrModules
 		$r = 1;
 		/* BEGIN MODULEBUILDER EXPORT KNOWLEDGERECORD */
 		/*
-		$langs->load("knowledgemanagement@knowledgemanagement");
+		$langs->load("knowledgemanagement");
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
 		$this->export_label[$r]='KnowledgeRecordLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_icon[$r]='knowledgerecord@knowledgemanagement';
@@ -446,7 +446,7 @@ class modKnowledgeManagement extends DolibarrModules
 		$r = 1;
 		/* BEGIN MODULEBUILDER IMPORT KNOWLEDGERECORD */
 		/*
-		 $langs->load("knowledgemanagement@knowledgemanagement");
+		 $langs->load("knowledgemanagement");
 		 $this->export_code[$r]=$this->rights_class.'_'.$r;
 		 $this->export_label[$r]='KnowledgeRecordLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
 		 $this->export_icon[$r]='knowledgerecord@knowledgemanagement';

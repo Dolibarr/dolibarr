@@ -91,7 +91,7 @@ abstract class ModeleNumRefKnowledgeRecord
 	public function info()
 	{
 		global $langs;
-		$langs->load("knowledgemanagement@knowledgemanagement");
+		$langs->load("knowledgemanagement");
 		return $langs->trans("NoDescription");
 	}
 
@@ -103,7 +103,7 @@ abstract class ModeleNumRefKnowledgeRecord
 	public function getExample()
 	{
 		global $langs;
-		$langs->load("knowledgemanagement@knowledgemanagement");
+		$langs->load("knowledgemanagement");
 		return $langs->trans("NoExample");
 	}
 

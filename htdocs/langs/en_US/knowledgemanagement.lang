@@ -28,8 +28,6 @@ ModuleKnowledgeManagementDesc = Knowledge Management description
 KnowledgeManagementSetup = Knowledge Management setup
 Settings = Settings
 KnowledgeManagementSetupPage = Knowledge Management setup page
-KNOWLEDGEMANAGEMENT_MYPARAM1 = My param 1
-KNOWLEDGEMANAGEMENT_MYPARAM1Tooltip = My param 1 tooltip
 
 
 #
@@ -44,11 +42,6 @@ KnowledgeManagementAboutPage = Knowledge Management about page
 #
 KnowledgeManagementArea = Knowledge Management
 
-#
-# Sample widget
-#
-MyWidget = My widget
-MyWidgetDescription = My widget description
 
 #
 # Menu
@@ -59,3 +52,4 @@ NewKnowledgeRecord = New knowledge record
 Reply = Reply
 KnowledgeRecords = knowledge record
 KnowledgeRecord = knowledge record
+KnowledgeRecordExtraFields = Extrafields for Knowledge Records
