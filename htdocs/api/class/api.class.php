@@ -72,6 +72,7 @@ class DolibarrApi
 		//$this->r->setSupportedFormats('jsonFormat');
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Check and convert a string depending on its type/name.
 	 *
@@ -82,8 +83,9 @@ class DolibarrApi
 	 * @param	stdClass	$object		Object
 	 * @return 	string					Value cleaned
 	 */
-	protected function checkValForAPI($field, $value, $object)
+	protected function _checkValForAPI($field, $value, $object)
 	{
+		// phpcs:enable
 		// TODO Use type detected in $object->fields
 		if (in_array($field, array('note', 'note_private', 'note_public', 'desc', 'description'))) {
 			return checkVal($value, 'restricthtml');

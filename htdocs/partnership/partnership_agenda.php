@@ -82,7 +82,7 @@ dol_include_once('/partnership/lib/partnership.lib.php');
 
 
 // Load translation files required by the page
-$langs->loadLangs(array("partnership@partnership", "other"));
+$langs->loadLangs(array("partnership", "other"));
 
 // Get parameters
 $id = GETPOST('id', 'int');
