@@ -204,11 +204,10 @@ class Adherent extends CommonObject
 	 */
 	public $morphy;
 
+	/**
+	 * @var int Info can be public
+	 */
 	public $public;
-
-	// -2:excluded, -1:draft, 0:resiliated, >=1:valided,payed
-	// def in common object
-	public $statut; // TODO modify to set statut as deprecated
 
 	/**
 	 * @var string photo of member
