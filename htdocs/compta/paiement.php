@@ -450,7 +450,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		}
 
 		print '<form id="payment_form" name="add_paiement" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-		print '<input type="idden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="add_paiement">';
 		print '<input type="hidden" name="facid" value="'.$facture->id.'">';
 		print '<input type="hidden" name="socid" value="'.$facture->socid.'">';
@@ -465,7 +465,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		print '<table class="noborder tableforfield" centpercent>';
 
 		// Third party
-		print '<tr><td width=30% class="fieldrequired">'.$langs->trans('Company').'</td><td>'.$facture->thirdparty->getNomUrl(4)."</td></tr>\n";
+		print '<tr><td class="width25p fieldrequired">'.$langs->trans('Company').'</td><td>'.$facture->thirdparty->getNomUrl(4)."</td></tr>\n";
 
 		// Date payment
 		print '<tr><td><span class="fieldrequired">'.$langs->trans('Date').'</span></td><td>';
@@ -506,7 +506,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		print '<table class="noborder tableforfield" width="100%">';
 
 		// Bank check number
-		print '<tr><td width=40%>'.$langs->trans('Numero');
+		print '<tr><td class="width40p">'.$langs->trans('Numero');
 		print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
 		print '</td>';
 		print '<td><input name="num_paiement" type="text" class="maxwidth200" value="'.$paymentnum.'"></td></tr>';
