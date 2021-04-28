@@ -461,7 +461,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		print '<div class="fichecenter">';
 		print '<div class="fichehalfleft">';
 		print '<div class="underbanner clearboth"></div>';
-	
+
 		print '<table class="noborder tableforfield" centpercent>';
 
 		// Third party
@@ -502,7 +502,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		print '</div>';
 		print '<div class="fichehalfright"><div class="ficheaddleft">';
 		print '<div class="underbanner clearboth"></div>';
-	
+
 		print '<table class="noborder tableforfield" width="100%">';
 
 		// Bank check number
@@ -533,7 +533,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		print '</div>';
 		print '</div></div>';
 		print '<div style="clear:both"></div>';
-	
+
 		/*
 		 * List of unpaid invoices
 		 */
