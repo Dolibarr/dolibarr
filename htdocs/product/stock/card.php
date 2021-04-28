@@ -460,8 +460,10 @@ if ($action == 'create') {
 				print '</td></tr>';
 			}
 
+			print '<tr>';
+
 			// Description
-			print '<tr><td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>'.nl2br($object->description).'</td></tr>';
+			print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>'.dol_htmlentitiesbr($object->description).'</td></tr>';
 
 			$calcproductsunique = $object->nb_different_products();
 			$calcproducts = $object->nb_products();
