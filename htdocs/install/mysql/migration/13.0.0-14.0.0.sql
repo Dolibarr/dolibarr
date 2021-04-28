@@ -437,5 +437,5 @@ ALTER TABLE llx_entrepot ADD COLUMN fk_project INTEGER DEFAULT NULL AFTER entity
 UPDATE llx_const SET value = 'github' WHERE __DECRYPT('name')__ = 'MAIN_BUGTRACK_ENABLELINK' AND __DECRYPT('value')__ = 1;
 
 -- For MultiCompany PMP per entity
-ALTER TABLE llx_product_perentity ADD pmp FLOAT NULL DEFAULT NULL AFTER accountancy_code_buy_export
+ALTER TABLE llx_product_perentity ADD COLUMN pmp FLOAT NULL DEFAULT NULL AFTER accountancy_code_buy_export
 
