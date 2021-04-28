@@ -1092,6 +1092,8 @@ class Product extends CommonObject
 			$sql .= ", customcode = '".$this->db->escape($this->customcode)."'";
 			$sql .= ", fk_country = ".($this->country_id > 0 ? (int) $this->country_id : 'null');
 			$sql .= ", fk_state = ".($this->state_id > 0 ? (int) $this->state_id : 'null');
+			$sql .= ", lifetime = ".($this->lifetime > 0 ? (int) $this->lifetime : 'null');
+			$sql .= ", qc_frequency = ".($this->qc_frequency > 0 ? (int) $this->qc_frequency : 'null');
 			$sql .= ", note = ".(isset($this->note) ? "'".$this->db->escape($this->note)."'" : 'null');
 			$sql .= ", duration = '".$this->db->escape($this->duration_value.$this->duration_unit)."'";
 			if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
@@ -2171,7 +2173,7 @@ class Product extends CommonObject
 			return -1;
 		}
 
-		$sql = "SELECT p.rowid, p.ref, p.ref_ext, p.label, p.description, p.url, p.note_public, p.note as note_private, p.customcode, p.fk_country, p.fk_state, p.price, p.price_ttc,";
+		$sql = "SELECT p.rowid, p.ref, p.ref_ext, p.label, p.description, p.url, p.note_public, p.note as note_private, p.customcode, p.fk_country, p.fk_state, p.lifetime, p.qc_frequency, p.price, p.price_ttc,";
 		$sql .= " p.price_min, p.price_min_ttc, p.price_base_type, p.cost_price, p.default_vat_code, p.tva_tx, p.recuperableonly as tva_npr, p.localtax1_tx, p.localtax2_tx, p.localtax1_type, p.localtax2_type, p.tosell,";
 		$sql .= " p.tobuy, p.fk_product_type, p.duration, p.fk_default_warehouse, p.seuil_stock_alerte, p.canvas, p.net_measure, p.net_measure_units, p.weight, p.weight_units,";
 		$sql .= " p.length, p.length_units, p.width, p.width_units, p.height, p.height_units,";
@@ -2227,6 +2229,8 @@ class Product extends CommonObject
 				$this->country_id                    = $obj->fk_country;
 				$this->country_code = getCountry($this->country_id, 2, $this->db);
 				$this->state_id = $obj->fk_state;
+				$this->lifetime                     = $obj->lifetime;
+				$this->qc_frequency                 = $obj->qc_frequency;
 				$this->price                        = $obj->price;
 				$this->price_ttc                    = $obj->price_ttc;
 				$this->price_min                    = $obj->price_min;

@@ -332,6 +332,8 @@ if (empty($reshook)) {
 			$object->customcode              = GETPOST('customcode', 'alphanohtml');
 			$object->country_id = GETPOST('country_id', 'int');
 			$object->state_id = GETPOST('state_id', 'int');
+			$object->lifetime               = GETPOST('lifetime', 'int');
+			$object->qc_frequency           = GETPOST('qc_frequency', 'int');
 			$object->duration_value     	 = $duration_value;
 			$object->duration_unit      	 = $duration_unit;
 			$object->fk_default_warehouse	 = GETPOST('fk_default_warehouse');
@@ -473,8 +475,8 @@ if (empty($reshook)) {
 				$object->customcode             = GETPOST('customcode', 'alpha');
 				$object->country_id = GETPOST('country_id', 'int');
 				$object->state_id = GETPOST('state_id', 'int');
-				$object->lifetime = GETPOST('lifetime', 'int');
-				$object->qc_frequency = GETPOST('qc_frequency', 'int');
+				$object->lifetime               = GETPOST('lifetime', 'int');
+				$object->qc_frequency           = GETPOST('qc_frequency', 'int');
 				$object->status                 = GETPOST('statut', 'int');
 				$object->status_buy             = GETPOST('statut_buy', 'int');
 				$object->status_batch = GETPOST('status_batch', 'aZ09');
