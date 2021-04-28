@@ -259,7 +259,7 @@ create table llx_salary
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   ref             varchar(30) NULL,           -- payment reference number (currently NULL because there is no numbering manager yet)
   label           varchar(255),
-  tms             timestamp,
+  tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   datec           datetime,                   -- Create date
   fk_user         integer NOT NULL,
   datep           date,                       -- payment date
