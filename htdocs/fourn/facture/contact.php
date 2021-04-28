@@ -182,26 +182,22 @@ if ($id > 0 || !empty($ref)) {
 		print '<table class="border centpercent tableforfield">';
 		print '<tr><td class="titlefield">'.$langs->trans('Type').'</td><td>';
 		print $object->getLibType();
-		if ($object->type == FactureFournisseur::TYPE_REPLACEMENT)
-		{
+		if ($object->type == FactureFournisseur::TYPE_REPLACEMENT) {
 			$facreplaced = new FactureFournisseur($db);
 			$facreplaced->fetch($object->fk_facture_source);
 			print ' ('.$langs->transnoentities("ReplaceInvoice", $facreplaced->getNomUrl(1)).')';
 		}
-		if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE)
-		{
+		if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
 			$facusing = new FactureFournisseur($db);
 			$facusing->fetch($object->fk_facture_source);
 			print ' ('.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1)).')';
 		}
 
 		$facidavoir = $object->getListIdAvoirFromInvoice();
-		if (count($facidavoir) > 0)
-		{
+		if (count($facidavoir) > 0) {
 			print ' ('.$langs->transnoentities("InvoiceHasAvoir");
 			$i = 0;
-			foreach ($facidavoir as $fid)
-			{
+			foreach ($facidavoir as $fid) {
 				if ($i == 0) print ' ';
 				else print ',';
 				$facavoir = new FactureFournisseur($db);
@@ -210,8 +206,7 @@ if ($id > 0 || !empty($ref)) {
 			}
 			print ')';
 		}
-		if ($facidnext > 0)
-		{
+		if ($facidnext > 0) {
 			$facthatreplace = new FactureFournisseur($db);
 			$facthatreplace->fetch($facidnext);
 			print ' ('.$langs->transnoentities("ReplacedByInvoice", $facthatreplace->getNomUrl(1)).')';
