@@ -149,9 +149,6 @@ if ($object->id > 0) {
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0);
 
-	print '<div class="fichecenter">';
-	print '<div class="underbanner clearboth"></div>';
-
 	// Build file list
 	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
 	$totalsize = 0;
@@ -166,74 +163,84 @@ if ($object->id > 0) {
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
 	}
 
-	print '<table class="border tableforfield centpercent">';
+	print '<div class="fichecenter">';
+	print '<div class="fichehalfleft">';
+	print '<div class="underbanner clearboth"></div>';
 
-	// Type
+
+	print '<table class="border centpercent tableforfield">';
 	print '<tr><td class="titlefield">'.$langs->trans('Type').'</td><td>';
 	print $object->getLibType();
-	if ($object->type == FactureFournisseur::TYPE_REPLACEMENT) {
+	if ($object->type == FactureFournisseur::TYPE_REPLACEMENT)
+	{
 		$facreplaced = new FactureFournisseur($db);
 		$facreplaced->fetch($object->fk_facture_source);
 		print ' ('.$langs->transnoentities("ReplaceInvoice", $facreplaced->getNomUrl(1)).')';
 	}
-	if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
+	if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE)
+	{
 		$facusing = new FactureFournisseur($db);
 		$facusing->fetch($object->fk_facture_source);
 		print ' ('.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1)).')';
 	}
 
 	$facidavoir = $object->getListIdAvoirFromInvoice();
-	if (count($facidavoir) > 0) {
+	if (count($facidavoir) > 0)
+	{
 		print ' ('.$langs->transnoentities("InvoiceHasAvoir");
 		$i = 0;
-		foreach ($facidavoir as $id) {
-			if ($i == 0) {
-				print ' ';
-			} else {
-				print ',';
-			}
+		foreach ($facidavoir as $fid)
+		{
+			if ($i == 0) print ' ';
+			else print ',';
 			$facavoir = new FactureFournisseur($db);
-			$facavoir->fetch($id);
+			$facavoir->fetch($fid);
 			print $facavoir->getNomUrl(1);
 		}
 		print ')';
 	}
-	/*
 	if ($facidnext > 0)
 	{
-		$facthatreplace=new FactureFournisseur($db);
+		$facthatreplace = new FactureFournisseur($db);
 		$facthatreplace->fetch($facidnext);
-		print ' ('.$langs->transnoentities("ReplacedByInvoice",$facthatreplace->getNomUrl(1)).')';
+		print ' ('.$langs->transnoentities("ReplacedByInvoice", $facthatreplace->getNomUrl(1)).')';
 	}
-	*/
 	print '</td></tr>';
 
+
 	// Label
-	print '<tr><td>'.$form->editfieldkey("Label", 'label', $object->label, $object, 0).'</td><td>';
-	print $form->editfieldval("Label", 'label', $object->label, $object, 0);
-	print '</td>';
+	print '<tr><td>'.$langs->trans('Label').'</td>';
+	print '<td colspan="3">'.$object->label.'</td>';
 
-	// Amount
-	print '<tr><td>'.$langs->trans('AmountHT').'</td><td>'.price($object->total_ht, 1, $langs, 0, -1, -1, $conf->currency).'</td></tr>';
-	print '<tr><td>'.$langs->trans('AmountVAT').'</td><td>'.price($object->total_tva, 1, $langs, 0, -1, -1, $conf->currency).'</td></tr>';
+	// Date invoice
+	print '<tr><td>';
+	print $langs->trans('Date');
+	print '</td><td colspan="3">';
+	print dol_print_date($object->date, 'daytext');
+	print '</td></tr>';
+	print '</table>';
 
-	// Amount Local Taxes
-	//TODO: Place into a function to control showing by country or study better option
-	if ($mysoc->localtax1_assuj == "1") { //Localtax1
-		print '<tr><td>'.$langs->transcountry("AmountLT1", $mysoc->country_code).'</td>';
-		print '<td>'.price($object->total_localtax1, 1, $langs, 0, -1, -1, $conf->currency).'</td>';
-		print '</tr>';
-	}
-	if ($mysoc->localtax2_assuj == "1") { //Localtax2
-		print '<tr><td>'.$langs->transcountry("AmountLT2", $mysoc->country_code).'</td>';
-		print '<td>'.price($object->total_localtax2, 1, $langs, 0, -1, -1, $conf->currency).'</td>';
-		print '</tr>';
-	}
-	print '<tr><td>'.$langs->trans('AmountTTC').'</td><td>'.price($object->total_ttc, 1, $langs, 0, -1, -1, $conf->currency).'</td></tr>';
-
-	print '</table><br>';
+	print '</div>';
+	print '<div class="fichehalfright"><div class="ficheaddleft">';
 
 	print '<div class="underbanner clearboth"></div>';
+	print '<table class="border centpercent tableforfield">';
+
+	print '<tr><td width="20%" class="titlefield">'.$langs->trans('AmountHT').'</td><td width=150px align="right">';
+	print price($object->total_ht, 1, $langs, 0, -1, -1, $conf->currency);
+	print '</td><td colspan="2" align="left">&nbsp;</td></tr>';
+	print '<tr><td class="titlefield">'.$langs->trans('AmountVAT').'</td><td align="right">';
+	print price($object->total_tva, 1, $langs, 0, -1, -1, $conf->currency);
+	print '</td><td colspan="2" align="left">&nbsp;</td></tr>';
+	print '<tr><td class="titlefield">'.$langs->trans('AmountTTC').'</td><td  align="right">';
+	print price($object->total_ttc, 1, $langs, 0, -1, -1, $conf->currency);
+	print '</td><td colspan="2" align="left">&nbsp;</td></tr>';
+
+	print '</table>';
+	print '</div>';
+
+	print '</div></div>';
+	print '<div style="clear:both"></div>';
 
 	print '<table class="border tableforfield centpercent">';
 
