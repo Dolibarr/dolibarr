@@ -357,7 +357,7 @@ class MouvementStock extends CommonObject
 						$i++;
 					}
 				}
-				elseif ($type == 0 || $type == 3)   // If not found, we add record
+				else
 				{
 					$productlot = new Productlot($this->db);
 					$productlot->entity = $conf->entity;
@@ -374,10 +374,6 @@ class MouvementStock extends CommonObject
 						$this->db->rollback();
 						return -4;
 					}
-				} else {
-					$this->error = $langs->trans("BatchNotFound", $batch);
-					$this->errors[] = $this->error;
-					return -2;
 				}
 			}
 			else
