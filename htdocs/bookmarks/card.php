@@ -196,7 +196,6 @@ if ($action == 'create') {
 
 
 if ($id > 0 && !preg_match('/^add/i', $action)) {
-
 	if ($action == 'edit') {
 		print '<form name="edit" method="POST" action="'.$_SERVER["PHP_SELF"].'" enctype="multipart/form-data">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';

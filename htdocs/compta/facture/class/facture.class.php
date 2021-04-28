@@ -4949,8 +4949,8 @@ class Facture extends CommonInvoice
 		// TODO Add filter to check there is no payment started
 		$sql .= $this->db->order("date_lim_reglement", "ASC");
 		$resql = $this->db->query($sql);
-
-		$this->output .= 'Search unpaid invoices with due date = '.$this->db->idate(dol_get_first_hour(dol_time_plus_duree($now, -1 * $nbdays, 'd'), 'gmt'), 'gmt').'<br>';
+		$tmpidate=$this->db->idate(dol_get_first_hour(dol_time_plus_duree($now, -1 * $nbdays, 'd'), 'gmt'), 'gmt');
+		$this->output .= 'Search unpaid invoices with due date = '.$tmpidate.'<br>';
 
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
