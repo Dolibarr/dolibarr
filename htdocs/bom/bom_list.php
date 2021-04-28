@@ -278,9 +278,11 @@ $form = new Form($db);
 
 $now = dol_now();
 
-//$help_url="EN:Module_BillOfMaterials|FR:Module_BillOfMaterials_FR|ES:Módulo_BillOfMaterials";
-$help_url = '';
+$help_url = 'EN:Module_BOM';
+
 $title = $langs->trans('ListOfBOMs');
+
+llxHeader('', $title, $help_url);
 
 
 // Build and execute select
@@ -393,7 +395,7 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url);
+// llxHeader('', $title, $help_url);
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 

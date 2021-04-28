@@ -727,7 +727,7 @@ if (!empty($id) || !empty($ref)) {
 				$prodstatic->fetch($prodcomb->fk_product_child);
 
 				print $form->formconfirm(
-					"combinations.php?id=".$id."&valueid=".$valueid,
+					"combinations.php?id=".urlencode($id)."&valueid=".urlencode($valueid),
 					$langs->trans('Delete'),
 					$langs->trans('ProductCombinationDeleteDialog', $prodstatic->ref),
 					"confirm_deletecombination",

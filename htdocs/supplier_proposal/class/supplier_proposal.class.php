@@ -290,7 +290,9 @@ class SupplierProposal extends CommonObject
 			$line->tva_tx = $tva_tx;
 
 			$this->lines[] = $line;
+			return 1;
 		}
+		return -1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1401,10 +1403,12 @@ class SupplierProposal extends CommonObject
 
 			// Numbering module definition
 			$soc = new Societe($this->db);
-			$soc->fetch($this->socid);
+			$result = $soc->fetch($this->socid);
+
+			if ($result < 0) return -1;
 
 			// Define new ref
-			if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
+			if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
 				$num = $this->getNextNumRef($soc);
 			} else {
 				$num = $this->ref;
@@ -1525,6 +1529,7 @@ class SupplierProposal extends CommonObject
 				return -1;
 			}
 		}
+		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1555,6 +1560,7 @@ class SupplierProposal extends CommonObject
 				return -1;
 			}
 		}
+		return 0;
 	}
 
 
@@ -1589,6 +1595,7 @@ class SupplierProposal extends CommonObject
 				return -1;
 			}
 		}
+		return 0;
 	}
 
 
@@ -1663,7 +1670,9 @@ class SupplierProposal extends CommonObject
 	public function cloture($user, $status, $note)
 	{
 		global $langs, $conf;
-
+		$hidedetails = 0;
+		$hidedesc = 0;
+		$hideref = 0;
 		$this->statut = $status;
 		$error = 0;
 		$now = dol_now();
@@ -1785,6 +1794,7 @@ class SupplierProposal extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
+		return 1;
 	}
 
 	 /**
@@ -1847,6 +1857,7 @@ class SupplierProposal extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
+		return 1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -2908,8 +2919,10 @@ class SupplierProposalLine extends CommonObjectLine
 			$this->fk_unit = $objp->fk_unit;
 
 			$this->db->free($result);
+			return 1;
 		} else {
 			dol_print_error($this->db);
+			return -1;
 		}
 	}
 

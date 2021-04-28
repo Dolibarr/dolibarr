@@ -1606,7 +1606,8 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
-		// Balance
+
+		// Balance after
 		if (!empty($arrayfields['balance']['checked'])) {
 			if ($mode_balance_ok) {
 				if ($balance >= 0) {
@@ -1627,7 +1628,7 @@ if ($resql) {
 			// Transaction reconciliated or edit link
 			if ($bankaccount->canBeConciliated() > 0) {
 				if ($objp->num_releve) {
-					print '<a href="releve.php?num='.$objp->num_releve.'&account='.$objp->bankid.'&save_lastsearch_values=1">'.$objp->num_releve.'</a>';
+					print '<a href="releve.php?num='.urlencode($objp->num_releve).'&account='.urlencode($objp->bankid).'&save_lastsearch_values=1">'.dol_escape_htmltag($objp->num_releve).'</a>';
 				}
 				if (!$objp->conciliated && $action == 'reconcile') {
 					if ($objp->num_releve) {
@@ -1645,7 +1646,7 @@ if ($resql) {
 
 		if (!empty($arrayfields['b.conciliated']['checked'])) {
 			print '<td class="nowraponall" align="center">';
-			print $objp->conciliated ? $langs->trans("Yes") : $langs->trans("No");
+			print yn($objp->conciliated);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

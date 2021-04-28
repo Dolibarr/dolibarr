@@ -181,7 +181,7 @@ print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "b.rowid", "", $param, 'ali
 print_liste_field_titre("Title", $_SERVER["PHP_SELF"], "b.title", "", $param, 'align="left"', $sortfield, $sortorder);
 print_liste_field_titre("Link", $_SERVER["PHP_SELF"], "b.url", "", $param, 'align="left"', $sortfield, $sortorder);
 print_liste_field_titre("Target", '', '', '', '', 'align="center"');
-print_liste_field_titre("Owner", $_SERVER["PHP_SELF"], "u.lastname", "", $param, 'align="center"', $sortfield, $sortorder);
+print_liste_field_titre("Visibility", $_SERVER["PHP_SELF"], "u.lastname", "", $param, 'align="center"', $sortfield, $sortorder);
 print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "b.dateb", "", $param, 'align="center"', $sortfield, $sortorder);
 print_liste_field_titre("Position", $_SERVER["PHP_SELF"], "b.position", "", $param, 'class="right"', $sortfield, $sortorder);
 print_liste_field_titre('');
@@ -204,8 +204,10 @@ while ($i < min($num, $limit)) {
 	print '</td>';
 
 	$linkintern = 0;
-	$title = $obj->title;
-	$link = $obj->url;
+	$title      = $obj->title;
+	$link       = $obj->url;
+	$canedit    = $user->rights->bookmark->supprimer;
+	$candelete  = $user->rights->bookmark->creer;
 
 	// Title
 	print "<td>";
@@ -251,7 +253,11 @@ while ($i < min($num, $limit)) {
 		$tmpuser = $cacheOfUsers[$obj->fk_user];
 		print $tmpuser->getNomUrl(1);
 	} else {
-		print $langs->trans("Public");
+		print '<span class="opacitymedium">'.$langs->trans("Everybody").'</span>';
+		if (!$user->admin) {
+			$candelete = false;
+			$canedit = false;
+		}
 	}
 	print "</td>\n";
 
@@ -263,10 +269,10 @@ while ($i < min($num, $limit)) {
 
 	// Actions
 	print '<td class="nowrap right">';
-	if ($user->rights->bookmark->creer) {
+	if ($canedit) {
 		print '<a class="editfielda" href="'.DOL_URL_ROOT.'/bookmarks/card.php?action=edit&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.img_edit()."</a>";
 	}
-	if ($user->rights->bookmark->supprimer) {
+	if ($candelete) {
 		print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$obj->rowid.'">'.img_delete().'</a>';
 	} else {
 		print "&nbsp;";

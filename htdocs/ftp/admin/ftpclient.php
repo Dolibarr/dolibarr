@@ -237,6 +237,7 @@ if (!function_exists('ftp_connect')) {
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
 
+			$reg = array();
 			preg_match('/([0-9]+)$/i', $obj->name, $reg);
 			$idrss = $reg[0];
 			//print "x".join(',',$reg)."=".$obj->name."=".$idrss;

@@ -765,7 +765,7 @@ class FactureRec extends CommonInvoice
 	{
 		$rowid = $this->id;
 
-		dol_syslog(get_class($this)."::delete rowid=".$rowid, LOG_DEBUG);
+		dol_syslog(get_class($this)."::delete rowid=".((int) $rowid), LOG_DEBUG);
 
 		$error = 0;
 		$this->db->begin();
@@ -1153,14 +1153,14 @@ class FactureRec extends CommonInvoice
 			$sql .= ", date_end_fill=".((int) $date_end_fill);
 			$sql .= ", fk_product_fournisseur_price=".($fk_fournprice > 0 ? $fk_fournprice : 'null');
 			$sql .= ", buy_price_ht=".($pa_ht ? price2num($pa_ht) : 0);
-			$sql .= ", info_bits=".$info_bits;
-			$sql .= ", rang=".$rang;
-			$sql .= ", special_code=".$special_code;
+			$sql .= ", info_bits=".((int) $info_bits);
+			$sql .= ", rang=".((int) $rang);
+			$sql .= ", special_code=".((int) $special_code);
 			$sql .= ", fk_unit=".($fk_unit ? "'".$this->db->escape($fk_unit)."'" : "null");
-			$sql .= ', multicurrency_subprice = '.$pu_ht_devise;
-			$sql .= ', multicurrency_total_ht = '.$multicurrency_total_ht;
-			$sql .= ', multicurrency_total_tva = '.$multicurrency_total_tva;
-			$sql .= ', multicurrency_total_ttc = '.$multicurrency_total_ttc;
+			$sql .= ', multicurrency_subprice = '.price2num($pu_ht_devise);
+			$sql .= ', multicurrency_total_ht = '.price2num($multicurrency_total_ht);
+			$sql .= ', multicurrency_total_tva = '.price2num($multicurrency_total_tva);
+			$sql .= ', multicurrency_total_ttc = '.price2num($multicurrency_total_ttc);
 			$sql .= " WHERE rowid = ".((int) $rowid);
 
 			dol_syslog(get_class($this)."::updateline", LOG_DEBUG);
@@ -1248,7 +1248,7 @@ class FactureRec extends CommonInvoice
 		$sql .= ' AND suspended = 0';
 		$sql .= ' AND entity = '.$conf->entity; // MUST STAY = $conf->entity here
 		if ($restrictioninvoiceid > 0) {
-			$sql .= ' AND rowid = '.$restrictioninvoiceid;
+			$sql .= ' AND rowid = '.((int) $restrictioninvoiceid);
 		}
 		$sql .= $this->db->order('entity', 'ASC');
 		//print $sql;exit;

@@ -104,8 +104,6 @@ if ($action == 'add') {
 	}
 	if ($result > 0) {
 		setEventMessages($langs->trans("XTargetsAdded", $result), null, 'mesgs');
-		//header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
-		//exit;
 		$action = '';
 	}
 	if ($result == 0) {

@@ -571,7 +571,7 @@ function getState($id, $withcode = '', $dbtouse = 0, $withregion = 0, $outputlan
 
 	$sql = "SELECT d.rowid as id, d.code_departement as code, d.nom as name, d.active, c.label as country, c.code as country_code, r.code_region as region_code, r.nom as region_name FROM";
 	$sql .= " ".MAIN_DB_PREFIX."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r,".MAIN_DB_PREFIX."c_country as c";
-	$sql .= " WHERE d.fk_region=r.code_region and r.fk_pays=c.rowid and d.rowid=".$id;
+	$sql .= " WHERE d.fk_region=r.code_region and r.fk_pays=c.rowid and d.rowid=".((int) $id);
 	$sql .= " AND d.active = 1 AND r.active = 1 AND c.active = 1";
 	$sql .= " ORDER BY c.code, d.code_departement";
 
