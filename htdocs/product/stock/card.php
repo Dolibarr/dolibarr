@@ -460,8 +460,10 @@ if ($action == 'create') {
 				print '</td></tr>';
 			}
 
+			print '<tr>';
+
 			// Description
-			print '<tr><td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>'.nl2br($object->description).'</td></tr>';
+			print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>'.dol_htmlentitiesbr($object->description).'</td></tr>';
 
 			$calcproductsunique = $object->nb_different_products();
 			$calcproducts = $object->nb_products();
@@ -571,6 +573,9 @@ if ($action == 'create') {
 
 			print '<table class="noborder centpercent">';
 			print "<tr class=\"liste_titre\">";
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
+			print $hookmanager->resPrint;
 			print_liste_field_titre("Product", "", "p.ref", "&amp;id=".$id, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("Label", "", "p.label", "&amp;id=".$id, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("NumberOfUnit", "", "ps.reel", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
@@ -591,6 +596,10 @@ if ($action == 'create') {
 			if ($user->rights->stock->creer) {
 				print_liste_field_titre('');
 			}
+			// Hook fields
+			$parameters = array('sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+			$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
+			print $hookmanager->resPrint;
 			print "</tr>\n";
 
 			$totalunit = 0;
@@ -612,6 +621,13 @@ if ($action == 'create') {
 			if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 				$sql .= ",fk_unit";
 			}
+			// Add fields from hooks
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
+			if ($reshook > 0) {			//Note that $sql is replaced if reshook > 0
+				$sql = "";
+			}
+			$sql .= $hookmanager->resPrint;
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_stock as ps, ".MAIN_DB_PREFIX."product as p";
 
 			if ($separatedPMP) {
@@ -656,6 +672,9 @@ if ($action == 'create') {
 
 					//print '<td>'.dol_print_date($objp->datem).'</td>';
 					print '<tr class="oddeven">';
+					$parameters = array('obj'=>$objp);
+					$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
+					print $hookmanager->resPrint;
 					print "<td>";
 					$productstatic->id = $objp->rowid;
 					$productstatic->ref = $objp->ref;

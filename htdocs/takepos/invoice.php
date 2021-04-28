@@ -974,12 +974,12 @@ if ($action == "search") {
 function SendTicket(id)
 {
 	console.log("Open box to select the Print/Send form");
-	$.colorbox({href:"send.php?facid="+id, width:"70%", height:"30%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("SendTicket"); ?>"});
+	$.colorbox({href:"send.php?facid="+id, width:"70%", height:"30%", transition:"none", iframe:"true", title:'<?php echo dol_escape_js($langs->trans("SendTicket")); ?>'});
 }
 
 function Print(id, gift){
-	$.colorbox({href:"receipt.php?facid="+id+"&gift="+gift, width:"40%", height:"90%", transition:"none", iframe:"true", title:"<?php
-	echo $langs->trans("PrintTicket"); ?>"});
+	console.log("Call Print() to generate the receipt.");
+	$.colorbox({href:"receipt.php?facid="+id+"&gift="+gift, width:"40%", height:"90%", transition:"none", iframe:"true", title:'<?php echo dol_escape_js($langs->trans("PrintTicket")); ?>'});
 }
 
 function TakeposPrinting(id){

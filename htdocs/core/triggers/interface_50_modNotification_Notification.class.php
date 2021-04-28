@@ -128,7 +128,7 @@ class InterfaceNotification extends DolibarrTriggers
 				}
 				// Check if module for this event is active
 				if ($qualified) {
-					//print 'xx'.$obj->code;
+					//print 'xx'.$obj->code.' '.$obj->elementtype.'<br>';
 					$element = $obj->elementtype;
 
 					// Exclude events if related module is disabled
@@ -142,7 +142,9 @@ class InterfaceNotification extends DolibarrTriggers
 						$qualified = 0;
 					} elseif ($element == 'member' && empty($conf->adherent->enabled)) {
 						$qualified = 0;
-					} elseif (!in_array($element, array('order_supplier', 'invoice_supplier', 'withdraw', 'shipping', 'member', 'expensereport')) && empty($conf->$element->enabled)) {
+					} elseif (($element == 'expense_report' || $element == 'expensereport') && empty($conf->expensereport->enabled)) {
+						$qualified = 0;
+					} elseif (!in_array($element, array('order_supplier', 'invoice_supplier', 'withdraw', 'shipping', 'member', 'expense_report', 'expensereport')) && empty($conf->$element->enabled)) {
 						$qualified = 0;
 					}
 				}

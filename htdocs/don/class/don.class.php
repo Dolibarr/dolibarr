@@ -7,6 +7,7 @@
  * Copyright (C) 2016      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2019      Thibault FOUCART     <support@ptibogxiv.net>
  * Copyright (C) 2019-2020 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2021      Maxime DEMAREST      <maxime@indelog.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1097,5 +1098,32 @@ class Don extends CommonObject
 		);
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+	}
+
+	/**
+	 * Function to get reamain to pay for a donation
+	 *
+	 * @return   int      					<0 if KO, > reamain to pay if  OK
+	 */
+	public function getRemainToPay()
+	{
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		if (empty($this->id)) {
+			$this->error = 'Missing object id';
+			$this->errors[] = $this->error;
+			dol_syslog(__METHOD__.' : '.$this->error, LOG_ERR);
+			return -1;
+		}
+
+		$sql = 'SELECT SUM(amount) as sum_amount FROM '.MAIN_DB_PREFIX.'payment_donation WHERE fk_donation = '.$this->id;
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			dol_print_error($this->db);
+			return -2;
+		} else {
+			$sum_amount = (float) $this->db->fetch_object($resql)->sum_amount;
+			return (float) $this->amount - $sum_amount;
+		}
 	}
 }
