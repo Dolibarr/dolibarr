@@ -44,7 +44,6 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
  */
 class Adherent extends CommonObject
 {
-
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -331,6 +330,23 @@ class Adherent extends CommonObject
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'visible' => 0, 'position' => 800),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'position' => 805)
 	);
+
+	/**
+	 * Draft status
+	 */
+	const STATUS_DRAFT = 0;
+	/**
+	 * Validated status
+	 */
+	const STATUS_VALIDATED = 1;
+	/**
+	 * Resiliated
+	 */
+	const STATUS_RESILIATED = -1;
+	/**
+	 * Excluded
+	 */
+	const STATUS_EXCLUDED = -2;
 
 
 	/**
