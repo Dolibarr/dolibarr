@@ -184,7 +184,7 @@ foreach ($modules as $key => $module) {
 			}
 		}
 
-		if (empty($found)) {
+		if (!$found) {
 			continue;
 		}
 	}
