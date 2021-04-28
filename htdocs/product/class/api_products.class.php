@@ -1568,7 +1568,7 @@ class Products extends DolibarrApi
 	 * Get product variants.
 	 *
 	 * @param  int 	$id 			ID of Product
-	 * @param  int $includestock  	Default value 0. If parameter is set to 1 the response will contain stock data of each variant 
+	 * @param  int  $includestock  	Default value 0. If parameter is set to 1 the response will contain stock data of each variant 
 	 * @return array
 	 *
 	 * @throws RestException 500
