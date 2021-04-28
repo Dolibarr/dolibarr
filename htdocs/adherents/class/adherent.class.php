@@ -208,7 +208,7 @@ class Adherent extends CommonObject
 
 	// -2:excluded, -1:draft, 0:resiliated, >=1:valided,payed
 	// def in common object
-	//public $status;
+	public $statut = $this->status; // TODO modify to set statut as deprecated
 
 	/**
 	 * @var string photo of member
@@ -357,7 +357,8 @@ class Adherent extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
-		$this->statut = self::STATUS_DRAFT; // shouldn't this be $status ?
+		$this->statut = self::STATUS_DRAFT; 
+		$this->status = $this->statut;
 		// l'adherent n'est pas public par defaut
 		$this->public = 0;
 		// les champs optionnels sont vides
