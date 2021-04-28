@@ -307,7 +307,8 @@ create table llx_product_perentity
     accountancy_code_sell_export  varchar(32),                        -- Selling accountancy code for vat export
     accountancy_code_buy          varchar(32),                        -- Buying accountancy code
     accountancy_code_buy_intra    varchar(32),                        -- Buying accountancy code for vat intracommunity
-    accountancy_code_buy_export   varchar(32)                  		-- Buying accountancy code for vat import
+    accountancy_code_buy_export   varchar(32),                  		-- Buying accountancy code for vat import
+    pmp double(24,8)
 )ENGINE=innodb;
 
 ALTER TABLE llx_product_perentity ADD INDEX idx_product_perentity_fk_product (fk_product);
@@ -435,7 +436,3 @@ ALTER TABLE llx_entrepot ADD COLUMN fk_project INTEGER DEFAULT NULL AFTER entity
 -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
 UPDATE llx_const SET value = 'github' WHERE __DECRYPT('name')__ = 'MAIN_BUGTRACK_ENABLELINK' AND __DECRYPT('value')__ = 1;
-
--- For MultiCompany PMP per entity
-ALTER TABLE llx_product_perentity ADD pmp FLOAT NULL DEFAULT NULL AFTER accountancy_code_buy_export
-
