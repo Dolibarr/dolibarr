@@ -105,8 +105,10 @@ function Floors() {
 
 <?php
 
+print '<center>';
 print $langs->trans("EnableBarOrRestaurantFeatures");
 print ajax_constantonoff("TAKEPOS_BAR_RESTAURANT", array(), $conf->entity, 0, 0, 1, 0);
+print '</center>';
 
 print '<br>';
 
