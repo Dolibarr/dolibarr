@@ -135,7 +135,7 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_valu
 print load_fiche_titre($title, $linkback, 'object_partnership');
 
 $head = partnershipAdminPrepareHead();
-print dol_get_fiche_head($head, 'settings', $tab, -1, 'object_partnership');
+print dol_get_fiche_head($head, 'settings', $tab, -1, '');
 
 $form = new Form($db);
 

@@ -102,7 +102,7 @@ print load_fiche_titre($langs->trans("PartnershipSetup"), $linkback, 'object_par
 
 $head = partnershipAdminPrepareHead();
 
-print dol_get_fiche_head($head, 'partnership_extrafields', $langs->trans("PartnershipExtraFields"), -1, 'partnership');
+print dol_get_fiche_head($head, 'partnership_extrafields', $langs->trans("PartnershipExtraFields"), -1, '');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
