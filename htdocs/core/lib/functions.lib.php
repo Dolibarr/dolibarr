@@ -1991,19 +1991,15 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 	// Clean parameters
 	$to_gmt = false;
 	$offsettz = $offsetdst = 0;
-	if ($tzoutput)
-	{
+	if ($tzoutput) {
 		$to_gmt = true; // For backward compatibility
-		if (is_string($tzoutput))
-		{
-			if ($tzoutput == 'tzserver')
-			{
+		if (is_string($tzoutput)) {
+			if ($tzoutput == 'tzserver') {
 				$to_gmt = false;
 				$offsettzstring = @date_default_timezone_get(); // Example 'Europe/Berlin' or 'Indian/Reunion'
-				$offsettz = 0;
-				$offsetdst = 0;
-			} elseif ($tzoutput == 'tzuser' || $tzoutput == 'tzuserrel')
-			{
+				$offsettz = 0;	// Timezone offset with server timezone, so 0
+				$offsetdst = 0;	// Dst offset with server timezone, so 0
+			} elseif ($tzoutput == 'tzuser' || $tzoutput == 'tzuserrel') {
 				$to_gmt = true;
 				$offsettzstring = (empty($_SESSION['dol_tz_string']) ? 'UTC' : $_SESSION['dol_tz_string']); // Example 'Europe/Berlin' or 'Indian/Reunion'
 				$offsettz = (empty($_SESSION['dol_tz']) ? 0 : $_SESSION['dol_tz']) * 60 * 60; // Will not be used anymore
@@ -2011,54 +2007,77 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 			}
 		}
 	}
-	if (!is_object($outputlangs)) $outputlangs = $langs;
-	if (!$format) $format = 'daytextshort';
+	if (!is_object($outputlangs)) {
+		$outputlangs = $langs;
+	}
+	if (!$format) {
+		$format = 'daytextshort';
+	}
 
 	// Do we have to reduce the length of date (year on 2 chars) to save space.
 	// Note: dayinputnoreduce is same than day but no reduction of year length will be done
 	$reduceformat = (!empty($conf->dol_optimize_smallscreen) && in_array($format, array('day', 'dayhour'))) ? 1 : 0;	// Test on original $format param.
 	$format = preg_replace('/inputnoreduce/', '', $format);	// so format 'dayinputnoreduce' is processed like day
 	$formatwithoutreduce = preg_replace('/reduceformat/', '', $format);
-	if ($formatwithoutreduce != $format) { $format = $formatwithoutreduce; $reduceformat = 1; }  // so format 'dayreduceformat' is processed like day
+	if ($formatwithoutreduce != $format) {
+		$format = $formatwithoutreduce;
+		$reduceformat = 1;
+	}  // so format 'dayreduceformat' is processed like day
 
 	// Change predefined format into computer format. If found translation in lang file we use it, otherwise we use default.
 	// TODO Add format daysmallyear and dayhoursmallyear
-	if ($format == 'day') $format = ($outputlangs->trans("FormatDateShort") != "FormatDateShort" ? $outputlangs->trans("FormatDateShort") : $conf->format_date_short);
-	elseif ($format == 'hour')			$format = ($outputlangs->trans("FormatHourShort") != "FormatHourShort" ? $outputlangs->trans("FormatHourShort") : $conf->format_hour_short);
-	elseif ($format == 'hourduration')	$format = ($outputlangs->trans("FormatHourShortDuration") != "FormatHourShortDuration" ? $outputlangs->trans("FormatHourShortDuration") : $conf->format_hour_short_duration);
-	elseif ($format == 'daytext')			 $format = ($outputlangs->trans("FormatDateText") != "FormatDateText" ? $outputlangs->trans("FormatDateText") : $conf->format_date_text);
-	elseif ($format == 'daytextshort')	$format = ($outputlangs->trans("FormatDateTextShort") != "FormatDateTextShort" ? $outputlangs->trans("FormatDateTextShort") : $conf->format_date_text_short);
-	elseif ($format == 'dayhour')			 $format = ($outputlangs->trans("FormatDateHourShort") != "FormatDateHourShort" ? $outputlangs->trans("FormatDateHourShort") : $conf->format_date_hour_short);
-	elseif ($format == 'dayhoursec')		 $format = ($outputlangs->trans("FormatDateHourSecShort") != "FormatDateHourSecShort" ? $outputlangs->trans("FormatDateHourSecShort") : $conf->format_date_hour_sec_short);
-	elseif ($format == 'dayhourtext')		 $format = ($outputlangs->trans("FormatDateHourText") != "FormatDateHourText" ? $outputlangs->trans("FormatDateHourText") : $conf->format_date_hour_text);
-	elseif ($format == 'dayhourtextshort') $format = ($outputlangs->trans("FormatDateHourTextShort") != "FormatDateHourTextShort" ? $outputlangs->trans("FormatDateHourTextShort") : $conf->format_date_hour_text_short);
-	// Format not sensitive to language
-	elseif ($format == 'dayhourlog')		 $format = '%Y%m%d%H%M%S';
-	elseif ($format == 'dayhourldap')		 $format = '%Y%m%d%H%M%SZ';
-	elseif ($format == 'dayhourxcard')	$format = '%Y%m%dT%H%M%SZ';
-	elseif ($format == 'dayxcard')	 	$format = '%Y%m%d';
-	elseif ($format == 'dayrfc')			 $format = '%Y-%m-%d'; // DATE_RFC3339
-	elseif ($format == 'dayhourrfc')		 $format = '%Y-%m-%dT%H:%M:%SZ'; // DATETIME RFC3339
-	elseif ($format == 'standard')		$format = '%Y-%m-%d %H:%M:%S';
+	if ($format == 'day') {
+		$format = ($outputlangs->trans("FormatDateShort") != "FormatDateShort" ? $outputlangs->trans("FormatDateShort") : $conf->format_date_short);
+	} elseif ($format == 'hour') {
+		$format = ($outputlangs->trans("FormatHourShort") != "FormatHourShort" ? $outputlangs->trans("FormatHourShort") : $conf->format_hour_short);
+	} elseif ($format == 'hourduration') {
+		$format = ($outputlangs->trans("FormatHourShortDuration") != "FormatHourShortDuration" ? $outputlangs->trans("FormatHourShortDuration") : $conf->format_hour_short_duration);
+	} elseif ($format == 'daytext') {
+		$format = ($outputlangs->trans("FormatDateText") != "FormatDateText" ? $outputlangs->trans("FormatDateText") : $conf->format_date_text);
+	} elseif ($format == 'daytextshort') {
+		$format = ($outputlangs->trans("FormatDateTextShort") != "FormatDateTextShort" ? $outputlangs->trans("FormatDateTextShort") : $conf->format_date_text_short);
+	} elseif ($format == 'dayhour') {
+		$format = ($outputlangs->trans("FormatDateHourShort") != "FormatDateHourShort" ? $outputlangs->trans("FormatDateHourShort") : $conf->format_date_hour_short);
+	} elseif ($format == 'dayhoursec') {
+		$format = ($outputlangs->trans("FormatDateHourSecShort") != "FormatDateHourSecShort" ? $outputlangs->trans("FormatDateHourSecShort") : $conf->format_date_hour_sec_short);
+	} elseif ($format == 'dayhourtext') {
+		$format = ($outputlangs->trans("FormatDateHourText") != "FormatDateHourText" ? $outputlangs->trans("FormatDateHourText") : $conf->format_date_hour_text);
+	} elseif ($format == 'dayhourtextshort') {
+		$format = ($outputlangs->trans("FormatDateHourTextShort") != "FormatDateHourTextShort" ? $outputlangs->trans("FormatDateHourTextShort") : $conf->format_date_hour_text_short);
+	} elseif ($format == 'dayhourlog') {
+		// Format not sensitive to language
+		$format = '%Y%m%d%H%M%S';
+	} elseif ($format == 'dayhourldap') {
+		$format = '%Y%m%d%H%M%SZ';
+	} elseif ($format == 'dayhourxcard') {
+		$format = '%Y%m%dT%H%M%SZ';
+	} elseif ($format == 'dayxcard') {
+		$format = '%Y%m%d';
+	} elseif ($format == 'dayrfc') {
+		$format = '%Y-%m-%d'; // DATE_RFC3339
+	} elseif ($format == 'dayhourrfc') {
+		$format = '%Y-%m-%dT%H:%M:%SZ'; // DATETIME RFC3339
+	} elseif ($format == 'standard') {
+		$format = '%Y-%m-%d %H:%M:%S';
+	}
 
-	if ($reduceformat)
-	{
+	if ($reduceformat) {
 		$format = str_replace('%Y', '%y', $format);
 		$format = str_replace('yyyy', 'yy', $format);
 	}
 
 	// If date undefined or "", we return ""
-	if (dol_strlen($time) == 0) return ''; // $time=0 allowed (it means 01/01/1970 00:00:00)
+	if (dol_strlen($time) == 0) {
+		return ''; // $time=0 allowed (it means 01/01/1970 00:00:00)
+	}
 
 	// Clean format
-	if (preg_match('/%b/i', $format))		// There is some text to translate
-	{
+	if (preg_match('/%b/i', $format)) {		// There is some text to translate
 		// We inhibate translation to text made by strftime functions. We will use trans instead later.
 		$format = str_replace('%b', '__b__', $format);
 		$format = str_replace('%B', '__B__', $format);
 	}
-	if (preg_match('/%a/i', $format))		// There is some text to translate
-	{
+	if (preg_match('/%a/i', $format)) {		// There is some text to translate
 		// We inhibate translation to text made by strftime functions. We will use trans instead later.
 		$format = str_replace('%a', '__a__', $format);
 		$format = str_replace('%A', '__A__', $format);
@@ -2067,13 +2086,11 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 
 	// Analyze date
 	$reg = array();
-	if (preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])$/i', $time, $reg))	// Deprecated. Ex: 1970-01-01, 1970-01-01 01:00:00, 19700101010000
-	{
+	if (preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])$/i', $time, $reg)) {	// Deprecated. Ex: 1970-01-01, 1970-01-01 01:00:00, 19700101010000
 		dol_print_error("Functions.lib::dol_print_date function called with a bad value from page ".$_SERVER["PHP_SELF"]);
 		return '';
-	} elseif (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?:?([0-9]+)?/i', $time, $reg))    // Still available to solve problems in extrafields of type date
-	{
-		// This part of code should not be used.
+	} elseif (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?:?([0-9]+)?/i', $time, $reg)) {    // Still available to solve problems in extrafields of type date
+		// This part of code should not be used anymore.
 		dol_syslog("Functions.lib::dol_print_date function called with a bad value from page ".$_SERVER["PHP_SELF"], LOG_WARNING);
 		//if (function_exists('debug_print_backtrace')) debug_print_backtrace();
 		// Date has format 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS'
@@ -2088,23 +2105,22 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 		$ret = adodb_strftime($format, $time + $offsettz + $offsetdst, $to_gmt);
 	} else {
 		// Date is a timestamps
-		if ($time < 100000000000)	// Protection against bad date values
-		{
+		if ($time < 100000000000) {	// Protection against bad date values
 			$timetouse = $time + $offsettz + $offsetdst; // TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
 
-			$ret = adodb_strftime($format, $timetouse, $to_gmt);
-		} else $ret = 'Bad value '.$time.' for date';
+			$ret = adodb_strftime($format, $timetouse, $to_gmt);	// If to_gmt = false then adodb_strftime use TZ of server
+		} else {
+			$ret = 'Bad value '.$time.' for date';
+		}
 	}
 
-	if (preg_match('/__b__/i', $format))
-	{
+	if (preg_match('/__b__/i', $format)) {
 		$timetouse = $time + $offsettz + $offsetdst; // TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
 
 		// Here ret is string in PHP setup language (strftime was used). Now we convert to $outputlangs.
-		$month = adodb_strftime('%m', $timetouse);
+		$month = adodb_strftime('%m', $timetouse, $to_gmt);		// If to_gmt = false then adodb_strftime use TZ of server
 		$month = sprintf("%02d", $month); // $month may be return with format '06' on some installation and '6' on other, so we force it to '06'.
-		if ($encodetooutput)
-		{
+		if ($encodetooutput) {
 			$monthtext = $outputlangs->transnoentities('Month'.$month);
 			$monthtextshort = $outputlangs->transnoentities('MonthShort'.$month);
 		} else {
@@ -2117,11 +2133,11 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 		//print 'x'.$outputlangs->charset_output.'-'.$ret.'x';
 		//return $ret;
 	}
-	if (preg_match('/__a__/i', $format))
-	{
+	if (preg_match('/__a__/i', $format)) {
+		//print "time=$time offsettz=$offsettz offsetdst=$offsetdst offsettzstring=$offsettzstring";
 		$timetouse = $time + $offsettz + $offsetdst; // TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
 
-		$w = adodb_strftime('%w', $timetouse); // TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
+		$w = adodb_strftime('%w', $timetouse, $to_gmt);		// If to_gmt = false then adodb_strftime use TZ of server
 		$dayweek = $outputlangs->transnoentitiesnoconv('Day'.$w);
 		$ret = str_replace('__A__', $dayweek, $ret);
 		$ret = str_replace('__a__', dol_substr($dayweek, 0, 3), $ret);
