@@ -357,7 +357,7 @@ class Adherent extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
-		$this->statut = self::STATUS_DRAFT; 
+		$this->statut = self::STATUS_DRAFT;
 		$this->status = $this->statut;
 		// l'adherent n'est pas public par defaut
 		$this->public = 0;
