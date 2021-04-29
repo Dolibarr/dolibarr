@@ -59,7 +59,7 @@ Notify_TICKET_SENTBYMAIL=メールでチケットメッセージを送信する
 
 # Status
 Read=読む
-Assigned=割り当て済み
+Assigned=割り当て済
 InProgress=進行中
 NeedMoreInformation=情報を待っている
 Answered=答えた
@@ -70,6 +70,8 @@ Deleted=削除
 # Dict
 Type=タイプ
 Severity=重大度
+TicketGroupIsPublic=グループは公開されている
+TicketGroupIsPublicDesc=チケットグループがパブリックの場合、パブリックインターフェイスからチケットを作成するときにフォームに表示される
 
 # Email templates
 MailToSendTicketMessage=チケットメッセージからメールを送信するには
@@ -114,8 +116,8 @@ TicketsShowModuleLogo=パブリックインターフェイスにモジュール�
 TicketsShowModuleLogoHelp=このオプションを有効にすると、パブリックインターフェイスのページでロゴモジュールが非表示になる
 TicketsShowCompanyLogo=パブリックインターフェイスに法人のロゴを表示する
 TicketsShowCompanyLogoHelp=このオプションを有効にすると、パブリックインターフェイスのページで主要法人のロゴが非表示になる。
-TicketsEmailAlsoSendToMainAddress=メインのメールアドレスにも通知を送信する
-TicketsEmailAlsoSendToMainAddressHelp=このオプションを有効にすると、「通知メールの送信元」アドレスにメールが送信される(以下の設定を参照)。
+TicketsEmailAlsoSendToMainAddress=また、メインの電子メールアドレスに通知を送信する
+TicketsEmailAlsoSendToMainAddressHelp=このオプションを有効にすると、セットアップ「%s」で定義されたアドレスにも電子メールが送信される（タブ「%s」を参照）。
 TicketsLimitViewAssignedOnly=現在のユーザーに割り当てられたチケットに表示を制限する(外部ユーザーには無効で、常に依存しているサードパーティに制限される)
 TicketsLimitViewAssignedOnlyHelp=現在のユーザーに割り当てられているチケットのみが表示される。チケット管理権を持つユーザーには適用されない。
 TicketsActivatePublicInterface=パブリックインターフェイスをアクティブ化する
@@ -126,10 +128,10 @@ TicketNumberingModules=チケット番号付けモジュール
 TicketsModelModule=チケットのドキュメントテンプレート
 TicketNotifyTiersAtCreation=作成時にサードパーティに通知する
 TicketsDisableCustomerEmail=パブリックインターフェイスからチケットを作成するときは、常にメールを無効にすること
-TicketsPublicNotificationNewMessage=新規メッセージが追加されたときにメール(s)を送信する
+TicketsPublicNotificationNewMessage=新規メッセージ/コメントがチケットに追加されたときにメール(s)を送信する
 TicketsPublicNotificationNewMessageHelp=新規メッセージがパブリックインターフェイスから追加されたときに電子メール(s)を送信する(割り当てられたユーザーまたは通知電子メールを(更新)および/または通知電子メールに)
 TicketPublicNotificationNewMessageDefaultEmail=通知メール(更新)
-TicketPublicNotificationNewMessageDefaultEmailHelp=チケットにユーザーが割り当てられていない場合、またはユーザーに電子メールがない場合は、このアドレスに新規メッセージ通知を電子メールで送信する。
+TicketPublicNotificationNewMessageDefaultEmailHelp=チケットにユーザが割り当てられていない場合、またはユーザに既知の電子メールがない場合は、新規メッセージ通知ごとにこのアドレスに電子メールを送信する。
 #
 # Index & list page
 #
@@ -302,3 +304,13 @@ BoxLastModifiedTicket=最新の変更されたチケット
 BoxLastModifiedTicketDescription=最新の%s変更チケット
 BoxLastModifiedTicketContent=
 BoxLastModifiedTicketNoRecordedTickets=最近変更されたチケットはない
+BoxTicketType=タイプ別のオープンチケットの数
+BoxTicketSeverity=重大度別のオープンチケットの数
+BoxNoTicketSeverity=開いているチケットなし
+BoxTicketLastXDays=過去%s日ごとの新規チケットの数
+BoxTicketLastXDayswidget = 過去X日間の日ごとの新規チケットの数
+BoxNoTicketLastXDays=過去%s日間に新規チケットなし
+BoxNumberOfTicketByDay=日ごとの新規チケット数
+BoxNewTicketVSClose=今日の新規チケットと今日の終息チケットの数
+TicketCreatedToday=今日作成されたチケット
+TicketClosedToday=本日終息したチケット

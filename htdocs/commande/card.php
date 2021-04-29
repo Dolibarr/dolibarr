@@ -2629,12 +2629,6 @@ if ($action == 'create' && $usercancreate) {
 				print showOnlinePaymentUrl('order', $object->ref).'<br>';
 			}
 
-			// Show direct download link
-			if ($object->statut != Commande::STATUS_DRAFT && !empty($conf->global->ORDER_ALLOW_EXTERNAL_DOWNLOAD)) {
-				print '<br><!-- Link to download main doc -->'."\n";
-				print showDirectDownloadLink($object).'<br>';
-			}
-
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 			// List of actions on element

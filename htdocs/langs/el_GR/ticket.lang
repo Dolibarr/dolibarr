@@ -70,6 +70,8 @@ Deleted=Διαγράφηκε
 # Dict
 Type=Τύπος
 Severity=Δριμύτητα
+TicketGroupIsPublic=Group is public
+TicketGroupIsPublicDesc=If a ticket group is public, it will be visible in the form when creating a ticket from the public interface
 
 # Email templates
 MailToSendTicketMessage=Για να στείλετε email από το μήνυμα εισιτηρίων
@@ -114,8 +116,8 @@ TicketsShowModuleLogo=Εμφανίστε το λογότυπο της ενότη
 TicketsShowModuleLogoHelp=Ενεργοποιήστε αυτήν την επιλογή για να αποκρύψετε τη λειτουργική μονάδα λογότυπου στις σελίδες της δημόσιας διασύνδεσης
 TicketsShowCompanyLogo=Εμφανίστε το λογότυπο της εταιρείας στο δημόσιο περιβάλλον
 TicketsShowCompanyLogoHelp=Ενεργοποιήστε αυτήν την επιλογή για να αποκρύψετε το λογότυπο της κύριας εταιρείας στις σελίδες της δημόσιας διασύνδεσης
-TicketsEmailAlsoSendToMainAddress=Επίσης, αποστέλλετε ειδοποίηση στην κύρια διεύθυνση ηλεκτρονικού ταχυδρομείου
-TicketsEmailAlsoSendToMainAddressHelp=Ενεργοποιήστε αυτή την επιλογή για να στείλετε ένα μήνυμα ηλεκτρονικού ταχυδρομείου στη διεύθυνση &quot;Ειδοποίηση ηλεκτρονικού ταχυδρομείου από&quot; (δείτε την παρακάτω ρύθμιση)
+TicketsEmailAlsoSendToMainAddress=Also send a notification to the main email address
+TicketsEmailAlsoSendToMainAddressHelp=Enable this option to also send an email to the address defined into setup "%s" (see tab "%s")
 TicketsLimitViewAssignedOnly=Περιορίστε την εμφάνιση σε εισιτήρια που έχουν εκχωρηθεί στον τρέχοντα χρήστη (δεν είναι αποτελεσματικά για εξωτερικούς χρήστες, πάντα περιορίζονται στο τρίτο μέρος από το οποίο εξαρτώνται)
 TicketsLimitViewAssignedOnlyHelp=Μόνο εισιτήρια που έχουν εκχωρηθεί στον τρέχοντα χρήστη θα είναι ορατά. Δεν ισχύει για χρήστη με δικαιώματα διαχείρισης εισιτηρίων.
 TicketsActivatePublicInterface=Ενεργοποιήστε τη δημόσια διεπαφή
@@ -126,10 +128,10 @@ TicketNumberingModules=Μονάδα αρίθμησης εισιτηρίων
 TicketsModelModule=Document templates for tickets
 TicketNotifyTiersAtCreation=Ειδοποιήστε τρίτο μέρος στη δημιουργία
 TicketsDisableCustomerEmail=Πάντα να απενεργοποιείτε τα μηνύματα ηλεκτρονικού ταχυδρομείου όταν δημιουργείται ένα εισιτήριο από τη δημόσια διασύνδεση
-TicketsPublicNotificationNewMessage=Send email(s) when a new message is added
+TicketsPublicNotificationNewMessage=Send email(s) when a new message/comment is added to a ticket
 TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
 TicketPublicNotificationNewMessageDefaultEmail=Notifications email to (update)
-TicketPublicNotificationNewMessageDefaultEmailHelp=Send email new message notifications to this address if the ticket don't have a user assigned or the user don't have a email.
+TicketPublicNotificationNewMessageDefaultEmailHelp=Send an email to this address for each new message notifications if the ticket doesn't have a user assigned to it or if the user doesn't have any known email.
 #
 # Index & list page
 #
@@ -302,3 +304,13 @@ BoxLastModifiedTicket=Τελευταία τροποποιημένα εισιτή
 BoxLastModifiedTicketDescription=Τα τελευταία τροποποιημένα εισιτήρια %s
 BoxLastModifiedTicketContent=
 BoxLastModifiedTicketNoRecordedTickets=Δεν υπάρχουν πρόσφατα τροποποιημένα εισιτήρια
+BoxTicketType=Number of open tickets by type
+BoxTicketSeverity=Number of open tickets by severity
+BoxNoTicketSeverity=No tickets opened
+BoxTicketLastXDays=Number of new tickets by days the last %s days
+BoxTicketLastXDayswidget = Number of new tickets by days the last X days
+BoxNoTicketLastXDays=No new tickets the last %s days
+BoxNumberOfTicketByDay=Number of new tickets by day
+BoxNewTicketVSClose=Number of today's new tickets versus today's closed tickets
+TicketCreatedToday=Ticket created today
+TicketClosedToday=Ticket closed today

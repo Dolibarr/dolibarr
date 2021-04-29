@@ -808,12 +808,12 @@ if ($resql) {
 
 	// List of mass actions available
 	$arrayofmassactions = array(
-	//    'presend'=>$langs->trans("SendByMail"),
-	//    'builddoc'=>$langs->trans("PDFMerge"),
+	//    'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
+	//    'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	);
 	// By default, we should never accept deletion of stock movement.
 	if (!empty($conf->global->STOCK_ALLOW_DELETE_OF_MOVEMENT) && $permissiontodelete) {
-		$arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	}
 	if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) {
 		$arrayofmassactions = array();

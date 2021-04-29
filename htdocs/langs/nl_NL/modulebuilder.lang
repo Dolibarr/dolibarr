@@ -133,7 +133,9 @@ IncludeDocGeneration=Ik wil enkele documenten genereren van het object
 IncludeDocGenerationHelp=Als u dit aanvinkt, wordt er een code gegenereerd om een vak "Document genereren" aan de record toe te voegen.
 ShowOnCombobox=Waarde weergeven in combobox
 KeyForTooltip=Sleutel voor knopinfo
-CSSClass=CSS-klasse
+CSSClass=CSS for edit/create form
+CSSViewClass=CSS for read form
+CSSListClass=CSS for list
 NotEditable=Niet bewerkbaar
 ForeignKey=Vreemde sleutel
 TypeOfFieldsHelp=Type velden: <br> varchar (99), dubbel (24,8), real, tekst, html, datetime, timestamp, integer, integer: ClassName: relativepath / to / classfile.class.php [: 1 [: filter]] ('1' betekent we voegen een + -knop toe na de combo om het record te maken, 'filter' kan 'status = 1 EN fk_user = __USER_ID EN entiteit IN (bijvoorbeeld __SHARED_ENTITIES__)' zijn)
