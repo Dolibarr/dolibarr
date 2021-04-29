@@ -74,7 +74,7 @@ if (!empty($cancel)) {
 			exit;
 		}
 	}
-}Luracast/Restler/pull/515/files
+}
 
 // Delete jobs
 if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->cron->delete) {
