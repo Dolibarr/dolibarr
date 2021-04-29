@@ -1978,10 +1978,10 @@ if ($id) {
 								$valuetoshow = $obj->state_code;
 							} elseif ($fieldlist[$field] == 'label' && $tabname[$id] == MAIN_DB_PREFIX.'c_product_nature') {
 								$langs->load("products");
-								$valuetoshow = $langs->trans($obj->{$fieldlist[$field]});
+								$valuetoshow = $langs->trans($obj->{$value});
 							} elseif ($fieldlist[$field] == 'label' && $tabname[$id] == MAIN_DB_PREFIX.'c_productbatch_qcstatus') {
 								$langs->load("productbatch");
-								$valuetoshow = $langs->trans($obj->{$fieldlist[$field]});
+								$valuetoshow = $langs->trans($obj->{$value});
 							}
 							$class .= ($class ? ' ' : '').'tddict';
 							if ($fieldlist[$field] == 'note' && $id == 10) {
