@@ -506,12 +506,12 @@ if ($modecompta == 'CREANCES-DETTES') {
 				// Each month
 				foreach ($totCat['M'] as $k => $v) {
 					if (($k + 1) >= $date_startmonth) {
-						print '<td class="right"><span class="amount">'.price($v).'</span></td>';
+						print '<td class="right nowraponall"><span class="amount">'.price($v).'</span></td>';
 					}
 				}
 				foreach ($totCat['M'] as $k => $v) {
 					if (($k + 1) < $date_startmonth) {
-						print '<td class="right"><span class="amount">'.price($v).'</span></td>';
+						print '<td class="right nowraponall"><span class="amount">'.price($v).'</span></td>';
 					}
 				}
 
