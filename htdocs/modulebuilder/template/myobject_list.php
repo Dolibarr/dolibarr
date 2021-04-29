@@ -182,12 +182,14 @@ $permissiontodelete = $user->rights->mymodule->myobject->delete;
 if (empty($conf->mymodule->enabled)) {
 	accessforbidden('Module not enabled');
 }
-$socid = 0;
-if ($user->socid > 0) { // Protection if external user
-	//$socid = $user->socid;
-	accessforbidden();
-}
-//$result = restrictedArea($user, 'mymodule');
+
+// Security check (enable the most restrictive one)
+if ($user->socid > 0) accessforbidden();
+//if ($user->socid > 0) accessforbidden();
+//$socid = 0; if ($user->socid > 0) $socid = $user->socid;
+//$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
+//restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
+//if (empty($conf->mymodule->enabled)) accessforbidden();
 //if (!$permissiontoread) accessforbidden();
 
 
@@ -289,7 +291,7 @@ foreach ($search as $key => $val) {
 			continue;
 		}
 		$mode_search = (($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key])) ? 1 : 0);
-		if ((strpos($object->fields[$key]['type'], 'integer:') === 0) || (strpos($object->fields[$key]['type'], 'sellist:') === 0)) {
+		if ((strpos($object->fields[$key]['type'], 'integer:') === 0) || (strpos($object->fields[$key]['type'], 'sellist:') === 0) || !empty($object->fields[$key]['arrayofkeyval'])) {
 			if ($search[$key] == '-1' || $search[$key] === '0') {
 				$search[$key] = '';
 			}
