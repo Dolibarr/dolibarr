@@ -538,7 +538,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 							foreach ($months as $k => $v) {
 								if (($k + 1) >= $date_startmonth) {
 									$resultM = $totPerAccount[$cpt['account_number']]['M'][$k];
-									print '<td class="right"><span class="amount">'.price($resultM).'</span>/td>';
+									print '<td class="right"><span class="amount">'.price($resultM).'</span></td>';
 								}
 							}
 							foreach ($months as $k => $v) {
