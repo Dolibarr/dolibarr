@@ -148,7 +148,7 @@ if ($object->id) {
 	 */
 	$head = myobjectPrepareHead($object);
 
-	print dol_get_fiche_head($head, 'contact', $langs->trans("MyObject"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'contact', '', -1, $object->picto);
 
 	$linkback = '<a href="'.dol_buildpath('/mymodule/myobject_list.php', 1).'?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 

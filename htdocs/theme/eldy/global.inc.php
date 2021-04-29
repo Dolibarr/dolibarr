@@ -3215,6 +3215,10 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 .smallpaddingimp {
 	padding: 4px !important;
 }
+input.button[name="upload"] {
+	padding: 4px !important;
+	font-size: 0.9em;
+}
 input.button.smallpaddingimp {
 	font-size: 0.8em;
 }

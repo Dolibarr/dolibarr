@@ -157,7 +157,7 @@ if ($object->id) {
 	 */
 	$head = myobjectPrepareHead($object);
 
-	print dol_get_fiche_head($head, 'document', $langs->trans("MyObject"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'document', '', -1, $object->picto);
 
 
 	// Build file list
