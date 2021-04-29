@@ -38,7 +38,6 @@ ACCOUNTING_MISCELLANEOUS_JOURNAL=Diario diverso
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Informe de Gastos Diario
 ACCOUNTING_SOCIAL_JOURNAL=Diario Social
 ACCOUNTING_ACCOUNT_SUSPENSE=Cuenta contable de espera
-Sens=Significado
 Codejournal=Periódico
 FinanceJournal=Periodo Financiero
 TotalMarge=Margen total de ventas

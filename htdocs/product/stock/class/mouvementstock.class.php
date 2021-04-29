@@ -159,6 +159,40 @@ class MouvementStock extends CommonObject
 		$error = 0;
 		dol_syslog(get_class($this)."::_create start userid=$user->id, fk_product=$fk_product, warehouse_id=$entrepot_id, qty=$qty, type=$type, price=$price, label=$label, inventorycode=$inventorycode, datem=".$datem.", eatby=".$eatby.", sellby=".$sellby.", batch=".$batch.", skip_batch=".$skip_batch);
 
+		// start hook at beginning
+                global $action, $hookmanager;
+                $hookmanager->initHooks(array('mouvementstock'));
+                // Hook of thirdparty module
+                if (is_object($hookmanager)) {
+			$parameters = array(
+		'currentcontext'   => 'mouvementstock',
+		'user'             => &$user,
+		'fk_product'       => &$fk_product,
+		'entrepot_id'      => &$entrepot_id,
+		'qty'              => &$qty,
+		'type'             => &$type,
+		'price'            => &$price,
+		'label'            => &$label,
+		'inventorycode'    => &$inventorycode,
+		'datem'            => &$datem,
+		'eatby'            => &$eatby,
+		'sellby'           => &$sellby,
+		'batch'            => &$batch,
+		'skip_batch'       => &$skip_batch,
+		'id_product_batch' => &$id_product_batch
+			);
+			$reshook    = $hookmanager->executeHooks('stockMovementCreate', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+
+			if ($reshook < 0) {
+				if (!empty($hookmanager->resPrint))
+					dol_print_error('', $hookmanager->resPrint);
+				return $reshook;
+			} elseif ($reshook > 0) {
+				return $hookmanager->resPrint;
+			}
+                }
+                // end hook at beginning
+
 		// Clean parameters
 		$price = price2num($price, 'MU'); // Clean value for the casse we receive a float zero value, to have it a real zero value.
 		if (empty($price)) $price = 0;
@@ -454,7 +488,7 @@ class MouvementStock extends CommonObject
 			if (!$error)
 			{
 				$sql = "SELECT rowid, reel FROM ".MAIN_DB_PREFIX."product_stock";
-				$sql .= " WHERE fk_entrepot = ".$entrepot_id." AND fk_product = ".$fk_product; // This is a unique key
+				$sql .= " WHERE fk_entrepot = ".((int) $entrepot_id)." AND fk_product = ".((int) $fk_product); // This is a unique key
 
 				dol_syslog(get_class($this)."::_create check if a record already exists in product_stock", LOG_DEBUG);
 				$resql = $this->db->query($sql);
@@ -510,12 +544,12 @@ class MouvementStock extends CommonObject
 			{
 				if ($alreadyarecord > 0)
 				{
-					$sql = "UPDATE ".MAIN_DB_PREFIX."product_stock SET reel = reel + ".$qty;
-					$sql .= " WHERE fk_entrepot = ".$entrepot_id." AND fk_product = ".$fk_product;
+					$sql = "UPDATE ".MAIN_DB_PREFIX."product_stock SET reel = reel + ".((float) $qty);
+					$sql .= " WHERE fk_entrepot = ".((int) $entrepot_id)." AND fk_product = ".((int) $fk_product);
 				} else {
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_stock";
 					$sql .= " (reel, fk_entrepot, fk_product) VALUES ";
-					$sql .= " (".$qty.", ".$entrepot_id.", ".$fk_product.")";
+					$sql .= " (".((float) $qty).", ".((int) $entrepot_id).", ".((int) $fk_product).")";
 				}
 
 				dol_syslog(get_class($this)."::_create update stock value", LOG_DEBUG);
@@ -534,14 +568,32 @@ class MouvementStock extends CommonObject
 			// Update detail stock for batch product
 			if (!$error && !empty($conf->productbatch->enabled) && $product->hasbatch() && !$skip_batch)
 			{
-				if ($id_product_batch > 0)
+				// check unicity for serial numbered equipments ( different for lots managed products)
+				if ( $product->status_batch == 2 && $qty > 0 )
 				{
-					$result = $this->createBatch($id_product_batch, $qty);
-				} else {
-					$param_batch = array('fk_product_stock' =>$fk_product_stock, 'batchnumber'=>$batch);
-					$result = $this->createBatch($param_batch, $qty);
+					if ( $this->getBatchCount($fk_product, $batch) > 0 )
+					{
+						$error++;
+						$this->errors[] = $langs->trans("SerialNumberAlreadyInUse", $batch, $product->ref);
+					}
+					elseif ( $qty > 1 )
+					{
+						$error++;
+						$this->errors[] = $langs->trans("TooManyQtyForSerialNumber", $product->ref, $batch);
+					}
 				}
-				if ($result < 0) $error++;
+
+				if ( ! $error )
+				{
+					if ($id_product_batch > 0)
+					{
+						$result = $this->createBatch($id_product_batch, $qty);
+					} else {
+						$param_batch = array('fk_product_stock' =>$fk_product_stock, 'batchnumber'=>$batch);
+						$result = $this->createBatch($param_batch, $qty);
+					}
+					if ($result < 0) $error++;
+				}
 			}
 
 			// Update PMP and denormalized value of stock qty at product level
@@ -550,11 +602,11 @@ class MouvementStock extends CommonObject
 				$newpmp = price2num($newpmp, 'MU');
 
 				// $sql = "UPDATE ".MAIN_DB_PREFIX."product SET pmp = ".$newpmp.", stock = ".$this->db->ifsql("stock IS NULL", 0, "stock") . " + ".$qty;
-				// $sql.= " WHERE rowid = ".$fk_product;
+				// $sql.= " WHERE rowid = ".((int) $fk_product);
 				// Update pmp + denormalized fields because we change content of produt_stock. Warning: Do not use "SET p.stock", does not works with pgsql
-				$sql = "UPDATE ".MAIN_DB_PREFIX."product as p SET pmp = ".$newpmp.",";
+				$sql = "UPDATE ".MAIN_DB_PREFIX."product as p SET pmp = ".((float) $newpmp).",";
 				$sql .= " stock=(SELECT SUM(ps.reel) FROM ".MAIN_DB_PREFIX."product_stock as ps WHERE ps.fk_product = p.rowid)";
-				$sql .= " WHERE rowid = ".$fk_product;
+				$sql .= " WHERE rowid = ".((int) $fk_product);
 
 				dol_syslog(get_class($this)."::_create update AWP", LOG_DEBUG);
 				$resql = $this->db->query($sql);
@@ -635,7 +687,7 @@ class MouvementStock extends CommonObject
 		//if (null !== $ref) {
 			//$sql .= ' AND t.ref = ' . '\'' . $ref . '\'';
 		//} else {
-			$sql .= ' AND t.rowid = '.$id;
+			$sql .= ' AND t.rowid = '.((int) $id);
 		//}
 
 		$resql = $this->db->query($sql);
@@ -666,7 +718,6 @@ class MouvementStock extends CommonObject
 			}
 
 			// Retrieve all extrafield
-			// fetch optionals attributes and labels
 			$this->fetch_optionals();
 
 			// $this->fetch_lines();
@@ -712,7 +763,7 @@ class MouvementStock extends CommonObject
 
 		$sql = "SELECT fk_product_pere, fk_product_fils, qty";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_association";
-		$sql .= " WHERE fk_product_pere = ".$idProduct;
+		$sql .= " WHERE fk_product_pere = ".((int) $idProduct);
 		$sql .= " AND incdec = 1";
 
 		dol_syslog(get_class($this)."::_createSubProduct for parent product ".$idProduct, LOG_DEBUG);
@@ -824,7 +875,7 @@ class MouvementStock extends CommonObject
 		$nbSP=0;
 
 		$resql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."product_association";
-		$resql.= " WHERE fk_product_pere = ".$id;
+		$resql.= " WHERE fk_product_pere = ".((int) $id);
 		if ($this->db->query($resql))
 		{
 			$obj=$this->db->fetch_object($resql);
@@ -845,7 +896,7 @@ class MouvementStock extends CommonObject
 		$nb = 0;
 
 		$sql = 'SELECT SUM(value) as nb from '.MAIN_DB_PREFIX.'stock_mouvement';
-		$sql .= ' WHERE fk_product = '.$productidselected;
+		$sql .= ' WHERE fk_product = '.((int) $productidselected);
 		$sql .= " AND datem < '".$this->db->idate($datebefore)."'";
 
 		dol_syslog(get_class($this).__METHOD__.'', LOG_DEBUG);
@@ -987,15 +1038,13 @@ class MouvementStock extends CommonObject
 				break;
 
 			default:
-				if ($origintype)
-				{
+				if ($origintype) {
 					// Separate originetype with "@" : left part is class name, right part is module name
 					$origintype_array = explode('@', $origintype);
 					$classname = ucfirst($origintype_array[0]);
 					$modulename = empty($origintype_array[1]) ? $classname : $origintype_array[1];
 					$result = dol_include_once('/'.$modulename.'/class/'.strtolower($classname).'.class.php');
-					if ($result)
-					{
+					if ($result) {
 						$classname = ucfirst($classname);
 						$origin = new $classname($this->db);
 					}
@@ -1003,7 +1052,9 @@ class MouvementStock extends CommonObject
 				break;
 		}
 
-		if (empty($origin) || !is_object($origin)) return '';
+		if (empty($origin) || !is_object($origin)) {
+			return '';
+		}
 
 		if ($origin->fetch($fk_origin) > 0) {
 			return $origin->getNomUrl(1);
@@ -1022,17 +1073,16 @@ class MouvementStock extends CommonObject
 	 */
 	public function setOrigin($origin_element, $origin_id)
 	{
-		if (!empty($origin_element) && $origin_id > 0)
-		{
+		if (!empty($origin_element) && $origin_id > 0) {
 			$origin = '';
-			if ($origin_element == 'project')
-			{
-				if (!class_exists('Project')) require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+			if ($origin_element == 'project') {
+				if (!class_exists('Project')) {
+					require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+				}
 				$origin = new Project($this->db);
 			}
 
-			if (!empty($origin))
-			{
+			if (!empty($origin)) {
 				$this->origin = $origin;
 				$this->origin->id = $origin_id;
 			}
@@ -1055,6 +1105,47 @@ class MouvementStock extends CommonObject
 		$this->id = 0;
 
 		// There is no specific properties. All data into insert are provided as method parameter.
+	}
+
+	/**
+	 *  Return html string with picto for type of movement
+	 *
+	 *	@param	int		$withlabel			With label
+	 *	@return	string					    String with URL
+	 */
+	public function getTypeMovement($withlabel = 0)
+	{
+		global $langs;
+
+		$s = '';
+		switch ($this->type) {
+			case "0":
+				$s = '<span class="fa fa-level-down-alt stockmovemententry stockmovementtransfer" title="'.$langs->trans('StockIncreaseAfterCorrectTransfer').'"></span>';
+				if ($withlabel) {
+					$s .= $langs->trans('StockIncreaseAfterCorrectTransfer');
+				}
+				break;
+			case "1":
+				$s = '<span class="fa fa-level-up-alt stockmovementexit stockmovementtransfer" title="'.$langs->trans('StockDecreaseAfterCorrectTransfer').'"></span>';
+				if ($withlabel) {
+					$s .= $langs->trans('StockDecreaseAfterCorrectTransfer');
+				}
+				break;
+			case "2":
+				$s = '<span class="fa fa-long-arrow-alt-up stockmovementexit stockmovement" title="'.$langs->trans('StockDecrease').'"></span>';
+				if ($withlabel) {
+					$s .= $langs->trans('StockDecrease');
+				}
+				break;
+			case "3":
+				$s = '<span class="fa fa-long-arrow-alt-down stockmovemententry stockmovement" title="'.$langs->trans('StockIncrease').'"></span>';
+				if ($withlabel) {
+					$s .= $langs->trans('StockIncrease');
+				}
+				break;
+		}
+
+		return $s;
 	}
 
 	/**
@@ -1086,10 +1177,11 @@ class MouvementStock extends CommonObject
 		$link .= '>';
 		$linkend = '</a>';
 
-		if ($withpicto)
-		{
+		if ($withpicto) {
 			$result .= ($link.img_object(($notooltip ? '' : $label), 'stock', ($notooltip ? '' : 'class="classfortooltip"')).$linkend);
-			if ($withpicto != 2) $result .= ' ';
+			if ($withpicto != 2) {
+				$result .= ' ';
+			}
 		}
 		$result .= $link.$this->id.$linkend;
 		return $result;
@@ -1174,5 +1266,40 @@ class MouvementStock extends CommonObject
 	{
 		return $this->deleteCommon($user, $notrigger);
 		//return $this->deleteCommon($user, $notrigger, 1);
+	}
+
+	/**
+	 * Retrieve number of equipments for a product batch
+	 *
+	 * @param int $fk_product Product id
+	 * @param varchar $batch  batch number
+	 * @return int            <0 if KO, number of equipments if OK
+	 */
+	private function getBatchCount($fk_product, $batch)
+	{
+		global $conf;
+
+		$cpt = 0;
+
+		$sql = "SELECT sum(pb.qty) as cpt";
+		$sql .= " FROM ".MAIN_DB_PREFIX."product_batch as pb";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."product_stock as ps ON ps.rowid = pb.fk_product_stock";
+		$sql .= " WHERE ps.fk_product = " . ((int) $fk_product);
+		$sql .= " AND pb.batch = '" . $this->db->escape($batch) . "'";
+
+		$result = $this->db->query($sql);
+		if ($result) {
+			if ($this->db->num_rows($result)) {
+				$obj = $this->db->fetch_object($result);
+				$cpt = $obj->cpt;
+			}
+
+			$this->db->free($result);
+		} else {
+			dol_print_error($this->db);
+			return -1;
+		}
+
+		return $cpt;
 	}
 }

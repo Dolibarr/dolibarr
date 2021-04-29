@@ -84,13 +84,14 @@ abstract class DoliDB implements Database
 	 *   Convert (by PHP) a GM Timestamp date into a string date with PHP server TZ to insert into a date field.
 	 *   Function to use to build INSERT, UPDATE or WHERE predica
 	 *
-	 *   @param	    int		$param      	Date TMS to convert
-	 *   @return	string      			Date in a string YYYY-MM-DD HH:MM:SS
+	 *   @param	    int		$param      Date TMS to convert
+	 *	 @param		mixed	$gm			'gmt'=Input informations are GMT values, 'tzserver'=Local to server TZ
+	 *   @return	string      		Date in a string YYYY-MM-DD HH:MM:SS
 	 */
-	public function idate($param)
+	public function idate($param, $gm = 'tzserver')
 	{
-		// TODO GMT $param should be gmt, so we should add tzouptut to 'gmt'
-		return dol_print_date($param, "%Y-%m-%d %H:%M:%S", 'tzserver');
+		// TODO $param should be gmt, so we should add $gm to 'gmt' instead of default 'tzserver'
+		return dol_print_date($param, "%Y-%m-%d %H:%M:%S", $gm);
 	}
 
 	/**
@@ -126,11 +127,9 @@ abstract class DoliDB implements Database
 	 */
 	public function begin()
 	{
-		if (!$this->transaction_opened)
-		{
+		if (!$this->transaction_opened) {
 			$ret = $this->query("BEGIN");
-			if ($ret)
-			{
+			if ($ret) {
 				$this->transaction_opened++;
 				dol_syslog("BEGIN Transaction", LOG_DEBUG);
 				dol_syslog('', 0, 1);
@@ -152,11 +151,9 @@ abstract class DoliDB implements Database
 	public function commit($log = '')
 	{
 		dol_syslog('', 0, -1);
-		if ($this->transaction_opened <= 1)
-		{
+		if ($this->transaction_opened <= 1) {
 			$ret = $this->query("COMMIT");
-			if ($ret)
-			{
+			if ($ret) {
 				$this->transaction_opened = 0;
 				dol_syslog("COMMIT Transaction".($log ? ' '.$log : ''), LOG_DEBUG);
 				return 1;
@@ -178,8 +175,7 @@ abstract class DoliDB implements Database
 	public function rollback($log = '')
 	{
 		dol_syslog('', 0, -1);
-		if ($this->transaction_opened <= 1)
-		{
+		if ($this->transaction_opened <= 1) {
 			$ret = $this->query("ROLLBACK");
 			$this->transaction_opened = 0;
 			dol_syslog("ROLLBACK Transaction".($log ? ' '.$log : ''), LOG_DEBUG);
@@ -200,10 +196,17 @@ abstract class DoliDB implements Database
 	public function plimit($limit = 0, $offset = 0)
 	{
 		global $conf;
-		if (empty($limit)) return "";
-		if ($limit < 0) $limit = $conf->liste_limit;
-		if ($offset > 0) return " LIMIT $offset,$limit ";
-		else return " LIMIT $limit ";
+		if (empty($limit)) {
+			return "";
+		}
+		if ($limit < 0) {
+			$limit = $conf->liste_limit;
+		}
+		if ($offset > 0) {
+			return " LIMIT $offset,$limit ";
+		} else {
+			return " LIMIT $limit ";
+		}
 	}
 
 	/**
@@ -235,16 +238,18 @@ abstract class DoliDB implements Database
 	 */
 	public function order($sortfield = null, $sortorder = null)
 	{
-		if (!empty($sortfield))
-		{
+		if (!empty($sortfield)) {
 			$oldsortorder = '';
 			$return = '';
 			$fields = explode(',', $sortfield);
 			$orders = explode(',', $sortorder);
 			$i = 0;
 			foreach ($fields as $val) {
-				if (!$return) $return .= ' ORDER BY ';
-				else $return .= ', ';
+				if (!$return) {
+					$return .= ' ORDER BY ';
+				} else {
+					$return .= ', ';
+				}
 
 				$return .= preg_replace('/[^0-9a-z_\.]/i', '', $val); // Add field
 
@@ -285,13 +290,15 @@ abstract class DoliDB implements Database
 	 * 	19700101020000 -> 7200 whaterver is TZ if gmt=1
 	 *
 	 * 	@param	string				$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
-	 *	@param	bool				$gm			1=Input informations are GMT values, otherwise local to server TZ
+	 *	@param	mixed				$gm			'gmt'=Input informations are GMT values, 'tzserver'=Local to server TZ
 	 *	@return	int|string						Date TMS or ''
 	 */
-	public function jdate($string, $gm = false)
+	public function jdate($string, $gm = 'tzserver')
 	{
-		// TODO GMT must set param gm to true by default
-		if ($string == 0 || $string == "0000-00-00 00:00:00") return '';
+		// TODO $string should be converted into a GMT timestamp, so param gm should be set to true by default instead of false
+		if ($string == 0 || $string == "0000-00-00 00:00:00") {
+			return '';
+		}
 		$string = preg_replace('/([^0-9])/i', '', $string);
 		$tmp = $string.'000000';
 		$date = dol_mktime((int) substr($tmp, 8, 2), (int) substr($tmp, 10, 2), (int) substr($tmp, 12, 2), (int) substr($tmp, 4, 2), (int) substr($tmp, 6, 2), (int) substr($tmp, 0, 4), $gm);
@@ -320,8 +327,7 @@ abstract class DoliDB implements Database
 		$sql .= ' LIMIT 1;';
 
 		$res = $this->query($sql);
-		if ($res)
-		{
+		if ($res) {
 			return $this->fetch_object($res);
 		}
 
@@ -338,8 +344,7 @@ abstract class DoliDB implements Database
 	public function getRows($sql)
 	{
 		$res = $this->query($sql);
-		if ($res)
-		{
+		if ($res) {
 			$results = array();
 			if ($this->num_rows($res) > 0) {
 				while ($obj = $this->fetch_object($res)) {

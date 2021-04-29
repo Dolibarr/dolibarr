@@ -32,8 +32,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($object) || !is_object($object))
-{
+if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
@@ -41,7 +40,9 @@ if (empty($object) || !is_object($object))
 
 global $forceall;
 
-if (empty($forceall)) $forceall = 0;
+if (empty($forceall)) {
+	$forceall = 0;
+}
 
 
 // Define colspan for the button 'Add'
@@ -79,8 +80,7 @@ if ($line->fk_product > 0) {
 	print $tmpproduct->getNomUrl(1);
 }
 
-if (is_object($hookmanager))
-{
+if (is_object($hookmanager)) {
 	$fk_parent_line = (GETPOST('fk_parent_line') ? GETPOST('fk_parent_line') : $line->fk_parent_line);
 	$parameters = array('line'=>$line, 'fk_parent_line'=>$fk_parent_line, 'var'=>$var, 'dateSelector'=>$dateSelector, 'seller'=>$seller, 'buyer'=>$buyer);
 	$reshook = $hookmanager->executeHooks('formEditProductOptions', $parameters, $this, $action);
@@ -90,7 +90,7 @@ print '</td>';
 
 /*if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier')	// We must have same test in printObjectLines
 {
-    $coldisplay++;
+	$coldisplay++;
 ?>
 	<td class="right"><input id="fourn_ref" name="fourn_ref" class="flat minwidth75" value="<?php echo ($line->ref_supplier ? $line->ref_supplier : $line->ref_fourn); ?>"></td>
 <?php
@@ -108,11 +108,9 @@ if (($line->info_bits & 2) != 2) {
 }
 print '</td>';
 
-if (!empty($conf->global->PRODUCT_USE_UNITS))
-{
+if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 	$coldisplay++;
 	print '<td class="nobottom linecoluseunit left">';
-	// print $form->selectUnits($line->fk_unit, "units");
 	print '</td>';
 }
 
@@ -142,7 +140,7 @@ print '</td>';
 print '</tr>';
 
 if (is_object($objectline)) {
-	print $objectline->showOptionals($extrafields, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$coldisplay), '', '', 1);
+	print $objectline->showOptionals($extrafields, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$coldisplay), '', '', 1, 'line');
 }
 
 print "<!-- END PHP TEMPLATE objectline_edit.tpl.php -->\n";

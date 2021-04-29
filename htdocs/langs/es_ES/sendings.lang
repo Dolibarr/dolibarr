@@ -30,6 +30,7 @@ OtherSendingsForSameOrder=Otros envíos de este pedido
 SendingsAndReceivingForSameOrder=Envíos y recepciones de este pedido
 SendingsToValidate=Envíos a validar
 StatusSendingCanceled=Anulado
+StatusSendingCanceledShort=Anulado
 StatusSendingDraft=Borrador
 StatusSendingValidated=Validado (productos a enviar o enviados)
 StatusSendingProcessed=Procesado
@@ -65,6 +66,7 @@ ValidateOrderFirstBeforeShipment=Antes de poder realizar envíos debe validar el
 # Sending methods
 # ModelDocument
 DocumentModelTyphon=Modelo completo de nota de entrega / recepción (logo...)
+DocumentModelStorm=Modelo de documento más completo para recibos de entrega y compatibilidad de campos adicionales (logotipo ...)
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constante EXPEDITION_ADDON_NUMBER no definida
 SumOfProductVolumes=Suma del volumen de los productos
 SumOfProductWeights=Suma del peso de los productos

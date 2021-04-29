@@ -20,10 +20,18 @@
  *       \brief      File to save field value
  */
 
-if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
-if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
-if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (!defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1'); // Disables token renewal
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1');
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
+if (!defined('NOREQUIRESOC')) {
+	define('NOREQUIRESOC', '1');
+}
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
@@ -56,8 +64,7 @@ top_httphead();
 //print_r($_POST);
 
 // Load original field value
-if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_element))
-{
+if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_element)) {
 	$ext_element = GETPOST('ext_element', 'alpha', 2);
 	$field = substr($field, 8); // remove prefix val_
 	$type = GETPOST('type', 'alpha', 2);
@@ -124,18 +131,15 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 		|| ($element == 'payment_supplier' && $user->rights->fournisseur->facture->creer))
 	*/
 
-	if ($check_access)
-	{
+	if ($check_access) {
 		// Clean parameters
 		$newvalue = trim($value);
 
-		if ($type == 'numeric')
-		{
+		if ($type == 'numeric') {
 			$newvalue = price2num($newvalue);
 
 			// Check parameters
-			if (!is_numeric($newvalue))
-			{
+			if (!is_numeric($newvalue)) {
 				$error++;
 				$return['error'] = $langs->trans('ErrorBadValue');
 			}
@@ -149,16 +153,13 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 			$loadviewname = 'view_'.$loadmethod;
 
 			$form = new Form($db);
-			if (method_exists($form, $loadmethodname))
-			{
+			if (method_exists($form, $loadmethodname)) {
 				$ret = $form->$loadmethodname();
-				if ($ret > 0)
-				{
+				if ($ret > 0) {
 					$loadcache = $form->$loadcachename;
 					$value = $loadcache[$newvalue];
 
-					if (!empty($form->$loadviewname))
-					{
+					if (!empty($form->$loadviewname)) {
 						$loadview = $form->$loadviewname;
 						$view = $loadview[$newvalue];
 					}
@@ -168,8 +169,7 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 				}
 			} else {
 				$module = $subelement = $ext_element;
-				if (preg_match('/^([^_]+)_([^_]+)/i', $ext_element, $regs))
-				{
+				if (preg_match('/^([^_]+)_([^_]+)/i', $ext_element, $regs)) {
 					$module = $regs[1];
 					$subelement = $regs[2];
 				}
@@ -178,13 +178,11 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 				$classname = 'Actions'.ucfirst($subelement);
 				$object = new $classname($db);
 				$ret = $object->$loadmethodname();
-				if ($ret > 0)
-				{
+				if ($ret > 0) {
 					$loadcache = $object->$loadcachename;
 					$value = $loadcache[$newvalue];
 
-					if (!empty($object->$loadviewname))
-					{
+					if (!empty($object->$loadviewname)) {
 						$loadview = $object->$loadviewname;
 						$view = $loadview[$newvalue];
 					}
@@ -195,9 +193,10 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 			}
 		}
 
-		if (!$error)
-		{
-			if ((isset($object) && !is_object($object)) || empty($savemethod)) $object = new GenericObject($db);
+		if (!$error) {
+			if ((isset($object) && !is_object($object)) || empty($savemethod)) {
+				$object = new GenericObject($db);
+			}
 
 			// Specific for add_object_linked()
 			// TODO add a function for variable treatment
@@ -207,10 +206,12 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 			$object->element = $element;
 
 			$ret = $object->$savemethodname($field, $newvalue, $table_element, $fk_element, $format);
-			if ($ret > 0)
-			{
-				if ($type == 'numeric') $value = price($newvalue);
-				elseif ($type == 'textarea') $value = dol_nl2br($newvalue);
+			if ($ret > 0) {
+				if ($type == 'numeric') {
+					$value = price($newvalue);
+				} elseif ($type == 'textarea') {
+					$value = dol_nl2br($newvalue);
+				}
 
 				$return['value'] = $value;
 				$return['view'] = (!empty($view) ? $view : $value);

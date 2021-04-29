@@ -64,7 +64,6 @@ ModeRECUR=Pagamento recorrente
 PleaseCheckOne=Favor marcar apenas um
 DirectDebitOrderCreated=Pedido de débito direto %s criado
 CreateForSepa=Crie um arquivo de débito direto
-ICS=Identificador do credor
 END_TO_END=Tag SEPA XML "EndToEndId" - ID exclusivo atribuído por transação
 USTRD=Tag SEPA XML "não estruturada"
 ADDDAYS=Adicionar dias à data de execução

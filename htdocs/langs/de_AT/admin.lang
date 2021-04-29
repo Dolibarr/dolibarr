@@ -128,6 +128,7 @@ SummaryConst=Liste aller Systemeinstellungen
 Skin=Oberfläche
 DefaultSkin=Standardoberfläche
 CompanyCurrency=Firmenwährung
+ShowBugTrackLink=Show link "<strong>%s</strong>"
 WatermarkOnDraftInvoices=Wasserzeichen auf Rechnungsentwürfen (alle, falls leer)
 WatermarkOnDraftProposal=Wasserzeichen für Angebotsentwürfe (alle, falls leer)
 BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER=Fragen Sie nach dem Bestimmungsort des Bankkontos der Bestellung

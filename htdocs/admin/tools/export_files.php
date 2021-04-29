@@ -42,13 +42,23 @@ $file = preg_replace('/(\.zip|\.tar|\.tgz|\.gz|\.tar\.gz|\.bz2)$/i', '', $file);
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (!$sortorder) $sortorder = "DESC";
-if (!$sortfield) $sortfield = "date";
-if ($page < 0) { $page = 0; } elseif (empty($page)) $page = 0;
+if (!$sortorder) {
+	$sortorder = "DESC";
+}
+if (!$sortfield) {
+	$sortfield = "date";
+}
+if ($page < 0) {
+	$page = 0;
+} elseif (empty($page)) {
+	$page = 0;
+}
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $offset = $limit * $page;
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 $errormsg = '';
 
@@ -57,13 +67,15 @@ $errormsg = '';
  * Actions
  */
 
-if ($action == 'delete')
-{
+if ($action == 'delete') {
 	$filerelative = dol_sanitizeFileName(GETPOST('urlfile', 'alpha'));
 	$filepath = $conf->admin->dir_output.'/'.$filerelative;
 	$ret = dol_delete_file($filepath, 1);
-	if ($ret) setEventMessages($langs->trans("FileWasRemoved", $filerelative), null, 'mesgs');
-	else setEventMessages($langs->trans("ErrorFailToDeleteFile", $filerelative), null, 'errors');
+	if ($ret) {
+		setEventMessages($langs->trans("FileWasRemoved", $filerelative), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("ErrorFailToDeleteFile", $filerelative), null, 'errors');
+	}
 	$action = '';
 }
 
@@ -74,8 +86,7 @@ if ($action == 'delete')
 
 // Increase limit of time. Works only if we are not in safe mode
 $ExecTimeLimit = 1800; // 30mn
-if (!empty($ExecTimeLimit))
-{
+if (!empty($ExecTimeLimit)) {
 	$err = error_reporting();
 	error_reporting(0); // Disable all errors
 	//error_reporting(E_ALL);
@@ -83,8 +94,7 @@ if (!empty($ExecTimeLimit))
 	error_reporting($err);
 }
 $MemoryLimit = 0;
-if (!empty($MemoryLimit))
-{
+if (!empty($MemoryLimit)) {
 	@ini_set('memory_limit', $MemoryLimit);
 }
 
@@ -110,12 +120,11 @@ $result = dol_mkdir($outputdir);
 
 $utils = new Utils($db);
 
-if ($compression == 'zip')
-{
+if ($compression == 'zip') {
 	$file .= '.zip';
-	$ret = dol_compress_dir(DOL_DATA_ROOT, $outputdir."/".$file, $compression, '/(\.back|\.old|\.log|[\\\/]temp[\\\/]|documents[\\\/]admin[\\\/]documents[\\\/])/i');
-	if ($ret < 0)
-	{
+	$excludefiles = '/(\.back|\.old|\.log|[\/\\\]temp[\/\\\]|documents[\/\\\]admin[\/\\\]documents[\/\\\])/i';
+	$ret = dol_compress_dir(DOL_DATA_ROOT, $outputdir."/".$file, $compression, $excludefiles);
+	if ($ret < 0) {
 		if ($ret == -2) {
 			$langs->load("errors");
 			$errormsg = $langs->trans("ErrNoZipEngine");
@@ -124,8 +133,7 @@ if ($compression == 'zip')
 			$errormsg = $langs->trans("ErrorFailedToWriteInDir", $outputdir);
 		}
 	}
-} elseif (in_array($compression, array('gz', 'bz')))
-{
+} elseif (in_array($compression, array('gz', 'bz'))) {
 	$userlogin = ($user->login ? $user->login : 'unknown');
 
 	$outputfile = $conf->admin->dir_temp.'/export_files.'.$userlogin.'.out'; // File used with popen method
@@ -137,34 +145,29 @@ if ($compression == 'zip')
 	$result = $utils->executeCLI($cmd, $outputfile);
 
 	$retval = $result['error'];
-	if ($result['result'] || !empty($retval))
-	{
+	if ($result['result'] || !empty($retval)) {
 		$langs->load("errors");
 		dol_syslog("Documents tar retval after exec=".$retval, LOG_ERR);
 		$errormsg = 'Error tar generation return '.$retval;
 	} else {
-		if ($compression == 'gz')
-		{
+		if ($compression == 'gz') {
 			$cmd = "gzip -f ".$outputdir."/".$file;
 		}
-		if ($compression == 'bz')
-		{
+		if ($compression == 'bz') {
 			$cmd = "bzip2 -f ".$outputdir."/".$file;
 		}
 
 		$result = $utils->executeCLI($cmd, $outputfile);
 
 		$retval = $result['error'];
-		if ($result['result'] || !empty($retval))
-		{
+		if ($result['result'] || !empty($retval)) {
 			$errormsg = 'Error '.$compression.' generation return '.$retval;
 			unlink($outputdir."/".$file);
 		}
 	}
 }
 
-if ($errormsg)
-{
+if ($errormsg) {
 	setEventMessages($langs->trans("Error")." : ".$errormsg, null, 'errors');
 }
 

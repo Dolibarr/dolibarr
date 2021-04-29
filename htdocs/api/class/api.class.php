@@ -51,7 +51,9 @@ class DolibarrApi
 	{
 		global $conf, $dolibarr_main_url_root;
 
-		if (empty($cachedir)) $cachedir = $conf->api->dir_temp;
+		if (empty($cachedir)) {
+			$cachedir = $conf->api->dir_temp;
+		}
 		Defaults::$cacheDirectory = $cachedir;
 
 		$this->db = $db;
@@ -70,23 +72,27 @@ class DolibarrApi
 		//$this->r->setSupportedFormats('jsonFormat');
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 * Executed method when API is called without parameter
+	 * Check and convert a string depending on its type/name.
 	 *
 	 * Display a short message an return a http code 200
 	 *
-	 * @return array
+	 * @param	string		$field		Field name
+	 * @param	string		$value		Value to check/clean
+	 * @param	stdClass	$object		Object
+	 * @return 	string					Value cleaned
 	 */
-	/* Disabled, most APIs does not share same signature for method index
-	function index()
+	protected function _checkValForAPI($field, $value, $object)
 	{
-		return array(
-			'success' => array(
-				'code' => 200,
-				'message' => __class__.' is up and running!'
-			)
-		);
-	}*/
+		// phpcs:enable
+		// TODO Use type detected in $object->fields
+		if (in_array($field, array('note', 'note_private', 'note_public', 'desc', 'description'))) {
+			return checkVal($value, 'restricthtml');
+		} else {
+			return checkVal($value, 'alphanohtml');
+		}
+	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
@@ -140,7 +146,7 @@ class DolibarrApi
 		unset($object->labelStatusShort);
 
 		unset($object->stats_propale);
-	  	unset($object->stats_commande);
+		unset($object->stats_commande);
 		unset($object->stats_contrat);
 		unset($object->stats_facture);
 		unset($object->stats_commande_fournisseur);
@@ -173,7 +179,7 @@ class DolibarrApi
 		unset($object->name_bis);
 		unset($object->newref);
 
-		if ($object->table_element != 'ticket') {
+		if (!isset($object->table_element) || $object->table_element != 'ticket') {
 			unset($object->comments);
 		}
 
@@ -191,8 +197,7 @@ class DolibarrApi
 		// If object has lines, remove $db property
 		if (isset($object->lines) && is_array($object->lines) && count($object->lines) > 0) {
 			$nboflines = count($object->lines);
-			for ($i = 0; $i < $nboflines; $i++)
-			{
+			for ($i = 0; $i < $nboflines; $i++) {
 				$this->_cleanObjectDatas($object->lines[$i]);
 
 				unset($object->lines[$i]->contact);
@@ -236,8 +241,6 @@ class DolibarrApi
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 * Check user access to a resource
-	 *
 	 * Check access by user to a given resource
 	 *
 	 * @param string	$resource		element to check
@@ -284,12 +287,14 @@ class DolibarrApi
 		$ok = 0;
 		$i = 0; $nb = strlen($tmp);
 		$counter = 0;
-		while ($i < $nb)
-		{
-			if ($tmp[$i] == '(') $counter++;
-			if ($tmp[$i] == ')') $counter--;
-			if ($counter < 0)
-			{
+		while ($i < $nb) {
+			if ($tmp[$i] == '(') {
+				$counter++;
+			}
+			if ($tmp[$i] == ')') {
+				$counter--;
+			}
+			if ($counter < 0) {
 				$error = "Bad sqlfilters=".$sqlfilters;
 				dol_syslog($error, LOG_WARNING);
 				return false;
@@ -313,14 +318,17 @@ class DolibarrApi
 		global $db;
 
 		//dol_syslog("Convert matches ".$matches[1]);
-		if (empty($matches[1])) return '';
+		if (empty($matches[1])) {
+			return '';
+		}
 		$tmp = explode(':', $matches[1]);
-		if (count($tmp) < 3) return '';
+		if (count($tmp) < 3) {
+			return '';
+		}
 
 		$tmpescaped = $tmp[2];
 		$regbis = array();
-		if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis))
-		{
+		if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {
 			$tmpescaped = "'".$db->escape($regbis[1])."'";
 		} else {
 			$tmpescaped = $db->escape($tmpescaped);

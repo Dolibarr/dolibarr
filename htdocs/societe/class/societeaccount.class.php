@@ -172,7 +172,9 @@ class SocieteAccount extends CommonObject
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) $this->fields['rowid']['visible'] = 0;
+		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) {
+			$this->fields['rowid']['visible'] = 0;
+		}
 	}
 
 	/**
@@ -248,7 +250,9 @@ class SocieteAccount extends CommonObject
 	public function fetch($id, $ref = null)
 	{
 		$result = $this->fetchCommon($id, $ref);
-		if ($result > 0 && !empty($this->table_element_line)) $this->fetchLines();
+		if ($result > 0 && !empty($this->table_element_line)) {
+			$this->fetchLines();
+		}
 		return $result;
 	}
 
@@ -280,7 +284,7 @@ class SocieteAccount extends CommonObject
 	{
 		$sql = "SELECT sa.key_account as key_account, sa.entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_account as sa";
-		$sql .= " WHERE sa.fk_soc = ".$id;
+		$sql .= " WHERE sa.fk_soc = ".((int) $id);
 		$sql .= " AND sa.entity IN (".getEntity('societe').")";
 		$sql .= " AND sa.site = '".$this->db->escape($site)."' AND sa.status = ".((int) $status);
 		$sql .= " AND sa.key_account IS NOT NULL AND sa.key_account <> ''";
@@ -375,7 +379,9 @@ class SocieteAccount extends CommonObject
 		global $dolibarr_main_authentication, $dolibarr_main_demo;
 		global $menumanager;
 
-		if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
+		if (!empty($conf->dol_no_mouse_hover)) {
+			$notooltip = 1; // Force disable tooltips
+		}
 
 		$result = '';
 
@@ -388,33 +394,40 @@ class SocieteAccount extends CommonObject
 
 		$url = dol_buildpath('/website/websiteaccount_card.php', 1).'?id='.$this->id;
 
-		if ($option != 'nolink')
-		{
+		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
-			if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+				$add_save_lastsearch_values = 1;
+			}
+			if ($add_save_lastsearch_values) {
+				$url .= '&save_lastsearch_values=1';
+			}
 		}
 
 		$linkclose = '';
-		if (empty($notooltip))
-		{
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-			{
+		if (empty($notooltip)) {
+			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$label = $langs->trans("WebsiteAccount");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-		} else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		} else {
+			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		}
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';
 		$linkend = '</a>';
 
 		$result .= $linkstart;
-		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
-		if ($withpicto != 2) $result .= $this->ref;
+		if ($withpicto) {
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+		}
+		if ($withpicto != 2) {
+			$result .= $this->ref;
+		}
 		$result .= $linkend;
 
 		return $result;
@@ -444,35 +457,49 @@ class SocieteAccount extends CommonObject
 		// phpcs:enable
 		global $langs;
 
-		if ($mode == 0)
-		{
+		if ($mode == 0) {
 			$prefix = '';
-			if ($status == 1) return $langs->trans('Enabled');
-			elseif ($status == 0) return $langs->trans('Disabled');
-		} elseif ($mode == 1)
-		{
-			if ($status == 1) return $langs->trans('Enabled');
-			elseif ($status == 0) return $langs->trans('Disabled');
-		} elseif ($mode == 2)
-		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
-			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
-		} elseif ($mode == 3)
-		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4');
-			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5');
-		} elseif ($mode == 4)
-		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
-			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
-		} elseif ($mode == 5)
-		{
-			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
-			elseif ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
-		} elseif ($mode == 6)
-		{
-			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
-			elseif ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
+			if ($status == 1) {
+				return $langs->trans('Enabled');
+			} elseif ($status == 0) {
+				return $langs->trans('Disabled');
+			}
+		} elseif ($mode == 1) {
+			if ($status == 1) {
+				return $langs->trans('Enabled');
+			} elseif ($status == 0) {
+				return $langs->trans('Disabled');
+			}
+		} elseif ($mode == 2) {
+			if ($status == 1) {
+				return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
+			} elseif ($status == 0) {
+				return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
+			}
+		} elseif ($mode == 3) {
+			if ($status == 1) {
+				return img_picto($langs->trans('Enabled'), 'statut4');
+			} elseif ($status == 0) {
+				return img_picto($langs->trans('Disabled'), 'statut5');
+			}
+		} elseif ($mode == 4) {
+			if ($status == 1) {
+				return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
+			} elseif ($status == 0) {
+				return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
+			}
+		} elseif ($mode == 5) {
+			if ($status == 1) {
+				return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
+			} elseif ($status == 0) {
+				return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
+			}
+		} elseif ($mode == 6) {
+			if ($status == 1) {
+				return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
+			} elseif ($status == 0) {
+				return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
+			}
 		}
 	}
 
@@ -487,30 +514,25 @@ class SocieteAccount extends CommonObject
 		$sql = 'SELECT rowid, date_creation as datec, tms as datem,';
 		$sql .= ' fk_user_creat, fk_user_modif';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		$sql .= ' WHERE t.rowid = '.$id;
+		$sql .= ' WHERE t.rowid = '.((int) $id);
 		$result = $this->db->query($sql);
-		if ($result)
-		{
-			if ($this->db->num_rows($result))
-			{
+		if ($result) {
+			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
-				if ($obj->fk_user_author)
-				{
+				if ($obj->fk_user_author) {
 					$cuser = new User($this->db);
 					$cuser->fetch($obj->fk_user_author);
 					$this->user_creation = $cuser;
 				}
 
-				if ($obj->fk_user_valid)
-				{
+				if ($obj->fk_user_valid) {
 					$vuser = new User($this->db);
 					$vuser->fetch($obj->fk_user_valid);
 					$this->user_validation = $vuser;
 				}
 
-				if ($obj->fk_user_cloture)
-				{
+				if ($obj->fk_user_cloture) {
 					$cluser = new User($this->db);
 					$cluser->fetch($obj->fk_user_cloture);
 					$this->user_cloture = $cluser;

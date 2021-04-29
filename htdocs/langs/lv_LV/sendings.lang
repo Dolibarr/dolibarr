@@ -30,6 +30,7 @@ OtherSendingsForSameOrder=Citas sūtījumiem uz šo rīkojumu
 SendingsAndReceivingForSameOrder=Shipments and receipts for this order
 SendingsToValidate=Sūtījumi apstiprināšanai,
 StatusSendingCanceled=Atcelts
+StatusSendingCanceledShort=Atcelts
 StatusSendingDraft=Uzmetums
 StatusSendingValidated=Apstiprinātas (produkti, uz kuģi vai jau nosūtīti)
 StatusSendingProcessed=Apstrādāts
@@ -65,6 +66,7 @@ ValidateOrderFirstBeforeShipment=Vispirms jums ir jāapstiprina pasūtījums, la
 # Sending methods
 # ModelDocument
 DocumentModelTyphon=Vairāk pilnīgu dokumentu modelis piegādes ieņēmumiem (logo. ..)
+DocumentModelStorm=Pilnīgāks dokumentu paraugs piegādes kvīšu un ekstrahēto lauku saderībai (logotips ...)
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Pastāvīga EXPEDITION_ADDON_NUMBER nav noteikts
 SumOfProductVolumes=Produkta apjomu summa
 SumOfProductWeights=Summēt produkta svaru

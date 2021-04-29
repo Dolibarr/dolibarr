@@ -1,12 +1,12 @@
 # Dolibarr language file - Source file is en_US - admin
 VersionProgram=Versión del programa
 VersionLastInstall=Instalar versión inicial
-ExampleOfDirectoriesForModelGen=Ejemplo de sintaxis:<br>c:\\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
 Module30Name=Facturas
 Permission91=Consultar impuestos e IGV
 Permission92=Crear/modificar impuestos e IGV
 Permission93=Eliminar impuestos e IGV
 DictionaryVAT=Tasa de IGV o tasa de impuesto a las ventas
+ShowBugTrackLink=Show link "<strong>%s</strong>"
 UnitPriceOfProduct=Precio unitario sin IGV de un producto
 OptionVatMode=IGV adeudado
 MailToSendInvoice=Facturas de Clientes

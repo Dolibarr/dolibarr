@@ -24,6 +24,7 @@
  */
 
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherentstats.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
@@ -31,8 +32,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
-$userid = GETPOST('userid', 'int'); if ($userid < 0) $userid = 0;
-$socid = GETPOST('socid', 'int'); if ($socid < 0) $socid = 0;
+$userid = GETPOST('userid', 'int'); if ($userid < 0) {
+	$userid = 0;
+}
+$socid = GETPOST('socid', 'int'); if ($socid < 0) {
+	$socid = 0;
+}
 
 // Security check
 if ($user->socid > 0) {
@@ -53,12 +58,13 @@ $langs->loadLangs(array("companies", "members"));
  * View
  */
 
+$memberstatic = new Adherent($db);
 $form = new Form($db);
 
 $title = $langs->trans("SubscriptionsStatistics");
 llxHeader('', $title);
 
-print load_fiche_titre($title, '', 'members');
+print load_fiche_titre($title, '', $memberstatic->picto);
 
 $dir = $conf->adherent->dir_temp;
 
@@ -131,9 +137,9 @@ if (!$mesg) {
 }
 
 
-$head = member_stats_prepare_head($adh);
+$head = member_stats_prepare_head($memberstatic);
 
-print dol_get_fiche_head($head, 'statssubscription', $langs->trans("Statistics"), -1, 'user');
+print dol_get_fiche_head($head, 'statssubscription', '', -1, '');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -207,7 +213,9 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 // Show graphs
 print '<table class="border centpercent"><tr class="pair nohover"><td class="center">';
-if ($mesg) { print $mesg; } else {
+if ($mesg) {
+	print $mesg;
+} else {
 	print $px1->show();
 	print "<br>\n";
 	print $px2->show();

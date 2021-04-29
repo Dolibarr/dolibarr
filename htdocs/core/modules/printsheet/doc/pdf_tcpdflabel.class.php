@@ -120,14 +120,11 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 
 		// Define logo
 		$logo = $conf->mycompany->dir_output.'/logos/'.$mysoc->logo;
-		if (!is_readable($logo))
-		{
+		if (!is_readable($logo)) {
 			$logo = '';
-			if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small))
-			{
+			if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small)) {
 				$logo = $conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small;
-			} elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo))
-			{
+			} elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo)) {
 				$logo = $conf->mycompany->dir_output.'/logos/'.$mysoc->logo;
 			}
 		}
@@ -136,8 +133,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 		$ytop = 2;
 
 		// Top
-		if ($header != '')
-		{
+		if ($header != '') {
 			$pdf->SetXY($_PosX + $xleft, $_PosY + 1); // Only 1 mm and not ytop for top text
 			$pdf->Cell($this->_Width - 2 * $xleft, $this->_Line_Height, $outputlangs->convToOutputCharset($header), 0, 1, 'C');
 		}
@@ -158,54 +154,50 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 		//var_dump($this->_Width.'x'.$this->_Height.' with border and scale '.$imgscale.' => max '.$maxwidthtouse.'x'.$maxheighttouse.' => We use '.$widthtouse.'x'.$heighttouse);exit;
 
 		// Center
-		if ($textright == '')	// Only a left part
-		{
+		if ($textright == '') {	// Only a left part
 			// Output left area
-			if ($textleft == '%LOGO%' && $logo) $pdf->Image($logo, $_PosX + $xleft, $_PosY + $ytop, 0, $logoHeight);
-			elseif ($code && !empty($encoding))
-			{
+			if ($textleft == '%LOGO%' && $logo) {
+				$pdf->Image($logo, $_PosX + $xleft, $_PosY + $ytop, 0, $logoHeight);
+			} elseif ($code && !empty($encoding)) {
 				$this->writeBarcode($pdf, $code, $encoding, $is2d, $_PosX + $xleft, $_PosY + $ytop, $widthtouse, $heighttouse);
 			} else {
 				$pdf->SetXY($_PosX + $xleft, $_PosY + $ytop);
 				$pdf->MultiCell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft), 0, 'L');
 			}
-		} elseif ($textleft != '' && $textright != '')	// left and right part
-		{
+		} elseif ($textleft != '' && $textright != '') {	// left and right part
 			$logoHeight = $heighttouse / 2;
 			$logoWidth = $widthtouse / 2;
-			if (($textleft == '%LOGO%' || $textleft == '%PHOTO%' || $textleft == '%BARCODE%') && !strstr($textright, '%'))	 // left part logo/barcode right part text
-			{
-				if ($textleft == '%LOGO%' && $logo) $pdf->Image($logo, $_PosX + $xleft, $_PosY + $ytop, $logoWidth, 0);
-				elseif ($code && !empty($encoding))
-				{
+			if (($textleft == '%LOGO%' || $textleft == '%PHOTO%' || $textleft == '%BARCODE%') && !strstr($textright, '%')) {	 // left part logo/barcode right part text
+				if ($textleft == '%LOGO%' && $logo) {
+					$pdf->Image($logo, $_PosX + $xleft, $_PosY + $ytop, $logoWidth, 0);
+				} elseif ($code && !empty($encoding)) {
 					$this->writeBarcode($pdf, $code, $encoding, $is2d, $_PosX + $xleft, $_PosY + $ytop, $widthtouse / 2, $heighttouse);
 				}
 				$pdf->SetXY($_PosX + ($widthtouse / 2), $_PosY + $ytop);
 				$pdf->MultiCell($widthtouse / 2, $this->_Line_Height, $outputlangs->convToOutputCharset($textright), 0, 'R');
-			} elseif (($textright == '%LOGO%' || $textright == '%PHOTO%' || $textright == '%BARCODE%') && !strstr($textleft, '%')) // right part logo/barcode left part text
-			{
-				if ($textright == '%LOGO%' && $logo) $pdf->Image($logo, $_PosX + ($widthtouse / 2), $_PosY + $ytop, $logoWidth, 0);
-				elseif ($code && !empty($encoding))
-				{
+			} elseif (($textright == '%LOGO%' || $textright == '%PHOTO%' || $textright == '%BARCODE%') && !strstr($textleft, '%')) { // right part logo/barcode left part text
+				if ($textright == '%LOGO%' && $logo) {
+					$pdf->Image($logo, $_PosX + ($widthtouse / 2), $_PosY + $ytop, $logoWidth, 0);
+				} elseif ($code && !empty($encoding)) {
 					$this->writeBarcode($pdf, $code, $encoding, $is2d, $_PosX + ($widthtouse / 2), $_PosY + $ytop, $widthtouse / 2, $heighttouse);
 				}
 				$pdf->SetXY($_PosX + $xleft, $_PosY + $ytop);
 				$pdf->MultiCell($widthtouse / 2, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft), 0, 'L');
-			} elseif ($textleft == '%LOGO%')	 // left part logo right part text/barcode
-			{
-				if ($logo) $pdf->Image($logo, $_PosX + $xleft, $_PosY + $ytop, 0, $logoHeight);
-				if ($code && !empty($encoding))
-				{
+			} elseif ($textleft == '%LOGO%') {	 // left part logo right part text/barcode
+				if ($logo) {
+					$pdf->Image($logo, $_PosX + $xleft, $_PosY + $ytop, 0, $logoHeight);
+				}
+				if ($code && !empty($encoding)) {
 					$this->writeBarcode($pdf, $code, $encoding, $is2d, $_PosX + $xleft + $logoWidth + 1, $_PosY + $ytop, $widthtouse - $logoWidth - 1, $heighttouse);
 				} else {
 					$pdf->SetXY($_PosX + $xleft + $logoWidth + 1, $_PosY + $ytop);
 					$pdf->MultiCell($widthtouse - $logoWidth - 1, $this->_Line_Height, $outputlangs->convToOutputCharset($textright), 0, 'R');
 				}
-			} elseif ($textright == '%LOGO%')  // right part logo left part text/barcode
-			{
-				if ($logo) $pdf->Image($logo, $_PosX + $xleft + $widthtouse - $logoWidth + 1, $_PosY + $ytop, 0, $logoHeight);
-				if ($code && !empty($encoding))
-				{
+			} elseif ($textright == '%LOGO%') {  // right part logo left part text/barcode
+				if ($logo) {
+					$pdf->Image($logo, $_PosX + $xleft + $widthtouse - $logoWidth + 1, $_PosY + $ytop, 0, $logoHeight);
+				}
+				if ($code && !empty($encoding)) {
 					$this->writeBarcode($pdf, $code, $encoding, $is2d, $_PosX + $xleft, $_PosY + $ytop, $widthtouse - $logoWidth - 1, $heighttouse);
 				} else {
 					$pdf->SetXY($_PosX + $xleft, $_PosY + $ytop);
@@ -221,9 +213,9 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 		} else // Only a right part
 		{
 			// Output right area
-			if ($textright == '%LOGO%' && $logo) $pdf->Image($logo, $_PosX + $this->_Width - $widthtouse - $xleft, $_PosY + $ytop, 0, $logoHeight);
-			elseif ($code && !empty($encoding))
-			{
+			if ($textright == '%LOGO%' && $logo) {
+				$pdf->Image($logo, $_PosX + $this->_Width - $widthtouse - $xleft, $_PosY + $ytop, 0, $logoHeight);
+			} elseif ($code && !empty($encoding)) {
 				$this->writeBarcode($pdf, $code, $encoding, $is2d, $_PosX + $this->_Width - $widthtouse - $xleft, $_PosY + $ytop, $widthtouse, $heighttouse);
 			} else {
 				$pdf->SetXY($_PosX + $xleft, $_PosY + $ytop);
@@ -232,8 +224,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 		}
 
 		// Bottom
-		if ($footer != '')
-		{
+		if ($footer != '') {
 			$pdf->SetXY($_PosX, $_PosY + $this->_Height - $this->_Line_Height - 1);
 			$pdf->Cell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($footer), 0, 1, 'C');
 		}
@@ -275,7 +266,10 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 
 		$this->code = $srctemplatepath;
 		$this->Tformat = $_Avery_Labels[$this->code];
-		if (empty($this->Tformat)) { dol_print_error('', 'ErrorBadTypeForCard'.$this->code); exit; }
+		if (empty($this->Tformat)) {
+			dol_print_error('', 'ErrorBadTypeForCard'.$this->code);
+			exit;
+		}
 		$this->type = 'pdf';
 		// standard format or custom
 		if ($this->Tformat['paper-size'] != 'custom') {
@@ -286,9 +280,13 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 			$this->format = $resolution;
 		}
 
-		if (!is_object($outputlangs)) $outputlangs = $langs;
+		if (!is_object($outputlangs)) {
+			$outputlangs = $langs;
+		}
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (!empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output = 'ISO-8859-1';
+		if (!empty($conf->global->MAIN_USE_FPDF)) {
+			$outputlangs->charset_output = 'ISO-8859-1';
+		}
 
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "admin"));
@@ -299,10 +297,8 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 		$dir = (empty($outputdir) ? $conf->adherent->dir_temp : $outputdir);
 		$file = $dir."/".$filename;
 
-		if (!file_exists($dir))
-		{
-			if (dol_mkdir($dir) < 0)
-			{
+		if (!file_exists($dir)) {
+			if (dol_mkdir($dir) < 0) {
 				$this->error = $langs->trans("ErrorCanNotCreateDir", $dir);
 				return 0;
 			}
@@ -310,8 +306,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 
 		$pdf = pdf_getInstance($this->format, $this->Tformat['metric'], $this->Tformat['orientation']);
 
-		if (class_exists('TCPDF'))
-		{
+		if (class_exists('TCPDF')) {
 			$pdf->setPrintHeader(false);
 			$pdf->setPrintFooter(false);
 		}
@@ -322,7 +317,9 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 		$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 		$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 		$pdf->SetKeyWords($keywords);
-		if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
+		if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) {
+			$pdf->SetCompression(false);
+		}
 
 		$pdf->SetMargins(0, 0);
 		$pdf->SetAutoPageBreak(false);
@@ -331,8 +328,16 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 		// Permet de commencer l'impression de l'etiquette desiree dans le cas ou la page a deja servie
 		$posX = 1;
 		$posY = 1;
-		if ($posX > 0) $posX--; else $posX = 0;
-		if ($posY > 0) $posY--; else $posY = 0;
+		if ($posX > 0) {
+			$posX--;
+		} else {
+			$posX = 0;
+		}
+		if ($posY > 0) {
+			$posY--;
+		} else {
+			$posY = 0;
+		}
 		$this->_COUNTX = $posX;
 		$this->_COUNTY = $posY;
 		$this->_Set_Format($pdf, $this->Tformat);
@@ -343,8 +348,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 
 
 		// Add each record
-		foreach ($arrayofrecords as $val)
-		{
+		foreach ($arrayofrecords as $val) {
 			// imprime le texte specifique sur la carte
 			$this->addSticker($pdf, $outputlangs, $val);
 		}
@@ -356,26 +360,10 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 		// Output to file
 		$pdf->Output($file, 'F');
 
-		if (!empty($conf->global->MAIN_UMASK))
+		if (!empty($conf->global->MAIN_UMASK)) {
 			@chmod($file, octdec($conf->global->MAIN_UMASK));
+		}
 
-		// Output to http stream
-		clearstatcache();
-
-		$attachment = true;
-		if (!empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) $attachment = false;
-		$type = dol_mimetype($filename);
-
-		//if ($encoding)   header('Content-Encoding: '.$encoding);
-		if ($type)		 header('Content-Type: '.$type);
-		if ($attachment) header('Content-Disposition: attachment; filename="'.$filename.'"');
-		else header('Content-Disposition: inline; filename="'.$filename.'"');
-
-		// Ajout directives pour resoudre bug IE
-		header('Cache-Control: Public, must-revalidate');
-		header('Pragma: public');
-
-		readfile($file);
 
 		$this->result = array('fullpath'=>$file);
 

@@ -32,7 +32,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('agenda', 'admin', 'other'));
@@ -41,7 +43,9 @@ $def = array();
 $actiontest = GETPOST('test', 'alpha');
 $actionsave = GETPOST('save', 'alpha');
 
-if (empty($conf->global->AGENDA_EXT_NB)) $conf->global->AGENDA_EXT_NB = 5;
+if (empty($conf->global->AGENDA_EXT_NB)) {
+	$conf->global->AGENDA_EXT_NB = 5;
+}
 $MAXAGENDA = $conf->global->AGENDA_EXT_NB;
 
 // List of available colors
@@ -52,8 +56,7 @@ $colorlist = array('BECEDD', 'DDBECE', 'BFDDBE', 'F598B4', 'F68654', 'CBF654', '
  * Actions
  */
 
-if ($actionsave)
-{
+if ($actionsave) {
 	$db->begin();
 
 	$disableext = GETPOST('AGENDA_DISABLE_EXT', 'alpha');
@@ -63,17 +66,17 @@ if ($actionsave)
 	$error = 0;
 
 	// Save agendas
-	while ($i <= $MAXAGENDA)
-	{
+	while ($i <= $MAXAGENDA) {
 		$name = trim(GETPOST('AGENDA_EXT_NAME'.$i, 'alpha'));
 		$src = trim(GETPOST('AGENDA_EXT_SRC'.$i, 'alpha'));
 		$offsettz = trim(GETPOST('AGENDA_EXT_OFFSETTZ'.$i, 'alpha'));
 		$color = trim(GETPOST('AGENDA_EXT_COLOR'.$i, 'alpha'));
-		if ($color == '-1') $color = '';
+		if ($color == '-1') {
+			$color = '';
+		}
 		$enabled = trim(GETPOST('AGENDA_EXT_ENABLED'.$i, 'alpha'));
 
-		if (!empty($src) && !dol_is_url($src))
-		{
+		if (!empty($src) && !dol_is_url($src)) {
 			setEventMessages($langs->trans("ErrorParamMustBeAnUrl"), null, 'errors');
 			$error++;
 			$errorsaved++;
@@ -82,34 +85,48 @@ if ($actionsave)
 
 		//print '-name='.$name.'-color='.$color;
 		$res = dolibarr_set_const($db, 'AGENDA_EXT_NAME'.$i, $name, 'chaine', 0, '', $conf->entity);
-		if (!$res > 0) $error++;
+		if (!($res > 0)) {
+			$error++;
+		}
 		$res = dolibarr_set_const($db, 'AGENDA_EXT_SRC'.$i, $src, 'chaine', 0, '', $conf->entity);
-		if (!$res > 0) $error++;
+		if (!($res > 0)) {
+			$error++;
+		}
 		$res = dolibarr_set_const($db, 'AGENDA_EXT_OFFSETTZ'.$i, $offsettz, 'chaine', 0, '', $conf->entity);
-		if (!$res > 0) $error++;
+		if (!($res > 0)) {
+			$error++;
+		}
 		$res = dolibarr_set_const($db, 'AGENDA_EXT_COLOR'.$i, $color, 'chaine', 0, '', $conf->entity);
-		if (!$res > 0) $error++;
+		if (!($res > 0)) {
+			$error++;
+		}
 		$res = dolibarr_set_const($db, 'AGENDA_EXT_ENABLED'.$i, $enabled, 'chaine', 0, '', $conf->entity);
-		if (!$res > 0) $error++;
+		if (!($res > 0)) {
+			$error++;
+		}
 		$i++;
 	}
 
 	// Save nb of agenda
-	if (!$error)
-	{
+	if (!$error) {
 		$res = dolibarr_set_const($db, 'AGENDA_EXT_NB', trim(GETPOST('AGENDA_EXT_NB', 'int')), 'chaine', 0, '', $conf->entity);
-		if (!$res > 0) $error++;
-		if (empty($conf->global->AGENDA_EXT_NB)) $conf->global->AGENDA_EXT_NB = 5;
+		if (!($res > 0)) {
+			$error++;
+		}
+		if (empty($conf->global->AGENDA_EXT_NB)) {
+			$conf->global->AGENDA_EXT_NB = 5;
+		}
 		$MAXAGENDA = empty($conf->global->AGENDA_EXT_NB) ? 5 : $conf->global->AGENDA_EXT_NB;
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
 		$db->rollback();
-		if (empty($errorsaved))	setEventMessages($langs->trans("Error"), null, 'errors');
+		if (empty($errorsaved)) {
+			setEventMessages($langs->trans("Error"), null, 'errors');
+		}
 	}
 }
 
@@ -143,7 +160,11 @@ print "<br>\n";
 
 
 $selectedvalue = $conf->global->AGENDA_DISABLE_EXT;
-if ($selectedvalue == 1) $selectedvalue = 0; else $selectedvalue = 1;
+if ($selectedvalue == 1) {
+	$selectedvalue = 0;
+} else {
+	$selectedvalue = 1;
+}
 
 print "<table class=\"noborder\" width=\"100%\">";
 
@@ -157,12 +178,10 @@ print "</tr>";
 print '<tr class="oddeven">';
 print "<td>".$langs->trans("ExtSitesEnableThisTool")."</td>";
 print '<td class="center">';
-if ($conf->use_javascript_ajax)
-{
+if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('AGENDA_DISABLE_EXT', array('enabled'=>array(0=>'.hideifnotset')), null, 1);
 } else {
-	if (empty($conf->global->AGENDA_DISABLE_EXT))
-	{
+	if (empty($conf->global->AGENDA_DISABLE_EXT)) {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?save=1&AGENDA_DISABLE_EXT=1">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	} else {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?save=1&AGENDA_DISABLE_EXT=0">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
@@ -194,8 +213,7 @@ print '<td class="right">'.$langs->trans("Color").'</td>';
 print "</tr>";
 
 $i = 1;
-while ($i <= $MAXAGENDA)
-{
+while ($i <= $MAXAGENDA) {
 	$key = $i;
 	$name = 'AGENDA_EXT_NAME'.$key;
 	$src = 'AGENDA_EXT_SRC'.$key;

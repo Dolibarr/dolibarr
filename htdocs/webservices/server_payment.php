@@ -42,9 +42,9 @@ dol_syslog("Call Dolibarr webservices interfaces");
 $langs->load("main");
 
 // Enable and test if module web services is enabled
-if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
-{
+if (empty($conf->global->MAIN_MODULE_WEBSERVICES)) {
 	   $langs->load("admin");
+
 	   dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
 	   print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
 	   print $langs->trans("ToActivateModule");
@@ -139,14 +139,16 @@ $server->register(
  */
 function createPayment($authentication, $payment)
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	$now = dol_now();
 
 	dol_syslog("Function: createPayment login=".$authentication['login']." id=".$payment->id.
 			   ", ref=".$payment->ref.", ref_ext=".$payment->ref_ext);
 
-	if ($authentication['entity']) $conf->entity = $authentication['entity'];
+	if ($authentication['entity']) {
+		$conf->entity = $authentication['entity'];
+	}
 
 	// Init and check authentication
 	$objectresp = array();
@@ -162,10 +164,9 @@ function createPayment($authentication, $payment)
 		$errorlabel = "You must specify the amount and the third party's ID.";
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$soc = new Societe($db);
-		$res = $soc->fetch($payment['thirdparty_id']);
+		$soc->fetch($payment['thirdparty_id']);
 
 		$new_payment              = new Paiement($db);
 		$new_payment->amount      = doubleval($payment['amount']);
@@ -187,17 +188,14 @@ function createPayment($authentication, $payment)
 			$new_payment->addPaymentToBank($fuser, 'payment', $payment['int_label'], $payment['bank_account'], $payment['emitter'], $payment['bank_source']);
 		}
 
-		if ($result < 0)
-		{
+		if ($result < 0) {
 			$error++;
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$db->commit();
 			$objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'id'=>$new_payment->id);
-		}
-		else {
+		} else {
 			$db->rollback();
 			$error++;
 			$errorcode = 'KO';
@@ -206,8 +204,7 @@ function createPayment($authentication, $payment)
 		}
 	}
 
-	if ($error)
-	{
+	if ($error) {
 		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 

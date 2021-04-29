@@ -97,7 +97,6 @@ ACCOUNTING_EXPENSEREPORT_JOURNAL=Note de frais
 DONATION_ACCOUNTINGACCOUNT=Compte comptable pour enregistrer des dons
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Compte comptable par défaut pour les services achetés (utilisé si non défini dans la fiche de service)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Compte comptable par défaut pour les services vendus (utilisé si non défini dans la fiche de service)
-GroupByAccountAccounting=Groupe par compte comptable
 NotMatch=Pas encore défini
 FinanceJournal=Journal des finances
 ExpenseReportsJournal=Journal des rapports de dépenses

@@ -463,66 +463,78 @@ asort($orders);
 //var_dump($modules);
 
 $nbofactivatedmodules = count($conf->modules);
-$moreinfo = $langs->trans("TitleNumberOfActivatedModules");
-$moreinfo2 = ($nbofactivatedmodules - 1)." / ".count($modules);
-if ($nbofactivatedmodules <= 1) {
+
+//$conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING = 1000;
+/*$moreinfo = $langs->trans("TitleNumberOfActivatedModules");
+$moreinfo2 = '<b class="largenumber">'.($nbofactivatedmodules - 1).'</b> / <b class="largenumber">'.count($modules).'</b>';
+if ($nbofactivatedmodules <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING) ? 1 : $conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING)) {
 	$moreinfo2 .= ' '.img_warning($langs->trans("YouMustEnableOneModule"));
-}
+}*/
 
 print load_fiche_titre($langs->trans("ModulesSetup"), '', 'title_setup');
 
 // Start to show page
+$deschelp  = '';
 if ($mode == 'common' || $mode == 'commonkanban') {
 	$desc = $langs->trans("ModulesDesc", '{picto}');
 	$desc = str_replace('{picto}', img_picto('', 'switch_off'), $desc);
-	print '<span class="opacitymedium hideonsmartphone">'.$desc."<br></span>\n";
+	if (count($conf->modules) <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING) ? 1 : $conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING)) {	// If only minimal initial modules enabled
+		$deschelp = '<div class="info hideonsmartphone">'.$desc."<br></div><br>\n";
+	}
 }
 if ($mode == 'marketplace') {
-	print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesMarketPlaceDesc")."<br></span>\n";
+	//$deschelp = '<div class="info hideonsmartphone">'.$langs->trans("ModulesMarketPlaceDesc")."<br></div><br>\n";
 }
 if ($mode == 'deploy') {
-	print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesDeployDesc", $langs->transnoentitiesnoconv("AvailableModules"))."<br></span>\n";
+	$deschelp = '<div class="info hideonsmartphone">'.$langs->trans("ModulesDeployDesc", $langs->transnoentitiesnoconv("AvailableModules"))."<br></div><br>\n";
 }
 if ($mode == 'develop') {
-	print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModulesDevelopDesc")."<br></span>\n";
+	$deschelp = '<div class="info hideonsmartphone">'.$langs->trans("ModulesDevelopDesc")."<br></div><br>\n";
 }
 
-$head = modules_prepare_head();
-
-
-print "<br>\n";
+$head = modules_prepare_head($nbofactivatedmodules, count($modules));
 
 
 if ($mode == 'common' || $mode == 'commonkanban') {
 	dol_set_focus('#search_keyword');
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
-	if ($optioncss != '') {
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	if (isset($optioncss) && $optioncss != '') {
 		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	}
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
-	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-	print '<input type="hidden" name="page" value="'.$page.'">';
+	if (isset($sortfield) && $sortfield != '') {
+		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	}
+	if (isset($sortorder) && $sortorder != '') {
+		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	}
+	if (isset($page) && $page != '') {
+		print '<input type="hidden" name="page" value="'.$page.'">';
+	}
 	print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 	print dol_get_fiche_head($head, 'modules', '', -1);
 
+	print $deschelp;
+
 	$moreforfilter = '<div class="valignmiddle">';
 
-	$moreforfilter .= '<div class="floatright right pagination"><ul><li>';
-	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=commonkanban'.$param, '', 1, array('morecss'=>'reposition'.($mode == 'common' ? '' : ' btnTitleSelected')));
-	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-list-alt imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.$param, '', 1, array('morecss'=>'reposition'.($mode == 'commonkanban' ? '' : ' btnTitleSelected')));
+	$moreforfilter .= '<div class="floatright right pagination --module-list"><ul><li>';
+	$moreforfilter .= dolGetButtonTitle($langs->trans('CheckForModuleUpdate'), $langs->trans('CheckForModuleUpdate').'<br>'.$langs->trans('CheckForModuleUpdateHelp'), 'fa fa-sync', $_SERVER["PHP_SELF"].'?action=checklastversion&token='.newToken().'&mode='.$mode.$param, '', 1, array('morecss'=>'reposition'));
+	$moreforfilter .= dolGetButtonTitleSeparator();
+	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=commonkanban'.$param, '', ($mode == 'commonkanban' ? 2 : 1), array('morecss'=>'reposition'));
+	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-list-alt imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.$param, '', ($mode == 'common' ? 2 : 1), array('morecss'=>'reposition'));
 	$moreforfilter .= '</li></ul></div>';
 
-	$moreforfilter .= '<div class="floatright center marginrightonly hideonsmartphone" style="padding-top: 3px"><span class="">'.$moreinfo.'</span><br><b class="largenumber">'.$moreinfo2.'</b></div>';
+	//$moreforfilter .= '<div class="floatright center marginrightonly hideonsmartphone" style="padding-top: 3px"><span class="paddingright">'.$moreinfo.'</span> '.$moreinfo2.'</div>';
 
 	$moreforfilter .= '<div class="colorbacktimesheet float valignmiddle">';
 	$moreforfilter .= '<div class="divsearchfield paddingtop">';
-	$moreforfilter .= $langs->trans('Keyword').': <input type="text" id="search_keyword" name="search_keyword" class="maxwidth100" value="'.dol_escape_htmltag($search_keyword).'">';
+	$moreforfilter .= img_picto($langs->trans("Filter"), 'filter', 'class="paddingright opacityhigh"').'<input type="text" id="search_keyword" name="search_keyword" class="maxwidth125" value="'.dol_escape_htmltag($search_keyword).'" placeholder="'.dol_escape_htmltag($langs->trans('Keyword')).'">';
 	$moreforfilter .= '</div>';
 	$moreforfilter .= '<div class="divsearchfield paddingtop">';
-	$moreforfilter .= $langs->trans('Origin').': '.$form->selectarray('search_nature', $arrayofnatures, dol_escape_htmltag($search_nature), 1, 0, 0, '', 0, 0, 0, '', 'maxwidth200', 1);
+	$moreforfilter .= $form->selectarray('search_nature', $arrayofnatures, dol_escape_htmltag($search_nature), $langs->trans('Origin'), 0, 0, '', 0, 0, 0, '', 'maxwidth200', 1);
 	$moreforfilter .= '</div>';
 	if (!empty($conf->global->MAIN_FEATURES_LEVEL)) {
 		$array_version = array('stable'=>$langs->transnoentitiesnoconv("Stable"));
@@ -536,11 +548,11 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			$array_version['development'] = $langs->trans("Development");
 		}
 		$moreforfilter .= '<div class="divsearchfield paddingtop">';
-		$moreforfilter .= $langs->trans('Version').': '.$form->selectarray('search_version', $array_version, $search_version, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth150', 1);
+		$moreforfilter .= $form->selectarray('search_version', $array_version, $search_version, $langs->trans('Version'), 0, 0, '', 0, 0, 0, '', 'maxwidth150', 1);
 		$moreforfilter .= '</div>';
 	}
 	$moreforfilter .= '<div class="divsearchfield paddingtop">';
-	$moreforfilter .= $langs->trans('Status').': '.$form->selectarray('search_status', array('active'=>$langs->transnoentitiesnoconv("Enabled"), 'disabled'=>$langs->transnoentitiesnoconv("Disabled")), $search_status, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth150', 1);
+	$moreforfilter .= $form->selectarray('search_status', array('active'=>$langs->transnoentitiesnoconv("Enabled"), 'disabled'=>$langs->transnoentitiesnoconv("Disabled")), $search_status, $langs->trans('Status'), 0, 0, '', 0, 0, 0, '', 'maxwidth150', 1);
 	$moreforfilter .= '</div>';
 	$moreforfilter .= ' ';
 	$moreforfilter .= '<div class="divsearchfield">';
@@ -572,8 +584,8 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 
 	// Show list of modules
 	$oldfamily = '';
+	$foundoneexternalmodulewithupdate = 0;
 	$linenum = 0;
-
 	foreach ($orders as $key => $value) {
 		$linenum++;
 		$tab = explode('_', $value);
@@ -581,6 +593,8 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 		$module_position = $tab[2];
 
 		$modName = $filename[$key];
+
+		/** @var DolibarrModules $objMod */
 		$objMod = $modules[$modName];
 
 		//print $objMod->name." - ".$key." - ".$objMod->version."<br>";
@@ -709,6 +723,22 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			$versiontrans .= $objMod->getVersion(1);
 		}
 
+		if ($objMod->isCoreOrExternalModule() == 'external'
+			&& (
+				$action == 'checklastversion'
+				// This is a bad practice to activate a synch external access during building of a page. 1 external module can hang the application.
+				// Adding a cron job could be a good idea see DolibarrModules::checkForUpdate()
+				|| 	!empty($conf->global->CHECKLASTVERSION_EXTERNALMODULE)
+			)
+		) {
+			$checkRes = $objMod->checkForUpdate();
+			if ($checkRes > 0) {
+				setEventMessage($objMod->getName().' : '.$versiontrans.' -> '.$objMod->lastVersion);
+			} elseif ($checkRes < 0) {
+				setEventMessage($objMod->getName().' '.$langs->trans('CheckVersionFail'), 'warnings');
+			}
+		}
+
 		// Define imginfo
 		$imginfo = "info";
 		if ($objMod->isCoreOrExternalModule() == 'external') {
@@ -739,7 +769,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 				}
 			} else {
 				if (!empty($objMod->warnings_unactivation[$mysoc->country_code]) && method_exists($objMod, 'alreadyUsed') && $objMod->alreadyUsed()) {
-					$codeenabledisable .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;token='.newToken().'&amp;module_position='.$module_position.'&amp;action=reset_confirm&amp;confirm_message_code='.$objMod->warnings_unactivation[$mysoc->country_code].'&amp;value='.$modName.'&amp;mode='.$mode.$param.'">';
+					$codeenabledisable .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;token='.newToken().'&amp;module_position='.$module_position.'&amp;action=reset_confirm&amp;confirm_message_code='.urlencode($objMod->warnings_unactivation[$mysoc->country_code]).'&amp;value='.$modName.'&amp;mode='.$mode.$param.'">';
 					$codeenabledisable .= img_picto($langs->trans("Activated"), 'switch_on');
 					$codeenabledisable .= '</a>';
 				} else {
@@ -756,13 +786,13 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 					$backtourlparam .= ($backtourlparam ? '&' : '?').'search_keyword='.$search_keyword; // No urlencode here, done later
 				}
 				if ($search_nature > -1) {
-					$backtourlparam .= ($backtourlparam ? '&' : '?').'search_nature='.$search_nature;
+					$backtourlparam .= ($backtourlparam ? '&' : '?').'search_nature='.$search_nature; // No urlencode here, done later
 				}
 				if ($search_version > -1) {
-					$backtourlparam .= ($backtourlparam ? '&' : '?').'search_version='.$search_version;
+					$backtourlparam .= ($backtourlparam ? '&' : '?').'search_version='.$search_version; // No urlencode here, done later
 				}
 				if ($search_status > -1) {
-					$backtourlparam .= ($backtourlparam ? '&' : '?').'search_status='.$search_status;
+					$backtourlparam .= ($backtourlparam ? '&' : '?').'search_status='.$search_status; // No urlencode here, done later
 				}
 				$backtourl = $_SERVER["PHP_SELF"].$backtourlparam;
 
@@ -883,17 +913,12 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 
 			// Version
 			print '<td class="center nowrap" width="120px">';
-			print $versiontrans;
-			if (!empty($conf->global->CHECKLASTVERSION_EXTERNALMODULE)) {	// This is a bad practice to activate a synch external access during building of a page. 1 external module can hang the application.
-				require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
-				if (!empty($objMod->url_last_version)) {
-					$newversion = getURLContent($objMod->url_last_version);
-					if (isset($newversion['content'])) {
-						if (version_compare($newversion['content'], $versiontrans) > 0) {
-							print "&nbsp;<span class='butAction' title='".$langs->trans('LastStableVersion')."'>".$newversion['content']."</span>";
-						}
-					}
-				}
+			if ($objMod->needUpdate) {
+				$versionTitle = $langs->trans('ModuleUpdateAvailable').' : '.$objMod->lastVersion;
+				print '<span class="badge badge-warning classfortooltip" title="'.dol_escape_htmltag($versionTitle).'">'.$versiontrans.'</span>';
+				$foundoneexternalmodulewithupdate++;
+			} else {
+				print $versiontrans;
 			}
 			print "</td>\n";
 
@@ -908,6 +933,14 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			print '</td>';
 
 			print "</tr>\n";
+		}
+	}
+
+	if ($action == 'checklastversion') {
+		if ($foundoneexternalmodulewithupdate) {
+			setEventMessages($langs->trans("ModuleUpdateAvailable"), null, 'mesgs');
+		} else {
+			setEventMessages($langs->trans("NoExternalModuleWithUpdate"), null, 'mesgs');
 		}
 	}
 
@@ -933,6 +966,10 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 if ($mode == 'marketplace') {
 	print dol_get_fiche_head($head, $mode, '', -1);
 
+	print $deschelp;
+
+	print '<br>';
+
 	// Marketplace
 	print '<div class="div-table-responsive-no-min">';
 	print '<table summary="list_of_modules" class="noborder centpercent">'."\n";
@@ -945,7 +982,7 @@ if ($mode == 'marketplace') {
 	print '<tr class="oddeven">'."\n";
 	$url = 'https://www.dolistore.com';
 	print '<td class="hideonsmartphone"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.png"></a></td>';
-	print '<td>'.$langs->trans("DoliStoreDesc").'</td>';
+	print '<td><span class="opacitymedium">'.$langs->trans("DoliStoreDesc").'</span></td>';
 	print '<td><a href="'.$url.'" target="_blank" rel="external">'.$url.'</a></td>';
 	print '</tr>';
 
@@ -973,8 +1010,8 @@ if ($mode == 'marketplace') {
 		?>
 					<input type="hidden" name="token" value="<?php echo newToken(); ?>">
 					<input type="hidden" name="mode" value="marketplace">
-					<div class="divsearchfield"><?php echo $langs->trans('Keyword') ?>:
-						<input name="search_keyword" placeholder="<?php echo $langs->trans('Chercher un module') ?>" id="search_keyword" type="text" size="50" value="<?php echo $options['search'] ?>"><br>
+					<div class="divsearchfield">
+						<input name="search_keyword" placeholder="<?php echo $langs->trans('Keyword') ?>" id="search_keyword" type="text" size="50" value="<?php echo $options['search'] ?>"><br>
 					</div>
 					<div class="divsearchfield">
 						<input class="button buttongen" value="<?php echo $langs->trans('Rechercher') ?>" type="submit">
@@ -1001,7 +1038,7 @@ if ($mode == 'marketplace') {
 			<div id="listing-content">
 				<table summary="list_of_modules" id="list_of_modules" class="productlist centpercent">
 					<tbody id="listOfModules">
-						<?php echo $dolistore->get_products($categorie); ?>
+						<?php echo $dolistore->get_products(!empty($categorie) ? $categorie: ''); ?>
 					</tbody>
 				</table>
 			</div>
@@ -1015,6 +1052,8 @@ if ($mode == 'marketplace') {
 
 if ($mode == 'deploy') {
 	print dol_get_fiche_head($head, $mode, '', -1);
+
+	print $deschelp;
 
 	$dolibarrdataroot = preg_replace('/([\\/]+)$/i', '', DOL_DATA_ROOT);
 	$allowonlineinstall = true;
@@ -1061,9 +1100,9 @@ if ($mode == 'deploy') {
 		} else {
 			print $langs->trans("ThisIsAlternativeProcessToFollow").'<br>';
 			print '<b>'.$langs->trans("StepNb", 1).'</b>: ';
-			print $langs->trans("FindPackageFromWebSite", $fullurl).'<br>';
+			print str_replace('{s1}', $fullurl, $langs->trans("FindPackageFromWebSite", '{s1}')).'<br>';
 			print '<b>'.$langs->trans("StepNb", 2).'</b>: ';
-			print $langs->trans("DownloadPackageFromWebSite", $fullurl).'<br>';
+			print str_replace('{s1}', $fullurl, $langs->trans("DownloadPackageFromWebSite", '{s1}')).'<br>';
 			print '<b>'.$langs->trans("StepNb", 3).'</b>: ';
 		}
 
@@ -1082,28 +1121,36 @@ if ($mode == 'deploy') {
 			$max = $conf->global->MAIN_UPLOAD_DOC; // In Kb
 			$maxphp = @ini_get('upload_max_filesize'); // In unknown
 			if (preg_match('/k$/i', $maxphp)) {
+				$maxphp = preg_replace('/k$/i', '', $maxphp);
 				$maxphp = $maxphp * 1;
 			}
 			if (preg_match('/m$/i', $maxphp)) {
+				$maxphp = preg_replace('/m$/i', '', $maxphp);
 				$maxphp = $maxphp * 1024;
 			}
 			if (preg_match('/g$/i', $maxphp)) {
+				$maxphp = preg_replace('/g$/i', '', $maxphp);
 				$maxphp = $maxphp * 1024 * 1024;
 			}
 			if (preg_match('/t$/i', $maxphp)) {
+				$maxphp = preg_replace('/t$/i', '', $maxphp);
 				$maxphp = $maxphp * 1024 * 1024 * 1024;
 			}
 			$maxphp2 = @ini_get('post_max_size'); // In unknown
 			if (preg_match('/k$/i', $maxphp2)) {
+				$maxphp2 = preg_replace('/k$/i', '', $maxphp2);
 				$maxphp2 = $maxphp2 * 1;
 			}
 			if (preg_match('/m$/i', $maxphp2)) {
+				$maxphp2 = preg_replace('/m$/i', '', $maxphp2);
 				$maxphp2 = $maxphp2 * 1024;
 			}
 			if (preg_match('/g$/i', $maxphp2)) {
+				$maxphp2 = preg_replace('/g$/i', '', $maxphp2);
 				$maxphp2 = $maxphp2 * 1024 * 1024;
 			}
 			if (preg_match('/t$/i', $maxphp2)) {
+				$maxphp2 = preg_replace('/t$/i', '', $maxphp2);
 				$maxphp2 = $maxphp2 * 1024 * 1024 * 1024;
 			}
 			// Now $max and $maxphp and $maxphp2 are in Kb
@@ -1139,7 +1186,7 @@ if ($mode == 'deploy') {
 
 			print '<input class="flat minwidth400" type="file" name="fileinstall" id="fileinstall"> ';
 
-			print '<input type="submit" name="send" value="'.dol_escape_htmltag($langs->trans("Send")).'" class="button">';
+			print '<input type="submit" name="send" value="'.dol_escape_htmltag($langs->trans("Upload")).'" class="button">';
 
 			if (!empty($conf->global->MAIN_UPLOAD_DOC)) {
 				if ($user->admin) {
@@ -1177,6 +1224,10 @@ if ($mode == 'deploy') {
 
 if ($mode == 'develop') {
 	print dol_get_fiche_head($head, $mode, '', -1);
+
+	print $deschelp;
+
+	print '<br>';
 
 	// Marketplace
 	print "<table summary=\"list_of_modules\" class=\"noborder\" width=\"100%\">\n";

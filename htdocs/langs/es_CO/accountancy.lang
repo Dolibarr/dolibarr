@@ -107,7 +107,6 @@ LetteringCode=Codigo de letras
 Codejournal=diario
 NumPiece=Número de pieza
 TransactionNumShort=Num. transacción
-GroupByAccountAccounting=Grupo por cuenta contable
 AccountingAccountGroupsDesc=Puede definir aquí algunos grupos de cuentas contables. Serán utilizados para informes contables personalizados.
 ByPredefinedAccountGroups=Por grupos predefinidos.
 DelYear=Año para borrar

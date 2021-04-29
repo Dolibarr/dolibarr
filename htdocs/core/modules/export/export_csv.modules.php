@@ -69,7 +69,9 @@ class ExportCsv extends ModeleExports
 		$this->db = $db;
 
 		$this->separator = ',';
-		if (!empty($conf->global->EXPORT_CSV_SEPARATOR_TO_USE)) $this->separator = $conf->global->EXPORT_CSV_SEPARATOR_TO_USE;
+		if (!empty($conf->global->EXPORT_CSV_SEPARATOR_TO_USE)) {
+			$this->separator = $conf->global->EXPORT_CSV_SEPARATOR_TO_USE;
+		}
 		$this->escape = '"';
 		$this->enclosure = '"';
 
@@ -175,8 +177,7 @@ class ExportCsv extends ModeleExports
 
 		$outputlangs->load("exports");
 		$this->handle = fopen($file, "wt");
-		if (!$this->handle)
-		{
+		if (!$this->handle) {
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorFailToCreateFile", $file);
 			$ret = -1;
@@ -214,15 +215,13 @@ class ExportCsv extends ModeleExports
 		// phpcs:enable
 		global $conf;
 
-		if (!empty($conf->global->EXPORT_CSV_FORCE_CHARSET))
-		{
+		if (!empty($conf->global->EXPORT_CSV_FORCE_CHARSET)) {
 			$outputlangs->charset_output = $conf->global->EXPORT_CSV_FORCE_CHARSET;
 		} else {
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
-		foreach ($array_selected_sorted as $code => $value)
-		{
+		foreach ($array_selected_sorted as $code => $value) {
 			$newvalue = $outputlangs->transnoentities($array_export_fields_label[$code]); // newvalue is now $outputlangs->charset_output encoded
 			$newvalue = $this->csvClean($newvalue, $outputlangs->charset_output);
 
@@ -248,8 +247,7 @@ class ExportCsv extends ModeleExports
 		// phpcs:enable
 		global $conf;
 
-		if (!empty($conf->global->EXPORT_CSV_FORCE_CHARSET))
-		{
+		if (!empty($conf->global->EXPORT_CSV_FORCE_CHARSET)) {
 			$outputlangs->charset_output = $conf->global->EXPORT_CSV_FORCE_CHARSET;
 		} else {
 			$outputlangs->charset_output = 'ISO-8859-1';
@@ -259,22 +257,27 @@ class ExportCsv extends ModeleExports
 
 		$reg = array();
 
-		foreach ($array_selected_sorted as $code => $value)
-		{
-			if (strpos($code, ' as ') == 0) $alias = str_replace(array('.', '-', '(', ')'), '_', $code);
-			else $alias = substr($code, strpos($code, ' as ') + 4);
-			if (empty($alias)) dol_print_error('', 'Bad value for field with key='.$code.'. Try to redefine export.');
+		foreach ($array_selected_sorted as $code => $value) {
+			if (strpos($code, ' as ') == 0) {
+				$alias = str_replace(array('.', '-', '(', ')'), '_', $code);
+			} else {
+				$alias = substr($code, strpos($code, ' as ') + 4);
+			}
+			if (empty($alias)) {
+				dol_print_error('', 'Bad value for field with key='.$code.'. Try to redefine export.');
+			}
 
 			$newvalue = $outputlangs->convToOutputCharset($objp->$alias); // objp->$alias must be utf8 encoded as any var in memory	// newvalue is now $outputlangs->charset_output encoded
 			$typefield = isset($array_types[$code]) ? $array_types[$code] : '';
 
 			// Translation newvalue
-			if (preg_match('/^\((.*)\)$/i', $newvalue, $reg)) $newvalue = $outputlangs->transnoentities($reg[1]);
+			if (preg_match('/^\((.*)\)$/i', $newvalue, $reg)) {
+				$newvalue = $outputlangs->transnoentities($reg[1]);
+			}
 
 			$newvalue = $this->csvClean($newvalue, $outputlangs->charset_output);
 
-			if (preg_match('/^Select:/i', $typefield, $reg) && $typefield = substr($typefield, 7))
-			{
+			if (preg_match('/^Select:/i', $typefield, $reg) && $typefield = substr($typefield, 7)) {
 				$array = unserialize($typefield);
 				$array = $array['options'];
 				$newvalue = $array[$newvalue];
@@ -330,32 +333,29 @@ class ExportCsv extends ModeleExports
 		$addquote = 0;
 
 		// Rule Dolibarr: No HTML
-   		//print $charset.' '.$newvalue."\n";
-   		//$newvalue=dol_string_nohtmltag($newvalue,0,$charset);
-   		$newvalue = dol_htmlcleanlastbr($newvalue);
-   		//print $charset.' '.$newvalue."\n";
+		//print $charset.' '.$newvalue."\n";
+		//$newvalue=dol_string_nohtmltag($newvalue,0,$charset);
+		$newvalue = dol_htmlcleanlastbr($newvalue);
+		//print $charset.' '.$newvalue."\n";
 
 		// Rule 1 CSV: No CR, LF in cells (except if USE_STRICT_CSV_RULES is on, we can keep record as it is but we must add quotes)
 		$oldvalue = $newvalue;
 		$newvalue = str_replace("\r", '', $newvalue);
 		$newvalue = str_replace("\n", '\n', $newvalue);
-		if (!empty($conf->global->USE_STRICT_CSV_RULES) && $oldvalue != $newvalue)
-		{
+		if (!empty($conf->global->USE_STRICT_CSV_RULES) && $oldvalue != $newvalue) {
 			// If strict use of CSV rules, we just add quote
 			$newvalue = $oldvalue;
 			$addquote = 1;
 		}
 
 		// Rule 2 CSV: If value contains ", we must escape with ", and add "
-		if (preg_match('/"/', $newvalue))
-		{
+		if (preg_match('/"/', $newvalue)) {
 			$addquote = 1;
 			$newvalue = str_replace('"', '""', $newvalue);
 		}
 
 		// Rule 3 CSV: If value contains separator, we must add "
-		if (preg_match('/'.$this->separator.'/', $newvalue))
-		{
+		if (preg_match('/'.$this->separator.'/', $newvalue)) {
 			$addquote = 1;
 		}
 

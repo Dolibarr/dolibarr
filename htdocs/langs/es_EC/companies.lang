@@ -207,7 +207,6 @@ VATIntraCheckableOnEUSite=Consulte el ID de IVA intracomunitario en el sitio web
 VATIntraManualCheck=También puede consultar manualmente en el sitio web de la Comisión Europea. <a href="%s" target="_blank">%s</a>
 ErrorVATCheckMS_UNAVAILABLE=No es posible el chequeo. El servicio de chequeo no es proporcionado por el estado miembro (%s).
 NorProspectNorCustomer=No prospecto, ni cliente
-JuridicalStatus=Tipo de entidad jurídica
 ProspectLevel=Prospecto potencial
 OthersNotLinkedToThirdParty=Otros, no vinculados a cliente/proveedor
 ProspectStatus=Estado del prospecto
@@ -259,7 +258,6 @@ CurrentOutstandingBill=Factura actual pendiente
 OutstandingBill=Max. Por factura pendiente
 OutstandingBillReached=Max. Para la factura pendiente alcanzada
 OrderMinAmount=Monto mínimo para la orden
-MonkeyNumRefModelDesc=Devuelva un número con el formato %syymm-nnnn para el código de cliente y %syymm-nnnn para el código de proveedor donde yy es año, mm es mes y nnnn es una secuencia sin interrupción y sin retorno a 0.
 LeopardNumRefModelDesc=El código es gratuito. Este código se puede modificar en cualquier momento.
 ManagingDirectors=Nombre del Gerente(s) (CEO, director, presidente ...)
 MergeOriginThirdparty=Duplicar clientes/proveedores (clientes/proveedores que desea eliminar)

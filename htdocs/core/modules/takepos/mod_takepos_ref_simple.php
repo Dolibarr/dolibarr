@@ -141,17 +141,22 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
 		$resql = $db->query($sql);
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
-			if ($obj) $max = intval($obj->max);
-			else $max = 0;
+			if ($obj) {
+				$max = intval($obj->max);
+			} else {
+				$max = 0;
+			}
 		} else {
 			dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
 			return -1;
 		}
 
-		if ($mode == 'last')
-		{
-			if ($max >= (pow(10, 4) - 1)) $num = $max; // If counter > 9999, we do not format on 4 chars, we take number as it is
-			else $num = sprintf("%04s", $max);
+		if ($mode == 'last') {
+			if ($max >= (pow(10, 4) - 1)) {
+				$num = $max; // If counter > 9999, we do not format on 4 chars, we take number as it is
+			} else {
+				$num = sprintf("%04s", $max);
+			}
 
 			$ref = '';
 			$sql  = "SELECT ref as ref";
@@ -163,21 +168,29 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
 			$resql = $db->query($sql);
 			if ($resql) {
 				$obj = $db->fetch_object($resql);
-				if ($obj) $ref = $obj->ref;
-			} else dol_print_error($db);
+				if ($obj) {
+					$ref = $obj->ref;
+				}
+			} else {
+				dol_print_error($db);
+			}
 
 			return $ref;
-		} elseif ($mode == 'next')
-		{
+		} elseif ($mode == 'next') {
 			$date = $invoice->date; // This is invoice date (not creation date)
 			$yymm = strftime("%y%m", $date);
 
-			if ($max >= (pow(10, 4) - 1)) $num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
-			else $num = sprintf("%04s", $max + 1);
+			if ($max >= (pow(10, 4) - 1)) {
+				$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
+			} else {
+				$num = sprintf("%04s", $max + 1);
+			}
 
 			dol_syslog(get_class($this)."::getNextValue return ".$this->prefix.$pos_source.'-'.$yymm.'-'.$num);
 			return $this->prefix.$pos_source.'-'.$yymm.'-'.$num;
-		} else dol_print_error('', 'Bad parameter for getNextValue');
+		} else {
+			dol_print_error('', 'Bad parameter for getNextValue');
+		}
 	}
 
 	/**

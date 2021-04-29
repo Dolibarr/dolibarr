@@ -4,7 +4,7 @@ Accounting=Boekhouding
 ACCOUNTING_EXPORT_SEPARATORCSV=Kolom separator voor export bestand
 ACCOUNTING_EXPORT_DATE=Datumnotatie voor exportbestand
 ACCOUNTING_EXPORT_PIECE=Exporteer het aantal stuks
-ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Exporteer met algemeen account
 ACCOUNTING_EXPORT_LABEL=Export label
 ACCOUNTING_EXPORT_AMOUNT=Export bedrag
 ACCOUNTING_EXPORT_DEVISE=Export valuta
@@ -16,6 +16,8 @@ ThisService=Deze dienst
 ThisProduct=Dit product
 DefaultForService=Standaard bij dienst
 DefaultForProduct=Standaard bij product
+ProductForThisThirdparty=Product voor deze relatie
+ServiceForThisThirdparty=Service voor deze relatie
 CantSuggest=Geen voorstel
 AccountancySetupDoneFromAccountancyMenu=Meeste instellingen boekhouding worden gedaan vanuit menu %s
 ConfigAccountingExpert=Configuratie van boekhoud-module (dubbel boekhouden)
@@ -48,6 +50,7 @@ CountriesExceptMe=Alle landen behalve %s
 AccountantFiles=Bron-documenten exporteren
 ExportAccountingSourceDocHelp=Met deze tool kunt u de lijsten en pdf bestanden exporteren die werden gebruikt om uw boekhouding te genereren. Gebruik het menu-item %s - %s om uw dagboeken te exporteren.
 VueByAccountAccounting=Overzicht per grootboekrekening
+VueBySubAccountAccounting=Overzicht op volgorde subrekening
 
 MainAccountForCustomersNotDefined=De standaard grootboekrekening voor klanten is niet vastgelegd bij de instellingen
 MainAccountForSuppliersNotDefined=Hoofdrekening voor leveranciers die niet zijn gedefinieerd in de configuratie
@@ -128,7 +131,7 @@ InvoiceLinesDone=Gekoppelde factuurregels
 ExpenseReportLines=Te koppelen kostenboekingen
 ExpenseReportLinesDone=Gekoppelde kostenboekingen
 IntoAccount=Koppel regel aan grootboekrekening
-TotalForAccount=Totaal grootboekrekening
+TotalForAccount=Total accounting account
 
 
 Ventilate=Koppelen
@@ -144,7 +147,7 @@ NotVentilatedinAccount=Niet gekoppeld aan grootboekrekening
 XLineSuccessfullyBinded=%s producten/diensten met succes gekoppeld aan een grootboekrekening
 XLineFailedToBeBinded=%s producten/diensten zijn niet gekoppeld aan een grootboekrekening
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Aantal verbonden elementen per pagina (voorstel: max. 50)
+ACCOUNTING_LIMIT_LIST_VENTILATION=Maximumaantal regels op lijst en bindpagina (aanbevolen: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin met het sorteren van de pagina nog te koppelen met de laatste boekingen
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin met het sorteren van de pagina koppelen voltooid met de laatste boekingen
 
@@ -198,15 +201,17 @@ Docdate=Date
 Docref=Reference
 LabelAccount=Label account
 LabelOperation=Werking label
-Sens=D/C
+Sens=Richting
+AccountingDirectionHelp=Voor een tegenrekening van een klant, gebruik Credit om een betaling vast te leggen die u hebt ontvangen <br> Gebruik een tegenrekening van een leverancier Debet om een betaling vast te leggen die u hebt gedaan
 LetteringCode=Aflettercode
 Lettering=Afletteren
 Codejournal=Journaal
 JournalLabel=Journaal label
 NumPiece=Boekingstuk
 TransactionNumShort=Transactienummer
-AccountingCategory=Gepersonaliseerde groepen
-GroupByAccountAccounting=Groeperen per grootboekrekening
+AccountingCategory=Custom group
+GroupByAccountAccounting=Groeperen op grootboekrekening
+GroupBySubAccountAccounting=Groepeer op subgrootboekrekening
 AccountingAccountGroupsDesc=Hier kunt u enkele grootboekrekening-groepen definiëren. Deze worden gebruikt voor gepersonaliseerde boekhoudrapporten.
 ByAccounts=Op grootboekrekening
 ByPredefinedAccountGroups=Op voorgedefinieerde groepen
@@ -222,7 +227,7 @@ ConfirmDeleteMvtPartial=Hiermee wordt de boeking uit de boekhouding verwijderd (
 FinanceJournal=Kas/Bank journaal
 ExpenseReportsJournal=Overzicht resultaatrekening
 DescFinanceJournal=Financieel journaal inclusief alle soorten betalingen per kas/bankrekening
-DescJournalOnlyBindedVisible=Deze boeking is gebonden aan een boekhoudkundige rekening en kan worden opgenomen in de dagboeken en het grootboek.
+DescJournalOnlyBindedVisible=Deze boeking is gekoppeld aan een tegenrekening en kan worden opgenomen in de dagboeken en het grootboek.
 VATAccountNotDefined=BTW rekeningen niet gedefinieerd
 ThirdpartyAccountNotDefined=Grootboekrekening van relatie niet gedefinieerd
 ProductAccountNotDefined=Grootboekrekening producten niet gedefinieerd
@@ -248,7 +253,7 @@ PaymentsNotLinkedToProduct=Betaling niet gekoppeld aan een product / dienst
 OpeningBalance=Beginbalans
 ShowOpeningBalance=Toon beginbalans
 HideOpeningBalance=Verberg beginbalans
-ShowSubtotalByGroup=Totaal per groep
+ShowSubtotalByGroup=Toon subtotaal op niveau
 
 Pcgtype=Rekening hoofdgroep
 PcgtypeDesc=Cluster grootboekrekeningen welke gebruikt worden als vooraf gedefinieerde 'filter'- en' groepeer'-criteria voor sommige boekhoudrapporten. 'INKOMEN' of 'UITGAVEN' worden bijvoorbeeld gebruikt als groepen voor boekhoudrekeningen van producten om het kosten- / inkomstenrapport samen te stellen.
@@ -271,11 +276,13 @@ DescVentilExpenseReport=Hier kunt u de lijst raadplegen van kostenregels om te k
 DescVentilExpenseReportMore=Als u een account instelt op het type onkostendeclaratieregels, kan de toepassing alle bindingen maken tussen uw declaratieregels en de boekhoudrekening van uw rekeningschema, met één klik met de knop <strong> "%s" </ strong>. Als het account niet is ingesteld op het tarievenwoordenboek of als u nog steeds regels hebt die niet aan een account zijn gekoppeld, moet u een manuele binding maken via het menu "<strong> %s </ strong>".
 DescVentilDoneExpenseReport=Hier kunt u de lijst raadplegen van kostenregels met hun tegenrekening
 
+Closure=Jaarafsluiting
 DescClosure=Raadpleeg hier het aantal bewegingen per maand die niet zijn gevalideerd en fiscale jaren die al open zijn
 OverviewOfMovementsNotValidated=Stap 1 / Overzicht van bewegingen niet gevalideerd. (Noodzakelijk om een boekjaar af te sluiten)
+AllMovementsWereRecordedAsValidated=Alle boekingen zijn geregistreerd als gevalideerd
+NotAllMovementsCouldBeRecordedAsValidated=Niet alle boekingen konden als gevalideerd worden geregistreerd
 ValidateMovements=Valideer wijzigingen
 DescValidateMovements=Elke wijziging of verwijdering van inboeken, afletteren en verwijderingen is verboden. Alle boekingen moeten worden gevalideerd, anders is afsluiten niet mogelijk
-SelectMonthAndValidate=Selecteer een maand en valideer bewerkingen
 
 ValidateHistory=Automatisch boeken
 AutomaticBindingDone=Automatisch koppelen voltooid
@@ -293,6 +300,7 @@ Accounted=Geboekt in grootboek
 NotYetAccounted=Nog niet doorgeboekt in boekhouding
 ShowTutorial=Handleiding weergeven
 NotReconciled=Niet afgestemd
+WarningRecordWithoutSubledgerAreExcluded=Pas op, alle bewerkingen zonder gedefinieerde subgrootboekrekening worden gefilterd en uitgesloten van deze weergave
 
 ## Admin
 BindingOptions=Koppelmogelijkheden
@@ -315,8 +323,8 @@ ErrorAccountingJournalIsAlreadyUse=Dit dagboek is al in gebruik
 AccountingAccountForSalesTaxAreDefinedInto=Opmerking: Grootboekrekeningen voor BTW worden vastgelegd in menukeuze <b>%s</b>-<b>%s</b>
 NumberOfAccountancyEntries=Aantal boekingen
 NumberOfAccountancyMovements=Aantal veranderingen
-ACCOUNTING_DISABLE_BINDING_ON_SALES=Schakel het koppelen en doorboeken naar de boekhouding van verkopen uit (facturen van klanten worden niet in aanmerking genomen in de boekhouding)
-ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Schakel het koppelen en doorboeken naar de  boekhouding op inkopen uit (facturen van leveranciers worden niet meegerekend in de boekhouding)
+ACCOUNTING_DISABLE_BINDING_ON_SALES=Schakel het koppelen en doorboeken naar de boekhouding van verkopen uit (facturen van klanten worden niet opgenomen in de boekhouding)
+ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Schakel het koppelen en doorboeken naar de  boekhouding van inkopen uit (facturen van leveranciers worden niet doorgeboekt in de boekhouding)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Schakel het koppelen en doorboeken naar de boekhouding van onkostendeclaraties uit (met onkostendeclaraties wordt geen rekening gehouden in de boekhouding)
 
 ## Export
@@ -337,10 +345,11 @@ Modelcsv_LDCompta10=Exporteren voor LD Compta (v10 en hoger)
 Modelcsv_openconcerto=Exporteren voor OpenConcerto (test)
 Modelcsv_configurable=Configureerbare CSV export
 Modelcsv_FEC=FEC exporteren
+Modelcsv_FEC2=FEC exporteren (met datumgeneratie schrijven / document omgekeerd)
 Modelcsv_Sage50_Swiss=Export voor Sage 50 Zwitserland
 Modelcsv_winfic=Export Winfic - eWinfic - WinSis Compta
-Modelcsv_Gestinumv3=Export for Gestinum (v3)
-Modelcsv_Gestinumv5Export for Gestinum (v5)
+Modelcsv_Gestinumv3=Exporteren voor Gestinum (v3)
+Modelcsv_Gestinumv5Export voor Gestinum (v5)
 ChartofaccountsId=Rekeningschema Id
 
 ## Tools - Init accounting account on product / service
@@ -393,7 +402,29 @@ UseMenuToSetBindindManualy=Regels die nog niet zijn gebonden, gebruik het menu <
 
 ## Import
 ImportAccountingEntries=Boekingen
+ImportAccountingEntriesFECFormat=Accounting entries - FEC format
+FECFormatJournalCode=Code journal (JournalCode)
+FECFormatJournalLabel=Label journal (JournalLib)
+FECFormatEntryNum=Piece number (EcritureNum)
+FECFormatEntryDate=Piece date (EcritureDate)
+FECFormatGeneralAccountNumber=General account number (CompteNum)
+FECFormatGeneralAccountLabel=General account label (CompteLib)
+FECFormatSubledgerAccountNumber=Subledger account number (CompAuxNum)
+FECFormatSubledgerAccountLabel=Subledger account number (CompAuxLib)
+FECFormatPieceRef=Piece ref (PieceRef)
+FECFormatPieceDate=Piece date creation (PieceDate)
+FECFormatLabelOperation=Label operation (EcritureLib)
+FECFormatDebit=Debit (Debit)
+FECFormatCredit=Credit (Credit)
+FECFormatReconcilableCode=Reconcilable code (EcritureLet)
+FECFormatReconcilableDate=Reconcilable date (DateLet)
+FECFormatValidateDate=Piece date validated (ValidDate)
+FECFormatMulticurrencyAmount=Multicurrency amount (Montantdevise)
+FECFormatMulticurrencyCode=Multicurrency code (Idevise)
+
 DateExport=Exportdatum
 WarningReportNotReliable=Waarschuwing, dit rapport is niet gebaseerd op het grootboek, dus bevat het niet de transactie die handmatig in het grootboek is gewijzigd. Als uw journalisatie up-to-date is, is de weergave van de boekhouding nauwkeuriger.
 ExpenseReportJournal=Kostenoverzicht
 InventoryJournal=Inventarisatie
+
+NAccounts=%s accounts

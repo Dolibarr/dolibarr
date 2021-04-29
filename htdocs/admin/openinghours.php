@@ -31,7 +31,9 @@ $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'adm
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'companies', 'other'));
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 $error = 0;
 
@@ -42,11 +44,12 @@ $error = 0;
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 if (($action == 'update' && !GETPOST("cancel", 'alpha'))
-|| ($action == 'updateedit'))
-{
+|| ($action == 'updateedit')) {
 	dolibarr_set_const($db, "MAIN_INFO_OPENINGHOURS_MONDAY", GETPOST("monday", 'alpha'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_OPENINGHOURS_TUESDAY", GETPOST("tuesday", 'alpha'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_OPENINGHOURS_WEDNESDAY", GETPOST("wednesday", 'alpha'), 'chaine', 0, '', $conf->entity);
@@ -55,8 +58,8 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 	dolibarr_set_const($db, "MAIN_INFO_OPENINGHOURS_SATURDAY", GETPOST("saturday", 'alpha'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_OPENINGHOURS_SUNDAY", GETPOST('sunday', 'alpha'), 'chaine', 0, '', $conf->entity);
 
-	if ($action != 'updateedit' && !$error)
-	{
+	if ($action != 'updateedit' && !$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	}
@@ -80,8 +83,7 @@ print dol_get_fiche_head($head, 'openinghours', $langs->trans("Company"), -1, 'c
 print '<span class="opacitymedium">'.$langs->trans("OpeningHoursDesc")."</span><br>\n";
 print "<br>\n";
 
-if (empty($action) || $action == 'edit' || $action == 'updateedit')
-{
+if (empty($action) || $action == 'edit' || $action == 'updateedit') {
 	/**
 	 * Edit parameters
 	 */
@@ -95,37 +97,37 @@ if (empty($action) || $action == 'edit' || $action == 'updateedit')
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("Monday"), $langs->trans("OpeningHoursFormatDesc"));
 	print '</td><td>';
-	print '<input name="monday" id="monday" class="minwidth100" value="'.($conf->global->MAIN_INFO_OPENINGHOURS_MONDAY ? $conf->global->MAIN_INFO_OPENINGHOURS_MONDAY : GETPOST("monday", 'alpha')).'"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '' : ' autofocus="autofocus"').'></td></tr>'."\n";
+	print '<input name="monday" id="monday" class="minwidth100" value="'.(!empty($conf->global->MAIN_INFO_OPENINGHOURS_MONDAY) ? $conf->global->MAIN_INFO_OPENINGHOURS_MONDAY : GETPOST("monday", 'alpha')).'"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '' : ' autofocus="autofocus"').'></td></tr>'."\n";
 
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("Tuesday"), $langs->trans("OpeningHoursFormatDesc"));
 	print '</td><td>';
-	print '<input name="tuesday" id="tuesday" class="minwidth100" value="'.($conf->global->MAIN_INFO_OPENINGHOURS_TUESDAY ? $conf->global->MAIN_INFO_OPENINGHOURS_TUESDAY : GETPOST("tuesday", 'alpha')).'"></td></tr>'."\n";
+	print '<input name="tuesday" id="tuesday" class="minwidth100" value="'.(!empty($conf->global->MAIN_INFO_OPENINGHOURS_TUESDAY) ? $conf->global->MAIN_INFO_OPENINGHOURS_TUESDAY : GETPOST("tuesday", 'alpha')).'"></td></tr>'."\n";
 
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("Wednesday"), $langs->trans("OpeningHoursFormatDesc"));
 	print '</td><td>';
-	print '<input name="wednesday" id="wednesday" class="minwidth100" value="'.($conf->global->MAIN_INFO_OPENINGHOURS_WEDNESDAY ? $conf->global->MAIN_INFO_OPENINGHOURS_WEDNESDAY : GETPOST("wednesday", 'alpha')).'"></td></tr>'."\n";
+	print '<input name="wednesday" id="wednesday" class="minwidth100" value="'.(!empty($conf->global->MAIN_INFO_OPENINGHOURS_WEDNESDAY) ? $conf->global->MAIN_INFO_OPENINGHOURS_WEDNESDAY : GETPOST("wednesday", 'alpha')).'"></td></tr>'."\n";
 
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("Thursday"), $langs->trans("OpeningHoursFormatDesc"));
 	print '</td><td>';
-	print '<input name="thursday" id="thursday" class="minwidth100" value="'.($conf->global->MAIN_INFO_OPENINGHOURS_THURSDAY ? $conf->global->MAIN_INFO_OPENINGHOURS_THURSDAY : GETPOST("thursday", 'alpha')).'"></td></tr>'."\n";
+	print '<input name="thursday" id="thursday" class="minwidth100" value="'.(!empty($conf->global->MAIN_INFO_OPENINGHOURS_THURSDAY) ? $conf->global->MAIN_INFO_OPENINGHOURS_THURSDAY : GETPOST("thursday", 'alpha')).'"></td></tr>'."\n";
 
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("Friday"), $langs->trans("OpeningHoursFormatDesc"));
 	print '</td><td>';
-	print '<input name="friday" id="friday" class="minwidth100" value="'.($conf->global->MAIN_INFO_OPENINGHOURS_FRIDAY ? $conf->global->MAIN_INFO_OPENINGHOURS_FRIDAY : GETPOST("friday", 'alpha')).'"></td></tr>'."\n";
+	print '<input name="friday" id="friday" class="minwidth100" value="'.(!empty($conf->global->MAIN_INFO_OPENINGHOURS_FRIDAY) ? $conf->global->MAIN_INFO_OPENINGHOURS_FRIDAY : GETPOST("friday", 'alpha')).'"></td></tr>'."\n";
 
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("Saturday"), $langs->trans("OpeningHoursFormatDesc"));
 	print '</td><td>';
-	print '<input name="saturday" id="saturday" class="minwidth100" value="'.($conf->global->MAIN_INFO_OPENINGHOURS_SATURDAY ? $conf->global->MAIN_INFO_OPENINGHOURS_SATURDAY : GETPOST("saturday", 'alpha')).'"></td></tr>'."\n";
+	print '<input name="saturday" id="saturday" class="minwidth100" value="'.(!empty($conf->global->MAIN_INFO_OPENINGHOURS_SATURDAY) ? $conf->global->MAIN_INFO_OPENINGHOURS_SATURDAY : GETPOST("saturday", 'alpha')).'"></td></tr>'."\n";
 
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("Sunday"), $langs->trans("OpeningHoursFormatDesc"));
 	print '</td><td>';
-	print '<input name="sunday" id="sunday" class="minwidth100" value="'.($conf->global->MAIN_INFO_OPENINGHOURS_SUNDAY ? $conf->global->MAIN_INFO_OPENINGHOURS_SUNDAY : GETPOST("sunday", 'alpha')).'"></td></tr>'."\n";
+	print '<input name="sunday" id="sunday" class="minwidth100" value="'.(!empty($conf->global->MAIN_INFO_OPENINGHOURS_SUNDAY) ? $conf->global->MAIN_INFO_OPENINGHOURS_SUNDAY : GETPOST("sunday", 'alpha')).'"></td></tr>'."\n";
 
 	print '</table>';
 

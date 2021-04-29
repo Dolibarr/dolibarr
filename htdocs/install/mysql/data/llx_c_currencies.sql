@@ -73,6 +73,7 @@ INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'XCD'
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'EGP', '[163]', 1,	    			'Egypt Pound');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'SVC', '[36]', 1,			    	'El Salvador Colon');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'EEK', '[107,114]', 1,	  		'Estonia Kroon');
+INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'ETB', NULL, 1,		  		    'Ethiopian Birr'); 
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'EUR', '[8364]', 1,		  		'Euro Member Countries'); 
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'FKP', '[163]', 1,	    			'Falkland Islands (Malvinas) Pound');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'FJD', '[36]', 1,		    		'Fiji Dollar');

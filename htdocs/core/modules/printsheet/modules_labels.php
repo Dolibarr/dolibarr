@@ -54,12 +54,12 @@ class ModelePDFLabels
 		global $conf;
 
 		$type = 'members_labels';
-		$liste = array();
+		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste = getListOfModels($db, $type, $maxfilenamelength);
+		$list = getListOfModels($db, $type, $maxfilenamelength);
 
-		return $liste;
+		return $list;
 	}
 }
 
@@ -95,51 +95,54 @@ function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outp
 	$srctemplatepath = '';
 
 	// Positionne le modele sur le nom du modele a utiliser
-	if (!dol_strlen($modele))
-	{
-		if (!empty($conf->global->ADHERENT_ETIQUETTE_TYPE))
-		{
+	if (!dol_strlen($modele)) {
+		if (!empty($conf->global->ADHERENT_ETIQUETTE_TYPE)) {
 			$code = $conf->global->ADHERENT_ETIQUETTE_TYPE;
 		} else {
 			$code = $modele;
 		}
-	} else $code = $modele;
+	} else {
+		$code = $modele;
+	}
 
 	// If selected modele is a filename template (then $modele="modelname:filename")
 	$tmp = explode(':', $template, 2);
-	if (!empty($tmp[1]))
-	{
+	if (!empty($tmp[1])) {
 		$template = $tmp[0];
 		$srctemplatepath = $tmp[1];
-	} else $srctemplatepath = $code;
+	} else {
+		$srctemplatepath = $code;
+	}
 
 	dol_syslog("modele=".$modele." outputdir=".$outputdir." template=".$template." code=".$code." srctemplatepath=".$srctemplatepath." filename=".$filename, LOG_DEBUG);
 
 	// Search template files
-	$file = ''; $classname = ''; $filefound = 0;
+	$file = '';
+	$classname = '';
+	$filefound = 0;
 	$dirmodels = array('/');
-	if (is_array($conf->modules_parts['models'])) $dirmodels = array_merge($dirmodels, $conf->modules_parts['models']);
-	foreach ($dirmodels as $reldir)
-	{
-		foreach (array('doc', 'pdf') as $prefix)
-		{
+	if (is_array($conf->modules_parts['models'])) {
+		$dirmodels = array_merge($dirmodels, $conf->modules_parts['models']);
+	}
+	foreach ($dirmodels as $reldir) {
+		foreach (array('doc', 'pdf') as $prefix) {
 			$file = $prefix."_".$template.".class.php";
 
 			// On verifie l'emplacement du modele
 			$file = dol_buildpath($reldir."core/modules/printsheet/doc/".$file, 0);
-			if (file_exists($file))
-			{
+			if (file_exists($file)) {
 				$filefound = 1;
 				$classname = $prefix.'_'.$template;
 				break;
 			}
 		}
-		if ($filefound) break;
+		if ($filefound) {
+			break;
+		}
 	}
 
 	// Charge le modele
-	if ($filefound)
-	{
+	if ($filefound) {
 		require_once $file;
 
 		$obj = new $classname($db);
@@ -147,9 +150,36 @@ function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outp
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
 		$sav_charset_output = $outputlangs->charset_output;
-		if ($obj->write_file($arrayofrecords, $outputlangs, $srctemplatepath, $outputdir, $filename) > 0)
-		{
+		if ($obj->write_file($arrayofrecords, $outputlangs, $srctemplatepath, $outputdir, $filename) > 0) {
 			$outputlangs->charset_output = $sav_charset_output;
+
+			$fullpath = $obj->result['fullpath'];
+
+			// Output to http stream
+			clearstatcache();
+
+			$attachment = true;
+			if (!empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) {
+				$attachment = false;
+			}
+			$type = dol_mimetype($filename);
+
+			//if ($encoding)   header('Content-Encoding: '.$encoding);
+			if ($type) {
+				header('Content-Type: '.$type);
+			}
+			if ($attachment) {
+				header('Content-Disposition: attachment; filename="'.$filename.'"');
+			} else {
+				header('Content-Disposition: inline; filename="'.$filename.'"');
+			}
+
+			// Ajout directives pour resoudre bug IE
+			header('Cache-Control: Public, must-revalidate');
+			header('Pragma: public');
+
+			readfile($fullpath);
+
 			return 1;
 		} else {
 			$outputlangs->charset_output = $sav_charset_output;

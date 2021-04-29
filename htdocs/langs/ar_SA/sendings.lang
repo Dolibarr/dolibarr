@@ -30,6 +30,7 @@ OtherSendingsForSameOrder=الإرسال الأخرى لهذا النظام
 SendingsAndReceivingForSameOrder=Shipments and receipts for this order
 SendingsToValidate=للمصادقة على إرسال
 StatusSendingCanceled=ألغيت
+StatusSendingCanceledShort=ألغيت
 StatusSendingDraft=مسودة
 StatusSendingValidated=صادق (لشحن المنتجات أو شحنها بالفعل)
 StatusSendingProcessed=معالجة
@@ -65,6 +66,7 @@ ValidateOrderFirstBeforeShipment=You must first validate the order before being 
 # Sending methods
 # ModelDocument
 DocumentModelTyphon=أكمل نموذج لتسليم وثيقة من وثائق الإيصالات (logo...)
+DocumentModelStorm=More complete document model for delivery receipts and extrafields compatibility (logo...)
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER ثابت لم تحدد
 SumOfProductVolumes=مجموع أحجام المنتج
 SumOfProductWeights=مجموع الأوزان المنتج

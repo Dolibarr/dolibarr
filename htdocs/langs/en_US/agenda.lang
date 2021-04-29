@@ -4,7 +4,7 @@ Actions=Events
 Agenda=Agenda
 TMenuAgenda=Agenda
 Agendas=Agendas
-LocalAgenda=Internal calendar
+LocalAgenda=Default calendar
 ActionsOwnedBy=Event owned by
 ActionsOwnedByShort=Owner
 AffectedTo=Assigned to
@@ -20,7 +20,7 @@ MenuToDoActions=All incomplete events
 MenuDoneActions=All terminated events
 MenuToDoMyActions=My incomplete events
 MenuDoneMyActions=My terminated events
-ListOfEvents=List of events (internal calendar)
+ListOfEvents=List of events (default calendar)
 ActionsAskedBy=Events reported by
 ActionsToDoBy=Events assigned to
 ActionsDoneBy=Events done by
@@ -119,6 +119,7 @@ MRP_MO_UNVALIDATEInDolibarr=MO set to draft status
 MRP_MO_PRODUCEDInDolibarr=MO produced
 MRP_MO_DELETEInDolibarr=MO deleted
 MRP_MO_CANCELInDolibarr=MO canceled
+PAIDInDolibarr=%s paid
 ##### End agenda events #####
 AgendaModelModule=Document templates for event
 DateActionStart=Start date
@@ -130,7 +131,7 @@ AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to use
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic events.
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> to include events of holidays. 
-AgendaShowBirthdayEvents=Show birthdays of contacts
+AgendaShowBirthdayEvents=Birthdays of contacts
 AgendaHideBirthdayEvents=Hide birthdays of contacts
 Busy=Busy
 ExportDataset_event1=List of agenda events

@@ -16,6 +16,8 @@ ThisService=این خدمت
 ThisProduct=این محصول
 DefaultForService=پیش‌فرض برای خدمات
 DefaultForProduct=پیش‌فرض برای محصول
+ProductForThisThirdparty=Product for this thirdparty
+ServiceForThisThirdparty=Service for this thirdparty
 CantSuggest=امکان پیش‌نهاد نیست
 AccountancySetupDoneFromAccountancyMenu=اکثر برپاسازی حساب‌داری برای فهرست %s انجام شده است
 ConfigAccountingExpert=Configuration of the module accounting (double entry)
@@ -48,6 +50,7 @@ CountriesExceptMe=همۀ کشورها باستثناء %s
 AccountantFiles=Export source documents
 ExportAccountingSourceDocHelp=With this tool, you can export the source events (list and PDFs) that were used to generate your accountancy. To export your journals, use the menu entry %s - %s.
 VueByAccountAccounting=View by accounting account
+VueBySubAccountAccounting=View by accounting subaccount
 
 MainAccountForCustomersNotDefined=در برپاسازی برای مشتریان حساب حساب‌داری اصلی تعریف نشده است
 MainAccountForSuppliersNotDefined=در برپاسازی برای تامین کنندگان حساب حساب‌داری اصلی تعریف نشده است
@@ -128,7 +131,7 @@ InvoiceLinesDone=سطور بند شدۀ صورت‌حساب‌ها
 ExpenseReportLines=سطور گزارش هزینه‌ها که باید بند شوند
 ExpenseReportLinesDone=سطور بندشدۀ گزارش هزینه‌ها
 IntoAccount=بندکردن سطر به حساب حسابداری
-TotalForAccount=Total for accounting account
+TotalForAccount=Total accounting account
 
 
 Ventilate=بندکردن
@@ -144,7 +147,7 @@ NotVentilatedinAccount=به حساب حسابداری بند نشد
 XLineSuccessfullyBinded=محصول/خدمت %s‌ با موفقیت به حساب حساب‌داری بند شد
 XLineFailedToBeBinded=محصول/خدمت %s به حساب حساب‌داری بند نشد
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=تعداد عناصری که باید بند بشوند و در صفحه نمایش داده شوند (حداکثر پیشنهادی: 50 مورد)
+ACCOUNTING_LIMIT_LIST_VENTILATION=Maximum number of lines on list and bind page (recommended: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=آغاز مرتب‌کردن صفحۀ "بندکردن برای انجام" بواسطۀ عناصر اخیر
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=آغاز مرتب‌کردن صفحۀ "بندکردن انجام شد" بواسطۀ عناصر اخیر
 
@@ -198,15 +201,17 @@ Docdate=تاریخ
 Docref=مرجع
 LabelAccount=برچسب حساب
 LabelOperation=عملیات برچسب
-Sens=Sens
+Sens=Direction
+AccountingDirectionHelp=For an accounting account of a customer, use Credit to record a payment you received<br>For an accounting account of a supplier, use Debit to record a payment you make
 LetteringCode=کد حروف‌بندی
 Lettering=حروف‌بندی
 Codejournal=دفتر
 JournalLabel=برچسب دفتر
 NumPiece=شمارۀ بخش
 TransactionNumShort=تعداد تراکنش‌ها
-AccountingCategory=گروه‌های دل‌خواه
-GroupByAccountAccounting=گروه‌بندی با حساب حساب‌داری
+AccountingCategory=Custom group
+GroupByAccountAccounting=Group by general ledger account
+GroupBySubAccountAccounting=Group by subledger account
 AccountingAccountGroupsDesc=در این قسمت می‌توانید گروه‌های متشکل از حساب‌حساب‌داری بسازید. این گروه‌ها برای گزارش‌های دل‌خواه حساب‌داری استفاده می‌شود.
 ByAccounts=به واسطۀ حساب‌ها
 ByPredefinedAccountGroups=به واسطۀ  گروه‌های از پیش‌تعریف شده
@@ -248,7 +253,7 @@ PaymentsNotLinkedToProduct=پرداخت به هیچ محصول/خدمتی وصل
 OpeningBalance=Opening balance
 ShowOpeningBalance=Show opening balance
 HideOpeningBalance=Hide opening balance
-ShowSubtotalByGroup=Show subtotal by group
+ShowSubtotalByGroup=Show subtotal by level
 
 Pcgtype=گروه حساب
 PcgtypeDesc=Group of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
@@ -271,11 +276,13 @@ DescVentilExpenseReport=در این قسمت فهرستی از سطور گزار
 DescVentilExpenseReportMore=در صورتی‌که شما حساب‌حساب‌داری را از نوع سطور گزارش هزینه تنظیم می‌کنید، برنامه قادر خواهد بود همۀ بندهای لازم را بین سطور گزارش هزینه‌های شما و حساب حساب‌داری شما در ساختار حساب‌های‌تان را ایجاد نماید، فقط با یک کلیک بر روی کلید <strong>"%s"</strong>. در صورتی‌که حساب بر روی واژه‌نامۀ پرداخت‌ها ثبت نشده باشد یا هنوز سطوری داشته باشید که به هیچ حسابی متصل نباشد، باید بندها را به شکل دستی از فهرست "<strong>%s</strong>: ایجاد نمائید.
 DescVentilDoneExpenseReport=در این قسمت فهرستی از سطور گزارشات هزینه و حساب‌حساب‌داری پرداخت آن‌ها را داشته باشید
 
+Closure=Annual closure
 DescClosure=Consult here the number of movements by month who are not validated & fiscal years already open
 OverviewOfMovementsNotValidated=Step 1/ Overview of movements not validated. (Necessary to close a fiscal year)
+AllMovementsWereRecordedAsValidated=All movements were recorded as validated
+NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated
 ValidateMovements=Validate movements
 DescValidateMovements=Any modification or deletion of writing, lettering and deletes will be prohibited. All entries for an exercise must be validated otherwise closing will not be possible
-SelectMonthAndValidate=Select month and validate movements
 
 ValidateHistory=بندکردن خودکار
 AutomaticBindingDone=بندکردن خودکار انجام شد
@@ -293,6 +300,7 @@ Accounted=در دفترکل حساب‌شده است
 NotYetAccounted=هنوز در دفترکل حساب نشده‌است
 ShowTutorial=Show Tutorial
 NotReconciled=وفق داده نشده
+WarningRecordWithoutSubledgerAreExcluded=Warning, all operations without subledger account defined are filtered and excluded from this view
 
 ## Admin
 BindingOptions=Binding options
@@ -337,6 +345,7 @@ Modelcsv_LDCompta10=Export for LD Compta (v10 & higher)
 Modelcsv_openconcerto=صادرکردن برای OpenConcerto  (آزمایشی)
 Modelcsv_configurable= صدور قابل پیکربندی CSV 
 Modelcsv_FEC=Export FEC
+Modelcsv_FEC2=Export FEC (With dates generation writing / document reversed)
 Modelcsv_Sage50_Swiss=صادرکردن برای Sage 50 Switzerland
 Modelcsv_winfic=Export Winfic - eWinfic - WinSis Compta
 Modelcsv_Gestinumv3=Export for Gestinum (v3)
@@ -393,7 +402,29 @@ UseMenuToSetBindindManualy=سطوری که هنوز بند نشده‌اند، �
 
 ## Import
 ImportAccountingEntries=ورودی‌های حساب‌داری
+ImportAccountingEntriesFECFormat=Accounting entries - FEC format
+FECFormatJournalCode=Code journal (JournalCode)
+FECFormatJournalLabel=Label journal (JournalLib)
+FECFormatEntryNum=Piece number (EcritureNum)
+FECFormatEntryDate=Piece date (EcritureDate)
+FECFormatGeneralAccountNumber=General account number (CompteNum)
+FECFormatGeneralAccountLabel=General account label (CompteLib)
+FECFormatSubledgerAccountNumber=Subledger account number (CompAuxNum)
+FECFormatSubledgerAccountLabel=Subledger account number (CompAuxLib)
+FECFormatPieceRef=Piece ref (PieceRef)
+FECFormatPieceDate=Piece date creation (PieceDate)
+FECFormatLabelOperation=Label operation (EcritureLib)
+FECFormatDebit=Debit (Debit)
+FECFormatCredit=Credit (Credit)
+FECFormatReconcilableCode=Reconcilable code (EcritureLet)
+FECFormatReconcilableDate=Reconcilable date (DateLet)
+FECFormatValidateDate=Piece date validated (ValidDate)
+FECFormatMulticurrencyAmount=Multicurrency amount (Montantdevise)
+FECFormatMulticurrencyCode=Multicurrency code (Idevise)
+
 DateExport=Date export
 WarningReportNotReliable=هشدار! این گزارش بر مبنای دفتر کل نمی‌باشد، بنابراین دربردارندۀ تراکنش‌هائی که به شکل دستی در دفترکل ویرایش شده‌اند نیست. در صورتی که دفترنویسی شما روزآمد باشد، نمای «دفترنویسی» دقیق‌تر است.
 ExpenseReportJournal=دفتر گزارش هزینه‌ها
 InventoryJournal=دفتر انبار
+
+NAccounts=%s accounts

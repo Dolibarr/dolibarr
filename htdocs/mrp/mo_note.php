@@ -50,7 +50,9 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
-if ($id > 0 || !empty($ref)) $upload_dir = $conf->mrp->multidir_output[$object->entity]."/".$object->id;
+if ($id > 0 || !empty($ref)) {
+	$upload_dir = $conf->mrp->multidir_output[$object->entity]."/".$object->id;
+}
 
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
@@ -58,8 +60,7 @@ if ($id > 0 || !empty($ref)) $upload_dir = $conf->mrp->multidir_output[$object->
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 $result = restrictedArea($user, 'mrp', $object->id, 'mrp_mo', '', 'fk_soc', 'rowid', $isdraft);
 
-$permissionnote = 1;
-//$permissionnote=$user->rights->mrp->creer;	// Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->rights->mrp->write;	// Used by the include of actions_setnotes.inc.php
 
 
 
@@ -81,8 +82,7 @@ $formproject = new FormProjets($db);
 $help_url = '';
 llxHeader('', $langs->trans('Mo'), $help_url);
 
-if ($id > 0 || !empty($ref))
-{
+if ($id > 0 || !empty($ref)) {
 	$object->fetch_thirdparty();
 
 	$head = moPrepareHead($object);
@@ -100,14 +100,13 @@ if ($id > 0 || !empty($ref))
 	// Thirdparty
 	$morehtmlref .= $langs->trans('ThirdParty').' : '.(is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	// Project
-	if (!empty($conf->projet->enabled))
-	{
+	if (!empty($conf->projet->enabled)) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-		if ($permissiontoadd)
-		{
-			if ($action != 'classify')
+		if ($permissiontoadd) {
+			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+			}
 			if ($action == 'classify') {
 				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->fk_soc, $object->fk_project, 'projectid', 0, 0, 1, 1);
 				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';

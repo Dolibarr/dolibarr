@@ -38,6 +38,25 @@ $langs->loadLangs(array('companies', 'bills'));
 $id = GETPOST("facid", "int");
 $ref = GETPOST("ref", 'alpha');
 
+$object = new Facture($db);
+$extrafields = new ExtraFields($db);
+
+// Fetch optionals attributes and labels
+$extrafields->fetch_name_optionals_label($object->table_element);
+
+// Load object
+if ($id > 0 || !empty($ref)) {
+	$ret = $object->fetch($id, $ref, '', '', $conf->global->INVOICE_USE_SITUATION);
+}
+
+// Security check
+$fieldid = (!empty($ref) ? 'ref' : 'rowid');
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$isdraft = (($object->statut == Facture::STATUS_DRAFT) ? 1 : 0);
+$result = restrictedArea($user, 'facture', $object->id, '', '', 'fk_soc', $fieldid, $isdraft);
+
 
 /*
  * View
@@ -46,11 +65,10 @@ $ref = GETPOST("ref", 'alpha');
 $form = new Form($db);
 
 $title = $langs->trans('InvoiceCustomer')." - ".$langs->trans('Info');
-$helpurl = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
-llxHeader('', $title, $helpurl);
+$help_url = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
 
-$object = new Facture($db);
-$object->fetch($id, $ref);
+llxHeader('', $title, $help_url);
+
 $object->fetch_thirdparty();
 
 $object->info($object->id);
@@ -71,15 +89,14 @@ $morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_cl
 // Thirdparty
 $morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'customer');
 // Project
-if (!empty($conf->projet->enabled))
-{
+if (!empty($conf->projet->enabled)) {
 	$langs->load("projects");
 	$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-	if ($user->rights->facture->creer)
-	{
-		if ($action != 'classify')
+	if ($user->rights->facture->creer) {
+		if ($action != 'classify') {
 			//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 			$morehtmlref .= ' : ';
+		}
 		if ($action == 'classify') {
 			//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 			$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';

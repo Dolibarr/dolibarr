@@ -47,7 +47,7 @@ class InterfaceContactRoles extends DolibarrTriggers
 		$this->description = "Triggers of this module auto link contact to company.";
 		// 'development', 'experimental', 'dolibarr' or version
 		$this->version = self::VERSION_DOLIBARR;
-		$this->picto = 'action';
+		$this->picto = 'company';
 	}
 
 	/**
@@ -92,16 +92,18 @@ class InterfaceContactRoles extends DolibarrTriggers
 
 					foreach ($TContact as $i => $infos) {
 						foreach ($TContactAlreadyLinked as $contactData) {
-							if ($contactData['id'] == $infos['fk_socpeople'] && $contactData['fk_c_type_contact'] == $infos['type_contact'])
+							if ($contactData['id'] == $infos['fk_socpeople'] && $contactData['fk_c_type_contact'] == $infos['type_contact']) {
 								unset($TContact[$i]);
+							}
 						}
 					}
 
 					$nb = 0;
 					foreach ($TContact as $infos) {
 						$res = $object->add_contact($infos['fk_socpeople'], $infos['type_contact']);
-						if ($res > 0)
+						if ($res > 0) {
 							$nb++;
+						}
 					}
 
 					if ($nb > 0) {

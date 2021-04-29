@@ -37,7 +37,7 @@ CREATE TABLE llx_recruitment_recruitmentcandidature(
 	date_birth date,
 	remuneration_requested integer, 
 	remuneration_proposed integer,
-	email_msgid varchar(255),
+	email_msgid varchar(175),				-- Do not use a too large value, it generates trouble with unique index
 	fk_recruitment_origin INTEGER NULL
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;

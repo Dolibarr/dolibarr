@@ -135,23 +135,19 @@ class mailing_xinputfile extends MailingTargets
 
 		$upload_dir = $conf->mailing->dir_temp;
 
-		if (dol_mkdir($upload_dir) >= 0)
-		{
+		if (dol_mkdir($upload_dir) >= 0) {
 			$resupload = dol_move_uploaded_file($_FILES['username']['tmp_name'], $upload_dir."/".$_FILES['username']['name'], 1, 0, $_FILES['username']['error']);
-			if (is_numeric($resupload) && $resupload > 0)
-			{
+			if (is_numeric($resupload) && $resupload > 0) {
 				$cpt = 0;
 
 				$file = $upload_dir."/".$_FILES['username']['name'];
 				$handle = @fopen($file, "r");
-				if ($handle)
-				{
+				if ($handle) {
 					$i = 0;
 					$j = 0;
 
 					$old = '';
-					while (!feof($handle))
-					{
+					while (!feof($handle)) {
 						$cpt++;
 						$buffer = trim(fgets($handle));
 						$tab = explode(';', $buffer, 4);
@@ -159,14 +155,10 @@ class mailing_xinputfile extends MailingTargets
 						$name = $tab[1];
 						$firstname = $tab[2];
 						$other = $tab[3];
-						if (!empty($buffer))
-						{
+						if (!empty($buffer)) {
 							//print 'xx'.dol_strlen($buffer).empty($buffer)."<br>\n";
-							$id = $cpt;
-							if (isValidEMail($email))
-							{
-		   						if ($old <> $email)
-								{
+							if (isValidEMail($email)) {
+								if ($old <> $email) {
 									$cibles[$j] = array(
 													'email' => $email,
 													'lastname' => $name,
@@ -183,15 +175,17 @@ class mailing_xinputfile extends MailingTargets
 								$i++;
 								$langs->load("errors");
 								$msg = $langs->trans("ErrorFoundBadEmailInFile", $i, $cpt, $email);
-								if (!empty($msg)) $this->error = $msg;
-								else $this->error = 'ErrorFoundBadEmailInFile '.$i.' '.$cpt.' '.$email; // We experience case where $langs->trans return an empty string.
+								if (!empty($msg)) {
+									$this->error = $msg;
+								} else {
+									$this->error = 'ErrorFoundBadEmailInFile '.$i.' '.$cpt.' '.$email; // We experience case where $langs->trans return an empty string.
+								}
 							}
 						}
 					}
 					fclose($handle);
 
-					if ($i > 0)
-					{
+					if ($i > 0) {
 						return -$i;
 					}
 				} else {
@@ -202,11 +196,9 @@ class mailing_xinputfile extends MailingTargets
 				dol_syslog(get_class($this)."::add_to_target mailing ".$cpt." targets found");
 			} else {
 				$langs->load("errors");
-				if ($resupload < 0)	// Unknown error
-				{
+				if ($resupload < 0) {	// Unknown error
 					$this->error = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
-				} elseif (preg_match('/ErrorFileIsInfectedWithAVirus/', $resupload))	// Files infected by a virus
-				{
+				} elseif (preg_match('/ErrorFileIsInfectedWithAVirus/', $resupload)) {	// Files infected by a virus
 					$this->error = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
 				} else // Known error
 				{
