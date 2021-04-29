@@ -2442,11 +2442,13 @@ if ($action == 'create' && $usercancreate) {
 		if ($object->statut == Commande::STATUS_DRAFT && $usercancreate && $action != 'selectlines') {
 			if ($action != 'editline') {
 				// Add free products/services
-				$object->formAddObjectLine(1, $mysoc, $soc);
 
 				$parameters = array();
 				// Note that $action and $object may be modified by hook
 				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action);
+				if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				if (empty($reshook))
+					$object->formAddObjectLine(1, $societe, $mysoc);
 			}
 		}
 		print '</table>';

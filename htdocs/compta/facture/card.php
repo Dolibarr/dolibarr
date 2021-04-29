@@ -5191,10 +5191,12 @@ if ($action == 'create') {
 	if ($object->statut == 0 && $usercancreate && $action != 'valid' && $action != 'editline') {
 		if ($action != 'editline' && $action != 'selectlines') {
 			// Add free products/services
-			$object->formAddObjectLine(1, $mysoc, $soc);
 
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+			if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			if (empty($reshook))
+				$object->formAddObjectLine(1, $societe, $mysoc);
 		}
 	}
 
