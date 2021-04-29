@@ -620,6 +620,15 @@ class MouvementStock extends CommonObject
 			// End call triggers
 		}
 
+		// Check unicity for serial numbers
+		// Note that qty was temporaryly added in db
+		if (!$error && $movestock && ! empty($conf->productbatch->enabled) && $product->status_batch == 2 && !$skip_batch && $qty > 0) {
+			if ( $this->getBatchCount($fk_product, $batch) > 1 ) {
+				$error++;
+				$this->errors[] = $langs->trans("TooManyQtyForSerialNumber", $product->ref, $batch);
+			}
+		}
+
 		if (!$error)
 		{
 			$this->db->commit();
@@ -1248,5 +1257,40 @@ class MouvementStock extends CommonObject
 	{
 		return $this->deleteCommon($user, $notrigger);
 		//return $this->deleteCommon($user, $notrigger, 1);
+	}
+
+	/**
+	 * Retrieve number of equipments for a product batch
+	 *
+	 * @param int $fk_product Product id
+	 * @param varchar $batch  batch number
+	 * @return int            <0 if KO, number of equipments if OK
+	 */
+	private function getBatchCount($fk_product, $batch)
+	{
+		global $conf;
+
+		$cpt = 0;
+
+		$sql = "SELECT sum(pb.qty) as cpt";
+		$sql .= " FROM ".MAIN_DB_PREFIX."product_batch as pb";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."product_stock as ps ON ps.rowid = pb.fk_product_stock";
+		$sql .= " WHERE ps.fk_product = " . ((int) $fk_product);
+		$sql .= " AND pb.batch = '" . $this->db->escape($batch) . "'";
+
+		$result = $this->db->query($sql);
+		if ($result) {
+			if ($this->db->num_rows($result)) {
+				$obj = $this->db->fetch_object($result);
+				$cpt = $obj->cpt;
+			}
+
+			$this->db->free($result);
+		} else {
+			dol_print_error($this->db);
+			return -1;
+		}
+
+		return $cpt;
 	}
 }
