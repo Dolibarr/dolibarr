@@ -85,8 +85,7 @@ $email = GETPOST("email");
 $societe = GETPOST("societe");
 
 // Getting id from Post and decoding it
-$encodedid = GETPOST('id');
-$id = dol_decode($encodedid, $dolibarr_main_instance_unique_id);
+$id = GETPOST('id');
 
 $conference = new ConferenceOrBooth($db);
 $resultconf = $conference->fetch($id);
@@ -248,9 +247,8 @@ if (empty($reshook) && $action == 'add') {
 
 		// If the attendee has already paid
 		if ($confattendee->status == 1) {
-			$encodedid = dol_encode($id, $dolibarr_main_instance_unique_id);
 			$securekeyurl = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 2);
-			$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?id='.$encodedid.'&securekey='.$securekeyurl;
+			$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?id='.$id.'&securekey='.$securekeyurl;
 			Header("Location: ".$redirection);
 			exit;
 		}
@@ -434,9 +432,8 @@ if (empty($reshook) && $action == 'add') {
 				dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
 			}
 
-			$encodedid = dol_encode($id, $dolibarr_main_instance_unique_id);
 			$securekeyurl = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 2);
-			$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?id='.$encodedid.'&securekey='.$securekeyurl;
+			$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?id='.$id.'&securekey='.$securekeyurl;
 			Header("Location: ".$redirection);
 			exit;
 		}

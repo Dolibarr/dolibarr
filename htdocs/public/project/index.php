@@ -78,8 +78,7 @@ $langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors",
 // No check on module enabled. Done later according to $validpaymentmethod
 
 $action = GETPOST('action', 'aZ09');
-$encodedid = GETPOST('id');
-$id = dol_decode($encodedid, $dolibarr_main_instance_unique_id);
+$id = GETPOST('id');
 $securekeyreceived = GETPOST("securekey");
 $securekeytocompare = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 2);
 
