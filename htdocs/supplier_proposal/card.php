@@ -1773,7 +1773,7 @@ if ($action == 'create') {
 	if ($object->statut == SupplierProposal::STATUS_DRAFT && $usercancreate) {
 		if ($action != 'editline') {
 			// Add products/services form
-		
+
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
