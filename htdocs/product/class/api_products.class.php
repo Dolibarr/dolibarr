@@ -158,17 +158,18 @@ class Products extends DolibarrApi
 	 *
 	 * Get a list of products
 	 *
-	 * @param  string $sortfield  Sort field
-	 * @param  string $sortorder  Sort order
-	 * @param  int    $limit      Limit for list
-	 * @param  int    $page       Page number
-	 * @param  int    $mode       Use this param to filter list (0 for all, 1 for only product, 2 for only service)
-	 * @param  int    $category   Use this param to filter list by category
-	 * @param  string $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.tobuy:=:0) and (t.tosell:=:1)"
-	 * @param  bool   $ids_only   Return only IDs of product instead of all properties (faster, above all if list is long)
-	 * @return array                Array of product objects
+	 * @param  string $sortfield  			Sort field
+	 * @param  string $sortorder  			Sort order
+	 * @param  int    $limit      			Limit for list
+	 * @param  int    $page       			Page number
+	 * @param  int    $mode       			Use this param to filter list (0 for all, 1 for only product, 2 for only service)
+	 * @param  int    $category   			Use this param to filter list by category
+	 * @param  string $sqlfilters 			Other criteria to filter answers separated by a comma. Syntax example "(t.tobuy:=:0) and (t.tosell:=:1)"
+	 * @param  bool   $ids_only   			Return only IDs of product instead of all properties (faster, above all if list is long)
+	 * @param  int    $variant_filter   	Use this param to filter list (0 = all, 1=products without variants, 2=parent of variants, 3=variants only)
+	 * @return array                		Array of product objects
 	 */
-	public function index($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '', $ids_only = false)
+	public function index($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '', $ids_only = false, $variant_filter = 0)
 	{
 		global $db, $conf;
 
@@ -186,6 +187,18 @@ class Products extends DolibarrApi
 			$sql .= ", ".MAIN_DB_PREFIX."categorie_product as c";
 		}
 		$sql .= ' WHERE t.entity IN ('.getEntity('product').')';
+
+		if ($variant_filter == 1) {
+			$sql .= ' AND t.rowid not in (select distinct fk_product_parent from '.MAIN_DB_PREFIX.'product_attribute_combination)';
+			$sql .= ' AND t.rowid not in (select distinct fk_product_child from '.MAIN_DB_PREFIX.'product_attribute_combination)';
+		}
+		if ($variant_filter == 2) {
+			$sql .= ' AND t.rowid in (select distinct fk_product_parent from '.MAIN_DB_PREFIX.'product_attribute_combination)';
+		}
+		if ($variant_filter == 3) {
+			$sql .= ' AND t.rowid in (select distinct fk_product_child from '.MAIN_DB_PREFIX.'product_attribute_combination)';
+		}
+
 		// Select products of given category
 		if ($category > 0) {
 			$sql .= " AND c.fk_categorie = ".$this->db->escape($category);
@@ -1791,6 +1804,51 @@ class Products extends DolibarrApi
 			throw new RestException(500, "Error deleting variant");
 		}
 		return $result;
+	}
+
+	/**
+	 * Get stock data for the product id given.
+	 * Optionaly with $selected_warehouse_id parameter user can get stock of specific warehouse
+	 *
+	 * @param  int $id ID of Product
+	 * @param  int $selected_warehouse_id ID of warehouse
+	 * @return int
+	 *
+	 * @throws RestException 500
+	 * @throws RestException 401
+	 * @throws RestException 404
+	 *
+	 * @url GET {id}/stock
+	 */
+	public function getStock($id, $selected_warehouse_id = null)
+	{
+
+		if (!DolibarrApiAccess::$user->rights->produit->lire) {
+			throw new RestException(401);
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('product', $id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$product_model = new Product($this->db);
+		$product_model->fetch($id);
+		$product_model->load_stock();
+
+		$stockData = $this->_cleanObjectDatas($product_model)->stock_warehouse;
+		if ($selected_warehouse_id) {
+			foreach ($stockData as $warehouse_id => $warehouse) {
+				if ($warehouse_id != $selected_warehouse_id) {
+					unset($stockData[$warehouse_id]);
+				}
+			}
+		}
+
+		if (empty($stockData)) {
+			throw new RestException(404, 'No stock found');
+		}
+
+		return ['stock_warehouses'=>$stockData];
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

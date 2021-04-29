@@ -58,7 +58,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once '../lib/partnership.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('partnership@partnership', 'admin'));
+$langs->loadLangs(array('partnership', 'admin'));
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);
@@ -91,17 +91,18 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
  * View
  */
 
+$help_url = '';
 
 llxHeader('', $langs->trans("PartnershipSetup"), $help_url);
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("PartnershipSetup"), $linkback, 'title_setup');
+print load_fiche_titre($langs->trans("PartnershipSetup"), $linkback, 'object_partnership');
 
 
 $head = partnershipAdminPrepareHead();
 
-print dol_get_fiche_head($head, 'partnership_extrafields', $langs->trans("PartnershipExtraFields"), -1, 'account');
+print dol_get_fiche_head($head, 'partnership_extrafields', $langs->trans("PartnershipExtraFields"), -1, '');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 

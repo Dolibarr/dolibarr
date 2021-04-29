@@ -61,7 +61,7 @@ class Partnership extends CommonObject
 	/**
 	 * @var string String with name of icon for partnership. Must be the part after the 'object_' into object_partnership.png
 	 */
-	public $picto = 'partnership@partnership';
+	public $picto = 'partnership';
 
 
 	const STATUS_DRAFT = 0;
@@ -113,7 +113,7 @@ class Partnership extends CommonObject
 		'last_main_doc' => array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>'1', 'position'=>600, 'notnull'=>0, 'visible'=>0,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>'1', 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
 		'model_pdf' => array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>'1', 'position'=>1010, 'notnull'=>-1, 'visible'=>0,),
-		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Brouillon', '1'=>'Accept&eacute;', '2'=>'Refus&eacute;', '9'=>'Annul&eacute;'),),
+		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'notnull'=>1, 'visible'=>4, 'default'=>0, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '2'=>'Refused', '9'=>'Canceled'),),
 		'fk_member' => array('type'=>'integer:Adherent:adherents/class/adherent.class.php:1', 'label'=>'Member', 'enabled'=>'1', 'position'=>51, 'notnull'=>-1, 'visible'=>1, 'index'=>1,),
 		'date_partnership_start' => array('type'=>'datetime', 'label'=>'DatePartnershipStart', 'enabled'=>'1', 'position'=>52, 'notnull'=>1, 'visible'=>1,),
 		'date_partnership_end' => array('type'=>'datetime', 'label'=>'DatePartnershipEnd', 'enabled'=>'1', 'position'=>53, 'notnull'=>1, 'visible'=>1,),
@@ -969,7 +969,7 @@ class Partnership extends CommonObject
 		// phpcs:enable
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
-			//$langs->load("partnership@partnership");
+			//$langs->load("partnership");
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
 			$this->labelStatus[self::STATUS_ACCEPTED] = $langs->trans('Accepted');
 			$this->labelStatus[self::STATUS_REFUSED] = $langs->trans('Refused');
@@ -1076,7 +1076,7 @@ class Partnership extends CommonObject
 	public function getNextNumRef()
 	{
 		global $langs, $conf;
-		$langs->load("partnership@partnership");
+		$langs->load("partnership");
 
 		if (empty($conf->global->PARTNERSHIP_ADDON)) {
 			$conf->global->PARTNERSHIP_ADDON = 'mod_partnership_standard';
@@ -1141,7 +1141,7 @@ class Partnership extends CommonObject
 		$result = 0;
 		$includedocgeneration = 0;
 
-		$langs->load("partnership@partnership");
+		$langs->load("partnership");
 
 		if (!dol_strlen($modele)) {
 			$modele = 'standard_partnership';

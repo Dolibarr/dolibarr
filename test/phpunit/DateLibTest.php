@@ -390,6 +390,17 @@ class DateLibTest extends PHPUnit\Framework\TestCase
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('Jeu Jan. Janvier', $result);
 
+
+		$result=dol_print_date(1619388000, '%Y-%m-%d %a', 'gmt', $outputlangs);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('2021-04-25 Dim', $result);
+
+		/* This test is disabled because result depends on TZ of server
+		$result=dol_print_date(1619388000, '%Y-%m-%d %a', 'tzserver', $outputlangs);	// If TZ is +2, then result will be Lun for 1619388000
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('2021-04-26 Lun', $result);
+		*/
+
 		// Check day format for en_US
 		$outputlangs=new Translate('', $conf);
 		$outputlangs->setDefaultLang('en_US');

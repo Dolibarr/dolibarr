@@ -34,6 +34,7 @@ class InterfaceNotification extends DolibarrTriggers
 	public $listofmanagedevents = array(
 		'BILL_VALIDATE',
 		'BILL_PAYED',
+		'ORDER_CREATE',
 		'ORDER_VALIDATE',
 		'PROPAL_VALIDATE',
 		'PROPAL_CLOSE_SIGNED',

@@ -157,7 +157,7 @@ class BankAccounts extends DolibarrApi
 
 		$account = new Account($this->db);
 		foreach ($request_data as $field => $value) {
-			$account->$field = $this->checkValForAPI($field, $value, $account);
+			$account->$field = $this->_checkValForAPI($field, $value, $account);
 		}
 		// Date of the initial balance (required to create an account).
 		$account->date_solde = time();
@@ -332,7 +332,7 @@ class BankAccounts extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
-			$account->$field = $this->checkValForAPI($field, $value, $account);
+			$account->$field = $this->_checkValForAPI($field, $value, $account);
 		}
 
 		if ($account->update(DolibarrApiAccess::$user) > 0) {

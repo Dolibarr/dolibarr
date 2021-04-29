@@ -665,7 +665,12 @@ if (!empty($arrayfields['timeconsumed']['checked'])) {
 for ($idw = 0; $idw < 7; $idw++) {
 	$dayinloopfromfirstdaytoshow = dol_time_plus_duree($firstdaytoshow, $idw, 'd'); // $firstdaytoshow is a date with hours = 0
 	$dayinloop = dol_time_plus_duree($startday, $idw, 'd');
-
+	/*print $dayinloopfromfirstdaytoshow;
+	print dol_print_date($dayinloopfromfirstdaytoshow, 'dayhour', 'gmt');
+	print dol_print_date($dayinloopfromfirstdaytoshow, 'dayhour');
+	print dol_print_date($dayinloopfromfirstdaytoshow, '%a', 'gmt');
+	print dol_print_date($dayinloopfromfirstdaytoshow, '%a');
+	print '<br>';*/
 	$cssweekend = '';
 	if ((($idw + 1) < $numstartworkingday) || (($idw + 1) > $numendworkingday)) {	// This is a day is not inside the setup of working days, so we use a week-end css.
 		$cssweekend = 'weekend';
@@ -682,7 +687,9 @@ for ($idw = 0; $idw < 7; $idw++) {
 		$cssonholiday .= 'onholidayafternoon ';
 	}
 
-	print '<th width="6%" align="center" class="bold hide'.$idw.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').'">'.dol_print_date($dayinloopfromfirstdaytoshow, '%a').'<br>'.dol_print_date($dayinloopfromfirstdaytoshow, 'dayreduceformat').'</th>';
+	print '<th width="6%" align="center" class="bold hide'.$idw.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').'">';
+	print dol_print_date($dayinloopfromfirstdaytoshow, '%a');
+	print '<br>'.dol_print_date($dayinloopfromfirstdaytoshow, 'dayreduceformat').'</th>';
 }
 //print '<td></td>';
 print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');

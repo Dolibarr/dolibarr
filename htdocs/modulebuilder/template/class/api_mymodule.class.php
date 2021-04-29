@@ -213,7 +213,7 @@ class MyModuleApi extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
-			$this->myobject->$field = $this->checkValForAPI($field, $value, $this->myobject);
+			$this->myobject->$field = $this->_checkValForAPI($field, $value, $this->myobject);
 		}
 
 		// Clean data
@@ -255,7 +255,7 @@ class MyModuleApi extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
-			$this->myobject->$field = $this->checkValForAPI($field, $value, $this->myobject);
+			$this->myobject->$field = $this->_checkValForAPI($field, $value, $this->myobject);
 		}
 
 		// Clean data
