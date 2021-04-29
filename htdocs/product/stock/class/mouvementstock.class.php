@@ -272,15 +272,6 @@ class MouvementStock extends CommonObject
 				$i = 0;
 				if ($num > 0)
 				{
-					if ( $product->status_batch == 2 && ($type == 0 || $type == 3) ) {
-						$langs->load("errors");
-						$this->errors[] = $langs->transnoentitiesnoconv("SerialNumberAlreadyInUse", $batch, $product->ref);
-						dol_syslog("Try to make a movement of a product with serial number already existing");
-
-						$this->db->rollback();
-						return -3;
-					}
-
 					while ($i < $num)
 					{
 						$obj = $this->db->fetch_object($resql);
@@ -387,17 +378,6 @@ class MouvementStock extends CommonObject
 		// Define if we must make the stock change (If product type is a service or if stock is used also for services)
 		$movestock = 0;
 		if ($product->type != Product::TYPE_SERVICE || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) $movestock = 1;
-
-		// check unicity for serial numbered equipments ( different for lots managed products)
-		if ( $movestock && $product->status_batch == 2 )
-		{
-			if ( abs($qty) > 1 )
-			{
-				$this->errors[] = $langs->trans("TooManyQtyForSerialNumber", $product->ref, $batch);
-				$this->db->rollback();
-				return -2;
-			}
-		}
 
 		// Check if stock is enough when qty is < 0
 		// Note that qty should be > 0 with type 0 or 3, < 0 with type 1 or 2.
