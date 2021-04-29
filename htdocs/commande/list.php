@@ -104,6 +104,7 @@ $search_shippable = GETPOST('search_shippable', 'aZ09');
 $search_fk_cond_reglement = GETPOST("search_fk_cond_reglement", 'int');
 $search_fk_shipping_method = GETPOST("search_fk_shipping_method", 'int');
 $search_fk_mode_reglement = GETPOST("search_fk_mode_reglement", 'int');
+$search_fk_input_reason = GETPOST("search_fk_input_reason", 'int');
 
 // Security check
 $id = (GETPOST('orderid') ?GETPOST('orderid', 'int') : GETPOST('id', 'int'));
@@ -176,6 +177,7 @@ $arrayfields = array(
 	'c.fk_shipping_method'=>array('label'=>"SendingMethod", 'checked'=>0, 'position'=>66 , 'enabled'=>!empty($conf->expedition->enabled)),
 	'c.fk_cond_reglement'=>array('label'=>"PaymentConditionsShort", 'checked'=>0, 'position'=>67),
 	'c.fk_mode_reglement'=>array('label'=>"PaymentMode", 'checked'=>0, 'position'=>68),
+	'c.fk_input_reason'=>array('label'=>"Channel", 'checked'=>0, 'position'=>69),
 	'c.total_ht'=>array('label'=>"AmountHT", 'checked'=>1, 'position'=>75),
 	'c.total_vat'=>array('label'=>"AmountVAT", 'checked'=>0, 'position'=>80),
 	'c.total_ttc'=>array('label'=>"AmountTTC", 'checked'=>0, 'position'=>85),
@@ -265,6 +267,7 @@ if (empty($reshook)) {
 		$search_fk_cond_reglement = '';
 		$search_fk_shipping_method = '';
 		$search_fk_mode_reglement = '';
+		$search_fk_input_reason = '';
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
 	 || GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha')) {
@@ -424,6 +427,7 @@ $sql .= ' c.date_creation as date_creation, c.tms as date_update, c.date_cloture
 $sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_label,";
 $sql .= " u.login,";
 $sql .= ' c.fk_cond_reglement,c.fk_mode_reglement,c.fk_shipping_method';
+$sql .= ' ,c.fk_input_reason';
 if ($search_categ_cus) {
 	$sql .= ", cc.fk_categorie, cc.fk_soc";
 }
@@ -605,6 +609,9 @@ if ($search_fk_shipping_method > 0) {
 }
 if ($search_fk_mode_reglement > 0) {
 	$sql .= " AND c.fk_mode_reglement = ".$db->escape($search_fk_mode_reglement);
+}
+if ($search_fk_input_reason > 0) {
+	$sql .= " AND c.fk_input_reason = ".$db->escape($search_fk_input_reason);
 }
 
 // Add where from extra fields
@@ -805,6 +812,9 @@ if ($resql) {
 	}
 	if ($search_fk_mode_reglement > 0) {
 		$param .= '&search_fk_mode_reglement='.$search_fk_mode_reglement;
+	}
+	if ($search_fk_input_reason > 0) {
+		$param .= '&search_fk_input_reason='.$search_fk_input_reason;
 	}
 
 	// Add $param from extra fields
@@ -1102,6 +1112,12 @@ if ($resql) {
 		$form->select_types_paiements($search_fk_mode_reglement, 'search_fk_mode_reglement', '', 0, 1, 1, 0, -1);
 		print '</td>';
 	}
+	// Channel
+	if (!empty($arrayfields['c.fk_input_reason']['checked'])) {
+		print '<td class="liste_titre">';
+		$form->selectInputReason($search_fk_input_reason, 'search_fk_input_reason', '', 1);
+		print '</td>';
+	}
 	if (!empty($arrayfields['c.total_ht']['checked'])) {
 		// Amount
 		print '<td class="liste_titre right">';
@@ -1282,6 +1298,9 @@ if ($resql) {
 	}
 	if (!empty($arrayfields['c.fk_mode_reglement']['checked'])) {
 		print_liste_field_titre($arrayfields['c.fk_mode_reglement']['label'], $_SERVER["PHP_SELF"], "c.fk_mode_reglement", "", $param, '', $sortfield, $sortorder);
+	}
+	if (!empty($arrayfields['c.fk_input_reason']['checked'])) {
+		print_liste_field_titre($arrayfields['c.fk_input_reason']['label'], $_SERVER["PHP_SELF"], "c.fk_input_reason", "", $param, '', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['c.total_ht']['checked'])) {
 		print_liste_field_titre($arrayfields['c.total_ht']['label'], $_SERVER["PHP_SELF"], 'c.total_ht', '', $param, '', $sortfield, $sortorder, 'right ');
@@ -1562,6 +1581,15 @@ if ($resql) {
 		if (!empty($arrayfields['c.fk_mode_reglement']['checked'])) {
 			print '<td>';
 			$form->form_modes_reglement($_SERVER['PHP_SELF'], $obj->fk_mode_reglement, 'none', '', -1);
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Channel
+		if (!empty($arrayfields['c.fk_input_reason']['checked'])) {
+			print '<td>';
+			$form->formInputReason($_SERVER['PHP_SELF'], $obj->fk_input_reason, 'none', '');
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
