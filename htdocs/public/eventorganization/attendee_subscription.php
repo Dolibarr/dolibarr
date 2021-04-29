@@ -475,7 +475,7 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="newmember">'.
 print '<input type="hidden" name="token" value="'.newToken().'" / >';
 print '<input type="hidden" name="entity" value="'.$entity.'" />';
 print '<input type="hidden" name="action" value="add" />';
-print '<input type="hidden" name="id" value="'.$encodedid.'" />';
+print '<input type="hidden" name="id" value="'.$id.'" />';
 print '<input type="hidden" name="securekey" value="'.$securekeyreceived.'" />';
 
 print '<br>';
