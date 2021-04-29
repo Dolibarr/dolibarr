@@ -3610,10 +3610,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			if (in_array($pictowithouttext, array('dollyrevert', 'member', 'members', 'contract', 'group', 'resource', 'shipment'))) {
 				$morecss = 'em092';
 			}
-			if (in_array($pictowithouttext, array('conferenceorbooth', 'collab', 'eventorganization', 'holiday', 'project', 'workstation'))) {
+			if (in_array($pictowithouttext, array('conferenceorbooth', 'collab', 'eventorganization', 'holiday', 'info', 'project', 'workstation'))) {
 				$morecss = 'em088';
 			}
-			if (in_array($pictowithouttext, array('intervention', 'info', 'payment', 'loan', 'partnership', 'stock', 'technic'))) {
+			if (in_array($pictowithouttext, array('intervention', 'payment', 'loan', 'partnership', 'stock', 'technic'))) {
 				$morecss = 'em080';
 			}
 
