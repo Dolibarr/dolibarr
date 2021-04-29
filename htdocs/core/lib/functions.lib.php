@@ -3533,7 +3533,6 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'uncheck', 'user-cog', 'website', 'workstation',
 				'conferenceorbooth', 'eventorganization'
 			))) {
-
 			$fakey = $pictowithouttext;
 			$facolor = '';
 			$fasize = '';
