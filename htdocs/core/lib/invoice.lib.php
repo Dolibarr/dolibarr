@@ -466,9 +466,25 @@ function getNumberInvoicesPieChart($mode)
 	global $conf, $db, $langs, $user;
 	if (!empty($conf->facture->enabled) && !empty($user->rights->facture->lire)) {
 		include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
-		$langs->load("boxes");
-		$tmpinvoice = new Facture($db);
-		$sql = "SELECT f.rowid, f.ref, f.fk_statut as status, f.type, f.total_ht, f.total_tva, f.total_ttc, f.paye, f.datef";
+
+		$now = date_create(date('Y-m-d', dol_now()));
+		$datenowsub30 = date_create(date('Y-m-d', dol_now()));
+		$datenowsub15 = date_create(date('Y-m-d', dol_now()));
+		$datenowadd30 = date_create(date('Y-m-d', dol_now()));
+		$datenowadd15 = date_create(date('Y-m-d', dol_now()));
+		$interval30days = date_interval_create_from_date_string('30 days');
+		$interval15days = date_interval_create_from_date_string('15 days');
+		date_sub($datenowsub30, $interval30days);
+		date_sub($datenowsub15, $interval15days);
+		date_add($datenowadd30, $interval30days);
+		date_add($datenowadd15, $interval15days);
+
+		$sql = "SELECT sum(".$db->ifsql("f.date_lim_reglement < '".date_format($datenowsub30, 'Y-m-d')."'", 1, 0).") as nblate30";
+		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement < '".date_format($datenowsub15, 'Y-m-d')."'", 1, 0).") as nblate15";
+		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement < '".date_format($now, 'Y-m-d')."'", 1, 0).") as nblatenow";
+		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement > '".date_format($datenowadd30, 'Y-m-d')."'", 1, 0).") as nbnotlate30";
+		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement > '".date_format($datenowadd15, 'Y-m-d')."'", 1, 0).") as nbnotlate15";
+		$sql .= ", sum(".$db->ifsql("f.date_lim_reglement >= '".date_format($now, 'Y-m-d')."'", 1, 0).") as nbnotlatenow";
 		if ($mode == 'customers') {
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 		} elseif ($mode == 'fourn') {
@@ -482,55 +498,22 @@ function getNumberInvoicesPieChart($mode)
 		if ($resql) {
 			$num = $db->num_rows($resql);
 			$i = 0;
-			$now = date_create(date('Y-m-d', dol_now()));
-			$datenowsub30 = date_create(date('Y-m-d', dol_now()));
-			$datenowsub15 = date_create(date('Y-m-d', dol_now()));
-			$datenowadd30 = date_create(date('Y-m-d', dol_now()));
-			$datenowadd15 = date_create(date('Y-m-d', dol_now()));
-			$interval30days = date_interval_create_from_date_string('30 days');
-			$interval15days = date_interval_create_from_date_string('15 days');
-			date_sub($datenowsub30, $interval30days);
-			date_sub($datenowsub15, $interval15days);
-			date_add($datenowadd30, $interval30days);
-			date_add($datenowadd15, $interval15days);
-			$numberinvoices = array('late30'=>0,'late15'=>0,'late'=>0,'notlate'=>0,'notlate15'=>0,'notlate30'=>0);
-			$labelnumberinvoices = array('late30'=>'InvoiceLate30Days',
-			'late15'=>'InvoiceLate15Days',
-			'late'=>'InvoiceLateMinus15Days',
-			'notlate'=>'InvoiceNotLate',
-			'notlate15'=>'InvoiceNotLate15Days',
-			'notlate30'=>'InvoiceNotLate30Days');
 			$total = 0;
+			$dataseries = array();
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
-				$datef = date_create($obj->datef);
-				if ($datef < $datenowsub30) {
-					$numberinvoices['late30']++;
-				} elseif ($datef < $datenowsub15) {
-					$numberinvoices['late15']++;
-				} elseif ($datef < $now) {
-					$numberinvoices['late']++;
-				} elseif ($datef > $datenowadd30) {
-					$numberinvoices['notlate30']++;
-				} elseif ($datef > $datenowadd15) {
-					$numberinvoices['notlate15']++;
-				} else {
-					$numberinvoices['notlate']++;
-				}
-				$total++;
+				$dataseries = array(array($langs->trans('InvoiceLate30Days'),$obj->nblate30)
+									,array($langs->trans('InvoiceLate15Days'),$obj->nblate15-$obj->nblate30)
+									,array($langs->trans('InvoiceLateMinus15Days'),$obj->nblatenow-$obj->nblate15)
+									,array($langs->trans('InvoiceNotLate'),$obj->nbnotlatenow-$obj->nbnotlate15)
+									,array($langs->trans('InvoiceNotLate15Days'),$obj->nbnotlate15-$obj->nbnotlate30)
+									,array($langs->trans('InvoiceNotLate30Days'),$obj->nbnotlate30));
 				$i++;
 			}
-			$dataseries = array();
-			$colorseries = array();
-			foreach ($numberinvoices as $key => $nbinvoice) {
-				$dataseries[] = array($langs->trans($labelnumberinvoices[$key]),$nbinvoice);
+			foreach ($dataseries as $key=>$value) {
+				$total+=$value[1];
 			}
-			$colorseries[] = $badgeStatus8;
-			$colorseries[] = $badgeStatus1;
-			$colorseries[] = $badgeStatus3;
-			$colorseries[] = $badgeStatus2;
-			$colorseries[] = $badgeStatus4;
-			$colorseries[] = $badgeStatus0;
+			$colorseries = array($badgeStatus8,$badgeStatus1,$badgeStatus3,$badgeStatus2,$badgeStatus4,$badgeStatus0);
 			if ($conf->use_javascript_ajax) {
 				$result = '<div class="div-table-responsive-no-min">';
 				$result .= '<table class="noborder nohover centpercent">';
@@ -560,14 +543,15 @@ function getNumberInvoicesPieChart($mode)
 				} else {
 					return '';
 				}
-
 				$result .= '<tr maxwidth="255">';
 				$result .= '<td align="center" colspan="2">'.$dolgraph->show($total ? 0 : 1).'</td>';
 				$result .= '</tr>';
 				$result .= '</table>';
 				$result .= '</div>';
 			}
-			print $result;
+			return $result;
+		} else {
+			dol_print_error($db);
 		}
 	}
 }
