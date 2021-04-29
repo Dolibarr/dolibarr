@@ -229,6 +229,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/variants
 %_datadir/dolibarr/htdocs/webservices
 %_datadir/dolibarr/htdocs/website
+%_datadir/dolibarr/htdocs/workstation
 %_datadir/dolibarr/htdocs/zapier
 %_datadir/dolibarr/htdocs/*.ico
 %_datadir/dolibarr/htdocs/*.patch
