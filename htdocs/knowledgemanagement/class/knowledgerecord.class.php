@@ -218,7 +218,6 @@ class KnowledgeRecord extends CommonObject
 	 */
 	public function create(User $user, $notrigger = false)
 	{
-		$this->question = "ABCD";
 		return $this->createCommon($user, $notrigger);
 	}
 
@@ -883,6 +882,7 @@ class KnowledgeRecord extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
+		$this->question = "ABCD";
 		$this->initAsSpecimenCommon();
 	}
 
