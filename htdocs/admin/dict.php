@@ -146,7 +146,7 @@ $tabname[39] = MAIN_DB_PREFIX."c_prospectcontactlevel";
 $tabname[40] = MAIN_DB_PREFIX."c_stcommcontact";
 $tabname[41] = MAIN_DB_PREFIX."c_transport_mode";
 $tabname[42] = MAIN_DB_PREFIX."c_product_nature";
-$tabname[43] = MAIN_DB_PREFIX."c_productbatch_status";
+$tabname[43] = MAIN_DB_PREFIX."c_productbatch_qcstatus";
 
 // Dictionary labels
 $tablib = array();
@@ -238,7 +238,7 @@ $tabsql[39] = "SELECT code, label as libelle, sortorder, active FROM ".MAIN_DB_P
 $tabsql[40] = "SELECT id      as rowid, code, libelle, picto, active FROM ".MAIN_DB_PREFIX."c_stcommcontact";
 $tabsql[41] = "SELECT rowid as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_transport_mode";
 $tabsql[42] = "SELECT rowid as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_product_nature";
-$tabsql[43] = "SELECT rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_productbatch_status";
+$tabsql[43] = "SELECT rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_productbatch_qcstatus";
 
 // Criteria to sort dictionaries
 $tabsqlsort = array();
@@ -1978,6 +1978,9 @@ if ($id) {
 								$valuetoshow = $obj->state_code;
 							} elseif ($fieldlist[$field] == 'label' && $tabname[$id] == MAIN_DB_PREFIX.'c_product_nature') {
 								$langs->load("products");
+								$valuetoshow = $langs->trans($obj->{$fieldlist[$field]});
+							} elseif ($fieldlist[$field] == 'label' && $tabname[$id] == MAIN_DB_PREFIX.'c_productbatch_qcstatus') {
+								$langs->load("productbatch");
 								$valuetoshow = $langs->trans($obj->{$fieldlist[$field]});
 							}
 							$class .= ($class ? ' ' : '').'tddict';

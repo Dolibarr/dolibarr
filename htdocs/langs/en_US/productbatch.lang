@@ -33,3 +33,6 @@ LotProductTooltip=Adds an option in the product card to define a dedicated batch
 SNProductTooltip=Adds an option in the product card to define a dedicated serial number mask
 QtyToAddAfterBarcodeScan=Qty to add for each barcode/lot/serial scanned
 
+#Traceability - qc status
+OutOfOrder=Out of order
+InWorkingOrder=In working order
