@@ -127,7 +127,7 @@ if (dol_strlen($begin)) {
 	$sql .= natural_search("s.nom", $begin);
 }
 if ($socid) {
-	$sql .= " AND s.rowid = ".$socid;
+	$sql .= " AND s.rowid = ".((int) $socid);
 }
 $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $db->plimit($conf->liste_limit + 1, $offset);

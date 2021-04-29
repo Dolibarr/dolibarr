@@ -70,6 +70,8 @@ Deleted=Deleted
 # Dict
 Type=Tip
 Severity=Severity
+TicketGroupIsPublic=Group is public
+TicketGroupIsPublicDesc=If a ticket group is public, it will be visible in the form when creating a ticket from the public interface
 
 # Email templates
 MailToSendTicketMessage=To send email from ticket message
@@ -114,8 +116,8 @@ TicketsShowModuleLogo=Display the logo of the module in the public interface
 TicketsShowModuleLogoHelp=Enable this option to hide the logo module in the pages of the public interface
 TicketsShowCompanyLogo=Display the logo of the company in the public interface
 TicketsShowCompanyLogoHelp=Enable this option to hide the logo of the main company in the pages of the public interface
-TicketsEmailAlsoSendToMainAddress=Also send notification to main email address
-TicketsEmailAlsoSendToMainAddressHelp=Enable this option to send an email to "Notification email from" address (see setup below)
+TicketsEmailAlsoSendToMainAddress=Also send a notification to the main email address
+TicketsEmailAlsoSendToMainAddressHelp=Enable this option to also send an email to the address defined into setup "%s" (see tab "%s")
 TicketsLimitViewAssignedOnly=Restrict the display to tickets assigned to the current user (not effective for external users, always be limited to the third party they depend on)
 TicketsLimitViewAssignedOnlyHelp=Only tickets assigned to the current user will be visible. Does not apply to a user with tickets management rights.
 TicketsActivatePublicInterface=Activate public interface
@@ -126,10 +128,10 @@ TicketNumberingModules=Tickets numbering module
 TicketsModelModule=Document templates for tickets
 TicketNotifyTiersAtCreation=Notify third party at creation
 TicketsDisableCustomerEmail=Always disable emails when a ticket is created from public interface
-TicketsPublicNotificationNewMessage=Send email(s) when a new message is added
+TicketsPublicNotificationNewMessage=Send email(s) when a new message/comment is added to a ticket
 TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
 TicketPublicNotificationNewMessageDefaultEmail=Notifications email to (update)
-TicketPublicNotificationNewMessageDefaultEmailHelp=Send email new message notifications to this address if the ticket don't have a user assigned or the user don't have a email.
+TicketPublicNotificationNewMessageDefaultEmailHelp=Send an email to this address for each new message notifications if the ticket doesn't have a user assigned to it or if the user doesn't have any known email.
 #
 # Index & list page
 #
@@ -302,3 +304,13 @@ BoxLastModifiedTicket=Latest modified tickets
 BoxLastModifiedTicketDescription=Latest %s modified tickets
 BoxLastModifiedTicketContent=
 BoxLastModifiedTicketNoRecordedTickets=No recent modified tickets
+BoxTicketType=Number of open tickets by type
+BoxTicketSeverity=Number of open tickets by severity
+BoxNoTicketSeverity=No tickets opened
+BoxTicketLastXDays=Number of new tickets by days the last %s days
+BoxTicketLastXDayswidget = Number of new tickets by days the last X days
+BoxNoTicketLastXDays=No new tickets the last %s days
+BoxNumberOfTicketByDay=Number of new tickets by day
+BoxNewTicketVSClose=Number of today's new tickets versus today's closed tickets
+TicketCreatedToday=Ticket created today
+TicketClosedToday=Ticket closed today

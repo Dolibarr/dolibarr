@@ -719,10 +719,10 @@ class Ticket extends CommonObject
 					if (is_array($value) && count($value) > 0) {
 						$sql .= 'AND '.$key.' IN ('.$this->db->sanitize(implode(',', $value)).')';
 					} else {
-						$sql .= ' AND '.$key.' = '.$this->db->escape($value);
+						$sql .= ' AND '.$key.' = '.((int) $value);
 					}
 				} else {
-					$sql .= ' AND '.$key.' LIKE \'%'.$value.'%\'';
+					$sql .= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
 				}
 			}
 		}
@@ -1452,7 +1452,7 @@ class Ticket extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
 		if ($id_assign_user > 0) {
-			$sql .= " SET fk_user_assign=".$id_assign_user.", fk_statut = ".Ticket::STATUS_ASSIGNED;
+			$sql .= " SET fk_user_assign=".((int) $id_assign_user).", fk_statut = ".Ticket::STATUS_ASSIGNED;
 		} else {
 			$sql .= " SET fk_user_assign=null, fk_statut = ".Ticket::STATUS_READ;
 		}

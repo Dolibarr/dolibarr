@@ -126,12 +126,12 @@ AccountBalance=Balance des comptes
 ObjectsRef=Référence de l'objet source
 CAHTF=Total achat fournisseur HT
 TotalExpenseReport=Total note de frais
-InvoiceLines=Lignes de factures à ventiler
+InvoiceLines=Lignes de factures à lier
 InvoiceLinesDone=Lignes de factures liées
 ExpenseReportLines=Lignes de notes de frais à lier
 ExpenseReportLinesDone=Lignes de notes de frais liées
 IntoAccount=Lier ligne avec le compte comptable
-TotalForAccount=Total compte comptable
+TotalForAccount=Total pour le compte comptable
 
 
 Ventilate=Lier
@@ -209,7 +209,7 @@ Codejournal=Journal
 JournalLabel=Libellé journal
 NumPiece=Numéro de pièce
 TransactionNumShort=Num. transaction
-AccountingCategory=Groupes personnalisés
+AccountingCategory=Custom group
 GroupByAccountAccounting=Affichage par compte comptable
 GroupBySubAccountAccounting=Affichage par compte auxiliaire
 AccountingAccountGroupsDesc=Vous pouvez définir ici des groupes de comptes comptable. Il seront utilisés pour les reporting comptables personnalisés
@@ -402,7 +402,29 @@ UseMenuToSetBindindManualy=Lignes non encore liées, utilisez le menu <a href="%
 
 ## Import
 ImportAccountingEntries=Écritures comptables
+ImportAccountingEntriesFECFormat=Accounting entries - FEC format
+FECFormatJournalCode=Code journal (JournalCode)
+FECFormatJournalLabel=Label journal (JournalLib)
+FECFormatEntryNum=Piece number (EcritureNum)
+FECFormatEntryDate=Piece date (EcritureDate)
+FECFormatGeneralAccountNumber=General account number (CompteNum)
+FECFormatGeneralAccountLabel=General account label (CompteLib)
+FECFormatSubledgerAccountNumber=Subledger account number (CompAuxNum)
+FECFormatSubledgerAccountLabel=Subledger account number (CompAuxLib)
+FECFormatPieceRef=Piece ref (PieceRef)
+FECFormatPieceDate=Piece date creation (PieceDate)
+FECFormatLabelOperation=Label operation (EcritureLib)
+FECFormatDebit=Debit (Debit)
+FECFormatCredit=Credit (Credit)
+FECFormatReconcilableCode=Reconcilable code (EcritureLet)
+FECFormatReconcilableDate=Reconcilable date (DateLet)
+FECFormatValidateDate=Piece date validated (ValidDate)
+FECFormatMulticurrencyAmount=Multicurrency amount (Montantdevise)
+FECFormatMulticurrencyCode=Multicurrency code (Idevise)
+
 DateExport=Date d'export
 WarningReportNotReliable=Attention : ce rapport n'est pas basé sur le grand livre et ne contient donc pas les écritures manuelles qui lui ont été ajoutées. Si votre journalisation est à jour, la vue depuis le grand livre sera plus précise.
 ExpenseReportJournal=Journal des notes de frais
 InventoryJournal=Journal d'inventaire
+
+NAccounts=%s accounts

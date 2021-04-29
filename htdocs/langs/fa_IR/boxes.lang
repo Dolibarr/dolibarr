@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - boxes
+BoxDolibarrStateBoard=Statistics on main business objects in database
 BoxLoginInformation=اطلاعات ورود
 BoxLastRssInfos=اطلاعات RSS
 BoxLastProducts=آخرین %s محصول/خدما
@@ -17,9 +18,13 @@ BoxLastActions=آخرین فعالیت‌ها
 BoxLastContracts=آخرین قراردادها
 BoxLastContacts=آخرین طرف‌های تماس/نشانی‌ها
 BoxLastMembers=آخرین اعضاء
+BoxLastModifiedMembers=Latest modified members
+BoxLastMembersSubscriptions=Latest member subscriptions
 BoxFicheInter=آخرین واسطه‌گری‌ها
 BoxCurrentAccounts=ماندۀ حساب‌های باز
 BoxTitleMemberNextBirthdays=Birthdays of this month (members)
+BoxTitleMembersByType=Members by type
+BoxTitleMembersSubscriptionsByYear=Members Subscriptions by year
 BoxTitleLastRssInfos=آخرین %s اخبار از %s
 BoxTitleLastProducts=خدمات/محصولات: آخرین %s تغییریافته
 BoxTitleProductsAlertStock=محصولات: هشدار موجودی
@@ -107,5 +112,9 @@ BoxTitleLastCustomerShipments=Latest %s customer shipments
 NoRecordedShipments=No recorded customer shipment
 BoxCustomersOutstandingBillReached=Customers with oustanding limit reached
 # Pages
-AccountancyHome=حسابداری
+UsersHome=Home users and groups
+MembersHome=Home Membership
+ThirdpartiesHome=Home Thirdparties
+TicketsHome=Home Tickets
+AccountancyHome=Home Accountancy
 ValidatedProjects=Validated projects

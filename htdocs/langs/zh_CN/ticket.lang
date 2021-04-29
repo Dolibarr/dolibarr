@@ -70,6 +70,8 @@ Deleted=删除
 # Dict
 Type=类型
 Severity=严重
+TicketGroupIsPublic=Group is public
+TicketGroupIsPublicDesc=If a ticket group is public, it will be visible in the form when creating a ticket from the public interface
 
 # Email templates
 MailToSendTicketMessage=从票证消息发送电子邮件
@@ -114,8 +116,8 @@ TicketsShowModuleLogo=在公共界面中显示模块的徽标
 TicketsShowModuleLogoHelp=启用此选项可在公共界面的页面中隐藏徽标模块
 TicketsShowCompanyLogo=在公共界面中显示公司的徽标
 TicketsShowCompanyLogoHelp=启用此选项可在公共界面的页面中隐藏主公司的徽标
-TicketsEmailAlsoSendToMainAddress=同时向主电子邮件地址发送通知
-TicketsEmailAlsoSendToMainAddressHelp=启用此选项可向“通知电子邮件地址”发送电子邮件（请参阅下面的设置）
+TicketsEmailAlsoSendToMainAddress=Also send a notification to the main email address
+TicketsEmailAlsoSendToMainAddressHelp=Enable this option to also send an email to the address defined into setup "%s" (see tab "%s")
 TicketsLimitViewAssignedOnly=Restrict the display to tickets assigned to the current user (not effective for external users, always be limited to the third party they depend on)
 TicketsLimitViewAssignedOnlyHelp=仅显示分配给当前用户的票证。不适用于具有票证管理权限的用户。
 TicketsActivatePublicInterface=激活公共接口
@@ -126,10 +128,10 @@ TicketNumberingModules=票据编号模块
 TicketsModelModule=Document templates for tickets
 TicketNotifyTiersAtCreation=Notify third party at creation
 TicketsDisableCustomerEmail=Always disable emails when a ticket is created from public interface
-TicketsPublicNotificationNewMessage=Send email(s) when a new message is added
+TicketsPublicNotificationNewMessage=Send email(s) when a new message/comment is added to a ticket
 TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
 TicketPublicNotificationNewMessageDefaultEmail=Notifications email to (update)
-TicketPublicNotificationNewMessageDefaultEmailHelp=Send email new message notifications to this address if the ticket don't have a user assigned or the user don't have a email.
+TicketPublicNotificationNewMessageDefaultEmailHelp=Send an email to this address for each new message notifications if the ticket doesn't have a user assigned to it or if the user doesn't have any known email.
 #
 # Index & list page
 #
@@ -302,3 +304,13 @@ BoxLastModifiedTicket=最新修改的票据
 BoxLastModifiedTicketDescription=最新%s改装票据
 BoxLastModifiedTicketContent=
 BoxLastModifiedTicketNoRecordedTickets=没有最近修改的票据
+BoxTicketType=Number of open tickets by type
+BoxTicketSeverity=Number of open tickets by severity
+BoxNoTicketSeverity=No tickets opened
+BoxTicketLastXDays=Number of new tickets by days the last %s days
+BoxTicketLastXDayswidget = Number of new tickets by days the last X days
+BoxNoTicketLastXDays=No new tickets the last %s days
+BoxNumberOfTicketByDay=Number of new tickets by day
+BoxNewTicketVSClose=Number of today's new tickets versus today's closed tickets
+TicketCreatedToday=Ticket created today
+TicketClosedToday=Ticket closed today

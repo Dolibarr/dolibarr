@@ -67,10 +67,10 @@ print "<br>\n";
 print "<br><strong>Web server</strong> - ".$langs->trans("Version").": ".$_SERVER["SERVER_SOFTWARE"]."<br>\n";
 print '<br>';
 
-print "<strong>PHP safe_mode</strong> = ".(ini_get('safe_mode') ? ini_get('safe_mode') : yn(0))."<br>\n";
-print "<strong>PHP open_basedir</strong> = ".(ini_get('open_basedir') ? ini_get('open_basedir') : yn(0))."<br>\n";
-print "<strong>PHP allow_url_fopen</strong> = ".(ini_get('allow_url_fopen') ? img_picto($langs->trans("YouShouldSetThisToOff"), 'warning').' '.ini_get('allow_url_fopen') : yn(0))."<br>\n";
-print "<strong>PHP allow_url_include</strong> = ".(ini_get('allow_url_include') ? img_picto($langs->trans("YouShouldSetThisToOff"), 'warning').' '.ini_get('allow_url_include') : yn(0))."<br>\n";
+print "<strong>PHP safe_mode</strong> = ".(ini_get('safe_mode') ? ini_get('safe_mode') : yn(0)).' &nbsp; <span class="opacitymedium">'.$langs->trans("Deprecated")." (removed in PHP 5.4)</span><br>\n";
+print "<strong>PHP open_basedir</strong> = ".(ini_get('open_basedir') ? ini_get('open_basedir') : yn(0).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("ARestrictedPath")).')</span>')."<br>\n";
+print "<strong>PHP allow_url_fopen</strong> = ".(ini_get('allow_url_fopen') ? img_picto($langs->trans("YouShouldSetThisToOff"), 'warning').' '.ini_get('allow_url_fopen') : yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("No")).")</span><br>\n";
+print "<strong>PHP allow_url_include</strong> = ".(ini_get('allow_url_include') ? img_picto($langs->trans("YouShouldSetThisToOff"), 'warning').' '.ini_get('allow_url_include') : yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("No")).")</span><br>\n";
 print "<strong>PHP disable_functions</strong> = ";
 $arrayoffunctionsdisabled = explode(',', ini_get('disable_functions'));
 $arrayoffunctionstodisable = explode(',', 'pcntl_alarm,pcntl_fork,pcntl_waitpid,pcntl_wait,pcntl_wifexited,pcntl_wifstopped,pcntl_wifsignaled,pcntl_wifcontinued,pcntl_wexitstatus,pcntl_wtermsig,pcntl_wstopsig,pcntl_signal,pcntl_signal_get_handler,pcntl_signal_dispatch,pcntl_get_last_error,pcntl_strerror,pcntl_sigprocmask,pcntl_sigwaitinfo,pcntl_sigtimedwait,pcntl_exec,pcntl_getpriority,pcntl_setpriority,pcntl_async_signals');
@@ -156,7 +156,7 @@ print '<br>';
 print load_fiche_titre($langs->trans("PermissionsOnFiles"), '', 'folder');
 
 print '<strong>'.$langs->trans("PermissionsOnFilesInWebRoot").'</strong>: ';
-$arrayoffilesinroot = dol_dir_list(DOL_DOCUMENT_ROOT, 'all', 1, '', array('custom\/'), 'name', SORT_ASC, 4, 1, '', 1);
+$arrayoffilesinroot = dol_dir_list(DOL_DOCUMENT_ROOT, 'all', 1, '', array('\/custom'), 'name', SORT_ASC, 4, 1, '', 1);
 $fileswithwritepermission = array();
 foreach ($arrayoffilesinroot as $fileinroot) {
 	// Test permission on file
@@ -243,10 +243,13 @@ print '<br>';
 print load_fiche_titre($langs->trans("Menu").' '.$langs->trans("SecuritySetup"), '', 'folder');
 
 //print '<strong>'.$langs->trans("PasswordEncryption").'</strong>: ';
-print '<strong>MAIN_SECURITY_HASH_ALGO</strong> = '.(empty($conf->global->MAIN_SECURITY_HASH_ALGO) ? $langs->trans("Undefined") : '')." &nbsp; ";
-print '<span class="opacitymedium"> &nbsp; &nbsp; If unset: \'md5\'</span><br>';
+print '<strong>MAIN_SECURITY_HASH_ALGO</strong> = '.(empty($conf->global->MAIN_SECURITY_HASH_ALGO) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_SECURITY_HASH_ALGO)." &nbsp; ";
+if (empty($conf->global->MAIN_SECURITY_HASH_ALGO)) {
+	print '<span class="opacitymedium"> &nbsp; &nbsp; If unset: \'md5\'</span>';
+}
+print '<br>';
 if ($conf->global->MAIN_SECURITY_HASH_ALGO != 'password_hash') {
-	print '<strong>MAIN_SECURITY_SALT</strong> = '.(empty($conf->global->MAIN_SECURITY_SALT) ? $langs->trans("Undefined") : $conf->global->MAIN_SECURITY_SALT).'<br>';
+	print '<strong>MAIN_SECURITY_SALT</strong> = '.(empty($conf->global->MAIN_SECURITY_SALT) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_SECURITY_SALT).'<br>';
 }
 if ($conf->global->MAIN_SECURITY_HASH_ALGO != 'password_hash') {
 	print '<div class="info">The recommanded value for MAIN_SECURITY_HASH_ALGO is now \'password_hash\' but setting it now will make ALL existing passwords of all users not valid, so update is not possible.<br>';
@@ -257,6 +260,11 @@ if ($conf->global->MAIN_SECURITY_HASH_ALGO != 'password_hash') {
 	print '</div><br>';
 }
 print '<br>';
+
+
+print '<strong>MAIN_SECURITY_ANTI_SSRF_SERVER_IP</strong> = '.(empty($conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP)."<br>";
+print '<br>';
+
 
 print '<strong>'.$langs->trans("AntivirusEnabledOnUpload").'</strong>: ';
 print empty($conf->global->MAIN_ANTIVIRUS_COMMAND) ? '' : img_picto('', 'tick').' ';
@@ -292,9 +300,10 @@ if (!empty($eventstolog) && is_array($eventstolog)) {
 		}
 	}
 } else {
-	print img_warning().' '.$langs->trans("NoSecurityEventsAreAduited", $langs->transnoentities("Home").' - '.$langs->transnoentities("Setup").' - '.$langs->transnoentities("Audit"));
+	print img_warning().' '.$langs->trans("NoSecurityEventsAreAduited", $langs->transnoentities("Home").' - '.$langs->transnoentities("Setup").' - '.$langs->transnoentities("Audit")).'<br>';
 }
 
+print '<br><br>';
 
 // End of page
 llxFooter();

@@ -685,8 +685,7 @@ class Users extends DolibarrApi
 		unset($object->facebook);
 		unset($object->linkedin);
 
-		$canreadsalary = ((!empty($conf->salaries->enabled) && !empty(DolibarrApiAccess::$user->rights->salaries->read))
-			|| (!empty($conf->hrm->enabled) && !empty(DolibarrApiAccess::$user->rights->hrm->employee->read)));
+		$canreadsalary = ((!empty($conf->salaries->enabled) && !empty(DolibarrApiAccess::$user->rights->salaries->read)) || (empty($conf->salaries->enabled)));
 
 		if (!$canreadsalary) {
 			unset($object->salary);

@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - boxes
+BoxDolibarrStateBoard=Statistikk over viktigste forretningsobjekter i databasen
 BoxLoginInformation=Innloggingsinformasjon
 BoxLastRssInfos=RSS-informasjon
 BoxLastProducts=Siste %s Varer/Tjenester
@@ -17,9 +18,13 @@ BoxLastActions=Siste hendelser
 BoxLastContracts=Siste kontrakter
 BoxLastContacts=Siste kontakter/adresser
 BoxLastMembers=Siste medlemmer
+BoxLastModifiedMembers=Latest modified members
+BoxLastMembersSubscriptions=Latest member subscriptions
 BoxFicheInter=Siste intervensjoner
 BoxCurrentAccounts=Åpne kontobalanse
 BoxTitleMemberNextBirthdays=Fødselsdager denne måneden (medlemmer)
+BoxTitleMembersByType=Members by type
+BoxTitleMembersSubscriptionsByYear=Members Subscriptions by year
 BoxTitleLastRssInfos=Siste %s nyheter fra %s
 BoxTitleLastProducts=Varer/Tjenester: siste %s endret
 BoxTitleProductsAlertStock=Varer: lagervarsel
@@ -107,5 +112,9 @@ BoxTitleLastCustomerShipments=Siste %s kundeforsendelser
 NoRecordedShipments=Ingen registrert kundesending
 BoxCustomersOutstandingBillReached=Kunder med utestående grense nådd
 # Pages
-AccountancyHome=Regnskap
+UsersHome=Home users and groups
+MembersHome=Home Membership
+ThirdpartiesHome=Home Thirdparties
+TicketsHome=Home Tickets
+AccountancyHome=Home Accountancy
 ValidatedProjects=Validerte prosjekter

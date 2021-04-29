@@ -133,7 +133,7 @@ if ($id > 0 || !empty($ref)) {
 
 	$head = myobjectPrepareHead($object);
 
-	print dol_get_fiche_head($head, 'note', $langs->trans("MyObject"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'note', '', -1, $object->picto);
 
 	// Object card
 	// ------------------------------------------------------------

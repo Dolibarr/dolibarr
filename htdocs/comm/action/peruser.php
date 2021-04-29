@@ -613,7 +613,7 @@ if ($action == 'show_day') {
 	$sql .= ')';
 }
 if ($type) {
-	$sql .= " AND ca.id = ".$type;
+	$sql .= " AND ca.id = ".((int) $type);
 }
 if ($status == '0') {
 	$sql .= " AND a.percent = 0";

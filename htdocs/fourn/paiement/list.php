@@ -112,10 +112,10 @@ if ($user->socid) {
 // require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 // $object = new PaiementFourn($db);
 // restrictedArea($user, $object->element);
-if (empty($conf->fournisseur->enabled)) {
+if ((empty($conf->fournisseur->enabled) && !empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || empty($conf->supplier_invoice->enabled)) {
 	accessforbidden();
 }
-if (!$user->rights->fournisseur->facture->lire) {
+if (!$user->rights->fournisseur->facture->lire || !$user->rights->supplier_invoice->lire) {
 	accessforbidden();
 }
 
@@ -182,7 +182,7 @@ if (!$user->rights->societe->client->voir) {
 	$sql .= ' AND s.rowid = sc.fk_soc AND sc.fk_user = '.$user->id;
 }
 if ($socid > 0) {
-	$sql .= ' AND f.fk_soc = '.$socid;
+	$sql .= ' AND f.fk_soc = '.((int) $socid);
 }
 if ($search_ref) {
 	$sql .= natural_search('p.ref', $search_ref);

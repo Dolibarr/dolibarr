@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - vendors
 Suppliers=Eladók
 SuppliersInvoice=Vendor invoice
+SupplierInvoices=Szállítói számlák
 ShowSupplierInvoice=Show Vendor Invoice
 NewSupplier=New vendor
 History=Történet

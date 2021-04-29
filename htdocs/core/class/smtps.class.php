@@ -533,6 +533,10 @@ class SMTPs
 			// Send Authentication to Server
 			// Check for errors along the way
 			switch ($conf->global->MAIL_SMTP_AUTH_TYPE) {
+				case 'NONE':
+					// Do not send the 'AUTH type' message. For test purpose, if you don't need authentication, it is better to not enter login/pass into setup.
+					$_retVal = true;
+					break;
 				case 'PLAIN':
 					$this->socket_send_str('AUTH PLAIN', '334');
 					// The error here just means the ID/password combo doesn't work.
@@ -540,12 +544,16 @@ class SMTPs
 					break;
 				case 'LOGIN':	// most common case
 				default:
-					$this->socket_send_str('AUTH LOGIN', '334');
-					// User name will not return any error, server will take anything we give it.
-					$this->socket_send_str(base64_encode($this->_smtpsID), '334');
-					// The error here just means the ID/password combo doesn't work.
-					// There is not a method to determine which is the problem, ID or password
-					$_retVal = $this->socket_send_str(base64_encode($this->_smtpsPW), '235');
+					$_retVal = $this->socket_send_str('AUTH LOGIN', '334');
+					if (!$_retVal) {
+						$this->_setErr(130, 'Error when asking for AUTH LOGIN');
+					} else {
+						// User name will not return any error, server will take anything we give it.
+						$this->socket_send_str(base64_encode($this->_smtpsID), '334');
+						// The error here just means the ID/password combo doesn't work.
+						// There is not a method to determine which is the problem, ID or password
+						$_retVal = $this->socket_send_str(base64_encode($this->_smtpsPW), '235');
+					}
 					break;
 			}
 			if (!$_retVal) {

@@ -295,13 +295,13 @@ if ($socid) {
 	$sql .= " AND e.fk_soc = ".$socid;
 }
 if ($search_status <> '' && $search_status >= 0) {
-	$sql .= " AND e.fk_statut = ".$search_status;
+	$sql .= " AND e.fk_statut = ".((int) $search_status);
 }
 if ($search_ref_customer != '') {
 	$sql .= natural_search('e.ref_customer', $search_ref_customer);
 }
 if ($search_billed != '' && $search_billed >= 0) {
-	$sql .= ' AND e.billed = '.$search_billed;
+	$sql .= ' AND e.billed = '.((int) $search_billed);
 }
 if ($search_town) {
 	$sql .= natural_search('s.town', $search_town);
@@ -464,9 +464,9 @@ if ($optioncss != '') {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 $arrayofmassactions = array(
-	'builddoc' => $langs->trans("PDFMerge"),
+	'builddoc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	//'classifyclose'=>$langs->trans("Close"), TODO massive close shipment ie: when truck is charged
-	'presend'  => $langs->trans("SendByMail"),
+	'presend'  => img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
 if (in_array($massaction, array('presend'))) {
 	$arrayofmassactions = array();

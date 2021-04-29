@@ -239,7 +239,7 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 	print '<label for="checkbox_use_quick">';
 	print $form->textwithpicto($langs->trans('ExportUseMySQLQuickParameter'), $langs->trans('ExportUseMySQLQuickParameterHelp'));
 	print '</label>';
-	print '<br/>';
+	print '<br>';
 
 	print '<!-- <input type="checkbox" name="drop_database" value="yes" id="checkbox_drop_database" />';
 	print '<label for="checkbox_drop_database">'.$langs->trans("AddDropDatabase").'</label>';

@@ -248,7 +248,7 @@ class ExpenseReportIk extends CoreObject
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'c_exp_tax_range r';
 		$sql .= ' WHERE r.entity IN (0, '.$conf->entity.')';
 		if ($default_c_exp_tax_cat > 0) {
-			$sql .= ' AND r.fk_c_exp_tax_cat = '.$default_c_exp_tax_cat;
+			$sql .= ' AND r.fk_c_exp_tax_cat = '.((int) $default_c_exp_tax_cat);
 		}
 		$sql .= ' GROUP BY r.fk_c_exp_tax_cat';
 		$sql .= ') as counts';

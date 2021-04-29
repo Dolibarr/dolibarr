@@ -73,7 +73,10 @@ if ($action == 'update') {
  * View
  */
 
-llxHeader('', $langs->trans('Parameters'));
+
+$title = $langs->trans('Parameters');
+
+llxHeader('', $title, '');
 
 $form = new Form($db);
 

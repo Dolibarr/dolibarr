@@ -46,12 +46,13 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 /* Buttons for actions                                                            */
 /* ============================================================================== */
 
-div.divButAction {
+/*div.divButAction {
 	margin-bottom: 1.4em;
-}
+}*/
 div.tabsAction > a.butAction, div.tabsAction > a.butActionRefused, div.tabsAction > a.butActionDelete,
 div.tabsAction > span.butAction, div.tabsAction > span.butActionRefused, div.tabsAction > span.butActionDelete {
 	margin-bottom: 1.4em !important;
+	margin-right: 0px !important;
 }
 div.tabsActionNoBottom > a.butAction, div.tabsActionNoBottom > a.butActionRefused {
 	margin-bottom: 0 !important;
@@ -279,6 +280,11 @@ div.pagination li:first-child a.btnTitle{
 	margin-left: 10px;
 }
 
+.button-title-separator{
+	display: inline-block;
+	clear: both;
+	width: 20px;
+}
 
 .imgforviewmode {
 	color: #aaa;

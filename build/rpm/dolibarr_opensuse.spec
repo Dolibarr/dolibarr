@@ -193,6 +193,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/don
 %_datadir/dolibarr/htdocs/ecm
 %_datadir/dolibarr/htdocs/emailcollector
+%_datadir/dolibarr/htdocs/eventorganization
 %_datadir/dolibarr/htdocs/expedition
 %_datadir/dolibarr/htdocs/expensereport
 %_datadir/dolibarr/htdocs/exports
@@ -214,6 +215,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/mrp
 %_datadir/dolibarr/htdocs/multicurrency
 %_datadir/dolibarr/htdocs/opensurvey
+%_datadir/dolibarr/htdocs/partnership
 %_datadir/dolibarr/htdocs/paybox
 %_datadir/dolibarr/htdocs/paypal
 %_datadir/dolibarr/htdocs/printing
@@ -235,6 +237,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/variants
 %_datadir/dolibarr/htdocs/webservices
 %_datadir/dolibarr/htdocs/website
+%_datadir/dolibarr/htdocs/workstation
 %_datadir/dolibarr/htdocs/zapier
 %_datadir/dolibarr/htdocs/*.ico
 %_datadir/dolibarr/htdocs/*.patch

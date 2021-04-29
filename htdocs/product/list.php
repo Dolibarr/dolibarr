@@ -191,7 +191,7 @@ if (empty($conf->global->PRODUIT_MULTIPRICES)) {
 
 $isInEEC = isInEEC($mysoc);
 
-$alias_product_perentity = empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "p" : "pa";
+$alias_product_perentity = empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "p" : "ppe";
 
 // Definition of fields for lists
 $arrayfields = array(
@@ -364,7 +364,7 @@ $sql .= ' p.tobatch,';
 if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 	$sql .= " p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export, p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export,";
 } else {
-	$sql .= " pa.accountancy_code_sell, pa.accountancy_code_sell_intra, pa.accountancy_code_sell_export, pa.accountancy_code_buy, pa.accountancy_code_buy_intra, pa.accountancy_code_buy_export,";
+	$sql .= " ppe.accountancy_code_sell, ppe.accountancy_code_sell_intra, ppe.accountancy_code_sell_export, ppe.accountancy_code_buy, ppe.accountancy_code_buy_intra, ppe.accountancy_code_buy_export,";
 }
 $sql .= ' p.datec as date_creation, p.tms as date_update, p.pmp, p.stock, p.cost_price,';
 $sql .= ' p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units, fk_country, fk_state,';
@@ -387,7 +387,7 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // N
 $sql .= $hookmanager->resPrint;
 $sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
 if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
-	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as pa ON pa.fk_product = p.rowid AND pa.entity = " . ((int) $conf->entity);
+	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);
 }
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_extrafields as ef on (p.rowid = ef.fk_object)";
@@ -523,7 +523,7 @@ $sql .= ' p.datec, p.tms, p.entity, p.tobatch, p.pmp, p.cost_price, p.stock,';
 if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 	$sql .= " p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export, p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export,";
 } else {
-	$sql .= " pa.accountancy_code_sell, pa.accountancy_code_sell_intra, pa.accountancy_code_sell_export, pa.accountancy_code_buy, pa.accountancy_code_buy_intra, pa.accountancy_code_buy_export,";
+	$sql .= " ppe.accountancy_code_sell, ppe.accountancy_code_sell_intra, ppe.accountancy_code_sell_export, ppe.accountancy_code_buy, ppe.accountancy_code_buy_intra, ppe.accountancy_code_buy_export,";
 }
 $sql .= ' p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units, p.fk_country, p.fk_state';
 if (!empty($conf->global->PRODUCT_USE_UNITS)) {
@@ -681,16 +681,16 @@ if ($resql) {
 
 	// List of mass actions available
 	$arrayofmassactions = array(
-		'generate_doc'=>$langs->trans("ReGeneratePDF"),
-		//'builddoc'=>$langs->trans("PDFMerge"),
-		//'presend'=>$langs->trans("SendByMail"),
+		'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
+		//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
+		//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 	);
 
 	if ($user->rights->{$rightskey}->supprimer) {
-		$arrayofmassactions['predelete'] = "<span class='fa fa-trash paddingrightonly'></span>".$langs->trans("Delete");
+		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	}
 	if ($user->rights->{$rightskey}->creer) {
-		$arrayofmassactions['preaffecttag'] = '<span class="fa fa-tag paddingrightonly"></span>'.$langs->trans("AffectTag");
+		$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 	}
 	if (in_array($massaction, array('presend', 'predelete','preaffecttag'))) {
 		$arrayofmassactions = array();
@@ -1579,7 +1579,7 @@ if ($resql) {
 				//print price($obj->minsellprice).' '.$langs->trans("HT");
 				if ($product_fourn->find_min_price_product_fournisseur($obj->rowid) > 0) {
 					if ($product_fourn->product_fourn_price_id > 0) {
-						if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire) {
+						if ((!empty($conf->fournisseur->enabled) && !empty($user->rights->fournisseur->lire) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (!empty($conf->supplier_order->enabled) && !empty($user->rights->supplier_order->lire)) || (!empty($conf->supplier_invoice->enabled) && !empty($user->rights->supplier_invoice->lire))) {
 							$htmltext = $product_fourn->display_price_product_fournisseur(1, 1, 0, 1);
 							print '<span class="amount">'.$form->textwithpicto(price($product_fourn->fourn_unitprice * (1 - $product_fourn->fourn_remise_percent / 100) - $product_fourn->fourn_remise).' '.$langs->trans("HT"), $htmltext).'</span>';
 						} else {
