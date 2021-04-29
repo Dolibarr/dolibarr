@@ -216,11 +216,11 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'setfk_status' && $user->rights->stock->creer && !GETPOST('cancel', 'alpha')) {
-		$result = $object->setValueFrom('fk_status', GETPOST('fk_status') ? GETPOST('fk_status') : null, '', null, 'text', '', $user, 'PRODUCT_MODIFY');
+	if ($action == 'setfk_qcstatus' && $user->rights->stock->creer && !GETPOST('cancel', 'alpha')) {
+		$result = $object->setValueFrom('fk_qcstatus', GETPOST('fk_qcstatus') ? GETPOST('fk_qcstatus') : null, '', null, 'text', '', $user, 'PRODUCT_MODIFY');
 		if ($result < 0) {
 			setEventMessages($object->error, null, 'errors');
-			$action == 'editfk_status';
+			$action == 'editfk_qcstatus';
 		} else {
 			$action = 'view';
 		}
@@ -514,40 +514,20 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '</tr>';
 		print '<tr>';
 		print '<td class="maxwidthonsmartphone">';
-		print $form->editfieldkey("Status", 'fk_status', $object->fk_status, $object, $user->rights->stock->creer);
+		print $form->editfieldkey("Status", 'fk_qcstatus', $object->fk_qcstatus, $object, $user->rights->stock->creer);
 		print '</td>';
 		print '<td class="valuefield">';
-		if ($action != 'editfk_status') {
-			$formproduct->load_cache_productbatch_status();
-			print $formproduct->cache_productbatch_status[$object->fk_status];
+		if ($action != 'editfk_qcstatus') {
+			$formproduct->load_cache_productbatch_qcstatus();
+			print $formproduct->cache_productbatch_qcstatus[$object->fk_qcstatus];
 		} else {
-	// $fk_status = GETPOST('fk_status');
-		if (empty($fk_status)) {
-			$fk_status = $object->fk_status;
+		if (empty($fk_qcstatus)) {
+			$fk_qcstatus = $object->fk_qcstatus;
 		}
-		print $formproduct->select_productbatch_status($fk_status,'?id='.$object->id);
+		print $formproduct->select_productbatch_qcstatus($fk_qcstatus,'?id='.$object->id);
 		}
 		print '</td></tr>';
-
-
-		/* print '<tr><td>'.$form->editfieldkey('Status', 'fk_status', '', $object, 0);
-		// print_r($formproductlot->productbatch_status_array(0));
-		print '</td>';
-		print '<td>'.$form->selectarray('fk_status', $formproductlot->productbatch_status_array(0), $object->fk_status, 1, 0, 0, '', 0, 0, 0, $sortparam, '', 1);
-		if ($user->admin) {
-			print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-		}
-		print '</td></tr>'; */
-		/* $form->load_cache_productbatch_status();
-		print '<tr><td>';
-		print implode(',',$form->cache_productbatch_status);
-		print $form->editfieldkey($langs->trans('Status'), 'fk_status', $langs->trans($object->laberl), $object, $user->rights->stock->creer, 'select;'.implode(',', $form->cache_productbatch_status));
-		print '</td><td>';
-		print $form->editfieldval($langs->trans('Status'), 'fk_status', $form->cache_productbatch_status[$object->label], $object, $user->rights->stock->creer, 'select;'.implode(',', $form->cache_productbatch_status));
-		// print $form->editfieldval("Type", 'type', $form->cache_types_fees[$object->type], $object, $user->rights->deplacement->creer, 'select:types_fees');
-		print '</td>';
-		print '</tr>'; */
-}
+	}
 
 	// Other attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';

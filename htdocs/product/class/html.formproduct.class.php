@@ -684,7 +684,7 @@ class FormProduct
      *  @param	array	$events					Event options to run on change. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
      *  @return string           				HTML string with select and input
      */
-    public function select_productbatch_status($selected = '', $page = '', $htmlname = 'fk_status', $htmloption = '', $forcecombo = 1, $events = array())
+    public function select_productbatch_qcstatus($selected = '', $page = '', $htmlname = 'fk_qcstatus', $htmloption = '', $forcecombo = 1, $events = array())
     {
         // phpcs:enable
         global $conf, $langs;
@@ -695,11 +695,11 @@ class FormProduct
         $statusArray = array();
 
         $sql = "SELECT code, label";
-        $sql .= " FROM ".MAIN_DB_PREFIX."c_productbatch_status";
+        $sql .= " FROM ".MAIN_DB_PREFIX."c_productbatch_qcstatus";
         $sql .= " WHERE active > 0";
         $sql .= " ORDER BY code ASC";
 
-        dol_syslog(get_class($this)."::select_productbatch_status", LOG_DEBUG);
+        dol_syslog(get_class($this)."::select_productbatch_qcstatus", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql) {
             if ($conf->use_javascript_ajax && !$forcecombo) {
@@ -709,7 +709,7 @@ class FormProduct
 
             if (!empty($page)) {
                 $out .= '<form method="post" action="'.$page.'">';
-                $out .= '<input type="hidden" name="action" value="setfk_status">';
+                $out .= '<input type="hidden" name="action" value="setfk_qcstatus">';
                 $out .= '<input type="hidden" name="token" value="'.newToken().'">';
             }
 
@@ -735,7 +735,7 @@ class FormProduct
                     }
 
                     if ($row['label']) {
-                        $out .= $row['label'];
+                        $out .= $langs->trans($row['label']);
                     }
 
                     $out .= '</option>';
@@ -762,7 +762,7 @@ class FormProduct
 	 *
 	 *  @return	int							Nb of loaded lines, 0 if already loaded, <0 if KO
 	 */
-	public function load_cache_productbatch_status()
+	public function load_cache_productbatch_qcstatus()
 	{
 		// phpcs:enable
 		global $langs;
@@ -770,7 +770,7 @@ class FormProduct
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$sql = "SELECT s.rowid, s.code, s.label";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_productbatch_status as s";
+		$sql .= " FROM ".MAIN_DB_PREFIX."c_productbatch_qcstatus as s";
 		$sql .= " WHERE s.active > 0";
 		$sql .= " ORDER BY s.code ASC";
 
@@ -784,11 +784,11 @@ class FormProduct
 
 				// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
 				$label = ($obj->code != $langs->trans($obj->code) ? $langs->trans($obj->code) : $langs->trans($obj->label));
-				$this->cache_productbatch_status[$obj->code] = $label;
+				$this->cache_productbatch_qcstatus[$obj->code] = $label;
 				$i++;
 			}
 
-			asort($this->cache_productbatch_status);
+			asort($this->cache_productbatch_qcstatus);
 
 			return $num;
 		} else {
