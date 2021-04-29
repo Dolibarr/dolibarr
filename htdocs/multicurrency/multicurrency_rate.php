@@ -202,8 +202,7 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-if (empty($reshook))
-{
+if (empty($reshook)) {
 	// Selection of new fields
 	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
@@ -292,7 +291,7 @@ $sql .= $hookmanager->resPrint;
 $sql .= ' FROM '.MAIN_DB_PREFIX.'multicurrency_rate as cr ';
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."multicurrency AS m ON cr.fk_multicurrency = m.rowid";
 if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
-if ($search_date_sync && $search_date_sync_end ){
+if ($search_date_sync && $search_date_sync_end ) {
 	$sql .= " AND (cr.date_sync BETWEEN '".$db->idate($search_date_sync)."' AND '".$db->idate($search_date_sync_end)."')";
 } elseif ($search_date_sync && !$search_date_sync_end) {
 	$sql .= natural_search('cr.date_sync', $db->idate($search_date_sync));
@@ -418,24 +417,24 @@ if ($resql) {
 	print '<tr class="liste_titre_filter">';
 
 	// date
-	if (!empty($arrayfields['cr.date_sync']['checked'])) {
-		print '<td class="liste_titre" align="left">';
-		print $form->selectDate(dol_print_date($search_date_sync, "%Y-%m-%d"), 'search_date_sync', 0, 0, 1);
-		print $form->selectDate(dol_print_date($search_date_sync_end, "%Y-%m-%d"), 'search_date_sync_end', 0, 0, 1);
-		print '</td>';
-	}
+if (!empty($arrayfields['cr.date_sync']['checked'])) {
+	print '<td class="liste_titre" align="left">';
+	print $form->selectDate(dol_print_date($search_date_sync, "%Y-%m-%d"), 'search_date_sync', 0, 0, 1);
+	print $form->selectDate(dol_print_date($search_date_sync_end, "%Y-%m-%d"), 'search_date_sync_end', 0, 0, 1);
+	print '</td>';
+}
 	// code
-	if (!empty($arrayfields['m.code']['checked'])) {
-		print '<td class="liste_titre" align="left">';
-		print  $form->selectMultiCurrency($multicurrency_code, 'search_code', 1, " code != '".$conf->currency."'", true);
-		print '</td>';
-	}
+if (!empty($arrayfields['m.code']['checked'])) {
+	print '<td class="liste_titre" align="left">';
+	print  $form->selectMultiCurrency($multicurrency_code, 'search_code', 1, " code != '".$conf->currency."'", true);
+	print '</td>';
+}
 	// rate
-	if (!empty($arrayfields['cr.rate']['checked'])) {
-		print '<td class="liste_titre" align="left">';
-		print '<input class="flat" type="text" name="search_rate" size="8" value="'.dol_escape_htmltag($search_rate).'">';
-		print '</td>';
-	}
+if (!empty($arrayfields['cr.rate']['checked'])) {
+	print '<td class="liste_titre" align="left">';
+	print '<input class="flat" type="text" name="search_rate" size="8" value="'.dol_escape_htmltag($search_rate).'">';
+	print '</td>';
+}
 
 	// Fields from hook
 	$parameters = array('arrayfields'=>$arrayfields);
@@ -470,89 +469,85 @@ if ($resql) {
 
 	$i = 0;
 	$totalarray = array();
-	while ($i < min($num, $limit)) {
-		$obj = $db->fetch_object($resql);
+while ($i < min($num, $limit)) {
+	$obj = $db->fetch_object($resql);
 
-		print '<tr class="oddeven">';
+	print '<tr class="oddeven">';
 
-		// USER REQUEST UPDATE FOR THIS LINE
-		if ($action == "updateRate" && $obj->rowid == $id_rate_selected) {
-			//  var_dump($obj);
-			print ' <td><input class="minwidth200" name="dateinput" value="'. date('Y-m-d', dol_stringtotime($obj->date_sync)) .'" type="date"></td>';
-			print '<td>' . $form->selectMultiCurrency($obj->code, 'multicurrency_code', 1, " code != '".$conf->currency."'", true) . '</td>';
-			print ' <td><input type="number" min ="0" step="any" class="minwidth200" name="rateinput" value="' . dol_escape_htmltag($obj->rate) . '"></td>';
+	// USER REQUEST UPDATE FOR THIS LINE
+	if ($action == "updateRate" && $obj->rowid == $id_rate_selected) {
+		//  var_dump($obj);
+		print ' <td><input class="minwidth200" name="dateinput" value="'. date('Y-m-d', dol_stringtotime($obj->date_sync)) .'" type="date"></td>';
+		print '<td>' . $form->selectMultiCurrency($obj->code, 'multicurrency_code', 1, " code != '".$conf->currency."'", true) . '</td>';
+		print ' <td><input type="number" min ="0" step="any" class="minwidth200" name="rateinput" value="' . dol_escape_htmltag($obj->rate) . '"></td>';
 
-			print '<td class="center nowrap ">';
-			print '<input type="hidden" name="page" value="'.dol_escape_htmltag($page).'">';
-			print '<input type="hidden" name="id_rate" value="'.dol_escape_htmltag($obj->rowid).'">';
-			print '<button type="submit" class="button" name="action" value="update">'.$langs->trans("Modify").'</button>';
-			print '<button type="submit" class="button" name="action" value="cancel">'.$langs->trans("Cancel").'</button>';
-			print '</td>';
-		}
-		else {
-			// date_sync
-			if (!empty($arrayfields['cr.date_sync']['checked']))
-			{
-				print '<td class="tdoverflowmax200">';
-				print $obj->date_sync;
-				print "</td>\n";
-				if (!$i) $totalarray['nbfield']++;
-			}
-
-			// code
-			if (! empty($arrayfields['m.code']['checked']))
-			{
-				print '<td class="tdoverflowmax200">';
-				print $obj->code." ".$obj->name;
-				print "</td>\n";
-
-				if (! $i) $totalarray['nbfield']++;
-			}
-
-			// rate
-			if (! empty($arrayfields['cr.rate']['checked']))
-			{
-				print '<td class="tdoverflowmax200">';
-				print $obj->rate;
-				print "</td>\n";
-				if (! $i) $totalarray['nbfield']++;
-			}
-
-
-			// Fields from hook
-			$parameters = ['arrayfields' => $arrayfields, 'obj' => $obj];
-			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters);    // Note that $action and $object may have been modified by hook
-			print $hookmanager->resPrint;
-
-			// Action
-			print '<td class="nowrap" align="center">';
-			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-				$selected = 0;
-				if (in_array($obj->rowid, $arrayofselected)) {
-					$selected = 1;
-				}
-				print '<a class="editfielda marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?action=updateRate&amp;id_rate='.$obj->rowid.'">'.img_picto('edit', 'edit').'</a>';
-				print '<a class="marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?action=deleteRate&amp;id_rate='.$obj->rowid.'">'.img_picto('delete', 'delete').'</a>';
-				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect marginleftonly" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
-			}
-			print '</td>';
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
-
-			print "</tr>\n";
-			$i++;
-		}
-
-		$db->free($resql);
-
-		print "</table>";
-		print "</div>";
-
-		print '</form>';
+		print '<td class="center nowrap ">';
+		print '<input type="hidden" name="page" value="'.dol_escape_htmltag($page).'">';
+		print '<input type="hidden" name="id_rate" value="'.dol_escape_htmltag($obj->rowid).'">';
+		print '<button type="submit" class="button" name="action" value="update">'.$langs->trans("Modify").'</button>';
+		print '<button type="submit" class="button" name="action" value="cancel">'.$langs->trans("Cancel").'</button>';
+		print '</td>';
 	} else {
-		dol_print_error($db);
+		// date_sync
+		if (!empty($arrayfields['cr.date_sync']['checked'])) {
+			print '<td class="tdoverflowmax200">';
+			print $obj->date_sync;
+			print "</td>\n";
+			if (!$i) $totalarray['nbfield']++;
+		}
+
+		// code
+		if (! empty($arrayfields['m.code']['checked'])) {
+			print '<td class="tdoverflowmax200">';
+			print $obj->code." ".$obj->name;
+			print "</td>\n";
+
+			if (! $i) $totalarray['nbfield']++;
+		}
+
+		// rate
+		if (! empty($arrayfields['cr.rate']['checked'])) {
+			print '<td class="tdoverflowmax200">';
+			print $obj->rate;
+			print "</td>\n";
+			if (! $i) $totalarray['nbfield']++;
+		}
+
+
+		// Fields from hook
+		$parameters = ['arrayfields' => $arrayfields, 'obj' => $obj];
+		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters);    // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
+
+		// Action
+		print '<td class="nowrap" align="center">';
+		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($obj->rowid, $arrayofselected)) {
+				$selected = 1;
+			}
+			print '<a class="editfielda marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?action=updateRate&amp;id_rate='.$obj->rowid.'">'.img_picto('edit', 'edit').'</a>';
+			print '<a class="marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?action=deleteRate&amp;id_rate='.$obj->rowid.'">'.img_picto('delete', 'delete').'</a>';
+			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect marginleftonly" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
+		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+
+		print "</tr>\n";
+		$i++;
 	}
+
+	$db->free($resql);
+
+	print "</table>";
+	print "</div>";
+
+	print '</form>';
+} else {
+	dol_print_error($db);
+}
 
 
 	llxFooter();
