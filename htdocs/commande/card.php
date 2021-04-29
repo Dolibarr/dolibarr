@@ -2448,7 +2448,7 @@ if ($action == 'create' && $usercancreate) {
 				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action);
 				if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 				if (empty($reshook))
-					$object->formAddObjectLine(1, $societe, $mysoc);
+					$object->formAddObjectLine(1, $mysoc, $soc);
 			}
 		}
 		print '</table>';
