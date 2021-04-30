@@ -61,7 +61,7 @@ class KnowledgeRecord extends CommonObject
 	/**
 	 * @var string String with name of icon for knowledgerecord. Must be the part after the 'object_' into object_knowledgerecord.png
 	 */
-	public $picto = 'book';
+	public $picto = 'knowledgemanagement';
 
 
 	const STATUS_DRAFT = 0;
@@ -111,7 +111,7 @@ class KnowledgeRecord extends CommonObject
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>'1', 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
 		'model_pdf' => array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>'1', 'position'=>1010, 'notnull'=>-1, 'visible'=>0,),
 		'question' => array('type'=>'text', 'label'=>'Question', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1,),
-		'answer' => array('type'=>'text', 'label'=>'Answer', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>4,),
+		'answer' => array('type'=>'html', 'label'=>'Answer', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>-1,),
 		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'notnull'=>1, 'visible'=>0, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Brouillon', '1'=>'Actif'),),
 	);
 	public $rowid;
