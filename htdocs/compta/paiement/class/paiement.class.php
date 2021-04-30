@@ -440,8 +440,13 @@ class Paiement extends CommonObject
                             	$outputlangs = new Translate("", $conf);
                             	$outputlangs->setDefaultLang($newlang);
                             }
+
+                            $hidedetails = ! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0;
+                            $hidedesc = ! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0;
+                            $hideref = !empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0;
+
                             $ret = $invoice->fetch($facid); // Reload to get new records
-                            $result = $invoice->generateDocument($invoice->modelpdf, $outputlangs);
+                            $result = $invoice->generateDocument($invoice->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
                             if ($result < 0) {
                             	setEventMessages($invoice->error, $invoice->errors, 'errors');
                             	$error++;

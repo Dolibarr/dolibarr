@@ -16,7 +16,7 @@
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2018-2021  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
  * Copyright (C) 2018       Christophe Battarel     <christophe@altairis.fr>
@@ -7020,7 +7020,7 @@ class Form
 						print '<input type="radio" name="idtolinkto" value='.$objp->rowid.'>';
 						print '</td>';
 						print '<td class="center">'.$objp->ref.'</td>';
-						print '<td>'.$objp->ref_client.'</td>';
+						print '<td>'.(!empty($objp->ref_client)?$objp->ref_client:$objp->ref_supplier).'</td>';
 						print '<td class="right">'.price($objp->total_ht).'</td>';
 						print '<td>'.$objp->name.'</td>';
 						print '</tr>';
