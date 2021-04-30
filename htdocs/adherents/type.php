@@ -511,7 +511,7 @@ if ($rowid > 0)
 		$sql .= " AND t.rowid = ".$object->id;
 		if ($sall)
 		{
-			$sql .= natural_search(array("f.firstname", "d.lastname", "d.societe", "d.email", "d.login", "d.address", "d.town", "d.note_public", "d.note_private"), $sall);
+			$sql .= natural_search(array("d.firstname", "d.lastname", "d.societe", "d.email", "d.login", "d.address", "d.town", "d.note_public", "d.note_private"), $sall);
 		}
 		if ($status != '')
 		{
