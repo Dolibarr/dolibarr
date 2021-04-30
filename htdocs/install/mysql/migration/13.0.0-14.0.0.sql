@@ -374,7 +374,7 @@ UPDATE llx_propal SET date_signature = date_cloture WHERE date_signature IS NULL
 
 ALTER TABLE llx_product ADD COLUMN batch_mask VARCHAR(32) NULL;
 ALTER TABLE llx_product ADD COLUMN lifetime VARCHAR(6);
-ALTER TABLE llx_product ADD COLUMN qc_frequency VARCHAR(6);
+ALTER TABLE llx_product ADD COLUMN qc_frequency INT;
 
 ALTER TABLE llx_product_batch ADD COLUMN fk_qcstatus VARCHAR(16);
 
@@ -382,7 +382,7 @@ ALTER TABLE llx_product_lot ADD COLUMN eol_date datetime;
 ALTER TABLE llx_product_lot ADD COLUMN manufacturing_date datetime;
 ALTER TABLE llx_product_lot ADD COLUMN scrapping_date datetime;
 ALTER TABLE llx_product_lot ADD COLUMN commissionning_date datetime;
-ALTER TABLE llx_product_lot ADD COLUMN qc_frequency VARCHAR(6);
+ALTER TABLE llx_product_lot ADD COLUMN qc_frequency INT;
 
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (210, 'conferenceorbooth', 'internal', 'MANAGER',  'Conference or Booth manager', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (211, 'conferenceorbooth', 'external', 'SPEAKER',   'Conference Speaker', 1);

@@ -32,6 +32,6 @@ CREATE TABLE llx_product_lot (
   manufacturing_date  datetime,
   scrapping_date      datetime,                   -- Put to disposal
   commissionning_date datetime,                   -- First use
-  qc_frequency        varchar(6),                 -- Quality control periodicity
+  qc_frequency        int,                        -- Quality control periodicity
   import_key          integer
 ) ENGINE=innodb;
