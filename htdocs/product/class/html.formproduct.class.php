@@ -677,17 +677,15 @@ class FormProduct
      *  Return select list of productbatch status
      *
      *  @param	string	$selected       		Id or Code of preselected incoterm
-     *  @param	string	$page       			Defined the form action
      *  @param  string	$htmlname       		Name of html select object
      *  @param  string	$htmloption     		Options html on select object
-     * 	@param	int		$forcecombo				Force to load all values and output a standard combobox (with no beautification)
      *  @param	array	$events					Event options to run on change. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
      *  @return string           				HTML string with select and input
      */
-    public function select_productbatch_qcstatus($selected = '', $page = '', $htmlname = 'fk_qcstatus', $htmloption = '', $forcecombo = 1, $events = array())
+    public function selectProductbatchQcstatus($selected = '', $htmlname = 'fk_qcstatus', $htmloption = '', $forcecombo = 0, $events = array())
     {
         // phpcs:enable
-        global $conf, $langs;
+        global $conf, $langs, $user;
 
         $langs->load("dict");
 
@@ -707,11 +705,11 @@ class FormProduct
                 $out .= ajax_combobox($htmlname, $events);
             }
 
-            if (!empty($page)) {
+            /* if (!empty($page)) {
                 $out .= '<form method="post" action="'.$page.'">';
                 $out .= '<input type="hidden" name="action" value="setfk_qcstatus">';
                 $out .= '<input type="hidden" name="token" value="'.newToken().'">';
-            }
+            } */
 
             $out .= '<select id="'.$htmlname.'" class="flat selectfkstatus minwidth100imp noenlargeonsmartphone" name="'.$htmlname.'" '.$htmloption.'>';
             $out .= '<option value="0">&nbsp;</option>';
@@ -743,13 +741,13 @@ class FormProduct
             }
             $out .= '</select>';
 
-			// if ($user->admin) {
+			if ($user->admin) {
 				$out .= ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-			// }
+			}
 
-            if (!empty($page)) {
+            /* if (!empty($page)) {
                 $out .= '<input type="submit" class="button valignmiddle smallpaddingimp nomargintop nomarginbottom" value="'.$langs->trans("Modify").'"></form>';
-            }
+            } */
         } else {
             dol_print_error($this->db);
         }

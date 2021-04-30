@@ -512,7 +512,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<tr><td>'.$form->editfieldkey($langs->trans('QCFrequency'), 'qc_frequency', $object->qc_frequency, $object, $user->rights->stock->creer).'</td>';
 		print '<td>'.$form->editfieldval($langs->trans('QCFrequency'), 'qc_frequency', $object->qc_frequency, $object, $user->rights->stock->creer, 'string').'</td>';
 		print '</tr>';
-		print '<tr>';
+		/* print '<tr>';
 		print '<td class="maxwidthonsmartphone">';
 		print $form->editfieldkey("Status", 'fk_qcstatus', $object->fk_qcstatus, $object, $user->rights->stock->creer);
 		print '</td>';
@@ -526,7 +526,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 		print $formproduct->select_productbatch_qcstatus($fk_qcstatus,'?id='.$object->id);
 		}
-		print '</td></tr>';
+		print '</td></tr>'; */
 	}
 
 	// Other attributes
