@@ -30,7 +30,7 @@ function workstationAdminPrepareHead()
 {
 	global $langs, $conf;
 
-	$langs->load("workstation@workstation");
+	$langs->load("workstation");
 
 	$h = 0;
 	$head = array();

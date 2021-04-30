@@ -442,3 +442,29 @@ UPDATE llx_const SET value = 'github' WHERE __DECRYPT('name')__ = 'MAIN_BUGTRACK
 
 ALTER TABLE llx_facture_fourn_det ADD COLUMN fk_remise_except integer DEFAULT NULL after remise_percent;
 ALTER TABLE llx_facture_fourn_det ADD UNIQUE INDEX uk_fk_remise_except (fk_remise_except, fk_facture_fourn);
+
+CREATE TABLE llx_knowledgemanagement_knowledgerecord(
+	-- BEGIN MODULEBUILDER FIELDS
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
+	ref varchar(128) NOT NULL, 
+	date_creation datetime NOT NULL, 
+	tms timestamp, 
+	last_main_doc varchar(255), 
+	fk_user_creat integer NOT NULL, 
+	fk_user_modif integer, 
+	fk_user_valid integer, 
+	import_key varchar(14), 
+	model_pdf varchar(255), 
+	question text NOT NULL, 
+	answer text, 
+	status integer NOT NULL
+	-- END MODULEBUILDER FIELDS
+) ENGINE=innodb;
+
+create table llx_knowledgemanagement_knowledgerecord_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;

@@ -225,7 +225,7 @@ class Form
 				$ret .= '<input type="hidden" name="token" value="'.newToken().'">';
 				$ret .= '<input type="hidden" name="'.$paramid.'" value="'.$object->id.'">';
 				if (empty($notabletag)) {
-					$ret .= '<table class="nobordernopadding centpercent" cellpadding="0" cellspacing="0">';
+					$ret .= '<table class="nobordernopadding centpercent">';
 				}
 				if (empty($notabletag)) {
 					$ret .= '<tr><td>';
@@ -5171,7 +5171,7 @@ class Form
 			$ret .= '<form method="post" action="'.$page.'" name="form'.$htmlname.'">';
 			$ret .= '<input type="hidden" name="action" value="set'.$htmlname.'">';
 			$ret .= '<input type="hidden" name="token" value="'.newToken().'">';
-			$ret .= '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+			$ret .= '<table class="nobordernopadding">';
 			$ret .= '<tr><td>';
 			$ret .= $this->selectDate($selected, $htmlname, $displayhour, $displaymin, 1, 'form'.$htmlname, 1, 0);
 			$ret .= '</td>';
@@ -5475,7 +5475,7 @@ class Form
 			print '<form method="post" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="set_contact">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
-			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+			print '<table class="nobordernopadding">';
 			print '<tr><td>';
 			print $this->selectcontacts($societe->id, $selected, $htmlname);
 			$num = $this->num;

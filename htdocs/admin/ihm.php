@@ -312,8 +312,9 @@ print '<br>';
 
 // Other
 print '<div class="div-table-responsive-no-min">';
-print '<table summary="otherparameters" class="noborder centpercent editmode">';
-print '<tr class="liste_titre"><th>'.$langs->trans("Miscellaneous").'</th><th></th>';
+print '<table summary="otherparameters" class="noborder centpercent editmode tableforfield">';
+print '<tr class="liste_titre"><th class="titlefieldmiddle">'.$langs->trans("Miscellaneous").'</th>';
+print '<th></th>';
 print '<th width="20">&nbsp;</tg>';
 print '</tr>';
 
@@ -441,8 +442,9 @@ print '<br>';
 
 // Other
 print '<div class="div-table-responsive-no-min">';
-print '<table summary="edit" class="noborder centpercent editmode">';
-print '<tr class="liste_titre"><th>'.$langs->trans("LoginPage").'</th><th></th>';
+print '<table summary="edit" class="noborder centpercent editmode tableforfield">';
+print '<tr class="liste_titre"><th class="titlefieldmiddle">'.$langs->trans("LoginPage").'</th>';
+print '<th></th>';
 print '<th width="20">&nbsp;</th>';
 print '</tr>';
 

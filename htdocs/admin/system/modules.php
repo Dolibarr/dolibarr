@@ -324,7 +324,7 @@ foreach ($moduleList as $module) {
 	}
 
 	if ($arrayfields['version']['checked']) {
-		print '<td>'.$module->version.'</td>';
+		print '<td class="nowraponall">'.$module->version.'</td>';
 	}
 
 	if ($arrayfields['id']['checked']) {

@@ -1524,7 +1524,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '')
 
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td class="titlefieldcreate">'.$langs->trans("Description").'</td>';
+	print '<td class="">'.$langs->trans("Description").'</td>';
 	print '<td>';
 	$text = $langs->trans("Value");
 	print $form->textwithpicto($text, $helptext, 1, 'help', '', 0, 2, 'idhelptext');
@@ -1669,17 +1669,21 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '')
 					//var_dump($arraydefaultmessage);
 					//var_dump($arrayofmessagename);
 					print $form->selectarray('constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')), $arrayofmessagename, $obj->value.':'.$tmp[1], 'None', 0, 0, '', 0, 0, 0, '', '', 1);
+				} elseif (preg_match('/MAIL_FROM$/i', $const)) {
+					print img_picto('', 'email', 'class="pictofixedwidth"').'<input type="text" class="flat minwidth300" name="constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')).'" value="'.dol_escape_htmltag($obj->value).'">';
 				} else { // type = 'string' ou 'chaine'
 					print '<input type="text" class="flat minwidth300" name="constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')).'" value="'.dol_escape_htmltag($obj->value).'">';
 				}
 				print '</td>';
 			}
+
 			// Submit
 			if (empty($strictw3c)) {
 				print '<td class="center">';
 				print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
 				print "</td>";
 			}
+
 			print "</tr>\n";
 
 			if (empty($strictw3c)) {
