@@ -45,7 +45,7 @@ class modKnowledgeManagement extends DolibarrModules
 
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
-		$this->numero = 80000; // TODO Go on page https://wiki.dolibarr.org/index.php/List_of_modules_id to reserve an id number for your module
+		$this->numero = 57000; // TODO Go on page https://wiki.dolibarr.org/index.php/List_of_modules_id to reserve an id number for your module
 
 		// Key text used to identify module (for permissions, menus, etc...)
 		$this->rights_class = 'knowledgemanagement';
@@ -63,9 +63,9 @@ class modKnowledgeManagement extends DolibarrModules
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 
 		// Module description, used if translation string 'ModuleKnowledgeManagementDesc' not found (KnowledgeManagement is name of module).
-		$this->description = "Knowledge Management Description";
+		$this->description = "Knowledge Management (KM)";
 		// Used only if file README.md and README-LL.md not found.
-		$this->descriptionlong = "Knowledge Management Description";
+		$this->descriptionlong = "Manage a Knowledge Management (KM) database";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
 		$this->version = 'development';
@@ -79,7 +79,7 @@ class modKnowledgeManagement extends DolibarrModules
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
 		// To use a supported fa-xxx css style of font awesome, use this->picto='xxx'
-		$this->picto = 'generic';
+		$this->picto = 'knowledgemanagement';
 
 		// Define some features supported by module (triggers, login, substitutions, menus, css, etc...)
 		$this->module_parts = array(

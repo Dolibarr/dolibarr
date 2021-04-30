@@ -58,11 +58,6 @@ require_once DOL_DOCUMENT_ROOT."/knowledgemanagement/lib/knowledgemanagement.lib
 // Translations
 $langs->loadLangs(array("admin", "knowledgemanagement"));
 
-// Access control
-if (!$user->admin) {
-	accessforbidden();
-}
-
 // Parameters
 $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
@@ -70,7 +65,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $value = GETPOST('value', 'alpha');
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
-$type = 'myobject';
+$type = 'knowledgemanagement';
 
 $arrayofparameters = array(
 	'KNOWLEDGEMANAGEMENT_MYPARAM1'=>array('type'=>'string', 'css'=>'minwidth500' ,'enabled'=>0),
@@ -83,6 +78,11 @@ $arrayofparameters = array(
 
 $error = 0;
 $setupnotempty = 0;
+
+// Access control
+if (!$user->admin) {
+	accessforbidden();
+}
 
 
 /*

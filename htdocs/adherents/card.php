@@ -1791,7 +1791,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<input type="hidden" name="rowid" value="'.$object->id.'">';
 				print '<input type="hidden" name="action" value="set'.$htmlname.'">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
-				print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+				print '<table class="nobordernopadding">';
 				print '<tr><td>';
 				print $form->select_company($object->socid, 'socid', '', 1);
 				print '</td>';
