@@ -8,12 +8,15 @@ English Dolibarr ChangeLog
 For users:
 ----------
 NEW: Several security issues after a second private bug bounty campaign. 
-
+NEW: Add a security center page with all information and advices related to the security of your instance 
+NEW: Add a performance center page with all information and advices related to the performance of your instance 
 
 
 For developers:
 ---------------
 * start new module EventOrganization
+* start new module Partnership
+* start new module KnowledgeInformation
 
 
 
