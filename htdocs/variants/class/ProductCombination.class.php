@@ -534,7 +534,7 @@ class ProductCombination
 							$new_price += $variation_price;
 						}
 
-						$child->updatePrice($new_price, $new_type, $user, $new_vat, $new_min_price, $i, $new_npr, $new_psq);
+						$child->updatePrice($new_price, $new_type, $user, $new_vat, $new_min_price, $i, $new_npr, $new_psq, 0, array(), $parent->default_vat_code);
 					}
 				}
 			} else {
