@@ -1676,11 +1676,7 @@ class Societe extends CommonObject
 
 		$sql .= ' WHERE s.entity IN ('.getEntity($this->element).')';
 		if ($rowid) {
-<<<<<<< HEAD
 			$sql .= " AND s.rowid = '" . $rowid . "'";
-=======
-			$sql .= ' AND s.rowid = '.((int) $rowid);
->>>>>>> upstream/develop
 		}
 		if ($ref) {
 			$sql .= " AND s.nom = '".$this->db->escape($ref)."'";
