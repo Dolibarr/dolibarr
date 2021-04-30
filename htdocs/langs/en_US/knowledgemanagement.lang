@@ -18,16 +18,16 @@
 #
 
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Knowledge Management
+ModuleKnowledgeManagementName = Knowledge Management System
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc = Knowledge Management description
+ModuleKnowledgeManagementDesc = Manage a Knowledge Management database
 
 #
 # Admin page
 #
-KnowledgeManagementSetup = Knowledge Management setup
+KnowledgeManagementSetup = Knowledge Management System setup
 Settings = Settings
-KnowledgeManagementSetupPage = Knowledge Management setup page
+KnowledgeManagementSetupPage = Knowledge Management System setup page
 
 
 #
@@ -46,10 +46,10 @@ KnowledgeManagementArea = Knowledge Management
 #
 # Menu
 #
-MenuKnowledgeRecord = Knowledge records
+MenuKnowledgeRecord = Knowledge
 ListKnowledgeRecord = List
-NewKnowledgeRecord = New knowledge record
-Reply = Reply
-KnowledgeRecords = knowledge record
-KnowledgeRecord = knowledge record
-KnowledgeRecordExtraFields = Extrafields for Knowledge Records
+NewKnowledgeRecord = New knowledge
+ValidateReply = Validate solution
+KnowledgeRecords = Knowledges
+KnowledgeRecord = Knowledge
+KnowledgeRecordExtraFields = Extrafields for Knowledge record
