@@ -26,6 +26,9 @@
  */
 
 
+if (empty($user->rights->cashdesk->run)) {
+	accessforbidden();
+}
 
 
 /*

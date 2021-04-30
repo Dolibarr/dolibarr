@@ -46,12 +46,13 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 /* Buttons for actions                                                            */
 /* ============================================================================== */
 
-div.divButAction {
+/*div.divButAction {
 	margin-bottom: 1.4em;
-}
+}*/
 div.tabsAction > a.butAction, div.tabsAction > a.butActionRefused, div.tabsAction > a.butActionDelete,
 div.tabsAction > span.butAction, div.tabsAction > span.butActionRefused, div.tabsAction > span.butActionDelete {
 	margin-bottom: 1.4em !important;
+	margin-right: 0px !important;
 }
 div.tabsActionNoBottom > a.butAction, div.tabsActionNoBottom > a.butActionRefused {
 	margin-bottom: 0 !important;
@@ -72,14 +73,14 @@ span.butAction, span.butActionDelete {
 	border-radius: 3px;
 }
 .butActionRefused:last-child, .butAction:last-child, .butActionDelete:last-child {
-	margin-right: 0px !important;
+	margin-<?php echo $right; ?>: 0px !important;
 }
 .butActionRefused, .butAction, .butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
 	text-decoration: none;
 	text-transform: uppercase;
 	font-weight: bold;
 
-	margin: 0em <?php echo ($dol_optimize_smallscreen ? '0.6' : '0.9'); ?>em;
+	margin: 0em <?php echo ($dol_optimize_smallscreen ? '0.6' : '1'); ?>em;
 	padding: 0.6em <?php echo ($dol_optimize_smallscreen ? '0.6' : '0.7'); ?>em;
 	display: inline-block;
 	text-align: center;
@@ -279,6 +280,11 @@ div.pagination li:first-child a.btnTitle{
 	margin-left: 10px;
 }
 
+.button-title-separator{
+	display: inline-block;
+	clear: both;
+	width: 20px;
+}
 
 .imgforviewmode {
 	color: #aaa;

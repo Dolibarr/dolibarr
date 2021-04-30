@@ -44,12 +44,6 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'holiday', $id, 'holiday');
-
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -69,11 +63,63 @@ if (!$sortfield) {
 }
 
 
+$childids = $user->getAllChildIds(1);
+
+$morefilter = '';
+if (!empty($conf->global->HOLIDAY_HIDE_FOR_NON_SALARIES)) {
+	$morefilter = 'AND employee = 1';
+}
+
 $object = new Holiday($db);
-$object->fetch($id, $ref);
+
+$extrafields = new ExtraFields($db);
+
+// fetch optionals attributes and labels
+$extrafields->fetch_name_optionals_label($object->table_element);
+
+if (($id > 0) || $ref) {
+	$object->fetch($id, $ref);
+
+	// Check current user can read this leave request
+	$canread = 0;
+	if (!empty($user->rights->holiday->readall)) {
+		$canread = 1;
+	}
+	if (!empty($user->rights->holiday->read) && in_array($object->fk_user, $childids)) {
+		$canread = 1;
+	}
+	if (!$canread) {
+		accessforbidden();
+	}
+}
+
+/*$cancreate = 0;
+
+if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->holiday->writeall_advance)) {
+	$cancreate = 1;
+}
+if (!empty($user->rights->holiday->write) && in_array($fuserid, $childids)) {
+	$cancreate = 1;
+}
+
+$candelete = 0;
+if (!empty($user->rights->holiday->delete)) {
+	$candelete = 1;
+}
+if ($object->statut == Holiday::STATUS_DRAFT && $user->rights->holiday->write && in_array($object->fk_user, $childids)) {
+	$candelete = 1;
+}
+*/
 
 $upload_dir = $conf->holiday->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, '');
 $modulepart = 'holiday';
+
+// Protection if external user
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'holiday', $object->id, 'holiday');
+
 
 
 /*
@@ -306,7 +352,7 @@ if ($object->id) {
 	$permission = $user->rights->holiday->write;
 	$permtoedit = $user->rights->holiday->write;
 	$param = '&id='.$object->id;
-	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {
 	print $langs->trans("ErrorUnknown");
 }

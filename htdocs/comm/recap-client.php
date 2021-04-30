@@ -33,12 +33,12 @@ if (!empty($conf->facture->enabled)) {
 }
 
 // Security check
-$socid = $_GET["socid"];
+$socid = GETPOST("socid", 'int');
 if ($user->socid > 0) {
 	$action = '';
-	$socid = $user->socid;
+	$id = $user->socid;
 }
-
+$result = restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid', 0);
 
 
 /*

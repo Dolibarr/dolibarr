@@ -211,7 +211,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 	dolibarr_set_const($db, "FACTURE_LOCAL_TAX1_OPTION", $uselocaltax1, 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "FACTURE_LOCAL_TAX2_OPTION", $uselocaltax2, 'chaine', 0, '', $conf->entity);
 
-	if ($_POST["optionlocaltax1"] == "localtax1on") {
+	if (GETPOST("optionlocaltax1") == "localtax1on") {
 		if (!GETPOSTISSET('lt1')) {
 			dolibarr_set_const($db, "MAIN_INFO_VALUE_LOCALTAX1", 0, 'chaine', 0, '', $conf->entity);
 		} else {
@@ -219,7 +219,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 		}
 		dolibarr_set_const($db, "MAIN_INFO_LOCALTAX_CALC1", GETPOST("clt1", 'aZ09'), 'chaine', 0, '', $conf->entity);
 	}
-	if ($_POST["optionlocaltax2"] == "localtax2on") {
+	if (GETPOST("optionlocaltax2") == "localtax2on") {
 		if (!GETPOSTISSET('lt2')) {
 			dolibarr_set_const($db, "MAIN_INFO_VALUE_LOCALTAX2", 0, 'chaine', 0, '', $conf->entity);
 		} else {
@@ -288,8 +288,8 @@ if ($action == 'addthumb' || $action == 'addthumbsquarred') {  // Regenerate thu
 	} else {
 		$error++;
 		$langs->load("errors");
-		setEventMessages($langs->trans("ErrorFileDoesNotExists", $_GET["file"]), null, 'errors');
-		dol_syslog($langs->transnoentities("ErrorFileDoesNotExists", $_GET["file"]), LOG_WARNING);
+		setEventMessages($langs->trans("ErrorFileDoesNotExists", GETPOST("file")), null, 'errors');
+		dol_syslog($langs->transnoentities("ErrorFileDoesNotExists", GETPOST("file")), LOG_WARNING);
 	}
 }
 
@@ -666,7 +666,7 @@ print '<td class="titlefield">'.$langs->trans("FiscalYearInformation").'</td><td
 print "</tr>\n";
 
 print '<tr class="oddeven"><td><label for="SOCIETE_FISCAL_MONTH_START">'.$langs->trans("FiscalMonthStart").'</label></td><td>';
-print $formother->select_month($conf->global->SOCIETE_FISCAL_MONTH_START, 'SOCIETE_FISCAL_MONTH_START', 0, 1, 'maxwidth100').'</td></tr>';
+print $formother->select_month(!empty($conf->global->SOCIETE_FISCAL_MONTH_START) ? $conf->global->SOCIETE_FISCAL_MONTH_START : '', 'SOCIETE_FISCAL_MONTH_START', 0, 1, 'maxwidth100').'</td></tr>';
 
 print "</table>";
 print '<br>';

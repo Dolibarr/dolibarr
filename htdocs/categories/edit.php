@@ -99,7 +99,6 @@ if ($action == 'update' && $user->rights->categorie->creer) {
 	$object->visible        = $visible;
 	$object->fk_parent = $parent != -1 ? $parent : 0;
 
-
 	if (empty($object->label)) {
 		$error++;
 		$action = 'edit';

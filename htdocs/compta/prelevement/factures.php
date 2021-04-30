@@ -195,10 +195,10 @@ if ($object->type != 'bank-transfer') {
 	$sql .= " AND f.entity IN (".getEntity('supplier_invoice').")";
 }
 if ($object->id > 0) {
-	$sql .= " AND p.rowid=".$object->id;
+	$sql .= " AND p.rowid = ".((int) $object->id);
 }
 if ($socid) {
-	$sql .= " AND s.rowid = ".$socid;
+	$sql .= " AND s.rowid = ".((int) $socid);
 }
 $sql .= $db->order($sortfield, $sortorder);
 
@@ -220,7 +220,7 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	$param = "&id=".$id;
+	$param = "&id=".urlencode($id);
 
 	// Lines of title fields
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -281,10 +281,10 @@ if ($resql) {
 		print "</td>\n";
 
 		// Amount of invoice
-		print '<td class="right">'.price($obj->total_ttc)."</td>\n";
+		print '<td class="right"><span class="amount">'.price($obj->total_ttc)."</span></td>\n";
 
 		// Amount requested
-		print '<td class="right">'.price($obj->amount_requested)."</td>\n";
+		print '<td class="right"><span class="amount">'.price($obj->amount_requested)."</span></td>\n";
 
 		// Status of requests
 		print '<td class="center">';

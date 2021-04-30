@@ -135,6 +135,18 @@ if (!empty($search_accountancy_code_end)) {
 	$param .= '&amp;search_accountancy_code_end='.$search_accountancy_code_end;
 }
 
+if (empty($conf->accounting->enabled)) {
+	accessforbidden();
+}
+if ($user->socid > 0) {
+	accessforbidden();
+}
+if (empty($user->rights->accounting->mouvements->lire)) {
+	accessforbidden();
+}
+
+
+
 /*
  * Action
  */

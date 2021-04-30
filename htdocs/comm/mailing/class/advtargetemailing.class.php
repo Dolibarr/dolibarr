@@ -228,7 +228,7 @@ class AdvanceTargetingMailing extends CommonObject
 		$sql .= " t.tms";
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."advtargetemailing as t";
-		$sql .= " WHERE t.rowid = ".$id;
+		$sql .= " WHERE t.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -284,9 +284,9 @@ class AdvanceTargetingMailing extends CommonObject
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."advtargetemailing as t";
 		if (!empty($id)) {
-			$sql .= " WHERE t.fk_element = ".$id." AND type_element='mailing'";
+			$sql .= " WHERE t.fk_element = ".((int) $id)." AND type_element = 'mailing'";
 		} else {
-			$sql .= " WHERE t.fk_element = ".$this->fk_element."  AND type_element='mailing'";
+			$sql .= " WHERE t.fk_element = ".((int) $this->fk_element)." AND type_element = 'mailing'";
 		}
 
 		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
@@ -347,9 +347,9 @@ class AdvanceTargetingMailing extends CommonObject
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."advtargetemailing as t";
 		if (!empty($id)) {
-			$sql .= " WHERE t.fk_element = ".$id." AND type_element='$type_element'";
+			$sql .= " WHERE t.fk_element = ".((int) $id)." AND type_element = '".$this->db->escape($type_element)."'";
 		} else {
-			$sql .= " WHERE t.fk_element = ".$this->fk_element."  AND type_element='$type_element'";
+			$sql .= " WHERE t.fk_element = ".((int) $this->fk_element)." AND type_element = '".$this->db->escape($type_element)."'";
 		}
 
 		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
@@ -419,7 +419,7 @@ class AdvanceTargetingMailing extends CommonObject
 		$sql .= " filtervalue=".(isset($this->filtervalue) ? "'".$this->db->escape($this->filtervalue)."'" : "null").",";
 		$sql .= " fk_user_mod=".$user->id;
 
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
 		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
@@ -459,7 +459,7 @@ class AdvanceTargetingMailing extends CommonObject
 
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."advtargetemailing";
-			$sql .= " WHERE rowid=".$this->id;
+			$sql .= " WHERE rowid=".((int) $this->id);
 
 			dol_syslog(get_class($this)."::delete sql=".$sql);
 			$resql = $this->db->query($sql);
@@ -559,34 +559,34 @@ class AdvanceTargetingMailing extends CommonObject
 				$sqlwhere[] = " (t.parent IN (SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE (".$str.")))";
 			}
 			if (!empty($arrayquery['cust_status']) && count($arrayquery['cust_status']) > 0) {
-				$sqlwhere[] = " (t.status IN (".implode(',', $arrayquery['cust_status'])."))";
+				$sqlwhere[] = " (t.status IN (".$this->db->sanitize(implode(',', $arrayquery['cust_status']))."))";
 			}
 			if (!empty($arrayquery['cust_typecust']) && count($arrayquery['cust_typecust']) > 0) {
-				$sqlwhere[] = " (t.client IN (".implode(',', $arrayquery['cust_typecust'])."))";
+				$sqlwhere[] = " (t.client IN (".$this->db->sanitize(implode(',', $arrayquery['cust_typecust']))."))";
 			}
 			if (!empty($arrayquery['cust_comm_status']) && count($arrayquery['cust_comm_status'] > 0)) {
-				$sqlwhere[] = " (t.fk_stcomm IN (".implode(',', $arrayquery['cust_comm_status'])."))";
+				$sqlwhere[] = " (t.fk_stcomm IN (".$this->db->sanitize(implode(',', $arrayquery['cust_comm_status']))."))";
 			}
 			if (!empty($arrayquery['cust_prospect_status']) && count($arrayquery['cust_prospect_status']) > 0) {
-				$sqlwhere[] = " (t.fk_prospectlevel IN ('".implode("','", $arrayquery['cust_prospect_status'])."'))";
+				$sqlwhere[] = " (t.fk_prospectlevel IN (".$this->db->sanitize("'".implode("','", $arrayquery['cust_prospect_status'])."'", 1)."))";
 			}
 			if (!empty($arrayquery['cust_typeent']) && count($arrayquery['cust_typeent']) > 0) {
-				$sqlwhere[] = " (t.fk_typent IN (".implode(',', $arrayquery['cust_typeent'])."))";
+				$sqlwhere[] = " (t.fk_typent IN (".$this->db->sanitize(implode(',', $arrayquery['cust_typeent']))."))";
 			}
 			if (!empty($arrayquery['cust_saleman']) && count($arrayquery['cust_saleman']) > 0) {
-				$sqlwhere[] = " (saleman.fk_user IN (".implode(',', $arrayquery['cust_saleman'])."))";
+				$sqlwhere[] = " (saleman.fk_user IN (".$this->db->sanitize(implode(',', $arrayquery['cust_saleman']))."))";
 			}
 			if (!empty($arrayquery['cust_country']) && count($arrayquery['cust_country']) > 0) {
-				$sqlwhere[] = " (t.fk_pays IN (".implode(',', $arrayquery['cust_country'])."))";
+				$sqlwhere[] = " (t.fk_pays IN (".$this->db->sanitize(implode(',', $arrayquery['cust_country']))."))";
 			}
 			if (!empty($arrayquery['cust_effectif_id']) && count($arrayquery['cust_effectif_id']) > 0) {
-				$sqlwhere[] = " (t.fk_effectif IN (".implode(',', $arrayquery['cust_effectif_id'])."))";
+				$sqlwhere[] = " (t.fk_effectif IN (".$this->db->sanitize(implode(',', $arrayquery['cust_effectif_id']))."))";
 			}
 			if (!empty($arrayquery['cust_categ']) && count($arrayquery['cust_categ']) > 0) {
-				$sqlwhere[] = " (custcateg.fk_categorie IN (".implode(',', $arrayquery['cust_categ'])."))";
+				$sqlwhere[] = " (custcateg.fk_categorie IN (".$this->db->sanitize(implode(',', $arrayquery['cust_categ']))."))";
 			}
 			if (!empty($arrayquery['cust_language']) && count($arrayquery['cust_language']) > 0) {
-				$sqlwhere[] = " (t.default_lang IN ('".implode("','", $arrayquery['cust_language'])."'))";
+				$sqlwhere[] = " (t.default_lang IN (".$this->db->sanitize("'".implode("','", $arrayquery['cust_language'])."'", 1)."))";
 			}
 
 			//Standard Extrafield feature
@@ -614,11 +614,15 @@ class AdvanceTargetingMailing extends CommonObject
 						}
 					} elseif ($extrafields->attributes[$elementtype]['type'][$key] == 'boolean') {
 						if ($arrayquery['options_'.$key] != '') {
-							$sqlwhere[] = " (te.".$key." = ".$arrayquery['options_'.$key].")";
+							$sqlwhere[] = " (te.".$key." = ".((int) $arrayquery['options_'.$key]).")";
+						}
+					} elseif ($extrafields->attributes[$elementtype]['type'][$key] == 'link') {
+						if ($arrayquery['options_'.$key] > 0) {
+							$sqlwhere[]= " (te.".$key." = ".((int) $arrayquery['options_'.$key]).")";
 						}
 					} else {
 						if (is_array($arrayquery['options_'.$key])) {
-							$sqlwhere[] = " (te.".$key." IN ('".implode("','", $arrayquery['options_'.$key])."'))";
+							$sqlwhere[] = " (te.".$key." IN (".$this->db->sanitize("'".implode("','", $arrayquery['options_'.$key])."'", 1)."))";
 						} elseif (!empty($arrayquery['options_'.$key])) {
 							$sqlwhere[] = " (te.".$key." LIKE '".$this->db->escape($arrayquery['options_'.$key])."')";
 						}
@@ -642,7 +646,6 @@ class AdvanceTargetingMailing extends CommonObject
 			if ($num) {
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($resql);
-
 					$this->thirdparty_lines[$i] = $obj->rowid;
 
 					$i++;
@@ -703,7 +706,7 @@ class AdvanceTargetingMailing extends CommonObject
 				$sqlwhere[] = " (t.statut IN (".$this->db->sanitize($this->db->escape(implode(',', $arrayquery['contact_status'])))."))";
 			}
 			if (!empty($arrayquery['contact_civility']) && count($arrayquery['contact_civility']) > 0) {
-				$sqlwhere[] = " (t.civility IN ('".$this->db->sanitize($this->db->escape(implode("','", $arrayquery['contact_civility'])))."'))";
+				$sqlwhere[] = " (t.civility IN (".$this->db->sanitize("'".implode("','", $arrayquery['contact_civility'])."'", 1)."))";
 			}
 			if ($arrayquery['contact_no_email'] != '') {
 				$tmpwhere = '';
@@ -762,7 +765,7 @@ class AdvanceTargetingMailing extends CommonObject
 						}
 					} else {
 						if (is_array($arrayquery['options_'.$key.'_cnct'])) {
-							$sqlwhere[] = " (te.".$key." IN ('".implode("','", $arrayquery['options_'.$key.'_cnct'])."'))";
+							$sqlwhere[] = " (te.".$key." IN (".$this->db->sanitize("'".implode("','", $arrayquery['options_'.$key.'_cnct'])."'", 1)."))";
 						} elseif (!empty($arrayquery['options_'.$key.'_cnct'])) {
 							$sqlwhere[] = " (te.".$key." LIKE '".$this->db->escape($arrayquery['options_'.$key.'_cnct'])."')";
 						}
@@ -797,34 +800,34 @@ class AdvanceTargetingMailing extends CommonObject
 						$sqlwhere[] = " (ts.parent IN (SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE (".$str.")))";
 					}
 					if (!empty($arrayquery['cust_status']) && count($arrayquery['cust_status']) > 0) {
-						$sqlwhere[] = " (ts.status IN (".implode(',', $arrayquery['cust_status'])."))";
+						$sqlwhere[] = " (ts.status IN (".$this->db->sanitize(implode(',', $arrayquery['cust_status']))."))";
 					}
 					if (!empty($arrayquery['cust_typecust']) && count($arrayquery['cust_typecust']) > 0) {
-						$sqlwhere[] = " (ts.client IN (".implode(',', $arrayquery['cust_typecust'])."))";
+						$sqlwhere[] = " (ts.client IN (".$this->db->sanitize(implode(',', $arrayquery['cust_typecust']))."))";
 					}
 					if (!empty($arrayquery['cust_comm_status']) && count($arrayquery['cust_comm_status'] > 0)) {
-						$sqlwhere[] = " (ts.fk_stcomm IN (".implode(',', $arrayquery['cust_comm_status'])."))";
+						$sqlwhere[] = " (ts.fk_stcomm IN (".$this->db->sanitize(implode(',', $arrayquery['cust_comm_status']))."))";
 					}
 					if (!empty($arrayquery['cust_prospect_status']) && count($arrayquery['cust_prospect_status']) > 0) {
-						$sqlwhere[] = " (ts.fk_prospectlevel IN ('".implode("','", $arrayquery['cust_prospect_status'])."'))";
+						$sqlwhere[] = " (ts.fk_prospectlevel IN ('".$this->db->sanitize(implode("','", $arrayquery['cust_prospect_status']))."'))";
 					}
 					if (!empty($arrayquery['cust_typeent']) && count($arrayquery['cust_typeent']) > 0) {
-						$sqlwhere[] = " (ts.fk_typent IN (".implode(',', $arrayquery['cust_typeent'])."))";
+						$sqlwhere[] = " (ts.fk_typent IN (".$this->db->sanitize(implode(',', $arrayquery['cust_typeent']))."))";
 					}
 					if (!empty($arrayquery['cust_saleman']) && count($arrayquery['cust_saleman']) > 0) {
-						$sqlwhere[] = " (saleman.fk_user IN (".implode(',', $arrayquery['cust_saleman'])."))";
+						$sqlwhere[] = " (saleman.fk_user IN (".$this->db->sanitize(implode(',', $arrayquery['cust_saleman']))."))";
 					}
 					if (!empty($arrayquery['cust_country']) && count($arrayquery['cust_country']) > 0) {
-						$sqlwhere[] = " (ts.fk_pays IN (".implode(',', $arrayquery['cust_country'])."))";
+						$sqlwhere[] = " (ts.fk_pays IN (".$this->db->sanitize(implode(',', $arrayquery['cust_country']))."))";
 					}
 					if (!empty($arrayquery['cust_effectif_id']) && count($arrayquery['cust_effectif_id']) > 0) {
-						$sqlwhere[] = " (ts.fk_effectif IN (".implode(',', $arrayquery['cust_effectif_id'])."))";
+						$sqlwhere[] = " (ts.fk_effectif IN (".$this->db->sanitize(implode(',', $arrayquery['cust_effectif_id']))."))";
 					}
 					if (!empty($arrayquery['cust_categ']) && count($arrayquery['cust_categ']) > 0) {
-						$sqlwhere[] = " (custcateg.fk_categorie IN (".implode(',', $arrayquery['cust_categ'])."))";
+						$sqlwhere[] = " (custcateg.fk_categorie IN (".$this->db->sanitize(implode(',', $arrayquery['cust_categ']))."))";
 					}
 					if (!empty($arrayquery['cust_language']) && count($arrayquery['cust_language']) > 0) {
-						$sqlwhere[] = " (ts.default_lang IN ('".implode("','", $arrayquery['cust_language'])."'))";
+						$sqlwhere[] = " (ts.default_lang IN ('".$this->db->sanitize(implode("','", $arrayquery['cust_language']))."'))";
 					}
 
 					//Standard Extrafield feature
@@ -860,7 +863,7 @@ class AdvanceTargetingMailing extends CommonObject
 								}
 							} else {
 								if (is_array($arrayquery['options_'.$key])) {
-									$sqlwhere[] = " (tse.".$key." IN ('".implode("','", $arrayquery['options_'.$key])."'))";
+									$sqlwhere[] = " (tse.".$key." IN (".$this->db->sanitize("'".implode("','", $arrayquery['options_'.$key])."'", 1)."))";
 								} elseif (!empty($arrayquery['options_'.$key])) {
 									$sqlwhere[] = " (tse.".$key." LIKE '".$this->db->escape($arrayquery['options_'.$key])."')";
 								}

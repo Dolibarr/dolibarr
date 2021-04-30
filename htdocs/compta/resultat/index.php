@@ -108,6 +108,14 @@ $year_end = $tmpe['year'];
 $nbofyear = ($year_end - $year_start) + 1;
 //var_dump("year_start=".$year_start." year_end=".$year_end." nbofyear=".$nbofyear." date_start=".dol_print_date($date_start, 'dayhour')." date_end=".dol_print_date($date_end, 'dayhour'));
 
+// Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES' or 'BOOKKEEPING')
+$modecompta = $conf->global->ACCOUNTING_MODE;
+if (!empty($conf->accounting->enabled)) {
+	$modecompta = 'BOOKKEEPING';
+}
+if (GETPOST("modecompta", 'alpha')) {
+	$modecompta = GETPOST("modecompta", 'alpha');
+}
 
 // Security check
 $socid = GETPOST('socid', 'int');
@@ -119,15 +127,6 @@ if (!empty($conf->comptabilite->enabled)) {
 }
 if (!empty($conf->accounting->enabled)) {
 	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
-}
-
-// Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES' or 'BOOKKEEPING')
-$modecompta = $conf->global->ACCOUNTING_MODE;
-if (!empty($conf->accounting->enabled)) {
-	$modecompta = 'BOOKKEEPING';
-}
-if (GETPOST("modecompta", 'alpha')) {
-	$modecompta = GETPOST("modecompta", 'alpha');
 }
 
 
@@ -210,7 +209,7 @@ $subtotal_ht = 0;
 $subtotal_ttc = 0;
 if (!empty($conf->facture->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
 	if ($modecompta == 'CREANCES-DETTES') {
-		$sql = "SELECT sum(f.total) as amount_ht, sum(f.total_ttc) as amount_ttc, date_format(f.datef,'%Y-%m') as dm";
+		$sql = "SELECT sum(f.total_ht) as amount_ht, sum(f.total_ttc) as amount_ttc, date_format(f.datef,'%Y-%m') as dm";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql .= ", ".MAIN_DB_PREFIX."facture as f";
 		$sql .= " WHERE f.fk_soc = s.rowid";
@@ -348,7 +347,7 @@ if (!empty($conf->facture->enabled) && ($modecompta == 'CREANCES-DETTES' || $mod
 
 	$sql .= " AND f.entity = ".$conf->entity;
 	if ($socid) {
-		$sql .= " AND f.fk_soc = ".$socid;
+		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
 	$sql .= " GROUP BY dm";
 
@@ -391,7 +390,7 @@ $subtotal_ttc = 0;
 if (!empty($conf->tax->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
 	if ($modecompta == 'CREANCES-DETTES') {
 		// TVA collected to pay
-		$sql = "SELECT sum(f.tva) as amount, date_format(f.datef,'%Y-%m') as dm";
+		$sql = "SELECT sum(f.total_tva) as amount, date_format(f.datef,'%Y-%m') as dm";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 		$sql .= " WHERE f.fk_statut IN (1,2)";
 		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {

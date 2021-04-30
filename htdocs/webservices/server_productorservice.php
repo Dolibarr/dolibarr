@@ -1006,7 +1006,7 @@ function getProductsForCategory($authentication, $id, $lang = '')
 				$table = "product";
 				$field = "product";
 				$sql  = "SELECT fk_".$field." FROM ".MAIN_DB_PREFIX."categorie_".$table;
-				$sql .= " WHERE fk_categorie = ".$id;
+				$sql .= " WHERE fk_categorie = ".((int) $id);
 				$sql .= " ORDER BY fk_".$field." ASC";
 
 

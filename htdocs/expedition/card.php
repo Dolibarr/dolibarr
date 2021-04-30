@@ -126,6 +126,13 @@ $permissiondellink = $user->rights->expedition->delivery->creer; // Used by the 
 
 $date_delivery = dol_mktime(GETPOST('date_deliveryhour', 'int'), GETPOST('date_deliverymin', 'int'), 0, GETPOST('date_deliverymonth', 'int'), GETPOST('date_deliveryday', 'int'), GETPOST('date_deliveryyear', 'int'));
 
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+
+$result = restrictedArea($user, 'expedition', $object->id, '');
+
 
 /*
  * Actions
@@ -275,8 +282,8 @@ if (empty($reshook)) {
 
 					$totalqty += $subtotalqty;
 				} else {
-					// No detail were provided for lots
-					if (!empty($_POST[$qty])) {
+					// No detail were provided for lots, so if a qty was provided, we can show an error.
+					if (GETPOST($qty)) {
 						// We try to set an amount
 						// Case we dont use the list of available qty for each warehouse/lot
 						// GUI does not allow this yet
@@ -784,7 +791,9 @@ if (empty($reshook)) {
  * View
  */
 
-llxHeader('', $langs->trans('Shipment'), 'Expedition');
+$help_url = 'EN:Module_Shipments|FR:Module_Expéditions|ES:M&oacute;dulo_Expediciones|DE:Modul_Lieferungen';
+
+llxHeader('', $langs->trans('Shipment'), 'Expedition', $help_url);
 
 $form = new Form($db);
 $formfile = new FormFile($db);
@@ -1027,7 +1036,7 @@ if ($action == 'create') {
 				print '<td class="center">'.$langs->trans("QtyShipped").'</td>';
 				print '<td class="center">'.$langs->trans("QtyToShip");
 				if (empty($conf->productbatch->enabled)) {
-					print '<br><a href="#" id="autofill" class="opacitymedium link cursor cursorpointer">'.$langs->trans("Fill").'</a>';
+					print '<br><a href="#" id="autofill" class="opacitymedium link cursor cursorpointer">'.img_picto($langs->trans("Autofill"), 'autofill', 'class="paddingrightonly"').$langs->trans("Fill").'</a>';
 					print ' / ';
 				} else {
 					print '<br>';
@@ -2207,7 +2216,7 @@ if ($action == 'create') {
 								if ($detail_entrepot->entrepot_id > 0) {
 									$entrepot = new Entrepot($db);
 									$entrepot->fetch($detail_entrepot->entrepot_id);
-									$detail .= $langs->trans("DetailWarehouseFormat", $entrepot->libelle, $detail_entrepot->qty_shipped).'<br/>';
+									$detail .= $langs->trans("DetailWarehouseFormat", $entrepot->libelle, $detail_entrepot->qty_shipped).'<br>';
 								}
 							}
 							print $form->textwithtooltip(img_picto('', 'object_stock').' '.$langs->trans("DetailWarehouseNumber"), $detail);

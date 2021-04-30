@@ -34,11 +34,6 @@ $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
 $userid = GETPOST('userid', 'int');
 $socid = GETPOST('socid', 'int');
-// Security check
-if ($user->socid > 0) {
-	$action = '';
-	$socid = $user->socid;
-}
 
 $nowyear = strftime("%Y", dol_now());
 $year = GETPOST('year') > 0 ?GETPOST('year') : $nowyear;
@@ -46,10 +41,13 @@ $year = GETPOST('year') > 0 ?GETPOST('year') : $nowyear;
 $startyear = $year - 1;
 $endyear = $year;
 
-$langs->load("reception");
-$langs->load("other");
-$langs->load("companies");
+$langs->loadLangs(array("reception", "other", "companies"));
 
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'reception', 0, '');
 
 
 /*

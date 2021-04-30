@@ -193,7 +193,7 @@ if ($id > 0) {
 	print '</form>';
 
 	/*
-	 * Barre d'actions
+	 * Action bar
 	 */
 	print '<div class="tabsAction">';
 

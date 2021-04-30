@@ -41,6 +41,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php'
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
 
 $langs->loadLangs(array("bills", "banks"));
 
@@ -71,6 +73,15 @@ $sday   = $cashcontrol->day_close;
 
 $posmodule = $cashcontrol->posmodule;
 $terminalid = $cashcontrol->posnumber;
+
+// Security check
+if ($user->socid > 0) {	// Protection if external user
+	//$socid = $user->socid;
+	accessforbidden();
+}
+if (!$user->rights->cashdesk->run && !$user->rights->takepos->run) {
+	accessforbidden();
+}
 
 
 /*
@@ -195,7 +206,7 @@ if ($resql) {
 		{
 			print '<tr class="oddeven">';
 			print '<td>'.$langs->trans("InitialBankBalance").' - '.$langs->trans("Cash").'</td>';
-			print '<td></td><td></td><td></td><td class="right">'.price($cashcontrol->opening).'</td>';
+			print '<td></td><td></td><td></td><td class="right"><span class="amount">'.price($cashcontrol->opening).'</span></td>';
 			print '</tr>';
 			$first = "no";
 		}*/
@@ -258,7 +269,7 @@ if ($resql) {
 		// Debit
 		print '<td class="right">';
 		if ($objp->amount < 0) {
-			print price($objp->amount * -1);
+			print '<span class="amount">'.price($objp->amount * -1).'</span>';
 			$totalarray['val']['totaldebfield'] += $objp->amount;
 			$amountpertype[$objp->code] += $objp->amount;
 		}
@@ -273,7 +284,7 @@ if ($resql) {
 		// Credit
 		print '<td class="right">';
 		if ($objp->amount > 0) {
-			print price($objp->amount);
+			print '<span class="amount">'.price($objp->amount).'</span>';
 			$totalarray['val']['totalcredfield'] += $objp->amount;
 			$amountpertype[$objp->code] -= $objp->amount;
 		}
@@ -298,7 +309,7 @@ if ($resql) {
 	//$cash = $amountpertype['LIQ'] + $cashcontrol->opening;
 	$cash = price2num($cash + $cashcontrol->opening, 'MT');
 
-	print "<div style='text-align: right'><h2>";
+	print '<div style="text-align: right"><h2>';
 	print $langs->trans("Cash").": ".price($cash);
 	if ($cashcontrol->status == $cashcontrol::STATUS_VALIDATED && $cash != $cashcontrol->cash) {
 		print ' <> <span class="amountremaintopay">'.$langs->trans("Declared").': '.price($cashcontrol->cash).'</span>';
@@ -331,7 +342,7 @@ if ($resql) {
 	$sql .= "SET";
 	$sql .= " cash='".$db->escape($cash)."'";
 	$sql .= ", card='".$db->escape($bank)."'";
-	$sql .= " where rowid=".$id;
+	$sql .= " where rowid = ".((int) $id);
 	$db->query($sql);
 	*/
 

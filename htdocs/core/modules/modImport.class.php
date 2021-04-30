@@ -21,7 +21,7 @@
  *  \brief      Module to make generic import of data into dolibarr database
  *	\file       htdocs/core/modules/modImport.class.php
  *	\ingroup    import
- *	\brief      Fichier de description et activation du module Import
+ *	\brief      Description and activation file for the module Import
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';

@@ -144,7 +144,7 @@ class Tva extends CommonObject
 		$sql .= " '".$this->db->escape($this->note)."',";
 		$sql .= " '".$this->db->escape($this->fk_account)."',";
 		$sql .= " '".$this->db->escape($this->type_payment)."',";
-		$sql .= " '".$this->db->escape($this->fk_user_creat)."',";
+		$sql .= " '".($this->fk_user_creat > 0 ? (int) $this->fk_user_creat : (int) $user->id)."',";
 		$sql .= " '".$this->db->escape($this->fk_user_modif)."'";
 		$sql .= ")";
 
@@ -209,7 +209,7 @@ class Tva extends CommonObject
 		$sql .= " note='".$this->db->escape($this->note)."',";
 		$sql .= " fk_user_creat=".$this->fk_user_creat.",";
 		$sql .= " fk_user_modif=".($this->fk_user_modif > 0 ? $this->fk_user_modif : $user->id)."";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -305,7 +305,7 @@ class Tva extends CommonObject
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."tva as t";
 		//$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON t.fk_bank = b.rowid";
-		$sql .= " WHERE t.rowid = ".$id;
+		$sql .= " WHERE t.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -360,7 +360,7 @@ class Tva extends CommonObject
 		// End call triggers
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."tva";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -427,7 +427,7 @@ class Tva extends CommonObject
 	{
         // phpcs:enable
 
-		$sql = "SELECT sum(f.tva) as amount";
+		$sql = "SELECT sum(f.total_tva) as amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f WHERE f.paye = 1";
 		if ($year) {
 			$sql .= " AND f.datef >= '".$this->db->escape($year)."-01-01' AND f.datef <= '".$this->db->escape($year)."-12-31' ";
@@ -585,7 +585,7 @@ class Tva extends CommonObject
 		$sql .= " '".$this->db->idate($this->datec)."'";
 		$sql .= ", '".$this->db->idate($this->datep)."'";
 		$sql .= ", '".$this->db->idate($this->datev)."'";
-		$sql .= ", ".$this->amount;
+		$sql .= ", ".((float) $this->amount);
 		$sql .= ", '".$this->db->escape($this->type_payment)."'";
 		$sql .= ", '".$this->db->escape($this->num_payment)."'";
 		if ($this->note) {

@@ -92,6 +92,15 @@ class PaymentDonation extends CommonObject
 	public $type_code;
 	public $type_label;
 
+	/**
+	 * @var string Id of external payment mode
+	 */
+	public $ext_payment_id;
+
+	/**
+	 * @var string Name of external payment mode
+	 */
+	public $ext_payment_site;
 
 	/**
 	 *	Constructor
@@ -126,6 +135,13 @@ class PaymentDonation extends CommonObject
 		}
 
 		// Clean parameters
+		if (isset($this->chid)) {
+			$this->chid = (int) $this->chid;
+		} elseif (isset($this->fk_donation)) {
+			// NOTE : The property used in INSERT for fk_donation is not fk_donation but chid
+			//        (keep priority to chid property)
+			$this->chid = (int) $this->fk_donation;
+		}
 		if (isset($this->fk_donation)) {
 			$this->fk_donation = (int) $this->fk_donation;
 		}
@@ -169,12 +185,14 @@ class PaymentDonation extends CommonObject
 
 		if ($totalamount != 0) {
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_donation (fk_donation, datec, datep, amount,";
-			$sql .= " fk_typepayment, num_payment, note, fk_user_creat, fk_bank)";
+			$sql .= " fk_typepayment, num_payment, note, ext_payment_id, ext_payment_site,";
+			$sql .= " fk_user_creat, fk_bank)";
 			$sql .= " VALUES ($this->chid, '".$this->db->idate($now)."',";
 			$sql .= " '".$this->db->idate($this->datepaid)."',";
 			$sql .= " ".$totalamount.",";
-			$sql .= " ".$this->paymenttype.", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note_public)."', ".$user->id.",";
-			$sql .= " 0)";
+			$sql .= " ".$this->paymenttype.", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note_public)."', ";
+			$sql .= " ".($this->ext_payment_id ? "'".$this->db->escape($this->ext_payment_id)."'" : "null").", ".($this->ext_payment_site ? "'".$this->db->escape($this->ext_payment_site)."'" : "null").",";
+			$sql .= " ".$user->id.", 0)";
 
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -234,7 +252,7 @@ class PaymentDonation extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."payment_donation as t";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pt ON t.fk_typepayment = pt.id";
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON t.fk_bank = b.rowid';
-		$sql .= " WHERE t.rowid = ".$id;
+		$sql .= " WHERE t.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -394,7 +412,7 @@ class PaymentDonation extends CommonObject
 
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."payment_donation";
-			$sql .= " WHERE rowid=".$this->id;
+			$sql .= " WHERE rowid=".((int) $this->id);
 
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);

@@ -290,7 +290,9 @@ class SupplierProposal extends CommonObject
 			$line->tva_tx = $tva_tx;
 
 			$this->lines[] = $line;
+			return 1;
 		}
+		return -1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -959,7 +961,7 @@ class SupplierProposal extends CommonObject
 
 			if ($this->id) {
 				$this->ref = '(PROV'.$this->id.')';
-				$sql = 'UPDATE '.MAIN_DB_PREFIX."supplier_proposal SET ref='".$this->db->escape($this->ref)."' WHERE rowid=".$this->id;
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."supplier_proposal SET ref='".$this->db->escape($this->ref)."' WHERE rowid=".((int) $this->id);
 
 				dol_syslog(get_class($this)."::create", LOG_DEBUG);
 				$resql = $this->db->query($sql);
@@ -1209,9 +1211,9 @@ class SupplierProposal extends CommonObject
 		$sql .= " WHERE p.fk_statut = c.id";
 		$sql .= " AND p.entity IN (".getEntity('supplier_proposal').")";
 		if ($ref) {
-			$sql .= " AND p.ref='".$ref."'";
+			$sql .= " AND p.ref = '".$this->db->escape($ref)."'";
 		} else {
-			$sql .= " AND p.rowid=".$rowid;
+			$sql .= " AND p.rowid = ".((int) $rowid);
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -1401,10 +1403,12 @@ class SupplierProposal extends CommonObject
 
 			// Numbering module definition
 			$soc = new Societe($this->db);
-			$soc->fetch($this->socid);
+			$result = $soc->fetch($this->socid);
+
+			if ($result < 0) return -1;
 
 			// Define new ref
-			if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
+			if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
 				$num = $this->getNextNumRef($soc);
 			} else {
 				$num = $this->ref;
@@ -1525,6 +1529,7 @@ class SupplierProposal extends CommonObject
 				return -1;
 			}
 		}
+		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1541,13 +1546,13 @@ class SupplierProposal extends CommonObject
 		$remise = trim($remise) ?trim($remise) : 0;
 
 		if (!empty($user->rights->supplier_proposal->creer)) {
-			$remise = price2num($remise);
+			$remise = price2num($remise, 2);
 
-			$sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal SET remise_percent = ".$remise;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal SET remise_percent = ".((float) $remise);
 			$sql .= " WHERE rowid = ".$this->id." AND fk_statut = 0";
 
 			if ($this->db->query($sql)) {
-				$this->remise_percent = $remise;
+				$this->remise_percent = ((float) $remise);
 				$this->update_price(1);
 				return 1;
 			} else {
@@ -1555,6 +1560,7 @@ class SupplierProposal extends CommonObject
 				return -1;
 			}
 		}
+		return 0;
 	}
 
 
@@ -1569,13 +1575,15 @@ class SupplierProposal extends CommonObject
 	public function set_remise_absolue($user, $remise)
 	{
 		// phpcs:enable
-		$remise = trim($remise) ?trim($remise) : 0;
+		if (empty($remise)) {
+			$remise = 0;
+		}
+
+		$remise = price2num($remise);
 
 		if (!empty($user->rights->supplier_proposal->creer)) {
-			$remise = price2num($remise);
-
 			$sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal ";
-			$sql .= " SET remise_absolue = ".$remise;
+			$sql .= " SET remise_absolue = ".((float) $remise);
 			$sql .= " WHERE rowid = ".$this->id." AND fk_statut = 0";
 
 			if ($this->db->query($sql)) {
@@ -1587,6 +1595,7 @@ class SupplierProposal extends CommonObject
 				return -1;
 			}
 		}
+		return 0;
 	}
 
 
@@ -1608,7 +1617,7 @@ class SupplierProposal extends CommonObject
 		$error = 0;
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal";
-		$sql .= " SET fk_statut = ".$this->statut.",";
+		$sql .= " SET fk_statut = ".((int) $this->statut).",";
 		if (!empty($note)) {
 			$sql .= " note_private = '".$this->db->escape($note)."',";
 		}
@@ -1661,7 +1670,9 @@ class SupplierProposal extends CommonObject
 	public function cloture($user, $status, $note)
 	{
 		global $langs, $conf;
-
+		$hidedetails = 0;
+		$hidedesc = 0;
+		$hideref = 0;
 		$this->statut = $status;
 		$error = 0;
 		$now = dol_now();
@@ -1669,7 +1680,7 @@ class SupplierProposal extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal";
-		$sql .= " SET fk_statut = ".$status.", note_private = '".$this->db->escape($note)."', date_cloture='".$this->db->idate($now)."', fk_user_cloture=".$user->id;
+		$sql .= " SET fk_statut = ".((int) $status).", note_private = '".$this->db->escape($note)."', date_cloture='".$this->db->idate($now)."', fk_user_cloture=".$user->id;
 		$sql .= " WHERE rowid = ".$this->id;
 
 		$resql = $this->db->query($sql);
@@ -1775,7 +1786,7 @@ class SupplierProposal extends CommonObject
 		$price = price2num($product->subprice * $product->qty, 'MU');
 		$unitPrice = price2num($product->subprice, 'MU');
 
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'product_fournisseur_price SET '.(!empty($product->ref_fourn) ? 'ref_fourn = "'.$product->ref_fourn.'", ' : '').' price ='.$price.', unitprice ='.$unitPrice.' WHERE rowid = '.$idProductFournPrice;
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'product_fournisseur_price SET '.(!empty($product->ref_fourn) ? 'ref_fourn = "'.$this->db->escape($product->ref_fourn).'", ' : '').' price ='.((float) $price).', unitprice ='.((float) $unitPrice).' WHERE rowid = '.((int) $idProductFournPrice);
 
 		$resql = $this->db->query($sql);
 		if (!$resql) {
@@ -1783,6 +1794,7 @@ class SupplierProposal extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
+		return 1;
 	}
 
 	 /**
@@ -1845,6 +1857,7 @@ class SupplierProposal extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
+		return 1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1936,7 +1949,7 @@ class SupplierProposal extends CommonObject
 			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 		}
 		if ($socid) {
-			$sql .= " AND s.rowid = ".$socid;
+			$sql .= " AND s.rowid = ".((int) $socid);
 		}
 		if ($draft) {
 			$sql .= " AND p.fk_statut = 0";
@@ -2852,7 +2865,7 @@ class SupplierProposalLine extends CommonObjectLine
 		$sql .= ' pd.fk_multicurrency, pd.multicurrency_code, pd.multicurrency_subprice, pd.multicurrency_total_ht, pd.multicurrency_total_tva, pd.multicurrency_total_ttc, pd.fk_unit';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'supplier_proposaldet as pd';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pd.fk_product = p.rowid';
-		$sql .= ' WHERE pd.rowid = '.$rowid;
+		$sql .= ' WHERE pd.rowid = '.((int) $rowid);
 
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -2906,8 +2919,10 @@ class SupplierProposalLine extends CommonObjectLine
 			$this->fk_unit = $objp->fk_unit;
 
 			$this->db->free($result);
+			return 1;
 		} else {
 			dol_print_error($this->db);
+			return -1;
 		}
 	}
 

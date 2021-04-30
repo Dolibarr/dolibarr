@@ -237,7 +237,7 @@ $sql .= ", note";
 $sql .= ", tms";
 $sql .= ", entity";
 $sql .= " FROM ".MAIN_DB_PREFIX."const";
-$sql .= " WHERE entity IN (".$user->entity.",".$conf->entity.")";
+$sql .= " WHERE entity IN (".$db->sanitize($user->entity.",".$conf->entity).")";
 if ((empty($user->entity) || $user->admin) && $debug) {
 } elseif (!GETPOST('visible') || GETPOST('visible') != 'all') {
 	// to force for superadmin to debug

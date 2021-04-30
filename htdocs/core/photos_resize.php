@@ -487,8 +487,8 @@ print load_fiche_titre($title);
 $infoarray = dol_getImageSize($dir."/".GETPOST("file", 'alpha'));
 $height = $infoarray['height'];
 $width = $infoarray['width'];
-print $langs->trans("CurrentInformationOnImage").': ';
-print $langs->trans("Width").': <strong>'.$width.'</strong> x '.$langs->trans("Height").': <strong>'.$height.'</strong><br>';
+print '<span class="opacitymedium">'.$langs->trans("CurrentInformationOnImage").': ';
+print $langs->trans("Width").': <strong>'.$width.'</strong> x '.$langs->trans("Height").': <strong>'.$height.'</strong></span><br>';
 
 print '<br>'."\n";
 

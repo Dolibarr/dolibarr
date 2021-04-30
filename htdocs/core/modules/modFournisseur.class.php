@@ -24,7 +24,7 @@
  * 		\defgroup   fournisseur     Module suppliers
  *		\file       htdocs/core/modules/modFournisseur.class.php
  *		\ingroup    fournisseur
- *		\brief      Description and activation file for module Supplier
+ *		\brief      Description and activation file for the module Supplier
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -666,7 +666,7 @@ class modFournisseur extends DolibarrModules
 
 		$r++;
 		$this->import_code[$r] = $this->rights_class.'_'.$r;
-		$this->import_label[$r] = "Supplier Invoice"; // Translation key
+		$this->import_label[$r] = "SupplierInvoices"; // Translation key
 		$this->import_icon[$r] = $this->picto;
 		$this->import_entities_array[$r] = []; // We define here only fields that use another icon that the one defined into import_icon
 		$this->import_tables_array[$r] = ['f' => MAIN_DB_PREFIX.'facture_fourn', 'extra' => MAIN_DB_PREFIX.'facture_fourn_extrafields'];
@@ -759,7 +759,7 @@ class modFournisseur extends DolibarrModules
 		//Import Supplier Invoice Lines
 		$r++;
 		$this->import_code[$r] = $this->rights_class.'_'.$r;
-		$this->import_label[$r] = "Supplier Invoice Lines"; // Translation key
+		$this->import_label[$r] = "SupplierInvoiceLines"; // Translation key
 		$this->import_icon[$r] = $this->picto;
 		$this->import_entities_array[$r] = []; // We define here only fields that use another icon that the one defined into import_icon
 		$this->import_tables_array[$r] = ['fd' => MAIN_DB_PREFIX.'facture_fourn_det', 'extra' => MAIN_DB_PREFIX.'facture_fourn_det_extrafields'];
@@ -839,7 +839,7 @@ class modFournisseur extends DolibarrModules
 		//Import Purchase Orders
 		$r++;
 		$this->import_code[$r] = 'commande_fournisseur_'.$r;
-		$this->import_label[$r] = 'Purchase Orders';
+		$this->import_label[$r] = 'SuppliersOrders';
 		$this->import_icon[$r] = $this->picto;
 		$this->import_entities_array[$r] = [];
 		$this->import_tables_array[$r] = ['c' => MAIN_DB_PREFIX.'commande_fournisseur', 'extra' => MAIN_DB_PREFIX.'commande_fournisseur_extrafields'];
@@ -922,7 +922,7 @@ class modFournisseur extends DolibarrModules
 		//Import PO Lines
 		$r++;
 		$this->import_code[$r] = 'commande_fournisseurdet_'.$r;
-		$this->import_label[$r] = 'PO Lines';
+		$this->import_label[$r] = 'PurchaseOrderLines';
 		$this->import_icon[$r] = $this->picto;
 		$this->import_entities_array[$r] = [];
 		$this->import_tables_array[$r] = ['cd' => MAIN_DB_PREFIX.'commande_fournisseurdet', 'extra' => MAIN_DB_PREFIX.'commande_fournisseurdet_extrafields'];

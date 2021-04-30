@@ -39,7 +39,7 @@ function dolDispatchToDo($order_id)
 
 	// Count nb of quantity dispatched per product
 	$sql = 'SELECT fk_product, SUM(qty) FROM '.MAIN_DB_PREFIX.'commande_fournisseur_dispatch';
-	$sql .= ' WHERE fk_commande = '.$order_id;
+	$sql .= ' WHERE fk_commande = '.((int) $order_id);
 	$sql .= ' GROUP BY fk_product';
 	$sql .= ' ORDER by fk_product';
 	$resql = $db->query($sql);
@@ -51,7 +51,7 @@ function dolDispatchToDo($order_id)
 
 	// Count nb of quantity to dispatch per product
 	$sql = 'SELECT fk_product, SUM(qty) FROM '.MAIN_DB_PREFIX.'commande_fournisseurdet';
-	$sql .= ' WHERE fk_commande = '.$order_id;
+	$sql .= ' WHERE fk_commande = '.((int) $order_id);
 	$sql .= ' AND fk_product > 0';
 	if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 		$sql .= ' AND product_type = 0';
@@ -126,7 +126,7 @@ function ordered($product_id)
 	} else {
 		$sql .= ' cf.fk_statut < 5';
 	}
-	$sql .= ' AND cfd.fk_product = '.$product_id;
+	$sql .= ' AND cfd.fk_product = '.((int) $product_id);
 	$sql .= ' GROUP BY cfd.fk_product';
 
 	$resql = $db->query($sql);

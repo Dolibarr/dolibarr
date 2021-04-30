@@ -194,7 +194,7 @@ class MembersTypes extends DolibarrApi
 				continue;
 			}
 			// Process the status separately because it must be updated using
-			// the validate() and resiliate() methods of the class AdherentType.
+			// the validate(), resiliate() and exclude() methods of the class AdherentType.
 			$membertype->$field = $value;
 		}
 

@@ -19,7 +19,7 @@
  */
 
 /**
- *	\file       htdocs/core/boxes/box_last_modified_members.php
+ *	\file       htdocs/core/boxes/box_members_last_modified.php
  *	\ingroup    adherent
  *	\brief      Module to show box of members
  */
@@ -30,9 +30,9 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 /**
  * Class to manage the box to show last modofied members
  */
-class box_last_modified_members extends ModeleBoxes
+class box_members_last_modified extends ModeleBoxes
 {
-	public $boxcode = "box_last_modified_members";
+	public $boxcode = "box_members_last_modified";
 	public $boximg = "object_user";
 	public $boxlabel = "BoxLastModifiedMembers";
 	public $depends = array("adherent");

@@ -66,13 +66,19 @@ if (GETPOST('action', 'aZ09') == 'setremise') {
 			header("Location: ".$backtopage);
 			exit;
 		} else {
-			header("Location: remise.php?id=".$_GET["id"]);
+			header("Location: remise.php?id=".GETPOST("id", 'int'));
 			exit;
 		}
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
+
+// Security check
+if ($user->socid > 0) {
+	$id = $user->socid;
+}
+$result = restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid', 0);
 
 
 /*
@@ -82,7 +88,6 @@ if (GETPOST('action', 'aZ09') == 'setremise') {
 $form = new Form($db);
 
 llxHeader();
-
 
 /*********************************************************************************
  *

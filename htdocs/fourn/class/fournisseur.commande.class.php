@@ -331,7 +331,7 @@ class CommandeFournisseur extends CommonOrder
 		if (empty($id)) {
 			$sql .= " WHERE c.entity IN (".getEntity('supplier_order').")";
 		} else {
-			$sql .= " WHERE c.rowid=".$id;
+			$sql .= " WHERE c.rowid=".((int) $id);
 		}
 
 		if ($ref) {
@@ -571,31 +571,31 @@ class CommandeFournisseur extends CommonOrder
 
 		dol_syslog(get_class($this)."::valid");
 		$result = 0;
-		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->commande->creer))
-		|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->supplier_order_advance->validate))) {
-			$this->db->begin();
+		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && (!empty($user->rights->fournisseur->commande->creer) || !empty($user->rights->supplier_order->creer)))
+			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->supplier_order_advance->validate))) {
+				$this->db->begin();
 
-			// Definition of supplier order numbering model name
-			$soc = new Societe($this->db);
-			$soc->fetch($this->fourn_id);
+				// Definition of supplier order numbering model name
+				$soc = new Societe($this->db);
+				$soc->fetch($this->fourn_id);
 
-			// Check if object has a temporary ref
+				// Check if object has a temporary ref
 			if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
 				$num = $this->getNextNumRef($soc);
 			} else {
 				$num = $this->ref;
 			}
-			$this->newref = dol_sanitizeFileName($num);
+				$this->newref = dol_sanitizeFileName($num);
 
-			$sql = 'UPDATE '.MAIN_DB_PREFIX."commande_fournisseur";
-			$sql .= " SET ref='".$this->db->escape($num)."',";
-			$sql .= " fk_statut = ".self::STATUS_VALIDATED.",";
-			$sql .= " date_valid='".$this->db->idate(dol_now())."',";
-			$sql .= " fk_user_valid = ".$user->id;
-			$sql .= " WHERE rowid = ".$this->id;
-			$sql .= " AND fk_statut = ".self::STATUS_DRAFT;
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."commande_fournisseur";
+				$sql .= " SET ref='".$this->db->escape($num)."',";
+				$sql .= " fk_statut = ".self::STATUS_VALIDATED.",";
+				$sql .= " date_valid='".$this->db->idate(dol_now())."',";
+				$sql .= " fk_user_valid = ".$user->id;
+				$sql .= " WHERE rowid = ".$this->id;
+				$sql .= " AND fk_statut = ".self::STATUS_DRAFT;
 
-			$resql = $this->db->query($sql);
+				$resql = $this->db->query($sql);
 			if (!$resql) {
 				dol_print_error($this->db);
 				$error++;
@@ -1157,7 +1157,7 @@ class CommandeFournisseur extends CommonOrder
 
 			$this->db->begin();
 
-			$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = ".$statut;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = ".((int) $statut);
 			$sql .= " WHERE rowid = ".$this->id;
 			dol_syslog(get_class($this)."::cancel", LOG_DEBUG);
 			if ($this->db->query($sql)) {
@@ -1214,7 +1214,7 @@ class CommandeFournisseur extends CommonOrder
 			$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
 			$sql .= " SET fk_statut=".self::STATUS_ORDERSENT.", fk_input_method=".$methode.", date_commande='".$this->db->idate($date)."', ";
 			$sql .= " note_private='".$this->db->escape($newnoteprivate)."'";
-			$sql .= " WHERE rowid=".$this->id;
+			$sql .= " WHERE rowid=".((int) $this->id);
 
 			dol_syslog(get_class($this)."::commande", LOG_DEBUG);
 			if ($this->db->query($sql)) {
@@ -1316,7 +1316,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= ", multicurrency_tx";
 		$sql .= ") ";
 		$sql .= " VALUES (";
-		$sql .= "''";
+		$sql .= "'(PROV)'";
 		$sql .= ", '".$this->db->escape($this->ref_supplier)."'";
 		$sql .= ", '".$this->db->escape($this->note_private)."'";
 		$sql .= ", '".$this->db->escape($this->note_public)."'";
@@ -1371,7 +1371,7 @@ class CommandeFournisseur extends CommonOrder
 						$this->lines[$i]->date_end,
 						$this->lines[$i]->array_options,
 						$this->lines[$i]->fk_unit
-					);
+						);
 					if ($result < 0) {
 						dol_syslog(get_class($this)."::create ".$this->error, LOG_WARNING); // do not use dol_print_error here as it may be a functionnal error
 						$this->db->rollback();
@@ -1381,7 +1381,7 @@ class CommandeFournisseur extends CommonOrder
 
 				$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
 				$sql .= " SET ref='(PROV".$this->id.")'";
-				$sql .= " WHERE rowid=".$this->id;
+				$sql .= " WHERE rowid=".((int) $this->id);
 				dol_syslog(get_class($this)."::create", LOG_DEBUG);
 				if ($this->db->query($sql)) {
 					// Add link with price request and supplier order
@@ -1510,7 +1510,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
 		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null")."";
 
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
 
@@ -1556,9 +1556,10 @@ class CommandeFournisseur extends CommonOrder
 	 *
 	 *  @param	    User	$user		User making the clone
 	 *	@param		int		$socid		Id of thirdparty
+	 *  @param 		int		$notrigger  Disable all triggers
 	 *	@return		int					New id of clone
 	 */
-	public function createFromClone(User $user, $socid = 0)
+	public function createFromClone(User $user, $socid = 0, $notrigger = 0)
 	{
 		global $conf, $user, $hookmanager;
 
@@ -1605,7 +1606,7 @@ class CommandeFournisseur extends CommonOrder
 
 		// Create clone
 		$this->context['createfromclone'] = 'createfromclone';
-		$result = $this->create($user);
+		$result = $this->create($user, $notrigger);
 		if ($result < 0) {
 			$error++;
 		}
@@ -2306,7 +2307,7 @@ class CommandeFournisseur extends CommonOrder
 				$this->db->begin();
 
 				$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
-				$sql .= " SET fk_statut = ".$statut;
+				$sql .= " SET fk_statut = ".((int) $statut);
 				$sql .= " WHERE rowid = ".$this->id;
 				$sql .= " AND fk_statut IN (".self::STATUS_ORDERSENT.",".self::STATUS_RECEIVED_PARTIALLY.")"; // Process running or Partially received
 
@@ -2374,7 +2375,7 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public function setDeliveryDate($user, $delivery_date, $notrigger = 0)
 	{
-		if ($user->rights->fournisseur->commande->creer) {
+		if ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer) {
 			$error = 0;
 
 			$this->db->begin();
@@ -2433,7 +2434,7 @@ class CommandeFournisseur extends CommonOrder
 	public function set_id_projet($user, $id_projet, $notrigger = 0)
 	{
 		// phpcs:enable
-		if ($user->rights->fournisseur->commande->creer) {
+		if ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer) {
 			$error = 0;
 
 			$this->db->begin();
@@ -2708,7 +2709,7 @@ class CommandeFournisseur extends CommonOrder
 				if ($qty < $this->line->packaging) {
 					$qty = $this->line->packaging;
 				} else {
-					if (($qty % $this->line->packaging) > 0) {
+					if (! empty($this->line->packaging) && ($qty % $this->line->packaging) > 0) {
 						$coeff = intval($qty / $this->line->packaging) + 1;
 						$qty = $this->line->packaging * $coeff;
 						setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'mesgs');
@@ -2879,7 +2880,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql = 'SELECT c.rowid, date_creation as datec, tms as datem, date_valid as date_validation, date_approve as datea, date_approve2 as datea2,';
 		$sql .= ' fk_user_author, fk_user_modif, fk_user_valid, fk_user_approve, fk_user_approve2';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'commande_fournisseur as c';
-		$sql .= ' WHERE c.rowid = '.$id;
+		$sql .= ' WHERE c.rowid = '.((int) $id);
 
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -3229,7 +3230,7 @@ class CommandeFournisseur extends CommonOrder
 	{
 		global $conf, $langs;
 
-		if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled)) {
+		if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled)) {
 			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
 
 			$qtydelivered = array();
@@ -3495,7 +3496,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON cd.fk_product = pfp.fk_product and cd.ref = pfp.ref_fourn";
 		}
-		$sql .= ' WHERE cd.rowid = '.$rowid;
+		$sql .= ' WHERE cd.rowid = '.((int) $rowid);
 		$result = $this->db->query($sql);
 		if ($result) {
 			$objp = $this->db->fetch_object($result);
@@ -3820,7 +3821,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 			return -1;
 		}
 
-		$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commande_fournisseurdet WHERE rowid=".$this->id;
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commande_fournisseurdet WHERE rowid=".((int) $this->id);
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);

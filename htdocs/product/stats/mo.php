@@ -140,7 +140,7 @@ if ($id > 0 || !empty($ref)) {
 		$sql .= " AND c.entity IN (".getEntity('mo').")";
 		$sql .= " AND cd.fk_product =".$product->id;
 		if ($socid) {
-			$sql .= " AND s.rowid = ".$socid;
+			$sql .= " AND s.rowid = ".((int) $socid);
 		}
 		$sql .= " GROUP BY c.rowid, c.ref, c.date_valid, c.status";
 		//$sql .= ", s.nom, s.rowid, s.code_client";

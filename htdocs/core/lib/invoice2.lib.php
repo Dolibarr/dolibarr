@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
  * @param	int			$regenerate				''=Use existing PDF files, 'nameofpdf'=Regenerate all PDF files using the template
  * @param	string		$filesuffix				Suffix to add into file name of generated PDF
  * @param	string		$paymentbankid			Only if payment on this bank account id
- * @param	array		$thirdpartiesid			List of thirdparties id when using filter excludethirdpartiesid	or onlythirdpartiesid
+ * @param	array		$thirdpartiesid			List of thirdparties id when using filter=excludethirdpartiesid	or filter=onlythirdpartiesid
  * @param	string		$fileprefix				Prefix to add into filename of generated PDF
  * @return	int									Error code
  */
@@ -96,7 +96,7 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 		}
 		if (in_array('bank', $filter)) {
 			$sqlwhere .= " AND p.fk_bank = b.rowid";
-			$sqlwhere .= " AND b.fk_account = ".$paymentbankid;
+			$sqlwhere .= " AND b.fk_account = ".((int) $paymentbankid);
 		}
 		$sqlorder = " ORDER BY p.datep ASC";
 	}
@@ -130,7 +130,7 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 		} else {
 			$sqlwhere .= " AND";
 		}
-		$sqlwhere .= ' f.fk_soc NOT IN ('.join(',', $thirdpartiesid).')';
+		$sqlwhere .= ' f.fk_soc NOT IN ('.$db->sanitize(join(',', $thirdpartiesid)).')';
 	}
 	if (in_array('onlythirdparties', $filter) && is_array($thirdpartiesid)) {
 		if (empty($sqlwhere)) {
@@ -138,7 +138,7 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 		} else {
 			$sqlwhere .= " AND";
 		}
-		$sqlwhere .= ' f.fk_soc IN ('.join(',', $thirdpartiesid).')';
+		$sqlwhere .= ' f.fk_soc IN ('.$db->sanitize(join(',', $thirdpartiesid)).')';
 	}
 	if ($sqlwhere) {
 		$sql .= $sqlwhere;

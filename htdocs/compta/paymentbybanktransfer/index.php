@@ -84,9 +84,9 @@ print '</a>';
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>'.$langs->trans("AmountToWithdraw").'</td>';
-print '<td class="right">';
+print '<td class="right"><span class="amount">';
 print price($bprev->SommeAPrelever('bank-transfer'), '', '', 1, -1, -1, 'auto');
-print '</td></tr></table></div><br>';
+print '</span></td></tr></table></div><br>';
 
 
 
@@ -115,7 +115,7 @@ if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 }
 if ($socid) {
-	$sql .= " AND f.fk_soc = ".$socid;
+	$sql .= " AND f.fk_soc = ".((int) $socid);
 }
 
 $resql = $db->query($sql);
@@ -216,8 +216,8 @@ if ($result) {
 			print $bprev->getNomUrl(1);
 			print "</td>\n";
 			print '<td>'.dol_print_date($db->jdate($obj->datec), "dayhour")."</td>\n";
-			print '<td class="right">'.price($obj->amount)."</td>\n";
-			print '<td class="right">'.$bprev->getLibStatut(3)."</td>\n";
+			print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>\n";
+			print '<td class="right"><span class="amount">'.$bprev->getLibStatut(3)."</span></td>\n";
 
 			print "</tr>\n";
 			$i++;

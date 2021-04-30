@@ -99,6 +99,10 @@ class Boms extends DolibarrApi
 	{
 		global $db, $conf;
 
+		if (!DolibarrApiAccess::$user->rights->bom->read) {
+			throw new RestException(401);
+		}
+
 		$obj_ret = array();
 		$tmpobject = new BOM($this->db);
 
@@ -134,14 +138,14 @@ class Boms extends DolibarrApi
 			$sql .= " AND t.fk_soc = sc.fk_soc";
 		}
 		if ($restrictonsocid && $socid) {
-			$sql .= " AND t.fk_soc = ".$socid;
+			$sql .= " AND t.fk_soc = ".((int) $socid);
 		}
 		if ($restrictonsocid && $search_sale > 0) {
 			$sql .= " AND t.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
 		}
 		// Insert sale filter
 		if ($restrictonsocid && $search_sale > 0) {
-			$sql .= " AND sc.fk_user = ".$search_sale;
+			$sql .= " AND sc.fk_user = ".((int) $search_sale);
 		}
 		if ($sqlfilters) {
 			if (!DolibarrApi::_checkFilters($sqlfilters)) {

@@ -458,7 +458,7 @@ if ($search_societe) {
 	$sql .= natural_search(empty($conf->global->SOCIETE_DISABLE_CONTACTS) ? 's.nom' : 'p.fk_soc', $search_societe);
 }
 if ($search_country) {
-	$sql .= " AND p.fk_pays IN (".$search_country.')';
+	$sql .= " AND p.fk_pays IN (".$db->sanitize($search_country).')';
 }
 if (strlen($search_poste)) {
 	$sql .= natural_search('p.poste', $search_poste);
@@ -492,9 +492,8 @@ if (strlen($search_town)) {
 	$sql .= natural_search("p.town", $search_town);
 }
 if (count($search_roles) > 0) {
-	$sql .= " AND p.rowid IN (SELECT sc.fk_socpeople FROM ".MAIN_DB_PREFIX."societe_contacts as sc WHERE sc.fk_c_type_contact IN (".implode(',', $search_roles)."))";
+	$sql .= " AND p.rowid IN (SELECT sc.fk_socpeople FROM ".MAIN_DB_PREFIX."societe_contacts as sc WHERE sc.fk_c_type_contact IN (".$db->sanitize(implode(',', $search_roles))."))";
 }
-
 if ($search_no_email != '' && $search_no_email >= 0) {
 	$sql .= " AND p.no_email = ".$db->escape($search_no_email);
 }
@@ -514,7 +513,7 @@ if ($type == "o") {        // filtre sur type
 	$sql .= " AND s.client IN (2, 3)";
 }
 if (!empty($socid)) {
-	$sql .= " AND s.rowid = ".$socid;
+	$sql .= " AND s.rowid = ".((int) $socid);
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -654,15 +653,15 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 // List of mass actions available
 $arrayofmassactions = array(
-//    'presend'=>$langs->trans("SendByMail"),
-//    'builddoc'=>$langs->trans("PDFMerge"),
+//    'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
+//    'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 );
 //if($user->rights->societe->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
 if ($user->rights->societe->supprimer) {
-	$arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
 if ($user->rights->societe->creer) {
-	$arrayofmassactions['preaffecttag'] = '<span class="fa fa-tag paddingrightonly"></span>'.$langs->trans("AffectTag");
+	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
 if (in_array($massaction, array('presend', 'predelete','preaffecttag'))) {
 	$arrayofmassactions = array();
@@ -705,25 +704,30 @@ $moreforfilter = '';
 if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= $langs->trans('Categories').': ';
-	$moreforfilter .= $formother->select_categories(Categorie::TYPE_CONTACT, $search_categ, 'search_categ', 1);
+	$tmptitle = $langs->trans('ContactCategoriesShort');
+	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
+	$moreforfilter .= $formother->select_categories(Categorie::TYPE_CONTACT, $search_categ, 'search_categ', 1, $tmptitle);
 	$moreforfilter .= '</div>';
 	if (empty($type) || $type == 'c' || $type == 'p') {
 		$moreforfilter .= '<div class="divsearchfield">';
+		$tmptitle = '';
 		if ($type == 'c') {
-			$moreforfilter .= $langs->trans('CustomersCategoriesShort').': ';
+			$tmptitle .= $langs->trans('CustomersCategoriesShort');
 		} elseif ($type == 'p') {
-			$moreforfilter .= $langs->trans('ProspectsCategoriesShort').': ';
+			$tmptitle .= $langs->trans('ProspectsCategoriesShort');
 		} else {
-			$moreforfilter .= $langs->trans('CustomersProspectsCategoriesShort').': ';
+			$tmptitle .= $langs->trans('CustomersProspectsCategoriesShort');
 		}
-		$moreforfilter .= $formother->select_categories(Categorie::TYPE_CUSTOMER, $search_categ_thirdparty, 'search_categ_thirdparty', 1);
+		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
+		$moreforfilter .= $formother->select_categories(Categorie::TYPE_CUSTOMER, $search_categ_thirdparty, 'search_categ_thirdparty', 1, $tmptitle);
 		$moreforfilter .= '</div>';
 	}
-	if (empty($type) || $type == 'f') {
+
+	if (!empty($conf->fournisseur->enabled) && (empty($type) || $type == 'f')) {
 		$moreforfilter .= '<div class="divsearchfield">';
-		$moreforfilter .= $langs->trans('SuppliersCategoriesShort').': ';
-		$moreforfilter .= $formother->select_categories(Categorie::TYPE_SUPPLIER, $search_categ_supplier, 'search_categ_supplier', 1);
+		$tmptitle = $langs->trans('SuppliersCategoriesShort');
+		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
+		$moreforfilter .= $formother->select_categories(Categorie::TYPE_SUPPLIER, $search_categ_supplier, 'search_categ_supplier', 1, $tmptitle);
 		$moreforfilter .= '</div>';
 	}
 }
@@ -1093,35 +1097,35 @@ while ($i < min($num, $limit)) {
 	}
 	// Phone
 	if (!empty($arrayfields['p.phone']['checked'])) {
-		print '<td>'.dol_print_phone($obj->phone_pro, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'phone').'</td>';
+		print '<td class="nowraponall">'.dol_print_phone($obj->phone_pro, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'phone').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// Phone perso
 	if (!empty($arrayfields['p.phone_perso']['checked'])) {
-		print '<td>'.dol_print_phone($obj->phone_perso, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'phone').'</td>';
+		print '<td class="nowraponall">'.dol_print_phone($obj->phone_perso, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'phone').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// Phone mobile
 	if (!empty($arrayfields['p.phone_mobile']['checked'])) {
-		print '<td>'.dol_print_phone($obj->phone_mobile, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'mobile').'</td>';
+		print '<td class="nowraponall">'.dol_print_phone($obj->phone_mobile, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'mobile').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// Fax
 	if (!empty($arrayfields['p.fax']['checked'])) {
-		print '<td>'.dol_print_phone($obj->fax, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'fax').'</td>';
+		print '<td class="nowraponall">'.dol_print_phone($obj->fax, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'fax').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// EMail
 	if (!empty($arrayfields['p.email']['checked'])) {
-		print '<td>'.dol_print_email($obj->email, $obj->rowid, $obj->socid, 'AC_EMAIL', 18, 0, 1).'</td>';
+		print '<td class="nowraponall tdmaxoverflow300">'.dol_print_email($obj->email, $obj->rowid, $obj->socid, 'AC_EMAIL', 18, 0, 1).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -1145,7 +1149,7 @@ while ($i < min($num, $limit)) {
 	}
 	// Company
 	if (!empty($arrayfields['p.fk_soc']['checked']) || !empty($arrayfields['s.nom']['checked'])) {
-		print '<td>';
+		print '<td class="tdoverflowmax200">';
 		if ($obj->socid) {
 			$objsoc = new Societe($db);
 			$objsoc->fetch($obj->socid);

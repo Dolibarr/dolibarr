@@ -42,7 +42,13 @@ $codeventil = GETPOST('codeventil', 'int');
 $id = GETPOST('id', 'int');
 
 // Security check
+if (empty($conf->accounting->enabled)) {
+	accessforbidden();
+}
 if ($user->socid > 0) {
+	accessforbidden();
+}
+if (empty($user->rights->accounting->mouvements->lire)) {
 	accessforbidden();
 }
 
@@ -58,8 +64,8 @@ if ($action == 'ventil' && $user->rights->accounting->bind->write) {
 		}
 
 		$sql = " UPDATE ".MAIN_DB_PREFIX."facture_fourn_det";
-		$sql .= " SET fk_code_ventilation = ".$codeventil;
-		$sql .= " WHERE rowid = ".$id;
+		$sql .= " SET fk_code_ventilation = ".((int) $codeventil);
+		$sql .= " WHERE rowid = ".((int) $id);
 
 		$resql = $db->query($sql);
 		if (!$resql) {
@@ -95,13 +101,21 @@ $formaccounting = new FormAccounting($db);
 
 if (!empty($id)) {
 	$sql = "SELECT f.ref as ref, f.rowid as facid, l.fk_product, l.description, l.rowid, l.fk_code_ventilation, ";
-	$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label";
-	$sql .= ", aa.account_number, aa.label";
+	$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label,";
+	if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+		$sql .= " ppe.accountancy_code_buy as code_buy,";
+	} else {
+		$sql .= " p.accountancy_code_buy as code_buy,";
+	}
+	$sql .= " aa.account_number, aa.label";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn_det as l";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = l.fk_product";
+	if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);
+	}
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON l.fk_code_ventilation = aa.rowid";
 	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."facture_fourn as f ON f.rowid = l.fk_facture_fourn ";
-	$sql .= " WHERE f.fk_statut > 0 AND l.rowid = ".$id;
+	$sql .= " WHERE f.fk_statut > 0 AND l.rowid = ".((int) $id);
 	$sql .= " AND f.entity IN (".getEntity('facture_fourn', 0).")"; // We don't share object for accountancy
 
 	dol_syslog("/accounting/supplier/card.php sql=".$sql, LOG_DEBUG);

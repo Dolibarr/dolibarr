@@ -36,15 +36,17 @@ if (!$user->rights->cron->read) {
 
 $id = GETPOST('id', 'int');
 
-$mesg = '';
+$object = new Cronjob($db);
+
 
 /*
  * View
-*/
+ */
+
+$form = new Form($db);	// $form is required as global value into dol_banner_tab
 
 llxHeader('', $langs->trans("CronInfo"));
 
-$object = new Cronjob($db);
 $object->fetch($id);
 $object->info($id);
 

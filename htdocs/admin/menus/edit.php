@@ -333,8 +333,8 @@ if ($action == 'create') {
 	} else {
 		print '<select name="type" class="flat" id="topleft">';
 		print '<option value="">&nbsp;</option>';
-		print '<option value="top"'.(!empty($_POST["type"]) && $_POST["type"] == 'top' ? ' selected' : '').'>'.$langs->trans('Top').'</option>';
-		print '<option value="left"'.(!empty($_POST["type"]) && $_POST["type"] == 'left' ? ' selected' : '').'>'.$langs->trans('Left').'</option>';
+		print '<option value="top"'.(GETPOST("type") == 'top' ? ' selected' : '').'>'.$langs->trans('Top').'</option>';
+		print '<option value="left"'.(GETPOST("type") == 'left' ? ' selected' : '').'>'.$langs->trans('Left').'</option>';
 		print '</select>';
 	}
 	print '</td><td>'.$langs->trans('DetailType').'</td></tr>';

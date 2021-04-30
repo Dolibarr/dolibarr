@@ -52,7 +52,6 @@ $ref = GETPOST('ref', 'alpha');
 if ($user->socid) {
 	$id = $user->socid;
 }
-$result = restrictedArea($user, 'produit|service', $id, 'product&product');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -73,6 +72,8 @@ if (!$sortorder) {
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('agendathirdparty'));
+
+$result = restrictedArea($user, 'produit|service', $id, 'product&product');
 
 
 /*
@@ -120,10 +121,13 @@ if ($id > 0 || $ref) {
 	$result = $object->fetch($id, $ref);
 
 	$title = $langs->trans("Agenda");
+
+	$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda';
+
 	if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/productnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 		$title = $object->name." - ".$title;
 	}
-	llxHeader('', $title);
+	llxHeader('', $title, $help_url);
 
 	if (!empty($conf->notification->enabled)) {
 		$langs->load("mails");

@@ -50,7 +50,7 @@ include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 $langs->loadLangs(array("main", "cashdesk", "companies"));
 
-$place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Ba or Restaurant
+$place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant
 
 $facid = GETPOST('facid', 'int');
 
@@ -260,7 +260,7 @@ if ($conf->global->TAKEPOS_PRINT_PAYMENT_METHOD) {
 	$sql .= " cp.code";
 	$sql .= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."paiement as p";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON p.fk_paiement = cp.id";
-	$sql .= " WHERE pf.fk_paiement = p.rowid AND pf.fk_facture = ".$facid;
+	$sql .= " WHERE pf.fk_paiement = p.rowid AND pf.fk_facture = ".((int) $facid);
 	$sql .= " ORDER BY p.datep";
 	$resql = $db->query($sql);
 	if ($resql) {
@@ -318,5 +318,6 @@ if (!empty($conf->global->TAKEPOS_FOOTER) || !empty($conf->global->{$constFreeTe
 <script type="text/javascript">
 	window.print();
 </script>
+
 </body>
 </html>

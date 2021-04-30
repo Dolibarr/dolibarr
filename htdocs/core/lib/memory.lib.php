@@ -93,7 +93,7 @@ function dol_setcache($memoryid, $data, $expire = 0)
 		$dolmemcache->add($memoryid, $data, $expire); // This fails if key already exists
 		$rescode = $dolmemcache->getResultCode();
 		if ($rescode == 0) {
-			return count($data);
+			return is_countable($data) ? count($data) : 0;
 		} else {
 			return -$rescode;
 		}
@@ -113,7 +113,7 @@ function dol_setcache($memoryid, $data, $expire = 0)
 		//$dolmemcache->setOption(Memcached::OPT_COMPRESSION, false);
 		$result = $dolmemcache->add($memoryid, $data, false, $expire); // This fails if key already exists
 		if ($result) {
-			return count($data);
+			return is_countable($data) ? count($data) : 0;
 		} else {
 			return -1;
 		}

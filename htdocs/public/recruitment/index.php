@@ -258,15 +258,15 @@ if ($display_ticket_list) {
 	if (!empty($filter)) {
 		foreach ($filter as $key => $value) {
 			if (strpos($key, 'date')) { // To allow $filter['YEAR(s.dated)']=>$year
-				$sql .= ' AND '.$key.' = \''.$value.'\'';
+				$sql .= ' AND '.$key.' = \''.$db->escape($value).'\'';
 			} elseif ($key == 't.fk_statut') {
 				if (is_array($value) && count($value) > 0) {
-					$sql .= 'AND '.$key.' IN ('.implode(',', $value).')';
+					$sql .= 'AND '.$key.' IN ('.$db->sanitize(implode(',', $value)).')';
 				} else {
-					$sql .= ' AND '.$key.' = '.$db->escape($value);
+					$sql .= ' AND '.$key.' = '.((int) $value);
 				}
 			} else {
-				$sql .= ' AND '.$key.' LIKE \'%'.$value.'%\'';
+				$sql .= ' AND '.$key.' LIKE \'%'.$db->escape($value).'%\'';
 			}
 		}
 	}

@@ -196,8 +196,9 @@ if ($action == 'confirm_delete' && $user->rights->asset->write) {
 
 $form = new Form($db);
 
-$helpurl = '';
-llxHeader('', $langs->trans("AssetsTypeSetup"), $helpurl);
+$help_url = '';
+
+llxHeader('', $langs->trans("AssetsTypeSetup"), $help_url);
 
 
 // List of asset type

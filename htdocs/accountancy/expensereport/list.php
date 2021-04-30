@@ -83,18 +83,21 @@ if (!$sortorder) {
 	}
 }
 
-// Security check
-if ($user->socid > 0) {
-	accessforbidden();
-}
-if (!$user->rights->accounting->bind->write) {
-	accessforbidden();
-}
-
 $formaccounting = new FormAccounting($db);
 $accounting = new AccountingAccount($db);
 
 $chartaccountcode = dol_getIdFromCode($db, $conf->global->CHARTOFACCOUNTS, 'accounting_system', 'rowid', 'pcg_version');
+
+// Security check
+if (empty($conf->accounting->enabled)) {
+	accessforbidden();
+}
+if ($user->socid > 0) {
+	accessforbidden();
+}
+if (empty($user->rights->accounting->mouvements->lire)) {
+	accessforbidden();
+}
 
 
 /*
@@ -130,7 +133,7 @@ $permissiontodelete = $user->rights->expensereport->delete;
 $uploaddir = $conf->expensereport->dir_output;
 include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
-if ($massaction == 'ventil') {
+if ($massaction == 'ventil' && $user->rights->accounting->bind->write) {
 	$msg = '';
 	//print '<div><span style="color:red">' . $langs->trans("Processing") . '...</span></div>';
 	if (!empty($mesCasesCochees)) {
@@ -150,8 +153,8 @@ if ($massaction == 'ventil') {
 				$ko++;
 			} else {
 				$sql = " UPDATE ".MAIN_DB_PREFIX."expensereport_det";
-				$sql .= " SET fk_code_ventilation = ".$monCompte;
-				$sql .= " WHERE rowid = ".$monId;
+				$sql .= " SET fk_code_ventilation = ".((int) $monCompte);
+				$sql .= " WHERE rowid = ".((int) $monId);
 
 				$accountventilated = new AccountingAccount($db);
 				$accountventilated->fetch($monCompte, '', 1);
@@ -161,7 +164,7 @@ if ($massaction == 'ventil') {
 					$msg .= '<div><span style="color:green">'.$langs->trans("LineOfExpenseReport").' '.$monId.' - '.$langs->trans("VentilatedinAccount").' : '.length_accountg($accountventilated->account_number).'</span></div>';
 					$ok++;
 				} else {
-					$msg .= '<div><span style="color:red">'.$langs->trans("ErrorDB").' : '.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("NotVentilatedinAccount").' : '.length_accountg($accountventilated->account_number).'<br/> <pre>'.$sql.'</pre></span></div>';
+					$msg .= '<div><span style="color:red">'.$langs->trans("ErrorDB").' : '.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("NotVentilatedinAccount").' : '.length_accountg($accountventilated->account_number).'<br> <pre>'.$sql.'</pre></span></div>';
 					$ko++;
 				}
 			}
@@ -295,7 +298,7 @@ if ($result) {
 	}
 
 	$arrayofmassactions = array(
-		'ventil' => $langs->trans("Ventilate")
+		'ventil' => img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Ventilate")
 	);
 	$massactionbutton = $form->selectMassAction('ventil', $arrayofmassactions, 1);
 

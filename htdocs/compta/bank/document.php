@@ -71,6 +71,7 @@ if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref);
 }
 
+
 $result = restrictedArea($user, 'banque', $object->id, 'bank_account', '', '');
 
 
@@ -91,8 +92,10 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
  */
 
 $title = $langs->trans("FinancialAccount").' - '.$langs->trans("Documents");
-$helpurl = "";
-llxHeader('', $title, $helpurl);
+
+$help_url = "EN:Module_Banks_and_Cash|FR:Module_Banques_et_Caisses";
+
+llxHeader("", $title, $help_url);
 
 $form = new Form($db);
 
@@ -136,7 +139,7 @@ if ($id > 0 || !empty($ref)) {
 		$permission = $user->rights->banque->modifier;
 		$permtoedit = $user->rights->banque->modifier;
 		$param = '&id='.$object->id;
-		include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+		include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 	} else {
 		dol_print_error($db);
 	}

@@ -151,7 +151,7 @@ class Productbatch extends CommonObject
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_batch as t INNER JOIN ".MAIN_DB_PREFIX."product_stock w on t.fk_product_stock = w.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot as pl on pl.fk_product = w.fk_product and pl.batch = t.batch";
-		$sql .= " WHERE t.rowid = ".$id;
+		$sql .= " WHERE t.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -206,7 +206,7 @@ class Productbatch extends CommonObject
 		$sql .= " batch=".(isset($this->batch) ? "'".$this->db->escape($this->batch)."'" : "null").",";
 		$sql .= " qty=".(isset($this->qty) ? $this->qty : "null").",";
 		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null")."";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
 
@@ -246,7 +246,7 @@ class Productbatch extends CommonObject
 
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX.self::$_table_element."";
-			$sql .= " WHERE rowid=".$this->id;
+			$sql .= " WHERE rowid=".((int) $this->id);
 
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);

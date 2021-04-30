@@ -62,7 +62,7 @@ if ($socid && $socid != $object->thirdparty->id) {
  * Actions
  */
 
-if ($action == 'setnote' && $user->rights->fournisseur->facture->creer) {
+if ($action == 'setnote' && ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer)) {
 	$db->begin();
 
 	$object->fetch($id);
@@ -92,7 +92,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fournisse
 }
 
 if ($action == 'confirm_validate' && $confirm == 'yes' &&
-	((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->facture->creer))
+	((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && (!empty($user->rights->fournisseur->facture->creer) || !empty($user->rights->supplier_invoice->creer)))
 	|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->supplier_invoice_advance->validate)))
 ) {
 	$db->begin();
@@ -182,9 +182,9 @@ if ($result > 0) {
 	print '</td></tr>';*/
 
 	// Date of payment
-	print '<tr><td class="titlefield">'.$form->editfieldkey("Date", 'datep', $object->date, $object, $object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td>';
+	print '<tr><td class="titlefield">'.$form->editfieldkey("Date", 'datep', $object->date, $object, $object->statut == 0 && ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer)).'</td>';
 	print '<td>';
-	print $form->editfieldval("Date", 'datep', $object->date, $object, $object->statut == 0 && $user->rights->fournisseur->facture->creer, 'datehourpicker', '', null, $langs->trans('PaymentDateUpdateSucceeded'));
+	print $form->editfieldval("Date", 'datep', $object->date, $object, $object->statut == 0 && ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer), 'datehourpicker', '', null, $langs->trans('PaymentDateUpdateSucceeded'));
 	print '</td></tr>';
 
 	// Payment mode
@@ -241,9 +241,9 @@ if ($result > 0) {
 	}
 
 	// Note
-	print '<tr><td>'.$form->editfieldkey("Comments", 'note', $object->note, $object, $user->rights->fournisseur->facture->creer).'</td>';
+	print '<tr><td>'.$form->editfieldkey("Comments", 'note', $object->note, $object, ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer)).'</td>';
 	print '<td>';
-	print $form->editfieldval("Note", 'note', $object->note, $object, $user->rights->fournisseur->facture->creer, 'textarea');
+	print $form->editfieldval("Note", 'note', $object->note, $object, ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer), 'textarea');
 	print '</td></tr>';
 
 	print '</table>';
@@ -336,7 +336,7 @@ if ($result > 0) {
 	print '<div class="tabsAction">';
 	if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) {
 		if ($user->socid == 0 && $object->statut == 0 && $action == '') {
-			if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->facture->creer))
+			if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && (!empty($user->rights->fournisseur->facture->creer) || !empty($user->rights->supplier_invoice->creer)))
 			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->supplier_invoice_advance->validate))) {
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=validate">'.$langs->trans('Valid').'</a>';
 			}
@@ -356,16 +356,15 @@ if ($result > 0) {
 
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 
-	// Documents generes
-
+	// Generated documents
 	include_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_payment/modules_supplier_payment.php';
 	$modellist = ModelePDFSuppliersPayments::liste_modeles($db);
 	if (is_array($modellist)) {
 		$ref = dol_sanitizeFileName($object->ref);
 		$filedir = $conf->fournisseur->payment->dir_output.'/'.dol_sanitizeFileName($object->ref);
 		$urlsource = $_SERVER['PHP_SELF'].'?id='.$object->id;
-		$genallowed = $user->rights->fournisseur->facture->lire;
-		$delallowed = $user->rights->fournisseur->facture->creer;
+		$genallowed = ($user->rights->fournisseur->facture->lire || $user->rights->supplier_invoice->lire);
+		$delallowed = ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer);
 		$modelpdf = (!empty($object->model_pdf) ? $object->model_pdf : (empty($conf->global->SUPPLIER_PAYMENT_ADDON_PDF) ? '' : $conf->global->SUPPLIER_PAYMENT_ADDON_PDF));
 
 		print $formfile->showdocuments('supplier_payment', $ref, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $societe->default_lang);

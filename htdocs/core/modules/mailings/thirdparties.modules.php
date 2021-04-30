@@ -83,13 +83,13 @@ class mailing_thirdparties extends MailingTargets
 			if (GETPOSTISSET("filter_client") && GETPOST("filter_client") <> '-1') {
 				$addFilter .= " AND s.client=".((int) GETPOST("filter_client", 'int'));
 				$addDescription = $langs->trans('ProspectCustomer')."=";
-				if ($_POST["filter_client"] == 0) {
+				if (GETPOST("filter_client") == 0) {
 					$addDescription .= $langs->trans('NorProspectNorCustomer');
-				} elseif ($_POST["filter_client"] == 1) {
+				} elseif (GETPOST("filter_client") == 1) {
 					$addDescription .= $langs->trans('Customer');
-				} elseif ($_POST["filter_client"] == 2) {
+				} elseif (GETPOST("filter_client") == 2) {
 					$addDescription .= $langs->trans('Prospect');
-				} elseif ($_POST["filter_client"] == 3) {
+				} elseif (GETPOST("filter_client") == 3) {
 					$addDescription .= $langs->trans('ProspectCustomer');
 				} else {
 					$addDescription .= "Unknown status ".GETPOST("filter_client");

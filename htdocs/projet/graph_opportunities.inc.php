@@ -23,10 +23,10 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 	$sql .= " WHERE p.entity IN (".getEntity('project').")";
 	$sql .= " AND p.fk_statut = 1"; // Opend projects only
 	if ($mine || empty($user->rights->projet->all->lire)) {
-		$sql .= " AND p.rowid IN (".$projectsListId.")";
+		$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId).")";
 	}
-	if ($socid) {
-		$sql .= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
+	if ($socid > 0) {
+		$sql .= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
 	}
 	$sql .= " GROUP BY p.fk_opp_status, cls.code";
 	$resql = $db->query($sql);
@@ -35,6 +35,7 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 		$num = $db->num_rows($resql);
 		$i = 0;
 
+		$total = 0;
 		$totalnb = 0;
 		$totaloppnb = 0;
 		$totalamount = 0;

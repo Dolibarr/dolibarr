@@ -184,6 +184,11 @@ class Website extends CommonObject
 		$tmparray = explode(',', $this->otherlang);
 		if (is_array($tmparray)) {
 			foreach ($tmparray as $key => $val) {
+				// It possible we have empty val here if postparam WEBSITE_OTHERLANG is empty or set like this : 'en,,sv' or 'en,sv,'
+				if (empty(trim($val))) {
+					unset($tmparray[$key]);
+					continue;
+				}
 				$tmparray[$key] = preg_replace('/[_-].*$/', '', trim($val)); // en_US or en-US -> en
 			}
 			$this->otherlang = join(',', $tmparray);
@@ -496,6 +501,11 @@ class Website extends CommonObject
 		$tmparray = explode(',', $this->otherlang);
 		if (is_array($tmparray)) {
 			foreach ($tmparray as $key => $val) {
+				// It possible we have empty val here if postparam WEBSITE_OTHERLANG is empty or set like this : 'en,,sv' or 'en,sv,'
+				if (empty(trim($val))) {
+					unset($tmparray[$key]);
+					continue;
+				}
 				$tmparray[$key] = preg_replace('/[_-].*$/', '', trim($val)); // en_US or en-US -> en
 			}
 			$this->otherlang = join(',', $tmparray);
@@ -522,7 +532,7 @@ class Website extends CommonObject
 		$sql .= ' fk_user_modif = '.(!isset($this->fk_user_modif) ? $user->id : $this->fk_user_modif).',';
 		$sql .= ' date_creation = '.(!isset($this->date_creation) || dol_strlen($this->date_creation) != 0 ? "'".$this->db->idate($this->date_creation)."'" : 'null').',';
 		$sql .= ' tms = '.(dol_strlen($this->date_modification) != 0 ? "'".$this->db->idate($this->date_modification)."'" : "'".$this->db->idate(dol_now())."'");
-		$sql .= ' WHERE rowid='.$this->id;
+		$sql .= ' WHERE rowid='.((int) $this->id);
 
 		$this->db->begin();
 
@@ -597,7 +607,7 @@ class Website extends CommonObject
 
 		if (!$error) {
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= ' WHERE rowid='.$this->id;
+			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -1081,6 +1091,12 @@ class Website extends CommonObject
 			}
 		}
 
+		$line .= "\n-- For Dolibarr v14+ --\n";
+		$line .= "UPDATE llx_website SET fk_default_lang = '".$this->db->escape($this->fk_default_lang)."' WHERE rowid = __WEBSITE_ID__;\n";
+		$line .= "UPDATE llx_website SET otherlang = '".$this->db->escape($this->otherlang)."' WHERE rowid = __WEBSITE_ID__;\n";
+		$line .= "\n";
+		fputs($fp, $line);
+
 		fclose($fp);
 		if (!empty($conf->global->MAIN_UMASK)) {
 			@chmod($filesql, octdec($conf->global->MAIN_UMASK));
@@ -1281,7 +1297,7 @@ class Website extends CommonObject
 
 		$objectpagestatic = new WebsitePage($this->db);
 
-		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'website_page WHERE fk_website = '.$this->id;
+		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'website_page WHERE fk_website = '.((int) $this->id);
 
 		$resql = $this->db->query($sql);
 		if (!$resql) {
@@ -1414,10 +1430,10 @@ class Website extends CommonObject
 
 			$sql = "SELECT wp.rowid, wp.lang, wp.pageurl, wp.fk_page";
 			$sql .= " FROM ".MAIN_DB_PREFIX."website_page as wp";
-			$sql .= " WHERE wp.fk_website = ".$website->id;
-			$sql .= " AND (wp.fk_page = ".$pageid." OR wp.rowid  = ".$pageid;
+			$sql .= " WHERE wp.fk_website = ".((int) $website->id);
+			$sql .= " AND (wp.fk_page = ".((int) $pageid)." OR wp.rowid  = ".((int) $pageid);
 			if ($tmppage->fk_page > 0) {
-				$sql .= " OR wp.fk_page = ".$tmppage->fk_page." OR wp.rowid = ".$tmppage->fk_page;
+				$sql .= " OR wp.fk_page = ".((int) $tmppage->fk_page)." OR wp.rowid = ".((int) $tmppage->fk_page);
 			}
 			$sql .= ")";
 

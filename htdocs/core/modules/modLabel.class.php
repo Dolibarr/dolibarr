@@ -21,7 +21,7 @@
  *	\brief      Module pour gerer les formats d'impression des etiquettes
  *	\file       htdocs/core/modules/modLabel.class.php
  *	\ingroup    other
- *	\brief      Fichier de description et activation du module Label
+ *	\brief      Description and activation file for the module Labels
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';

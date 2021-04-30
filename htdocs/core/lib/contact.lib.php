@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2010  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2010-2017  Regis Houssin       <regis.houssin@inodbox.com>
- * Copyright (C) 2015       Frederic France     <frederic.france@free.fr>
+ * Copyright (C) 2015-2021  Frederic France     <frederic.france@netlogic.fr>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -58,7 +58,7 @@ function contact_prepare_head(Contact $object)
 	$tab++;
 
 	// Related items
-	if (!empty($conf->commande->enabled) || !empty($conf->propal->enabled) || !empty($conf->facture->enabled) || !empty($conf->ficheinter->enabled) || !empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+	if (!empty($conf->commande->enabled) || !empty($conf->propal->enabled) || !empty($conf->facture->enabled) || !empty($conf->ficheinter->enabled) || (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
 		$head[$tab][0] = DOL_URL_ROOT.'/contact/consumption.php?id='.$object->id;
 		$head[$tab][1] = $langs->trans("Referers");
 		$head[$tab][2] = 'consumption';
@@ -98,7 +98,7 @@ function contact_prepare_head(Contact $object)
 
 	// Agenda / Events
 	$head[$tab][0] = DOL_URL_ROOT.'/contact/agenda.php?id='.$object->id;
-	$head[$tab][1] .= $langs->trans("Events");
+	$head[$tab][1] = $langs->trans("Events");
 	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
 		$head[$tab][1] .= '/';
 		$head[$tab][1] .= $langs->trans("Agenda");

@@ -181,7 +181,7 @@ if ($action == 'update') {
 		}
 	}
 
-	dolibarr_set_const($db, "MAIN_DISABLE_METEO", $_POST["MAIN_DISABLE_METEO"], 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_DISABLE_METEO", GETPOST("MAIN_DISABLE_METEO"), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_USE_METEO_WITH_PERCENTAGE", GETPOST("MAIN_USE_METEO_WITH_PERCENTAGE"), 'chaine', 0, '', $conf->entity);
 
 	// For update value with percentage
@@ -289,7 +289,7 @@ if ($action == 'edit') {
 print '<br>';
 
 
-if ($conf->global->MAIN_DISABLE_METEO != 1) {
+if (empty($conf->global->MAIN_DISABLE_METEO) || $conf->global->MAIN_DISABLE_METEO != 1) {
 	// Show logo for weather
 	print '<span class="opacitymedium">'.$langs->trans("DescWeather").'</span> ';
 
@@ -302,7 +302,7 @@ if ($conf->global->MAIN_DISABLE_METEO != 1) {
 			$str_mode_enabled = $str_mode_percentage;
 		}
 		print '<a href="#" onclick="return false;" id="change_mode">'.$str_mode_enabled.'</a>';
-		print '<input type="hidden" id="MAIN_USE_METEO_WITH_PERCENTAGE" name="MAIN_USE_METEO_WITH_PERCENTAGE" value="'.$conf->global->MAIN_USE_METEO_WITH_PERCENTAGE.'" />';
+		print '<input type="hidden" id="MAIN_USE_METEO_WITH_PERCENTAGE" name="MAIN_USE_METEO_WITH_PERCENTAGE" value="'.(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) ? $conf->global->MAIN_USE_METEO_WITH_PERCENTAGE : '').'" />';
 
 		print '<br><br>';
 	} else {
@@ -359,16 +359,16 @@ if ($conf->global->MAIN_DISABLE_METEO != 1) {
 		print '<div>';
 		print '<div class="inline-block" style="padding-right: 20px">';
 		print img_weather($text, 0, $options);
-		print ' &lt;= <input type="text" size="2" name="MAIN_METEO_PERCENTAGE_LEVEL0" value="'.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL0.'"/>&nbsp;%</td>';
+		print ' &lt;= <input type="text" size="2" name="MAIN_METEO_PERCENTAGE_LEVEL0" value="'.getDolGlobalString('MAIN_METEO_PERCENTAGE_LEVEL0').'"/>&nbsp;%</td>';
 		print '</div><div class="inline-block" style="padding-right: 20px">';
 		print img_weather($text, 1, $options);
-		print ' &lt;= <input type="text" size="2" name="MAIN_METEO_PERCENTAGE_LEVEL1" value="'.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL1.'"/>&nbsp;%</td>';
+		print ' &lt;= <input type="text" size="2" name="MAIN_METEO_PERCENTAGE_LEVEL1" value="'.getDolGlobalString('MAIN_METEO_PERCENTAGE_LEVEL1').'"/>&nbsp;%</td>';
 		print '</div><div class="inline-block" style="padding-right: 20px">';
 		print img_weather($text, 2, $options);
-		print ' &lt;= <input type="text" size="2" name="MAIN_METEO_PERCENTAGE_LEVEL2" value="'.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL2.'"/>&nbsp;%</td>';
+		print ' &lt;= <input type="text" size="2" name="MAIN_METEO_PERCENTAGE_LEVEL2" value="'.getDolGlobalString('MAIN_METEO_PERCENTAGE_LEVEL2').'"/>&nbsp;%</td>';
 		print '</div><div class="inline-block" style="padding-right: 20px">';
 		print img_weather($text, 3, $options);
-		print ' &lt;= <input type="text" size="2" name="MAIN_METEO_PERCENTAGE_LEVEL3" value="'.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL3.'"/>&nbsp;%</td>';
+		print ' &lt;= <input type="text" size="2" name="MAIN_METEO_PERCENTAGE_LEVEL3" value="'.getDolGlobalString('MAIN_METEO_PERCENTAGE_LEVEL3').'"/>&nbsp;%</td>';
 		print '</div>';
 		print '</div>';
 

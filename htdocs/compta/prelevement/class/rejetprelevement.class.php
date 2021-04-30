@@ -128,7 +128,7 @@ class RejetPrelevement
 		// Tag the line to refused
 		$sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_lignes ";
 		$sql .= " SET statut = 3";
-		$sql .= " WHERE rowid = ".$id;
+		$sql .= " WHERE rowid = ".((int) $id);
 
 		if (!$this->db->query($sql)) {
 			dol_syslog("RejetPrelevement::create Erreur 5");

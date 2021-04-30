@@ -25,7 +25,7 @@ $langs->loadLangs(array("admin", "products"));
 $action = GETPOST('action', 'alphanohtml');
 
 // Security check
-if (!$user->admin || (empty($conf->product->enabled) && empty($conf->service->enabled))) {
+if (!$user->admin || empty($conf->variants->enabled)) {
 	accessforbidden();
 }
 

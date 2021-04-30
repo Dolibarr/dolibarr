@@ -22,10 +22,11 @@
  *	\ingroup    cashdesk
  *	\brief      Include to show main page for cashdesk module
  */
+
 require_once 'class/Facturation.class.php';
 
 // Si nouvelle vente, reinitialisation des donnees (destruction de l'objet et vidage de la table contenant la liste des articles)
-if ($_GET['id'] == 'NOUV') {
+if (GETPOST('id', 'int') == 'NOUV') {
 	unset($_SESSION['serObjFacturation']);
 	unset($_SESSION['poscart']);
 }
@@ -38,6 +39,15 @@ if (isset($_SESSION['serObjFacturation'])) {
 	// ... sinon, c'est une nouvelle vente
 	$obj_facturation = new Facturation();
 }
+
+if (empty($user->rights->cashdesk->run)) {
+	accessforbidden();
+}
+
+
+/*
+ * View
+ */
 
 // $obj_facturation contains data for all invoice total + selection of current product
 

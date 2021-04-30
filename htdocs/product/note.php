@@ -43,7 +43,6 @@ $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 $object = new Product($db);
 if ($id > 0 || !empty($ref)) {
@@ -51,6 +50,8 @@ if ($id > 0 || !empty($ref)) {
 }
 
 $permissionnote = $user->rights->produit->creer; // Used by the include of actions_setnotes.inc.php
+
+$result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 
 /*

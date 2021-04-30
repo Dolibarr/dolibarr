@@ -92,7 +92,7 @@ if ($action == 'settemplates') {
 if ($action == 'setvalue' && $user->admin) {
 	$db->begin();
 
-	$result = dolibarr_set_const($db, "NOTIFICATION_EMAIL_FROM", GETPOST("email_from", "restricthtml"), 'chaine', 0, '', $conf->entity);
+	$result = dolibarr_set_const($db, "NOTIFICATION_EMAIL_FROM", GETPOST("email_from", "alphawithlgt"), 'chaine', 0, '', $conf->entity);
 	if ($result < 0) {
 		$error++;
 	}
@@ -243,7 +243,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 			$elementLabel = $langs->trans('Intervention');
 		} elseif ($notifiedevent['elementtype'] == 'shipping') {
 			$elementLabel = $langs->trans('Shipping');
-		} elseif ($notifiedevent['elementtype'] == 'expensereport') {
+		} elseif ($notifiedevent['elementtype'] == 'expensereport' || $notifiedevent['elementtype'] == 'expense_report') {
 			$elementLabel = $langs->trans('ExpenseReport');
 		}
 
@@ -270,7 +270,9 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 	}
 
 	$helptext = '';
-	form_constantes($constantes, 2, $helptext);
+	form_constantes($constantes, 3, $helptext);
+
+	print '<div class="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></div>';
 } else {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
@@ -300,7 +302,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 			$elementLabel = $langs->trans('Intervention');
 		} elseif ($notifiedevent['elementtype'] == 'shipping') {
 			$elementLabel = $langs->trans('Shipping');
-		} elseif ($notifiedevent['elementtype'] == 'expensereport') {
+		} elseif ($notifiedevent['elementtype'] == 'expensereport' || $notifiedevent['elementtype'] == 'expense_report') {
 			$elementLabel = $langs->trans('ExpenseReport');
 		}
 
@@ -316,7 +318,13 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 	print '</table>';
 }
 
-print '<div class="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></div>';
+
+print '<div class="opacitymedium">';
+print '* '.$langs->trans("GoOntoUserCardToAddMore").'<br>';
+if (!empty($conf->societe->enabled)) {
+	print '** '.$langs->trans("GoOntoContactCardToAddMore").'<br>';
+}
+print '</div>';
 
 print '</form>';
 
@@ -343,28 +351,38 @@ print "</tr>\n";
 foreach ($listofnotifiedevents as $notifiedevent) {
 	$label = $langs->trans("Notify_".$notifiedevent['code']); //!=$langs->trans("Notify_".$notifiedevent['code'])?$langs->trans("Notify_".$notifiedevent['code']):$notifiedevent['label'];
 
+	$elementPicto = $notifiedevent['elementtype'];
 	$elementLabel = $langs->trans(ucfirst($notifiedevent['elementtype']));
 	// Special cases
 	if ($notifiedevent['elementtype'] == 'order_supplier') {
+		$elementPicto = 'supplier_order';
 		$elementLabel = $langs->trans('SupplierOrder');
 	} elseif ($notifiedevent['elementtype'] == 'propal') {
 		$elementLabel = $langs->trans('Proposal');
 	} elseif ($notifiedevent['elementtype'] == 'facture') {
+		$elementPicto = 'bill';
 		$elementLabel = $langs->trans('Bill');
 	} elseif ($notifiedevent['elementtype'] == 'commande') {
+		$elementPicto = 'order';
 		$elementLabel = $langs->trans('Order');
 	} elseif ($notifiedevent['elementtype'] == 'ficheinter') {
+		$elementPicto = 'intervention';
 		$elementLabel = $langs->trans('Intervention');
 	} elseif ($notifiedevent['elementtype'] == 'shipping') {
+		$elementPicto = 'shipment';
 		$elementLabel = $langs->trans('Shipping');
-	} elseif ($notifiedevent['elementtype'] == 'expensereport') {
+	} elseif ($notifiedevent['elementtype'] == 'expensereport' || $notifiedevent['elementtype'] == 'expense_report') {
+		$elementPicto = 'expensereport';
 		$elementLabel = $langs->trans('ExpenseReport');
 	}
 
 	print '<tr class="oddeven">';
-	print '<td>'.$elementLabel.'</td>';
+	print '<td>';
+	print img_picto('', $elementPicto, 'class="pictofixedwidth"');
+	print $elementLabel;
+	print '</td>';
 	print '<td>'.$notifiedevent['code'].'</td>';
-	print '<td>'.$label.'</td>';
+	print '<td><span class="opacitymedium">'.$label.'</span></td>';
 	print '<td>';
 	// Notification with threshold
 	foreach ($conf->global as $key => $val) {
@@ -416,14 +434,6 @@ foreach ($listofnotifiedevents as $notifiedevent) {
 	print '</tr>';
 }
 print '</table>';
-
-print '<div class="opacitymedium">';
-print '* '.$langs->trans("GoOntoUserCardToAddMore").'<br>';
-if (!empty($conf->societe->enabled)) {
-	print '** '.$langs->trans("GoOntoContactCardToAddMore").'<br>';
-}
-
-print '</div>';
 
 print '<br>';
 

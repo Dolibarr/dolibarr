@@ -163,7 +163,7 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 			}
 			$newref = str_replace(' ', '_', $user_author_infos).$expld_car.$prefix.$newref.$expld_car.dol_print_date($object->date_debut, '%y%m%d');
 
-			$sqlbis = 'UPDATE '.MAIN_DB_PREFIX.'expensereport SET ref_number_int = '.$ref_number_int.' WHERE rowid = '.$object->id;
+			$sqlbis = 'UPDATE '.MAIN_DB_PREFIX.'expensereport SET ref_number_int = '.((int) $ref_number_int).' WHERE rowid = '.((int) $object->id);
 			$resqlbis = $db->query($sqlbis);
 			if (!$resqlbis) {
 				dol_print_error($resqlbis);

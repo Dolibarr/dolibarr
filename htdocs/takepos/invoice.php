@@ -565,9 +565,9 @@ if ($action == "freezone") {
 
 if ($action == "addnote") {
 	foreach ($invoice->lines as $line) {
-		if ($line->id == $number) {
-			$line->array_options['order_notes'] = $desc;
-			$result = $invoice->updateline($line->id, $line->desc, $line->subprice, $line->qty, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
+		if ($line->id == $idline) {
+			$desc = GETPOST('addnote', 'alpha');
+			$result = $invoice->updateline($line->id, $desc, $line->subprice, $line->qty, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
 		}
 	}
 	$invoice->fetch($placeid);
@@ -850,6 +850,7 @@ if ($action == "valid" || $action == "history" || $action == 'creditnote') {
 	}
 }
 
+
 /*
  * View
  */
@@ -973,12 +974,12 @@ if ($action == "search") {
 function SendTicket(id)
 {
 	console.log("Open box to select the Print/Send form");
-	$.colorbox({href:"send.php?facid="+id, width:"70%", height:"30%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("SendTicket"); ?>"});
+	$.colorbox({href:"send.php?facid="+id, width:"70%", height:"30%", transition:"none", iframe:"true", title:'<?php echo dol_escape_js($langs->trans("SendTicket")); ?>'});
 }
 
 function Print(id, gift){
-	$.colorbox({href:"receipt.php?facid="+id+"&gift="+gift, width:"40%", height:"90%", transition:"none", iframe:"true", title:"<?php
-	echo $langs->trans("PrintTicket"); ?>"});
+	console.log("Call Print() to generate the receipt.");
+	$.colorbox({href:"receipt.php?facid="+id+"&gift="+gift, width:"40%", height:"90%", transition:"none", iframe:"true", title:'<?php echo dol_escape_js($langs->trans("PrintTicket")); ?>'});
 }
 
 function TakeposPrinting(id){
@@ -1009,12 +1010,17 @@ function DolibarrTakeposPrinting(id) {
 	console.log("DolibarrTakeposPrinting Printing invoice ticket " + id)
 	$.ajax({
 		type: "GET",
-		url: "<?php print dol_buildpath('/takepos/ajax/ajax.php', 1).'?action=printinvoiceticket&term='.$_SESSION["takeposterminal"].'&id='; ?>" + id,
+		url: "<?php print DOL_URL_ROOT.'/takepos/ajax/ajax.php?action=printinvoiceticket&term='.$_SESSION["takeposterminal"].'&id='; ?>" + id,
 	});
 }
 
 function CreditNote() {
 	$("#poslines").load("invoice.php?action=creditnote&invoiceid="+placeid, function() {
+	});
+}
+
+function SetNote() {
+	$("#poslines").load("invoice.php?action=addnote&invoiceid="+placeid+"&idline="+selectedline+"&addnote="+$("#textinput").val(), function() {
 	});
 }
 
@@ -1062,7 +1068,7 @@ $( document ).ready(function() {
 			if ($placeid == $obj->rowid) {
 				echo "<b>";
 			}
-			echo dol_print_date($db->jdate($obj->datec), '%H:%M', 'tzuser');
+			echo '<span class="fa fa-shopping-cart paddingright"></span>'.dol_print_date($db->jdate($obj->datec), '%H:%M', 'tzuser');
 			if ($placeid == $obj->rowid) {
 				echo "</b>";
 			}
@@ -1070,7 +1076,7 @@ $( document ).ready(function() {
 		}
 		echo '$("#customerandsales").append(\'<a onclick="place=\\\'0-';
 		echo $max_sale + 1;
-		echo '\\\'; invoiceid=0; Refresh();"><span class="fa fa-plus-square" title="'.dol_escape_htmltag($langs->trans("StartAParallelSale")).'"></a>\');';
+		echo '\\\'; invoiceid=0; Refresh();"><div><span class="fa fa-plus" title="'.dol_escape_htmltag($langs->trans("StartAParallelSale")).'"><span class="fa fa-shopping-cart"></span></div></a>\');';
 	} else {
 		dol_print_error($db);
 	}
@@ -1418,7 +1424,7 @@ if ($placeid > 0) {
 						$sql .= " ".MAIN_DB_PREFIX."product_stock as ps";
 						$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = ps.fk_product";
 						$sql .= " WHERE ps.reel != 0";
-						$sql .= " AND ps.fk_entrepot = ".$conf->global->$constantforkey;
+						$sql .= " AND ps.fk_entrepot = ".((int) $conf->global->$constantforkey);
 						$sql .= " AND e.entity IN (".getEntity('stock').")";
 						$sql .= " AND ps.fk_product = ".$line->fk_product;
 						$resql = $db->query($sql);

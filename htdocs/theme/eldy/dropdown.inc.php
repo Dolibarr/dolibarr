@@ -277,14 +277,14 @@ a.top-menu-dropdown-link {
 	text-decoration: none;
 }
 
-#topmenuloginmoreinfo-btn{
+#topmenuloginmoreinfo-btn, #topmenulogincompanyinfo-btn {
 	display: block;
 	text-aling: right;
 	color:#666;
 	cursor: pointer;
 }
 
-#topmenuloginmoreinfo{
+#topmenuloginmoreinfo, #topmenulogincompanyinfo {
 	display: none;
 	clear: both;
 	font-size: 0.95em;

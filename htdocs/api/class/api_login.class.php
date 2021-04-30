@@ -31,8 +31,13 @@ class Login
 	 */
 	public function __construct()
 	{
-		global $db;
+		global $conf, $db;
 		$this->db = $db;
+
+		//$conf->global->MAIN_MODULE_API_LOGIN_DISABLED = 1;
+		if (!empty($conf->global->MAIN_MODULE_API_LOGIN_DISABLED)) {
+			throw new RestException(403, "Error login APIs are disabled. You must get the token from backoffice to be able to use APIs");
+		}
 	}
 
 	/**
@@ -52,13 +57,39 @@ class Login
 	 * @throws RestException 500 System error
 	 *
 	 * @url GET /
+	 */
+	public function loginUnsecured($login, $password, $entity = '', $reset = 0)
+	{
+		return $this->index($login, $password, $entity, $reset);
+	}
+
+	/**
+	 * Login
+	 *
+	 * Request the API token for a couple username / password.
+	 * Using method POST is recommanded for security reasons (method GET is often logged by default by web servers with parameters so with login and pass into server log file).
+	 * Both methods are provided for developer conveniance. Best is to not use at all the login API method and enter directly the "DOLAPIKEY" into field at the top right of page. Note: The API token (DOLAPIKEY) can be found/set on the user page.
+	 *
+	 * @param   string  $login			User login
+	 * @param   string  $password		User password
+	 * @param   string  $entity			Entity (when multicompany module is used). '' means 1=first company.
+	 * @param   int     $reset          Reset token (0=get current token, 1=ask a new token and canceled old token. This means access using current existing API token of user will fails: new token will be required for new access)
+	 * @return  array                   Response status and user token
+	 *
+	 * @throws RestException 403 Access denied
+	 * @throws RestException 500 System error
+	 *
 	 * @url POST /
 	 */
 	public function index($login, $password, $entity = '', $reset = 0)
 	{
 		global $conf, $dolibarr_main_authentication, $dolibarr_auto_user;
 
-		// TODO Remove the API login. The token must be generated from backoffice only.
+		// Is the login API disabled ? The token must be generated from backoffice only.
+		if (! empty($conf->global->API_DISABLE_LOGIN_API)) {
+			dol_syslog("Warning: A try to use the login API has been done while the login API is disabled. You must generate or get the token from the backoffice.", LOG_WARNING);
+			throw new RestException(403, "Error, the login API has been disabled for security purpose. You must generate or get the token from the backoffice.");
+		}
 
 		// Authentication mode
 		if (empty($dolibarr_main_authentication)) {
@@ -87,7 +118,7 @@ class Login
 		}
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-		$login = checkLoginPassEntity($login, $password, $entity, $authmode, 'api');
+		$login = checkLoginPassEntity($login, $password, $entity, $authmode, 'api');		// Check credentials.
 		if (empty($login)) {
 			throw new RestException(403, 'Access denied');
 		}

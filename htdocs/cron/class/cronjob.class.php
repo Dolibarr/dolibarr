@@ -435,7 +435,7 @@ class Cronjob extends CommonObject
 		$sql .= " t.test";
 		$sql .= " FROM ".MAIN_DB_PREFIX."cronjob as t";
 		if ($id > 0) {
-			$sql .= " WHERE t.rowid = ".$id;
+			$sql .= " WHERE t.rowid = ".((int) $id);
 		} else {
 			$sql .= " WHERE t.entity IN(0, ".getEntity('cron').")";
 			$sql .= " AND t.objectname = '".$this->db->escape($objectname)."'";
@@ -553,11 +553,11 @@ class Cronjob extends CommonObject
 		} elseif ($status == 2) {
 			$sql .= " AND t.status = 2";
 		}
-		//Manage filter
+		// Manage filter
 		if (is_array($filter) && count($filter) > 0) {
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid') {
-					$sql .= ' AND '.$key.' = '.$this->db->escape($value);
+					$sql .= ' AND '.$key.' = '.((int) $value);
 				} else {
 					$sql .= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
 				}
@@ -786,7 +786,7 @@ class Cronjob extends CommonObject
 		$sql .= " maxrun=".((isset($this->maxrun) && $this->maxrun > 0) ? $this->maxrun : "0").",";
 		$sql .= " libname=".(isset($this->libname) ? "'".$this->db->escape($this->libname)."'" : "null").",";
 		$sql .= " test=".(isset($this->test) ? "'".$this->db->escape($this->test)."'" : "null");
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
 
@@ -825,7 +825,7 @@ class Cronjob extends CommonObject
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."cronjob";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1027,7 +1027,7 @@ class Cronjob extends CommonObject
 		$sql = "SELECT";
 		$sql .= " f.rowid, f.datec, f.tms, f.fk_user_mod, f.fk_user_author";
 		$sql .= " FROM ".MAIN_DB_PREFIX."cronjob as f";
-		$sql .= " WHERE f.rowid = ".$id;
+		$sql .= " WHERE f.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1140,9 +1140,9 @@ class Cronjob extends CommonObject
 				$ret = dol_include_once($this->classesname);
 				if ($ret === false || (!class_exists($this->objectname))) {
 					if ($ret === false) {
-						$this->error = $langs->trans('CronCannotLoadClass', $this->classesname, $this->objectname);
+						$this->error = $langs->transnoentitiesnoconv('CronCannotLoadClass', $this->classesname, $this->objectname);
 					} else {
-						$this->error = $langs->trans('CronCannotLoadObject', $this->classesname, $this->objectname);
+						$this->error = $langs->transnoentitiesnoconv('CronCannotLoadObject', $this->classesname, $this->objectname);
 					}
 					dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
 					$this->lastoutput = $this->error;
@@ -1155,7 +1155,7 @@ class Cronjob extends CommonObject
 			// test if method exists
 			if (!$error) {
 				if (!method_exists($this->objectname, $this->methodename)) {
-					$this->error = $langs->trans('CronMethodDoesNotExists', $this->objectname, $this->methodename);
+					$this->error = $langs->transnoentitiesnoconv('CronMethodDoesNotExists', $this->objectname, $this->methodename);
 					dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
 					$this->lastoutput = $this->error;
 					$this->lastresult = -1;
@@ -1163,7 +1163,7 @@ class Cronjob extends CommonObject
 					$error++;
 				}
 				if (in_array(strtolower(trim($this->methodename)), array('executecli'))) {
-					$this->error = $langs->trans('CronMethodNotAllowed', $this->methodename, $this->objectname);
+					$this->error = $langs->transnoentitiesnoconv('CronMethodNotAllowed', $this->methodename, $this->objectname);
 					dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
 					$this->lastoutput = $this->error;
 					$this->lastresult = -1;

@@ -77,7 +77,7 @@ if ($conf->use_javascript_ajax) {
 		$colorseries = array();
 		$vals = array();
 
-		include_once DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+		include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);

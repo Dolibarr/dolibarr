@@ -80,6 +80,13 @@ if (!$sortfield) {
 $object = new Propal($db);
 $object->fetch($id, $ref);
 
+// Security check
+if (!empty($user->socid)) {
+	$socid = $user->socid;
+	$object->id = $user->socid;
+}
+restrictedArea($user, 'propal', $object->id);
+
 
 /*
  * Actions
@@ -182,7 +189,7 @@ if ($object->id > 0) {
 	$permission = $user->rights->propal->creer;
 	$permtoedit = $user->rights->propal->creer;
 	$param = '&id='.$object->id;
-	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {
 	print $langs->trans("ErrorUnknown");
 }

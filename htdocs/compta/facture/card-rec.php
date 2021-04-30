@@ -65,7 +65,6 @@ $objecttype = 'facture_rec';
 if ($action == "create" || $action == "add") {
 	$objecttype = '';
 }
-$result = restrictedArea($user, 'facture', $id, $objecttype);
 $projectid = GETPOST('projectid', 'int');
 
 $year_date_when = GETPOST('year_date_when');
@@ -126,6 +125,8 @@ $usercancreatewithdrarequest = $user->rights->prelevement->bons->creer;
 $now = dol_now();
 
 $error = 0;
+
+$result = restrictedArea($user, 'facture', $object->id, $objecttype);
 
 
 /*
@@ -769,7 +770,7 @@ if (empty($reshook)) {
 		}
 
 		/*$line = new FactureLigne($db);
-		$line->fetch(GETPOST('lineid'));
+		$line->fetch(GETPOST('lineid', 'int'));
 		$percent = $line->get_prev_progress($object->id);
 
 		if (GETPOST('progress') < $percent)
@@ -822,7 +823,7 @@ if (empty($reshook)) {
 		// Update line
 		if (!$error) {
 			$result = $object->updateline(
-				GETPOST('lineid'),
+				GETPOST('lineid', 'int'),
 				$description,
 				$pu_ht,
 				$qty,
@@ -1468,7 +1469,7 @@ if ($action == 'create') {
 			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'">';
 			print '<input type="hidden" name="action" value="setfrequency">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
-			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+			print '<table class="nobordernopadding">';
 			print '<tr><td>';
 			print "<input type='text' name='frequency' value='".$object->frequency."' size='5' />&nbsp;".$form->selectarray('unit_frequency', array('d'=>$langs->trans('Day'), 'm'=>$langs->trans('Month'), 'y'=>$langs->trans('Year')), ($object->unit_frequency ? $object->unit_frequency : 'm'));
 			print '</td>';
@@ -1596,7 +1597,7 @@ if ($action == 'create') {
 
 
 		// Lines
-		print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#add' : '#line_'.GETPOST('lineid')).'" method="POST">
+		print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#add' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">
         	<input type="hidden" name="token" value="' . newToken().'">
         	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
         	<input type="hidden" name="mode" value="">
@@ -1634,8 +1635,8 @@ if ($action == 'create') {
 		print dol_get_fiche_end();
 
 
-		/**
-		 * Barre d'actions
+		/*
+		 * Action bar
 		 */
 		print '<div class="tabsAction">';
 
@@ -1657,15 +1658,15 @@ if ($action == 'create') {
 
 		if ($user->rights->facture->creer) {
 			if (empty($object->suspended)) {
-				print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.DOL_URL_ROOT.'/compta/facture/card-rec.php?action=disable&id='.$object->id.'">'.$langs->trans("Disable").'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=disable&id='.$object->id.'&token='.newToken().'">'.$langs->trans("Disable").'</a></div>';
 			} else {
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card-rec.php?action=enable&id='.$object->id.'">'.$langs->trans("Enable").'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=enable&id='.$object->id.'&token='.newToken().'">'.$langs->trans("Enable").'</a></div>';
 			}
 		}
 
 		//if ($object->statut == Facture::STATUS_DRAFT && $user->rights->facture->supprimer)
 		if ($user->rights->facture->supprimer) {
-			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=ask_deleteinvoice&id='.$object->id.'">'.$langs->trans('Delete').'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=ask_deleteinvoice&id='.$object->id.'&token='.newToken().'">'.$langs->trans('Delete').'</a></div>';
 		}
 
 		print '</div>';

@@ -239,7 +239,7 @@ if ($action == 'create') {
 
 	$sql = "SELECT SUM(amount_capital) as total";
 	$sql .= " FROM ".MAIN_DB_PREFIX."payment_loan";
-	$sql .= " WHERE fk_loan = ".$chid;
+	$sql .= " WHERE fk_loan = ".((int) $chid);
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);

@@ -32,17 +32,13 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modNotification_Notification.class.php';
 
 // Load translation files required by page
-$langs->loadLangs(array('companies', 'mails', 'admin', 'other'));
+$langs->loadLangs(array('companies', 'mails', 'admin', 'other', 'errors'));
 
 $id = GETPOST("id", 'int');
+$ref = GETPOST('ref', 'alpha');
+
 $action = GETPOST('action', 'aZ09');
 $actionid = GETPOST('actionid');
-
-// Security check
-if ($user->socid) {
-	$id = $user->socid;
-}
-$result = restrictedArea($user, 'societe', '', '');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -63,10 +59,29 @@ $pagenext = $page + 1;
 
 $now = dol_now();
 
+// Security check
+$object = new User($db);
+if ($id > 0 || !empty($ref)) {
+	$result = $object->fetch($id, $ref, '', 1);
+	$object->getrights();
+}
+
+$permissiontoadd = (($object->id == $user->id) || (!empty($user->rights->user->user->lire)));
+
+// Security check
+if ($user->socid) {
+	$id = $user->socid;
+}
+$result = restrictedArea($user, 'user', '', '');
+
 
 /*
  * Actions
  */
+
+if (GETPOST('cancel', 'alpha')) {
+	$action = 'list';
+}
 
 // Add a notification
 if ($action == 'add') {
@@ -75,13 +90,14 @@ if ($action == 'add') {
 	if ($actionid <= 0) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Action")), null, 'errors');
 		$error++;
+		$action = 'create';
 	}
 
 	if (!$error) {
 		$db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
-		$sql .= " WHERE fk_user=".$id." AND fk_action=".$actionid;
+		$sql .= " WHERE fk_user=".((int) $id)." AND fk_action=".((int) $actionid);
 		if ($db->query($sql)) {
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (datec,fk_user, fk_action)";
 			$sql .= " VALUES ('".$db->idate($now)."',".$id.",".$actionid.")";
@@ -98,6 +114,7 @@ if ($action == 'add') {
 			$db->commit();
 		} else {
 			$db->rollback();
+			$action = 'create';
 		}
 	}
 }
@@ -185,16 +202,16 @@ if ($result > 0) {
 
 
 	// Add notification form
-	print load_fiche_titre($langs->trans("AddNewNotification"), '', '');
+	//  print load_fiche_titre($langs->trans("AddNewNotification"), '', '');
 
-	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">';
+	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.urlencode($id).'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	$param = "&id=".$id;
+	$param = "&id=".urlencode($id);
 
 	// Line with titles
-	print '<table width="100%" class="noborder">';
+	/*  print '<table width="100%" class="noborder">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Target", $_SERVER["PHP_SELF"], "c.lastname,c.firstname", '', $param, 'width="45%"', $sortfield, $sortorder);
 	print_liste_field_titre("Action", $_SERVER["PHP_SELF"], "", '', $param, 'width="35%"', $sortfield, $sortorder);
@@ -202,48 +219,10 @@ if ($result > 0) {
 	print_liste_field_titre('');
 	print "</tr>\n";
 
-
-	// $listofemails=$object->thirdparty_and_contact_email_array();
-	if ($object->email) {
-		$actions = array();
-
-		// Load array of available notifications
-		$notificationtrigger = new InterfaceNotification($db);
-		$listofnotifiedevents = $notificationtrigger->getListOfManagedEvents();
-
-		foreach ($listofnotifiedevents as $notifiedevent) {
-			$label = ($langs->trans("Notify_".$notifiedevent['code']) != "Notify_".$notifiedevent['code'] ? $langs->trans("Notify_".$notifiedevent['code']) : $notifiedevent['label']);
-			$actions[$notifiedevent['rowid']] = $label;
-		}
-		print '<tr class="oddeven nohover"><td>';
-		print $object->getNomUrl(1);
-		if (isValidEmail($object->email)) {
-			print ' &lt;'.$object->email.'&gt;';
-		} else {
-			$langs->load("errors");
-			print ' &nbsp; '.img_warning().' '.$langs->trans("ErrorBadEMail", $object->email);
-		}
-		print '</td>';
-		print '<td>';
-		print img_picto('', 'object_action', '', false, 0, 0, '', 'paddingright').$form->selectarray("actionid", $actions, '', 1);
-		print '</td>';
-		print '<td>';
-		$type = array('email'=>$langs->trans("EMail"));
-		print $form->selectarray("typeid", $type);
-		print '</td>';
-		print '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
-		print '</tr>';
-	} else {
-		print '<tr class="oddeven"><td colspan="4">';
-		print $langs->trans("YouMustAssignUserMailFirst");
-		print '</td></tr>';
-	}
-
 	print '</table>';
 
-	print '</form>';
 	print '<br>';
-
+	*/
 	// List of notifications enabled for contacts
 	$sql = "SELECT n.rowid, n.type,";
 	$sql .= " a.code, a.label,";
@@ -262,8 +241,13 @@ if ($result > 0) {
 		dol_print_error($db);
 	}
 
+	$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
+
+	$title = $langs->trans("ListOfActiveNotifications");
+
 	// List of active notifications
-	print load_fiche_titre($langs->trans("ListOfActiveNotifications").' ('.$num.')', '', '');
+	//print load_fiche_titre($langs->trans("ListOfActiveNotifications").' ('.$num.')', '', '');
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $num, 'email', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	// Line with titles
 	print '<table width="100%" class="noborder">';
@@ -274,98 +258,140 @@ if ($result > 0) {
 	print_liste_field_titre('', '', '');
 	print '</tr>';
 
-	$langs->load("errors");
-	$langs->load("other");
 
-	if ($num) {
-		$i = 0;
+	if ($action == 'create') {
+		// $listofemails=$object->thirdparty_and_contact_email_array();
+		if ($object->email) {
+			$actions = array();
 
-		$userstatic = new user($db);
+			// Load array of available notifications
+			$notificationtrigger = new InterfaceNotification($db);
+			$listofnotifiedevents = $notificationtrigger->getListOfManagedEvents();
 
-		while ($i < $num) {
-			$obj = $db->fetch_object($resql);
+			foreach ($listofnotifiedevents as $notifiedevent) {
+				$label = ($langs->trans("Notify_".$notifiedevent['code']) != "Notify_".$notifiedevent['code'] ? $langs->trans("Notify_".$notifiedevent['code']) : $notifiedevent['label']);
+				$actions[$notifiedevent['rowid']] = $label;
+			}
+			print '<tr class="oddeven nohover"><td>';
+			print $object->getNomUrl(1);
+			if (isValidEmail($object->email)) {
+				print ' &lt;'.$object->email.'&gt;';
+			} else {
+				$langs->load("errors");
+				print ' &nbsp; '.img_warning().' '.$langs->trans("ErrorBadEMail", $object->email);
+			}
+			print '</td>';
+			print '<td>';
+			print img_picto('', 'object_action', '', false, 0, 0, '', 'paddingright').$form->selectarray("actionid", $actions, '', 1);
+			print '</td>';
+			print '<td>';
+			$type = array('email'=>$langs->trans("EMail"));
+			print $form->selectarray("typeid", $type);
+			print '</td>';
+			print '<td class="nowraponall">';
+			print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+			print '&nbsp;';
+			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+			print '</td>';
+			print '</tr>';
+		} else {
+			print '<tr class="oddeven"><td colspan="4">';
+			print $langs->trans("YouMustAssignUserMailFirst");
+			print '</td></tr>';
+		}
+	} else {
+		if ($num) {
+			$i = 0;
 
-			$userstatic->id = $obj->userid;
-			$userstatic->lastname = $obj->lastname;
-			$userstatic->firstname = $obj->firstname;
-			print '<tr class="oddeven"><td>'.$userstatic->getNomUrl(1);
-			if ($obj->type == 'email') {
-				if (isValidEmail($obj->email)) {
-					print ' &lt;'.$obj->email.'&gt;';
-				} else {
-					$langs->load("errors");
-					print ' &nbsp; '.img_warning().' '.$langs->trans("ErrorBadEMail", $obj->email);
+			$userstatic = new user($db);
+
+			while ($i < $num) {
+				$obj = $db->fetch_object($resql);
+
+				$userstatic->id = $obj->userid;
+				$userstatic->lastname = $obj->lastname;
+				$userstatic->firstname = $obj->firstname;
+				print '<tr class="oddeven"><td>'.$userstatic->getNomUrl(1);
+				if ($obj->type == 'email') {
+					if (isValidEmail($obj->email)) {
+						print ' &lt;'.$obj->email.'&gt;';
+					} else {
+						$langs->load("errors");
+						print ' &nbsp; '.img_warning().' '.$langs->trans("ErrorBadEMail", $obj->email);
+					}
+				}
+				print '</td>';
+				print '<td>';
+				$label = ($langs->trans("Notify_".$obj->code) != "Notify_".$obj->code ? $langs->trans("Notify_".$obj->code) : $obj->label);
+				print img_picto('', 'object_action', '', false, 0, 0, '', 'paddingright').$label;
+				print '</td>';
+				print '<td>';
+				if ($obj->type == 'email') {
+					print $langs->trans("Email");
+				}
+				if ($obj->type == 'sms') {
+					print $langs->trans("SMS");
+				}
+				print '</td>';
+				print '<td class="right"><a href="card.php?id='.$id.'&amp;action=delete&amp;token='.newToken().'&amp;actid='.$obj->rowid.'">'.img_delete().'</a></td>';
+				print '</tr>';
+				$i++;
+			}
+			$db->free($resql);
+		}
+
+		// List of notifications enabled for fixed email
+		/*
+		foreach($conf->global as $key => $val) {
+			if (! preg_match('/^NOTIFICATION_FIXEDEMAIL_(.*)/', $key, $reg)) continue;
+			print '<tr class="oddeven"><td>';
+			$listtmp=explode(',',$val);
+			$first=1;
+			foreach($listtmp as $keyemail => $valemail)
+			{
+				if (! $first) print ', ';
+				$first=0;
+				$valemail=trim($valemail);
+				//print $keyemail.' - '.$valemail.' - '.$reg[1].'<br>';
+				if (isValidEmail($valemail, 1))
+				{
+					if ($valemail == '__SUPERVISOREMAIL__') print $valemail;
+					else print ' &lt;'.$valemail.'&gt;';
+				}
+				else
+				{
+					print ' '.img_warning().' '.$langs->trans("ErrorBadEMail",$valemail);
 				}
 			}
 			print '</td>';
 			print '<td>';
-			$label = ($langs->trans("Notify_".$obj->code) != "Notify_".$obj->code ? $langs->trans("Notify_".$obj->code) : $obj->label);
-			print img_picto('', 'object_action', '', false, 0, 0, '', 'paddingright').$label;
+			$notifcode=preg_replace('/_THRESHOLD_.*$/','',$reg[1]);
+			$notifcodecond=preg_replace('/^.*_(THRESHOLD_)/','$1',$reg[1]);
+			$label=($langs->trans("Notify_".$notifcode)!="Notify_".$notifcode?$langs->trans("Notify_".$notifcode):$notifcode);
+			print $label;
+			if (preg_match('/^THRESHOLD_HIGHER_(.*)$/',$notifcodecond,$regcond) && ($regcond[1] > 0))
+			{
+				print ' - '.$langs->trans("IfAmountHigherThan",$regcond[1]);
+			}
 			print '</td>';
 			print '<td>';
-			if ($obj->type == 'email') {
-				print $langs->trans("Email");
-			}
-			if ($obj->type == 'sms') {
-				print $langs->trans("SMS");
-			}
+			print $langs->trans("Email");
 			print '</td>';
-			print '<td class="right"><a href="card.php?id='.$id.'&amp;action=delete&amp;token='.newToken().'&amp;actid='.$obj->rowid.'">'.img_delete().'</a></td>';
+			print '<td class="right">'.$langs->trans("SeeModuleSetup", $langs->transnoentitiesnoconv("Module600Name")).'</td>';
 			print '</tr>';
-			$i++;
-		}
-		$db->free($resql);
+		}*/
+		/*if ($user->admin)
+		{
+			$var = ! $var;
+			print '<tr class="oddeven"><td colspan="4">';
+			print '+ <a href="'.DOL_URL_ROOT.'/admin/notification.php">'.$langs->trans("SeeModuleSetup", $langs->transnoentitiesnoconv("Module600Name")).'</a>';
+			print '</td></tr>';
+		}*/
 	}
 
-	// List of notifications enabled for fixed email
-	/*
-	foreach($conf->global as $key => $val) {
-		if (! preg_match('/^NOTIFICATION_FIXEDEMAIL_(.*)/', $key, $reg)) continue;
-		print '<tr class="oddeven"><td>';
-		$listtmp=explode(',',$val);
-		$first=1;
-		foreach($listtmp as $keyemail => $valemail)
-		{
-			if (! $first) print ', ';
-			$first=0;
-			$valemail=trim($valemail);
-			//print $keyemail.' - '.$valemail.' - '.$reg[1].'<br>';
-			if (isValidEmail($valemail, 1))
-			{
-				if ($valemail == '__SUPERVISOREMAIL__') print $valemail;
-				else print ' &lt;'.$valemail.'&gt;';
-			}
-			else
-			{
-				print ' '.img_warning().' '.$langs->trans("ErrorBadEMail",$valemail);
-			}
-		}
-		print '</td>';
-		print '<td>';
-		$notifcode=preg_replace('/_THRESHOLD_.*$/','',$reg[1]);
-		$notifcodecond=preg_replace('/^.*_(THRESHOLD_)/','$1',$reg[1]);
-		$label=($langs->trans("Notify_".$notifcode)!="Notify_".$notifcode?$langs->trans("Notify_".$notifcode):$notifcode);
-		print $label;
-		if (preg_match('/^THRESHOLD_HIGHER_(.*)$/',$notifcodecond,$regcond) && ($regcond[1] > 0))
-		{
-			print ' - '.$langs->trans("IfAmountHigherThan",$regcond[1]);
-		}
-		print '</td>';
-		print '<td>';
-		print $langs->trans("Email");
-		print '</td>';
-		print '<td class="right">'.$langs->trans("SeeModuleSetup", $langs->transnoentitiesnoconv("Module600Name")).'</td>';
-		print '</tr>';
-	}*/
-	/*if ($user->admin)
-	{
-		$var = ! $var;
-		print '<tr class="oddeven"><td colspan="4">';
-		print '+ <a href="'.DOL_URL_ROOT.'/admin/notification.php">'.$langs->trans("SeeModuleSetup", $langs->transnoentitiesnoconv("Module600Name")).'</a>';
-		print '</td></tr>';
-	}*/
-
 	print '</table>';
+
+	print '</form>';
 
 
 	print '<br><br>'."\n";
@@ -422,7 +448,7 @@ if ($result > 0) {
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 
 	// List of notifications done
-	print_barre_liste($langs->trans("ListOfNotificationsDone"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, '', '', $limit);
+	print_barre_liste($langs->trans("ListOfNotificationsDone"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'email', 0, '', '', $limit);
 
 	// Line with titles
 	print '<table width="100%" class="noborder">';

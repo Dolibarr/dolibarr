@@ -75,6 +75,7 @@ function llxFooter()
 	print "\n".'</html>'."\n";
 }
 
+
 require_once '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -117,10 +118,10 @@ if (!isset($conf->global->ASTERISK_MAX_RETRY)) {
 }
 
 
-$login = GETPOST('login');
-$password = GETPOST('password');
-$caller = GETPOST('caller');
-$called = GETPOST('called');
+$login = GETPOST('login', 'alphanohtml');
+$password = GETPOST('password', 'none');
+$caller = GETPOST('caller', 'alphanohtml');
+$called = GETPOST('called', 'alphanohtml');
 
 // IP address of Asterisk server
 $strHost = $conf->global->ASTERISK_HOST;
@@ -163,7 +164,7 @@ if ($resql) {
 	if ($obj) {
 		$found = $obj->name;
 	} else {
-		$found = $notfound;
+		$found = 'Not found';
 	}
 	$db->free($resql);
 } else {
@@ -177,7 +178,7 @@ if (!empty($number)) {
 	if ($pos === false) {
 		$errno = 0;
 		$errstr = 0;
-		$strCallerId = "Dolibarr call $found <".strtolower($number).">";
+		$strCallerId = "Dolibarr caller $found <".strtolower($number).">";
 		$oSocket = @fsockopen($strHost, $port, $errno, $errstr, 10);
 		if (!$oSocket) {
 			print '<body>'."\n";
@@ -211,7 +212,7 @@ if (!empty($number)) {
 		}
 	}
 } else {
-	print 'Bad parameters in URL. Must be '.$_SERVER['PHP_SELF'].'?caller=99999&called=99999&login=xxxxx&password=xxxxx';
+	print 'Bad parameters in URL. Must be '.dol_escape_htmltag($_SERVER['PHP_SELF']).'?caller=99999&called=99999&login=xxxxx&password=xxxxx';
 }
 
 // End of page

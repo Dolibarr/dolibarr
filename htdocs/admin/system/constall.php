@@ -223,7 +223,7 @@ if (empty($conf->multicompany->enabled)) {
 } else {
 	// If multicompany mode, superadmin (user->entity=0) can see everything, admin are limited to their entities.
 	if ($user->entity) {
-		$sql .= " WHERE entity IN (".$user->entity.",".$conf->entity.")";
+		$sql .= " WHERE entity IN (".$db->sanitize($user->entity.",".$conf->entity).")";
 	}
 }
 $sql .= " ORDER BY entity, name ASC";

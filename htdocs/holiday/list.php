@@ -3,7 +3,7 @@
  * Copyright (C) 2013-2020 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2016 Regis Houssin	<regis.houssin@inodbox.com>
  * Copyright (C) 2018      Charlene Benke	<charlie@patas-monkey.com>
- * Copyright (C) 2019	   Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2021 Frédéric France		<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'holidaylist'; // To manage different context of search
 
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
-$optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+$optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 $id = GETPOST('id', 'int');
 
@@ -341,10 +341,10 @@ if (!empty($search_status) && $search_status != -1) {
 }
 
 if (empty($user->rights->holiday->readall)) {
-	$sql .= ' AND cp.fk_user IN ('.join(',', $childids).')';
+	$sql .= ' AND cp.fk_user IN ('.$db->sanitize(join(',', $childids)).')';
 }
 if ($id > 0) {
-	$sql .= " AND cp.fk_user IN (".$id.")";
+	$sql .= " AND cp.fk_user IN (".$db->sanitize($id).")";
 }
 
 // Add where from extra fields
@@ -434,12 +434,12 @@ if ($resql) {
 
 	// List of mass actions available
 	$arrayofmassactions = array(
-		//'generate_doc'=>$langs->trans("ReGeneratePDF"),
-		//'builddoc'=>$langs->trans("PDFMerge"),
-		//'presend'=>$langs->trans("SendByMail"),
+		//'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
+		//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
+		//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 	);
-	if ($user->rights->holiday->supprimer) {
-		$arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+	if (!empty($user->rights->holiday->delete)) {
+		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	}
 	if (in_array($massaction, array('presend', 'predelete'))) {
 		$arrayofmassactions = array();

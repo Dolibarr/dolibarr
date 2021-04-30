@@ -33,7 +33,7 @@ function checkElementExist($id, $table)
 	global $db;
 
 	$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$table;
-	$sql .= ' WHERE rowid = '.$id;
+	$sql .= ' WHERE rowid = '.((int) $id);
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
@@ -106,7 +106,7 @@ function checkLinkedElements($sourcetype, $targettype)
 		foreach ($elements as $key => $element) {
 			if (!checkElementExist($element[$sourcetype], $sourcetable) || !checkElementExist($element[$targettype], $targettable)) {
 				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'element_element';
-				$sql .= ' WHERE rowid = '.$key;
+				$sql .= ' WHERE rowid = '.((int) $key);
 				$resql = $db->query($sql);
 				$deleted++;
 			}
@@ -140,7 +140,7 @@ function clean_data_ecm_directories()
 			$label = $obj->label;
 			$newlabel = dol_sanitizeFileName($label);
 			if ($label != $newlabel) {
-				$sqlupdate = "UPDATE ".MAIN_DB_PREFIX."ecm_directories set label='".$db->escape($newlabel)."' WHERE rowid=".$id;
+				$sqlupdate = "UPDATE ".MAIN_DB_PREFIX."ecm_directories set label = '".$db->escape($newlabel)."' WHERE rowid = ".((int) $id);
 				print '<tr><td>'.$sqlupdate."</td></tr>\n";
 				$resqlupdate = $db->query($sqlupdate);
 				if (!$resqlupdate) {

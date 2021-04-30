@@ -179,7 +179,7 @@ if ($action == "correct_stock") {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Product")), null, 'errors');
 		$action = 'correction';
 	}
-	if (!is_numeric($_POST["nbpiece"])) {
+	if (!is_numeric(GETPOST("nbpiece"))) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldMustBeANumeric", $langs->transnoentitiesnoconv("NumberOfUnit")), null, 'errors');
 		$action = 'correction';
@@ -456,7 +456,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON m.fk_user_author = u.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot as pl ON m.batch = pl.batch AND m.fk_product = pl.fk_product";
 $sql .= " WHERE m.fk_product = p.rowid";
 if ($msid > 0) {
-	$sql .= " AND m.rowid = ".$msid;
+	$sql .= " AND m.rowid = ".((int) $msid);
 }
 $sql .= " AND m.fk_entrepot = e.rowid";
 $sql .= " AND e.entity IN (".getEntity('stock').")";
@@ -464,7 +464,7 @@ if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 	$sql .= " AND p.fk_product_type = 0";
 }
 if ($id > 0) {
-	$sql .= " AND e.rowid ='".$id."'";
+	$sql .= " AND e.rowid = ".((int) $id);
 }
 $sql .= dolSqlDateFilter('m.datem', 0, $month, $year);
 if ($idproduct > 0) {
@@ -664,12 +664,9 @@ if ($resql) {
 	}
 
 
-	/* ************************************************************************** */
-	/*                                                                            */
-	/* Barre d'action                                                             */
-	/*                                                                            */
-	/* ************************************************************************** */
-
+	/*
+	 * Action bar
+	 */
 	if ((empty($action) || $action == 'list') && $id > 0) {
 		print "<div class=\"tabsAction\">\n";
 
@@ -1176,13 +1173,13 @@ if ($resql) {
 
 
 /*
- * Documents generes
+ * Generated documents
  */
 //Area for doc and last events of warehouse are stored on the main card of warehouse
 $modulepart = 'movement';
 
 if ($action != 'create' && $action != 'edit' && $action != 'delete' && $id > 0) {
-	print '<br/>';
+	print '<br>';
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 	print '<a name="builddoc"></a>'; // ancre
 

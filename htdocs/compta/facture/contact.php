@@ -48,9 +48,14 @@ $action = GETPOST('action', 'aZ09');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'facture', $id);
 
 $object = new Facture($db);
+// Load object
+if ($id > 0 || !empty($ref)) {
+	$ret = $object->fetch($id, $ref, '', '', $conf->global->INVOICE_USE_SITUATION);
+}
+
+$result = restrictedArea($user, 'facture', $object->id);
 
 
 /*
@@ -58,8 +63,6 @@ $object = new Facture($db);
  */
 
 if ($action == 'addcontact' && $user->rights->facture->creer) {
-	$result = $object->fetch($id);
-
 	if ($result > 0 && $id > 0) {
 		$contactid = (GETPOST('userid') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
 		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
@@ -79,14 +82,9 @@ if ($action == 'addcontact' && $user->rights->facture->creer) {
 	}
 } elseif ($action == 'swapstatut' && $user->rights->facture->creer) {
 	// Toggle the status of a contact
-	if ($object->fetch($id)) {
-		$result = $object->swapContactStatus(GETPOST('ligne'));
-	} else {
-		dol_print_error($db);
-	}
+	$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
 } elseif ($action == 'deletecontact' && $user->rights->facture->creer) {
 	// Deletes a contact
-	$object->fetch($id);
 	$result = $object->delete_contact($lineid);
 
 	if ($result >= 0) {

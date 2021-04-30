@@ -351,12 +351,12 @@ if ($id > 0 || $ref) {
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 	$sql .= ", ".MAIN_DB_PREFIX."prelevement_bons as pb";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-	$sql .= " WHERE pl.fk_prelevement_bons = ".$id;
+	$sql .= " WHERE pl.fk_prelevement_bons = ".((int) $id);
 	$sql .= " AND pl.fk_prelevement_bons = pb.rowid";
 	$sql .= " AND pb.entity = ".$conf->entity;
 	$sql .= " AND pl.fk_soc = s.rowid";
 	if ($socid) {
-		$sql .= " AND s.rowid = ".$socid;
+		$sql .= " AND s.rowid = ".((int) $socid);
 	}
 	$sql .= $db->order($sortfield, $sortorder);
 
@@ -380,7 +380,7 @@ if ($id > 0 || $ref) {
 		$num = $db->num_rows($result);
 		$i = 0;
 
-		$urladd = "&amp;id=".$id;
+		$urladd = "&id=".urlencode($id);
 
 		print '<form method="get" action="'.$_SERVER ['PHP_SELF'].'" name="search_form">'."\n";
 		print '<input type="hidden" name="id" value="'.$id.'"/>';
@@ -394,7 +394,7 @@ if ($id > 0 || $ref) {
 		print_barre_liste($langs->trans("Lines"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, '', '', $limit);
 
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
-		print '<table class="noborder liste" width="100%" cellspacing="0" cellpadding="4">';
+		print '<table class="noborder liste" width="100%" cellpadding="4">';
 		print '<tr class="liste_titre">';
 		print_liste_field_titre("Lines", $_SERVER["PHP_SELF"], "pl.rowid", '', $urladd);
 		print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", '', $urladd);
@@ -423,7 +423,7 @@ if ($id > 0 || $ref) {
 			print $thirdparty->getNomUrl(1);
 			print "</td>\n";
 
-			print '<td class="right">'.price($obj->amount)."</td>\n";
+			print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>\n";
 
 			print '<td class="right">';
 

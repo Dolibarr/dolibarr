@@ -518,7 +518,7 @@ function pFooter($nonext = 0, $setuplang = '', $jscheckfunction = '', $withpleas
 		}
 	}
 	if ($setuplang) {
-		print '<input type="hidden" name="selectlang" value="'.$setuplang.'">';
+		print '<input type="hidden" name="selectlang" value="'.dol_escape_htmltag($setuplang).'">';
 	}
 
 	print '</form>'."\n";

@@ -1023,7 +1023,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$sql .= " cp.code";
 		$sql .= " FROM ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf, ".MAIN_DB_PREFIX."paiementfourn as p";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON p.fk_paiement = cp.id";
-		$sql .= " WHERE pf.fk_paiementfourn = p.rowid and pf.fk_facturefourn = ".$object->id;
+		$sql .= " WHERE pf.fk_paiementfourn = p.rowid and pf.fk_facturefourn = ".((int) $object->id);
 		$sql .= " ORDER BY p.datep";
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -1111,7 +1111,17 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("SupplierInvoice")." ".$outputlangs->convToOutputCharset($object->ref), '', 'R');
+		$title = $outputlangs->transnoentities("PdfInvoiceTitle");
+		if ($object->type == 1) {
+			$title = $outputlangs->transnoentities("InvoiceReplacement");
+		}
+		if ($object->type == 2) {
+			$title = $outputlangs->transnoentities("InvoiceAvoir");
+		}
+		if ($object->type == 3) {
+			$title = $outputlangs->transnoentities("InvoiceDeposit");
+		}
+		$pdf->MultiCell(100, 3, $title." ".$outputlangs->convToOutputCharset($object->ref), '', 'R');
 		$posy += 1;
 
 		if ($object->ref_supplier) {
@@ -1125,14 +1135,25 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 		$pdf->SetFont('', '', $default_font_size - 1);
 
+		if (!empty($conf->global->PDF_SHOW_PROJECT_TITLE)) {
+			$object->fetch_projet();
+			if (!empty($object->project->ref)) {
+				$posy += 3;
+				$pdf->SetXY($posx, $posy);
+				$pdf->SetTextColor(0, 0, 60);
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->title) ? '' : $object->project->title), '', 'R');
+			}
+		}
+
 		if (!empty($conf->global->PDF_SHOW_PROJECT)) {
 			$object->fetch_projet();
 			if (!empty($object->project->ref)) {
+				$outputlangs->load("projects");
 				$posy += 4;
 				$pdf->SetXY($posx, $posy);
 				$langs->load("projects");
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->ref) ? '' : $object->projet->ref), '', 'R');
+				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->ref) ? '' : $object->project->ref), '', 'R');
 			}
 		}
 

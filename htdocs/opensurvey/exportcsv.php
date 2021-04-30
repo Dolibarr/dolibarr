@@ -40,6 +40,11 @@ if ($result <= 0) {
 	dol_print_error('', 'Failed to get survey id '.$numsondage);
 }
 
+// Security check
+if (empty($user->rights->opensurvey->read)) {
+	accessforbidden();
+}
+
 
 /*
  * Actions

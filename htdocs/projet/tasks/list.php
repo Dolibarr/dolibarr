@@ -128,26 +128,26 @@ if (empty($user->socid)) {
 }
 
 $arrayfields = array(
-	't.fk_task_parent'=>array('label'=>$langs->trans("RefTaskParent"), 'checked'=>0, 'position'=>70),
-	't.ref'=>array('label'=>$langs->trans("RefTask"), 'checked'=>1, 'position'=>80),
-	't.label'=>array('label'=>$langs->trans("LabelTask"), 'checked'=>1, 'position'=>80),
-	't.description'=>array('label'=>$langs->trans("Description"), 'checked'=>0, 'position'=>80),
-	't.dateo'=>array('label'=>$langs->trans("DateStart"), 'checked'=>1, 'position'=>100),
-	't.datee'=>array('label'=>$langs->trans("Deadline"), 'checked'=>1, 'position'=>101),
-	'p.ref'=>array('label'=>$langs->trans("ProjectRef"), 'checked'=>1),
-	'p.title'=>array('label'=>$langs->trans("ProjectLabel"), 'checked'=>0),
-	's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>0),
-	'p.fk_statut'=>array('label'=>$langs->trans("ProjectStatus"), 'checked'=>1),
-	't.planned_workload'=>array('label'=>$langs->trans("PlannedWorkload"), 'checked'=>1, 'position'=>102),
-	't.duration_effective'=>array('label'=>$langs->trans("TimeSpent"), 'checked'=>1, 'position'=>103),
-	't.progress_calculated'=>array('label'=>$langs->trans("ProgressCalculated"), 'checked'=>1, 'position'=>104),
-	't.progress'=>array('label'=>$langs->trans("ProgressDeclared"), 'checked'=>1, 'position'=>105),
-	't.progress_summary'=>array('label'=>$langs->trans("TaskProgressSummary"), 'checked'=>1, 'position'=>106),
-	't.tobill'=>array('label'=>$langs->trans("TimeToBill"), 'checked'=>0, 'position'=>110),
-	't.billed'=>array('label'=>$langs->trans("TimeBilled"), 'checked'=>0, 'position'=>111),
-	't.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
-	't.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
-	//'t.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
+	't.fk_task_parent'=>array('label'=>"RefTaskParent", 'checked'=>0, 'position'=>70),
+	't.ref'=>array('label'=>"RefTask", 'checked'=>1, 'position'=>80),
+	't.label'=>array('label'=>"LabelTask", 'checked'=>1, 'position'=>80),
+	't.description'=>array('label'=>"Description", 'checked'=>0, 'position'=>80),
+	't.dateo'=>array('label'=>"DateStart", 'checked'=>1, 'position'=>100),
+	't.datee'=>array('label'=>"Deadline", 'checked'=>1, 'position'=>101),
+	'p.ref'=>array('label'=>"ProjectRef", 'checked'=>1),
+	'p.title'=>array('label'=>"ProjectLabel", 'checked'=>0),
+	's.nom'=>array('label'=>"ThirdParty", 'checked'=>0),
+	'p.fk_statut'=>array('label'=>"ProjectStatus", 'checked'=>1),
+	't.planned_workload'=>array('label'=>"PlannedWorkload", 'checked'=>1, 'position'=>102),
+	't.duration_effective'=>array('label'=>"TimeSpent", 'checked'=>1, 'position'=>103),
+	't.progress_calculated'=>array('label'=>"ProgressCalculated", 'checked'=>1, 'position'=>104),
+	't.progress'=>array('label'=>"ProgressDeclared", 'checked'=>1, 'position'=>105),
+	't.progress_summary'=>array('label'=>"TaskProgressSummary", 'checked'=>1, 'position'=>106),
+	't.tobill'=>array('label'=>"TimeToBill", 'checked'=>0, 'position'=>110),
+	't.billed'=>array('label'=>"TimeBilled", 'checked'=>0, 'position'=>111),
+	't.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
+	't.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
+	//'t.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
@@ -334,17 +334,17 @@ if ($search_task_user > 0) {
 $sql .= " WHERE t.fk_projet = p.rowid";
 $sql .= " AND p.entity IN (".getEntity('project').')';
 if (!$user->rights->projet->all->lire) {
-	$sql .= " AND p.rowid IN (".($projectsListId ? $projectsListId : '0').")"; // public and assigned to projects, or restricted to company for external users
+	$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId ? $projectsListId : '0').")"; // public and assigned to projects, or restricted to company for external users
 }
 if (is_object($projectstatic) && $projectstatic->id > 0) {
-	$sql .= " AND p.rowid = ".$projectstatic->id;
+	$sql .= " AND p.rowid = ".((int) $projectstatic->id);
 }
 // No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
 if ($socid) {
-	$sql .= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
+	$sql .= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
 }
 if ($search_categ > 0) {
-	$sql .= " AND cs.fk_categorie = ".$db->escape($search_categ);
+	$sql .= " AND cs.fk_categorie = ".((int) $search_categ);
 }
 if ($search_categ == -2) {
 	$sql .= " AND cs.fk_categorie IS NULL";
@@ -389,10 +389,10 @@ if ($search_public != '') {
 	$sql .= " AND p.public = ".$db->escape($search_public);
 }
 if ($search_project_user > 0) {
-	$sql .= " AND ecp.fk_c_type_contact IN (".join(',', array_keys($listofprojectcontacttype)).") AND ecp.element_id = p.rowid AND ecp.fk_socpeople = ".$search_project_user;
+	$sql .= " AND ecp.fk_c_type_contact IN (".$db->sanitize(join(',', array_keys($listofprojectcontacttype))).") AND ecp.element_id = p.rowid AND ecp.fk_socpeople = ".$search_project_user;
 }
 if ($search_task_user > 0) {
-	$sql .= " AND ect.fk_c_type_contact IN (".join(',', array_keys($listoftaskcontacttype)).") AND ect.element_id = t.rowid AND ect.fk_socpeople = ".$search_task_user;
+	$sql .= " AND ect.fk_c_type_contact IN (".$db->sanitize(join(',', array_keys($listoftaskcontacttype))).") AND ect.element_id = t.rowid AND ect.fk_socpeople = ".$search_task_user;
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -529,12 +529,12 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 // List of mass actions available
 $arrayofmassactions = array(
-//    'presend'=>$langs->trans("SendByMail"),
-//    'builddoc'=>$langs->trans("PDFMerge"),
+//    'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
+//    'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 );
 //if($user->rights->societe->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
 if ($user->rights->societe->supprimer) {
-	$arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
 if (in_array($massaction, array('presend', 'predelete'))) {
 	$arrayofmassactions = array();
@@ -588,29 +588,29 @@ $morehtmlfilter = '';
 if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= $langs->trans('ProjectCategories').': ';
-	$moreforfilter .= $formother->select_categories('project', $search_categ, 'search_categ', 1, 'maxwidth300');
+	$tmptitle = $langs->trans('ProjectCategories');
+	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$formother->select_categories('project', $search_categ, 'search_categ', 0, $tmptitle, 'maxwidth300');
 	$moreforfilter .= '</div>';
 }
 
 // If the user can view users
 $moreforfilter .= '<div class="divsearchfield">';
-$moreforfilter .= $langs->trans('ProjectsWithThisUserAsContact').' ';
+$tmptitle = $langs->trans('ProjectsWithThisUserAsContact');
 $includeonly = '';
 if (empty($user->rights->user->user->lire)) {
 	$includeonly = array($user->id);
 }
-$moreforfilter .= $form->select_dolusers($search_project_user ? $search_project_user : '', 'search_project_user', 1, '', 0, $includeonly, '', 0, 0, 0, '', 0, '', 'maxwidth200');
+$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_project_user ? $search_project_user : '', 'search_project_user', $tmptitle, '', 0, $includeonly, '', 0, 0, 0, '', 0, '', 'maxwidth250');
 $moreforfilter .= '</div>';
 
 // If the user can view users
 $moreforfilter .= '<div class="divsearchfield">';
-$moreforfilter .= $langs->trans('TasksWithThisUserAsContact').': ';
+$tmptitle = $langs->trans('TasksWithThisUserAsContact');
 $includeonly = '';
 if (empty($user->rights->user->user->lire)) {
 	$includeonly = array($user->id);
 }
-$moreforfilter .= $form->select_dolusers($search_task_user, 'search_task_user', 1, '', 0, $includeonly, '', 0, 0, 0, '', 0, '', 'maxwidth200');
+$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_task_user, 'search_task_user', $tmptitle, '', 0, $includeonly, '', 0, 0, 0, '', 0, '', 'maxwidth250');
 $moreforfilter .= '</div>';
 
 if (!empty($moreforfilter)) {
@@ -658,7 +658,7 @@ if (!empty($arrayfields['t.dateo']['checked'])) {
 		print '<input class="flat" type="text" size="1" maxlength="2" name="search_sday" value="'.$search_sday.'">';
 	}
 	print '<input class="flat" type="text" size="1" maxlength="2" name="search_smonth" value="'.$search_smonth.'">';
-	$formother->select_year($search_syear ? $search_syear : -1, 'search_syear', 1, 20, 5);
+	print $formother->selectyear($search_syear ? $search_syear : -1, 'search_syear', 1, 20, 5, 0, 0, '', 'valignmiddle width75', 1);
 	print '</td>';
 }
 // End date
@@ -668,7 +668,7 @@ if (!empty($arrayfields['t.datee']['checked'])) {
 		print '<input class="flat" type="text" size="1" maxlength="2" name="search_eday" value="'.$search_eday.'">';
 	}
 	print '<input class="flat" type="text" size="1" maxlength="2" name="search_emonth" value="'.$search_emonth.'">';
-	$formother->select_year($search_eyear ? $search_eyear : -1, 'search_eyear', 1, 20, 5);
+	print $formother->selectyear($search_eyear ? $search_eyear : -1, 'search_eyear', 1, 20, 5, 0, 0, '', 'valignmiddle width75', 1);
 	print '</td>';
 }
 if (!empty($arrayfields['p.ref']['checked'])) {

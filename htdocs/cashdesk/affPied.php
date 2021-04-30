@@ -21,6 +21,10 @@
  *	\brief      Bottom of main page of point of sale module
  */
 
+if (empty($user->rights->cashdesk->run)) {
+	accessforbidden();
+}
+
 ?>
 <!-- affPied.php -->
 <div class="pied">

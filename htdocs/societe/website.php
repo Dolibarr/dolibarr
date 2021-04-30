@@ -283,7 +283,7 @@ if ($objectwebsiteaccount->ismultientitymanaged == 1) {
 } else {
 	$sql .= " WHERE 1 = 1";
 }
-$sql .= " AND fk_soc = ".$object->id;
+$sql .= " AND fk_soc = ".((int) $object->id);
 foreach ($search as $key => $val) {
 	$mode_search = (($objectwebsiteaccount->isInt($objectwebsiteaccount->fields[$key]) || $objectwebsiteaccount->isFloat($objectwebsiteaccount->fields[$key])) ? 1 : 0);
 	if ($search[$key] != '') {

@@ -20,7 +20,7 @@
  *  \brief      Add a log into a block chain for some actions.
  *  \file       htdocs/core/modules/modBlockedLog.class.php
  *  \ingroup    blockedlog
- *  \brief      Description and activation file for module BlockedLog
+ *  \brief      Description and activation file for the module BlockedLog
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -92,7 +92,7 @@ class modBlockedLog extends DolibarrModules
 
 		$this->always_enabled = (!empty($conf->blockedlog->enabled)
 			&& !empty($conf->global->BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY)
-			&& in_array($mysoc->country_code, explode(',', $conf->global->BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY))
+			&& in_array((empty($mysoc->country_code) ? '' : $mysoc->country_code), explode(',', $conf->global->BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY))
 			&& $this->alreadyUsed());
 
 		// Constants
@@ -113,7 +113,7 @@ class modBlockedLog extends DolibarrModules
 		// -----------------
 		$this->rights = array(); // Permission array used by this module
 
-		$r = 0;
+		$r = 1;
 		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Read archived events and fingerprints'; // Permission label
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)

@@ -43,6 +43,11 @@ $err = GETPOST("err");
 // Instantiate hooks of thirdparty module only if not already define
 $hookmanager->initHooks(array('cashdeskloginpage'));
 
+if (empty($user->rights->cashdesk->run)) {
+	accessforbidden();
+}
+
+
 /*
  * View
  */

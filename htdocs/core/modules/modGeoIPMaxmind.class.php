@@ -20,7 +20,7 @@
  *  \brief      Module to make geoip conversions
  *	\file       htdocs/core/modules/modGeoIPMaxmind.class.php
  *	\ingroup    geoip
- *	\brief      File of geoipmaxmind module descriptor
+ *	\brief      Description and activation file for the module geoipmaxmind
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';

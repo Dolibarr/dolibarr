@@ -110,6 +110,12 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 	public $note;
 
 	/**
+	 * @var string 	Widget type ('graph' means the widget is a graph widget)
+	 */
+	public $widgettype = '';
+
+
+	/**
 	 * Constructor
 	 *
 	 * @param   DoliDB  $db     Database handler
@@ -489,12 +495,12 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 				}
 
 				// We set info of modules
-				$widget[$j]['picto'] = $objMod->picto ?img_object('', $objMod->picto) : img_object('', 'generic');
+				$widget[$j]['picto'] = $objMod->picto ? img_object('', $objMod->picto) : img_object('', 'generic');
 				$widget[$j]['file'] = $files[$key];
 				$widget[$j]['fullpath'] = $fullpath[$key];
 				$widget[$j]['relpath'] = $relpath[$key];
 				$widget[$j]['iscoreorexternal'] = $iscoreorexternal[$key];
-				//$widget[$j]['version'] = $objMod->getVersion();
+				$widget[$j]['version'] = empty($objMod->version) ? '' : $objMod->version;
 				$widget[$j]['status'] = img_picto($langs->trans("Active"), 'tick');
 				if ($disabledbyname > 0 || $disabledbymodule > 1) {
 					$widget[$j]['status'] = '';

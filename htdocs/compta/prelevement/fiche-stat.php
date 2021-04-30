@@ -162,7 +162,7 @@ if ($prev_id > 0 || $ref) {
 
 	$sql = "SELECT sum(pl.amount), pl.statut";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-	$sql .= " WHERE pl.fk_prelevement_bons = ".$object->id;
+	$sql .= " WHERE pl.fk_prelevement_bons = ".((int) $object->id);
 	$sql .= " GROUP BY pl.statut";
 
 	$resql = $db->query($sql);
@@ -173,7 +173,7 @@ if ($prev_id > 0 || $ref) {
 		print load_fiche_titre($langs->trans("StatisticsByLineStatus"), '', '');
 
 		print"\n<!-- debut table -->\n";
-		print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+		print '<table class="noborder" width="100%" cellpadding="4">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Status").'</td><td class="right">'.$langs->trans("Amount").'</td><td class="right">%</td></tr>';
 

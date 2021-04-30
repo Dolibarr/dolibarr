@@ -225,12 +225,9 @@ if ($id) {
 		print '</form>';
 	}
 
-	/* ************************************************************************** */
-	/*                                                                            */
-	/* Barre d'action                                                             */
-	/*                                                                            */
-	/* ************************************************************************** */
-
+	/*
+	 * Action bar
+	 */
 	print "<div class=\"tabsAction\">";
 
 	if ($action == '') {
@@ -265,9 +262,9 @@ if ($id) {
 	$sql .= " AND f.fk_soc = s.rowid";
 	$sql .= " AND pf.fk_facture = f.rowid";
 	$sql .= " AND f.entity IN (".getEntity('invoice').")";
-	$sql .= " AND pl.rowid=".$id;
+	$sql .= " AND pl.rowid = ".((int) $id);
 	if ($socid) {
-		$sql .= " AND s.rowid = ".$socid;
+		$sql .= " AND s.rowid = ".((int) $socid);
 	}
 	$sql .= " ORDER BY $sortfield $sortorder ";
 	$sql .= $db->plimit($conf->liste_limit + 1, $offset);
@@ -278,12 +275,12 @@ if ($id) {
 		$num = $db->num_rows($result);
 		$i = 0;
 
-		$urladd = "&amp;id=".$id;
+		$urladd = "&id=".urlencode($id);
 
 		print_barre_liste($langs->trans("Bills"), $page, "factures.php", $urladd, $sortfield, $sortorder, '', $num, 0, '');
 
 		print"\n<!-- debut table -->\n";
-		print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+		print '<table class="noborder" width="100%" cellpadding="4">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Invoice").'</td><td>'.$langs->trans("ThirdParty").'</td><td class="right">'.$langs->trans("Amount").'</td><td class="right">'.$langs->trans("Status").'</td>';
 		print '</tr>';
@@ -304,7 +301,7 @@ if ($id) {
 			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">';
 			print img_object($langs->trans("ShowCompany"), "company").' '.$obj->name."</a></td>\n";
 
-			print '<td class="right">'.price($obj->total_ttc)."</td>\n";
+			print '<td class="right"><span class="amount">'.price($obj->total_ttc)."</span></td>\n";
 
 			print '<td class="right">';
 			$invoicestatic->fetch($obj->facid);

@@ -158,6 +158,10 @@ class Orders extends DolibarrApi
 	{
 		global $db, $conf;
 
+		if (!DolibarrApiAccess::$user->rights->commande->lire) {
+			throw new RestException(401);
+		}
+
 		$obj_ret = array();
 
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
@@ -184,14 +188,14 @@ class Orders extends DolibarrApi
 			$sql .= " AND t.fk_soc = sc.fk_soc";
 		}
 		if ($socids) {
-			$sql .= " AND t.fk_soc IN (".$socids.")";
+			$sql .= " AND t.fk_soc IN (".$this->db->sanitize($socids).")";
 		}
 		if ($search_sale > 0) {
 			$sql .= " AND t.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
 		}
 		// Insert sale filter
 		if ($search_sale > 0) {
-			$sql .= " AND sc.fk_user = ".$search_sale;
+			$sql .= " AND sc.fk_user = ".((int) $search_sale);
 		}
 		// Add sql filters
 		if ($sqlfilters) {
@@ -327,7 +331,12 @@ class Orders extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('commande', $this->commande->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
+
 		$request_data = (object) $request_data;
+
+		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
+		$request_data->label = checkVal($request_data->label);
+
 		$updateRes = $this->commande->addline(
 			$request_data->desc,
 			$request_data->subprice,
@@ -339,8 +348,8 @@ class Orders extends DolibarrApi
 			$request_data->remise_percent,
 			$request_data->info_bits,
 			$request_data->fk_remise_except,
-			'HT',
-			0,
+			$request_data->price_base_type ? $request_data->price_base_type : 'HT',
+			$request_data->subprice,
 			$request_data->date_start,
 			$request_data->date_end,
 			$request_data->product_type,
@@ -390,7 +399,12 @@ class Orders extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('commande', $this->commande->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
+
 		$request_data = (object) $request_data;
+
+		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
+		$request_data->label = checkVal($request_data->label);
+
 		$updateRes = $this->commande->updateline(
 			$lineid,
 			$request_data->desc,
@@ -400,7 +414,7 @@ class Orders extends DolibarrApi
 			$request_data->tva_tx,
 			$request_data->localtax1_tx,
 			$request_data->localtax2_tx,
-			'HT',
+			$request_data->price_base_type ? $request_data->price_base_type : 'HT',
 			$request_data->info_bits,
 			$request_data->date_start,
 			$request_data->date_end,

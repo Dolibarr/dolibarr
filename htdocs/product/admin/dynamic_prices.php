@@ -189,7 +189,9 @@ if ($action != 'create_updater' && $action != 'edit_updater') {
 	print '</table>';
 
 	if (empty($action)) {
-		//Action Buttons
+		/*
+		 * Action bar
+		 */
 		print '<div class="tabsAction">';
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=create_variable">'.$langs->trans("AddVariable").'</a>';
 		print '</div>';
@@ -277,7 +279,9 @@ if ($action != 'create_variable' && $action != 'edit_variable') {
 	print '</table>';
 
 	if (empty($action)) {
-		//Action Buttons
+		/*
+		 * Action bar
+		 */
 		print '<div class="tabsAction">';
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=create_updater&token='.newToken().'">'.$langs->trans("AddUpdater").'</a>';
 		print '</div>';

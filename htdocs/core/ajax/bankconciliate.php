@@ -48,10 +48,6 @@ $action = GETPOST('action', 'aZ09');
  * View
  */
 
-// Ajout directives pour resoudre bug IE
-//header('Cache-Control: Public, must-revalidate');
-//header('Pragma: public');
-
 //top_htmlhead("", "", 1);  // Replaced with top_httphead. An ajax page does not need html header.
 top_httphead();
 
@@ -63,7 +59,7 @@ if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $
 	$al->datev_next(GETPOST('rowid', 'int'));
 	$al->fetch(GETPOST('rowid', 'int'));
 
-	print '<span>'.dol_print_date($db->jdate($al->datev), "day").'</span>';
+	print '<span class="spanforajaxedit" id="datevalue_'.$al->id.'">'.dol_print_date($db->jdate($al->datev), "day").'</span>';
 
 	exit;
 }
@@ -74,7 +70,7 @@ if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $
 	$al->datev_previous(GETPOST('rowid', 'int'));
 	$al->fetch(GETPOST('rowid', 'int'));
 
-	print '<span>'.dol_print_date($db->jdate($al->datev), "day").'</span>';
+	print '<span class="spanforajaxedit" id="datevalue_'.$al->id.'">'.dol_print_date($db->jdate($al->datev), "day").'</span>';
 
 	exit;
 }
@@ -85,7 +81,7 @@ if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $
 	$al->dateo_next(GETPOST('rowid', 'int'));
 	$al->fetch(GETPOST('rowid', 'int'));
 
-	print '<span>'.dol_print_date($db->jdate($al->dateo), "day").'</span>';
+	print '<span class="spanforajaxedit" id="dateoperation_'.$al->id.'">'.dol_print_date($db->jdate($al->dateo), "day").'</span>';
 
 	exit;
 }
@@ -96,7 +92,7 @@ if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $
 	$al->dateo_previous(GETPOST('rowid', 'int'));
 	$al->fetch(GETPOST('rowid', 'int'));
 
-	print '<span>'.dol_print_date($db->jdate($al->dateo), "day").'</span>';
+	print '<span class="spanforajaxedit" id="dateoperation_'.$al->id.'">'.dol_print_date($db->jdate($al->dateo), "day").'</span>';
 
 	exit;
 }

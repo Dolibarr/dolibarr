@@ -39,7 +39,7 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
-$nowyear = strftime("%Y", dol_now());
+$nowyear = dol_print_date(dol_now(), "%Y");
 $year = GETPOST('year') > 0 ?GETPOST('year') : $nowyear;
 //$startyear=$year-2;
 $startyear = $year - 1;
@@ -47,6 +47,12 @@ $endyear = $year;
 
 // Load translation files required by the page
 $langs->loadLangs(array('sendings', 'other', 'companies'));
+
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+restrictedArea($user, 'expedition');
 
 
 /*

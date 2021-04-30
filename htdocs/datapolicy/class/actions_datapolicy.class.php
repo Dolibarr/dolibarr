@@ -117,7 +117,7 @@ class ActionsDatapolicy
 				$object->state_id = '';
 				$object->skype = '';
 				$object->country_id = '';
-				$object->note_private = $object->note_private.'<br/>'.$langs->trans('ANONYMISER_AT', dol_print_date(time()));
+				$object->note_private = $object->note_private.'<br>'.$langs->trans('ANONYMISER_AT', dol_print_date(time()));
 
 				if ($object->update($object->id, $user, 0)) {
 					// On supprime les contacts associé

@@ -22,7 +22,7 @@
  *  \brief		Module to manage LDAP interfaces with contacts or users
  *	\file       htdocs/core/modules/modLdap.class.php
  *	\ingroup    ldap
- *	\brief		File to describe and activate Ldap module
+ *	\brief		Description and activation file for the module LDAP
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 

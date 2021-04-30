@@ -9,8 +9,12 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
  * -------------------
  */
 
-.info-box-module-external span.info-box-icon-version {
+.info-box-module.--external span.info-box-icon-version {
 	background: #bbb;
+}
+
+.info-box-module.--external.--need-update span.info-box-icon-version{
+	background: #bc9525;
 }
 
 .info-box {
@@ -153,7 +157,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	-webkit-transition: opacity 0.5s, visibility 0s 0.5s;
 	transition: opacity 0.5s, visibility 0s 0.5s;
 }
-.box-flex-item.info-box-module.info-box-module-disabled {
+.box-flex-item.info-box-module.--disabled {
 	/* opacity: 0.6; */
 }
 
@@ -366,14 +370,14 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	content: "\f571";
 }
 .fa-dol-project:before {
-	content: "\f0e8";
+	content: "\f542";
 }
 .fa-dol-commande:before,
 .fa-dol-order_supplier:before {
 	content: "\f570";
 }
 .fa-dol-contrat:before {
-	content: "\f1e6";
+	content: "\f0f2";
 }
 .fa-dol-ticket:before {
 	content: "\f3ff";
@@ -382,7 +386,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	content: "\f19c";
 }
 .fa-dol-member:before {
-	content: "\f0c0";
+	content: "\f007";
 }
 .fa-dol-expensereport:before {
 	content: "\f555";

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2020 Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2021 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2014 	   Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014 	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015      Ari Elbaz (elarifr)	<github@accedinfo.com>
@@ -98,6 +98,28 @@ if (empty($action)) {
 
 $arrayfields = array();
 
+$accounting_product_modes = array(
+	'ACCOUNTANCY_SELL',
+	'ACCOUNTANCY_SELL_INTRA',
+	'ACCOUNTANCY_SELL_EXPORT',
+	'ACCOUNTANCY_BUY',
+	'ACCOUNTANCY_BUY_INTRA',
+	'ACCOUNTANCY_BUY_EXPORT'
+);
+
+if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
+	$accountancy_field_name = "accountancy_code_buy";
+} elseif ($accounting_product_mode == 'ACCOUNTANCY_BUY_INTRA') {
+	$accountancy_field_name = "accountancy_code_buy_intra";
+} elseif ($accounting_product_mode == 'ACCOUNTANCY_BUY_EXPORT') {
+	$accountancy_field_name = "accountancy_code_buy_export";
+} elseif ($accounting_product_mode == 'ACCOUNTANCY_SELL') {
+	$accountancy_field_name = "accountancy_code_sell";
+} elseif ($accounting_product_mode == 'ACCOUNTANCY_SELL_INTRA') {
+	$accountancy_field_name = "accountancy_code_sell_intra";
+} else { // $accounting_product_mode == 'ACCOUNTANCY_SELL_EXPORT'
+	$accountancy_field_name = "accountancy_code_sell_export";
+}
 
 /*
  * Actions
@@ -133,15 +155,6 @@ if ($action == 'update') {
 	if (!empty($btn_changetype)) {
 		$error = 0;
 
-		$accounting_product_modes = array(
-				'ACCOUNTANCY_SELL',
-				'ACCOUNTANCY_SELL_INTRA',
-				'ACCOUNTANCY_SELL_EXPORT',
-				'ACCOUNTANCY_BUY',
-				'ACCOUNTANCY_BUY_INTRA',
-				'ACCOUNTANCY_BUY_EXPORT'
-		);
-
 		if (in_array($accounting_product_mode, $accounting_product_modes)) {
 			if (!dolibarr_set_const($db, 'ACCOUNTING_PRODUCT_MODE', $accounting_product_mode, 'chaine', 0, '', $conf->entity)) {
 				$error++;
@@ -153,7 +166,7 @@ if ($action == 'update') {
 
 	if (!empty($btn_changeaccount)) {
 		//$msg = '<div><span class="accountingprocessing">' . $langs->trans("Processing") . '...</span></div>';
-		if (!empty($chk_prod)) {
+		if (!empty($chk_prod) && in_array($accounting_product_mode, $accounting_product_modes)) {
 			$accounting = new AccountingAccount($db);
 
 			//$msg .= '<div><span class="accountingprocessing">' . count($chk_prod) . ' ' . $langs->trans("SelectedLines") . '</span></div>';
@@ -170,31 +183,20 @@ if ($action == 'update') {
 				}
 				if ($result <= 0) {
 					// setEventMessages(null, $accounting->errors, 'errors');
-					$msg .= '<div><span style="color:red">'.$langs->trans("ErrorDB").' : '.$langs->trans("Product").' '.$productid.' '.$langs->trans("NotVentilatedinAccount").' : id='.$accounting_account_id.'<br/> <pre>'.$sql.'</pre></span></div>';
+					$msg .= '<div><span style="color:red">'.$langs->trans("ErrorDB").' : '.$langs->trans("Product").' '.$productid.' '.$langs->trans("NotVentilatedinAccount").' : id='.$accounting_account_id.'<br> <pre>'.$sql.'</pre></span></div>';
 					$ko++;
 				} else {
 					$db->begin();
 
-					$sql = " UPDATE ".MAIN_DB_PREFIX."product";
-					if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
-						$sql .= " SET accountancy_code_buy = ".$accounting->account_number;
+					if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+						$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_perentity (fk_product, entity, '".$db->escape($accountancy_field_name)."')";
+						$sql .= " VALUES (".((int) $productid).", ".((int) $conf->entity).", '".$db->escape($accounting->account_number)."')";
+						$sql .= " ON DUPLICATE KEY UPDATE ".$accountancy_field_name." = '".$db->escape($accounting->account_number)."'";
+					} else {
+						$sql = " UPDATE ".MAIN_DB_PREFIX."product";
+						$sql .= " SET ".$accountancy_field_name." = '".$db->escape($accounting->account_number)."'";
+						$sql .= " WHERE rowid = ".((int) $productid);
 					}
-					if ($accounting_product_mode == 'ACCOUNTANCY_BUY_INTRA') {
-						$sql .= " SET accountancy_code_buy_intra = ".$accounting->account_number;
-					}
-					if ($accounting_product_mode == 'ACCOUNTANCY_BUY_EXPORT') {
-						$sql .= " SET accountancy_code_buy_export = ".$accounting->account_number;
-					}
-					if ($accounting_product_mode == 'ACCOUNTANCY_SELL') {
-						$sql .= " SET accountancy_code_sell = ".$accounting->account_number;
-					}
-					if ($accounting_product_mode == 'ACCOUNTANCY_SELL_INTRA') {
-						$sql .= " SET accountancy_code_sell_intra = ".$accounting->account_number;
-					}
-					if ($accounting_product_mode == 'ACCOUNTANCY_SELL_EXPORT') {
-						$sql .= " SET accountancy_code_sell_export = ".$accounting->account_number;
-					}
-					$sql .= " WHERE rowid = ".((int) $productid);
 
 					dol_syslog("/accountancy/admin/productaccount.php sql=".$sql, LOG_DEBUG);
 					if ($db->query($sql)) {
@@ -267,50 +269,25 @@ if (empty($pcgvercode)) {
 }
 
 $sql = "SELECT p.rowid, p.ref, p.label, p.description, p.tosell, p.tobuy, p.tva_tx,";
-$sql .= " p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export,";
-$sql .= " p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export,";
+if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+	$sql .= " ppe.accountancy_code_sell, ppe.accountancy_code_sell_intra, ppe.accountancy_code_sell_export,";
+	$sql .= " ppe.accountancy_code_buy, ppe.accountancy_code_buy_intra, ppe.accountancy_code_buy_export,";
+} else {
+	$sql .= " p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export,";
+	$sql .= " p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export,";
+}
 $sql .= " p.tms, p.fk_product_type as product_type,";
 $sql .= " aa.rowid as aaid";
 $sql .= " FROM ".MAIN_DB_PREFIX."product as p";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON";
-if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
-	$sql .= " p.accountancy_code_buy = aa.account_number AND aa.fk_pcg_version = '".$db->escape($pcgvercode)."'";
-} elseif ($accounting_product_mode == 'ACCOUNTANCY_BUY_INTRA') {
-	$sql .= " p.accountancy_code_buy_intra = aa.account_number AND aa.fk_pcg_version = '".$db->escape($pcgvercode)."'";
-} elseif ($accounting_product_mode == 'ACCOUNTANCY_BUY_EXPORT') {
-	$sql .= " p.accountancy_code_buy_export = aa.account_number AND aa.fk_pcg_version = '".$db->escape($pcgvercode)."'";
-} elseif ($accounting_product_mode == 'ACCOUNTANCY_SELL') {
-	$sql .= " p.accountancy_code_sell = aa.account_number AND aa.fk_pcg_version = '".$db->escape($pcgvercode)."'";
-} elseif ($accounting_product_mode == 'ACCOUNTANCY_SELL_INTRA') {
-	$sql .= " p.accountancy_code_sell_intra = aa.account_number AND aa.fk_pcg_version = '".$db->escape($pcgvercode)."'";
+if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);
+	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.account_number = ppe." . $accountancy_field_name . " AND aa.fk_pcg_version = '" . $db->escape($pcgvercode) . "'";
 } else {
-	$sql .= " p.accountancy_code_sell_export = aa.account_number AND aa.fk_pcg_version = '".$db->escape($pcgvercode)."'";
+	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.account_number = p." . $accountancy_field_name . " AND aa.fk_pcg_version = '" . $db->escape($pcgvercode) . "'";
 }
 $sql .= ' WHERE p.entity IN ('.getEntity('product').')';
-if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
-	if (strlen(trim($search_current_account))) {
-		$sql .= natural_search("p.accountancy_code_buy", $search_current_account);
-	}
-} elseif ($accounting_product_mode == 'ACCOUNTANCY_BUY_INTRA') {
-	if (strlen(trim($search_current_account))) {
-		$sql .= natural_search("p.accountancy_code_buy_intra", $search_current_account);
-	}
-} elseif ($accounting_product_mode == 'ACCOUNTANCY_BUY_EXPORT') {
-	if (strlen(trim($search_current_account))) {
-		$sql .= natural_search("p.accountancy_code_buy_export", $search_current_account);
-	}
-} elseif ($accounting_product_mode == 'ACCOUNTANCY_SELL') {
-	if (strlen(trim($search_current_account))) {
-		$sql .= natural_search("p.accountancy_code_sell", $search_current_account);
-	}
-} elseif ($accounting_product_mode == 'ACCOUNTANCY_SELL_INTRA') {
-	if (strlen(trim($search_current_account))) {
-		$sql .= natural_search("p.accountancy_code_sell_intra", $search_current_account);
-	}
-} else {
-	if (strlen(trim($search_current_account))) {
-		$sql .= natural_search("p.accountancy_code_sell_export", $search_current_account);
-	}
+if (strlen(trim($search_current_account))) {
+	$sql .= natural_search((empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "p." : "ppe.") . $accountancy_field_name, $search_current_account);
 }
 if ($search_current_account_valid == 'withoutvalidaccount') {
 	$sql .= " AND aa.account_number IS NULL";
@@ -459,7 +436,7 @@ if ($result) {
 	// On sell
 	if ($accounting_product_mode == 'ACCOUNTANCY_SELL' || $accounting_product_mode == 'ACCOUNTANCY_SELL_INTRA' || $accounting_product_mode == 'ACCOUNTANCY_SELL_EXPORT') {
 		print '<td class="liste_titre center">'.$form->selectyesno('search_onsell', $search_onsell, 1, false, 1).'</td>';
-	} elseif ($accounting_product_mode == 'ACCOUNTANCY_BUY' || $accounting_product_mode == 'ACCOUNTANCY_BUY_INTRA' || $accounting_product_mode == 'ACCOUNTANCY_BUY_EXPORT') {
+	} else {
 		// On buy
 		print '<td class="liste_titre center">'.$form->selectyesno('search_onpurchase', $search_onpurchase, 1, false, 1).'</td>';
 	}
@@ -484,26 +461,12 @@ if ($result) {
 	}
 	print_liste_field_titre("VATRate", $_SERVER["PHP_SELF"], "p.tva_tx", "", $param, '', $sortfield, $sortorder, 'right ');
 	// On sell / On purchase
-	if ($accounting_product_mode == 'ACCOUNTANCY_SELL') {
+	if ($accounting_product_mode == 'ACCOUNTANCY_SELL' || $accounting_product_mode == 'ACCOUNTANCY_SELL_INTRA' || $accounting_product_mode == 'ACCOUNTANCY_SELL_EXPORT') {
 		print_liste_field_titre("OnSell", $_SERVER["PHP_SELF"], "p.tosell", "", $param, '', $sortfield, $sortorder, 'center ');
-		$fieldtosortaccount = "p.accountancy_code_sell";
-	} elseif ($accounting_product_mode == 'ACCOUNTANCY_SELL_INTRA') {
-		print_liste_field_titre("OnSell", $_SERVER["PHP_SELF"], "p.tosell", "", $param, '', $sortfield, $sortorder, 'center ');
-		$fieldtosortaccount = "p.accountancy_code_sell_intra";
-	} elseif ($accounting_product_mode == 'ACCOUNTANCY_SELL_EXPORT') {
-		print_liste_field_titre("OnSell", $_SERVER["PHP_SELF"], "p.tosell", "", $param, '', $sortfield, $sortorder, 'center ');
-		$fieldtosortaccount = "p.accountancy_code_sell_export";
-	} elseif ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
+	} else {
 		print_liste_field_titre("OnBuy", $_SERVER["PHP_SELF"], "p.tobuy", "", $param, '', $sortfield, $sortorder, 'center ');
-		$fieldtosortaccount = "p.accountancy_code_buy";
-	} elseif ($accounting_product_mode == 'ACCOUNTANCY_BUY_INTRA') {
-		print_liste_field_titre("OnBuy", $_SERVER["PHP_SELF"], "p.tobuy", "", $param, '', $sortfield, $sortorder, 'center ');
-		$fieldtosortaccount = "p.accountancy_code_buy_intra";
-	} elseif ($accounting_product_mode == 'ACCOUNTANCY_BUY_EXPORT') {
-		print_liste_field_titre("OnBuy", $_SERVER["PHP_SELF"], "p.tobuy", "", $param, '', $sortfield, $sortorder, 'center ');
-		$fieldtosortaccount = "p.accountancy_code_buy_export";
 	}
-	print_liste_field_titre("CurrentDedicatedAccountingAccount", $_SERVER["PHP_SELF"], $fieldtosortaccount, "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("CurrentDedicatedAccountingAccount", $_SERVER["PHP_SELF"], (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "p." : "ppe.") . $accountancy_field_name, "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("AssignDedicatedAccountingAccount");
 	$clickpitco = $form->showCheckAddButtons('checkforselect', 1);
 	print_liste_field_titre($clickpitco, '', '', '', '', '', '', '', 'center ');
@@ -607,11 +570,10 @@ if ($result) {
 		print vatrate($obj->tva_tx);
 		print '</td>';
 
+		// On sell / On purchase
 		if ($accounting_product_mode == 'ACCOUNTANCY_SELL' || $accounting_product_mode == 'ACCOUNTANCY_SELL_INTRA' || $accounting_product_mode == 'ACCOUNTANCY_SELL_EXPORT') {
 			print '<td class="center">'.$product_static->getLibStatut(3, 0).'</td>';
-		}
-
-		if ($accounting_product_mode == 'ACCOUNTANCY_BUY' || $accounting_product_mode == 'ACCOUNTANCY_BUY_INTRA' || $accounting_product_mode == 'ACCOUNTANCY_BUY_EXPORT') {
+		} else {
 			print '<td class="center">'.$product_static->getLibStatut(3, 1).'</td>';
 		}
 

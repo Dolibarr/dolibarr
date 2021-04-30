@@ -33,10 +33,6 @@ use OAuth\Common\Storage\DoliStorage;
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'printing', 'oauth'));
 
-if (!$user->admin) {
-	accessforbidden();
-}
-
 $action = GETPOST('action', 'aZ09');
 $mode = GETPOST('mode', 'alpha');
 $value = GETPOST('value', 'alpha', 0, null, null, 1); // The value may be __google__docs so we force disable of replace
@@ -52,6 +48,10 @@ if (!$mode) {
 }
 
 $OAUTH_SERVICENAME_GOOGLE = 'Google';
+
+if (!$user->admin) {
+	accessforbidden();
+}
 
 
 /*

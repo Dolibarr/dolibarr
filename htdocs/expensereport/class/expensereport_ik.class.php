@@ -137,7 +137,7 @@ class ExpenseReportIk extends CoreObject
 	 * @param int   $fk_c_exp_tax_cat   category
 	 * @return boolean|array
 	 */
-	public static function getRangeByUser(User $userauthor, $fk_c_exp_tax_cat)
+	public static function getRangeByUser(User $userauthor, int $fk_c_exp_tax_cat)
 	{
 		$default_range = (int) $userauthor->default_range; // if not defined, then 0
 		$ranges = self::getRangesByCategory($fk_c_exp_tax_cat);
@@ -157,23 +157,24 @@ class ExpenseReportIk extends CoreObject
 	 * @param int	$active				active
 	 * @return array
 	 */
-	public static function getRangesByCategory($fk_c_exp_tax_cat, $active = 1)
+	public static function getRangesByCategory(int $fk_c_exp_tax_cat, $active = 1)
 	{
 		global $db;
 
 		$ranges = array();
 
+		dol_syslog(get_called_class().'::getRangesByCategory for fk_c_exp_tax_cat='.$fk_c_exp_tax_cat, LOG_DEBUG);
+
 		$sql = 'SELECT r.rowid FROM '.MAIN_DB_PREFIX.'c_exp_tax_range r';
 		if ($active) {
 			$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'c_exp_tax_cat c ON (r.fk_c_exp_tax_cat = c.rowid)';
 		}
-		$sql .= ' WHERE r.fk_c_exp_tax_cat = '.$fk_c_exp_tax_cat;
+		$sql .= ' WHERE r.fk_c_exp_tax_cat = '.((int) $fk_c_exp_tax_cat);
 		if ($active) {
 			$sql .= ' AND r.active = 1 AND c.active = 1';
 		}
 		$sql .= ' ORDER BY r.range_ik';
 
-		dol_syslog(get_called_class().'::getRangesByCategory sql='.$sql, LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql) {
 			$num = $db->num_rows($resql);
@@ -247,7 +248,7 @@ class ExpenseReportIk extends CoreObject
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'c_exp_tax_range r';
 		$sql .= ' WHERE r.entity IN (0, '.$conf->entity.')';
 		if ($default_c_exp_tax_cat > 0) {
-			$sql .= ' AND r.fk_c_exp_tax_cat = '.$default_c_exp_tax_cat;
+			$sql .= ' AND r.fk_c_exp_tax_cat = '.((int) $default_c_exp_tax_cat);
 		}
 		$sql .= ' GROUP BY r.fk_c_exp_tax_cat';
 		$sql .= ') as counts';

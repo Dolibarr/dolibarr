@@ -52,16 +52,21 @@ $arrayofparameters = array(
 	'EVENTORGANIZATION_TASK_LABEL'=>array('type'=>'textarea','enabled'=>1),
 	'EVENTORGANIZATION_CATEG_THIRDPARTY_CONF'=>array('type'=>'category:'.Categorie::TYPE_CUSTOMER, 'enabled'=>1),
 	'EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH'=>array('type'=>'category:'.Categorie::TYPE_CUSTOMER, 'enabled'=>1),
+	//'EVENTORGANIZATION_FILTERATTENDEES_CAT'=>array('type'=>'category:'.Categorie::TYPE_CUSTOMER, 'enabled'=>1),
+	//'EVENTORGANIZATION_FILTERATTENDEES_TYPE'=>array('type'=>'thirdparty_type:', 'enabled'=>1),
 	'EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF'=>array('type'=>'emailtemplate:eventorganization_send', 'enabled'=>1),
 	'EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH'=>array('type'=>'emailtemplate:eventorganization_send', 'enabled'=>1),
 	'EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH'=>array('type'=>'emailtemplate:eventorganization_send', 'enabled'=>1),
 	'EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT'=>array('type'=>'emailtemplate:eventorganization_send', 'enabled'=>1),
 	'EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER'=>array('type'=>'emailtemplate:eventorganization_send', 'enabled'=>1),
 	'EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES'=>array('type'=>'emailtemplate:eventorganization_send', 'enabled'=>1),
+	'EVENTORGANIZATION_SECUREKEY'=>array('type'=>'securekey', 'enabled'=>1),
 );
 
 $error = 0;
 $setupnotempty = 0;
+
+$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 
 /*
@@ -144,7 +149,7 @@ if ($action == 'updateMask') {
 			}
 		}
 	}
-} elseif ($action == 'setdoc') {
+}/* elseif ($action == 'setdoc') {
 	// Set or unset default model
 	$tmpobjectkey = GETPOST('object');
 	if (!empty($tmpobjectkey)) {
@@ -167,7 +172,7 @@ if ($action == 'updateMask') {
 		$constforval = 'EVENTORGANIZATION_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
 		dolibarr_del_const($db, $constforval, $conf->entity);
 	}
-}
+}*/
 
 
 
@@ -177,15 +182,14 @@ if ($action == 'updateMask') {
 
 $form = new Form($db);
 
-$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-
 $page_name = "EventOrganizationSetup";
+
 llxHeader('', $langs->trans($page_name));
 
 // Subheader
 $linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';
 
-print load_fiche_titre($langs->trans($page_name), $linkback, 'eventorganization');
+print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 
 // Configuration header
 $head = eventorganizationAdminPrepareHead();
@@ -201,7 +205,7 @@ if ($action == 'edit') {
 	print '<input type="hidden" name="action" value="update">';
 
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td class="titlefieldcreate">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	foreach ($arrayofparameters as $constname => $val) {
 		if ($val['enabled']==1) {
@@ -249,6 +253,30 @@ if ($action == 'edit') {
 				$tmp = explode(':', $val['type']);
 				print img_picto('', 'category', 'class="pictofixedwidth"');
 				print $formother->select_categories($tmp[1], $conf->global->{$constname}, $constname, 0, $langs->trans('CustomersProspectsCategoriesShort'));
+			} elseif (preg_match('/thirdparty_type/', $val['type'])) {
+				require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+				$formcompany = new FormCompany($db);
+				print $formcompany->selectProspectCustomerType($conf->global->{$constname}, $constname);
+			} elseif ($val['type'] == 'securekey') {
+				print '<input required="required" type="text" class="flat" id="'.$constname.'" name="'.$constname.'" value="'.(GETPOST($constname, 'alpha') ?GETPOST($constname, 'alpha') : $conf->global->{$constname}).'" size="40">';
+				if (!empty($conf->use_javascript_ajax)) {
+					print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token'.$constname.'" class="linkobject"');
+				}
+				if (!empty($conf->use_javascript_ajax)) {
+					print "\n".'<script type="text/javascript">';
+					print '$(document).ready(function () {
+                        $("#generate_token'.$constname.'").click(function() {
+                	        $.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
+                		      action: \'getrandompassword\',
+                		      generic: true
+    				        },
+    				        function(token) {
+    					       $("#'.$constname.'").val(token);
+            				});
+                         });
+                    });';
+					print '</script>';
+				}
 			} else {
 				print '<input name="'.$constname.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.$conf->global->{$constname}.'">';
 			}
@@ -266,7 +294,7 @@ if ($action == 'edit') {
 } else {
 	if (!empty($arrayofparameters)) {
 		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+		print '<tr class="liste_titre"><td class="titlefieldcreate">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 		foreach ($arrayofparameters as $constname => $val) {
 			if ($val['enabled']==1) {
@@ -309,6 +337,16 @@ if ($action == 'edit') {
 						}
 						print '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
 					}
+				} elseif (preg_match('/thirdparty_type/', $val['type'])) {
+					if ($conf->global->{$constname}==2) {
+						print $langs->trans("Prospect");
+					} elseif ($conf->global->{$constname}==3) {
+						print $langs->trans("ProspectCustomer");
+					} elseif ($conf->global->{$constname}==1) {
+						print $langs->trans("Customer");
+					} elseif ($conf->global->{$constname}==0) {
+						print $langs->trans("NorProspectNorCustomer");
+					}
 				} else {
 					print  $conf->global->{$constname};
 				}
@@ -327,7 +365,7 @@ if ($action == 'edit') {
 }
 
 
-$moduledir = 'eventorganization';
+/*$moduledir = 'eventorganization';
 $myTmpObjects = array();
 $myTmpObjects['MyObject'] = array('includerefgeneration'=>0, 'includedocgeneration'=>0);
 
@@ -337,9 +375,6 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 		continue;
 	}
 	if ($myTmpObjectArray['includerefgeneration']) {
-		/*
-		 * Orders Numbering model
-		 */
 		$setupnotempty++;
 
 		print load_fiche_titre($langs->trans("NumberingModules", $myTmpObjectKey), '', '');
@@ -444,9 +479,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 	}
 
 	if ($myTmpObjectArray['includedocgeneration']) {
-		/*
-		 * Document templates generators
-		 */
+
 		$setupnotempty++;
 		$type = strtolower($myTmpObjectKey);
 
@@ -588,10 +621,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 		print '</table>';
 	}
 }
-
-if (empty($setupnotempty)) {
-	print '<br>'.$langs->trans("NothingToSetup");
-}
+*/
 
 // Page end
 print dol_get_fiche_end();

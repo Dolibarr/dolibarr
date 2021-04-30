@@ -24,7 +24,7 @@
  *
  *  \file       htdocs/workstation/core/modules/modWorkstation.class.php
  *  \ingroup    workstation
- *  \brief      Description and activation file for module Workstation
+ *  \brief      Description and activation file for the module Workstation
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -45,12 +45,12 @@ class modWorkstation extends DolibarrModules
 
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
-		$this->numero = 500000; // TODO Go on page https://wiki.dolibarr.org/index.php/List_of_modules_id to reserve an id number for your module
+		$this->numero = 690;
 		// Key text used to identify module (for permissions, menus, etc...)
 		$this->rights_class = 'workstation';
 		// Family can be 'base' (core modules),'crm','financial','hr','projects','products','ecm','technic' (transverse modules),'interface' (link with external tools),'other','...'
 		// It is used to group modules by family in module setup page
-		$this->family = "other";
+		$this->family = "products";
 		// Module position in the family on 2 digits ('01', '10', '20', ...)
 		$this->module_position = '90';
 		// Gives the possibility for the module, to provide his own family info and position of this family (Overwrite $this->family and $this->module_position. Avoid this)
@@ -71,7 +71,7 @@ class modWorkstation extends DolibarrModules
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
-		$this->picto = 'mrp';
+		$this->picto = 'workstation';
 		// Define some features supported by module (triggers, login, substitutions, menus, css, etc...)
 		$this->module_parts = array(
 			// Set this to 1 if module has its own trigger directory (core/triggers)
@@ -239,7 +239,7 @@ class modWorkstation extends DolibarrModules
 
 		// Permissions provided by this module
 		$this->rights = array();
-		$r = 0;
+		$r = 1;
 		// Add here entries to declare new permissions
 		/* BEGIN MODULEBUILDER PERMISSIONS */
 		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
@@ -330,6 +330,7 @@ class modWorkstation extends DolibarrModules
 			// This is a Left menu entry
 			'type'=>'left',
 			'titre'=>$langs->trans('Workstations'),
+			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
 			'mainmenu'=>'mrp',
 			'leftmenu'=>'workstation_workstation',
 			'url'=>'',

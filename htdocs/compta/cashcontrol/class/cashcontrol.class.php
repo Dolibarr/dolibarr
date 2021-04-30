@@ -54,7 +54,31 @@ class CashControl extends CommonObject
 	 */
 	public $picto = 'cash-register';
 
-
+	/**
+	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *  'label' the translation key.
+	 *  'picto' is code of a picto to show before value in forms
+	 *  'enabled' is a condition when the field must be managed (Example: 1 or '$conf->global->MY_SETUP_PARAM)
+	 *  'position' is the sort order of field.
+	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
+	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
+	 *  'noteditable' says if field is not editable (1 or 0)
+	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'index' if we want an index in database.
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
+	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
+	 *  'css' and 'cssview' and 'csslist' is the CSS style to use on field. 'css' is used in creation and update. 'cssview' is used in view mode. 'csslist' is used for columns in lists. For example: 'maxwidth200', 'wordbreak', 'tdoverflowmax200'
+	 *  'help' is a 'TranslationString' to use to show a tooltip on field. You can also use 'TranslationString:keyfortooltiponlick' for a tooltip on click.
+	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
+	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
+	 *  'arrayofkeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
+	 *  'autofocusoncreate' to have field having the focus on a create form. Only 1 field should have this property set to 1.
+	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
+	 *
+	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
+	 */
 	public $fields = array(
 	'rowid' =>array('type'=>'integer', 'label'=>'ID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>10),
 	'entity' =>array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>15),
@@ -62,10 +86,10 @@ class CashControl extends CommonObject
 	'posmodule' =>array('type'=>'varchar(30)', 'label'=>'Module', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>19),
 	'posnumber' =>array('type'=>'varchar(30)', 'label'=>'Terminal', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>20, 'css'=>'center'),
 	'label' =>array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>0, 'position'=>24),
-	'opening' =>array('type'=>'price', 'label'=>'Opening', 'enabled'=>1, 'visible'=>1, 'position'=>25),
-	'cash' =>array('type'=>'price', 'label'=>'Cash', 'enabled'=>1, 'visible'=>1, 'position'=>30),
-	'cheque' =>array('type'=>'price', 'label'=>'Cheque', 'enabled'=>1, 'visible'=>1, 'position'=>33),
-	'card' =>array('type'=>'price', 'label'=>'CreditCard', 'enabled'=>1, 'visible'=>1, 'position'=>36),
+	'opening' =>array('type'=>'price', 'label'=>'Opening', 'enabled'=>1, 'visible'=>1, 'position'=>25, 'csslist'=>'amount'),
+	'cash' =>array('type'=>'price', 'label'=>'Cash', 'enabled'=>1, 'visible'=>1, 'position'=>30, 'csslist'=>'amount'),
+	'cheque' =>array('type'=>'price', 'label'=>'Cheque', 'enabled'=>1, 'visible'=>1, 'position'=>33, 'csslist'=>'amount'),
+	'card' =>array('type'=>'price', 'label'=>'CreditCard', 'enabled'=>1, 'visible'=>1, 'position'=>36, 'csslist'=>'amount'),
 	'year_close' =>array('type'=>'integer', 'label'=>'Year close', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>50, 'css'=>'center'),
 	'month_close' =>array('type'=>'integer', 'label'=>'Month close', 'enabled'=>1, 'visible'=>1, 'position'=>55, 'css'=>'center'),
 	'day_close' =>array('type'=>'integer', 'label'=>'Day close', 'enabled'=>1, 'visible'=>1, 'position'=>60, 'css'=>'center'),
@@ -189,7 +213,7 @@ class CashControl extends CommonObject
 		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."pos_cash_fence");
 
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'pos_cash_fence SET ref = rowid where rowid = '.$this->id;
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'pos_cash_fence SET ref = rowid where rowid = '.((int) $this->id);
 			$this->db->query($sql);
 		}
 
@@ -244,7 +268,7 @@ class CashControl extends CommonObject
 		$sql .= " SET status = ".self::STATUS_VALIDATED.",";
 		$sql .= " date_valid='".$this->db->idate($now)."',";
 		$sql .= " fk_user_valid = ".$user->id;
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
 

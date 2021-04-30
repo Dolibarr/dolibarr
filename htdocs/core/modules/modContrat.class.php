@@ -22,7 +22,7 @@
  *	\brief      Module pour gerer la tenue de contrat de services
  *	\file       htdocs/core/modules/modContrat.class.php
  *	\ingroup    contrat
- *	\brief      Fichier de description et activation du module Contrat
+ *	\brief      Description and activation file for the module contract
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';

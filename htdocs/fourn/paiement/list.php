@@ -9,8 +9,9 @@
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2015		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2017		Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2018		Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021	Frédéric France			<frederic.france@netlogic.fr>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
+ * Copyright (C) 2021		Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,41 +28,22 @@
  */
 
 /**
- *	\file		htdocs/fourn/paiment/list.php
+ *	\file		htdocs/fourn/paiement/list.php
 *	\ingroup	fournisseur,facture
  *	\brief		Payment list for supplier invoices
  */
 
 require '../../main.inc.php';
-
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-
-// doesn't work :-(
-// restrictedArea($user, 'fournisseur');
-
-// doesn't work :-(
-// require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
-// $object = new PaiementFourn($db);
-// restrictedArea($user, $object->element);
-
-if (!$user->rights->fournisseur->facture->lire) {
-	accessforbidden();
-}
-
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'banks', 'compta'));
 
 $action = GETPOST('action', 'alpha');
-$massaction				= GETPOST('massaction', 'alpha');
+$massaction = GETPOST('massaction', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
-$contextpage			= GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'vendorpaymentlist';
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'vendorpaymentlist';
 
 $socid = GETPOST('socid', 'int');
 
@@ -119,9 +101,28 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 $hookmanager->initHooks(array('paymentsupplierlist'));
 $object = new PaiementFourn($db);
 
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+
+// doesn't work :-(
+// restrictedArea($user, 'fournisseur');
+// doesn't work :-(
+// require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
+// $object = new PaiementFourn($db);
+// restrictedArea($user, $object->element);
+if ((empty($conf->fournisseur->enabled) && !empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || empty($conf->supplier_invoice->enabled)) {
+	accessforbidden();
+}
+if (!$user->rights->fournisseur->facture->lire || !$user->rights->supplier_invoice->lire) {
+	accessforbidden();
+}
+
+
 /*
-* Actions
-*/
+ * Actions
+ */
 
 $parameters = array('socid'=>$socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -181,7 +182,7 @@ if (!$user->rights->societe->client->voir) {
 	$sql .= ' AND s.rowid = sc.fk_soc AND sc.fk_user = '.$user->id;
 }
 if ($socid > 0) {
-	$sql .= ' AND f.fk_soc = '.$socid;
+	$sql .= ' AND f.fk_soc = '.((int) $socid);
 }
 if ($search_ref) {
 	$sql .= natural_search('p.ref', $search_ref);
@@ -200,9 +201,8 @@ if ($search_amount) {
 	$sql .= natural_search('p.amount', $search_amount, 1);
 }
 if ($search_bank_account > 0) {
-	$sql .= ' AND b.fk_account='.$search_bank_account."'";
+	$sql .= ' AND b.fk_account = '.((int) $search_bank_account);
 }
-
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
@@ -520,7 +520,7 @@ while ($i < min($num, $limit)) {
 
 	// Amount
 	if (!empty($arrayfields['p.amount']['checked'])) {
-		print '<td class="right">'.price($objp->pamount).'</td>';
+		print '<td class="right"><span class="amount">'.price($objp->pamount).'</span></td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

@@ -117,9 +117,9 @@ if ($action == 'setref' && $user->rights->banque->cheque) {
 	}
 }
 
-if ($action == 'create' && $_POST["accountid"] > 0 && $user->rights->banque->cheque) {
+if ($action == 'create' && GETPOST("accountid", "int") > 0 && $user->rights->banque->cheque) {
 	if (is_array($_POST['toRemise'])) {
-		$result = $object->create($user, $_POST["accountid"], 0, $_POST['toRemise']);
+		$result = $object->create($user, GETPOST("accountid", "int"), 0, GETPOST('toRemise'));
 		if ($result > 0) {
 			if ($object->statut == 1) {     // If statut is validated, we build doc
 				$object->fetch($object->id); // To force to reload all properties in correct property name
@@ -134,7 +134,7 @@ if ($action == 'create' && $_POST["accountid"] > 0 && $user->rights->banque->che
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
 				}
-				$result = $object->generatePdf($_POST["model"], $outputlangs);
+				$result = $object->generatePdf(GETPOST("model"), $outputlangs);
 			}
 
 			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
@@ -227,7 +227,7 @@ if ($action == 'builddoc' && $user->rights->banque->cheque) {
 		$outputlangs = new Translate("", $conf);
 		$outputlangs->setDefaultLang($newlang);
 	}
-	$result = $object->generatePdf($_POST["model"], $outputlangs);
+	$result = $object->generatePdf(GETPOST("model"), $outputlangs);
 	if ($result <= 0) {
 		dol_print_error($db, $object->error);
 		exit;
@@ -462,7 +462,7 @@ if ($action == 'new') {
 				print '<td>'.$value["numero"]."</td>\n";
 				print '<td>'.$value["emetteur"]."</td>\n";
 				print '<td>'.$value["banque"]."</td>\n";
-				print '<td class="right">'.price($value["amount"], 0, $langs, 1, -1, -1, $conf->currency).'</td>';
+				print '<td class="right"><span class="amount">'.price($value["amount"], 0, $langs, 1, -1, -1, $conf->currency).'</span></td>';
 
 				// Link to payment
 				print '<td class="center">';
@@ -639,7 +639,7 @@ if ($action == 'new') {
 				print '<td class="center">'.($objp->num_chq ? $objp->num_chq : '&nbsp;').'</td>';
 				print '<td>'.dol_trunc($objp->emetteur, 24).'</td>';
 				print '<td>'.dol_trunc($objp->banque, 24).'</td>';
-				print '<td class="right">'.price($objp->amount).'</td>';
+				print '<td class="right"><span class="amount">'.price($objp->amount).'</span></td>';
 				// Link to payment
 				print '<td class="center">';
 				$paymentstatic->id = $objp->pid;

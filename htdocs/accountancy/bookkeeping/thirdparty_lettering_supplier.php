@@ -94,10 +94,21 @@ if ($result < 0) {
 	setEventMessages($object->error, $object->errors, 'errors');
 }
 
+if (empty($conf->accounting->enabled)) {
+	accessforbidden();
+}
+if ($user->socid > 0) {
+	accessforbidden();
+}
+if (empty($user->rights->accounting->mouvements->lire)) {
+	accessforbidden();
+}
+
 
 /*
  * Action
  */
+
 if ($action == 'lettering') {
 	$result = $lettering->updateLettering($toselect);
 
@@ -127,7 +138,7 @@ $form = new Form($db);
 $formaccounting = new FormAccounting($db);
 
 $title = $object->name." - ".$langs->trans('TabLetteringSupplier');
-$help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+$help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas|DE:Modul_Geschäftspartner';
 llxHeader('', $title, $help_url);
 
 $head = societe_prepare_head($object);

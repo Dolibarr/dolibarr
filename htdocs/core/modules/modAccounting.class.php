@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2013-2014 Olivier Geffroy		 <jeff@jeffinfo.com>
- * Copyright (C) 2013-2019 Alexandre Spangaro	 <aspangaro@open-dsi.fr>
- * Copyright (C) 2014      Ari Elbaz (elarifr)  <github@accedinfo.com>
- * Copyright (C) 2014 	    Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2016-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2017      Open-DSI             <support@open-dsi.fr>
+/* Copyright (C) 2013-2014	Olivier Geffroy		<jeff@jeffinfo.com>
+ * Copyright (C) 2013-2021	Alexandre Spangaro	<aspangaro@open-dsi.fr>
+ * Copyright (C) 2014		Ari Elbaz (elarifr)	<github@accedinfo.com>
+ * Copyright (C) 2014		Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2016-2017	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2017-2021	Open-DSI			<support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 /**
- * Description and activation class for module accounting expert
+ * Class to describe and enable double entry accounting module
  */
 class modAccounting extends DolibarrModules
 {
@@ -54,13 +54,13 @@ class modAccounting extends DolibarrModules
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->picto = 'accounting';
+		$this->picto = 'accountancy';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array('/accounting/temp');
 
 		// Config pages
-		$this->config_page_url = array();
+		$this->config_page_url = array('accounting.php');
 
 		// Dependencies
 		$this->depends = array("modFacture", "modBanque", "modTax"); // List of modules id that must be enabled if this module is enabled
@@ -285,15 +285,15 @@ class modAccounting extends DolibarrModules
 			//'b.doc_type'=>'Doctype',
 			'b.doc_ref'=>'Piece',
 			'b.code_journal'=>'Codejournal',
-			//'b.journal_label'=>'JournalLabel',
+			'b.journal_label'=>'JournalLabel',
 			'b.numero_compte'=>'AccountAccounting',
-			//'b.label_compte'=>'LabelAccount',
+			'b.label_compte'=>'LabelAccount',
 			'b.subledger_account'=>'SubledgerAccount',
 			'b.subledger_label'=>'SubledgerAccountLabel',
 			'b.label_operation'=>'LabelOperation',
 			'b.debit'=>"Debit",
 			'b.credit'=>"Credit",
-			'b.sens'=>'Direction'	// This field is still used by accounting export. We can remove it once it has been replace into accountancyexport.class.php by a detection using ->debit and ->credit
+			'b.sens'=>'Direction'	// This field is still used by accounting export. We can remove it once it has been replaced into accountancyexport.class.php by a detection using ->debit and ->credit
 		);
 		$this->import_fieldshidden_array[$r] = array('b.doc_type'=>'const-import_from_external', 'b.fk_doc'=>'const-0', 'b.fk_docdet'=>'const-0', 'b.fk_user_author'=>'user->id', 'b.date_creation'=>'const-'.dol_print_date(dol_now(), 'standard')); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 		$this->import_regex_array[$r] = array('b.doc_date'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$');
@@ -303,15 +303,85 @@ class modAccounting extends DolibarrModules
 			//'b.doc_type'=>'import',
 			'b.doc_ref'=>'My document ABC',
 			'b.code_journal'=>"VTE",
-			//'b.journal_label'=>"Sale journal",
+			'b.journal_label'=>"Sale journal",
 			'b.numero_compte'=>"707",
-			//'b.label_compte'=>'Product account 707',
+			'b.label_compte'=>'Product account 707',
 			'b.subledger_account'=>'',
 			'b.subledger_label'=>'',
 			'b.label_operation'=>"Sale of ABC",
 			'b.debit'=>"0",
 			'b.credit'=>"100",
 			'b.sens'=>'C'	// This field is still used by accounting export. We can remove it once it has been replace into accountancyexport.class.php by a detection using ->debit and ->credit
+		);
+
+		// General ledger - Fichier FEC
+		$r++;
+		$this->import_code[$r] = $this->rights_class.'_'.$r;
+		$this->import_label[$r] = 'ImportAccountingEntriesFECFormat';
+		$this->import_icon[$r] = $this->picto;
+		$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
+		$this->import_tables_array[$r] = array('b'=>MAIN_DB_PREFIX.'accounting_bookkeeping'); // List of tables to insert into (insert done in same order)
+		$this->import_fields_array[$r] = array(
+			'b.code_journal'=>'FECFormatJournalCode*',
+			'b.journal_label'=>'FECFormatJournalLabel',
+			'b.piece_num'=>'FECFormatEntryNum*',
+			'b.doc_date'=>'FECFormatEntryDate*',
+			'b.numero_compte'=>'FECFormatGeneralAccountNumber*',
+			'b.label_compte'=>'FECFormatGeneralAccountLabel*',
+			'b.subledger_account'=>'FECFormatSubledgerAccountNumber',
+			'b.subledger_label'=>'FECFormatSubledgerAccountLabel',
+			'b.doc_ref'=>'FECFormatPieceRef*',
+			'b.date_creation'=>'FECFormatPieceDate',
+			'b.label_operation'=>'FECFormatLabelOperation',
+			'b.debit'=>'FECFormatDebit*',
+			'b.credit'=>'FECFormatCredit*',
+			'b.lettering_code'=>'FECFormatReconcilableCode',
+			'b.date_lettering'=>'FECFormatReconcilableDate',
+			'b.date_validated'=>'FECFormatValidateDate',
+			'b.multicurrency_amount'=>'FECFormatMulticurrencyAmount',
+			'b.multicurrency_code'=>'FECFormatMulticurrencyCode'
+		);
+		$this->import_fieldshidden_array[$r] = array(
+			'b.doc_type'=>'const-import_from_external',
+			'b.fk_doc'=>'const-0',
+			'b.fk_docdet'=>'const-0',
+			'b.fk_user_author'=>'user->id',
+			'b.montant'=>'rule-computeMontant',
+			'b.sens'=>'rule-computeSens'
+		); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
+		$this->import_convertvalue_array[$r]=array(
+			'b.montant' => array('rule' => 'compute', 'classfile' => '/accountancy/class/accountancyimport.class.php', 'class' => 'AccountancyImport', 'method' => 'computeAmount', 'element' => 'Accountancy'),
+			'b.sens' => array('rule' => 'compute', 'classfile' => '/accountancy/class/accountancyimport.class.php', 'class' => 'AccountancyImport', 'method' => 'computeDirection', 'element' => 'Accountancy'),
+		);
+		$this->import_regex_array[$r] = array(
+			//'b.doc_date'=>'^\d{4}\d{2}\d{2}$',
+			'b.doc_ref'=>'^.{1,300}$',
+			'b.numero_compte'=>'^.{1,32}$',
+			'b.label_compte'=>'^.{1,255}$',
+			'b.subledger_compte'=>'^.{1,32}$',
+			'b.subledger_label'=>'^.{1,255}$',
+			'b.label_operation'=>'^.{1,255}$',
+			//'b.sens'=>'^[D|C]$',
+		);
+		$this->import_examplevalues_array[$r] = array(
+			'b.code_journal'=>"VT",
+			'b.journal_label'=>"Sale journal",
+			'b.piece_num'=>'123 (!!! use next value not already used)',
+			'b.doc_date'=>dol_print_date(dol_now(), "%Y%m%d"),
+			'b.numero_compte'=>"707",
+			'b.label_compte'=>'Sale',
+			'b.subledger_account'=>'',
+			'b.subledger_label'=>'',
+			'b.doc_ref'=>'My document ABC',
+			'b.date_creation'=>dol_print_date(dol_now(), "%Y%m%d"),
+			'b.label_operation'=>"Sale of ABC",
+			'b.debit'=>"0",
+			'b.credit'=>"100",
+			'b.lettering_code'=>'ABC',
+			'b.date_lettering'=>dol_print_date(dol_now(), "%Y%m%d"),
+			'b.date_validated'=>dol_print_date(dol_now(), "%Y%m%d"),
+			'b.multicurrency_amount'=>"90 (Necessary if devise is different than EUR)",
+			'b.multicurrency_code'=>"US (Necessary if devise is different than EUR)",
 		);
 
 		// Chart of accounts

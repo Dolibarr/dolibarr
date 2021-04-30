@@ -7,7 +7,7 @@
  * Copyright (C) 2014      Cedric GROSS         <c.gross@kreiz-it.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2017      Open-DSI             <support@open-dsi.fr>
- * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021 Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,7 +79,6 @@ $socid = GETPOST("search_socid", "int") ?GETPOST("search_socid", "int") : GETPOS
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'agenda', 0, '', 'myactions');
 if ($socid < 0) {
 	$socid = '';
 }
@@ -115,8 +114,8 @@ if ($dateselect > 0) {
 }
 
 // Set actioncode (this code must be same for setting actioncode into peruser, listacton and index)
-if (GETPOST('search_actioncode', 'array')) {
-	$actioncode = GETPOST('search_actioncode', 'array', 3);
+if (GETPOST('search_actioncode', 'array:aZ09')) {
+	$actioncode = GETPOST('search_actioncode', 'array:aZ09', 3);
 	if (!count($actioncode)) {
 		$actioncode = '0';
 	}
@@ -154,6 +153,11 @@ $langs->loadLangs(array('agenda', 'other', 'commercial'));
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('agenda'));
+
+$result = restrictedArea($user, 'agenda', 0, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id');
+if ($user->socid && $socid) {
+	$result = restrictedArea($user, 'societe', $socid);
+}
 
 
 /*
@@ -258,7 +262,13 @@ if (empty($conf->global->AGENDA_DISABLE_EXT)) {
 		$buggedfile = 'AGENDA_EXT_BUGGEDFILE'.$i;
 		if (!empty($conf->global->$source) && !empty($conf->global->$name)) {
 			// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
-			$listofextcals[] = array('src'=>$conf->global->$source, 'name'=>$conf->global->$name, 'offsettz'=>$conf->global->$offsettz, 'color'=>$conf->global->$color, 'buggedfile'=>(isset($conf->global->buggedfile) ? $conf->global->buggedfile : 0));
+			$listofextcals[] = array(
+				'src'=>$conf->global->$source,
+				'name'=>$conf->global->$name,
+				'offsettz' => (!empty($conf->global->$offsettz) ? $conf->global->$offsettz : 0),
+				'color'=>$conf->global->$color,
+				'buggedfile'=>(isset($conf->global->buggedfile) ? $conf->global->buggedfile : 0)
+			);
 		}
 	}
 }
@@ -275,7 +285,13 @@ if (empty($user->conf->AGENDA_DISABLE_EXT)) {
 		$buggedfile = 'AGENDA_EXT_BUGGEDFILE_'.$user->id.'_'.$i;
 		if (!empty($user->conf->$source) && !empty($user->conf->$name)) {
 			// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
-			$listofextcals[] = array('src'=>$user->conf->$source, 'name'=>$user->conf->$name, 'offsettz'=>$user->conf->$offsettz, 'color'=>$user->conf->$color, 'buggedfile'=>(isset($user->conf->buggedfile) ? $user->conf->buggedfile : 0));
+			$listofextcals[] = array(
+				'src'=>$user->conf->$source,
+				'name'=>$user->conf->$name,
+				'offsettz' => (!empty($user->conf->$offsettz) ? $user->conf->$offsettz : 0),
+				'color'=>$user->conf->$color,
+				'buggedfile'=>(isset($user->conf->buggedfile) ? $user->conf->buggedfile : 0)
+			);
 		}
 	}
 }
@@ -338,15 +354,13 @@ if ($action == 'show_day') {
 	$next_year  = $next['year'];
 	$next_month = $next['month'];
 	$next_day   = $next['day'];
-
 	// Define firstdaytoshow and lastdaytoshow (warning: lastdaytoshow is last second to show + 1)
 	$firstdaytoshow = dol_mktime(0, 0, 0, $prev_month, $prev_day, $prev_year, 'tzuserrel');
 	$lastdaytoshow = dol_mktime(0, 0, 0, $next_month, $next_day, $next_year, 'tzuserrel');
 }
 //print 'xx'.$prev_year.'-'.$prev_month.'-'.$prev_day;
 //print 'xx'.$next_year.'-'.$next_month.'-'.$next_day;
-//print dol_print_date($firstdaytoshow,'day');
-//print dol_print_date($lastdaytoshow,'day');
+//print dol_print_date($firstdaytoshow,'dayhour').' '.dol_print_date($lastdaytoshow,'dayhour');
 
 /*$title = $langs->trans("DoneAndToDoActions");
 if ($status == 'done') $title = $langs->trans("DoneActions");
@@ -657,18 +671,18 @@ if (!empty($actioncode)) {
 			$sql .= " AND ca.type = 'systemauto'";
 		} else {
 			if (is_array($actioncode)) {
-				$sql .= " AND ca.code IN ('".implode("','", $actioncode)."')";
+				$sql .= " AND ca.code IN (".$db->sanitize("'".implode("','", $actioncode)."'", 1).")";
 			} else {
-				$sql .= " AND ca.code IN ('".implode("','", explode(',', $actioncode))."')";
+				$sql .= " AND ca.code IN (".$db->sanitize("'".implode("','", explode(',', $actioncode))."'", 1).")";
 			}
 		}
 	}
 }
 if ($resourceid > 0) {
-	$sql .= " AND r.element_type = 'action' AND r.element_id = a.id AND r.resource_id = ".$db->escape($resourceid);
+	$sql .= " AND r.element_type = 'action' AND r.element_id = a.id AND r.resource_id = ".((int) $resourceid);
 }
 if ($pid) {
-	$sql .= " AND a.fk_project=".$db->escape($pid);
+	$sql .= " AND a.fk_project=".((int) $pid);
 }
 if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".$user->id.")";
@@ -706,7 +720,7 @@ if ($action == 'show_day') {
 	$sql .= ')';
 }
 if ($type) {
-	$sql .= " AND ca.id = ".$type;
+	$sql .= " AND ca.id = ".((int) $type);
 }
 if ($status == '0') {
 	$sql .= " AND a.percent = 0";
@@ -763,6 +777,7 @@ if ($resql) {
 
 		$event->datep = $db->jdate($obj->datep); // datep and datef are GMT date. Example: 1970-01-01 01:00:00, jdate will return 0 if TZ of PHP server is Europe/Berlin
 		$event->datef = $db->jdate($obj->datep2);
+		//$event->datep_formated_gmt = dol_print_date($event->datep, 'dayhour', 'gmt');
 		//var_dump($obj->datep);
 		//var_dump($event->datep);
 
@@ -821,14 +836,15 @@ if ($resql) {
 			$annee = dol_print_date($daycursor, '%Y', 'tzuserrel');
 			$mois = dol_print_date($daycursor, '%m', 'tzuserrel');
 			$jour = dol_print_date($daycursor, '%d', 'tzuserrel');
-			//var_dump(dol_print_date($event->date_start_in_calendar, 'dayhour', 'gmt'));
+			//var_dump(dol_print_date($event->date_start_in_calendar, 'dayhour', 'gmt'));	// Hour at greenwich
 			//var_dump($annee.'-'.$mois.'-'.$jour);
 
 			// Loop on each day covered by action to prepare an index to show on calendar
 			$loop = true; $j = 0;
 			$daykey = dol_mktime(0, 0, 0, $mois, $jour, $annee, 'gmt');
 			do {
-				//if ($event->id==408) print 'daykey='.$daykey.' '.$event->datep.' '.$event->datef.'<br>';
+				//if ($event->id==408)
+				//print 'daykey='.$daykey.' '.dol_print_date($daykey, 'dayhour', 'gmt').' '.$event->datep.' '.$event->datef.'<br>';
 
 				$eventarray[$daykey][] = $event;
 				$j++;
@@ -847,6 +863,7 @@ if ($resql) {
 } else {
 	dol_print_error($db);
 }
+//var_dump($eventarray);
 
 // BIRTHDATES CALENDAR
 // Complete $eventarray with birthdates
@@ -857,10 +874,10 @@ if ($showbirthday) {
 	$sql .= ' WHERE (priv=0 OR (priv=1 AND fk_user_creat='.$user->id.'))';
 	$sql .= " AND sp.entity IN (".getEntity('socpeople').")";
 	if ($action == 'show_day') {
-		$sql .= ' AND MONTH(birthday) = '.$month;
-		$sql .= ' AND DAY(birthday) = '.$day;
+		$sql .= ' AND MONTH(birthday) = '.((int) $month);
+		$sql .= ' AND DAY(birthday) = '.((int) $day);
 	} else {
-		$sql .= ' AND MONTH(birthday) = '.$month;
+		$sql .= ' AND MONTH(birthday) = '.((int) $month);
 	}
 	$sql .= ' ORDER BY birthday';
 
@@ -930,7 +947,7 @@ $sql .= " AND (x.statut = '2' OR x.statut = '3')"; // Show only public leaves (2
 
 if ($action == 'show_day') {
 	// Request only leaves for the current selected day
-	$sql .= " AND '".$db->escape($year)."-".$db->escape($month)."-".$db->escape($day)."' BETWEEN x.date_debut AND x.date_fin";	// date_debut and date_fin are date wihout time
+	$sql .= " AND '".$db->escape($year)."-".$db->escape($month)."-".$db->escape($day)."' BETWEEN x.date_debut AND x.date_fin";	// date_debut and date_fin are date without time
 } elseif ($action == 'show_week') {
 	// TODO: Add filter to reduce database request
 } elseif ($action == 'show_month') {
@@ -1126,7 +1143,11 @@ if (count($listofextcals)) {
 				if (isset($icalevent['DTSTART;VALUE=DATE'])) { // fullday event
 					// For full day events, date are also GMT but they wont but converted using tz during output
 					$datestart = dol_stringtotime($icalevent['DTSTART;VALUE=DATE'], 1);
-					$dateend = dol_stringtotime($icalevent['DTEND;VALUE=DATE'], 1) - 1; // We remove one second to get last second of day
+					if (empty($icalevent['DTEND;VALUE=DATE'])) {
+						$dateend = $datestart + 86400 - 1;
+					} else {
+						$dateend = dol_stringtotime($icalevent['DTEND;VALUE=DATE'], 1) - 1; // We remove one second to get last second of day
+					}
 					//print 'x'.$datestart.'-'.$dateend;exit;
 					//print dol_print_date($dateend,'dayhour','gmt');
 					$event->fulldayevent = 1;
@@ -1200,7 +1221,7 @@ if (count($listofextcals)) {
 					// LOW      = 0 to 4
 					// MEDIUM   = 5
 					// HIGH     = 6 to 9
-					if ($icalevent['PRIORITY']) {
+					if (!empty($icalevent['PRIORITY'])) {
 						$event->priority = $icalevent['PRIORITY'];
 					}
 
@@ -1221,7 +1242,7 @@ if (count($listofextcals)) {
 						// X-MICROSOFT-CDO-BUSYSTATUS:OOF       + TRANSP:OPAQUE      => Away from the office / off-site
 					}
 
-					if ($icalevent['LOCATION']) {
+					if (!empty($icalevent['LOCATION'])) {
 						$event->location = $icalevent['LOCATION'];
 					}
 
@@ -1307,7 +1328,7 @@ $cacheusers = array();
 // Define theme_datacolor array
 $color_file = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/theme_vars.inc.php";
 if (is_readable($color_file)) {
-	include_once $color_file;
+	include $color_file;
 }
 if (!is_array($theme_datacolor)) {
 	$theme_datacolor = array(array(120, 130, 150), array(200, 160, 180), array(190, 190, 220));
@@ -1621,6 +1642,8 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 
 	$dateint = sprintf("%04d", $year).sprintf("%02d", $month).sprintf("%02d", $day);
 
+	//print 'show_day_events day='.$day.' month='.$month.' year='.$year.' dateint='.$dateint;
+
 	print "\n";
 
 	$curtime = dol_mktime(0, 0, 0, $month, $day, $year);
@@ -1673,10 +1696,12 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 	include_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 	$tmpholiday = new Holiday($db);
 
-	foreach ($eventarray as $daykey => $notused) {
-		$annee = dol_print_date($daykey, '%Y');
-		$mois =  dol_print_date($daykey, '%m');
-		$jour =  dol_print_date($daykey, '%d');
+	foreach ($eventarray as $daykey => $notused) {		// daykey is the 'YYYYMMDD' to show according to user
+		$annee = dol_print_date($daykey, '%Y', 'gmt');	// We use gmt because we want the value represented by string 'YYYYMMDD'
+		$mois =  dol_print_date($daykey, '%m', 'gmt');	// We use gmt because we want the value represented by string 'YYYYMMDD'
+		$jour =  dol_print_date($daykey, '%d', 'gmt');	// We use gmt because we want the value represented by string 'YYYYMMDD'
+
+		//print 'event daykey='.$daykey.' dol_print_date(daykey)='.dol_print_date($daykey, 'dayhour', 'gmt').' jour='.$jour.' mois='.$mois.' annee='.$annee."<br>\n";
 
 		if ($day == $jour && $month == $mois && $year == $annee) {
 			foreach ($eventarray[$daykey] as $index => $event) {

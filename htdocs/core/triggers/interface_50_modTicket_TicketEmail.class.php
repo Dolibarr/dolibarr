@@ -61,7 +61,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 	{
 		$ok = 0;
 
-		if (empty($conf->ticket->enabled)) {
+		if (empty($conf->ticket) || empty($conf->ticket->enabled)) {
 			return 0; // Module not active, we do nothing
 		}
 

@@ -17,7 +17,7 @@
  */
 
 /**
- *  \file       htdocs/core/modules/stock/modules_movement.php
+ *  \file       htdocs/core/modules/movement/modules_movement.php
  *  \ingroup    stock
  *  \brief      File with parent class for generating PDF of a stock movements
  */

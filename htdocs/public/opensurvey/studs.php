@@ -203,7 +203,6 @@ if ($testmodifier) {
 	//var_dump($_POST);exit;
 	$nouveauchoix = '';
 	for ($i = 0; $i < $nbcolonnes; $i++) {
-		//var_dump($_POST["choix$i"]);
 		if (GETPOSTISSET("choix".$i) && GETPOST("choix".$i) == '1') {
 			$nouveauchoix .= "1";
 		} elseif (GETPOSTISSET("choix".$i) && GETPOST("choix".$i) == '2') {
@@ -217,7 +216,7 @@ if ($testmodifier) {
 		accessforbidden('', 0, 0, 1);
 	}
 
-	$idtomodify = $_POST["idtomodify".$modifier];
+	$idtomodify = GETPOST("idtomodify".$modifier);
 	$sql = 'UPDATE '.MAIN_DB_PREFIX."opensurvey_user_studs";
 	$sql .= " SET reponses = '".$db->escape($nouveauchoix)."'";
 	$sql .= " WHERE id_users = '".$db->escape($idtomodify)."'";

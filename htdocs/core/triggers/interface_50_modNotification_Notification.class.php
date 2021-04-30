@@ -34,6 +34,7 @@ class InterfaceNotification extends DolibarrTriggers
 	public $listofmanagedevents = array(
 		'BILL_VALIDATE',
 		'BILL_PAYED',
+		'ORDER_CREATE',
 		'ORDER_VALIDATE',
 		'PROPAL_VALIDATE',
 		'PROPAL_CLOSE_SIGNED',
@@ -80,7 +81,7 @@ class InterfaceNotification extends DolibarrTriggers
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
-		if (empty($conf->notification->enabled)) {
+		if (empty($conf->notification) || empty($conf->notification->enabled)) {
 			return 0; // Module not active, we do nothing
 		}
 
@@ -128,13 +129,13 @@ class InterfaceNotification extends DolibarrTriggers
 				}
 				// Check if module for this event is active
 				if ($qualified) {
-					//print 'xx'.$obj->code;
+					//print 'xx'.$obj->code.' '.$obj->elementtype.'<br>';
 					$element = $obj->elementtype;
 
 					// Exclude events if related module is disabled
-					if ($element == 'order_supplier' && empty($conf->fournisseur->enabled)) {
+					if ($element == 'order_supplier' && ((empty($conf->fournisseur->enabled) && !empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || empty($conf->supplier_order->enabled))) {
 						$qualified = 0;
-					} elseif ($element == 'invoice_supplier' && empty($conf->fournisseur->enabled)) {
+					} elseif ($element == 'invoice_supplier' && ((empty($conf->fournisseur->enabled) && !empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || empty($conf->supplier_invoice->enabled))) {
 						$qualified = 0;
 					} elseif ($element == 'withdraw' && empty($conf->prelevement->enabled)) {
 						$qualified = 0;
@@ -142,7 +143,9 @@ class InterfaceNotification extends DolibarrTriggers
 						$qualified = 0;
 					} elseif ($element == 'member' && empty($conf->adherent->enabled)) {
 						$qualified = 0;
-					} elseif (!in_array($element, array('order_supplier', 'invoice_supplier', 'withdraw', 'shipping', 'member', 'expensereport')) && empty($conf->$element->enabled)) {
+					} elseif (($element == 'expense_report' || $element == 'expensereport') && empty($conf->expensereport->enabled)) {
+						$qualified = 0;
+					} elseif (!in_array($element, array('order_supplier', 'invoice_supplier', 'withdraw', 'shipping', 'member', 'expense_report', 'expensereport')) && empty($conf->$element->enabled)) {
 						$qualified = 0;
 					}
 				}

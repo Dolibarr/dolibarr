@@ -19,7 +19,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/delivery/mod_livraison_saphir.php
+ *	\file       htdocs/core/modules/delivery/mod_delivery_saphir.php
  *	\ingroup    expedition
  *	\brief      Fichier contenant la classe du modele de numerotation de reference de livraison Saphir
  */

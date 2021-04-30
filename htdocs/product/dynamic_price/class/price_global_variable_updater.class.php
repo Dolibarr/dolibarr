@@ -159,7 +159,7 @@ class PriceGlobalVariableUpdater
 	{
 		$sql = "SELECT type, description, parameters, fk_variable, update_interval, next_update, last_status";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
-		$sql .= " WHERE rowid = ".$id;
+		$sql .= " WHERE rowid = ".((int) $id);
 
 		dol_syslog(__METHOD__);
 		$resql = $this->db->query($sql);
@@ -275,7 +275,7 @@ class PriceGlobalVariableUpdater
 
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
-			$sql .= " WHERE rowid = ".$rowid;
+			$sql .= " WHERE rowid = ".((int) $rowid);
 
 			dol_syslog(__METHOD__);
 			$resql = $this->db->query($sql);
@@ -487,7 +487,7 @@ class PriceGlobalVariableUpdater
 			if ($this->type == 0) {
 				// Call JSON request
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
-				$tmpresult = getURLContent($url);
+				$tmpresult = getURLContent($url, 'GET', '', 1, array(), array('http', 'https'), 0);
 				$code = $tmpresult['http_code'];
 				$result = $tmpresult['content'];
 

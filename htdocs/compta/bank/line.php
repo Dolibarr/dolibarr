@@ -92,22 +92,22 @@ if ($cancel) {
 
 if ($user->rights->banque->consolidate && $action == 'donext') {
 	$al = new AccountLine($db);
-	$al->dateo_next($_GET["rowid"]);
+	$al->dateo_next(GETPOST("rowid", 'int'));
 } elseif ($user->rights->banque->consolidate && $action == 'doprev') {
 	$al = new AccountLine($db);
-	$al->dateo_previous($_GET["rowid"]);
+	$al->dateo_previous(GETPOST("rowid", 'int'));
 } elseif ($user->rights->banque->consolidate && $action == 'dvnext') {
 	$al = new AccountLine($db);
-	$al->datev_next($_GET["rowid"]);
+	$al->datev_next(GETPOST("rowid", 'int'));
 } elseif ($user->rights->banque->consolidate && $action == 'dvprev') {
 	$al = new AccountLine($db);
-	$al->datev_previous($_GET["rowid"]);
+	$al->datev_previous(GETPOST("rowid", 'int'));
 }
 
 if ($action == 'confirm_delete_categ' && $confirm == "yes" && $user->rights->banque->modifier) {
 	$cat1 = GETPOST("cat1", 'int');
 	if (!empty($rowid) && !empty($cat1)) {
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid = ".$rowid." AND fk_categ = ".$cat1;
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid = ".((int) $rowid)." AND fk_categ = ".((int) $cat1);
 		if (!$db->query($sql)) {
 			dol_print_error($db);
 		}
@@ -140,9 +140,9 @@ if ($user->rights->banque->modifier && $action == "update") {
 	if (!$error) {
 		$db->begin();
 
-		$amount = price2num($_POST['amount']);
-		$dateop = dol_mktime(12, 0, 0, $_POST["dateomonth"], $_POST["dateoday"], $_POST["dateoyear"]);
-		$dateval = dol_mktime(12, 0, 0, $_POST["datevmonth"], $_POST["datevday"], $_POST["datevyear"]);
+		$amount = price2num(GETPOST('amount'));
+		$dateop = dol_mktime(12, 0, 0, GETPOST("dateomonth"), GETPOST("dateoday"), GETPOST("dateoyear"));
+		$dateval = dol_mktime(12, 0, 0, GETPOST("datevmonth"), GETPOST("datevday"), GETPOST("datevyear"));
 		$sql = "UPDATE ".MAIN_DB_PREFIX."bank";
 		$sql .= " SET ";
 		// Always opened
@@ -174,7 +174,7 @@ if ($user->rights->banque->modifier && $action == "update") {
 			}
 		}
 		$sql .= " fk_account = ".$actarget->id;
-		$sql .= " WHERE rowid = ".$acline->id;
+		$sql .= " WHERE rowid = ".((int) $acline->id);
 
 		$result = $db->query($sql);
 		if (!$result) {
@@ -183,14 +183,14 @@ if ($user->rights->banque->modifier && $action == "update") {
 
 		if (!$error) {
 			$arrayofcategs = GETPOST('custcats', 'array');
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid = ".$rowid;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid = ".((int) $rowid);
 			if (!$db->query($sql)) {
 				$error++;
 				dol_print_error($db);
 			}
 			if (count($arrayofcategs)) {
 				foreach ($arrayofcategs as $val) {
-					$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (lineid, fk_categ) VALUES (".$rowid.", ".$val.")";
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (lineid, fk_categ) VALUES (".((int) $rowid).", ".((int) $val).")";
 					if (!$db->query($sql)) {
 						$error++;
 						dol_print_error($db);
@@ -212,8 +212,8 @@ if ($user->rights->banque->modifier && $action == "update") {
 
 // Reconcile
 if ($user->rights->banque->consolidate && ($action == 'num_releve' || $action == 'setreconcile')) {
-	$num_rel = trim($_POST["num_rel"]);
-	$rappro = $_POST['reconciled'] ? 1 : 0;
+	$num_rel = trim(GETPOST("num_rel"));
+	$rappro = GETPOST('reconciled') ? 1 : 0;
 
 	// Check parameters
 	if ($rappro && empty($num_rel)) {
@@ -229,9 +229,9 @@ if ($user->rights->banque->consolidate && ($action == 'num_releve' || $action ==
 		if (empty($num_rel)) {
 			$sql .= ", rappro = 0";
 		} else {
-			$sql .= ", rappro = ".$rappro;
+			$sql .= ", rappro = ".((int) $rappro);
 		}
-		$sql .= " WHERE rowid = ".$rowid;
+		$sql .= " WHERE rowid = ".((int) $rowid);
 
 		dol_syslog("line.php", LOG_DEBUG);
 		$result = $db->query($sql);
@@ -268,7 +268,7 @@ $sql = "SELECT b.rowid,b.dateo as do,b.datev as dv, b.amount, b.label, b.rappro,
 $sql .= " b.num_releve, b.fk_user_author, b.num_chq, b.fk_type, b.fk_account, b.fk_bordereau as receiptid,";
 $sql .= " b.emetteur,b.banque";
 $sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
-$sql .= " WHERE rowid=".$rowid;
+$sql .= " WHERE rowid=".((int) $rowid);
 $sql .= " ORDER BY dateo ASC";
 $result = $db->query($sql);
 if ($result) {
@@ -291,7 +291,7 @@ if ($result) {
 
 		// Confirmations
 		if ($action == 'delete_categ') {
-			print $form->formconfirm($_SERVER['PHP_SELF']."?rowid=".$rowid."&cat1=".GETPOST("fk_categ")."&orig_account=".$orig_account, $langs->trans("RemoveFromRubrique"), $langs->trans("RemoveFromRubriqueConfirm"), "confirm_delete_categ", '', 'yes', 1);
+			print $form->formconfirm($_SERVER['PHP_SELF']."?rowid=".urlencode($rowid)."&cat1=".urlencode(GETPOST("fk_categ", 'int'))."&orig_account=".urlencode($orig_account), $langs->trans("RemoveFromRubrique"), $langs->trans("RemoveFromRubriqueConfirm"), "confirm_delete_categ", '', 'yes', 1);
 		}
 
 		print '<form name="update" method="POST" action="'.$_SERVER['PHP_SELF'].'?rowid='.$rowid.'">';
@@ -452,7 +452,7 @@ if ($result) {
 			}
 			print '</td>';
 		} else {
-			print '<td>'.$objp->fk_type.' '.$objp->num_chq.'</td>';
+			print '<td>'.$objp->fk_type.' '.dol_escape_htmltag($objp->num_chq).'</td>';
 		}
 		print "</tr>";
 
@@ -462,7 +462,7 @@ if ($result) {
 		print "</td>";
 		if ($user->rights->banque->modifier || $user->rights->banque->consolidate) {
 			print '<td>';
-			print '<input type="text" class="flat minwidth200" name="emetteur" value="'.(empty($objp->emetteur) ? '' : stripslashes($objp->emetteur)).'">';
+			print '<input type="text" class="flat minwidth200" name="emetteur" value="'.(empty($objp->emetteur) ? '' : dol_escape_htmltag($objp->emetteur)).'">';
 			print '</td>';
 		} else {
 			print '<td>'.$objp->emetteur.'</td>';
@@ -475,10 +475,10 @@ if ($result) {
 		print "</td>";
 		if ($user->rights->banque->modifier || $user->rights->banque->consolidate) {
 			print '<td>';
-			print '<input type="text" class="flat minwidth200" name="banque" value="'.(empty($objp->banque) ? '' : $objp->banque).'">';
+			print '<input type="text" class="flat minwidth200" name="banque" value="'.(empty($objp->banque) ? '' : dol_escape_htmltag($objp->banque)).'">';
 			print '</td>';
 		} else {
-			print '<td>'.$objp->banque.'</td>';
+			print '<td>'.dol_escape_htmltag($objp->banque).'</td>';
 		}
 		print "</tr>";
 
@@ -489,9 +489,9 @@ if ($result) {
 			print $form->selectDate($db->jdate($objp->do), 'dateo', '', '', '', 'update', 1, 0, $objp->rappro);
 			if (!$objp->rappro) {
 				print ' &nbsp; ';
-				print '<a href="'.$_SERVER['PHP_SELF'].'?action=doprev&amp;id='.$id.'&amp;rowid='.$objp->rowid.'">';
+				print '<a class="ajaxforbankoperationchange" href="'.$_SERVER['PHP_SELF'].'?action=doprev&amp;id='.$id.'&amp;rowid='.$objp->rowid.'">';
 				print img_edit_remove()."</a> ";
-				print '<a href="'.$_SERVER['PHP_SELF'].'?action=donext&amp;id='.$id.'&amp;rowid='.$objp->rowid.'">';
+				print '<a class="ajaxforbankoperationchange" href="'.$_SERVER['PHP_SELF'].'?action=donext&amp;id='.$id.'&amp;rowid='.$objp->rowid.'">';
 				print img_edit_add()."</a>";
 			}
 			print '</td>';
@@ -509,9 +509,9 @@ if ($result) {
 			print $form->selectDate($db->jdate($objp->dv), 'datev', '', '', '', 'update', 1, 0, $objp->rappro);
 			if (!$objp->rappro) {
 				print ' &nbsp; ';
-				print '<a href="'.$_SERVER['PHP_SELF'].'?action=dvprev&amp;id='.$id.'&amp;rowid='.$objp->rowid.'">';
+				print '<a class="ajaxforbankoperationchange" href="'.$_SERVER['PHP_SELF'].'?action=dvprev&amp;id='.$id.'&amp;rowid='.$objp->rowid.'">';
 				print img_edit_remove()."</a> ";
-				print '<a href="'.$_SERVER['PHP_SELF'].'?action=dvnext&amp;id='.$id.'&amp;rowid='.$objp->rowid.'">';
+				print '<a class="ajaxforbankoperationchange" href="'.$_SERVER['PHP_SELF'].'?action=dvnext&amp;id='.$id.'&amp;rowid='.$objp->rowid.'">';
 				print img_edit_add()."</a>";
 			}
 			print '</td>';
@@ -523,6 +523,7 @@ if ($result) {
 		print "</tr>";
 
 		// Description
+		$reg = array();
 		print "<tr><td>".$langs->trans("Label")."</td>";
 		if ($user->rights->banque->modifier || $user->rights->banque->consolidate) {
 			print '<td>';
@@ -531,7 +532,7 @@ if ($result) {
 				// Label generique car entre parentheses. On l'affiche en le traduisant
 				print $langs->trans($reg[1]);
 			} else {
-				print $objp->label;
+				print dol_escape_htmltag($objp->label);
 			}
 			print '">';
 			print '</td>';
@@ -541,7 +542,7 @@ if ($result) {
 				// Label generique car entre parentheses. On l'affiche en le traduisant
 				print $langs->trans($reg[1]);
 			} else {
-				print $objp->label;
+				print dol_escape_htmltag($objp->label);
 			}
 			print '</td>';
 		}
@@ -573,6 +574,30 @@ if ($result) {
 
 		print "</table>";
 
+		// Code to adjust value date with plus and less picto using an Ajax call instead of a full reload of page
+		/* Not yet ready. We must manage inline replacemet of input date field
+		$urlajax = DOL_URL_ROOT.'/core/ajax/bankconciliate.php?token='.currentToken();
+		print '
+			<script type="text/javascript">
+			$(function() {
+				$("a.ajaxforbankoperationchange").each(function(){
+					var current = $(this);
+					current.click(function()
+					{
+						var url = "'.$urlajax.'&"+current.attr("href").split("?")[1];
+						$.get(url, function(data)
+						{
+							console.log(url)
+							console.log(data)
+							current.parent().prev().replaceWith(data);
+						});
+						return false;
+					});
+				});
+			});
+			</script>
+			';
+		*/
 		print '</div>';
 
 		print dol_get_fiche_end();

@@ -102,8 +102,10 @@ if (!empty($conf->projet->enabled)) {
 }
 
 $title = $langs->trans('Donation')." - ".$langs->trans('Documents');
-$helpurl = "";
-llxHeader('', $title, $helpurl);
+
+$help_url = 'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones|DE:Modul_Spenden';
+
+llxHeader('', $title, $help_url);
 
 
 if ($object->id) {
@@ -186,10 +188,10 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'don';
-	$permission = $user->rights->don->lire;
+	$permission = $user->rights->don->creer;
 	$permtoedit = $user->rights->don->creer;
 	$param = '&id='.$object->id;
-	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {
 	print $langs->trans("ErrorUnknown");
 }

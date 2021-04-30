@@ -169,7 +169,7 @@ class box_task extends ModeleBoxes
 			$sql .= " AND (pt.progress < 100 OR pt.progress IS NULL ) "; // 100% is done and not displayed
 			$sql .= " AND p.usage_task = 1 ";
 			if (!$user->rights->projet->all->lire) {
-				$sql .= " AND p.rowid IN (".$projectsListId.")"; // public and assigned to, or restricted to company for external users
+				$sql .= " AND p.rowid IN (".$this->db->sanitize($projectsListId).")"; // public and assigned to, or restricted to company for external users
 			}
 
 			$sql .= " ORDER BY pt.datee ASC, pt.dateo ASC";

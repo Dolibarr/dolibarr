@@ -3,7 +3,7 @@
  * Copyright (C) 2014-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2015       Charlie BENKE           <charlie@patas-monkey.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -44,7 +44,8 @@ if (!empty($conf->projet->enabled)) {
 	$langs->load("projects");
 }
 
-$id = GETPOST("id", 'int');
+$id = GETPOSTINT('id');
+$ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'aZ09');
 $accountid = GETPOST('accountid', 'int') > 0 ? GETPOST('accountid', 'int') : 0;
@@ -60,14 +61,8 @@ $datep = dol_mktime(12, 0, 0, GETPOST("datepmonth", 'int'), GETPOST("datepday", 
 $datev = dol_mktime(12, 0, 0, GETPOST("datevmonth", 'int'), GETPOST("datevday", 'int'), GETPOST("datevyear", 'int'));
 $datesp = dol_mktime(12, 0, 0, GETPOST("datespmonth", 'int'), GETPOST("datespday", 'int'), GETPOST("datespyear", 'int'));
 $dateep = dol_mktime(12, 0, 0, GETPOST("dateepmonth", 'int'), GETPOST("dateepday", 'int'), GETPOST("dateepyear", 'int'));
-$label = GETPOST('label');
-
-// Security check
-$socid = GETPOST("socid", "int");
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'salaries', '', '', '');
+$label = GETPOST('label', 'alphanohtml');
+$fk_user = GETPOSTINT('userid');
 
 $object = new Salary($db);
 $extrafields = new ExtraFields($db);
@@ -77,6 +72,18 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('salarycard', 'globalcard'));
+
+$object = new Salary($db);
+if ($id > 0 || !empty($ref)) {
+	$object->fetch($id, $ref);
+}
+
+// Security check
+$socid = GETPOSTINT('socid');
+if ($user->socid) {
+	$socid = $user->socid;
+}
+restrictedArea($user, 'salaries', $object->id, 'salary', '');
 
 
 /**
@@ -107,7 +114,17 @@ if ($action == 'confirm_paid' && $user->rights->salaries->write && $confirm == '
 	$result = $object->set_paid($user);
 }
 
-// Reopen
+if ($action == 'setfk_user' && $user->rights->salaries->write) {
+	$result = $object->fetch($id);
+	if ($result > 0) {
+		$object->fk_user = $fk_user;
+		$object->update($user);
+	} else {
+		dol_print_error($db);
+		exit;
+	}
+}
+
 if ($action == 'reopen' && $user->rights->salaries->write) {
 	$result = $object->fetch($id);
 	if ($object->paye) {
@@ -196,10 +213,11 @@ if ($action == 'add' && empty($cancel)) {
 	}
 
 	if (!$error) {
+		$db->begin();
+
 		$ret = $object->create($user);
 		if ($ret < 0) $error++;
 		if (!empty($auto_create_paiement) && !$error) {
-			$db->begin();
 			// Create a line of payments
 			$paiement = new PaymentSalary($db);
 			$paiement->chid         = $object->id;
@@ -226,15 +244,11 @@ if ($action == 'add' && empty($cancel)) {
 					setEventMessages($paiement->error, null, 'errors');
 				}
 			}
-
-			if (!$error) {
-				$db->commit();
-			} else {
-				$db->rollback();
-			}
 		}
 
 		if (empty($error)) {
+			$db->commit();
+
 			if (GETPOST('saveandnew', 'alpha')) {
 				setEventMessages($langs->trans("RecordSaved"), '', 'mesgs');
 				header("Location: card.php?action=create&fk_project=" . urlencode($projectid) . "&accountid=" . urlencode($accountid) . '&paymenttype=' . urlencode(GETPOST('paymenttype', 'az09')) . '&datepday=' . GETPOST("datepday", 'int') . '&datepmonth=' . GETPOST("datepmonth", 'int') . '&datepyear=' . GETPOST("datepyear", 'int'));
@@ -243,6 +257,8 @@ if ($action == 'add' && empty($cancel)) {
 				header("Location: " . $_SERVER['PHP_SELF'] . '?id=' . $object->id);
 				exit;
 			}
+		} else {
+			$db->rollback();
 		}
 	}
 
@@ -271,7 +287,7 @@ if ($action == 'confirm_delete') {
 }
 
 
-if ($action == 'update' && !$_POST["cancel"] && $user->rights->salaries->write) {
+if ($action == 'update' && !GETPOST("cancel") && $user->rights->salaries->write) {
 	$amount = price2num(GETPOST('amount'), 'MT', 2);
 
 	if (empty($amount)) {
@@ -421,7 +437,7 @@ if ($action == 'create') {
 	print '<table class="border centpercent">';
 
 	// Employee
-	print '<tr><td>';
+	print '<tr><td class="titlefieldcreate">';
 	print $form->editfieldkey('Employee', 'fk_user', '', $object, 0, 'string', '', 1).'</td><td>';
 	$noactive = 0; // We keep active and unactive users
 	print img_picto('', 'user', 'class="paddingrighonly"').$form->select_dolusers(GETPOST('fk_user', 'int'), 'fk_user', 1, '', 0, '', '', 0, 0, 0, 'AND employee=1', 0, '', 'maxwidth300', $noactive);
@@ -448,7 +464,7 @@ if ($action == 'create') {
 	// Amount
 	print '<tr><td>';
 	print $form->editfieldkey('Amount', 'amount', '', $object, 0, 'string', '', 1).'</td><td>';
-	print '<input name="amount" id="amount" class="minwidth100" value="'.GETPOST("amount").'">';
+	print '<input name="amount" id="amount" class="minwidth75 maxwidth100" value="'.GETPOST("amount").'">';
 	print '</td></tr>';
 
 	// Project
@@ -461,7 +477,7 @@ if ($action == 'create') {
 	}
 
 	// Comments
-	print '<tr class="hide_if_no_auto_create_payment">';
+	print '<tr>';
 	print '<td class="tdtop">'.$langs->trans("Comments").'</td>';
 	print '<td class="tdtop"><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_3.'">'.GETPOST('note', 'restricthtml').'</textarea></td>';
 	print '</tr>';
@@ -509,9 +525,11 @@ if ($action == 'create') {
 	}
 
 	// Bouton Save payment
+	/*
 	print '<tr class="hide_if_no_auto_create_payment"><td>';
 	print $langs->trans("ClosePaidSalaryAutomatically");
 	print '</td><td><input type="checkbox" checked value="1" name="closepaidsalary"></td></tr>';
+	*/
 
 	// Other attributes
 	$parameters = array();
@@ -526,6 +544,12 @@ if ($action == 'create') {
 	print dol_get_fiche_end();
 
 	print '<div class="center">';
+
+	print '<div class="hide_if_no_auto_create_payment paddingbottom">';
+	print '<input type="checkbox" checked value="1" name="closepaidsalary">'.$langs->trans("ClosePaidSalaryAutomatically");
+	print '<br>';
+	print '</div>';
+
 	print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
 	print '&nbsp;&nbsp; &nbsp;&nbsp;';
 	print '<input type="submit" class="button" name="saveandnew" value="'.$langs->trans("SaveAndNew").'">';
@@ -593,10 +617,37 @@ if ($id) {
 		$morehtmlref .= '</form>';
 	}
 
-	// Employee
-	$userstatic = new User($db);
-	$userstatic->fetch($object->fk_user);
-	$morehtmlref .= '<br>' .$langs->trans('Employee').' : '.$userstatic->getNomUrl(1);
+	//Employee
+	if ($action != 'editfk_user') {
+		if ($object->getSommePaiement() > 0 && !empty($object->fk_user)) {
+			$userstatic = new User($db);
+			$result = $userstatic->fetch($object->fk_user);
+			if ($result > 0) {
+				$morehtmlref .= '<br>' .$langs->trans('Employee').' : '.$userstatic->getNomUrl(1);
+			}
+		} else {
+			$morehtmlref .= '<br>' . $form->editfieldkey("Employee", 'fk_user', $object->label, $object, $user->rights->salaries->write, 'string', '', 0, 1);
+
+			if (!empty($object->fk_user)) {
+				$userstatic = new User($db);
+				$result = $userstatic->fetch($object->fk_user);
+				if ($result > 0) {
+					$morehtmlref .= $userstatic->getNomUrl(1);
+				} else {
+					dol_print_error($db);
+					exit();
+				}
+			}
+		}
+	} else {
+		$morehtmlref .= '<br>'.$langs->trans('Employee').' :&nbsp;';
+		$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+		$morehtmlref .= '<input type="hidden" name="action" value="setfk_user">';
+		$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
+		$morehtmlref .= $form->select_dolusers($object->fk_user, 'userid', 1);
+		$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+		$morehtmlref .= '</form>';
+	}
 
 	// Project
 	if (!empty($conf->projet->enabled)) {
@@ -643,12 +694,12 @@ if ($id) {
 	print '<table class="border centpercent tableforfield">';
 
 	if ($action == 'edit') {
-		print '<tr><td>'.$langs->trans("DateStartPeriod")."</td><td>";
+		print '<tr><td class="titlefield">'.$langs->trans("DateStartPeriod")."</td><td>";
 		print $form->selectDate($object->datesp, 'datesp', 0, 0, 0, 'datesp', 1);
 		print "</td></tr>";
 	} else {
 		print "<tr>";
-		print '<td>' . $langs->trans("DateStartPeriod") . '</td><td>';
+		print '<td class="titlefield">' . $langs->trans("DateStartPeriod") . '</td><td>';
 		print dol_print_date($object->datesp, 'day');
 		print '</td></tr>';
 	}
@@ -674,15 +725,15 @@ if ($id) {
 	print '</td></tr>';*/
 
 	if ($action == 'edit') {
-		print '<tr><td class="fieldrequired">' . $langs->trans("Amount") . '</td><td><input name="amount" size="10" value="' . $object->amount . '"></td></tr>';
+		print '<tr><td class="fieldrequired">' . $langs->trans("Amount") . '</td><td><input name="amount" size="10" value="' . price($object->amount) . '"></td></tr>';
 	} else {
 		print '<tr><td>' . $langs->trans("Amount") . '</td><td>' . price($object->amount, 0, $outputlangs, 1, -1, -1, $conf->currency) . '</td></tr>';
 	}
 
-	// Mode of payment
+	// Default mode of payment
 	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
-	print $langs->trans('PaymentMode');
+	print $langs->trans('DefaultPaymentMode');
 	print '</td>';
 	if ($action != 'editmode')
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
@@ -696,11 +747,11 @@ if ($id) {
 	}
 	print '</td></tr>';
 
-	// Bank Account
+	// Default Bank Account
 	if (!empty($conf->banque->enabled)) {
 		print '<tr><td class="nowrap">';
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
-		print $langs->trans('BankAccount');
+		print $langs->trans('DefaultBankAccount');
 		print '<td>';
 		if ($action != 'editbankaccount' && $user->rights->salaries->write) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
@@ -742,7 +793,7 @@ if ($id) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepayment = c.id";
 	$sql .= ", ".MAIN_DB_PREFIX."salary as salaire";
-	$sql .= " WHERE p.fk_salary = ".$id;
+	$sql .= " WHERE p.fk_salary = ".((int) $id);
 	$sql .= " AND p.fk_salary = salaire.rowid";
 	$sql .= " AND salaire.entity IN (".getEntity('tax').")";
 	$sql .= " ORDER BY dp DESC";
@@ -844,23 +895,25 @@ if ($id) {
 	print dol_get_fiche_end();
 
 
-	// Action buttons
+	/*
+	 * Action bar
+	 */
 
 	print '<div class="tabsAction">'."\n";
 	if ($action != 'edit') {
 		// Reopen
 		if ($object->paye && $user->rights->salaries->write) {
-			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".dol_buildpath("/salaries/card.php", 1)."?id=$object->id&amp;action=reopen\">".$langs->trans("ReOpen")."</a></div>";
+			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".dol_buildpath("/salaries/card.php", 1)."?id=".$object->id.'&action=reopen&token='.newToken().'">'.$langs->trans("ReOpen")."</a></div>";
 		}
 
 		// Edit
 		if ($object->paye == 0 && $user->rights->salaries->write) {
-			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".DOL_URL_ROOT."/salaries/card.php?id=$object->id&amp;action=edit\">".$langs->trans("Modify")."</a></div>";
+			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".DOL_URL_ROOT."/salaries/card.php?id=".$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify")."</a></div>";
 		}
 
 		// Emit payment
 		if ($object->paye == 0 && ((price2num($object->amount) < 0 && price2num($resteapayer, 'MT') < 0) || (price2num($object->amount) > 0 && price2num($resteapayer, 'MT') > 0)) && $user->rights->salaries->write) {
-			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".DOL_URL_ROOT."/salaries/paiement_salary.php?id=$object->id&amp;action=create\">".$langs->trans("DoPayment")."</a></div>";
+			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".DOL_URL_ROOT."/salaries/paiement_salary.php?id=".$object->id.'&action=create&token='.newToken().'">'.$langs->trans("DoPayment")."</a></div>";
 		}
 
 		// Classify 'paid'
@@ -870,16 +923,16 @@ if ($id) {
 				|| (round($resteapayer) >= 0 && $object->amount < 0)
 			)
 			&& $user->rights->salaries->write) {
-			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".DOL_URL_ROOT."/salaries/card.php?id=$object->id&amp;action=paid\">".$langs->trans("ClassifyPaid")."</a></div>";
+			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".DOL_URL_ROOT."/salaries/card.php?id=".$object->id.'&action=paid&token='.newToken().'">'.$langs->trans("ClassifyPaid")."</a></div>";
 		}
 
 		// Clone
 		if ($user->rights->salaries->write) {
-			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".dol_buildpath("/salaries/card.php", 1)."?id=$object->id&amp;action=clone\">".$langs->trans("ToClone")."</a></div>";
+			print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".DOL_URL_ROOT."/salaries/card.php?id=".$object->id.'&action=clone&token='.newToken().'">'.$langs->trans("ToClone")."</a></div>";
 		}
 
 		if (!empty($user->rights->salaries->delete) && empty($totalpaye)) {
-			print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete">'.$langs->trans("Delete").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a></div>';
 		} else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.(dol_escape_htmltag($langs->trans("DisabledBecausePayments"))).'">'.$langs->trans("Delete").'</a></div>';
 		}

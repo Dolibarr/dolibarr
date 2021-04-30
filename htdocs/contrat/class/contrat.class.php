@@ -9,7 +9,7 @@
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2018   	Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2015-2018	Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -206,7 +206,7 @@ class Contrat extends CommonObject
 	 *  'help' is a string visible as a tooltip on field
 	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
 	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
-	 *  'arraykeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
+	 *  'arrayofkeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
 	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
 	 *
 	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
@@ -979,7 +979,7 @@ class Contrat extends CommonObject
 
 				if (!empty($modCodeContract->code_auto)) {
 					// Force the ref to a draft value if numbering module is an automatic numbering
-					$sql = 'UPDATE '.MAIN_DB_PREFIX."contrat SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
+					$sql = 'UPDATE '.MAIN_DB_PREFIX."contrat SET ref='(PROV".$this->id.")' WHERE rowid=".((int) $this->id);
 					if ($this->db->query($sql)) {
 						if ($this->id) {
 							$this->ref = "(PROV".$this->id.")";
@@ -1057,7 +1057,7 @@ class Contrat extends CommonObject
 					}
 
 					$sqlcontact = "SELECT ctc.code, ctc.source, ec.fk_socpeople FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as ctc";
-					$sqlcontact .= " WHERE element_id = ".$originidforcontact." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$this->db->escape($originforcontact)."'";
+					$sqlcontact .= " WHERE element_id = ".((int) $originidforcontact)." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$this->db->escape($originforcontact)."'";
 
 					$resqlcontact = $this->db->query($sqlcontact);
 					if ($resqlcontact) {
@@ -1172,7 +1172,7 @@ class Contrat extends CommonObject
 				$this->db->free($resql);
 
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."contratdet_log ";
-				$sql .= " WHERE ".MAIN_DB_PREFIX."contratdet_log.rowid IN (".implode(",", $tab_resql).")";
+				$sql .= " WHERE ".MAIN_DB_PREFIX."contratdet_log.rowid IN (".$this->db->sanitize(implode(",", $tab_resql)).")";
 
 				dol_syslog(get_class($this)."::delete contratdet_log", LOG_DEBUG);
 				$resql = $this->db->query($sql);
@@ -1225,7 +1225,7 @@ class Contrat extends CommonObject
 		// Delete contract
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."contrat";
-			$sql .= " WHERE rowid=".$this->id;
+			$sql .= " WHERE rowid=".((int) $this->id);
 
 			dol_syslog(get_class($this)."::delete contrat", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -1353,7 +1353,7 @@ class Contrat extends CommonObject
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null")."";
 		//$sql.= " extraparams=".(isset($this->extraparams)?"'".$this->db->escape($this->extraparams)."'":"null")."";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
 
@@ -1759,7 +1759,7 @@ class Contrat extends CommonObject
 			$sql .= ",date_cloture=null";
 		}
 		$sql .= ", fk_unit=".($fk_unit ? "'".$this->db->escape($fk_unit)."'" : "null");
-		$sql .= " WHERE rowid = ".$rowid;
+		$sql .= " WHERE rowid = ".((int) $rowid);
 
 		dol_syslog(get_class($this)."::updateline", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -1832,7 +1832,7 @@ class Contrat extends CommonObject
 			$this->db->begin();
 
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element_line;
-			$sql .= " WHERE rowid=".$idline;
+			$sql .= " WHERE rowid = ".((int) $idline);
 
 			dol_syslog(get_class($this)."::deleteline", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -2001,7 +2001,8 @@ class Contrat extends CommonObject
 				$label .= ' '.$this->getLibStatut(5);
 			}*/
 			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.($this->ref ? $this->ref : $this->id);
-			$label .= '<br><b>'.$langs->trans('RefCustomer').':</b> '.($this->ref_customer ? $this->ref_customer : $this->ref_client);
+			$ref_customer = (!empty($this->ref_customer) ? $this->ref_customer : (empty($this->ref_client) ? '' : $this->ref_client));
+			$label .= '<br><b>'.$langs->trans('RefCustomer').':</b> '.$ref_customer;
 			$label .= '<br><b>'.$langs->trans('RefSupplier').':</b> '.$this->ref_supplier;
 			if (!empty($this->total_ht)) {
 				$label .= '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
@@ -2873,7 +2874,7 @@ class ContratLigne extends CommonObjectLine
 		$sql .= " t.fk_unit";
 		$sql .= " FROM ".MAIN_DB_PREFIX."contratdet as t LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = t.fk_product";
 		if ($id) {
-			$sql .= " WHERE t.rowid = ".$id;
+			$sql .= " WHERE t.rowid = ".((int) $id);
 		}
 		if ($ref) {
 			$sql .= " WHERE t.rowid = '".$this->db->escape($ref)."'";
@@ -3098,7 +3099,7 @@ class ContratLigne extends CommonObjectLine
 		$sql .= " fk_user_cloture=".($this->fk_user_cloture > 0 ? $this->fk_user_cloture : "NULL").",";
 		$sql .= " commentaire='".$this->db->escape($this->commentaire)."',";
 		$sql .= " fk_unit=".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);

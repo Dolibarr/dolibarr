@@ -100,7 +100,7 @@ class Stripe extends CommonObject
 		$sql .= " WHERE service = '".$this->db->escape($mode)."'";
 		$sql .= " AND entity = ".((int) $entity);
 		if ($fk_soc > 0) {
-			$sql .= " AND fk_soc = ".$fk_soc;
+			$sql .= " AND fk_soc = ".((int) $fk_soc);
 		} else {
 			$sql .= " AND fk_soc IS NULL";
 		}

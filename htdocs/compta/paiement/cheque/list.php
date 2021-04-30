@@ -228,7 +228,7 @@ if ($resql) {
 			print '<td class="right">'.$objp->nbcheque.'</td>';
 
 			// Amount
-			print '<td class="right">'.price($objp->amount).'</td>';
+			print '<td class="right"><span class="amount">'.price($objp->amount).'</span></td>';
 
 			// Statut
 			print '<td class="right">';

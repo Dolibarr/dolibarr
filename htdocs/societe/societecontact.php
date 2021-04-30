@@ -95,14 +95,14 @@ if ($action == 'addcontact' && $user->rights->societe->creer) {
 } elseif ($action == 'swapstatut' && $user->rights->societe->creer) {
 	// bascule du statut d'un contact
 	if ($object->fetch($id)) {
-		$result = $object->swapContactStatus(GETPOST('ligne'));
+		$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
 	} else {
 		dol_print_error($db);
 	}
 } elseif ($action == 'deletecontact' && $user->rights->societe->creer) {
 	// Efface un contact
 	$object->fetch($id);
-	$result = $object->delete_contact($_GET["lineid"]);
+	$result = $object->delete_contact(GETPOST("lineid", 'int'));
 
 	if ($result >= 0) {
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
@@ -227,7 +227,7 @@ if ($id > 0 || !empty($ref)) {
 			$sql .= " t.libelle as type, t.subscription";
 			$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
 			$sql .= ", ".MAIN_DB_PREFIX."adherent_type as t";
-			$sql .= " WHERE d.fk_soc = ".$id;
+			$sql .= " WHERE d.fk_soc = ".((int) $id);
 			$sql .= " AND d.fk_adherent_type = t.rowid";
 
 			dol_syslog("get list sql=".$sql);

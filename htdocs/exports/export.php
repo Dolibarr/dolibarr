@@ -154,6 +154,9 @@ $upload_dir = $conf->export->dir_temp.'/'.$user->id;
 //$usefilters=($conf->global->MAIN_FEATURES_LEVEL > 1);
 $usefilters = 1;
 
+// Security check
+$result = restrictedArea($user, 'export');
+
 
 /*
  * Actions
@@ -449,7 +452,7 @@ if ($step == 1 || !$datatoexport) {
 			if ($objexport->array_export_perms[$key]) {
 				print '<a href="'.DOL_URL_ROOT.'/exports/export.php?step=2&module_position='.$objexport->array_export_module[$key]->module_position.'&datatoexport='.$objexport->array_export_code[$key].'">'.img_picto($langs->trans("NewExport"), 'next', 'class="fa-15x"').'</a>';
 			} else {
-				print $langs->trans("NotEnoughPermissions");
+				print '<span class="opacitymedium">'.$langs->trans("NotEnoughPermissions").'</span>';
 			}
 			print '</td></tr>';
 		}
@@ -619,7 +622,7 @@ if ($step == 2 && $datatoexport) {
 	print '</div>';
 
 	/*
-	 * Barre d'action
+	 * Action bar
 	 */
 	print '<div class="tabsAction tabsActionNoBottom">';
 
@@ -793,7 +796,7 @@ if ($step == 3 && $datatoexport) {
 	print '</div>';
 
 	/*
-	 * Barre d'action
+	 * Action bar
 	 */
 	print '<div class="tabsAction tabsActionNoBottom">';
 	// il n'est pas obligatoire de filtrer les champs
@@ -974,8 +977,7 @@ if ($step == 4 && $datatoexport) {
 	print '</div>';
 
 	/*
-	 * Barre d'action
-	 *
+	 * Action bar
 	 */
 	print '<div class="tabsAction">';
 

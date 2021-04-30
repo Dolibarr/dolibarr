@@ -27,11 +27,12 @@ require_once DOL_DOCUMENT_ROOT.'/exports/class/export.class.php';
 // Load translation files required by the page
 $langs->load("exports");
 
+$export = new Export($db);
+$export->load_arrays($user);
+
 // Security check
 $result = restrictedArea($user, 'export');
 
-$export = new Export($db);
-$export->load_arrays($user);
 
 /*
  * View
@@ -39,7 +40,10 @@ $export->load_arrays($user);
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("ExportsArea"), 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
+
+$help_url = 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones';
+
+llxHeader('', $langs->trans("ExportsArea"), $help_url);
 
 print load_fiche_titre($langs->trans("ExportsArea"));
 

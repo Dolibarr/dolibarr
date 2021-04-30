@@ -7,7 +7,7 @@
  * Copyright (C) 2018       Ferran Marcet	     <fmarcet@2byte.es>
  * Copyright (C) 2018       Charlene Benke       <charlie@patas-monkey.com>
  * Copyright (C) 2019       Juanjo Menent		 <jmenent@2byte.es>
- * Copyright (C) 2019       Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2021  Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,10 +80,10 @@ $diroutputmassaction = $conf->expensereport->dir_output.'/temp/massgeneration/'.
 
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'aZ09comma');
-$sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$limit 		= GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$sortfield	= GETPOST('sortfield', 'aZ09comma');
+$sortorder	= GETPOST('sortorder', 'aZ09comma');
+$page 		= GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -98,19 +98,22 @@ if (!$sortfield) {
 }
 
 
-$sall         = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
-$search_ref   = GETPOST('search_ref', 'alpha');
-$search_user  = GETPOST('search_user', 'int');
-$search_amount_ht = GETPOST('search_amount_ht', 'alpha');
-$search_amount_vat = GETPOST('search_amount_vat', 'alpha');
-$search_amount_ttc = GETPOST('search_amount_ttc', 'alpha');
-$search_status = (GETPOST('search_status', 'intcomma') != '' ?GETPOST('search_status', 'intcomma') : GETPOST('statut', 'intcomma'));
-$month_start  = GETPOST("month_start", "int");
-$year_start   = GETPOST("year_start", "int");
-$day_start    = GETPOST("day_start", "int");
-$day_end      = GETPOST("day_end", "int");
-$month_end    = GETPOST("month_end", "int");
-$year_end     = GETPOST("year_end", "int");
+$sall			= trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+
+$search_ref			= GETPOST('search_ref', 'alpha');
+$search_user		= GETPOST('search_user', 'int');
+$search_amount_ht	= GETPOST('search_amount_ht', 'alpha');
+$search_amount_vat	= GETPOST('search_amount_vat', 'alpha');
+$search_amount_ttc	= GETPOST('search_amount_ttc', 'alpha');
+$search_status		= (GETPOST('search_status', 'intcomma') != '' ?GETPOST('search_status', 'intcomma') : GETPOST('statut', 'intcomma'));
+
+$year_start   = GETPOST('year_start', 'int');
+$month_start  = GETPOST('month_start', 'int');
+$day_start    = GETPOST('day_start', 'int');
+$year_end     = GETPOST('year_end', 'int');
+$month_end    = GETPOST('month_end', 'int');
+$day_end      = GETPOST('day_end', 'int');
+
 $optioncss    = GETPOST('optioncss', 'alpha');
 
 if ($search_status == '') {
@@ -290,12 +293,12 @@ if ($search_user != '' && $search_user >= 0) {
 }
 // Status
 if ($search_status != '' && $search_status >= 0) {
-	$sql .= " AND d.fk_statut IN (".$db->sanitize($db->escape($search_status)).")";
+	$sql .= " AND d.fk_statut IN (".$db->sanitize($search_status).")";
 }
 // RESTRICT RIGHTS
 if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)
 	&& (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance))) {
-	$sql .= " AND d.fk_user_author IN (".join(',', $childids).")\n";
+	$sql .= " AND d.fk_user_author IN (".$db->sanitize(join(',', $childids)).")\n";
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -359,12 +362,12 @@ if ($resql) {
 
 	// List of mass actions available
 	$arrayofmassactions = array(
-		'generate_doc'=>$langs->trans("ReGeneratePDF"),
-		'builddoc'=>$langs->trans("PDFMerge"),
-		'presend'=>$langs->trans("SendByMail"),
+		'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
+		'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
+		'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 	);
 	if ($user->rights->expensereport->supprimer) {
-		$arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	}
 	if (in_array($massaction, array('presend', 'predelete'))) {
 		$arrayofmassactions = array();
@@ -616,6 +619,12 @@ if ($resql) {
 	if ($num > 0) {
 		$i = 0;
 		$totalarray = array();
+		$totalarray['nbfield'] = 0;
+		$totalarray['val'] = array();
+		$totalarray['val']['d.total_ht'] = 0;
+		$totalarray['val']['d.total_tva'] = 0;
+		$totalarray['val']['d.total_ttc'] = 0;
+		$totalarray['totalizable'] = array();
 		while ($i < min($num, $limit)) {
 			$obj = $db->fetch_object($resql);
 

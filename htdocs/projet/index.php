@@ -43,7 +43,7 @@ $action = GETPOST('action', 'aZ09');
 $search_project_user = GETPOST('search_project_user', 'int');
 $mine = GETPOST('mode', 'aZ09') == 'mine' ? 1 : 0;
 if ($mine == 0 && $search_project_user === '') {
-	$search_project_user = $user->conf->MAIN_SEARCH_PROJECT_USER_PROJECTSINDEX;
+	$search_project_user = (empty($user->conf->MAIN_SEARCH_PROJECT_USER_PROJECTSINDEX) ? '' : $user->conf->MAIN_SEARCH_PROJECT_USER_PROJECTSINDEX);
 }
 if ($search_project_user == $user->id) {
 	$mine = 1;
@@ -95,9 +95,14 @@ $projectset = ($mine ? $mine : (empty($user->rights->projet->all->lire) ? 0 : 2)
 $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, $projectset, 1);
 //var_dump($projectsListId);
 
-llxHeader("", $langs->trans("Projects"), "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos");
 
-$title = $langs->trans("ProjectsArea");
+$title = $langs->trans('ProjectsArea');
+
+$help_url = 'EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos|DE:Modul_Projekte';
+
+llxHeader('', $title, $help_url);
+
+
 //if ($mine) $title=$langs->trans("MyProjectsArea");
 
 
@@ -134,7 +139,7 @@ print_barre_liste($form->textwithpicto($title, $tooltiphelp), 0, $_SERVER["PHP_S
 
 
 // Get list of ponderated percent and colors for each status
-include_once DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 $listofoppstatus = array(); $listofopplabel = array(); $listofoppcode = array(); $colorseries = array();
 $sql = "SELECT cls.rowid, cls.code, cls.percent, cls.label";
 $sql .= " FROM ".MAIN_DB_PREFIX."c_lead_status as cls";
@@ -182,39 +187,6 @@ if ($resql) {
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-
-if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This is useless due to the global search combo
-	// Search project
-	if (!empty($conf->projet->enabled) && $user->rights->projet->lire) {
-		$listofsearchfields['search_project'] = array('text'=>'Project');
-	}
-
-	if (count($listofsearchfields)) {
-		print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
-		print '<input type="hidden" name="token" value="'.newToken().'">';
-		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder nohover centpercent">';
-		$i = 0;
-		foreach ($listofsearchfields as $key => $value) {
-			if ($i == 0) {
-				print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-			}
-			print '<tr>';
-			print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
-			if ($i == 0) {
-				print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
-			}
-			print '</tr>';
-			$i++;
-		}
-		print '</table>';
-		print '</div>';
-		print '</form>';
-		print '<br>';
-	}
-}
-
-
 /*
  * Statistics
  */
@@ -238,7 +210,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql .= " WHERE p.entity IN (".getEntity('project').")";
 if ($mine || empty($user->rights->projet->all->lire)) {
-	$sql .= " AND p.rowid IN (".$projectsListId.")"; // If we have this test true, it also means projectset is not 2
+	$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId).")"; // If we have this test true, it also means projectset is not 2
 }
 if ($socid) {
 	$sql .= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
@@ -338,10 +310,10 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql .= " WHERE p.entity IN (".getEntity('project').")";
 $sql .= " AND p.fk_statut = 1";
 if ($mine || empty($user->rights->projet->all->lire)) {
-	$sql .= " AND p.rowid IN (".$projectsListId.")"; // If we have this test true, it also means projectset is not 2
+	$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId).")"; // If we have this test true, it also means projectset is not 2
 }
-if ($socid) {
-	$sql .= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
+if ($socid > 0) {
+	$sql .= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
 }
 $sql .= " GROUP BY s.rowid, s.nom, s.name_alias, s.code_client, s.code_compta, s.client, s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur, s.logo, s.email, s.entity, s.canvas, s.status";
 $sql .= $db->order($sortfield, $sortorder);

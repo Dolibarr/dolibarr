@@ -190,7 +190,7 @@ class Cchargesociales
 		if (null !== $ref) {
 			$sql .= " WHERE t.code = '".$this->db->escape($ref)."'";
 		} else {
-			$sql .= ' WHERE t.id = '.$id;
+			$sql .= ' WHERE t.id = '.((int) $id);
 		}
 
 		$resql = $this->db->query($sql);

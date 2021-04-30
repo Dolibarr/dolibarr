@@ -261,7 +261,7 @@ class AccountancyCategory // extends CommonObject
 		$sql .= " t.active";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_accounting_category as t";
 		if ($id) {
-			$sql .= " WHERE t.rowid = ".$id;
+			$sql .= " WHERE t.rowid = ".((int) $id);
 		} else {
 			$sql .= " WHERE t.entity IN (".getEntity('c_accounting_category').")"; // Dont't use entity if you use rowid
 			if ($code) {
@@ -354,7 +354,7 @@ class AccountancyCategory // extends CommonObject
 		$sql .= " position=".(isset($this->position) ? $this->position : "null").",";
 		$sql .= " fk_country=".(isset($this->fk_country) ? $this->fk_country : "null").",";
 		$sql .= " active=".(isset($this->active) ? $this->active : "null")."";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
 
@@ -392,7 +392,7 @@ class AccountancyCategory // extends CommonObject
 		$error = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."c_accounting_category";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
 
@@ -418,17 +418,17 @@ class AccountancyCategory // extends CommonObject
 
 
 	/**
-	 * Function to select all accounting accounts from an accounting category
+	 * Function to select into ->lines_display all accounting accounts for a given custom accounting group
 	 *
-	 * @param int $id Id
-	 * @return int <0 if KO, 0 if not found, >0 if OK
+	 * @param 	int 	$id 	Id
+	 * @return 	int 			<0 if KO, 0 if not found, >0 if OK
 	 */
 	public function display($id)
 	{
 		global $conf;
 		$sql = "SELECT t.rowid, t.account_number, t.label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as t";
-		$sql .= " WHERE t.fk_accounting_category = ".$id;
+		$sql .= " WHERE t.fk_accounting_category = ".((int) $id);
 		$sql .= " AND t.entity = ".$conf->entity;
 
 		$this->lines_display = array();
@@ -453,33 +453,33 @@ class AccountancyCategory // extends CommonObject
 	}
 
 	/**
-	 * Function to select accounting category of an accounting account present in chart of accounts
+	 * Function to fill ->lines_cptbk with accounting account used (into bookkeeping) and not yet into a custom group
 	 *
-	 * @param int $id Id category
-	 *
-	 * @return int <0 if KO, 0 if not found, >0 if OK
+	 * @param 	int $id 	Id of custom group
+	 * @return 	int 		<0 if KO, 0 if not found, >0 if OK
 	 */
+	/*
 	public function getCptBK($id)
 	{
 		global $conf;
 
-		$sql = "SELECT t.numero_compte, t.label_operation, t.doc_ref";
+		$sql = "SELECT DISTINCT t.numero_compte, t.label_operation, t.doc_ref";
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as t";
-		$sql .= " WHERE t.numero_compte NOT IN (";
+		$sql .= " WHERE t.numero_compte NOT IN (";	// account not into a custom group
 		$sql .= " SELECT t.account_number";
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as t";
-		$sql .= " WHERE t.fk_accounting_category = ".$id." AND t.entity = ".$conf->entity.")";
-		$sql .= " AND t.numero_compte IN (";
+		$sql .= " WHERE t.fk_accounting_category = ".((int) $id)." AND t.entity = ".$conf->entity.")";
+		$sql .= " AND t.numero_compte IN (";		// account into current chart of account
 		$sql .= " SELECT DISTINCT aa.account_number";
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as aa";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
-		$sql .= " AND asy.rowid = ".$conf->global->CHARTOFACCOUNTS;
+		$sql .= " AND asy.rowid = ".((int) $conf->global->CHARTOFACCOUNTS);
 		$sql .= " AND aa.active = 1";
 		$sql .= " AND aa.entity = ".$conf->entity.")";
 		$sql .= " GROUP BY t.numero_compte, t.label_operation, t.doc_ref";
 		$sql .= " ORDER BY t.numero_compte";
 
-		$this->lines_CptBk = array();
+		$this->lines_cptbk = array();
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -500,13 +500,13 @@ class AccountancyCategory // extends CommonObject
 			return -1;
 		}
 	}
+	*/
 
 	/**
-	 * Function to select accounting category of an accounting account present in chart of accounts
+	 * Function to fill ->lines_cptbk with accounting account (defined in chart of account) and not yet into a custom group
 	 *
-	 * @param int $id      Id of category to know which account to exclude
-	 *
-	 * @return int <0 if KO, 0 if not found, >0 if OK
+	 * @param 	int $id     Id of category to know which account to exclude
+	 * @return 	int 		<0 if KO, 0 if not found, >0 if OK
 	 */
 	public function getAccountsWithNoCategory($id)
 	{
@@ -515,14 +515,14 @@ class AccountancyCategory // extends CommonObject
 		$sql = "SELECT aa.account_number as numero_compte, aa.label as label_compte";
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as aa";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
-		$sql .= " WHERE (aa.fk_accounting_category != ".$id." OR aa.fk_accounting_category IS NULL)";
-		$sql .= " AND asy.rowid = ".$conf->global->CHARTOFACCOUNTS;
+		$sql .= " WHERE (aa.fk_accounting_category <> ".((int) $id)." OR aa.fk_accounting_category IS NULL)";
+		$sql .= " AND asy.rowid = ".((int) $conf->global->CHARTOFACCOUNTS);
 		$sql .= " AND aa.active = 1";
 		$sql .= " AND aa.entity = ".$conf->entity;
 		$sql .= " GROUP BY aa.account_number, aa.label";
 		$sql .= " ORDER BY aa.account_number, aa.label";
 
-		$this->lines_CptBk = array();
+		$this->lines_cptbk = array();
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -562,7 +562,7 @@ class AccountancyCategory // extends CommonObject
 		$sql = "SELECT aa.rowid, aa.account_number";
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as aa";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
-		$sql .= " AND asy.rowid = ".$conf->global->CHARTOFACCOUNTS;
+		$sql .= " AND asy.rowid = ".((int) $conf->global->CHARTOFACCOUNTS);
 		$sql .= " AND aa.active = 1";
 		$sql .= " AND aa.entity = ".$conf->entity;
 		$sql .= " ORDER BY LENGTH(aa.account_number) DESC;"; // LENGTH is ok with mysql and postgresql
@@ -589,8 +589,8 @@ class AccountancyCategory // extends CommonObject
 				$accountincptsadded[$account_number_formated] = 1;
 				// We found an account number that is in list $cpts of account to add
 				$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_account";
-				$sql .= " SET fk_accounting_category=".$id_cat;
-				$sql .= " WHERE rowid=".$obj->rowid;
+				$sql .= " SET fk_accounting_category=".((int) $id_cat);
+				$sql .= " WHERE rowid=".((int) $obj->rowid);
 				dol_syslog(__METHOD__, LOG_DEBUG);
 				$resqlupdate = $this->db->query($sql);
 				if (!$resqlupdate) {
@@ -629,7 +629,7 @@ class AccountancyCategory // extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_account as aa";
 		$sql .= " SET fk_accounting_category= 0";
-		$sql .= " WHERE aa.rowid= ".$cpt_id;
+		$sql .= " WHERE aa.rowid = ".((int) $cpt_id);
 		$this->db->begin();
 
 		dol_syslog(__METHOD__." sql=".$sql, LOG_DEBUG);
@@ -656,7 +656,7 @@ class AccountancyCategory // extends CommonObject
 	}
 
 	/**
-	 * Function to know all category from accounting account
+	 * Function to know all custom groupd from an accounting account
 	 *
 	 * @return array|integer       Result in table (array), -1 if KO
 	 */
@@ -743,7 +743,7 @@ class AccountancyCategory // extends CommonObject
 				}
 				$listofaccount .= "'".$cptcursor."'";
 			}
-			$sql .= " AND t.numero_compte IN (".$listofaccount.")";
+			$sql .= " AND t.numero_compte IN (".$this->db->sanitize($listofaccount).")";
 		} else {
 			$sql .= " AND t.numero_compte = '".$this->db->escape($cpt)."'";
 		}
@@ -785,7 +785,7 @@ class AccountancyCategory // extends CommonObject
 	}
 
 	/**
-	 * Return list of personalized groups that are active
+	 * Return list of custom groups that are active
 	 *
 	 * @param	int			$categorytype		-1=All, 0=Only non computed groups, 1=Only computed groups
 	 * @return	array|int						Array of groups or -1 if error
@@ -843,11 +843,11 @@ class AccountancyCategory // extends CommonObject
 
 
 	/**
-	 * Get all accounting account of a group.
+	 * Get all accounting account of a custom group (or a list of custom groups).
 	 * You must choose between first parameter (personalized group) or the second (free criteria filter)
 	 *
 	 * @param 	int 		$cat_id 				Id if personalized accounting group/category
-	 * @param 	string 		$predefinedgroupwhere 	Sql criteria filter to select accounting accounts
+	 * @param 	string 		$predefinedgroupwhere 	Sql criteria filter to select accounting accounts. This value must not come from an input of a user.
 	 * @return 	array|int							Array of accounting accounts or -1 if error
 	 */
 	public function getCptsCat($cat_id, $predefinedgroupwhere = '')
@@ -863,7 +863,7 @@ class AccountancyCategory // extends CommonObject
 		if (!empty($cat_id)) {
 			$sql = "SELECT t.rowid, t.account_number, t.label as account_label";
 			$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as t";
-			$sql .= " WHERE t.fk_accounting_category = ".$cat_id;
+			$sql .= " WHERE t.fk_accounting_category = ".((int) $cat_id);
 			$sql .= " AND t.entity = ".$conf->entity;
 			$sql .= " ORDER BY t.account_number";
 		} else {

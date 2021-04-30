@@ -52,8 +52,8 @@ if (GETPOST("modecompta")) {
 	$modecompta = GETPOST("modecompta");
 }
 
-$sortorder = isset($_GET["sortorder"]) ? $_GET["sortorder"] : $_POST["sortorder"];
-$sortfield = isset($_GET["sortfield"]) ? $_GET["sortfield"] : $_POST["sortfield"];
+$sortorder = GETPOST("sortorder", 'aZ09');
+$sortfield = GETPOST("sortfield", 'aZ09');
 if (!$sortorder) {
 	$sortorder = "asc";
 }
@@ -89,16 +89,16 @@ $date_endyear = GETPOST("date_endyear");
 $date_endmonth = GETPOST("date_endmonth");
 $date_endday = GETPOST("date_endday");
 if (empty($year)) {
-	$year_current = strftime("%Y", dol_now());
-	$month_current = strftime("%m", dol_now());
+	$year_current = dol_print_date(dol_now(), '%Y');
+	$month_current = dol_print_date(dol_now(), '%m');
 	$year_start = $year_current;
 } else {
 	$year_current = $year;
-	$month_current = strftime("%m", dol_now());
+	$month_current = dol_print_date(dol_now(), '%m');
 	$year_start = $year;
 }
-$date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"));
-$date_end = dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"));
+$date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"), 'tzserver');	// We use timezone of server so report is same from everywhere
+$date_end = dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"), 'tzserver');		// We use timezone of server so report is same from everywhere
 // Quarter
 if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
 	$q = GETPOST("q", "int");
@@ -254,7 +254,9 @@ if ($modecompta == "CREANCES-DETTES") {
 } elseif ($modecompta == "BOOKKEEPINGCOLLECTED") {
 }
 
-$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
+$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzserver');
+$period .= ' - ';
+$period .= $form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzserver');
 if ($date_end == dol_time_plus_duree($date_start, 1, 'y') - 1) {
 	$periodlink = '<a href="'.$_SERVER["PHP_SELF"].'?year='.($year_start - 1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year_start + 1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
 } else {
@@ -280,6 +282,11 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql = "SELECT DISTINCT p.rowid as rowid, p.ref as ref, p.label as label, p.fk_product_type as product_type,";
 	$sql .= " SUM(l.total_ht) as amount, SUM(l.total_ttc) as amount_ttc,";
 	$sql .= " SUM(CASE WHEN f.type = 2 THEN -l.qty ELSE l.qty END) as qty";
+
+	$parameters = array();
+	$hookmanager->executeHooks('printFieldListSelect', $parameters);
+	$sql .= $hookmanager->resPrint;
+
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 	if ($selected_soc > 0) {
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as soc ON (soc.rowid = f.fk_soc)";
@@ -291,6 +298,11 @@ if ($modecompta == 'CREANCES-DETTES') {
 	} elseif ($selected_cat) { 	// Into a specific category
 		$sql .= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_product as cp";
 	}
+
+	$parameters = array();
+	$hookmanager->executeHooks('printFieldListFrom', $parameters);
+	$sql .= $hookmanager->resPrint;
+
 	$sql .= " WHERE l.fk_facture = f.rowid";
 	$sql .= " AND f.fk_statut in (1,2)";
 	$sql .= " AND l.product_type in (0,1)";
@@ -303,7 +315,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 		$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 	}
 	if ($selected_type >= 0) {
-		$sql .= " AND l.product_type = ".$selected_type;
+		$sql .= " AND l.product_type = ".((int) $selected_type);
 	}
 	if ($selected_cat === -2) {	// Without any category
 		$sql .= " AND cp.fk_product is null";
@@ -323,16 +335,21 @@ if ($modecompta == 'CREANCES-DETTES') {
 		$sql .= " AND (p.rowid IN ";
 		$sql .= " (SELECT fk_product FROM ".MAIN_DB_PREFIX."categorie_product cp WHERE ";
 		if ($subcat) {
-			$sql .= "cp.fk_categorie IN (".$listofcatsql.")";
+			$sql .= "cp.fk_categorie IN (".$db->sanitize($listofcatsql).")";
 		} else {
-			$sql .= "cp.fk_categorie = ".$selected_cat;
+			$sql .= "cp.fk_categorie = ".((int) $selected_cat);
 		}
 		$sql .= "))";
 	}
 	if ($selected_soc > 0) {
-		$sql .= " AND soc.rowid=".$selected_soc;
+		$sql .= " AND soc.rowid=".((int) $selected_soc);
 	}
 	$sql .= " AND f.entity IN (".getEntity('invoice').")";
+
+	$parameters = array();
+	$hookmanager->executeHooks('printFieldListWhere', $parameters);
+	$sql .= $hookmanager->resPrint;
+
 	$sql .= " GROUP BY p.rowid, p.ref, p.label, p.fk_product_type";
 	$sql .= $db->order($sortfield, $sortorder);
 
@@ -394,6 +411,11 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 	print '<td colspan="5" class="right">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListeTitle', $parameters);
+	print $hookmanager->resPrint;
+
 	print '</td></tr>';
 
 	// Array header

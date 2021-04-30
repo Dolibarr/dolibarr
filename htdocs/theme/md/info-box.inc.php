@@ -119,7 +119,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 }
 
 
-.info-box-module-external span.info-box-icon-version {
+.info-box-module.--external span.info-box-icon-version {
 	background: #bbb;
 }
 
@@ -250,7 +250,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	transition: opacity 0.5s, visibility 0s 0.5s;
 }
 
-.box-flex-item.info-box-module.info-box-module-disabled {
+.box-flex-item.info-box-module.--disabled {
 	/* opacity: 0.6; */
 }
 
@@ -375,7 +375,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	content: "\f571";
 }
 .fa-dol-project:before {
-	content: "\f0e8";
+	content: "\f542";
 }
 .fa-dol-commande:before,
 .fa-dol-order_supplier:before {

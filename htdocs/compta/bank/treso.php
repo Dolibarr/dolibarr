@@ -37,21 +37,22 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->loadLangs(array('banks', 'categories', 'bills', 'companies'));
 
 // Security check
-if (isset($_GET["account"]) || isset($_GET["ref"])) {
-	$id = isset($_GET["account"]) ? $_GET["account"] : (isset($_GET["ref"]) ? $_GET["ref"] : '');
+if (GETPOSTISSET("account") || GETPOSTISSET("ref")) {
+	$id = GETPOSTISSET("account") ? GETPOST("account") : (GETPOSTISSET("ref") ? GETPOST("ref") : '');
 }
-$fieldid = isset($_GET["ref"]) ? 'ref' : 'rowid';
+$fieldid = GETPOSTISSET("ref") ? 'ref' : 'rowid';
 if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'banque', $id, 'bank_account&bank_account', '', '', $fieldid);
 
 
-$vline = isset($_GET["vline"]) ? $_GET["vline"] : $_POST["vline"];
-$page = isset($_GET["page"]) ? $_GET["page"] : 0;
+$vline = GETPOST('vline');
+$page = GETPOSTISSET("page") ? GETPOST("page") : 0;
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('banktreso', 'globalcard'));
+
 
 /*
  * View
@@ -68,7 +69,7 @@ $socialcontribstatic = new ChargeSociales($db);
 
 $form = new Form($db);
 
-if ($_REQUEST["account"] || $_REQUEST["ref"]) {
+if (GETPOST("account") || GETPOST("ref")) {
 	if ($vline) {
 		$viewline = $vline;
 	} else {
@@ -76,11 +77,11 @@ if ($_REQUEST["account"] || $_REQUEST["ref"]) {
 	}
 
 	$object = new Account($db);
-	if ($_GET["account"]) {
-		$result = $object->fetch($_GET["account"]);
+	if (GETPOST("account", 'int')) {
+		$result = $object->fetch(GETPOST("account", 'int'));
 	}
-	if ($_GET["ref"]) {
-		$result = $object->fetch(0, $_GET["ref"]);
+	if (GETPOST("ref")) {
+		$result = $object->fetch(0, GETPOST("ref"));
 		$_GET["account"] = $object->id;
 	}
 
@@ -90,6 +91,8 @@ if ($_REQUEST["account"] || $_REQUEST["ref"]) {
 	print dol_get_fiche_head($head, 'cash', $langs->trans("FinancialAccount"), 0, 'account');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
+	$morehtmlref = '';
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
 

@@ -90,7 +90,7 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	if ($action == 'update' && ($caneditfield || !empty($user->admin))) {
-		if (!$_POST["cancel"]) {
+		if (!GETPOST("cancel")) {
 			$tabparam = array();
 
 			if (GETPOST("check_MAIN_LANDING_PAGE") == "on") {

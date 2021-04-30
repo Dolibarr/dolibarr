@@ -19,6 +19,7 @@
  *  \file       	htdocs/hrm/establishment/card.php
  *  \brief      	Page to show an establishment
  */
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/hrm.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/hrm/class/establishment.class.php';
@@ -27,11 +28,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'hrm'));
-
-// Security check
-if (!$user->admin) {
-	accessforbidden();
-}
 
 $error = 0;
 
@@ -54,6 +50,18 @@ $object = new Establishment($db);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once
+
+$permissiontoread = $user->admin;
+$permissiontoadd = $user->admin; // Used by the include of actions_addupdatedelete.inc.php
+$upload_dir = $conf->hrm->multidir_output[isset($object->entity) ? $object->entity : 1];
+
+// Security check - Protection if external user
+//if ($user->socid > 0) accessforbidden();
+//if ($user->socid > 0) $socid = $user->socid;
+//$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
+//restrictedArea($user, $object->element, $object->id, '', '', 'fk_soc', 'rowid', 0);
+if (empty($conf->hrm->enabled)) accessforbidden();
+if (empty($permissiontoread)) accessforbidden();
 
 
 /*
@@ -80,9 +88,9 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 
 		if (empty($error)) {
 			$object->address = GETPOST('address', 'alpha');
-			$object->zip 			= GETPOST('zipcode', 'alpha');
-			$object->town			= GETPOST('town', 'alpha');
-			$object->country_id     = $_POST["country_id"];
+			$object->zip = GETPOST('zipcode', 'alpha');
+			$object->town = GETPOST('town', 'alpha');
+			$object->country_id = GETPOST("country_id", 'int');
 			$object->status = GETPOST('status', 'int');
 			$object->fk_user_author	= $user->id;
 			$object->datec = dol_now();
@@ -165,7 +173,7 @@ if ($action == 'create') {
 	// Name
 	print '<tr>';
 	print '<td>'.$form->editfieldkey('Label', 'label', '', $object, 0, 'string', '', 1).'</td>';
-	print '<td><input name="label" id="label" value="'.GETPOST("label", "alphanohtml").'"></td>';
+	print '<td><input name="label" id="label" value="'.GETPOST("label", "alphanohtml").'" autofocus></td>';
 	print '</tr>';
 
 	// Entity
@@ -252,7 +260,7 @@ if (($id || $ref) && $action == 'edit') {
 		$head = establishment_prepare_head($object);
 
 		if ($action == 'edit') {
-			print dol_get_fiche_head($head, 'card', $langs->trans("Establishment"), 0, 'building');
+			print dol_get_fiche_head($head, 'card', $langs->trans("Establishment"), 0, $object->picto);
 
 			print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
 			print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -335,7 +343,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$res = $object->fetch_optionals();
 
 	$head = establishment_prepare_head($object);
-	print dol_get_fiche_head($head, 'card', $langs->trans("Establishment"), -1, 'building');
+	print dol_get_fiche_head($head, 'card', $langs->trans("Establishment"), -1, $object->picto);
 
 	// Confirmation to delete
 	if ($action == 'delete') {
@@ -412,9 +420,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print dol_get_fiche_end();
 
 	/*
-	 * Barre d'actions
-	*/
-
+	 * Action bar
+	 */
 	print '<div class="tabsAction">';
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$id.'">'.$langs->trans('Modify').'</a>';
 	print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$id.'">'.$langs->trans('Delete').'</a>';

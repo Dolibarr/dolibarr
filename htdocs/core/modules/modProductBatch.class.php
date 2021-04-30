@@ -23,7 +23,7 @@
  *	\brief      Management module for batch number, eat-by and sell-by date for product
  *  \file       htdocs/core/modules/modProductBatch.class.php
  *  \ingroup    productbatch
- *  \brief      Description and activation file for module productbatch
+ *  \brief      Description and activation file for the module productbatch
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -65,7 +65,7 @@ class modProductBatch extends DolibarrModules
 		$this->dirs = array();
 
 		// Config pages. Put here list of php page, stored into productdluo/admin directory, to use to setup module.
-		$this->config_page_url = array("product_lot_extrafields.php@product");
+		$this->config_page_url = array("product_lot.php@product");
 
 		// Dependencies
 		$this->hidden = false; // A condition to hide module
@@ -77,7 +77,23 @@ class modProductBatch extends DolibarrModules
 		$this->langfiles = array("productbatch");
 
 		// Constants
+		// Constants
 		$this->const = array();
+		$r = 0;
+
+		$this->const[$r][0] = "PRODUCTBATCH_LOT_ADDON";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "mod_lot_free";
+		$this->const[$r][3] = 'Module to control product codes';
+		$this->const[$r][4] = 0;
+		$r++;
+
+		$this->const[$r][0] = "PRODUCTBATCH_SN_ADDON";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "mod_sn_free";
+		$this->const[$r][3] = 'Module to control product codes';
+		$this->const[$r][4] = 0;
+		$r++;
 
 		$this->tabs = array();
 

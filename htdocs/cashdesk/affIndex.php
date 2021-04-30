@@ -38,6 +38,10 @@ if ($_SESSION['uid'] <= 0) {
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "compta", "cashdesk"));
 
+if (empty($user->rights->cashdesk->run)) {
+	accessforbidden();
+}
+
 
 /*
  * View

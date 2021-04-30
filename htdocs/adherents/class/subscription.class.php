@@ -165,7 +165,7 @@ class Subscription extends CommonObject
 		} else {
 			$type = $this->fk_type;
 		}
-		$sql .= " VALUES (".$this->fk_adherent.", '".$this->db->escape($type)."', '".$this->db->idate($now)."',";
+		$sql .= " VALUES (".((int) $this->fk_adherent).", '".$this->db->escape($type)."', '".$this->db->idate($now)."',";
 		$sql .= " '".$this->db->idate($this->dateh)."',";
 		$sql .= " '".$this->db->idate($this->datef)."',";
 		$sql .= " ".$this->amount.",";
@@ -217,7 +217,7 @@ class Subscription extends CommonObject
 		$sql .= " datef,";
 		$sql .= " subscription, note, fk_bank";
 		$sql .= " FROM ".MAIN_DB_PREFIX."subscription";
-		$sql .= "	WHERE rowid=".$rowid;
+		$sql .= "	WHERE rowid=".((int) $rowid);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -417,7 +417,7 @@ class Subscription extends CommonObject
 			$label .= '<br><b>'.$langs->trans('DateEnd').':</b> '.dol_print_date($this->datef, 'day');
 		}
 
-		$url = DOL_URL_ROOT.'/adherents/subscription/card.php?rowid='.$this->id;
+		$url = DOL_URL_ROOT.'/adherents/subscription/card.php?rowid='.((int) $this->id);
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
@@ -483,7 +483,7 @@ class Subscription extends CommonObject
 		$sql = 'SELECT c.rowid, c.datec,';
 		$sql .= ' c.tms as datem';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'subscription as c';
-		$sql .= ' WHERE c.rowid = '.$id;
+		$sql .= ' WHERE c.rowid = '.((int) $id);
 
 		$result = $this->db->query($sql);
 		if ($result) {

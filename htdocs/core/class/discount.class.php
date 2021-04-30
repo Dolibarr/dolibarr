@@ -141,16 +141,16 @@ class DiscountAbsolute
 		$sql .= " fsup.ref as ref_invoice_supplier_source, fsup.type as type_invoice_supplier_source";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as sr";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON sr.fk_facture_source = f.rowid";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as fsup ON sr.fk_invoice_supplier_source = fsup.rowid";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as fsup ON sr.fk_invoice_supplier_source = fsup.rowid";
 		$sql .= " WHERE sr.entity IN (".getEntity('invoice').")";
 		if ($rowid) {
-			$sql .= " AND sr.rowid=".$rowid;
+			$sql .= " AND sr.rowid=".((int) $rowid);
 		}
 		if ($fk_facture_source) {
-			$sql .= " AND sr.fk_facture_source=".$fk_facture_source;
+			$sql .= " AND sr.fk_facture_source = ".((int) $fk_facture_source);
 		}
 		if ($fk_invoice_supplier_source) {
-			$sql .= " AND sr.fk_invoice_supplier_source=".$fk_invoice_supplier_source;
+			$sql .= " AND sr.fk_invoice_supplier_source = ".((int) $fk_invoice_supplier_source);
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -337,11 +337,11 @@ class DiscountAbsolute
 		// Delete but only if not used
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_remise_except ";
 		if ($this->fk_facture_source) {
-			$sql .= " WHERE fk_facture_source = ".$this->fk_facture_source; // Delete all lines of same serie
+			$sql .= " WHERE fk_facture_source = ".((int) $this->fk_facture_source); // Delete all lines of same serie
 		} elseif ($this->fk_invoice_supplier_source) {
-			$sql .= " WHERE fk_invoice_supplier_source = ".$this->fk_invoice_supplier_source; // Delete all lines of same serie
+			$sql .= " WHERE fk_invoice_supplier_source = ".((int) $this->fk_invoice_supplier_source); // Delete all lines of same serie
 		} else {
-			$sql .= " WHERE rowid = ".$this->id; // Delete only line
+			$sql .= " WHERE rowid = ".((int) $this->id); // Delete only line
 		}
 		$sql .= " AND (fk_facture_line IS NULL"; // Not used as absolute simple discount
 		$sql .= " AND fk_facture IS NULL)"; // Not used as credit note and not used as deposit
@@ -421,17 +421,17 @@ class DiscountAbsolute
 		$sql = "UPDATE ".MAIN_DB_PREFIX."societe_remise_except";
 		if (!empty($this->discount_type)) {
 			if ($rowidline) {
-				$sql .= " SET fk_invoice_supplier_line = ".$rowidline;
+				$sql .= " SET fk_invoice_supplier_line = ".((int) $rowidline);
 			}
 			if ($rowidinvoice) {
-				$sql .= " SET fk_invoice_supplier = ".$rowidinvoice;
+				$sql .= " SET fk_invoice_supplier = ".((int) $rowidinvoice);
 			}
 		} else {
 			if ($rowidline) {
-				$sql .= " SET fk_facture_line = ".$rowidline;
+				$sql .= " SET fk_facture_line = ".((int) $rowidline);
 			}
 			if ($rowidinvoice) {
-				$sql .= " SET fk_facture = ".$rowidinvoice;
+				$sql .= " SET fk_facture = ".((int) $rowidinvoice);
 			}
 		}
 		$sql .= " WHERE rowid = ".$this->id;
@@ -597,12 +597,12 @@ class DiscountAbsolute
 			$sql = 'SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture as f';
 			$sql .= ' WHERE rc.fk_facture_source=f.rowid AND rc.fk_facture = '.$invoice->id;
-			$sql .= ' AND f.type IN ('.$invoice::TYPE_STANDARD.', '.$invoice::TYPE_CREDIT_NOTE.', '.$invoice::TYPE_SITUATION.')'; // Find discount coming from credit note or excess received
+			$sql .= ' AND f.type IN ('.$this->db->sanitize($invoice::TYPE_STANDARD.', '.$invoice::TYPE_CREDIT_NOTE.', '.$invoice::TYPE_SITUATION).')'; // Find discount coming from credit note or excess received
 		} elseif ($invoice->element == 'invoice_supplier') {
 			$sql = 'SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture_fourn as f';
 			$sql .= ' WHERE rc.fk_invoice_supplier_source=f.rowid AND rc.fk_invoice_supplier = '.$invoice->id;
-			$sql .= ' AND f.type IN ('.$invoice::TYPE_STANDARD.', '.$invoice::TYPE_CREDIT_NOTE.')'; // Find discount coming from credit note or excess paid
+			$sql .= ' AND f.type IN ('.$this->db->sanitize($invoice::TYPE_STANDARD.', '.$invoice::TYPE_CREDIT_NOTE).')'; // Find discount coming from credit note or excess paid
 		} else {
 			$this->error = get_class($this)."::getSumCreditNotesUsed was called with a bad object as a first parameter";
 			dol_print_error($this->error);

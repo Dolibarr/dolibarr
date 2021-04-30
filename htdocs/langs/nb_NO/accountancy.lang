@@ -131,7 +131,7 @@ InvoiceLinesDone=Bundne fakturalinjer
 ExpenseReportLines=Utgiftsrapport-linjer som skal bindes
 ExpenseReportLinesDone=Bundne utgiftsrapport-linjer
 IntoAccount=Bind linje med regnskapskonto
-TotalForAccount=Totalt for regnskapskonto
+TotalForAccount=Antall regnskapskonti
 
 
 Ventilate=Bind
@@ -209,7 +209,7 @@ Codejournal=Journal
 JournalLabel=Journaletikett
 NumPiece=Del nummer
 TransactionNumShort=Transaksjonsnummer
-AccountingCategory=Personlige grupper
+AccountingCategory=Custom group
 GroupByAccountAccounting=Gruppere etter hovedbokskonto
 GroupBySubAccountAccounting=Gruppere etter sub-hovedbokskonto
 AccountingAccountGroupsDesc=Her kan du definere noen grupper regnskapskonti. De vil bli brukt til personlige regnskapsrapporter.
@@ -402,7 +402,29 @@ UseMenuToSetBindindManualy=Linjer som ennå ikke er bundet, bruk menyen <a href=
 
 ## Import
 ImportAccountingEntries=Regnskapsposter
+ImportAccountingEntriesFECFormat=Regnskapsoppføringer - FEC-format
+FECFormatJournalCode=Kodejournal (JournalCode)
+FECFormatJournalLabel=Etikettjournal (JournalLib)
+FECFormatEntryNum=Piece number (EcritureNum)
+FECFormatEntryDate=Piece date (EcritureDate)
+FECFormatGeneralAccountNumber=General account number (CompteNum)
+FECFormatGeneralAccountLabel=General account label (CompteLib)
+FECFormatSubledgerAccountNumber=Subledger account number (CompAuxNum)
+FECFormatSubledgerAccountLabel=Subledger account number (CompAuxLib)
+FECFormatPieceRef=Piece ref (PieceRef)
+FECFormatPieceDate=Piece date creation (PieceDate)
+FECFormatLabelOperation=Label operation (EcritureLib)
+FECFormatDebit=Debit (Debit)
+FECFormatCredit=Credit (Credit)
+FECFormatReconcilableCode=Reconcilable code (EcritureLet)
+FECFormatReconcilableDate=Reconcilable date (DateLet)
+FECFormatValidateDate=Piece date validated (ValidDate)
+FECFormatMulticurrencyAmount=Multicurrency amount (Montantdevise)
+FECFormatMulticurrencyCode=Multicurrency code (Idevise)
+
 DateExport=Dato eksport
 WarningReportNotReliable=Advarsel, denne rapporten er ikke basert på hovedboken, så den inneholder ikke transaksjoner endret manuelt i hovedboken. Hvis journaliseringen din er oppdatert, er bokføringsvisningen mer nøyaktig.
 ExpenseReportJournal=Utgiftsrapport-journal
 InventoryJournal=Inventar-journal
+
+NAccounts=%s accounts

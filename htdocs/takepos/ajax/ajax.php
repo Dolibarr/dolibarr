@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004	Andreu Bisquerra	<jove@bisquerra.com>
-/* Copyright (C) 2020		Thibault FOUCART	<support@ptibogxiv.net>
+ * Copyright (C) 2020		Thibault FOUCART	<support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,10 +21,6 @@
  *	\brief      Ajax search component for TakePos. It search products of a category.
  */
 
-//if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
-//if (! defined('NOREQUIREDB'))		define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
-//if (! defined('NOREQUIRESOC'))		define('NOREQUIRESOC', '1');
-//if (! defined('NOREQUIRETRAN'))		define('NOREQUIRETRAN','1');
 if (!defined('NOCSRFCHECK')) {
 	define('NOCSRFCHECK', '1');
 }
@@ -47,7 +43,7 @@ if (!defined('NOBROWSERNOTIF')) {
 require '../../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
-$category = GETPOST('category', 'alpha');
+$category = GETPOST('category', 'alphanohtml');	// Can be id of category or 'supplements'
 $action = GETPOST('action', 'aZ09');
 $term = GETPOST('term', 'alpha');
 $id = GETPOST('id', 'int');
@@ -115,7 +111,7 @@ if ($action == 'getProducts') {
 	$sql = 'SELECT rowid, ref, label, tosell, tobuy, barcode, price FROM '.MAIN_DB_PREFIX.'product as p';
 	$sql .= ' WHERE entity IN ('.getEntity('product').')';
 	if ($filteroncategids) {
-		$sql .= ' AND EXISTS (SELECT cp.fk_product FROM '.MAIN_DB_PREFIX.'categorie_product as cp WHERE cp.fk_product = p.rowid AND cp.fk_categorie IN ('.$filteroncategids.'))';
+		$sql .= ' AND EXISTS (SELECT cp.fk_product FROM '.MAIN_DB_PREFIX.'categorie_product as cp WHERE cp.fk_product = p.rowid AND cp.fk_categorie IN ('.$db->sanitize($filteroncategids).'))';
 	}
 	$sql .= ' AND tosell = 1';
 	$sql .= natural_search(array('ref', 'label', 'barcode'), $term);

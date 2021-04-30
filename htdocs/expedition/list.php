@@ -295,13 +295,13 @@ if ($socid) {
 	$sql .= " AND e.fk_soc = ".$socid;
 }
 if ($search_status <> '' && $search_status >= 0) {
-	$sql .= " AND e.fk_statut = ".$search_status;
+	$sql .= " AND e.fk_statut = ".((int) $search_status);
 }
 if ($search_ref_customer != '') {
 	$sql .= natural_search('e.ref_customer', $search_ref_customer);
 }
 if ($search_billed != '' && $search_billed >= 0) {
-	$sql .= ' AND e.billed = '.$search_billed;
+	$sql .= ' AND e.billed = '.((int) $search_billed);
 }
 if ($search_town) {
 	$sql .= natural_search('s.town', $search_town);
@@ -313,13 +313,13 @@ if ($search_state) {
 	$sql .= natural_search("state.nom", $search_state);
 }
 if ($search_country) {
-	$sql .= " AND s.fk_pays IN (".$search_country.')';
+	$sql .= " AND s.fk_pays IN (".$db->sanitize($search_country).')';
 }
 if ($search_tracking) {
 	$sql .= natural_search("e.tracking_number", $search_tracking);
 }
 if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
-	$sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
+	$sql .= " AND s.fk_typent IN (".$db->sanitize($search_type_thirdparty).')';
 }
 if ($search_sale > 0) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$search_sale;
@@ -464,9 +464,9 @@ if ($optioncss != '') {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 $arrayofmassactions = array(
-	'builddoc' => $langs->trans("PDFMerge"),
+	'builddoc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	//'classifyclose'=>$langs->trans("Close"), TODO massive close shipment ie: when truck is charged
-	'presend'  => $langs->trans("SendByMail"),
+	'presend'  => img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
 if (in_array($massaction, array('presend'))) {
 	$arrayofmassactions = array();
@@ -511,31 +511,37 @@ $moreforfilter = '';
 if ($user->rights->societe->client->voir || $socid) {
 	$langs->load("commercial");
 	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= $langs->trans('ThirdPartiesOfSaleRepresentative').': ';
-	$moreforfilter .= $formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, 1, 'maxwidth200');
+	$tmptitle = $langs->trans('ThirdPartiesOfSaleRepresentative');
+	$moreforfilter .= img_picto($tmptitle, 'user');
+	$moreforfilter .= $formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, $tmptitle, 'maxwidth200');
 	$moreforfilter .= '</div>';
 }
 // If the user can view other users
 if ($user->rights->user->user->lire) {
 	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= $langs->trans('LinkedToSpecificUsers').': ';
-	$moreforfilter .= $form->select_dolusers($search_user, 'search_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth200');
+	$tmptitle = $langs->trans('LinkedToSpecificUsers');
+	$moreforfilter .= img_picto($tmptitle, 'user');
+	$moreforfilter .= $form->select_dolusers($search_user, 'search_user', $tmptitle, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth200');
 	$moreforfilter .= '</div>';
 }
 // If the user can view prospects other than his'
 if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire && ($user->rights->produit->lire || $user->rights->service->lire)) {
 	include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= $langs->trans('IncludingProductWithTag').': ';
-	$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
-	$moreforfilter .= $form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, 'maxwidth300', 1);
+	$tmptitle = $langs->trans('IncludingProductWithTag');
+	$moreforfilter .= img_picto($tmptitle, 'category');
+	//$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
+	//$moreforfilter .= $form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, 'maxwidth300', 1);
+	$moreforfilter .= $formother->select_categories(Categorie::TYPE_PRODUCT, $search_product_category, 'parent', 1, $tmptitle);
+
 	$moreforfilter .= '</div>';
 }
 if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= $langs->trans('CustomersProspectsCategoriesShort').': ';
-	$moreforfilter .= $formother->select_categories('customer', $search_categ_cus, 'search_categ_cus', 1);
+	$tmptitle = $langs->trans('CustomersProspectsCategoriesShort');
+	$moreforfilter .= img_picto($tmptitle, 'category');
+	$moreforfilter .= $formother->select_categories('customer', $search_categ_cus, 'search_categ_cus', 1, $tmptitle);
 	$moreforfilter .= '</div>';
 }
 $parameters = array();

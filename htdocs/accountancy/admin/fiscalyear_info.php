@@ -39,10 +39,14 @@ if (!$user->rights->accounting->fiscalyear->write) {
 
 $id = GETPOST('id', 'int');
 
+
 // View
+
 $title = $langs->trans("Fiscalyear")." - ".$langs->trans("Info");
-$helpurl = "";
-llxHeader("", $title, $helpurl);
+
+$help_url = "EN:Module_Double_Entry_Accounting";
+
+llxHeader('', $title, $help_url);
 
 if ($id) {
 	$object = new Fiscalyear($db);

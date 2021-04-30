@@ -28,9 +28,6 @@ require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
 // Load translation files required by the page
 $langs->load("mails");
 
-// Security check
-$result = restrictedArea($user, 'mailing');
-
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -69,6 +66,11 @@ $fieldstosearchall = array(
 	'm.titre'=>'Ref',
 );
 
+// Security check
+if (!$user->rights->mailing->lire || (empty($conf->global->EXTERNAL_USERS_ARE_AUTHORIZED) && $user->socid > 0)) {
+	accessforbidden();
+}
+//$result = restrictedArea($user, 'mailing');
 
 
 

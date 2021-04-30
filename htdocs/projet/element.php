@@ -7,6 +7,7 @@
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2016      Josep Lluís Amador   <joseplluis@lliuretic.cat>
  * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2021      Noé Cendrier         <noe.cendrier@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,8 +41,6 @@ if (!empty($conf->propal->enabled)) {
 }
 if (!empty($conf->facture->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-}
-if (!empty($conf->facture->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 }
 if (!empty($conf->commande->enabled)) {
@@ -50,10 +49,10 @@ if (!empty($conf->commande->enabled)) {
 if (!empty($conf->supplier_proposal->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 }
-if (!empty($conf->fournisseur->enabled)) {
+if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_invoice->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 }
-if (!empty($conf->fournisseur->enabled)) {
+if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 }
 if (!empty($conf->contrat->enabled)) {
@@ -79,8 +78,6 @@ if (!empty($conf->don->enabled)) {
 }
 if (!empty($conf->loan->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
-}
-if (!empty($conf->loan->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/loan/class/loanschedule.class.php';
 }
 if (!empty($conf->stock->enabled)) {
@@ -134,6 +131,9 @@ if (!empty($conf->salaries->enabled)) {
 if (!empty($conf->mrp->enabled)) {
 	$langs->load("mrp");
 }
+if (!empty($conf->eventorganization->enabled)) {
+	$langs->load("eventorganization");
+}
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -183,12 +183,14 @@ $hookmanager->initHooks(array('projectOverview'));
  *	View
  */
 
-$title = $langs->trans("ProjectReferers").' - '.$object->ref.' '.$object->name;
+$title = $langs->trans('ProjectReferers').' - '.$object->ref.' '.$object->name;
 if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
-	$title = $object->ref.' '.$object->name.' - '.$langs->trans("ProjectReferers");
+	$title = $object->ref.' '.$object->name.' - '.$langs->trans('ProjectReferers');
 }
-$help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
-llxHeader("", $langs->trans("Referers"), $help_url);
+
+$help_url = 'EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos|DE:Modul_Projekte';
+
+llxHeader('', $title, $help_url);
 
 $form = new Form($db);
 $formproject = new FormProjets($db);
@@ -219,7 +221,7 @@ $morehtmlref .= '</div>';
 // Define a complementary filter for search of next/prev ref.
 if (!$user->rights->projet->all->lire) {
 	$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-	$object->next_prev_filter = " te.rowid in (".(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
+	$object->next_prev_filter = " te.rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 }
 
 dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -232,29 +234,36 @@ print '<div class="underbanner clearboth"></div>';
 print '<table class="border tableforfield centpercent">';
 
 // Usage
-print '<tr><td class="tdtop">';
-print $langs->trans("Usage");
-print '</td>';
-print '<td>';
-if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
-	print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_opportunity ? ' checked="checked"' : '')).'"> ';
-	$htmltext = $langs->trans("ProjectFollowOpportunity");
-	print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
-	print '<br>';
+if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS) || !empty($conf->eventorganization->enabled)) {
+	print '<tr><td class="tdtop">';
+	print $langs->trans("Usage");
+	print '</td>';
+	print '<td>';
+	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+		print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_opportunity ? ' checked="checked"' : '')).'"> ';
+		$htmltext = $langs->trans("ProjectFollowOpportunity");
+		print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
+		print '<br>';
+	}
+	if (empty($conf->global->PROJECT_HIDE_TASKS)) {
+		print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_task ? ' checked="checked"' : '')).'"> ';
+		$htmltext = $langs->trans("ProjectFollowTasks");
+		print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
+		print '<br>';
+	}
+	if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_BILL_TIME_SPENT)) {
+		print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_bill_time ? ' checked="checked"' : '')).'"> ';
+		$htmltext = $langs->trans("ProjectBillTimeDescription");
+		print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
+		print '<br>';
+	}
+	if (!empty($conf->eventorganization->enabled)) {
+		print '<input type="checkbox" disabled name="usage_organize_event"'.(GETPOSTISSET('usage_organize_event') ? (GETPOST('usage_organize_event', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_organize_event ? ' checked="checked"' : '')).'"> ';
+		$htmltext = $langs->trans("EventOrganizationDescriptionLong");
+		print $form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext);
+	}
+	print '</td></tr>';
 }
-if (empty($conf->global->PROJECT_HIDE_TASKS)) {
-	print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_task ? ' checked="checked"' : '')).'"> ';
-	$htmltext = $langs->trans("ProjectFollowTasks");
-	print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
-	print '<br>';
-}
-if (!empty($conf->global->PROJECT_BILL_TIME_SPENT)) {
-	print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_bill_time ? ' checked="checked"' : '')).'"> ';
-	$htmltext = $langs->trans("ProjectBillTimeDescription");
-	print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
-	print '<br>';
-}
-print '</td></tr>';
 
 // Visibility
 print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
@@ -350,6 +359,18 @@ print '<br>';
  */
 
 $listofreferent = array(
+'entrepot'=>array(
+	'name'=>"Warehouse",
+	'title'=>"ListWarehouseAssociatedProject",
+	'class'=>'Entrepot',
+	'table'=>'entrepot',
+	'datefieldname'=>'date_entrepot',
+	'urlnew'=>DOL_URL_ROOT.'/product/stock/card.php?action=create&projectid='.$id,
+	'lang'=>'entrepot',
+	'buttonnew'=>'AddWarehouse',
+	'project_field'=>'fk_project',
+	'testnew'=>$user->rights->stock->creer,
+	'test'=>$conf->stock->enabled && $user->rights->stock->lire),
 'propal'=>array(
 	'name'=>"Proposals",
 	'title'=>"ListProposalsAssociatedProject",
@@ -415,8 +436,8 @@ $listofreferent = array(
 	'urlnew'=>DOL_URL_ROOT.'/fourn/commande/card.php?action=create&projectid='.$id, // No socid parameter here, the socid is often the customer and we create a supplier object
 	'lang'=>'suppliers',
 	'buttonnew'=>'AddSupplierOrder',
-	'testnew'=>$user->rights->fournisseur->commande->creer,
-	'test'=>$conf->supplier_order->enabled && $user->rights->fournisseur->commande->lire),
+	'testnew'=>($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer),
+	'test'=>$conf->supplier_order->enabled && ($user->rights->fournisseur->commande->lire || $user->rights->supplier_order->lire)),
 'invoice_supplier'=>array(
 	'name'=>"BillsSuppliers",
 	'title'=>"ListSupplierInvoicesAssociatedProject",
@@ -427,8 +448,8 @@ $listofreferent = array(
 	'urlnew'=>DOL_URL_ROOT.'/fourn/facture/card.php?action=create&projectid='.$id, // No socid parameter here, the socid is often the customer and we create a supplier object
 	'lang'=>'suppliers',
 	'buttonnew'=>'AddSupplierInvoice',
-	'testnew'=>$user->rights->fournisseur->facture->creer,
-	'test'=>$conf->supplier_invoice->enabled && $user->rights->fournisseur->facture->lire),
+	'testnew'=>($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer),
+	'test'=>$conf->supplier_invoice->enabled && ($user->rights->fournisseur->facture->lire || $user->rights->supplier_invoice->lire)),
 'contract'=>array(
 	'name'=>"Contracts",
 	'title'=>"ListContractAssociatedProject",

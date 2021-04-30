@@ -41,17 +41,20 @@ $ref = GETPOST('ref', 'alpha');
 $socid = GETPOST('socid', 'int');
 $action = GETPOST('action', 'aZ09');
 
+$object = new Facture($db);
+// Load object
+if ($id > 0 || !empty($ref)) {
+	$object->fetch($id, $ref, '', '', $conf->global->INVOICE_USE_SITUATION);
+}
+
+$permissionnote = $user->rights->facture->creer; // Used by the include of actions_setnotes.inc.php
+
 // Security check
 $socid = 0;
 if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'facture', $id, '');
-
-$object = new Facture($db);
-$object->fetch($id);
-
-$permissionnote = $user->rights->facture->creer; // Used by the include of actions_setnotes.inc.php
 
 
 /*

@@ -163,10 +163,21 @@ if ($search_date_end && empty($search_date_endyear)) {
 	$search_date_endday = $tmparray['mday'];
 }
 
+if (empty($conf->accounting->enabled)) {
+	accessforbidden();
+}
+if ($user->socid > 0) {
+	accessforbidden();
+}
+if (empty($user->rights->accounting->mouvements->lire)) {
+	accessforbidden();
+}
+
 
 /*
  * Action
  */
+
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list'; $massaction = '';
 }

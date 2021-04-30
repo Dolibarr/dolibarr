@@ -343,14 +343,14 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 
 	// Title
 	if ($foruserprofile) {
-		print '<tr class="liste_titre"><th class="titlefield">'.$langs->trans("Parameter").'</th><th>'.$langs->trans("DefaultValue").'</th>';
+		print '<tr class="liste_titre"><th class="titlefieldmiddle">'.$langs->trans("Parameter").'</th><th>'.$langs->trans("DefaultValue").'</th>';
 		print '<th colspan="2">&nbsp;</th>';
 		print '</tr>';
 
 		print '<tr>';
 		print '<td>'.$langs->trans("DefaultSkin").'</td>';
 		print '<td>'.$conf->global->MAIN_THEME.'</td>';
-		print '<td class="nowrap left" width="20%"><input id="check_MAIN_THEME" name="check_MAIN_THEME"'.($edit ? '' : ' disabled').' type="checkbox" '.($selected_theme ? " checked" : "").'> '.$langs->trans("UsePersonalValue").'</td>';
+		print '<td class="nowrap left"><input id="check_MAIN_THEME" name="check_MAIN_THEME"'.($edit ? '' : ' disabled').' type="checkbox" '.($selected_theme ? " checked" : "").'> '.$langs->trans("UsePersonalValue").'</td>';
 		print '<td>&nbsp;</td>';
 		print '</tr>';
 	} else {
@@ -359,7 +359,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 			$dirthemestring .= '"'.$dirtheme.'" ';
 		}
 
-		print '<tr class="liste_titre"><th class="titlefield">';
+		print '<tr class="liste_titre"><th class="titlefieldmiddle">';
 		print $form->textwithpicto($langs->trans("DefaultSkin"), $langs->trans("ThemeDir").' : '.$dirthemestring);
 		print '</th>';
 		print '<th class="right">';
@@ -409,9 +409,9 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 						print '<img class="img-skinthumb shadow" src="'.$url.'" alt="'.$title.'" title="'.$title.'" style="border: none; margin-bottom: 5px;">';
 						print '</a><br>';
 						if ($subdir == $selected_theme) {
-							print '<input '.($edit ? '' : 'disabled').' type="radio" class="themethumbs" style="border: 0px;" checked name="main_theme" value="'.$subdir.'"> <b>'.$subdir.'</b>';
+							print '<input '.($edit ? '' : 'disabled').' type="radio" class="themethumbs" style="border: 0px;" id="main_theme'.$subdir.'" checked name="main_theme" value="'.$subdir.'"><label for="main_theme'.$subdir.'"> <b>'.$subdir.'</b></label>';
 						} else {
-							print '<input '.($edit ? '' : 'disabled').' type="radio" class="themethumbs" style="border: 0px;" name="main_theme" value="'.$subdir.'"> '.$subdir;
+							print '<input '.($edit ? '' : 'disabled').' type="radio" class="themethumbs" style="border: 0px;" id="main_theme'.$subdir.'" name="main_theme" value="'.$subdir.'"><label for="main_theme'.$subdir.'"> '.$subdir.'</label>';
 						}
 						print '</div>';
 
@@ -448,7 +448,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		// Nothing
 	} else {
 		// Show logo
-		print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("EnableShowLogo").'</td><td>';
+		print '<tr class="oddeven"><td class="titlefieldmiddle">'.$langs->trans("EnableShowLogo").'</td><td>';
 		if ($edit) {
 			print ajax_constantonoff('MAIN_SHOW_LOGO', array(), null, 0, 0, 1);
 			//print $form->selectyesno('MAIN_SHOW_LOGO', $conf->global->MAIN_SHOW_LOGO, 1);

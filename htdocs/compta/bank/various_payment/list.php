@@ -226,7 +226,7 @@ $sql .= " WHERE v.entity IN (".getEntity('payment_various').")";
 
 // Search criteria
 if ($search_ref) {
-	$sql .= " AND v.rowid=".$db->escape($search_ref);
+	$sql .= " AND v.rowid = ".((int) $search_ref);
 }
 if ($search_label) {
 	$sql .= natural_search(array('v.label'), $search_label);
@@ -263,10 +263,6 @@ if ($search_accountancy_subledger > 0) {
 }
 if ($typeid > 0) {
 	$sql .= " AND v.fk_typepayment=".$typeid;
-}
-if ($filtre) {
-	$filtre = str_replace(":", "=", $filtre);
-	$sql .= " AND ".$filtre;
 }
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
@@ -675,7 +671,7 @@ if ($result) {
 		if ($arrayfields['debit']['checked']) {
 			print '<td class="nowrap right">';
 			if ($obj->sens == 0) {
-				print price($obj->amount);
+				print '<span class="amount">'.price($obj->amount).'</span>';
 				$totalarray['val']['total_deb'] += $obj->amount;
 			}
 			if (!$i) {
@@ -691,7 +687,7 @@ if ($result) {
 		if ($arrayfields['credit']['checked']) {
 			print '<td class="nowrap right">';
 			if ($obj->sens == 1) {
-				print price($obj->amount);
+				print '<span class="amount">'.price($obj->amount).'</span>';
 				$totalarray['val']['total_cred'] += $obj->amount;
 			}
 			if (!$i) {

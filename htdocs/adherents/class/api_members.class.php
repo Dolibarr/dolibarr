@@ -329,7 +329,7 @@ class Members extends DolibarrApi
 				continue;
 			}
 			// Process the status separately because it must be updated using
-			// the validate() and resiliate() methods of the class Adherent.
+			// the validate(), resiliate() and exclude() methods of the class Adherent.
 			if ($field == 'statut') {
 				if ($value == '0') {
 					$result = $member->resiliate(DolibarrApiAccess::$user);
@@ -340,6 +340,11 @@ class Members extends DolibarrApi
 					$result = $member->validate(DolibarrApiAccess::$user);
 					if ($result < 0) {
 						throw new RestException(500, 'Error when validating member: '.$member->error);
+					}
+				} elseif ($value == '-2') {
+					$result = $member->exclude(DolibarrApiAccess::$user);
+					if ($result < 0) {
+						throw new RestException(500, 'Error when excluding member: '.$member->error);
 					}
 				}
 			} else {

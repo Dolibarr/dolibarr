@@ -81,7 +81,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 		if ($perms && isset($extrafields->attributes[$object->table_element]['perms'][$tmpkeyextra])) {
 			$perms = dol_eval($extrafields->attributes[$object->table_element]['perms'][$tmpkeyextra], 1);
 		}
-		//print $tmpkeyextra.'-'.$enabled.'-'.$perms.'-'.$tmplabelextra.$_POST["options_" . $tmpkeyextra].'<br>'."\n";
+		//print $tmpkeyextra.'-'.$enabled.'-'.$perms.'<br>'."\n";
 
 		if (empty($enabled)) {
 			continue; // 0 = Never visible field
@@ -159,13 +159,21 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 				$keyforperm = 'ficheinter';
 			}
 			if (isset($user->rights->$keyforperm)) {
-				$permok = $user->rights->$keyforperm->creer || $user->rights->$keyforperm->create || $user->rights->$keyforperm->write;
+				$permok = !empty($user->rights->$keyforperm->creer) || !empty($user->rights->$keyforperm->create) || !empty($user->rights->$keyforperm->write);
 			}
 			if ($object->element == 'order_supplier') {
-				$permok = $user->rights->fournisseur->commande->creer;
+				if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
+					$permok = $user->rights->fournisseur->commande->creer;
+				} else {
+					$permok = $user->rights->supplier_order->creer;
+				}
 			}
 			if ($object->element == 'invoice_supplier') {
-				$permok = $user->rights->fournisseur->facture->creer;
+				if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
+					$permok = $user->rights->fournisseur->facture->creer;
+				} else {
+					$permok = $user->rights->supplier_invoice->creer;
+				}
 			}
 			if ($object->element == 'shipping') {
 				$permok = $user->rights->expedition->creer;
@@ -181,6 +189,9 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 			}
 			if ($object->element == 'mo') {
 				$permok = $user->rights->mrp->write;
+			}
+			if ($object->element == 'contact') {
+				$permok = $user->rights->societe->contact->creer;
 			}
 
 			$isdraft = ((isset($object->statut) && $object->statut == 0) || (isset($object->status) && $object->status == 0));

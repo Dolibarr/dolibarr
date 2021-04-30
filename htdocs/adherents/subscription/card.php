@@ -349,8 +349,7 @@ if ($rowid && $action != 'edit') {
 	print dol_get_fiche_end();
 
 	/*
-	 * Barre d'actions
-	 *
+	 * Action bar
 	 */
 	print '<div class="tabsAction">';
 
@@ -373,7 +372,7 @@ if ($rowid && $action != 'edit') {
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 	print '<a name="builddoc"></a>'; // ancre
 
-	// Documents generes
+	// Generated documents
 	/*
 	$filename = dol_sanitizeFileName($object->ref);
 	$filedir = $conf->facture->dir_output . '/' . dol_sanitizeFileName($object->ref);

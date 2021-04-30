@@ -33,7 +33,17 @@ if ($action == 'update' && is_array($arrayofparameters)) {
 	foreach ($arrayofparameters as $key => $val) {
 		// Modify constant only if key was posted (avoid resetting key to the null value)
 		if (GETPOSTISSET($key)) {
-			$result = dolibarr_set_const($db, $key, GETPOST($key, 'alpha'), 'chaine', 0, '', $conf->entity);
+			if (preg_match('/category:/', $val['type'])) {
+				if (GETPOST($key, 'int') == '-1') {
+					$val_const = '';
+				} else {
+					$val_const = GETPOST($key, 'int');
+				}
+			} else {
+				$val_const = GETPOST($key, 'alpha');
+			}
+
+			$result = dolibarr_set_const($db, $key, $val_const, 'chaine', 0, '', $conf->entity);
 			if ($result < 0) {
 				$error++;
 				break;

@@ -461,7 +461,7 @@ abstract class CommonDocGenerator
 		$array_key.'_total_localtax2'=>price2num($object->total_localtax2),
 		$array_key.'_total_ttc'=>price2num($object->total_ttc),
 
-		$array_key.'_multicurrency_code' => price2num($object->multicurrency_code),
+		$array_key.'_multicurrency_code' => $object->multicurrency_code,
 		$array_key.'_multicurrency_tx' => price2num($object->multicurrency_tx),
 		$array_key.'_multicurrency_total_ht' => price2num($object->multicurrency_total_ht),
 		$array_key.'_multicurrency_total_tva' => price2num($object->multicurrency_total_tva),
@@ -787,10 +787,9 @@ abstract class CommonDocGenerator
 		$resarray = $this->fill_substitutionarray_with_extrafields($line, $resarray, $extrafields, $array_key, $outputlangs);
 
 		// Load product data optional fields to the line -> enables to use "line_product_options_{extrafield}"
-		if (isset($line->fk_product) && $line->fk_product > 0)
-		{
+		if (isset($line->fk_product) && $line->fk_product > 0) {
 			$tmpproduct = new Product($this->db);
-			$result = $tmpproduct->fetch($line->fk_product);
+			$tmpproduct->fetch($line->fk_product);
 			foreach ($tmpproduct->array_options as $key=>$label)
 				$resarray["line_product_".$key] = $label;
 		}
@@ -1302,7 +1301,7 @@ abstract class CommonDocGenerator
 			),
 
 			'list'         => array(
-				'separator' => '<br/>'
+				'separator' => '<br>'
 			),
 
 			'auto'         => array(
@@ -1393,7 +1392,7 @@ abstract class CommonDocGenerator
 				$itemsInRow = 0;
 				$maxItemsInRow = $params['table']['maxItemsInRow'];
 				foreach ($fields as $field) {
-					//$html.= !empty($html)?'<br/>':'';
+					//$html.= !empty($html)?'<br>':'';
 					if ($itemsInRow >= $maxItemsInRow) {
 						// start a new line
 						$html .= "</tr><tr>";

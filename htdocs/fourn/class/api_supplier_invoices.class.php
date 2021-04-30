@@ -102,6 +102,10 @@ class SupplierInvoices extends DolibarrApi
 	{
 		global $db;
 
+		if (!DolibarrApiAccess::$user->rights->fournisseur->facture->lire) {
+			throw new RestException(401);
+		}
+
 		$obj_ret = array();
 
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
@@ -130,7 +134,7 @@ class SupplierInvoices extends DolibarrApi
 			$sql .= " AND t.fk_soc = sc.fk_soc";
 		}
 		if ($socids) {
-			$sql .= " AND t.fk_soc IN (".$socids.")";
+			$sql .= " AND t.fk_soc IN (".$this->db->sanitize($socids).")";
 		}
 		if ($search_sale > 0) {
 			$sql .= " AND t.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
@@ -542,7 +546,11 @@ class SupplierInvoices extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->invoice->id, 'facture_fourn', 'facture')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
+
 		$request_data = (object) $request_data;
+
+		$request_data->description = checkVal($request_data->description, 'restricthtml');
+		$request_data->ref_supplier = checkVal($request_data->ref_supplier);
 
 		$updateRes = $this->invoice->addline(
 			$request_data->description,
@@ -557,7 +565,7 @@ class SupplierInvoices extends DolibarrApi
 			$request_data->date_end,
 			$request_data->ventil,
 			$request_data->info_bits,
-			'HT',
+			$request_data->price_base_type ? $request_data->price_base_type : 'HT',
 			$request_data->product_type,
 			$request_data->rang,
 			false,
@@ -605,7 +613,12 @@ class SupplierInvoices extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->invoice->id, 'facture_fourn', 'facture')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
+
 		$request_data = (object) $request_data;
+
+		$request_data->description = checkVal($request_data->description, 'restricthtml');
+		$request_data->ref_supplier = checkVal($request_data->ref_supplier);
+
 		$updateRes = $this->invoice->updateline(
 			$lineid,
 			$request_data->description,
@@ -615,7 +628,7 @@ class SupplierInvoices extends DolibarrApi
 			$request_data->localtax2_tx,
 			$request_data->qty,
 			$request_data->fk_product,
-			'HT',
+			$request_data->price_base_type ? $request_data->price_base_type : 'HT',
 			$request_data->info_bits,
 			$request_data->product_type,
 			$request_data->remise_percent,

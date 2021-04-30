@@ -46,21 +46,27 @@ $action = GETPOST('action', 'aZ09');
 $testsubscribeemail = GETPOST("testsubscribeemail");
 $testunsubscribeemail = GETPOST("testunsubscribeemail");
 
+$error = 0;
+
+
 /*
  * Actions
  */
 
 // Action updated or added a constant
 if ($action == 'update' || $action == 'add') {
-	foreach ($_POST['constname'] as $key => $val) {
-		$constname = $_POST["constname"][$key];
-		$constvalue = $_POST["constvalue"][$key];
-		$consttype = $_POST["consttype"][$key];
-		$constnote = $_POST["constnote"][$key];
-		$res = dolibarr_set_const($db, $constname, $constvalue, $type[$consttype], 0, $constnote, $conf->entity);
+	$tmparray = GETPOST('constname', 'array');
+	if (is_array($tmparray)) {
+		foreach ($tmparray as $key => $val) {
+			$constname = $tmparray[$key];
+			$constvalue = $tmparray[$key];
+			$consttype = $tmparray[$key];
+			$constnote = $tmparray[$key];
+			$res = dolibarr_set_const($db, $constname, $constvalue, $type[$consttype], 0, $constnote, $conf->entity);
 
-		if (!($res > 0)) {
-			$error++;
+			if (!($res > 0)) {
+				$error++;
+			}
 		}
 	}
 

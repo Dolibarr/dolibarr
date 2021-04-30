@@ -41,7 +41,6 @@ if (!$user->admin) {
 	accessforbidden();
 }
 
-$def = array();
 $lastexternalrss = 0;
 $action = GETPOST('action', 'aZ09');
 
@@ -56,6 +55,7 @@ $sql .= " WHERE ".$db->decrypt('name')." LIKE 'EXTERNAL_RSS_URLRSS_%'";
 //print $sql;
 $result = $db->query($sql); // We can't use SELECT MAX() because EXTERNAL_RSS_URLRSS_10 is lower than EXTERNAL_RSS_URLRSS_9
 if ($result) {
+	$reg = array();
 	while ($obj = $db->fetch_object($result)) {
 		preg_match('/([0-9]+)$/i', $obj->name, $reg);
 		if ($reg[1] && $reg[1] > $lastexternalrss) {
@@ -70,17 +70,17 @@ if ($action == 'add' || GETPOST("modify")) {
 	$external_rss_title = "external_rss_title_".GETPOST("norss", 'int');
 	$external_rss_urlrss = "external_rss_urlrss_".GETPOST("norss", 'int');
 
-	if (!empty($_POST[$external_rss_urlrss])) {
+	if (GETPOST($external_rss_urlrss, 'alpha')) {
 		$boxlabel = '(ExternalRSSInformations)';
-		//$external_rss_url = "external_rss_url_" . $_POST["norss"];
+		//$external_rss_url = "external_rss_url_" . GETPOST("norss");
 
 		$db->begin();
 
-		if ($_POST["modify"]) {
+		if (GETPOST("modify")) {
 			// Supprime boite box_external_rss de definition des boites
 			/* $sql = "UPDATE ".MAIN_DB_PREFIX."boxes_def";
 			$sql.= " SET name = '".$db->escape($boxlabel)."'";
-			$sql.= " WHERE file ='box_external_rss.php' AND note like '".$db->escape($_POST["norss"])." %'";
+			$sql.= " WHERE file ='box_external_rss.php' AND note like '".$db->escape(GETPOST("norss"))." %'";
 
 			$resql=$db->query($sql);
 			if (! $resql)
@@ -95,13 +95,17 @@ if ($action == 'add' || GETPOST("modify")) {
 			$sql .= " VALUES ('box_external_rss.php','".$db->escape(GETPOST("norss", 'int').' ('.GETPOST($external_rss_title, 'alpha')).")')";
 			if (!$db->query($sql)) {
 				dol_print_error($db);
-				$err++;
+				$error++;
 			}
+			//print $sql;exit;
 		}
 
 		$result1 = dolibarr_set_const($db, "EXTERNAL_RSS_TITLE_".GETPOST("norss", 'int'), GETPOST($external_rss_title, 'alpha'), 'chaine', 0, '', $conf->entity);
 		if ($result1) {
-			$result2 = dolibarr_set_const($db, "EXTERNAL_RSS_URLRSS_".GETPOST("norss", 'int'), GETPOST($external_rss_urlrss, 'alpha'), 'chaine', 0, '', $conf->entity);
+			$consttosave = "EXTERNAL_RSS_URLRSS_".GETPOST("norss", 'int');
+			$urltosave = GETPOST($external_rss_urlrss, 'alpha');
+			$result2 = dolibarr_set_const($db, $consttosave, $urltosave, 'chaine', 0, '', $conf->entity);
+			//var_dump($result2);exit;
 		}
 
 		if ($result1 && $result2) {
@@ -115,7 +119,7 @@ if ($action == 'add' || GETPOST("modify")) {
 	}
 }
 
-if ($_POST["delete"]) {
+if (GETPOST("delete")) {
 	if (GETPOST("norss", 'int')) {
 		$db->begin();
 
@@ -132,11 +136,11 @@ if ($_POST["delete"]) {
 
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes";
 				$sql .= " WHERE entity = ".$conf->entity;
-				$sql .= " AND box_id = ".$obj->rowid;
+				$sql .= " AND box_id = ".((int) $obj->rowid);
 				$resql = $db->query($sql);
 
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes_def";
-				$sql .= " WHERE rowid = ".$obj->rowid;
+				$sql .= " WHERE rowid = ".((int) $obj->rowid);
 				$resql = $db->query($sql);
 
 				if (!$resql) {
@@ -258,14 +262,14 @@ if ($resql) {
 
 
 		print '<tr class="oddeven">';
-		print "<td width=\"100px\">".$langs->trans("Title")."</td>";
-		print "<td><input type=\"text\" class=\"flat minwidth300\" name=\"external_rss_title_".$idrss."\" value=\"".dol_escape_htmltag($conf->global->$keyrsstitle)."\"></td>";
+		print '<td class="titlefield">'.$langs->trans("Title")."</td>";
+		print '<td><input type="text" class="flat minwidth300" name="external_rss_title_'.$idrss.'" value="'.dol_escape_htmltag($conf->global->$keyrsstitle).'"></td>';
 		print '</tr>'."\n";
 
 
 		print '<tr class="oddeven">';
 		print "<td>".$langs->trans("URL")."</td>";
-		print "<td><input type=\"text\" class=\"flat minwidth300\" name=\"external_rss_urlrss_".$idrss."\" value=\"".dol_escape_htmltag($conf->global->$keyrssurl)."\"></td>";
+		print '<td><input type="text" class="flat minwidth300" name="external_rss_urlrss_'.$idrss.'" value="'.dol_escape_htmltag($conf->global->$keyrssurl).'"></td>';
 		print '</tr>'."\n";
 
 
@@ -307,7 +311,7 @@ if ($resql) {
 		// Active
 		$active = _isInBoxList($idrss, $boxlist) ? 'yes' : 'no';
 		print '<tr class="oddeven">';
-		print '<td>'.$langs->trans('WidgetEnabled').'</td>';
+		print '<td>'.$langs->trans('WidgetAvailable').'</td>';
 		print '<td>'.yn($active).'</td>';
 		print '</tr>'."\n";
 

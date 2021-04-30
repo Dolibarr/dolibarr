@@ -192,7 +192,7 @@ class PaymentTerm // extends CommonObject
 
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_payment_term as t";
-		$sql .= " WHERE t.rowid = ".$id;
+		$sql .= " WHERE t.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);

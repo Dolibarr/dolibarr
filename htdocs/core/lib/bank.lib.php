@@ -72,7 +72,7 @@ function bank_prepare_head(Account $object)
 		// List of all standing receipts
 		$sql = "SELECT COUNT(DISTINCT(b.num_releve)) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
-		$sql .= " WHERE b.fk_account = ".$object->id;
+		$sql .= " WHERE b.fk_account = ".((int) $object->id);
 
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -83,7 +83,7 @@ function bank_prepare_head(Account $object)
 			$db->free($resql);
 		}
 
-		$head[$h][0] = DOL_URL_ROOT."/compta/bank/releve.php?account=".$object->id;
+		$head[$h][0] = DOL_URL_ROOT."/compta/bank/releve.php?account=".((int) $object->id);
 		$head[$h][1] = $langs->trans("AccountStatements");
 		if (($nbReceipts) > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbReceipts).'</span>';

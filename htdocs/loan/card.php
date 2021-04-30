@@ -636,7 +636,7 @@ if ($id > 0) {
 		$sql .= " FROM ".MAIN_DB_PREFIX."payment_loan as p";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepayment = c.id";
 		$sql .= ", ".MAIN_DB_PREFIX."loan as l";
-		$sql .= " WHERE p.fk_loan = ".$id;
+		$sql .= " WHERE p.fk_loan = ".((int) $id);
 		$sql .= " AND p.fk_loan = l.rowid";
 		$sql .= " AND l.entity IN ( ".getEntity('loan').")";
 		$sql .= " ORDER BY dp DESC";

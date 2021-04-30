@@ -34,32 +34,42 @@ $langs->load("holiday");
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 
+
 $childids = $user->getAllChildIds(1);
 
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
+$morefilter = '';
+if (!empty($conf->global->HOLIDAY_HIDE_FOR_NON_SALARIES)) {
+	$morefilter = 'AND employee = 1';
 }
-$result = restrictedArea($user, 'holiday', $id, 'holiday');
 
 $object = new Holiday($db);
-if (!$object->fetch($id, $ref) > 0) {
-	dol_print_error($db);
-}
 
-if ($object->id > 0) {
-	// Check current user can read this expense report
+$extrafields = new ExtraFields($db);
+
+// fetch optionals attributes and labels
+$extrafields->fetch_name_optionals_label($object->table_element);
+
+if (($id > 0) || $ref) {
+	$object->fetch($id, $ref);
+
+	// Check current user can read this leave request
 	$canread = 0;
 	if (!empty($user->rights->holiday->readall)) {
 		$canread = 1;
 	}
-	if (!empty($user->rights->holiday->lire) && in_array($object->fk_user_author, $childids)) {
+	if (!empty($user->rights->holiday->read) && in_array($object->fk_user, $childids)) {
 		$canread = 1;
 	}
 	if (!$canread) {
 		accessforbidden();
 	}
 }
+
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'holiday', $object->id, 'holiday');
 
 
 /*

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2016-2020  Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2016-2019  Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2019       Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2021  Frédéric France			<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,13 +31,27 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "other", "accountancy", "loans", "banks", "admin", "dict"));
 
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
+$hookmanager->initHooks(array('accountancyindex'));
+
 // Security check
 if ($user->socid > 0) {
 	accessforbidden();
 }
-
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
-$hookmanager->initHooks(array('accountancyindex'));
+/*
+if (empty($conf->accounting->enabled)) {
+	accessforbidden();
+}
+if (empty($user->rights->accounting->mouvements->lire)) {
+	accessforbidden();
+}
+*/
+if (empty($conf->comptabilite->enabled) && empty($conf->accounting->enabled) && empty($conf->asset->enabled) && empty($conf->intracommreport->enabled)) {
+	accessforbidden();
+}
+if (empty($user->rights->compta->resultat->lire) && empty($user->rights->accounting->mouvements->lire) && empty($user->rights->asset->read) && empty($user->rights->intracommreport->read)) {
+	accessforbidden();
+}
 
 
 /*
@@ -220,7 +234,7 @@ if ($conf->accounting->enabled) {
 	/*
 	 * Show boxes
 	 */
-	$boxlist .= '<div class="twocolumns">';
+	$boxlist = '<div class="twocolumns">';
 
 	$boxlist .= '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
 

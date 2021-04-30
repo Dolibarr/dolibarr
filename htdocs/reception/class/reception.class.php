@@ -384,7 +384,7 @@ class Reception extends CommonObject
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON e.fk_incoterms = i.rowid';
 		$sql .= " WHERE e.entity IN (".getEntity('reception').")";
 		if ($id) {
-			$sql .= " AND e.rowid=".$id;
+			$sql .= " AND e.rowid=".((int) $id);
 		}
 		if ($ref) {
 			$sql .= " AND e.ref='".$this->db->escape($ref)."'";
@@ -853,7 +853,7 @@ class Reception extends CommonObject
 		$sql .= " model_pdf=".(isset($this->modelpdf) ? "'".$this->db->escape($this->modelpdf)."'" : "null").",";
 		$sql .= " entity=".$conf->entity;
 
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
 
@@ -1317,7 +1317,7 @@ class Reception extends CommonObject
 		$sql = "SELECT em.rowid, em.code, em.libelle, em.description, em.tracking, em.active";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as em";
 		if ($id != '') {
-			$sql .= " WHERE em.rowid=".$id;
+			$sql .= " WHERE em.rowid = ".((int) $id);
 		}
 
 		$resql = $this->db->query($sql);
@@ -1356,7 +1356,7 @@ class Reception extends CommonObject
 			$sql .= ",libelle='".$this->db->escape($this->update['libelle'])."'";
 			$sql .= ",description='".$this->db->escape($this->update['description'])."'";
 			$sql .= ",tracking='".$this->db->escape($this->update['tracking'])."'";
-			$sql .= " WHERE rowid=".$id;
+			$sql .= " WHERE rowid=".((int) $id);
 			$resql = $this->db->query($sql);
 		}
 		if ($resql < 0) {
@@ -1410,7 +1410,7 @@ class Reception extends CommonObject
 		if (!empty($this->shipping_method_id)) {
 			$sql = "SELECT em.code, em.tracking";
 			$sql .= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as em";
-			$sql .= " WHERE em.rowid = ".$this->shipping_method_id;
+			$sql .= " WHERE em.rowid = ".((int) $this->shipping_method_id);
 
 			$resql = $this->db->query($sql);
 			if ($resql) {

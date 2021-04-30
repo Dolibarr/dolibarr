@@ -44,7 +44,7 @@ function takepos_admin_prepare_head()
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/takepos/admin/receipt.php';
-	$head[$h][1] = $langs->trans("Receipt");
+	$head[$h][1] = $langs->trans("Printers").' / '.$langs->trans("Receipt");
 	$head[$h][2] = 'receipt';
 	$h++;
 
@@ -62,7 +62,7 @@ function takepos_admin_prepare_head()
 	}
 
 	$head[$h][0] = DOL_URL_ROOT.'/takepos/admin/other.php';
-	$head[$h][1] = $langs->trans("Other");
+	$head[$h][1] = $langs->trans("About");
 	$head[$h][2] = 'other';
 	$h++;
 

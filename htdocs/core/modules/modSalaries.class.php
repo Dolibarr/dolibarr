@@ -27,7 +27,7 @@
  *  \brief      Module to include salaries management
  *  \file       htdocs/core/modules/modSalaries.class.php
  *  \ingroup    salaries
- *  \brief      File to activate module salaries
+ *  \brief      Description and activation file for the module salaries
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 

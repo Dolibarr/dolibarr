@@ -146,7 +146,7 @@ if ($object->client) {
 		print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
 	}
 	print '</td></tr>';
-	$sql = "SELECT count(*) as nb from ".MAIN_DB_PREFIX."facture where fk_soc = ".$socid;
+	$sql = "SELECT count(*) as nb from ".MAIN_DB_PREFIX."facture where fk_soc = ".((int) $socid);
 	$resql = $db->query($sql);
 	if (!$resql) {
 		dol_print_error($db);
@@ -183,7 +183,7 @@ if ($object->fournisseur) {
 		print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
 	}
 	print '</td></tr>';
-	$sql = "SELECT count(*) as nb from ".MAIN_DB_PREFIX."commande_fournisseur where fk_soc = ".$socid;
+	$sql = "SELECT count(*) as nb from ".MAIN_DB_PREFIX."commande_fournisseur where fk_soc = ".((int) $socid);
 	$resql = $db->query($sql);
 	if (!$resql) {
 		dol_print_error($db);
@@ -192,13 +192,13 @@ if ($object->fournisseur) {
 	$obj = $db->fetch_object($resql);
 	$nbCmdsFourn = $obj->nb;
 	$thirdTypeArray['supplier'] = $langs->trans("supplier");
-	if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire) {
+	if (($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (!empty($conf->supplier_invoice->enabled) && $user->rights->supplier_invoice->lire)) {
 		$elementTypeArray['supplier_invoice'] = $langs->transnoentitiesnoconv('SuppliersInvoices');
 	}
-	if ($conf->fournisseur->enabled && $user->rights->fournisseur->commande->lire) {
+	if (($conf->fournisseur->enabled && $user->rights->fournisseur->commande->lire && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (!empty($conf->supplier_order->enabled) && $user->rights->supplier_order->lire)) {
 		$elementTypeArray['supplier_order'] = $langs->transnoentitiesnoconv('SuppliersOrders');
 	}
-	if ($conf->fournisseur->enabled && $user->rights->supplier_proposal->lire) {
+	if ($conf->supplier_proposal->enabled && $user->rights->supplier_proposal->lire) {
 		$elementTypeArray['supplier_proposal'] = $langs->transnoentitiesnoconv('SupplierProposals');
 	}
 }
@@ -229,7 +229,7 @@ if ($type_element == 'fichinter') { 	// Customer : show products from invoices
 	$documentstatic = new Fichinter($db);
 	$sql_select = 'SELECT f.rowid as doc_id, f.ref as doc_number, \'1\' as doc_type, f.datec as dateprint, f.fk_statut as status, ';
 	$tables_from = MAIN_DB_PREFIX."fichinter as f LEFT JOIN ".MAIN_DB_PREFIX."fichinterdet as d ON d.fk_fichinter = f.rowid"; // Must use left join to work also with option that disable usage of lines.
-	$where = " WHERE f.fk_soc = s.rowid AND s.rowid = ".$socid;
+	$where = " WHERE f.fk_soc = s.rowid AND s.rowid = ".((int) $socid);
 	$where .= " AND f.entity = ".$conf->entity;
 	$dateprint = 'f.datec';
 	$doc_number = 'f.ref';
@@ -239,7 +239,7 @@ if ($type_element == 'invoice') { 	// Customer : show products from invoices
 	$documentstatic = new Facture($db);
 	$sql_select = 'SELECT f.rowid as doc_id, f.ref as doc_number, f.type as doc_type, f.datef as dateprint, f.fk_statut as status, f.paye as paid, ';
 	$tables_from = MAIN_DB_PREFIX."facture as f,".MAIN_DB_PREFIX."facturedet as d";
-	$where = " WHERE f.fk_soc = s.rowid AND s.rowid = ".$socid;
+	$where = " WHERE f.fk_soc = s.rowid AND s.rowid = ".((int) $socid);
 	$where .= " AND d.fk_facture = f.rowid";
 	$where .= " AND f.entity IN (".getEntity('invoice').")";
 	$dateprint = 'f.datef';
@@ -251,7 +251,7 @@ if ($type_element == 'propal') {
 	$documentstatic = new Propal($db);
 	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.datep as dateprint, c.fk_statut as status, ';
 	$tables_from = MAIN_DB_PREFIX."propal as c,".MAIN_DB_PREFIX."propaldet as d";
-	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".$socid;
+	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".((int) $socid);
 	$where .= " AND d.fk_propal = c.rowid";
 	$where .= " AND c.entity = ".$conf->entity;
 	$datePrint = 'c.datep';
@@ -263,7 +263,7 @@ if ($type_element == 'order') {
 	$documentstatic = new Commande($db);
 	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.date_commande as dateprint, c.fk_statut as status, ';
 	$tables_from = MAIN_DB_PREFIX."commande as c,".MAIN_DB_PREFIX."commandedet as d";
-	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".$socid;
+	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".((int) $socid);
 	$where .= " AND d.fk_commande = c.rowid";
 	$where .= " AND c.entity = ".$conf->entity;
 	$dateprint = 'c.date_commande';
@@ -275,7 +275,7 @@ if ($type_element == 'supplier_invoice') { 	// Supplier : Show products from inv
 	$documentstatic = new FactureFournisseur($db);
 	$sql_select = 'SELECT f.rowid as doc_id, f.ref as doc_number, \'1\' as doc_type, f.datef as dateprint, f.fk_statut as status, f.paye as paid, ';
 	$tables_from = MAIN_DB_PREFIX."facture_fourn as f,".MAIN_DB_PREFIX."facture_fourn_det as d";
-	$where = " WHERE f.fk_soc = s.rowid AND s.rowid = ".$socid;
+	$where = " WHERE f.fk_soc = s.rowid AND s.rowid = ".((int) $socid);
 	$where .= " AND d.fk_facture_fourn = f.rowid";
 	$where .= " AND f.entity = ".$conf->entity;
 	$dateprint = 'f.datef';
@@ -287,7 +287,7 @@ if ($type_element == 'supplier_proposal') {
 	$documentstatic = new SupplierProposal($db);
 	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.date_valid as dateprint, c.fk_statut as status, ';
 	$tables_from = MAIN_DB_PREFIX."supplier_proposal as c,".MAIN_DB_PREFIX."supplier_proposaldet as d";
-	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".$socid;
+	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".((int) $socid);
 	$where .= " AND d.fk_supplier_proposal = c.rowid";
 	$where .= " AND c.entity = ".$conf->entity;
 	$dateprint = 'c.date_valid';
@@ -299,7 +299,7 @@ if ($type_element == 'supplier_order') { 	// Supplier : Show products from order
 	$documentstatic = new CommandeFournisseur($db);
 	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.date_valid as dateprint, c.fk_statut as status, ';
 	$tables_from = MAIN_DB_PREFIX."commande_fournisseur as c,".MAIN_DB_PREFIX."commande_fournisseurdet as d";
-	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".$socid;
+	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".((int) $socid);
 	$where .= " AND d.fk_commande = c.rowid";
 	$where .= " AND c.entity = ".$conf->entity;
 	$dateprint = 'c.date_valid';
@@ -312,7 +312,7 @@ if ($type_element == 'contract') { 	// Order
 	$documentstaticline = new ContratLigne($db);
 	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.date_contrat as dateprint, d.statut as status, ';
 	$tables_from = MAIN_DB_PREFIX."contrat as c,".MAIN_DB_PREFIX."contratdet as d";
-	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".$socid;
+	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".((int) $socid);
 	$where .= " AND d.fk_contrat = c.rowid";
 	$where .= " AND c.entity = ".$conf->entity;
 	$dateprint = 'c.date_valid';
@@ -379,7 +379,7 @@ if (empty($elementTypeArray) && !$object->client && !$object->fournisseur) {
 
 // Define type of elements
 $typeElementString = $form->selectarray("type_element", $elementTypeArray, GETPOST('type_element'), $showempty, 0, 0, '', 0, 0, $disabled, '', 'maxwidth150onsmartphone');
-$button = '<input type="submit" class="button" name="button_third" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+$button = '<input type="submit" class="button buttonform" name="button_third" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 
 $param = '';
 $param .= "&sref=".urlencode($sref);
@@ -643,10 +643,10 @@ if ($sql_select) {
 		if ($type_element == 'invoice' && $objp->doc_type == Facture::TYPE_CREDIT_NOTE) {
 			$objp->prod_qty = -($objp->prod_qty);
 		}
-		print '<td class="right">'.$objp->prod_qty.'</td>';
+		print '<td class="right"><span class="amount">'.$objp->prod_qty.'</span></td>';
 		$total_qty += $objp->prod_qty;
 
-		print '<td class="right">'.price($objp->total_ht).'</td>';
+		print '<td class="right"><span class="amount">'.price($objp->total_ht).'</span></td>';
 		$total_ht += $objp->total_ht;
 
 		print '<td class="right">'.price($objp->total_ht / (empty($objp->prod_qty) ? 1 : $objp->prod_qty)).'</td>';

@@ -32,15 +32,14 @@ $langs->loadLangs(array('compta', 'bills'));
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
 
+$object = new Tva($db);
+
 // Security check
 $socid = GETPOST('socid', 'int');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'tax', '', '', 'charges');
-
-$object = new Tva($db);
-
+$result = restrictedArea($user, 'tax', '', 'tva', 'charges');
 
 
 /*

@@ -21,7 +21,7 @@
  *	\brief      Module pour gerer les notifications (par mail ou autre)
  *	\file       htdocs/core/modules/modNotification.class.php
  *	\ingroup    notification
- *	\brief      Fichier de description et activation du module Notification
+ *	\brief      Description and activation file for the module Notification
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -45,7 +45,7 @@ class modNotification extends DolibarrModules
 		// It is used to group modules in module setup page
 		$this->family = "interface";
 		// Module position in the family on 2 digits ('01', '10', '20', ...)
-		$this->module_position = '01';
+		$this->module_position = '22';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "EMail notifications (push) on business Dolibarr events";

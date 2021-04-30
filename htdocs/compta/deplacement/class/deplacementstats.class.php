@@ -64,13 +64,13 @@ class DeplacementStats extends Stats
 
 		$this->where = " fk_statut > 0";
 		$this->where .= " AND entity = ".$conf->entity;
-		if ($this->socid) {
-			$this->where .= " AND fk_soc = ".$this->socid;
+		if ($this->socid > 0) {
+			$this->where .= " AND fk_soc = ".((int) $this->socid);
 		}
 		if (is_array($this->userid) && count($this->userid) > 0) {
-			$this->where .= ' AND fk_user IN ('.join(',', $this->userid).')';
+			$this->where .= ' AND fk_user IN ('.$this->db->sanitize(join(',', $this->userid)).')';
 		} elseif ($this->userid > 0) {
-			$this->where .= ' AND fk_user = '.$this->userid;
+			$this->where .= ' AND fk_user = '.((int) $this->userid);
 		}
 	}
 
@@ -102,7 +102,7 @@ class DeplacementStats extends Stats
 	{
 		$sql = "SELECT MONTH(dated) as dm, count(*)";
 		$sql .= " FROM ".$this->from;
-		$sql .= " WHERE YEAR(dated) = ".$year;
+		$sql .= " WHERE YEAR(dated) = ".((int) $year);
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');

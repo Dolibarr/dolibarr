@@ -57,9 +57,13 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->bom->multidir_output[$object->entity]."/".$object->id;
 }
 
-$permissionnote = 1;
-//$permissionnote=$user->rights->bom->creer;	// Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->rights->bom->write; // Used by the include of actions_setnotes.inc.php
 
+// Security check - Protection if external user
+//if ($user->socid > 0) accessforbidden();
+//if ($user->socid > 0) $socid = $user->socid;
+$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
+restrictedArea($user, 'bom', $object->id, 'bom_bom', '', '', 'rowid', $isdraft);
 
 
 /*
@@ -75,9 +79,11 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, 
 
 $form = new Form($db);
 
-//$help_url='EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes';
-$help_url = '';
-llxHeader('', $langs->trans('BillOfMaterials'), $help_url);
+$title = $langs->trans('BillOfMaterials');
+
+$help_url = 'EN:Module_BOM';
+
+llxHeader('', $title, $help_url);
 
 if ($id > 0 || !empty($ref)) {
 	$object->fetch_thirdparty();

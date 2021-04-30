@@ -247,7 +247,7 @@ class Account extends CommonObject
 	 *  'help' is a string visible as a tooltip on field
 	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
 	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
-	 *  'arraykeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
+	 *  'arrayofkeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
 	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
 	 *
 	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
@@ -451,9 +451,9 @@ class Account extends CommonObject
 		$sql = "SELECT fk_bank, url_id, url, label, type";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank_url";
 		if ($fk_bank > 0) {
-			$sql .= " WHERE fk_bank = ".$fk_bank;
+			$sql .= " WHERE fk_bank = ".((int) $fk_bank);
 		} else {
-			$sql .= " WHERE url_id = ".$url_id." AND type = '".$this->db->escape($type)."'";
+			$sql .= " WHERE url_id = ".((int) $url_id)." AND type = '".$this->db->escape($type)."'";
 		}
 		$sql .= " ORDER BY type, label";
 
@@ -508,15 +508,20 @@ class Account extends CommonObject
 			dol_syslog(__METHOD__.": using numeric operations is deprecated", LOG_WARNING);
 		}
 
+		if (empty($this->id) && !empty($this->rowid)) {	// For backward compatibility
+			$this->id = $this->rowid;
+		}
+
 		// Clean parameters
 		$emetteur = trim($emetteur);
 		$banque = trim($banque);
+		$label = trim($label);
 
 		$now = dol_now();
 
 		if (is_numeric($oper)) {    // Clean operation to have a code instead of a rowid
 			$sql = "SELECT code FROM ".MAIN_DB_PREFIX."c_paiement";
-			$sql .= " WHERE id=".$oper;
+			$sql .= " WHERE id = ".((int) $oper);
 			$sql .= " AND entity IN (".getEntity('c_paiement').")";
 			$resql = $this->db->query($sql);
 			if ($resql) {
@@ -533,8 +538,8 @@ class Account extends CommonObject
 			$this->error = "oper not defined";
 			return -1;
 		}
-		if (!$this->rowid) {
-			$this->error = "this->rowid not defined";
+		if (!$this->id) {
+			$this->error = "this->id not defined";
 			return -2;
 		}
 		if ($this->courant == Account::TYPE_CASH && $oper != 'LIQ') {
@@ -555,7 +560,7 @@ class Account extends CommonObject
 		$accline->label = $label;
 		$accline->amount = $amount;
 		$accline->fk_user_author = $user->id;
-		$accline->fk_account = $this->rowid;
+		$accline->fk_account = $this->id;
 		$accline->fk_type = $oper;
 		$accline->numero_compte = $accountancycode;
 		$accline->num_releve = $num_releve;
@@ -574,10 +579,10 @@ class Account extends CommonObject
 
 		if ($accline->insert() > 0) {
 			if ($categorie > 0) {
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (";
+				$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class(";
 				$sql .= "lineid, fk_categ";
 				$sql .= ") VALUES (";
-				$sql .= $accline->id.", ".$categorie;
+				$sql .= ((int) $accline->id).", '".$this->db->escape($categorie)."'";
 				$sql .= ")";
 
 				$result = $this->db->query($sql);
@@ -610,7 +615,7 @@ class Account extends CommonObject
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
-		global $langs, $conf, $hookmanager;
+		global $langs, $conf;
 
 		$error = 0;
 
@@ -769,7 +774,7 @@ class Account extends CommonObject
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
-		global $langs, $conf, $hookmanager;
+		global $langs, $conf;
 
 		$error = 0;
 
@@ -795,9 +800,9 @@ class Account extends CommonObject
 		$sql .= " ref   = '".$this->db->escape($this->ref)."'";
 		$sql .= ",label = '".$this->db->escape($this->label)."'";
 
-		$sql .= ",courant = ".$this->courant;
-		$sql .= ",clos = ".$this->clos;
-		$sql .= ",rappro = ".$this->rappro;
+		$sql .= ",courant = ".((int) $this->courant);
+		$sql .= ",clos = ".((int) $this->clos);
+		$sql .= ",rappro = ".((int) $this->rappro);
 		$sql .= ",url = ".($this->url ? "'".$this->db->escape($this->url)."'" : "null");
 		$sql .= ",account_number = '".$this->db->escape($this->account_number)."'";
 		$sql .= ",fk_accountancy_journal = ".($this->fk_accountancy_journal > 0 ? $this->db->escape($this->fk_accountancy_journal) : "null");
@@ -823,7 +828,7 @@ class Account extends CommonObject
 		$sql .= ",ics = '".$this->db->escape($this->ics)."'";
 		$sql .= ",ics_transfer = '".$this->db->escape($this->ics_transfer)."'";
 
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -943,7 +948,7 @@ class Account extends CommonObject
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'accounting_journal as aj ON aj.rowid=ba.fk_accountancy_journal';
 		$sql .= " WHERE ba.entity IN (".getEntity($this->element).")";
 		if ($id) {
-			$sql .= " AND ba.rowid  = ".$id;
+			$sql .= " AND ba.rowid = ".((int) $id);
 		}
 		if ($ref) {
 			$sql .= " AND ba.ref = '".$this->db->escape($ref)."'";
@@ -1223,7 +1228,7 @@ class Account extends CommonObject
 		$sql .= " AND (ba.rappro = 1 AND ba.courant != 2)"; // Compte rapprochable
 		$sql .= " AND clos = 0";
 		if ($filteraccountid) {
-			$sql .= " AND ba.rowid = ".$filteraccountid;
+			$sql .= " AND ba.rowid = ".((int) $filteraccountid);
 		}
 
 		$resql = $this->db->query($sql);
@@ -1278,7 +1283,7 @@ class Account extends CommonObject
 		$sql .= " AND (ba.rappro = 1 AND ba.courant != 2)"; // Compte rapprochable
 		$sql .= " AND clos = 0";
 		if ($filteraccountid) {
-			$sql .= " AND ba.rowid = ".$filteraccountid;
+			$sql .= " AND ba.rowid = ".((int) $filteraccountid);
 		}
 
 		$resql = $this->db->query($sql);
@@ -2098,12 +2103,12 @@ class AccountLine extends CommonObject
 		}
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."bank SET";
-		$sql .= " rappro = ".$conciliated;
+		$sql .= " rappro = ".((int) $conciliated);
 		$sql .= ", num_releve = '".$this->db->escape($this->num_releve)."'";
 		if ($conciliated) {
 			$sql .= ", fk_user_rappro = ".$user->id;
 		}
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update_conciliation", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -2145,7 +2150,7 @@ class AccountLine extends CommonObject
 	public function datev_change($rowid, $sign = 1)
 	{
 		// phpcs:enable
-		$sql = "SELECT datev FROM ".MAIN_DB_PREFIX."bank WHERE rowid = ".$rowid;
+		$sql = "SELECT datev FROM ".MAIN_DB_PREFIX."bank WHERE rowid = ".((int) $rowid);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
@@ -2153,7 +2158,7 @@ class AccountLine extends CommonObject
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."bank SET";
 			$sql .= " datev = '".$this->db->idate($newdate)."'";
-			$sql .= " WHERE rowid = ".$rowid;
+			$sql .= " WHERE rowid = ".((int) $rowid);
 
 			$result = $this->db->query($sql);
 			if ($result) {
@@ -2208,7 +2213,7 @@ class AccountLine extends CommonObject
 	public function dateo_change($rowid, $sign = 1)
 	{
 		// phpcs:enable
-		$sql = "SELECT dateo FROM ".MAIN_DB_PREFIX."bank WHERE rowid = ".$rowid;
+		$sql = "SELECT dateo FROM ".MAIN_DB_PREFIX."bank WHERE rowid = ".((int) $rowid);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
@@ -2216,7 +2221,7 @@ class AccountLine extends CommonObject
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."bank SET";
 			$sql .= " dateo = '".$this->db->idate($newdate)."'";
-			$sql .= " WHERE rowid = ".$rowid;
+			$sql .= " WHERE rowid = ".((int) $rowid);
 
 			$result = $this->db->query($sql);
 			if ($result) {
@@ -2271,7 +2276,7 @@ class AccountLine extends CommonObject
 		$sql = 'SELECT b.rowid, b.datec, b.tms as datem,';
 		$sql .= ' b.fk_user_author, b.fk_user_rappro';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'bank as b';
-		$sql .= ' WHERE b.rowid = '.$id;
+		$sql .= ' WHERE b.rowid = '.((int) $id);
 
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -2319,7 +2324,7 @@ class AccountLine extends CommonObject
 		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Transaction").'</u>:<br>';
 		$label .= '<b>'.$langs->trans("Ref").':</b> '.$this->ref;
 
-		$linkstart = '<a href="'.DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$this->id.'&save_lastsearch_values=1" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkstart = '<a href="'.DOL_URL_ROOT.'/compta/bank/line.php?rowid='.((int) $this->id).'&save_lastsearch_values=1" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend = '</a>';
 
 		$result .= $linkstart;
@@ -2435,7 +2440,7 @@ class AccountLine extends CommonObject
 
 		$type = 'bank';
 
-		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='".$this->db->escape($type)."' AND ab.fk_doc = ".$this->id;
+		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='".$this->db->escape($type)."' AND ab.fk_doc = ".((int) $this->id);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);

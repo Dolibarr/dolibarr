@@ -312,9 +312,9 @@ class FormCompany extends Form
 						$out .= '<option value="0">&nbsp;</option>';
 					} else {
 						if (!$country || $country != $obj->country) {
-							// Affiche la rupture si on est en mode liste multipays
+							// Show break if we are in list with multiple countries
 							if (!$country_codeid && $obj->country_code) {
-								$out .= '<option value="-1" disabled>----- '.$obj->country." -----</option>\n";
+								$out .= '<option value="-1" disabled data-html="----- '.$obj->country.' -----">----- '.$obj->country." -----</option>\n";
 								$country = $obj->country;
 							}
 						}
@@ -435,7 +435,7 @@ class FormCompany extends Form
 	 *  @param	int		$addjscombo		Add js combo
 	 *  @return	string					String with HTML select
 	 */
-	public function select_civility($selected = '', $htmlname = 'civility_id', $morecss = 'maxwidth150', $addjscombo = 0)
+	public function select_civility($selected = '', $htmlname = 'civility_id', $morecss = 'maxwidth150', $addjscombo = 1)
 	{
 		// phpcs:enable
 		global $conf, $langs, $user;
@@ -696,7 +696,7 @@ class FormCompany extends Form
 
 			print "\n".'<!-- Input text for third party with Ajax.Autocompleter (selectCompaniesForNewContact) -->'."\n";
 			print '<input type="text" size="30" id="search_'.$htmlname.'" name="search_'.$htmlname.'" value="'.$name.'" />';
-			print ajax_autocompleter(($socid ? $socid : -1), $htmlname, DOL_URL_ROOT.'/societe/ajaxcompanies.php', '', $minLength, 0);
+			print ajax_autocompleter(($socid ? $socid : -1), $htmlname, DOL_URL_ROOT.'/societe/ajax/ajaxcompanies.php', '', $minLength, 0);
 			return $socid;
 		} else {
 			// Search to list thirdparties
@@ -705,7 +705,7 @@ class FormCompany extends Form
 			$sql .= " WHERE s.entity IN (".getEntity('societe').")";
 			// For ajax search we limit here. For combo list, we limit later
 			if (is_array($limitto) && count($limitto)) {
-				$sql .= " AND s.rowid IN (".join(',', $limitto).")";
+				$sql .= " AND s.rowid IN (".$this->db->sanitize(join(',', $limitto)).")";
 			}
 			$sql .= " ORDER BY s.nom ASC";
 
@@ -713,7 +713,7 @@ class FormCompany extends Form
 			if ($resql) {
 				print '<select class="flat'.($morecss ? ' '.$morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.'"';
 				if ($conf->use_javascript_ajax) {
-					$javaScript = "window.location='".$_SERVER['PHP_SELF']."?".$var_id."=".($forceid > 0 ? $forceid : $object->id).$moreparam."&".$htmlname."=' + form.".$htmlname.".options[form.".$htmlname.".selectedIndex].value;";
+					$javaScript = "window.location='".dol_escape_js($_SERVER['PHP_SELF'])."?".$var_id."=".($forceid > 0 ? $forceid : $object->id).$moreparam."&".$htmlname."=' + form.".$htmlname.".options[form.".$htmlname.".selectedIndex].value;";
 					print ' onChange="'.$javaScript.'"';
 				}
 				print '>';
@@ -1007,6 +1007,9 @@ class FormCompany extends Form
 	{
 
 		global $conf, $langs;
+		if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && !empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->fournisseur->enabled)) {
+			return '' ;
+		}
 
 		$out = '<select class="flat '.$morecss.'" name="'.$htmlname.'" id="'.$htmlidname.'">';
 		if ($typeinput == 'form') {
@@ -1031,7 +1034,9 @@ class FormCompany extends Form
 			if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) {
 				$out .= '<option value="1,3"'.($selected == '1,3' ? ' selected' : '').'>'.$langs->trans('Customer').'</option>';
 			}
-			$out .= '<option value="4"'.($selected == '4' ? ' selected' : '').'>'.$langs->trans('Supplier').'</option>';
+			if (!empty($conf->fournisseur->enabled)) {
+				$out .= '<option value="4"'.($selected == '4' ? ' selected' : '').'>'.$langs->trans('Supplier').'</option>';
+			}
 			$out .= '<option value="0"'.($selected == '0' ? ' selected' : '').'>'.$langs->trans('Other').'</option>';
 		} elseif ($typeinput == 'admin') {
 			if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS)) {

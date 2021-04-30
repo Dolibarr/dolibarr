@@ -104,6 +104,7 @@ class ZapierApi extends DolibarrApi
 		if (!DolibarrApiAccess::$user->rights->zapier->read) {
 			throw new RestException(401);
 		}
+
 		$arraychoices = array(
 			'invoices' => 'Invoices',
 			'orders' => 'Orders',
@@ -143,6 +144,10 @@ class ZapierApi extends DolibarrApi
 	{
 		global $db, $conf;
 
+		if (!DolibarrApiAccess::$user->rights->zapier->read) {
+			throw new RestException(401);
+		}
+
 		$obj_ret = array();
 
 		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
@@ -180,7 +185,7 @@ class ZapierApi extends DolibarrApi
 			$sql .= " AND t.fk_soc = sc.fk_soc";
 		}
 		if ($restrictonsocid && $socid) {
-			$sql .= " AND t.fk_soc = ".$socid;
+			$sql .= " AND t.fk_soc = ".((int) $socid);
 		}
 		if ($restrictonsocid && $search_sale > 0) {
 			// Join for the needed table to filter by sale
@@ -188,7 +193,7 @@ class ZapierApi extends DolibarrApi
 		}
 		// Insert sale filter
 		if ($restrictonsocid && $search_sale > 0) {
-			$sql .= " AND sc.fk_user = ".$search_sale;
+			$sql .= " AND sc.fk_user = ".((int) $search_sale);
 		}
 		if ($sqlfilters) {
 			if (!DolibarrApi::_checkFilters($sqlfilters)) {
@@ -242,6 +247,7 @@ class ZapierApi extends DolibarrApi
 		if (!DolibarrApiAccess::$user->rights->zapier->write) {
 			throw new RestException(401);
 		}
+
 		// Check mandatory fields
 		$fields = array(
 			'url',
@@ -313,6 +319,7 @@ class ZapierApi extends DolibarrApi
 		if (!DolibarrApiAccess::$user->rights->zapier->delete) {
 			throw new RestException(401);
 		}
+
 		$result = $this->hook->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'Hook not found');

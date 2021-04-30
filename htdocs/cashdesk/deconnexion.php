@@ -40,5 +40,9 @@ require_once '../main.inc.php';
 // This destroy tag that say "Point of Sale session is on".
 unset($_SESSION['uid']);
 
+if (empty($user->rights->cashdesk->run)) {
+	accessforbidden();
+}
+
 header('Location: '.DOL_URL_ROOT.'/cashdesk/index.php');
 exit;

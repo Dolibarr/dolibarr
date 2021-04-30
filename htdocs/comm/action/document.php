@@ -54,7 +54,6 @@ if ($user->socid > 0) {
 	unset($_GET["action"]);
 	$action = '';
 }
-$result = restrictedArea($user, 'agenda', $id, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id');
 
 $object = new ActionComm($db);
 
@@ -84,10 +83,16 @@ if (!$sortfield) {
 $upload_dir = $conf->agenda->dir_output.'/'.dol_sanitizeFileName($object->ref);
 $modulepart = 'actions';
 
+$result = restrictedArea($user, 'agenda', $id, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id');
+if ($user->socid && $socid) {
+	$result = restrictedArea($user, 'societe', $socid);
+}
+
 
 /*
  * Actions
  */
+
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 
@@ -98,6 +103,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 $form = new Form($db);
 
 $help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:M&omodulodulo_Agenda';
+
 llxHeader('', $langs->trans("Agenda"), $help_url);
 
 
@@ -281,7 +287,7 @@ if ($object->id > 0) {
 	$modulepart = 'actions';
 	$permission = $user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create;
 	$param = '&id='.$object->id;
-	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {
 	print $langs->trans("ErrorUnknown");
 }

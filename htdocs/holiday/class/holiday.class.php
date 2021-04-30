@@ -4,7 +4,7 @@
  * Copyright (C) 2012-2016	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2016       Juanjo Menent       <jmenent@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -306,7 +306,7 @@ class Holiday extends CommonObject
 					$initialref = $this->ref;
 				}
 
-				$sql = 'UPDATE '.MAIN_DB_PREFIX."holiday SET ref='".$this->db->escape($initialref)."' WHERE rowid=".$this->id;
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."holiday SET ref='".$this->db->escape($initialref)."' WHERE rowid=".((int) $this->id);
 				if ($this->db->query($sql)) {
 					$this->ref = $initialref;
 
@@ -380,7 +380,7 @@ class Holiday extends CommonObject
 		$sql .= " cp.entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as cp";
 		if ($id > 0) {
-			$sql .= " WHERE cp.rowid = ".$id;
+			$sql .= " WHERE cp.rowid = ".((int) $id);
 		} else {
 			$sql .= " WHERE cp.ref = '".$this->db->escape($ref)."'";
 		}
@@ -479,7 +479,7 @@ class Holiday extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as cp, ".MAIN_DB_PREFIX."user as uu, ".MAIN_DB_PREFIX."user as ua";
 		$sql .= " WHERE cp.entity IN (".getEntity('holiday').")";
 		$sql .= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid"; // Hack pour la recherche sur le tableau
-		$sql .= " AND cp.fk_user IN (".$user_id.")";
+		$sql .= " AND cp.fk_user IN (".$this->db->sanitize($user_id).")";
 
 		// Selection filter
 		if (!empty($filter)) {
@@ -976,7 +976,7 @@ class Holiday extends CommonObject
 		$error = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."holiday";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
 
@@ -1122,7 +1122,7 @@ class Holiday extends CommonObject
 		$sql .= " AND cp.fk_user = ".(int) $fk_user;
 		$sql .= " AND cp.date_debut <= '".$this->db->idate($timestamp)."' AND cp.date_fin >= '".$this->db->idate($timestamp)."'";
 		if ($status != '-1') {
-			$sql .= " AND cp.statut IN (".$this->db->sanitize($this->db->escape($status)).")";
+			$sql .= " AND cp.statut IN (".$this->db->sanitize($status).")";
 		}
 
 		$resql = $this->db->query($sql);
@@ -1183,9 +1183,10 @@ class Holiday extends CommonObject
 	 *
 	 *	@param	int			$withpicto					0=_No picto, 1=Includes the picto in the linkn, 2=Picto only
 	 *  @param  int     	$save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @param  int         $notooltip					1=Disable tooltip
 	 *	@return	string									String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $save_lastsearch_value = -1)
+	public function getNomUrl($withpicto = 0, $save_lastsearch_value = -1, $notooltip = 0)
 	{
 		global $langs;
 
@@ -2068,7 +2069,7 @@ class Holiday extends CommonObject
 
 		$sql = "SELECT rowid, code, label, affect, delay, newByMonth";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_holiday_types";
-		$sql .= " WHERE (fk_country IS NULL OR fk_country = ".$mysoc->country_id.')';
+		$sql .= " WHERE (fk_country IS NULL OR fk_country = ".((int) $mysoc->country_id).')';
 		if ($active >= 0) {
 			$sql .= " AND active = ".((int) $active);
 		}
@@ -2116,7 +2117,7 @@ class Holiday extends CommonObject
 		$sql .= " f.fk_validator as fk_user_approve,";
 		$sql .= " f.fk_user_refuse as fk_user_refuse";
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as f";
-		$sql .= " WHERE f.rowid = ".$id;
+		$sql .= " WHERE f.rowid = ".((int) $id);
 		$sql .= " AND f.entity = ".$conf->entity;
 
 		$resql = $this->db->query($sql);
@@ -2208,8 +2209,8 @@ class Holiday extends CommonObject
 		$sql .= " AND h.entity IN (".getEntity('holiday').")";
 		if (empty($user->rights->expensereport->readall)) {
 			$userchildids = $user->getAllChildIds(1);
-			$sql .= " AND (h.fk_user IN (".join(',', $userchildids).")";
-			$sql .= " OR h.fk_validator IN (".join(',', $userchildids)."))";
+			$sql .= " AND (h.fk_user IN (".$this->db->sanitize(join(',', $userchildids)).")";
+			$sql .= " OR h.fk_validator IN (".$this->db->sanitize(join(',', $userchildids))."))";
 		}
 
 		$resql = $this->db->query($sql);
@@ -2250,8 +2251,8 @@ class Holiday extends CommonObject
 		$sql .= " AND h.entity IN (".getEntity('holiday').")";
 		if (empty($user->rights->expensereport->read_all)) {
 			$userchildids = $user->getAllChildIds(1);
-			$sql .= " AND (h.fk_user IN (".join(',', $userchildids).")";
-			$sql .= " OR h.fk_validator IN (".join(',', $userchildids)."))";
+			$sql .= " AND (h.fk_user IN (".$this->db->sanitize(join(',', $userchildids)).")";
+			$sql .= " OR h.fk_validator IN (".$this->db->sanitize(join(',', $userchildids))."))";
 		}
 
 		$resql = $this->db->query($sql);

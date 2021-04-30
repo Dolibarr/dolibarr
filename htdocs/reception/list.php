@@ -40,13 +40,6 @@ $socid = GETPOST('socid', 'int');
 $massaction = GETPOST('massaction', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 
-// Security check
-$receptionid = GETPOST('id', 'int');
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'reception', $receptionid, '');
-
 $diroutputmassaction = $conf->reception->dir_output.'/temp/massgeneration/'.$user->id;
 
 $search_ref_rcp = GETPOST("search_ref_rcp");
@@ -128,6 +121,13 @@ $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
 $error = 0;
+
+// Security check
+$receptionid = GETPOST('id', 'int');
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'reception', $receptionid, '');
 
 
 /*
@@ -384,7 +384,7 @@ if (empty($reshook)) {
 				// Fac builddoc
 				$donotredirect = 1;
 				$upload_dir = $conf->fournisseur->facture->dir_output;
-				$permissiontoadd = $user->rights->fournisseur->facture->creer;
+				$permissiontoadd = ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer);
 				include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 			}
 
@@ -460,7 +460,7 @@ if ($search_status <> '' && $search_status >= 0) {
 	$sql .= " AND e.fk_statut = ".$search_status;
 }
 if ($search_billed != '' && $search_billed >= 0) {
-	$sql .= ' AND e.billed = '.$search_billed;
+	$sql .= ' AND e.billed = '.((int) $search_billed);
 }
 if ($search_town) {
 	$sql .= natural_search('s.town', $search_town);
@@ -472,10 +472,10 @@ if ($search_state) {
 	$sql .= natural_search("state.nom", $search_state);
 }
 if ($search_country) {
-	$sql .= " AND s.fk_pays IN (".$search_country.')';
+	$sql .= " AND s.fk_pays IN (".$db->sanitize($search_country).')';
 }
 if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
-	$sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
+	$sql .= " AND s.fk_typent IN (".$db->sanitize($search_type_thirdparty).')';
 }
 if ($search_ref_rcp) {
 	$sql .= natural_search('e.ref', $search_ref_rcp);
@@ -593,10 +593,10 @@ foreach ($search_array_options as $key => $val) {
 
 
 $arrayofmassactions = array(
-	// 'presend'=>$langs->trans("SendByMail"),
+	// 'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
 
-if ($user->rights->fournisseur->facture->creer) {
+if ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer) {
 	$arrayofmassactions['createbills'] = $langs->trans("CreateInvoiceForThisSupplier");
 }
 if ($massaction == 'createbills') {

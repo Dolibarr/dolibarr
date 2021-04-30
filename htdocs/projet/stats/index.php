@@ -65,7 +65,7 @@ $includeuserlist = array();
 llxHeader('', $langs->trans('Projects'));
 
 $title = $langs->trans("ProjectsStatistics");
-$dir = $conf->projet->dir_output.'/temp';
+$dir = $conf->project->dir_output.'/temp';
 
 print load_fiche_titre($title, '', 'project');
 
@@ -224,7 +224,8 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 	$mesg = $px3->isGraphKo();
 	if (!$mesg) {
 		$px3->SetData($data);
-		$i = $startyear; $legend = array();
+		$i = $startyear;
+		$legend = array();
 		while ($i <= $endyear) {
 			$legend[] = $i;
 			$i++;
@@ -268,7 +269,7 @@ $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
 
-complete_head_from_modules($conf, $langs, null, $head, $h, $type);
+complete_head_from_modules($conf, $langs, null, $head, $h, 'project_stats');
 
 print dol_get_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1, '');
 
@@ -337,9 +338,9 @@ foreach ($data_all_year as $val) {
 	print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$year.'</a></td>';
 	print '<td class="right">'.$val['nb'].'</td>';
 	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
-		print '<td class="right">'.($val['total'] ?price(price2num($val['total'], 'MT'), 1) : '0').'</td>';
-		print '<td class="right">'.($val['avg'] ?price(price2num($val['avg'], 'MT'), 1) : '0').'</td>';
-		print '<td class="right">'.($val['weighted'] ?price(price2num($val['weighted'], 'MT'), 1) : '0').'</td>';
+		print '<td class="right">'.($val['total'] ? price(price2num($val['total'], 'MT'), 1) : '0').'</td>';
+		print '<td class="right">'.($val['avg'] ? price(price2num($val['avg'], 'MT'), 1) : '0').'</td>';
+		print '<td class="right">'.(isset($val['weighted']) ? price(price2num($val['weighted'], 'MT'), 1) : '0').'</td>';
 	}
 	print '</tr>';
 	$oldyear = $year;
@@ -350,7 +351,7 @@ print '</div>';
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
-$stringtoshow .= '<table class="border centpercent"><tr class="pair nohover"><td class="center">';
+$stringtoshow = '<table class="border centpercent"><tr class="pair nohover"><td class="center">';
 if ($mesg) {
 	print $mesg;
 } else {

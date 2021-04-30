@@ -96,7 +96,7 @@ if ($action == 'removebackgroundlogin' && !empty($conf->global->MAIN_LOGIN_BACKG
 if ($action == 'update') {
 	dolibarr_set_const($db, "MAIN_LANG_DEFAULT", GETPOST("MAIN_LANG_DEFAULT", 'aZ09'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
-	//dolibarr_set_const($db, "MAIN_MULTILANGS", $_POST["MAIN_MULTILANGS"], 'chaine', 0, '', $conf->entity);
+	//dolibarr_set_const($db, "MAIN_MULTILANGS", GETPOST("MAIN_MULTILANGS"), 'chaine', 0, '', $conf->entity);
 
 	dolibarr_set_const($db, "MAIN_THEME", GETPOST("main_theme", 'aZ09'), 'chaine', 0, '', $conf->entity);
 
@@ -211,11 +211,12 @@ if ($action == 'update') {
 	dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_DAYS", GETPOST("MAIN_DEFAULT_WORKING_DAYS", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_HOURS", GETPOST("MAIN_DEFAULT_WORKING_HOURS", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 
+	dolibarr_set_const($db, "MAIN_BUGTRACK_ENABLELINK", GETPOST("MAIN_BUGTRACK_ENABLELINK", 'alpha'), 'chaine', 0, '', $conf->entity);
+
 	dolibarr_set_const($db, "MAIN_FIRSTNAME_NAME_POSITION", GETPOST("MAIN_FIRSTNAME_NAME_POSITION", 'aZ09'), 'chaine', 0, '', $conf->entity);
 
 	dolibarr_set_const($db, "MAIN_MOTD", dol_htmlcleanlastbr(GETPOST("main_motd", 'restricthtml')), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_HOME", dol_htmlcleanlastbr(GETPOST("main_home", 'restricthtml')), 'chaine', 0, '', $conf->entity);
-	//dolibarr_set_const($db, "MAIN_BUGTRACK_ENABLELINK", GETPOST('MAIN_BUGTRACK_ENABLELINK', 'aZ09'), 'chaine', 0, '', $conf->entity);
 	//dolibarr_set_const($db, "MAIN_HELP_DISABLELINK", GETPOST("MAIN_HELP_DISABLELINK", 'aZ09'), 'chaine', 0, '', 0); // Param for all entities
 
 	$varforimage = 'imagebackground'; $dirforimage = $conf->mycompany->dir_output.'/logos/';
@@ -311,8 +312,9 @@ print '<br>';
 
 // Other
 print '<div class="div-table-responsive-no-min">';
-print '<table summary="otherparameters" class="noborder centpercent editmode">';
-print '<tr class="liste_titre"><th>'.$langs->trans("Miscellaneous").'</th><th></th>';
+print '<table summary="otherparameters" class="noborder centpercent editmode tableforfield">';
+print '<tr class="liste_titre"><th class="titlefieldmiddle">'.$langs->trans("Miscellaneous").'</th>';
+print '<th></th>';
 print '<th width="20">&nbsp;</tg>';
 print '</tr>';
 
@@ -401,8 +403,7 @@ print '</tr>';
 
 // Show bugtrack link
 print '<tr class="oddeven"><td>'.$langs->trans("ShowBugTrackLink", $langs->transnoentitiesnoconv("FindBug")).'</td><td>';
-print ajax_constantonoff("MAIN_BUGTRACK_ENABLELINK", array(), $conf->entity, 0, 0, 1, 0);
-//print $form->selectyesno('MAIN_BUGTRACK_ENABLELINK', $conf->global->MAIN_BUGTRACK_ENABLELINK, 1);
+print '<input type="text" name="MAIN_BUGTRACK_ENABLELINK" size="32" value="'.(isset($conf->global->MAIN_BUGTRACK_ENABLELINK) ? $conf->global->MAIN_BUGTRACK_ENABLELINK : '').'">';
 print '</td>';
 print '<td width="20">&nbsp;</td>';
 print '</tr>';
@@ -441,8 +442,9 @@ print '<br>';
 
 // Other
 print '<div class="div-table-responsive-no-min">';
-print '<table summary="edit" class="noborder centpercent editmode">';
-print '<tr class="liste_titre"><th>'.$langs->trans("LoginPage").'</th><th></th>';
+print '<table summary="edit" class="noborder centpercent editmode tableforfield">';
+print '<tr class="liste_titre"><th class="titlefieldmiddle">'.$langs->trans("LoginPage").'</th>';
+print '<th></th>';
 print '<th width="20">&nbsp;</th>';
 print '</tr>';
 

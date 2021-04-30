@@ -177,8 +177,8 @@ if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 	print $langs->trans("ForceMemberType");
 	print '</td><td class="right">';
 	$listofval = array();
-	$listofval += $adht->liste_array();
-	$forcetype = $conf->global->MEMBER_NEWFORM_FORCETYPE ?: -1;
+	$listofval += $adht->liste_array(1);
+	$forcetype = empty($conf->global->MEMBER_NEWFORM_FORCETYPE) ? -1 : $conf->global->MEMBER_NEWFORM_FORCETYPE;
 	print $form->selectarray("MEMBER_NEWFORM_FORCETYPE", $listofval, $forcetype, count($listofval) > 1 ? 1 : 0);
 	print "</td></tr>\n";
 
@@ -231,8 +231,8 @@ print '</form>';
 if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 	print '<br>';
 	//print $langs->trans('FollowingLinksArePublic').'<br>';
-	print img_picto('', 'globe').' '.$langs->trans('BlankSubscriptionForm').':<br>';
-	if ($conf->multicompany->enabled) {
+	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans('BlankSubscriptionForm').'</span><br>';
+	if (!empty($conf->multicompany->enabled)) {
 		$entity_qr = '?entity='.$conf->entity;
 	} else {
 		$entity_qr = '';
@@ -243,7 +243,11 @@ if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
-	print '<a target="_blank" href="'.$urlwithroot.'/public/members/new.php'.$entity_qr.'">'.$urlwithroot.'/public/members/new.php'.$entity_qr.'</a>';
+	print '<div class="urllink">';
+	print '<input type="text" id="publicurlmember" class="quatrevingtpercent" value="'.$urlwithroot.'/public/members/new.php'.$entity_qr.'">';
+	print '<a target="_blank" href="'.$urlwithroot.'/public/members/new.php'.$entity_qr.'">'.img_picto('', 'globe', 'class="paddingleft"').'</a>';
+	print '</div>';
+	print ajax_autoselect('publicurlmember');
 }
 
 // End of page

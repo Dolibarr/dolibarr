@@ -38,6 +38,25 @@ $langs->loadLangs(array('companies', 'bills'));
 $id = GETPOST("facid", "int");
 $ref = GETPOST("ref", 'alpha');
 
+$object = new Facture($db);
+$extrafields = new ExtraFields($db);
+
+// Fetch optionals attributes and labels
+$extrafields->fetch_name_optionals_label($object->table_element);
+
+// Load object
+if ($id > 0 || !empty($ref)) {
+	$ret = $object->fetch($id, $ref, '', '', $conf->global->INVOICE_USE_SITUATION);
+}
+
+// Security check
+$fieldid = (!empty($ref) ? 'ref' : 'rowid');
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$isdraft = (($object->statut == Facture::STATUS_DRAFT) ? 1 : 0);
+$result = restrictedArea($user, 'facture', $object->id, '', '', 'fk_soc', $fieldid, $isdraft);
+
 
 /*
  * View
@@ -46,11 +65,10 @@ $ref = GETPOST("ref", 'alpha');
 $form = new Form($db);
 
 $title = $langs->trans('InvoiceCustomer')." - ".$langs->trans('Info');
-$helpurl = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
-llxHeader('', $title, $helpurl);
+$help_url = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
 
-$object = new Facture($db);
-$object->fetch($id, $ref);
+llxHeader('', $title, $help_url);
+
 $object->fetch_thirdparty();
 
 $object->info($object->id);

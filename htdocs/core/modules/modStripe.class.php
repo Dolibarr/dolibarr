@@ -21,7 +21,7 @@
  * 	\brief      Add integration with Stripe online payment system.
  *  \file       htdocs/core/modules/modStripe.class.php
  *  \ingroup    stripe
- *  \brief      Description and activation file for module Stripe
+ *  \brief      Description and activation file for the module Stripe
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 

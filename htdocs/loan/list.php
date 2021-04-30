@@ -113,7 +113,7 @@ if ($search_amount) {
 	$sql .= natural_search("l.capital", $search_amount, 1);
 }
 if ($search_ref) {
-	$sql .= " AND l.rowid = ".$db->escape($search_ref);
+	$sql .= " AND l.rowid = ".((int) $search_ref);
 }
 if ($search_label) {
 	$sql .= natural_search("l.label", $search_label);
@@ -252,7 +252,7 @@ if ($resql) {
 		print '<td>'.dol_trunc($obj->label, 42).'</td>';
 
 		// Capital
-		print '<td class="right maxwidth100">'.price($obj->capital).'</td>';
+		print '<td class="right maxwidth100"><span class="amount">'.price($obj->capital).'</span></td>';
 
 		// Date start
 		print '<td class="center width100">'.dol_print_date($db->jdate($obj->datestart), 'day').'</td>';

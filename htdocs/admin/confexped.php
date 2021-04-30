@@ -110,11 +110,11 @@ print '<td class="center">';
 print $langs->trans("Required");
 /*if (empty($conf->global->MAIN_SUBMODULE_EXPEDITION))
 {
-	print '<a href="confexped.php?action=activate_sending">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+	print '<a href="confexped.php?action=activate_sending&token='.newToken().'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
 }
 else
 {
-	print '<a href="confexped.php?action=disable_sending">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
+	print '<a href="confexped.php?action=disable_sending&token='.newToken().'">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
 }*/
 print "</td>";
 print '</tr>';
@@ -130,9 +130,9 @@ print '</td>';
 print '<td class="center">';
 
 if (empty($conf->global->MAIN_SUBMODULE_DELIVERY)) {
-	print '<a href="confexped.php?action=activate_delivery">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+	print '<a href="'.$_SERVER["PHP_SELF"].'?action=activate_delivery&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 } else {
-	print '<a href="confexped.php?action=disable_delivery">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
+	print '<a href="'.$_SERVER["PHP_SELF"].'?action=disable_delivery&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
 }
 
 print "</td>";

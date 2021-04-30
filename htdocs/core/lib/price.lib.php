@@ -151,8 +151,8 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 
 		$sql = "SELECT taux, localtax1, localtax2, localtax1_type, localtax2_type";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as cv";
-		$sql .= " WHERE cv.taux = ".$txtva;
-		$sql .= " AND cv.fk_pays = ".$countryid;
+		$sql .= " WHERE cv.taux = ".((float) $txtva);
+		$sql .= " AND cv.fk_pays = ".((int) $countryid);
 		$resql = $db->query($sql);
 		if ($resql) {
 			$obj = $db->fetch_object($resql);

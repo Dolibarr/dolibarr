@@ -31,10 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 $langs->loadLangs(array('companies', 'products', 'admin', 'mails', 'other', 'errors'));
 
 $action = GETPOST('action', 'aZ09');
-
-if (!$user->admin) {
-	accessforbidden();
-}
+$cancel = GETPOST('cancel', 'alpha');
 
 $usersignature = $user->signature;
 // For action = test or send, we ensure that content is not html, even for signature, because this we want a test with NO html.
@@ -53,13 +50,17 @@ $substitutionarrayfortest = array(
 );
 complete_substitutions_array($substitutionarrayfortest, $langs);
 
+// Security check
+if (!$user->admin) {
+	accessforbidden();
+}
 
 
 /*
  * Actions
  */
 
-if ($action == 'update' && empty($_POST["cancel"])) {
+if ($action == 'update' && !$cancel) {
 	// Send mode parameters
 	dolibarr_set_const($db, "MAIN_MAIL_SENDMODE_TICKET", GETPOST("MAIN_MAIL_SENDMODE_TICKET"), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_MAIL_SMTP_PORT_TICKET", GETPOST("MAIN_MAIL_SMTP_PORT_TICKET"), 'chaine', 0, '', $conf->entity);

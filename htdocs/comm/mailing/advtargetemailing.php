@@ -42,11 +42,6 @@ if (!empty($conf->categorie->enabled)) {
 	$langs->load("categories");
 }
 
-// Security check
-if (!$user->rights->mailing->lire || $user->socid > 0) {
-	accessforbidden();
-}
-
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -98,6 +93,12 @@ if ($result < 0) {
 		$array_query = json_decode($advTarget->filtervalue, true);
 	}
 }
+
+// Security check
+if (!$user->rights->mailing->lire || (empty($conf->global->EXTERNAL_USERS_ARE_AUTHORIZED) && $user->socid > 0)) {
+	accessforbidden();
+}
+//$result = restrictedArea($user, 'mailing');
 
 
 /*
@@ -378,7 +379,7 @@ if ($action == 'deletefilter') {
 
 if ($action == 'delete') {
 	// Ici, rowid indique le destinataire et id le mailing
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE rowid=".$rowid;
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE rowid = ".((int) $rowid);
 	$resql = $db->query($sql);
 	if ($resql) {
 		if (!empty($id)) {
@@ -397,7 +398,7 @@ if ($action == 'delete') {
 	}
 }
 
-if ($_POST["button_removefilter"]) {
+if (GETPOST("button_removefilter")) {
 	$search_nom = '';
 	$search_prenom = '';
 	$search_email = '';

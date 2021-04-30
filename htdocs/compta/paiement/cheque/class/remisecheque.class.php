@@ -171,7 +171,7 @@ class RemiseCheque extends CommonObject
 		$sql .= "'".$this->db->idate($now)."'";
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", ".$user->id;
-		$sql .= ", ".$account_id;
+		$sql .= ", ".((int) $account_id);
 		$sql .= ", 0";
 		$sql .= ", 0";
 		$sql .= ", 0";
@@ -191,7 +191,7 @@ class RemiseCheque extends CommonObject
 			if ($this->id > 0 && $this->errno == 0) {
 				$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
 				$sql .= " SET ref='(PROV".$this->id.")'";
-				$sql .= " WHERE rowid=".$this->id."";
+				$sql .= " WHERE rowid=".((int) $this->id)."";
 
 				$resql = $this->db->query($sql);
 				if (!$resql) {
@@ -236,8 +236,8 @@ class RemiseCheque extends CommonObject
 
 					if ($checkremise) {
 						$sql = "UPDATE ".MAIN_DB_PREFIX."bank";
-						$sql .= " SET fk_bordereau = ".$this->id;
-						$sql .= " WHERE rowid = ".$lineid;
+						$sql .= " SET fk_bordereau = ".((int) $this->id);
+						$sql .= " WHERE rowid = ".((int) $lineid);
 
 						$resql = $this->db->query($sql);
 						if (!$resql) {
@@ -746,7 +746,7 @@ class RemiseCheque extends CommonObject
 		// Get invoices list to reopen them
 		$sql = 'SELECT pf.fk_facture, pf.amount';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf';
-		$sql .= ' WHERE pf.fk_paiement = '.$payment->id;
+		$sql .= ' WHERE pf.fk_paiement = '.((int) $payment->id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

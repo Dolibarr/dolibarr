@@ -207,11 +207,11 @@ if ($resql) {
 			// Label
 			print '<td>'.$objp->label.'</td>';
 			// Expected to pay
-			print '<td class="right">'.price($objp->sc_amount).'</td>';
+			print '<td class="right"><span class="amount">'.price($objp->sc_amount).'</span></td>';
 			// Status
 			print '<td class="center">'.$socialcontrib->getLibStatut(4, $objp->amount).'</td>';
 			// Amount paid
-			print '<td class="right">'.price($objp->amount).'</td>';
+			print '<td class="right"><span class="amount">'.price($objp->amount).'</span></td>';
 			print "</tr>\n";
 			if ($objp->paye == 1) {	// If at least one invoice is paid, disable delete
 				$disable_delete = 1;
@@ -242,7 +242,7 @@ if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 	{
 		if ($user->rights->facture->paiement)
 		{
-			print '<a class="butAction" href="card.php?id='.$_GET['id'].'&amp;facid='.$objp->facid.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
+			print '<a class="butAction" href="card.php?id='.GETPOST('id', 'int').'&amp;facid='.$objp->facid.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
 		}
 	}
 }

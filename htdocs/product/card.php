@@ -307,6 +307,7 @@ if (empty($reshook)) {
 			$object->status             	 = GETPOST('statut');
 			$object->status_buy            = GETPOST('statut_buy');
 			$object->status_batch = GETPOST('status_batch');
+			$object->batch_mask = GETPOST('batch_mask');
 
 			$object->barcode_type          = GETPOST('fk_barcode_type');
 			$object->barcode = GETPOST('barcode');
@@ -405,8 +406,8 @@ if (empty($reshook)) {
 			if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
 				for ($i = 2; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
 					if (GETPOSTISSET("price_".$i)) {
-						$object->multiprices["$i"] = price2num($_POST["price_".$i], 'MU');
-						$object->multiprices_base_type["$i"] = $_POST["multiprices_base_type_".$i];
+						$object->multiprices["$i"] = price2num(GETPOST("price_".$i), 'MU');
+						$object->multiprices_base_type["$i"] = GETPOST("multiprices_base_type_".$i);
 					} else {
 						$object->multiprices["$i"] = "";
 					}
@@ -475,6 +476,7 @@ if (empty($reshook)) {
 				$object->status                 = GETPOST('statut', 'int');
 				$object->status_buy             = GETPOST('statut_buy', 'int');
 				$object->status_batch = GETPOST('status_batch', 'aZ09');
+				$object->batch_mask = GETPOST('batch_mask', 'alpha');
 				$object->fk_default_warehouse   = GETPOST('fk_default_warehouse');
 				// removed from update view so GETPOST always empty
 				/*
@@ -894,7 +896,7 @@ if (empty($reshook)) {
 				$result = $facture->addline(
 					$desc,
 					$pu_ht,
-					price2nm(GETPOST('qty'), 'MS'),
+					price2num(GETPOST('qty'), 'MS'),
 					$tva_tx,
 					$localtax1_tx,
 					$localtax2_tx,
@@ -940,20 +942,6 @@ if (empty($reshook)) {
  * View
  */
 
-$title = $langs->trans('ProductServiceCard');
-$helpurl = '';
-$shortlabel = dol_trunc($object->label, 16);
-if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT)) {
-	$title = $langs->trans('Product')." ".$shortlabel." - ".$langs->trans('Card');
-	$helpurl = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
-}
-if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) {
-	$title = $langs->trans('Service')." ".$shortlabel." - ".$langs->trans('Card');
-	$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
-}
-
-llxHeader('', $title, $helpurl);
-
 $form = new Form($db);
 $formfile = new FormFile($db);
 $formproduct = new FormProduct($db);
@@ -961,6 +949,21 @@ $formcompany = new FormCompany($db);
 if (!empty($conf->accounting->enabled)) {
 	$formaccounting = new FormAccounting($db);
 }
+
+
+$title = $langs->trans('ProductServiceCard');
+$help_url = '';
+$shortlabel = dol_trunc($object->label, 16);
+if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT)) {
+	$title = $langs->trans('Product')." ".$shortlabel." - ".$langs->trans('Card');
+	$help_url = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos|DE:Modul_Produkte';
+}
+if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) {
+	$title = $langs->trans('Service')." ".$shortlabel." - ".$langs->trans('Card');
+	$help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios|DE:Modul_Leistungen';
+}
+
+llxHeader('', $title, $help_url);
 
 // Load object modBarCodeProduct
 $res = 0;
@@ -984,7 +987,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 	// When used with CANVAS
 	// -----------------------------------------
 	if (empty($object->error) && $id) {
-		$object = new Product($db);
 		$result = $object->fetch($id);
 		if ($result <= 0) {
 			dol_print_error('', $object->error);
@@ -1083,10 +1085,50 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Batch number management
 		if (!empty($conf->productbatch->enabled)) {
-			print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td colspan="3">';
+			print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td>';
 			$statutarray = array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"), '2' => $langs->trans("ProductStatusOnSerial"));
 			print $form->selectarray('status_batch', $statutarray, GETPOST('status_batch'));
-			print '</td></tr>';
+			print '</td>';
+			// Product specific batch number management
+			$status_batch = GETPOST('status_batch');
+			if ($status_batch !== '0') {
+				$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
+				$tooltip .= $langs->trans("GenericMaskCodes2");
+				$tooltip .= $langs->trans("GenericMaskCodes3");
+				$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
+				$tooltip .= $langs->trans("GenericMaskCodes5");
+				print '<td id="mask_option">'.$langs->trans("ManageLotMask").'</td>';
+				if (($conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_LOT_ADDON == 'mod_lot_advanced') || ($conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_SN_ADDON == 'mod_sn_advanced')) {
+					$inherited_mask_lot = $conf->global->LOT_ADVANCED_MASK;
+					$inherited_mask_sn = $conf->global->SN_ADVANCED_MASK;
+					print '<td id="field_mask">';
+					print $form->textwithpicto('<input type="text" class="flat" size="24" name="batch_mask" id="batch_mask_input">', $tooltip, 1, 1);
+					print '</td>';
+					print '<script type="text/javascript">
+								$(document).ready(function() {
+									$("#field_mask, #mask_option").addClass("hideobject");
+									$("#status_batch").on("change", function () {
+										var optionSelected = $("option:selected", this);
+										var valueSelected = this.value;
+										$("#field_mask, #mask_option").addClass("hideobject");
+										if (this.value == 1) {
+											$("#field_mask, #mask_option").toggleClass("hideobject");
+											$("#batch_mask_input").val("'.$inherited_mask_lot.'");
+										}
+										if (this.value == 2) {
+											$("#field_mask, #mask_option").toggleClass("hideobject");
+											$("#batch_mask_input").val("'.$inherited_mask_sn.'");
+										}
+									})
+								})
+							</script>';
+				} else {
+					print '<td></td>';
+				}
+			} else {
+				print '<td colspan="2"></td>';
+			}
+			print '</tr>';
 		}
 
 		$showbarcode = empty($conf->barcode->enabled) ? 0 : 1;
@@ -1135,6 +1177,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		if ($type != 1 && !empty($conf->stock->enabled)) {
 			// Default warehouse
 			print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
+			print img_picto($langs->trans("DefaultWarehouse"), 'stock', 'pictofixedwidth');
 			print $formproduct->selectWarehouses(GETPOST('fk_default_warehouse'), 'fk_default_warehouse', 'warehouseopen', 1);
 			print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit').'">';
 			print '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddWarehouse").'"></span>';
@@ -1333,7 +1376,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			} else {
 				$accountancy_code_sell = (GETPOSTISSET('accountancy_code_sell') ? GETPOST('accountancy_code_sell', 'alpha') : $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT);
 			}
-			print $formaccounting->select_account($accountancy_code_sell, 'accountancy_code_sell', 1, null, 1, 1, '');
+			print $formaccounting->select_account($accountancy_code_sell, 'accountancy_code_sell', 1, null, 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 1);
 			print '</td></tr>';
 
 			// Accountancy_code_sell_intra
@@ -1345,7 +1388,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				} else {
 					$accountancy_code_sell_intra = (GETPOSTISSET('accountancy_code_sell_intra') ? GETPOST('accountancy_code_sell_intra', 'alpha') : $conf->global->ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT);
 				}
-				print $formaccounting->select_account($accountancy_code_sell_intra, 'accountancy_code_sell_intra', 1, null, 1, 1, '');
+				print $formaccounting->select_account($accountancy_code_sell_intra, 'accountancy_code_sell_intra', 1, null, 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 1);
 				print '</td></tr>';
 			}
 
@@ -1357,7 +1400,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			} else {
 				$accountancy_code_sell_export = (GETPOST('accountancy_code_sell_export') ? GETPOST('accountancy_code_sell_export', 'alpha') : $conf->global->ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT);
 			}
-			print $formaccounting->select_account($accountancy_code_sell_export, 'accountancy_code_sell_export', 1, null, 1, 1, '');
+			print $formaccounting->select_account($accountancy_code_sell_export, 'accountancy_code_sell_export', 1, null, 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 1);
 			print '</td></tr>';
 
 			// Accountancy_code_buy
@@ -1368,7 +1411,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			} else {
 				$accountancy_code_buy = (GETPOST('accountancy_code_buy', 'alpha') ? (GETPOST('accountancy_code_buy', 'alpha')) : $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT);
 			}
-			print $formaccounting->select_account($accountancy_code_buy, 'accountancy_code_buy', 1, null, 1, 1, '');
+			print $formaccounting->select_account($accountancy_code_buy, 'accountancy_code_buy', 1, null, 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 1);
 			print '</td></tr>';
 
 			// Accountancy_code_buy_intra
@@ -1380,7 +1423,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				} else {
 					$accountancy_code_buy_intra = (GETPOSTISSET('accountancy_code_buy_intra') ? GETPOST('accountancy_code_buy_intra', 'alpha') : $conf->global->ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT);
 				}
-				print $formaccounting->select_account($accountancy_code_buy_intra, 'accountancy_code_buy_intra', 1, null, 1, 1, '');
+				print $formaccounting->select_account($accountancy_code_buy_intra, 'accountancy_code_buy_intra', 1, null, 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 1);
 				print '</td></tr>';
 			}
 
@@ -1392,7 +1435,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			} else {
 				$accountancy_code_buy_export = (GETPOST('accountancy_code_buy_export') ? GETPOST('accountancy_code_buy_export', 'alpha') : $conf->global->ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT);
 			}
-			print $formaccounting->select_account($accountancy_code_buy_export, 'accountancy_code_buy_export', 1, null, 1, 1, '');
+			print $formaccounting->select_account($accountancy_code_buy_export, 'accountancy_code_buy_export', 1, null, 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 1);
 			print '</td></tr>';
 		} else // For external software
 		{
@@ -1464,6 +1507,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		/*
 		 * Product card
 		 */
+
 		// Fiche en mode edition
 		if ($action == 'edit' && $usercancreate) {
 			//WYSIWYG Editor
@@ -1509,7 +1553,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<table class="border allwidth">';
 
 			// Ref
-			print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Ref").'</td><td colspan="3"><input name="ref" class="maxwidth200" maxlength="128" value="'.dol_escape_htmltag($object->ref).'"></td></tr>';
+			print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td colspan="3"><input name="ref" class="maxwidth200" maxlength="128" value="'.dol_escape_htmltag($object->ref).'"></td></tr>';
 
 			// Label
 			print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td colspan="3"><input name="label" class="minwidth300 maxwidth400onsmartphone" maxlength="255" value="'.dol_escape_htmltag($object->label).'"></td></tr>';
@@ -1543,10 +1587,55 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Batch number managment
 			if ($conf->productbatch->enabled) {
 				if ($object->isProduct() || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
-					print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td colspan="3">';
+					print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td>';
 					$statutarray = array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"), '2' => $langs->trans("ProductStatusOnSerial"));
 					print $form->selectarray('status_batch', $statutarray, $object->status_batch);
-					print '</td></tr>';
+					print '</td>';
+					if ($object->status_batch !== '0') {
+						$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
+						$tooltip .= $langs->trans("GenericMaskCodes2");
+						$tooltip .= $langs->trans("GenericMaskCodes3");
+						$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
+						$tooltip .= $langs->trans("GenericMaskCodes5");
+						print '<td id="mask_option">'.$langs->trans("ManageLotMask").'</td>';
+						if ($object->status_batch == '1' && $conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_LOT_ADDON == 'mod_lot_advanced') {
+							$mask = !is_empty($object->batch_mask) ? $object->batch_mask : $conf->global->LOT_ADVANCED_MASK;
+						}
+						if ($object->status_batch == '2' && $conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_SN_ADDON == 'mod_sn_advanced') {
+							$mask = !is_empty($object->batch_mask) ? $object->batch_mask : $conf->global->SN_ADVANCED_MASK;
+						}
+						$inherited_mask_lot = $conf->global->LOT_ADVANCED_MASK;
+						$inherited_mask_sn = $conf->global->SN_ADVANCED_MASK;
+						print '<td id="field_mask">';
+						print $form->textwithpicto('<input type="text" class="flat" size="24" name="batch_mask" id="batch_mask_input" value="'.$mask.'">', $tooltip, 1, 1);
+						print '</td>';
+
+						print '<script type="text/javascript">
+						$(document).ready(function() {
+							$("#field_mask, #mask_option").addClass("hideobject");
+							var preselect = $("#status_batch option:selected");
+							if (preselect !== "0") {
+								$("#field_mask, #mask_option").toggleClass("hideobject");
+							}
+							$("#status_batch").on("change", function () {
+								var optionSelected = $("option:selected", this);
+								var valueSelected = this.value;
+								$("#field_mask, #mask_option").addClass("hideobject");
+								if (this.value == 1) {
+									$("#field_mask, #mask_option").toggleClass("hideobject");
+									$("#batch_mask_input").val("'.$inherited_mask_lot.'");
+								}
+								if (this.value == 2) {
+									$("#field_mask, #mask_option").toggleClass("hideobject");
+									$("#batch_mask_input").val("'.$inherited_mask_sn.'");
+								}
+							})
+						})
+					</script>';
+					} else {
+						print '<td colspan="2"></td>';
+					}
+					print '</tr>';
 				}
 			}
 
@@ -1746,21 +1835,21 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			if (!empty($conf->accounting->enabled)) {
 				// Accountancy_code_sell
-				print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellCode").'</td>';
+				print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
 				print '<td>';
 				print $formaccounting->select_account($object->accountancy_code_sell, 'accountancy_code_sell', 1, '', 1, 1);
 				print '</td></tr>';
 
 				// Accountancy_code_sell_intra
 				if ($mysoc->isInEEC()) {
-					print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellIntraCode").'</td>';
+					print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellIntraCode").'</td>';
 					print '<td>';
 					print $formaccounting->select_account($object->accountancy_code_sell_intra, 'accountancy_code_sell_intra', 1, '', 1, 1);
 					print '</td></tr>';
 				}
 
 				// Accountancy_code_sell_export
-				print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellExportCode").'</td>';
+				print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellExportCode").'</td>';
 				print '<td>';
 				print $formaccounting->select_account($object->accountancy_code_sell_export, 'accountancy_code_sell_export', 1, '', 1, 1);
 				print '</td></tr>';
@@ -1773,33 +1862,33 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 				// Accountancy_code_buy_intra
 				if ($mysoc->isInEEC()) {
-					print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancyBuyIntraCode").'</td>';
+					print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancyBuyIntraCode").'</td>';
 					print '<td>';
 					print $formaccounting->select_account($object->accountancy_code_buy_intra, 'accountancy_code_buy_intra', 1, '', 1, 1);
 					print '</td></tr>';
 				}
 
 				// Accountancy_code_buy_export
-				print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancyBuyExportCode").'</td>';
+				print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancyBuyExportCode").'</td>';
 				print '<td>';
 				print $formaccounting->select_account($object->accountancy_code_buy_export, 'accountancy_code_buy_export', 1, '', 1, 1);
 				print '</td></tr>';
 			} else {
 				// For external software
 				// Accountancy_code_sell
-				print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellCode").'</td>';
+				print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
 				print '<td><input name="accountancy_code_sell" class="maxwidth200" value="'.$object->accountancy_code_sell.'">';
 				print '</td></tr>';
 
 				// Accountancy_code_sell_intra
 				if ($mysoc->isInEEC()) {
-					print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellIntraCode").'</td>';
+					print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellIntraCode").'</td>';
 					print '<td><input name="accountancy_code_sell_intra" class="maxwidth200" value="'.$object->accountancy_code_sell_intra.'">';
 					print '</td></tr>';
 				}
 
 				// Accountancy_code_sell_export
-				print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancySellExportCode").'</td>';
+				print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellExportCode").'</td>';
 				print '<td><input name="accountancy_code_sell_export" class="maxwidth200" value="'.$object->accountancy_code_sell_export.'">';
 				print '</td></tr>';
 
@@ -1810,13 +1899,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 				// Accountancy_code_buy_intra
 				if ($mysoc->isInEEC()) {
-					print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancyBuyIntraCode").'</td>';
+					print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancyBuyIntraCode").'</td>';
 					print '<td><input name="accountancy_code_buy_intra" class="maxwidth200" value="'.$object->accountancy_code_buy_intra.'">';
 					print '</td></tr>';
 				}
 
 				// Accountancy_code_buy_export
-				print '<tr><td class="titlefield">'.$langs->trans("ProductAccountancyBuyExportCode").'</td>';
+				print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancyBuyExportCode").'</td>';
 				print '<td><input name="accountancy_code_buy_export" class="maxwidth200" value="'.$object->accountancy_code_buy_export.'">';
 				print '</td></tr>';
 			}
@@ -2034,6 +2123,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td colspan="2">';
 					print $object->getLibStatut(0, 2);
 					print '</td></tr>';
+					if ((($object->status_batch == '1' &&$conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_LOT_ADDON == 'mod_lot_advanced')
+					|| ($object->status_batch == '2' && $conf->global->PRODUCTBATCH_SN_ADDON == 'mod_sn_advanced' && $conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS))) {
+						print '<tr><td>'.$langs->trans("ManageLotMask").'</td><td colspan="2">';
+						print $object->batch_mask;
+						print '</td></tr>';
+					}
 				}
 			}
 
@@ -2261,11 +2356,9 @@ if (empty($reshook)) {
 // Print form confirm
 print $formconfirm;
 
-/* ************************************************************************** */
-/*                                                                            */
-/* Barre d'action                                                             */
-/*                                                                            */
-/* ************************************************************************** */
+/*
+ * Action bar
+ */
 if ($action != 'create' && $action != 'edit') {
 	print "\n".'<div class="tabsAction">'."\n";
 
@@ -2407,7 +2500,7 @@ if (!empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action ==
 
 
 /*
- * Documents generes
+ * Generated documents
  */
 
 if ($action != 'create' && $action != 'edit' && $action != 'delete') {

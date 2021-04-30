@@ -72,7 +72,10 @@ print '<tr>';
 if ($object->element == 'product') {
 	print '<td class="fieldrequired">'.$langs->trans("WarehouseSource").'</td>';
 	print '<td>';
-	print img_picto('', 'stock').$formproduct->selectWarehouses((GETPOST("dwid") ?GETPOST("dwid", 'int') : (GETPOST('id_entrepot') ?GETPOST('id_entrepot', 'int') : ($object->element == 'product' && $object->fk_default_warehouse ? $object->fk_default_warehouse : 'ifone'))), 'id_entrepot', 'warehouseopen,warehouseinternal', 1);
+	print img_picto('', 'stock');
+	$selected = (GETPOST("dwid") ?GETPOST("dwid", 'int') : (GETPOST('id_entrepot') ?GETPOST('id_entrepot', 'int') : ($object->element == 'product' && $object->fk_default_warehouse ? $object->fk_default_warehouse : 'ifone')));
+	$warehousestatus = 'warehouseopen,warehouseinternal';
+	print $formproduct->selectWarehouses($selected, 'id_entrepot', $warehousestatus, 1);
 	print '</td>';
 }
 if ($object->element == 'stock') {

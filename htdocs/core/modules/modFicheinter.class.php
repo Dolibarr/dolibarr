@@ -25,7 +25,7 @@
  *	\brief      Module to manage intervention cards
  *	\file       htdocs/core/modules/modFicheinter.class.php
  *	\ingroup    ficheinter
- *	\brief      Fichier de description et activation du module Ficheinter
+ *	\brief      Description and activation file for the module Ficheinter
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';

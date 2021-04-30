@@ -283,32 +283,32 @@ abstract class ActionsContactCardCommon
 		// phpcs:enable
 		global $langs, $mysoc;
 
-		$this->object->old_name = $_POST["old_name"];
-		$this->object->old_firstname = $_POST["old_firstname"];
+		$this->object->old_name = GETPOST("old_name");
+		$this->object->old_firstname = GETPOST("old_firstname");
 
-		$this->object->socid = $_POST["socid"];
-		$this->object->lastname			= $_POST["name"];
-		$this->object->firstname		= $_POST["firstname"];
-		$this->object->civility_id = $_POST["civility_id"];
-		$this->object->poste			= $_POST["poste"];
-		$this->object->address = $_POST["address"];
-		$this->object->zip = $_POST["zipcode"];
-		$this->object->town				= $_POST["town"];
-		$this->object->country_id = $_POST["country_id"] ? $_POST["country_id"] : $mysoc->country_id;
-		$this->object->state_id = $_POST["state_id"];
-		$this->object->phone_pro = $_POST["phone_pro"];
-		$this->object->phone_perso = $_POST["phone_perso"];
-		$this->object->phone_mobile = $_POST["phone_mobile"];
-		$this->object->fax = $_POST["fax"];
-		$this->object->email			= $_POST["email"];
-		$this->object->jabberid = $_POST["jabberid"];
-		$this->object->priv				= $_POST["priv"];
-		$this->object->note				= $_POST["note"];
-		$this->object->canvas = $_POST["canvas"];
+		$this->object->socid = GETPOST("socid");
+		$this->object->lastname			= GETPOST("name");
+		$this->object->firstname		= GETPOST("firstname");
+		$this->object->civility_id = GETPOST("civility_id");
+		$this->object->poste			= GETPOST("poste");
+		$this->object->address = GETPOST("address");
+		$this->object->zip = GETPOST("zipcode");
+		$this->object->town				= GETPOST("town");
+		$this->object->country_id = GETPOST("country_id") ? GETPOST("country_id") : $mysoc->country_id;
+		$this->object->state_id = GETPOST("state_id");
+		$this->object->phone_pro = GETPOST("phone_pro");
+		$this->object->phone_perso = GETPOST("phone_perso");
+		$this->object->phone_mobile = GETPOST("phone_mobile");
+		$this->object->fax = GETPOST("fax");
+		$this->object->email			= GETPOST("email");
+		$this->object->jabberid = GETPOST("jabberid");
+		$this->object->priv				= GETPOST("priv");
+		$this->object->note				= GETPOST("note", "restricthtml");
+		$this->object->canvas = GETPOST("canvas");
 
 		// We set country_id, and country_code label of the chosen country
 		if ($this->object->country_id) {
-			$sql = "SELECT code, label FROM ".MAIN_DB_PREFIX."c_country WHERE rowid = ".$this->object->country_id;
+			$sql = "SELECT code, label FROM ".MAIN_DB_PREFIX."c_country WHERE rowid = ".((int) $this->object->country_id);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$obj = $this->db->fetch_object($resql);

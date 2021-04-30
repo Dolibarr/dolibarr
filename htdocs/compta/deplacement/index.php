@@ -76,7 +76,7 @@ $sql = "SELECT count(d.rowid) as nb, sum(d.km) as km, d.type";
 $sql .= " FROM ".MAIN_DB_PREFIX."deplacement as d";
 $sql .= " WHERE d.entity = ".$conf->entity;
 if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) {
-	$sql .= ' AND d.fk_user IN ('.join(',', $childids).')';
+	$sql .= ' AND d.fk_user IN ('.$db->sanitize(join(',', $childids)).')';
 }
 $sql .= " GROUP BY d.type";
 $sql .= " ORDER BY d.type";
@@ -156,13 +156,13 @@ if (!$user->rights->societe->client->voir && !$user->socid) {
 $sql .= " WHERE u.rowid = d.fk_user";
 $sql .= " AND d.entity = ".$conf->entity;
 if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) {
-	$sql .= ' AND d.fk_user IN ('.join(',', $childids).')';
+	$sql .= ' AND d.fk_user IN ('.$db->sanitize(join(',', $childids)).')';
 }
 if (!$user->rights->societe->client->voir && !$user->socid) {
 	$sql .= " AND d.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 }
 if ($socid) {
-	$sql .= " AND d.fk_soc = ".$socid;
+	$sql .= " AND d.fk_soc = ".((int) $socid);
 }
 $sql .= $db->order("d.tms", "DESC");
 $sql .= $db->plimit($max, 0);

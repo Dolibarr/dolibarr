@@ -557,7 +557,7 @@ class AccountancyExport
 			$Tab['signe_montant'] = '+';
 
 			// The amount must be in centimes without decimal points.
-			$Tab['montant'] = str_pad(abs(($data->debit - $abs->credit) * 100), 12, '0', STR_PAD_LEFT);
+			$Tab['montant'] = str_pad(abs(($data->debit - $data->credit) * 100), 12, '0', STR_PAD_LEFT);
 			$Tab['contrepartie'] = str_repeat(' ', 8);
 
 			// Force date format : %d%m%y
@@ -1644,7 +1644,7 @@ class AccountancyExport
 							// Get new customer invoice ref and company name
 							$sql = 'SELECT f.ref, s.nom FROM ' . MAIN_DB_PREFIX . 'facture as f';
 							$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'societe AS s ON f.fk_soc = s.rowid';
-							$sql .= ' WHERE f.rowid = ' . $line->fk_doc;
+							$sql .= ' WHERE f.rowid = '.((int) $line->fk_doc);
 							$resql = $this->db->query($sql);
 							if ($resql) {
 								if ($obj = $this->db->fetch_object($resql)) {
@@ -1658,7 +1658,7 @@ class AccountancyExport
 							// Get new supplier invoice ref and company name
 							$sql = 'SELECT ff.ref, s.nom FROM ' . MAIN_DB_PREFIX . 'facture_fourn as ff';
 							$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'societe AS s ON ff.fk_soc = s.rowid';
-							$sql .= ' WHERE ff.rowid = ' . $line->fk_doc;
+							$sql .= ' WHERE ff.rowid = '.((int) $line->fk_doc);
 							$resql = $this->db->query($sql);
 							if ($resql) {
 								if ($obj = $this->db->fetch_object($resql)) {

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2017 Alexandre Spangaro	<aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2021 Alexandre Spangaro	<aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,9 +38,16 @@ $codeventil = GETPOST('codeventil', 'int');
 $id = GETPOST('id', 'int');
 
 // Security check
+if (empty($conf->accounting->enabled)) {
+	accessforbidden();
+}
 if ($user->socid > 0) {
 	accessforbidden();
 }
+if (empty($user->rights->accounting->mouvements->lire)) {
+	accessforbidden();
+}
+
 
 
 /*
@@ -54,8 +61,8 @@ if ($action == 'ventil' && $user->rights->accounting->bind->write) {
 		}
 
 		$sql = " UPDATE ".MAIN_DB_PREFIX."facturedet";
-		$sql .= " SET fk_code_ventilation = ".$codeventil;
-		$sql .= " WHERE rowid = ".$id;
+		$sql .= " SET fk_code_ventilation = ".((int) $codeventil);
+		$sql .= " WHERE rowid = ".((int) $id);
 
 		$resql = $db->query($sql);
 		if (!$resql) {
@@ -93,13 +100,21 @@ $formaccounting = new FormAccounting($db);
 
 if (!empty($id)) {
 	$sql = "SELECT f.ref, f.rowid as facid, l.fk_product, l.description, l.price,";
-	$sql .= " l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice, p.accountancy_code_sell as code_sell,";
+	$sql .= " l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice,";
+	if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+		$sql .= " ppe.accountancy_code_sell as code_sell,";
+	} else {
+		$sql .= " p.accountancy_code_sell as code_sell,";
+	}
 	$sql .= " l.fk_code_ventilation, aa.account_number, aa.label";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facturedet as l";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = l.fk_product";
+	if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);
+	}
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON l.fk_code_ventilation = aa.rowid";
 	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."facture as f ON f.rowid = l.fk_facture";
-	$sql .= " WHERE f.fk_statut > 0 AND l.rowid = ".$id;
+	$sql .= " WHERE f.fk_statut > 0 AND l.rowid = ".((int) $id);
 	$sql .= " AND f.entity IN (".getEntity('invoice', 0).")"; // We don't share object for accountancy
 
 	dol_syslog("/accounting/customer/card.php sql=".$sql, LOG_DEBUG);

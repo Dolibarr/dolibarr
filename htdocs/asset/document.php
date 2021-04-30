@@ -82,8 +82,10 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
  */
 
 $title = $langs->trans('Assets')." - ".$langs->trans('Documents');
-$helpurl = '';
-llxHeader('', $title, $helpurl);
+
+$help_url = '';
+
+llxHeader('', $title, $help_url);
 
 $form = new Form($db);
 
@@ -127,7 +129,7 @@ if ($id > 0 || !empty($ref)) {
 		$permission = $user->rights->asset->write;
 		$permtoedit = $user->rights->asset->write;
 		$param = '&id='.$object->id;
-		include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+		include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 	} else {
 		dol_print_error($db);
 	}

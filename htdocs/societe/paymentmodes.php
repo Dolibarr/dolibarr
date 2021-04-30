@@ -517,10 +517,10 @@ if (empty($reshook)) {
 			$db->begin();
 
 			if (empty($newcu)) {
-				$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_account WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$db->escape($site_account)."') AND fk_soc = ".$object->id." AND status = ".$servicestatus." AND entity = ".$conf->entity;
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_account WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$db->escape($site_account)."') AND fk_soc = ".$object->id." AND status = ".((int) $servicestatus)." AND entity = ".$conf->entity;
 			} else {
 				$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX."societe_account";
-				$sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$db->escape($site_account)."') AND fk_soc = ".$object->id." AND status = ".$servicestatus." AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
+				$sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$db->escape($site_account)."') AND fk_soc = ".$object->id." AND status = ".((int) $servicestatus)." AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
 			}
 
 			$resql = $db->query($sql);
@@ -542,7 +542,7 @@ if (empty($reshook)) {
 				} else {
 					$sql = 'UPDATE '.MAIN_DB_PREFIX."societe_account";
 					$sql .= " SET key_account = '".$db->escape(GETPOST('key_account', 'alpha'))."', site_account = '".$db->escape($site_account)."'";
-					$sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$db->escape($site_account)."') AND fk_soc = ".$object->id." AND status = ".$servicestatus." AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
+					$sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$db->escape($site_account)."') AND fk_soc = ".$object->id." AND status = ".((int) $servicestatus)." AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
 					$resql = $db->query($sql);
 				}
 			}
@@ -761,7 +761,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
 		}
 		print '</td></tr>';
-		$sql = "SELECT count(*) as nb from ".MAIN_DB_PREFIX."facture where fk_soc = ".$socid;
+		$sql = "SELECT count(*) as nb from ".MAIN_DB_PREFIX."facture where fk_soc = ".((int) $socid);
 		$resql = $db->query($sql);
 		if (!$resql) {
 			dol_print_error($db);
@@ -823,7 +823,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
 		}
 		print '</td></tr>';
-		$sql = "SELECT count(*) as nb from ".MAIN_DB_PREFIX."facture where fk_soc = ".$socid;
+		$sql = "SELECT count(*) as nb from ".MAIN_DB_PREFIX."facture where fk_soc = ".((int) $socid);
 		$resql = $db->query($sql);
 		if (!$resql) {
 			dol_print_error($db);
@@ -1479,7 +1479,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		print '<a name="builddoc"></a>'; // ancre
 
 		/*
-		 * Documents generes
+		 * Generated documents
 		 */
 		$filedir = $conf->societe->multidir_output[$object->entity].'/'.$object->id;
 		$urlsource = $_SERVER["PHP_SELF"]."?socid=".$object->id;

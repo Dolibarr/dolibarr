@@ -330,16 +330,6 @@ if (empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
 }
 print '</td></tr>'."\n";
 
-// AGENDA_DEFAULT_VIEW
-print '<tr class="oddeven">'."\n";
-$htmltext = $langs->trans("ThisValueCanOverwrittenOnUserLevel", $langs->transnoentitiesnoconv("UserGUISetup"));
-print '<td>'.$form->textwithpicto($langs->trans("AGENDA_DEFAULT_VIEW"), $htmltext).'</td>'."\n";
-print '<td class="center">&nbsp;</td>'."\n";
-print '<td class="right">'."\n";
-$tmplist = array(''=>'&nbsp;', 'show_list'=>$langs->trans("ViewList"), 'show_month'=>$langs->trans("ViewCal"), 'show_week'=>$langs->trans("ViewWeek"), 'show_day'=>$langs->trans("ViewDay"), 'show_peruser'=>$langs->trans("ViewPerUser"));
-print $form->selectarray('AGENDA_DEFAULT_VIEW', $tmplist, $conf->global->AGENDA_DEFAULT_VIEW);
-print '</td></tr>'."\n";
-
 if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
 	print '<!-- AGENDA_USE_EVENT_TYPE_DEFAULT -->';
 	print '<tr class="oddeven">'."\n";
@@ -349,6 +339,16 @@ if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
 	$formactions->select_type_actions($conf->global->AGENDA_USE_EVENT_TYPE_DEFAULT, "AGENDA_USE_EVENT_TYPE_DEFAULT", 'systemauto', 0, 1);
 	print '</td></tr>'."\n";
 }
+
+// AGENDA_DEFAULT_VIEW
+print '<tr class="oddeven">'."\n";
+$htmltext = $langs->trans("ThisValueCanOverwrittenOnUserLevel", $langs->transnoentitiesnoconv("UserGUISetup"));
+print '<td>'.$form->textwithpicto($langs->trans("AGENDA_DEFAULT_VIEW"), $htmltext).'</td>'."\n";
+print '<td class="center">&nbsp;</td>'."\n";
+print '<td class="right">'."\n";
+$tmplist = array(''=>'&nbsp;', 'show_list'=>$langs->trans("ViewList"), 'show_month'=>$langs->trans("ViewCal"), 'show_week'=>$langs->trans("ViewWeek"), 'show_day'=>$langs->trans("ViewDay"), 'show_peruser'=>$langs->trans("ViewPerUser"));
+print $form->selectarray('AGENDA_DEFAULT_VIEW', $tmplist, $conf->global->AGENDA_DEFAULT_VIEW);
+print '</td></tr>'."\n";
 
 // AGENDA_EVENT_DEFAULT_STATUS
 print '<tr class="oddeven">'."\n";

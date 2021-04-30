@@ -41,6 +41,8 @@ class box_graph_invoices_permonth extends ModeleBoxes
 	public $info_box_head = array();
 	public $info_box_contents = array();
 
+	public $widgettype = 'graph';
+
 
 	/**
 	 *  Constructor

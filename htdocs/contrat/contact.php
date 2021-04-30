@@ -85,7 +85,7 @@ if ($action == 'addcontact' && $user->rights->contrat->creer) {
 // bascule du statut d'un contact
 if ($action == 'swapstatut' && $user->rights->contrat->creer) {
 	if ($object->fetch($id)) {
-		$result = $object->swapContactStatus(GETPOST('ligne'));
+		$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
 	} else {
 		dol_print_error($db, $object->error);
 	}
@@ -94,7 +94,7 @@ if ($action == 'swapstatut' && $user->rights->contrat->creer) {
 // Delete contact
 if ($action == 'deletecontact' && $user->rights->contrat->creer) {
 	$object->fetch($id);
-	$result = $object->delete_contact($_GET["lineid"]);
+	$result = $object->delete_contact(GETPOST("lineid", 'int'));
 
 	if ($result >= 0) {
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);

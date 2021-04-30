@@ -125,7 +125,7 @@ if ($type == 'bank-transfer') {
 $sql .= " AND f.fk_soc = s.rowid";
 $sql .= " AND f.entity IN (".getEntity('invoice').")";
 if ($socid) {
-	$sql .= " AND s.rowid = ".$socid;
+	$sql .= " AND s.rowid = ".((int) $socid);
 }
 if ($search_line) {
 	$sql .= " AND pl.rowid = '".$db->escape($search_line)."'";
@@ -266,7 +266,7 @@ if ($result) {
 
 			print '<td class="center">'.dol_print_date($db->jdate($obj->datec), 'day')."</td>\n";
 
-			print '<td class="right">'.price($obj->amount)."</td>\n";
+			print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>\n";
 
 			print '<td>&nbsp;</td>';
 

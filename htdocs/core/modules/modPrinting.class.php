@@ -23,7 +23,7 @@
 /**
  *  \file       htdocs/core/modules/modPrinting.class.php
  *  \ingroup    printing
- *  \brief      File of class to describe and activate module Direct Printing
+ *  \brief      Description and activation file for the module Direct Printing
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 

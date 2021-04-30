@@ -25,7 +25,7 @@
  * 		\brief      Module pour inclure des fonctions de saisies des taxes (tva) et charges sociales
  *      \file       htdocs/core/modules/modTax.class.php
  *      \ingroup    tax
- *      \brief      Fichier de description et activation du module Taxe
+ *      \brief      Description and activation file for the module taxes
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 

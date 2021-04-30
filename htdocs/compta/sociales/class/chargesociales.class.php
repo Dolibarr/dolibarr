@@ -147,9 +147,9 @@ class ChargeSociales extends CommonObject
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON cs.fk_mode_reglement = p.id';
 		$sql .= ' WHERE cs.entity IN ('.getEntity('tax').')';
 		if ($ref) {
-			$sql .= " AND cs.rowid = ".$ref;
+			$sql .= " AND cs.ref = '".$this->db->escape($ref)."'";
 		} else {
-			$sql .= " AND cs.rowid = ".$id;
+			$sql .= " AND cs.rowid = ".((int) $id);
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -197,7 +197,7 @@ class ChargeSociales extends CommonObject
 	{
 		$newamount = price2num($this->amount, 'MT');
 
-		// Validation parametres
+		// Validation of parameters
 		if (!$newamount > 0 || empty($this->date_ech) || empty($this->periode)) {
 			return false;
 		}
@@ -311,7 +311,7 @@ class ChargeSociales extends CommonObject
 		}
 
 		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."chargesociales WHERE rowid=".$this->id;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."chargesociales WHERE rowid=".((int) $this->id);
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -350,7 +350,7 @@ class ChargeSociales extends CommonObject
 		$sql .= ", fk_projet=".($this->fk_project > 0 ? $this->db->escape($this->fk_project) : "NULL");
 		$sql .= ", fk_user=".($this->fk_user > 0 ? $this->db->escape($this->fk_user) : "NULL");
 		$sql .= ", fk_user_modif=".$user->id;
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -672,7 +672,7 @@ class ChargeSociales extends CommonObject
 		$sql = "SELECT e.rowid, e.tms as datem, e.date_creation as datec, e.date_valid as datev, e.import_key,";
 		$sql .= " e.fk_user_author, e.fk_user_modif, e.fk_user_valid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."chargesociales as e";
-		$sql .= " WHERE e.rowid = ".$id;
+		$sql .= " WHERE e.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::info", LOG_DEBUG);
 		$result = $this->db->query($sql);

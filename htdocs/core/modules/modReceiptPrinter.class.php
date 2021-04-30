@@ -23,7 +23,7 @@
 /**
  *  \file       htdocs/core/modules/modReceiptPrinter.class.php
  *  \ingroup    printing
- *  \brief      File of class to describe and activate module Receipt Printer
+ *  \brief      Description and activation file for the module Receipt Printer
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -95,7 +95,7 @@ class modReceiptPrinter extends DolibarrModules
 		// $this->rights[$r][5]     Niveau 2 pour nommer permission dans code
 
 		$r++;
-		$this->rights[$r][0] = 67000;
+		$this->rights[$r][0] = 67001;
 		$this->rights[$r][1] = 'ReceiptPrinter';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;

@@ -154,9 +154,8 @@ class TaskStats extends Stats
 		if (!empty($this->yearmonth)) {
 			$sqlwhere[] = " t.datec BETWEEN '".$this->db->idate(dol_get_first_day($this->yearmonth))."' AND '".$this->db->idate(dol_get_last_day($this->yearmonth))."'";
 		}
-
-		if (!empty($this->status)) {
-			$sqlwhere[] = " t.priority IN (".$this->priority.")";
+		if (!empty($this->priority)) {
+			$sqlwhere[] = " t.priority IN (".$this->db->sanitize($this->priority, 1).")";
 		}
 
 		if (count($sqlwhere) > 0) {

@@ -139,8 +139,8 @@ if (preg_match('/[a-z]+/i', $version)) {
 }
 
 print '</td></tr>'."\n";
-print '<tr class="oddeven"><td>'.$langs->trans("VersionLastUpgrade").' ('.$langs->trans("Database").')</td><td>'.$conf->global->MAIN_VERSION_LAST_UPGRADE.'</td></tr>'."\n";
-print '<tr class="oddeven"><td>'.$langs->trans("VersionLastInstall").'</td><td>'.$conf->global->MAIN_VERSION_LAST_INSTALL.'</td></tr>'."\n";
+print '<tr class="oddeven"><td>'.$langs->trans("VersionLastUpgrade").' ('.$langs->trans("Database").')</td><td>'.getDolGlobalString('MAIN_VERSION_LAST_UPGRADE').'</td></tr>'."\n";
+print '<tr class="oddeven"><td>'.$langs->trans("VersionLastInstall").'</td><td>'.getDolGlobalString('MAIN_VERSION_LAST_INSTALL').'</td></tr>'."\n";
 print '</table>';
 print '</div>';
 print '<br>';
@@ -442,7 +442,7 @@ foreach ($configfileparameters as $key => $value) {
 					print img_warning($langs->trans('SwitchThisForABetterSecurity', 0));
 				}
 			} else {
-				print ${$newkey};
+				print (empty(${$newkey}) ? '' : ${$newkey});
 			}
 			if ($newkey == 'dolibarr_main_url_root' && ${$newkey} != DOL_MAIN_URL_ROOT) {
 				print ' (currently overwritten by autodetected value: '.DOL_MAIN_URL_ROOT.')';
@@ -484,7 +484,7 @@ if (empty($conf->multicompany->enabled)) {
 } else {
 	// If multicompany mode, superadmin (user->entity=0) can see everything, admin are limited to their entities.
 	if ($user->entity) {
-		$sql .= " WHERE entity IN (".$user->entity.",".$conf->entity.")";
+		$sql .= " WHERE entity IN (".$db->sanitize($user->entity.",".$conf->entity).")";
 	}
 }
 $sql .= " ORDER BY entity, name ASC";

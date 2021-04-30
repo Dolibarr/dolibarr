@@ -665,7 +665,7 @@ if ($id) {
 
 
 	/*
-	 * Action buttons
+	 * Action bar
 	 */
 	print '<div class="tabsAction">'."\n";
 

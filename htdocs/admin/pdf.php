@@ -68,6 +68,20 @@ if ($action == 'update') {
 	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT", GETPOST("MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT"), 'chaine', 0, '', $conf->entity);
 
 	dolibarr_set_const($db, "MAIN_TVAINTRA_NOT_IN_ADDRESS", GETPOST("MAIN_TVAINTRA_NOT_IN_ADDRESS"), 'chaine', 0, '', $conf->entity);
+
+	if (!empty($conf->projet->enabled)) {
+		if (GETPOST('PDF_SHOW_PROJECT_REF_OR_LABEL') == 'no') {
+			dolibarr_del_const($db, "PDF_SHOW_PROJECT", $conf->entity);
+			dolibarr_del_const($db, "PDF_SHOW_PROJECT_TITLE", $conf->entity);
+		} elseif (GETPOST('PDF_SHOW_PROJECT_REF_OR_LABEL') == 'showprojectref') {
+			dolibarr_set_const($db, "PDF_SHOW_PROJECT", GETPOST("PDF_SHOW_PROJECT_REF_OR_LABEL"), 'chaine', 0, '', $conf->entity);
+			dolibarr_del_const($db, "PDF_SHOW_PROJECT_TITLE", $conf->entity);
+		} elseif (GETPOST('PDF_SHOW_PROJECT_REF_OR_LABEL') == 'showprojectlabel') {
+			dolibarr_del_const($db, "PDF_SHOW_PROJECT", $conf->entity);
+			dolibarr_set_const($db, "PDF_SHOW_PROJECT_TITLE", GETPOST("PDF_SHOW_PROJECT_REF_OR_LABEL"), 'chaine', 0, '', $conf->entity);
+		}
+	}
+
 	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS", GETPOST("MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS"), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_DESC", GETPOST("MAIN_GENERATE_DOCUMENTS_HIDE_DESC"), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_REF", GETPOST("MAIN_GENERATE_DOCUMENTS_HIDE_REF"), 'chaine', 0, '', $conf->entity);
@@ -290,6 +304,40 @@ print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DOCUMENTS_LOGO_HEIGHT").'</
 print '<input type="text" class="maxwidth50" name="MAIN_DOCUMENTS_LOGO_HEIGHT" value="'.(!empty($conf->global->MAIN_DOCUMENTS_LOGO_HEIGHT) ? $conf->global->MAIN_DOCUMENTS_LOGO_HEIGHT : 20).'">';
 print '</td></tr>';
 
+// Show project
+
+if (!empty($conf->projet->enabled)) {
+	print '<tr class="oddeven"><td>'.$langs->trans("PDF_SHOW_PROJECT").'</td><td>';
+	$tmparray = array('no' => 'No', 'showprojectref' => 'RefProject', 'showprojectlabel' => 'ShowProjectLabel');
+	$showprojectref = empty($conf->global->PDF_SHOW_PROJECT) ? (empty($conf->global->PDF_SHOW_PROJECT_TITLE) ? 'no' : 'showprojectlabel') : 'showprojectref';
+	print $form->selectarray('PDF_SHOW_PROJECT_REF_OR_LABEL', $tmparray, $showprojectref, 0, 0, 0, '', 1);
+	print '</td></tr>';
+}
+
+//Invert sender and recipient
+
+print '<tr class="oddeven"><td>'.$langs->trans("SwapSenderAndRecipientOnPDF").'</td><td>';
+print $form->selectyesno('MAIN_INVERT_SENDER_RECIPIENT', (!empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) ? $conf->global->MAIN_INVERT_SENDER_RECIPIENT : 0, 1);
+print '</td></tr>';
+
+// Place customer adress to the ISO location
+
+print '<tr class="oddeven"><td>'.$langs->trans("PlaceCustomerAddressToIsoLocation").'</td><td>';
+print $form->selectyesno('MAIN_PDF_USE_ISO_LOCATION', (!empty($conf->global->MAIN_PDF_USE_ISO_LOCATION)) ? $conf->global->MAIN_PDF_USE_ISO_LOCATION : 0, 1);
+print '</td></tr>';
+
+// Use 2 languages into PDF
+
+print '<tr class="oddeven"><td>'.$langs->trans("PDF_USE_ALSO_LANGUAGE_CODE").'</td><td>';
+//if (! empty($conf->global->MAIN_MULTILANGS))
+//{
+$selected = GETPOSTISSET('PDF_USE_ALSO_LANGUAGE_CODE') ? GETPOST('PDF_USE_ALSO_LANGUAGE_CODE') : (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) ? $conf->global->PDF_USE_ALSO_LANGUAGE_CODE : 0);
+print $formadmin->select_language($selected, 'PDF_USE_ALSO_LANGUAGE_CODE', 0, null, 1);
+//} else {
+//	print '<span class="opacitymedium">'.$langs->trans("MultiLangNotEnabled").'</span>';
+//}
+print '</td></tr>';
+
 //Desc
 
 print '<tr class="oddeven"><td>'.$langs->trans("HideDescOnPDF").'</td><td>';
@@ -308,36 +356,16 @@ print '<tr class="oddeven"><td>'.$langs->trans("HideDetailsOnPDF").'</td><td>';
 print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS', (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS)) ? $conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS : 0, 1);
 print '</td></tr>';
 
-//Invert sender and recipient
+// SHOW_SUBPRODUCT_REF_IN_PDF - Option to show the detail of product ref for kits.
 
-print '<tr class="oddeven"><td>'.$langs->trans("SwapSenderAndRecipientOnPDF").'</td><td>';
-print $form->selectyesno('MAIN_INVERT_SENDER_RECIPIENT', (!empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) ? $conf->global->MAIN_INVERT_SENDER_RECIPIENT : 0, 1);
+print '<tr class="oddeven"><td>'.$langs->trans("SHOW_SUBPRODUCT_REF_IN_PDF", $langs->transnoentitiesnoconv("AssociatedProductsAbility"), $langs->transnoentitiesnoconv("Products")).'</td><td>';
+print $form->selectyesno('SHOW_SUBPRODUCT_REF_IN_PDF', (!empty($conf->global->SHOW_SUBPRODUCT_REF_IN_PDF)) ? $conf->global->SHOW_SUBPRODUCT_REF_IN_PDF : 0, 1);
 print '</td></tr>';
 
-// Place customer adress to the ISO location
-
-print '<tr class="oddeven"><td>'.$langs->trans("PlaceCustomerAddressToIsoLocation").'</td><td>';
-print $form->selectyesno('MAIN_PDF_USE_ISO_LOCATION', (!empty($conf->global->MAIN_PDF_USE_ISO_LOCATION)) ? $conf->global->MAIN_PDF_USE_ISO_LOCATION : 0, 1);
-print '</td></tr>';
-
+// Show more details in footer
 
 print '<tr class="oddeven"><td>'.$langs->trans("ShowDetailsInPDFPageFoot").'</td><td>';
 print $form->selectarray('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS', $arraydetailsforpdffoot, (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS : 0));
-print '</td></tr>';
-
-print '<tr class="oddeven"><td>'.$langs->trans("PDF_USE_ALSO_LANGUAGE_CODE").'</td><td>';
-//if (! empty($conf->global->MAIN_MULTILANGS))
-//{
-$selected = GETPOSTISSET('PDF_USE_ALSO_LANGUAGE_CODE') ? GETPOST('PDF_USE_ALSO_LANGUAGE_CODE') : (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) ? $conf->global->PDF_USE_ALSO_LANGUAGE_CODE : 0);
-print $formadmin->select_language($selected, 'PDF_USE_ALSO_LANGUAGE_CODE', 0, null, 1);
-//} else {
-//	print '<span class="opacitymedium">'.$langs->trans("MultiLangNotEnabled").'</span>';
-//}
-print '</td></tr>';
-
-// SHOW_SUBPRODUCT_REF_IN_PDF - Option to show the detail of product ref for kits.
-print '<tr class="oddeven"><td>'.$langs->trans("SHOW_SUBPRODUCT_REF_IN_PDF", $langs->transnoentitiesnoconv("AssociatedProductsAbility"), $langs->transnoentitiesnoconv("Products")).'</td><td>';
-print $form->selectyesno('SHOW_SUBPRODUCT_REF_IN_PDF', (!empty($conf->global->SHOW_SUBPRODUCT_REF_IN_PDF)) ? $conf->global->SHOW_SUBPRODUCT_REF_IN_PDF : 0, 1);
 print '</td></tr>';
 
 print '</table>';

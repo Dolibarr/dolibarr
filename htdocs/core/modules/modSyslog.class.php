@@ -21,7 +21,7 @@
  *	\brief      Module pour gerer les messages d'erreur dans syslog
  *	\file       htdocs/core/modules/modSyslog.class.php
  *	\ingroup    syslog
- *	\brief      Fichier de description et activation du module de syslog
+ *	\brief      Description and activation file for the module syslog
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';

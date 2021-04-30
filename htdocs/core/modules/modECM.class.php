@@ -20,7 +20,7 @@
  *      \brief      Module for ECM (Electronic Content Management)
  *      \file       htdocs/core/modules/modECM.class.php
  *      \ingroup    ecm
- *      \brief      Description and activation file for module ECM
+ *      \brief      Description and activation file for the module ECM
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
@@ -127,6 +127,7 @@ class modECM extends DolibarrModules
 			'fk_menu'=>0,
 			'type'=>'top',
 			'titre'=>'MenuECM',
+			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
 			'mainmenu'=>'ecm',
 			'url'=>'/ecm/index.php',
 			'langs'=>'ecm',

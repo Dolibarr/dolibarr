@@ -53,7 +53,8 @@ $donation_static = new Don($db);
 
 $donstatic = new Don($db);
 
-$help_url = 'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones';
+$help_url = 'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones|DE:Modul_Spenden';
+
 llxHeader('', $langs->trans("Donations"), $help_url);
 
 $nb = array();
@@ -88,7 +89,7 @@ print load_fiche_titre($langs->trans("DonationsArea"), '', 'object_donation');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This is useless due to the global search combo
+if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // TODO Add a search into global search combo so we can remove this
 	if (!empty($conf->don->enabled) && $user->rights->don->lire) {
 		$listofsearchfields['search_donation'] = array('text'=>'Donation');
 	}
@@ -119,7 +120,7 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This is usel
 $dataseries = array();
 $colorseries = array();
 
-include_once DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
 print '<table class="noborder nohover centpercent">';
 print '<tr class="liste_titre">';

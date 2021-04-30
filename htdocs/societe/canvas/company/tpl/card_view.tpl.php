@@ -279,7 +279,7 @@ for ($i = 1; $i <= 4; $i++) {
 
 <?php
 /*
- * Documents generes
+ * Generated documents
  */
 $filedir = $conf->societe->multidir_output[$this->control->tpl['entity']].'/'.$socid;
 $urlsource = $_SERVER["PHP_SELF"]."?socid=".$socid;

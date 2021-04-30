@@ -346,7 +346,7 @@ class Interfaces
 					}
 
 					// We set info of modules
-					$triggers[$j]['picto'] = $objMod->picto ?img_object('', $objMod->picto, 'class="valignmiddle pictomodule "') : img_object('', 'generic', 'class="valignmiddle pictomodule "');
+					$triggers[$j]['picto'] = (!empty($objMod->picto)) ? img_object('', $objMod->picto, 'class="valignmiddle pictomodule "') : img_object('', 'generic', 'class="valignmiddle pictomodule "');
 					$triggers[$j]['file'] = $files[$key];
 					$triggers[$j]['fullpath'] = $fullpath[$key];
 					$triggers[$j]['relpath'] = $relpath[$key];
@@ -377,7 +377,14 @@ class Interfaces
 						}
 					}
 				} else {
-					print 'Error: Trigger '.$modName.' does not extends DolibarrTriggers<br>';
+					$triggers[$j]['picto'] = (!empty($objMod->picto)) ? img_object('', $objMod->picto, 'class="valignmiddle pictomodule "') : img_object('', 'generic', 'class="valignmiddle pictomodule "');
+					$triggers[$j]['file'] = $files[$key];
+					$triggers[$j]['fullpath'] = $fullpath[$key];
+					$triggers[$j]['relpath'] = $relpath[$key];
+					$triggers[$j]['status'] = img_picto('Error: Trigger '.$modName.' does not extends DolibarrTriggers', 'warning');
+
+					//print 'Error: Trigger '.$modName.' does not extends DolibarrTriggers<br>';
+					$text = 'Error: Trigger '.$modName.' does not extends DolibarrTriggers';
 				}
 			} catch (Exception $e) {
 				print $e->getMessage();

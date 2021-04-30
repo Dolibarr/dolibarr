@@ -71,7 +71,7 @@ if ($action == 'activate_encrypt') {
 			if (dol_hash($obj->pass)) {
 				$sql = "UPDATE ".MAIN_DB_PREFIX."user";
 				$sql .= " SET pass_crypted = '".dol_hash($obj->pass)."', pass = NULL";
-				$sql .= " WHERE rowid=".$obj->rowid;
+				$sql .= " WHERE rowid=".((int) $obj->rowid);
 				//print $sql;
 
 				$resql2 = $db->query($sql);
@@ -254,9 +254,13 @@ foreach ($arrayhandler as $key => $module) {
 
 		print '<td width="100" align="center">';
 		if ($conf->global->USER_PASSWORD_GENERATED == $key) {
-			print img_picto('', 'tick');
+			//print img_picto('', 'tick');
+			print img_picto($langs->trans("Enabled"), 'switch_on');
 		} else {
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=setgeneraterule&amp;token='.newToken().'&amp;value='.$key.'">'.$langs->trans("Activate").'</a>';
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=setgeneraterule&amp;token='.newToken().'&amp;value='.$key.'">';
+			//print $langs->trans("Activate");
+			print img_picto($langs->trans("Disabled"), 'switch_off');
+			print '</a>';
 		}
 		print "</td></tr>\n";
 	}
@@ -390,23 +394,23 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td colspan="3">'.$langs->trans("DoNotStoreClearPassword").'</td>';
 print '<td align="center" width="60">';
-if (!empty($conf->global->DATABASE_PWD_ENCRYPTED)) {
+if (getDolGlobalString('DATABASE_PWD_ENCRYPTED')) {
 	print img_picto($langs->trans("Active"), 'tick');
 }
 print '</td>';
-if (!$conf->global->DATABASE_PWD_ENCRYPTED) {
+if (!getDolGlobalString('DATABASE_PWD_ENCRYPTED')) {
 	print '<td align="center" width="100">';
 	print '<a href="security.php?action=activate_encrypt">'.$langs->trans("Activate").'</a>';
 	print "</td>";
 }
 
 // Database conf file encryption
-if (!empty($conf->global->DATABASE_PWD_ENCRYPTED)) {
+if (getDolGlobalString('DATABASE_PWD_ENCRYPTED')) {
 	print '<td align="center" width="100">';
 	if ($allow_disable_encryption) {
 		//On n'autorise pas l'annulation de l'encryption car les mots de passe ne peuvent pas etre decodes
 		//Do not allow "disable encryption" as passwords cannot be decrypted
-		print '<a href="security.php?action=disable_encrypt">'.$langs->trans("Disable").'</a>';
+		print '<a href="'.$_SERVER["PHP_SELF"].'?action=disable_encrypt&token='.newToken().'">'.$langs->trans("Disable").'</a>';
 	} else {
 		print '-';
 	}
@@ -432,10 +436,10 @@ if (empty($dolibarr_main_db_pass) && empty($dolibarr_main_db_encrypted_pass)) {
 	print img_warning($langs->trans("WarningPassIsEmpty"));
 } else {
 	if (empty($dolibarr_main_db_encrypted_pass)) {
-		print '<a href="security.php?action=activate_encryptdbpassconf">'.$langs->trans("Activate").'</a>';
+		print '<a href="'.$_SERVER["PHP_SELF"].'?action=activate_encryptdbpassconf&token='.newToken().'">'.$langs->trans("Activate").'</a>';
 	}
 	if (!empty($dolibarr_main_db_encrypted_pass)) {
-		print '<a href="security.php?action=disable_encryptdbpassconf">'.$langs->trans("Disable").'</a>';
+		print '<a href="'.$_SERVER["PHP_SELF"].'?action=disable_encryptdbpassconf&token='.newToken().'">'.$langs->trans("Disable").'</a>';
 	}
 }
 print "</td>";
@@ -449,18 +453,18 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td colspan="3">'.$langs->trans("DisableForgetPasswordLinkOnLogonPage").'</td>';
 print '<td align="center" width="60">';
-if (!empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK)) {
+if (getDolGlobalString('MAIN_SECURITY_DISABLEFORGETPASSLINK')) {
 	print img_picto($langs->trans("Active"), 'tick');
 }
 print '</td>';
-if (empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK)) {
+if (!getDolGlobalString('MAIN_SECURITY_DISABLEFORGETPASSLINK')) {
 	print '<td align="center" width="100">';
-	print '<a href="security.php?action=activate_MAIN_SECURITY_DISABLEFORGETPASSLINK">'.$langs->trans("Activate").'</a>';
+	print '<a href="'.$_SERVER["PHP_SELF"].'?action=activate_MAIN_SECURITY_DISABLEFORGETPASSLINK&token='.newToken().'">'.$langs->trans("Activate").'</a>';
 	print "</td>";
 }
-if (!empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK)) {
+if (getDolGlobalString('MAIN_SECURITY_DISABLEFORGETPASSLINK')) {
 	print '<td align="center" width="100">';
-	print '<a href="security.php?action=disable_MAIN_SECURITY_DISABLEFORGETPASSLINK">'.$langs->trans("Disable").'</a>';
+	print '<a href="'.$_SERVER["PHP_SELF"].'?action=disable_MAIN_SECURITY_DISABLEFORGETPASSLINK&token='.newToken().'">'.$langs->trans("Disable").'</a>';
 	print "</td>";
 }
 print "</td>";
@@ -477,8 +481,8 @@ if (GETPOST('info', 'int') > 0) {
 	} else {
 		print $langs->trans("Note: The function password_hash does not exists on your PHP")."<br>\n";
 	}
-	print 'MAIN_SECURITY_HASH_ALGO = '.$conf->global->MAIN_SECURITY_HASH_ALGO."<br>\n";
-	print 'MAIN_SECURITY_SALT = '.$conf->global->MAIN_SECURITY_SALT."<br>\n";
+	print 'MAIN_SECURITY_HASH_ALGO = '.getDolGlobalString('MAIN_SECURITY_HASH_ALGO')."<br>\n";
+	print 'MAIN_SECURITY_SALT = '.getDolGlobalString('MAIN_SECURITY_SALT')."<br>\n";
 }
 
 print '</div>';

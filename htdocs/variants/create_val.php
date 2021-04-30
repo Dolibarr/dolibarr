@@ -36,6 +36,18 @@ if ($object->fetch($id) < 1) {
 	exit();
 }
 
+$permissiontoread = $user->rights->produit->lire || $user->rights->service->lire;
+
+// Security check
+if (empty($conf->variants->enabled)) {
+	accessforbidden('Module not enabled');
+}
+if ($user->socid > 0) { // Protection if external user
+	accessforbidden();
+}
+//$result = restrictedArea($user, 'variant');
+if (!$permissiontoread) accessforbidden();
+
 
 /*
  * Actions
@@ -75,9 +87,11 @@ if ($action == 'add') {
 
 $langs->load('products');
 
+$help_url = 'EN:Module_Products#Variants';
+
 $title = $langs->trans('ProductAttributeName', dol_htmlentities($object->label));
 
-llxHeader('', $title);
+llxHeader('', $title, $help_url);
 
 $h = 0;
 $head[$h][0] = DOL_URL_ROOT.'/variants/card.php?id='.$object->id;

@@ -121,8 +121,8 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 	if (!GETPOST('cancel', 'alpha')) {
 		$result = $object->fetch($id);
 
-		$object->date_start = empty($_POST["fiscalyear"]) ? '' : $date_start;
-		$object->date_end = empty($_POST["fiscalyearend"]) ? '' : $date_end;
+		$object->date_start = GETPOST("fiscalyear") ? $date_start : '';
+		$object->date_end = GETPOST("fiscalyearend") ? $date_end : '';
 		$object->label = GETPOST('label', 'alpha');
 		$object->statut = GETPOST('statut', 'int');
 
@@ -149,8 +149,10 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 $form = new Form($db);
 
 $title = $langs->trans("Fiscalyear")." - ".$langs->trans("Card");
-$helpurl = "";
-llxHeader("", $title, $helpurl);
+
+$help_url = "EN:Module_Double_Entry_Accounting";
+
+llxHeader('', $title, $help_url);
 
 if ($action == 'create') {
 	print load_fiche_titre($langs->trans("NewFiscalYear"));
@@ -298,10 +300,10 @@ if ($action == 'create') {
 
 			print dol_get_fiche_end();
 
+			/*
+			 * Action bar
+			 */
 			if (!empty($user->rights->accounting->fiscalyear->write)) {
-				/*
-				 * Barre d'actions
-				 */
 				print '<div class="tabsAction">';
 
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$id.'">'.$langs->trans('Modify').'</a>';

@@ -20,7 +20,7 @@
  *      \brief      Module to manage margins
  *      \file       htdocs/core/modules/modMargin.class.php
  *      \ingroup    margin
- *      \brief      Description and activation file for module Margin
+ *      \brief      Description and activation file for the module Margin
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 

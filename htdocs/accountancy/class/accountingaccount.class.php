@@ -347,10 +347,10 @@ class AccountingAccount extends CommonObject
 		$sql .= " , label = ".($this->label ? "'".$this->db->escape($this->label)."'" : "''");
 		$sql .= " , labelshort = ".($this->labelshort ? "'".$this->db->escape($this->labelshort)."'" : "''");
 		$sql .= " , fk_accounting_category = ".(empty($this->account_category) ? 0 : (int) $this->account_category);
-		$sql .= " , fk_user_modif = ".$user->id;
+		$sql .= " , fk_user_modif = ".((int) $user->id);
 		$sql .= " , active = ".(int) $this->active;
 		$sql .= " , reconcilable = ".(int) $this->reconcilable;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -414,7 +414,7 @@ class AccountingAccount extends CommonObject
 
 			if (!$error) {
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."accounting_account";
-				$sql .= " WHERE rowid=".$this->id;
+				$sql .= " WHERE rowid=".((int) $this->id);
 
 				dol_syslog(get_class($this)."::delete sql=".$sql);
 				$resql = $this->db->query($sql);
@@ -553,7 +553,7 @@ class AccountingAccount extends CommonObject
 	{
 		$sql = 'SELECT a.rowid, a.datec, a.fk_user_author, a.fk_user_modif, a.tms';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'accounting_account as a';
-		$sql .= ' WHERE a.rowid = '.$id;
+		$sql .= ' WHERE a.rowid = '.((int) $id);
 
 		dol_syslog(get_class($this).'::info sql='.$sql);
 		$result = $this->db->query($sql);

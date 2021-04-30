@@ -22,8 +22,8 @@
  *	\defgroup   barcode         Module barcode
  *	\brief      Module pour gerer les codes barres
  *	\file       htdocs/core/modules/modBarcode.class.php
- *	\ingroup    barcode,produit
- *	\brief      Fichier de description et activation du module Barcode
+ *	\ingroup    barcode, product
+ *	\brief      Description and activation file for the module barcode
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
@@ -79,13 +79,13 @@ class modBarcode extends DolibarrModules
 		$this->rights = array();
 		$this->rights_class = 'barcode';
 
-		$this->rights[1][0] = 300; // id de la permission
+		$this->rights[1][0] = 301; // id de la permission
 		$this->rights[1][1] = 'Read barcodes'; // libelle de la permission
 		$this->rights[1][2] = 'r'; // type de la permission (deprecie a ce jour)
 		$this->rights[1][3] = 1; // La permission est-elle une permission par defaut
 		$this->rights[1][4] = 'lire_advance';
 
-		$this->rights[2][0] = 301; // id de la permission
+		$this->rights[2][0] = 302; // id de la permission
 		$this->rights[2][1] = 'Create/modify barcodes'; // libelle de la permission
 		$this->rights[2][2] = 'w'; // type de la permission (deprecie a ce jour)
 		$this->rights[2][3] = 0; // La permission est-elle une permission par defaut

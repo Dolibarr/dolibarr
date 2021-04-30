@@ -27,11 +27,18 @@ require_once DOL_DOCUMENT_ROOT.'/hrm/class/establishment.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'hrm'));
 
-if (!$user->admin) {
-	accessforbidden();
-}
-
 $error = 0;
+
+$permissiontoread = $user->admin;
+$permissiontoadd = $user->admin;
+
+// Security check - Protection if external user
+//if ($user->socid > 0) accessforbidden();
+//if ($user->socid > 0) $socid = $user->socid;
+//$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
+//restrictedArea($user, $object->element, $object->id, '', '', 'fk_soc', 'rowid', 0);
+if (empty($conf->hrm->enabled)) accessforbidden();
+if (empty($permissiontoread)) accessforbidden();
 
 
 /*
@@ -48,7 +55,9 @@ $error = 0;
 $form = new Form($db);
 $establishmenttmp = new Establishment($db);
 
-llxHeader('', $langs->trans("Establishments"));
+$title = $langs->trans('Establishments');
+
+llxHeader('', $title, '');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortorder     = GETPOST("sortorder", 'alpha');
@@ -73,11 +82,13 @@ $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("HRMSetup"), $linkback);
 
+$newcardbutton = dolGetButtonTitle($langs->trans('NewEstablishment'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/hrm/establishment/card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
+
 // Configuration header
 $head = hrm_admin_prepare_head();
-print dol_get_fiche_head($head, 'establishments', $langs->trans("HRM"), -1, "user");
+print dol_get_fiche_head($head, 'establishments', $langs->trans("HRM"), -1, "user", 0, $newcardbutton);
 
-$sql = "SELECT e.rowid, e.label, e.address, e.zip, e.town, e.status";
+$sql = "SELECT e.rowid, e.rowid as ref, e.label, e.address, e.zip, e.town, e.status";
 $sql .= " FROM ".MAIN_DB_PREFIX."establishment as e";
 $sql .= " WHERE e.entity IN (".getEntity('establishment').')';
 $sql .= $db->order($sortfield, $sortorder);
@@ -134,11 +145,6 @@ if ($result) {
 }
 
 print dol_get_fiche_end();
-
-// Buttons
-print '<div class="tabsAction">';
-print '<a class="butAction" href="'.DOL_URL_ROOT.'/hrm/establishment/card.php?action=create">'.$langs->trans("NewEstablishment").'</a>';
-print '</div>';
 
 // End of page
 llxFooter();

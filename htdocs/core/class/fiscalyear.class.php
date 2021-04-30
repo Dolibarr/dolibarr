@@ -196,8 +196,8 @@ class Fiscalyear extends CommonObject
 		$sql .= ", date_start = '".$this->db->idate($this->date_start)."'";
 		$sql .= ", date_end = ".($this->date_end ? "'".$this->db->idate($this->date_end)."'" : "null");
 		$sql .= ", statut = '".$this->db->escape($this->statut ? $this->statut : 0)."'";
-		$sql .= ", fk_user_modif = ".$user->id;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= ", fk_user_modif = ".((int) $user->id);
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -222,7 +222,7 @@ class Fiscalyear extends CommonObject
 	{
 		$sql = "SELECT rowid, label, date_start, date_end, statut";
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_fiscalyear";
-		$sql .= " WHERE rowid = ".$id;
+		$sql .= " WHERE rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -253,7 +253,7 @@ class Fiscalyear extends CommonObject
 	{
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."accounting_fiscalyear WHERE rowid = ".$id;
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."accounting_fiscalyear WHERE rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -417,7 +417,7 @@ class Fiscalyear extends CommonObject
 		$sql = 'SELECT fy.rowid, fy.datec, fy.fk_user_author, fy.fk_user_modif,';
 		$sql .= ' fy.tms';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'accounting_fiscalyear as fy';
-		$sql .= ' WHERE fy.rowid = '.$id;
+		$sql .= ' WHERE fy.rowid = '.((int) $id);
 
 		dol_syslog(get_class($this)."::fetch info", LOG_DEBUG);
 		$result = $this->db->query($sql);

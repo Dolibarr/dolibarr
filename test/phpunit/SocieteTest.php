@@ -339,7 +339,7 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
 
-		$result=$localobject->set_price_level(1, $user);
+		$result=$localobject->setPriceLevel(1, $user);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
 

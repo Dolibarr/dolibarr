@@ -72,23 +72,27 @@ class DolibarrApi
 		//$this->r->setSupportedFormats('jsonFormat');
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 * Executed method when API is called without parameter
+	 * Check and convert a string depending on its type/name.
 	 *
 	 * Display a short message an return a http code 200
 	 *
-	 * @return array
+	 * @param	string		$field		Field name
+	 * @param	string		$value		Value to check/clean
+	 * @param	stdClass	$object		Object
+	 * @return 	string					Value cleaned
 	 */
-	/* Disabled, most APIs does not share same signature for method index
-	function index()
+	protected function _checkValForAPI($field, $value, $object)
 	{
-		return array(
-			'success' => array(
-				'code' => 200,
-				'message' => __class__.' is up and running!'
-			)
-		);
-	}*/
+		// phpcs:enable
+		// TODO Use type detected in $object->fields
+		if (in_array($field, array('note', 'note_private', 'note_public', 'desc', 'description'))) {
+			return checkVal($value, 'restricthtml');
+		} else {
+			return checkVal($value, 'alphanohtml');
+		}
+	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
@@ -237,8 +241,6 @@ class DolibarrApi
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 * Check user access to a resource
-	 *
 	 * Check access by user to a given resource
 	 *
 	 * @param string	$resource		element to check

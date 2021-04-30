@@ -79,6 +79,12 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->bom->multidir_output[$object->entity ? $object->entity : 1]."/bom/".get_exdir(0, 0, 0, 1, $object);
 }
 
+// Security check - Protection if external user
+//if ($user->socid > 0) accessforbidden();
+//if ($user->socid > 0) $socid = $user->socid;
+$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
+restrictedArea($user, 'bom', $object->id, 'bom_bom', '', '', 'rowid', $isdraft);
+
 
 /*
  * Actions
@@ -94,8 +100,9 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 $form = new Form($db);
 
 $title = $langs->trans("BillOfMaterials").' - '.$langs->trans("Files");
-$help_url = '';
-//$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+
+$help_url = 'EN:Module_BOM';
+
 llxHeader('', $title, $help_url);
 
 if ($object->id) {
@@ -145,7 +152,7 @@ if ($object->id) {
 	//$relativepathwithnofile='bom/' . dol_sanitizeFileName($object->id).'/';
 	$relativepathwithnofile = 'bom/'.dol_sanitizeFileName($object->ref).'/';
 
-	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {
 	accessforbidden('', 0, 1);
 }

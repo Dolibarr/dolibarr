@@ -366,7 +366,7 @@ if ($action == 'create') {
 			 * Confirm delete trip
 			 */
 			if ($action == 'delete') {
-				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id, $langs->trans("DeleteTrip"), $langs->trans("ConfirmDeleteTrip"), "confirm_delete");
+				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".urlencode($id), $langs->trans("DeleteTrip"), $langs->trans("ConfirmDeleteTrip"), "confirm_delete");
 			}
 
 			$soc = new Societe($db);
@@ -463,9 +463,8 @@ if ($action == 'create') {
 			print '</div>';
 
 			/*
-			 * Barre d'actions
+			 * Action bar
 			 */
-
 			print '<div class="tabsAction">';
 
 			if ($object->statut < Deplacement::STATUS_REFUNDED) { 	// if not refunded

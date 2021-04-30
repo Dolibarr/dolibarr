@@ -205,7 +205,7 @@ a.badge-dark:focus, a.badge-dark:hover {
 
 /* STATUS BADGES */
 <?php
-for ($i = 0; $i <= 9; $i++) {
+for ($i = 0; $i <= 10; $i++) {
 	/* Default Status */
 	_createStatusBadgeCss($i, '', "STATUS".$i);
 
@@ -236,7 +236,7 @@ function _createStatusBadgeCss($statusName, $statusVarNamePrefix = '', $commentL
 
 		$thisBadgeBackgroundColor = $thisBadgeBorderColor = ${$statusVarNamePrefix.'badgeStatus'.$statusName};
 
-		$TBadgeBorderOnly = array('0', '1b', '3', '4b', '5', '7');
+		$TBadgeBorderOnly = array('0', '1b', '3', '4b', '5', '7', '10');
 		$thisBadgeTextColor = colorIsLight(${$statusVarNamePrefix.'badgeStatus'.$statusName}) ? '#212529' : '#ffffff';
 
 		if (!empty(${$statusVarNamePrefix.'badgeStatus_textColor'.$statusName})) {

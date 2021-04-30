@@ -46,7 +46,7 @@ $search_date_endyear =  GETPOST('search_date_endyear', 'int');
 $search_date_endmonth =  GETPOST('search_date_endmonth', 'int');
 $search_date_endday =  GETPOST('search_date_endday', 'int');
 $search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);
-$search_date_end = dol_mktime(0, 0, 0, $search_date_endmonth, $search_date_endday, $search_date_endyear);
+$search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
 $search_doc_date = dol_mktime(0, 0, 0, GETPOST('doc_datemonth', 'int'), GETPOST('doc_dateday', 'int'), GETPOST('doc_dateyear', 'int'));
 $search_date_export_startyear =  GETPOST('search_date_export_startyear', 'int');
 $search_date_export_startmonth =  GETPOST('search_date_export_startmonth', 'int');
@@ -161,6 +161,16 @@ if ($search_date_end && empty($search_date_endyear)) {
 	$search_date_endyear = $tmparray['year'];
 	$search_date_endmonth = $tmparray['mon'];
 	$search_date_endday = $tmparray['mday'];
+}
+
+if (empty($conf->accounting->enabled)) {
+	accessforbidden();
+}
+if ($user->socid > 0) {
+	accessforbidden();
+}
+if (empty($user->rights->accounting->mouvements->lire)) {
+	accessforbidden();
 }
 
 

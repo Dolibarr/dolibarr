@@ -44,13 +44,6 @@ $id = GETPOST('id', 'int'); // id of record
 $mode = GETPOST('mode', 'aZ09'); // '' or '_tmp'
 $piece_num = GETPOST("piece_num", 'int'); // id of transaction (several lines share the same transaction id)
 
-// Security check
-if ($user->socid > 0) {
-	accessforbidden();
-}
-
-$mesg = '';
-
 $accountingaccount = new AccountingAccount($db);
 $accountingjournal = new AccountingJournal($db);
 
@@ -82,6 +75,17 @@ if (!empty($update)) {
 }
 
 $object = new BookKeeping($db);
+
+// Security check
+if (empty($conf->accounting->enabled)) {
+	accessforbidden();
+}
+if ($user->socid > 0) {
+	accessforbidden();
+}
+if (empty($user->rights->accounting->mouvements->lire)) {
+	accessforbidden();
+}
 
 
 /*
@@ -539,11 +543,11 @@ if ($action == 'create') {
 		print '<td class="titlefield">' . $langs->trans("Status") . '</td>';
 		print '<td>';
 			if (empty($object->validated)) {
-				print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?piece_num=' . $line->id . '&action=enable">';
+				print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?piece_num=' . $line->id . '&action=enable&token='.newToken().'">';
 				print img_picto($langs->trans("Disabled"), 'switch_off');
 				print '</a>';
 			} else {
-				print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?piece_num=' . $line->id . '&action=disable">';
+				print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?piece_num=' . $line->id . '&action=disable&token='.newToken().'">';
 				print img_picto($langs->trans("Activated"), 'switch_on');
 				print '</a>';
 			}
@@ -559,7 +563,7 @@ if ($action == 'create') {
 		{
 		 $sqlmid = 'SELECT rowid as ref';
 			$sqlmid .= " FROM ".MAIN_DB_PREFIX."facture as fac";
-			$sqlmid .= " WHERE fac.rowid=" . $object->fk_doc;
+			$sqlmid .= " WHERE fac.rowid=" . ((int) $object->fk_doc);
 			dol_syslog("accountancy/bookkeeping/card.php::sqlmid=" . $sqlmid, LOG_DEBUG);
 			$resultmid = $db->query($sqlmid);
 			if ($resultmid) {

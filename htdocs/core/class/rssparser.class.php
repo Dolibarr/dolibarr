@@ -181,7 +181,7 @@ class RssParser
 	 * 	@param	string	$urlRSS		Url to parse
 	 * 	@param	int		$maxNb		Max nb of records to get (0 for no limit)
 	 * 	@param	int		$cachedelay	0=No cache, nb of seconds we accept cache files (cachedir must also be defined)
-	 * 	@param	string	$cachedir	Directory where to save cache file
+	 * 	@param	string	$cachedir	Directory where to save cache file (For example $conf->externalrss->dir_temp)
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
 	public function parser($urlRSS, $maxNb = 0, $cachedelay = 60, $cachedir = '')
@@ -189,6 +189,7 @@ class RssParser
 		global $conf;
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
 		$rss = '';
 		$str = ''; // This will contain content of feed
@@ -225,21 +226,10 @@ class RssParser
 			$str = file_get_contents($newpathofdestfile);
 		} else {
 			try {
-				ini_set("user_agent", "Dolibarr ERP-CRM RSS reader");
-				ini_set("max_execution_time", $conf->global->MAIN_USE_RESPONSE_TIMEOUT);
-				ini_set("default_socket_timeout", $conf->global->MAIN_USE_RESPONSE_TIMEOUT);
-
-				$opts = array('http'=>array('method'=>"GET"));
-				if (!empty($conf->global->MAIN_USE_CONNECT_TIMEOUT)) {
-					$opts['http']['timeout'] = $conf->global->MAIN_USE_CONNECT_TIMEOUT;
+				$result = getURLContent($this->_urlRSS, 'GET', '', 1, array(), array('http', 'https'), 0);
+				if (!empty($result['content'])) {
+					$str = $result['content'];
 				}
-				if (!empty($conf->global->MAIN_PROXY_USE)) {
-					$opts['http']['proxy'] = 'tcp://'.$conf->global->MAIN_PROXY_HOST.':'.$conf->global->MAIN_PROXY_PORT;
-				}
-				//var_dump($opts);exit;
-				$context = stream_context_create($opts);
-
-				$str = file_get_contents($this->_urlRSS, false, $context);
 			} catch (Exception $e) {
 				print 'Error retrieving URL '.$this->_urlRSS.' - '.$e->getMessage();
 			}

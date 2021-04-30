@@ -64,6 +64,18 @@ if ($id > 0 || $ref) {
 
 $selectedvariant = $_SESSION['addvariant_'.$object->id];
 
+$permissiontoread = $user->rights->produit->lire || $user->rights->service->lire;
+
+// Security check
+if (empty($conf->variants->enabled)) {
+	accessforbidden('Module not enabled');
+}
+if ($user->socid > 0) { // Protection if external user
+	accessforbidden();
+}
+//$result = restrictedArea($user, 'variant');
+if (!$permissiontoread) accessforbidden();
+
 
 /*
  * Actions
@@ -715,7 +727,7 @@ if (!empty($id) || !empty($ref)) {
 				$prodstatic->fetch($prodcomb->fk_product_child);
 
 				print $form->formconfirm(
-					"combinations.php?id=".$id."&valueid=".$valueid,
+					"combinations.php?id=".urlencode($id)."&valueid=".urlencode($valueid),
 					$langs->trans('Delete'),
 					$langs->trans('ProductCombinationDeleteDialog', $prodstatic->ref),
 					"confirm_deletecombination",

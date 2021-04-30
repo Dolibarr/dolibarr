@@ -86,7 +86,7 @@ if ($action == 'update') {
 		if (!$db->query($sql)) {
 			//If we could not create, then we try updating
 			$sql = "UPDATE ".MAIN_DB_PREFIX."product_pricerules";
-			$sql .= " SET fk_level = ".$db->escape($i_fk_level).", var_percent = ".$i_var_percent.", var_min_percent = ".$i_var_min_percent." WHERE level = ".$i;
+			$sql .= " SET fk_level = ".$db->escape($i_fk_level).", var_percent = ".$i_var_percent.", var_min_percent = ".$i_var_min_percent." WHERE level = ".((int) $i);
 
 			if (!$db->query($sql)) {
 				setEventMessages($langs->trans('ErrorSavingChanges'), null, 'errors');

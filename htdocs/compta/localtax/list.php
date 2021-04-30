@@ -54,7 +54,7 @@ print load_fiche_titre($langs->transcountry($ltt == 2 ? "LT2Payments" : "LT1Paym
 
 $sql = "SELECT rowid, amount, label, f.datev, f.datep";
 $sql .= " FROM ".MAIN_DB_PREFIX."localtax as f ";
-$sql .= " WHERE f.entity = ".$conf->entity." AND localtaxtype = ".$db->escape($ltt);
+$sql .= " WHERE f.entity = ".$conf->entity." AND localtaxtype = ".((int) $ltt);
 $sql .= " ORDER BY datev DESC";
 
 $result = $db->query($sql);
@@ -91,7 +91,7 @@ if ($result) {
 		$i++;
 	}
 	print '<tr class="liste_total"><td colspan="4">'.$langs->trans("Total").'</td>';
-	print '<td class="right">'.price($total).'</td></tr>';
+	print '<td class="right"><span class="amount">'.price($total).'</span></td></tr>';
 
 	print "</table>";
 	$db->free($result);

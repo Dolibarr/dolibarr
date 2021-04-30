@@ -83,7 +83,7 @@ class PaiementFourn extends Paiement
 	 *	Load payment object
 	 *
 	 *	@param	int		$id         Id if payment to get
-	 *  @param	string	$ref		Ref of payment to get (currently ref = id but this may change in future)
+	 *  @param	string	$ref		Ref of payment to get
 	 *  @param	int		$fk_bank	Id of bank line associated to payment
 	 *  @return int		            <0 if KO, -2 if not found, >0 if OK
 	 */
@@ -99,11 +99,11 @@ class PaiementFourn extends Paiement
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
 		$sql .= ' WHERE p.entity IN ('.getEntity('facture_fourn').')';
 		if ($id > 0) {
-			$sql .= ' AND p.rowid = '.$id;
+			$sql .= ' AND p.rowid = '.((int) $id);
 		} elseif ($ref) {
-			$sql .= ' AND p.rowid = '.$ref;
-		} elseif ($fk_bank) {
-			$sql .= ' AND p.fk_bank = '.$fk_bank;
+			$sql .= " AND p.ref = '".$this->db->escape($ref)."'";
+		} elseif ($fk_bank > 0) {
+			$sql .= ' AND p.fk_bank = '.((int) $fk_bank);
 		}
 		//print $sql;
 
@@ -230,7 +230,66 @@ class PaiementFourn extends Paiement
 								$alreadypayed = price2num($paiement + $creditnotes + $deposits, 'MT');
 								$remaintopay = price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits, 'MT');
 								if ($remaintopay == 0) {
-									$result = $invoice->setPaid($user, '', '');
+									// If invoice is a down payment, we also convert down payment to discount
+									if ($invoice->type == FactureFournisseur::TYPE_DEPOSIT) {
+										$amount_ht = $amount_tva = $amount_ttc = array();
+										$multicurrency_amount_ht = $multicurrency_amount_tva = $multicurrency_amount_ttc = array();
+
+										// Insert one discount by VAT rate category
+										require_once DOL_DOCUMENT_ROOT . '/core/class/discount.class.php';
+										$discount = new DiscountAbsolute($this->db);
+										$discount->fetch('', $invoice->id);
+										if (empty($discount->id)) {    // If the invoice was not yet converted into a discount (this may have been done manually before we come here)
+											$discount->discount_type = 1; // Supplier discount
+											$discount->description = '(DEPOSIT)';
+											$discount->fk_soc = $invoice->socid;
+											$discount->fk_invoice_supplier_source = $invoice->id;
+
+											// Loop on each vat rate
+											$i = 0;
+											foreach ($invoice->lines as $line) {
+												if ($line->total_ht != 0) {    // no need to create discount if amount is null
+													$amount_ht[$line->tva_tx] += $line->total_ht;
+													$amount_tva[$line->tva_tx] += $line->total_tva;
+													$amount_ttc[$line->tva_tx] += $line->total_ttc;
+													$multicurrency_amount_ht[$line->tva_tx] += $line->multicurrency_total_ht;
+													$multicurrency_amount_tva[$line->tva_tx] += $line->multicurrency_total_tva;
+													$multicurrency_amount_ttc[$line->tva_tx] += $line->multicurrency_total_ttc;
+													$i++;
+												}
+											}
+
+											foreach ($amount_ht as $tva_tx => $xxx) {
+												$discount->amount_ht = abs($amount_ht[$tva_tx]);
+												$discount->amount_tva = abs($amount_tva[$tva_tx]);
+												$discount->amount_ttc = abs($amount_ttc[$tva_tx]);
+												$discount->multicurrency_amount_ht = abs($multicurrency_amount_ht[$tva_tx]);
+												$discount->multicurrency_amount_tva = abs($multicurrency_amount_tva[$tva_tx]);
+												$discount->multicurrency_amount_ttc = abs($multicurrency_amount_ttc[$tva_tx]);
+												$discount->tva_tx = abs($tva_tx);
+
+												$result = $discount->create($user);
+												if ($result < 0) {
+													$error++;
+													break;
+												}
+											}
+										}
+
+										if ($error) {
+											setEventMessages($discount->error, $discount->errors, 'errors');
+											$error++;
+										}
+									}
+
+									// Set invoice to paid
+									if (!$error) {
+										$result = $invoice->setPaid($user, '', '');
+										if ($result < 0) {
+											$this->error = $invoice->error;
+											$error++;
+										}
+									}
 								} else {
 									dol_syslog("Remain to pay for invoice ".$facid." not null. We do nothing.");
 								}
@@ -394,7 +453,7 @@ class PaiementFourn extends Paiement
 	{
 		$sql = 'SELECT c.rowid, datec, fk_user_author as fk_user_creat, tms';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn as c';
-		$sql .= ' WHERE c.rowid = '.$id;
+		$sql .= ' WHERE c.rowid = '.((int) $id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -529,9 +588,10 @@ class PaiementFourn extends Paiement
 	 *	@param		string	$option			Sur quoi pointe le lien
 	 *  @param		string  $mode           'withlistofinvoices'=Include list of invoices into tooltip
 	 *  @param		int  	$notooltip		1=Disable tooltip
+	 *  @param		string	$morecss		Add more CSS
 	 *	@return		string					Chaine avec URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $mode = 'withlistofinvoices', $notooltip = 0)
+	public function getNomUrl($withpicto = 0, $option = '', $mode = 'withlistofinvoices', $notooltip = 0, $morecss = '')
 	{
 		global $langs;
 
@@ -547,13 +607,26 @@ class PaiementFourn extends Paiement
 			$text = $langs->trans($reg[1]);
 		}
 
-		$label = '<u>'.$langs->trans("Payment").'</u><br>';
+		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Payment").'</u><br>';
 		$label .= '<strong>'.$langs->trans("Ref").':</strong> '.$text;
 		if ($this->datepaye ? $this->datepaye : $this->date) {
-			$label .= '<br><strong>'.$langs->trans("Date").':</strong> '.dol_print_date($this->datepaye ? $this->datepaye : $this->date, 'dayhour');
+			$label .= '<br><strong>'.$langs->trans("Date").':</strong> '.dol_print_date($this->datepaye ? $this->datepaye : $this->date, 'dayhour', 'tzuser');
 		}
 
-		$linkstart = '<a href="'.DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkclose = '';
+		if (empty($notooltip)) {
+			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+				$label = $langs->trans("Payment");
+				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+			}
+			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+		} else {
+			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		}
+
+		$linkstart = '<a href="'.DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$this->id.'"';
+		$linkstart .= $linkclose.'>';
 		$linkend = '</a>';
 
 		$result .= $linkstart;

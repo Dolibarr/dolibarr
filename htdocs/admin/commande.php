@@ -9,6 +9,7 @@
  * Copyright (C) 2011-2013 Juanjo Menent			    <jmenent@2byte.es>
  * Copyright (C) 2011-2016 Philippe Grand			    <philippe.grand@atoo-net.com>
  * Copyright (C) 2013 	   Florian Henry			    <florian.henry@open-concept.pro>
+ * Copyright (C) 2021		Frédéric France				<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -642,7 +643,7 @@ print '</form>';
 
 // Shippable Icon in List
 /* Kept as hidden feature for the moment, result seems bugged.
-Whet is definition of "shippable" according to all different STOCK_CALCULATE_... options ?
+Where is definition of "shippable" according to all different STOCK_CALCULATE_... options ?
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ShippableOrderIconInList").'</td>';
@@ -657,65 +658,46 @@ if (!empty($conf->global->SHIPPABLE_ORDER_ICON_IN_LIST)) {
 }
 print '</a></td>';
 print '</tr>';
+*/
 
 /*
 // Seems to be not so used. So kept hidden for the moment to avoid dangerous options inflation.
 // Ask for payment bank during order
-if ($conf->banque->enabled)
-{
+if ($conf->banque->enabled) {
 
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_ORDER").'</td><td>&nbsp;</td><td class="center">';
-	if (! empty($conf->use_javascript_ajax))
-	{
+	if (! empty($conf->use_javascript_ajax)) {
 		print ajax_constantonoff('BANK_ASK_PAYMENT_BANK_DURING_ORDER');
-	}
-	else
-	{
-		if (empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_ORDER))
-		{
+	} else {
+		if (empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_ORDER)) {
 			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_ORDER&amp;token='.newToken().'&amp;value=1">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
-		}
-		else
-		{
+		} else {
 			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_ORDER&amp;token='.newToken().'&amp;value=0">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
 		}
 	}
 	print '</td></tr>';
-}
-else
-{
+} else {
 
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_ORDER").'</td><td>&nbsp;</td><td class="center">'.$langs->trans('NotAvailable').'</td></tr>';
 }
 
 // Ask for warehouse during order
-if ($conf->stock->enabled)
-{
-
+if ($conf->stock->enabled) {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER").'</td><td>&nbsp;</td><td class="center">';
-	if (! empty($conf->use_javascript_ajax))
-	{
+	if (! empty($conf->use_javascript_ajax)) {
 		print ajax_constantonoff('WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER');
-	}
-	else
-	{
-		if (empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER))
-		{
+	} else {
+		if (empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
 			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER&amp;token='.newToken().'&amp;value=1">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
-		}
-		else
-		{
+		} else {
 			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER&amp;token='.newToken().'&amp;value=0">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
 		}
 	}
 	print '</td></tr>';
-}
-else
-{
-
+} else {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER").'</td><td>&nbsp;</td><td class="center">'.$langs->trans('NotAvailable').'</td></tr>';
 }

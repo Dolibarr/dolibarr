@@ -20,7 +20,7 @@
  *      \brief      Module to manage points of sale
  *      \file       htdocs/core/modules/modCashDesk.class.php
  *      \ingroup    pos
- *      \brief      File to enable/disable module Point Of Sales
+ *      \brief      Description and activation file for the module Point Of Sales
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -98,6 +98,8 @@ class modCashDesk extends DolibarrModules
 									'type'=>'top', // This is a Top menu entry
 									'titre'=>'PointOfSaleShort',
 									'mainmenu'=>'cashdesk',
+									'leftmenu'=>'',
+									'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
 									'url'=>'/cashdesk/index.php?user=__USER_LOGIN__',
 									'langs'=>'cashdesk', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 									'position'=>900,

@@ -24,7 +24,7 @@
  * 	\brief      Module pour gerer la tenue d'un compte bancaire et rapprochements
  *	\file       htdocs/core/modules/modBanque.class.php
  *	\ingroup    banque
- *	\brief      Fichier de description et activation du module Banque
+ *	\brief      Description and activation file for the module bank
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
@@ -162,7 +162,7 @@ class modBanque extends DolibarrModules
 			"s.nom"=>"company", "s.code_compta"=>"company", "s.code_compta_fournisseur"=>"company"
 		);
 		$this->export_special_array[$r] = array('-b.amount'=>'NULLIFNEG', 'b.amount'=>'NULLIFNEG');
-		if (empty($conf->fournisseur->enabled) && !empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || empty($conf->supplier_order->enabled) || empty($conf->supplier_invoice->enabled)) {
+		if ((empty($conf->fournisseur->enabled) && !empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || empty($conf->supplier_order->enabled) || empty($conf->supplier_invoice->enabled)) {
 			unset($this->export_fields_array[$r]['s.code_compta_fournisseur']);
 			unset($this->export_entities_array[$r]['s.code_compta_fournisseur']);
 		}

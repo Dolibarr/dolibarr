@@ -21,7 +21,7 @@
  *	\brief      Module pour gerer les deplacements et notes de frais
  *	\file       htdocs/core/modules/modDeplacement.class.php
  *	\ingroup    deplacement
- *	\brief      Fichier de description et activation du module Deplacement et notes de frais
+ *	\brief      Description and activation file for the module trips (deprecated)
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -143,7 +143,7 @@ class modDeplacement extends DolibarrModules
 			$childids[] = $user->id;
 
 			if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) {
-				$this->export_sql_end[$r] .= ' AND d.fk_user IN ('.join(',', $childids).')';
+				$this->export_sql_end[$r] .= ' AND d.fk_user IN ('.$this->db->sanitize(join(',', $childids)).')';
 			}
 		}
 	}

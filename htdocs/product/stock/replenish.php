@@ -5,6 +5,8 @@
  * Copyright (C) 2016		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2016		ATM Consulting		<support@atm-consulting.fr>
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2021		Ferran Marcet		<fmarcet@2byte.es>
+ * Copyright (C) 2021		Antonin MARCHAL		<antonin@letempledujeu.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,6 +65,25 @@ $draftorder = GETPOST('draftorder', 'alpha');
 $fourn_id = GETPOST('fourn_id', 'int');
 $fk_supplier = GETPOST('fk_supplier', 'int');
 $fk_entrepot = GETPOST('fk_entrepot', 'int');
+
+//List all visible warehouses
+$resWar = $db->query("SELECT rowid FROM " . MAIN_DB_PREFIX . "entrepot WHERE entity IN (" . $db->sanitize(getEntity('stock')) .")");
+$listofqualifiedwarehousesid = "";
+$count = 0;
+while ($tmpobj = $db->fetch_object($resWar)) {
+	if (!empty($listofqualifiedwarehousesid)) {
+		$listofqualifiedwarehousesid .= ",";
+	}
+	$listofqualifiedwarehousesid .= $tmpobj->rowid;
+	$lastWarehouseID = $tmpobj->rowid;
+	$count++;
+};
+
+//MultiCompany : If only 1 Warehouse is visible, filter will automatically be set to it.
+if ($count == 1 && (empty($fk_entrepot) || $fk_entrepot <= 0) && !empty($conf->global->MULTICOMPANY_PRODUCT_SHARING_ENABLED)) {
+	$fk_entrepot = $lastWarehouseID;
+};
+
 $texte = '';
 
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -205,7 +226,7 @@ if ($action == 'order' && GETPOST('valid')) {
 			$order = new CommandeFournisseur($db);
 			// Check if an order for the supplier exists
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande_fournisseur";
-			$sql .= " WHERE fk_soc = ".$suppliersid[$i];
+			$sql .= " WHERE fk_soc = ".((int) $suppliersid[$i]);
 			$sql .= " AND source = 42 AND fk_statut = 0";
 			$sql .= " AND entity IN (".getEntity('commande_fournisseur').")";
 			$sql .= " ORDER BY date_creation DESC";
@@ -323,8 +344,8 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // N
 $sql .= $hookmanager->resPrint;
 
 $sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
-$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as s ON p.rowid = s.fk_product';
-$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'entrepot AS ent ON s.fk_entrepot = ent.rowid AND ent.entity IN('.getEntity('stock').')';
+$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as s ON p.rowid = s.fk_product AND s.fk_entrepot IN ('.$db->sanitize($listofqualifiedwarehousesid).')';
+//$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'entrepot AS ent ON s.fk_entrepot = ent.rowid AND ent.entity IN('.getEntity('stock').')';
 if ($fk_supplier > 0) {
 	$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'product_fournisseur_price pfp ON (pfp.fk_product = p.rowid AND pfp.fk_soc = '.$fk_supplier.')';
 }
@@ -396,7 +417,7 @@ if ($usevirtualstock) {
 		$sqlExpeditionsCli = '0';
 	}
 
-	if (!empty($conf->fournisseur->enabled)) {
+	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled)) {
 		$sqlCommandesFourn = "(SELECT ".$db->ifsql("SUM(cd3.qty) IS NULL", "0", "SUM(cd3.qty)")." as qty"; // We need the ifsql because if result is 0 for product p.rowid, we must return 0 and not NULL
 		$sqlCommandesFourn .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd3,";
 		$sqlCommandesFourn .= " ".MAIN_DB_PREFIX."commande_fournisseur as c3";
@@ -750,13 +771,13 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 	if (!empty($conf->global->STOCK_SUPPORTS_SERVICES) || $objp->fk_product_type == 0) {
 		$prod->fetch($objp->rowid);
-		$prod->load_stock('warehouseopen, warehouseinternal', $draftchecked);
+		$prod->load_stock('warehouseopen, warehouseinternal'.(!$usevirtualstock?', novirtual':''), $draftchecked);
 
 		// Multilangs
 		if (!empty($conf->global->MAIN_MULTILANGS)) {
 			$sql = 'SELECT label,description';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'product_lang';
-			$sql .= ' WHERE fk_product = '.$objp->rowid;
+			$sql .= ' WHERE fk_product = '.((int) $objp->rowid);
 			$sql .= ' AND lang = "'.$langs->getDefaultLang().'"';
 			$sql .= ' LIMIT 1';
 
@@ -785,11 +806,13 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		// Force call prod->load_stats_xxx to choose status to count (otherwise it is loaded by load_stock function)
 		if (isset($draftchecked)) {
 			$result = $prod->load_stats_commande_fournisseur(0, '0,1,2,3,4');
-		} else {
+		} elseif (!$usevirtualstock) {
 			$result = $prod->load_stats_commande_fournisseur(0, '1,2,3,4');
 		}
 
-		$result = $prod->load_stats_reception(0, '4');
+		if (!$usevirtualstock) {
+			$result = $prod->load_stats_reception(0, '4');
+		}
 
 		//print $prod->stats_commande_fournisseur['qty'].'<br>'."\n";
 		//print $prod->stats_reception['qty'];

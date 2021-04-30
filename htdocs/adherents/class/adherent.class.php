@@ -13,6 +13,7 @@
  * Copyright (C) 2018-2019	Thibault FOUCART		<support@ptibogxiv.net>
  * Copyright (C) 2019		Nicolas ZABOURI 		<info@inovea-conseil.com>
  * Copyright (C) 2020		Josep Lluís Amador 		<joseplluis@lliuretic.cat>
+ * Copyright (C) 2021		Waël Almoman            <info@almoman.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +44,6 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
  */
 class Adherent extends CommonObject
 {
-
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -204,11 +204,10 @@ class Adherent extends CommonObject
 	 */
 	public $morphy;
 
+	/**
+	 * @var int Info can be public
+	 */
 	public $public;
-
-	// -1:brouillon, 0:resilie, >=1:valide,paye
-	// def in common object
-	//public $status;
 
 	/**
 	 * @var string photo of member
@@ -326,10 +325,27 @@ class Adherent extends CommonObject
 		'fk_user_valid' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserValidation', 'enabled' => 1, 'visible' => -1, 'position' => 190),
 		'canvas' => array('type' => 'varchar(32)', 'label' => 'Canvas', 'enabled' => 1, 'visible' => -1, 'position' => 195),
 		'statut' => array('type' => 'smallint(6)', 'label' => 'Statut', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 500,
-		'arrayofkeyval' => array(0 => 'Draft', 1 => 'Validated', -1 => 'MemberStatusResiliatedShort')),
+		'arrayofkeyval' => array(-1 => 'Draft', 1 => 'Validated', 0 => 'MemberStatusResiliatedShort', -2 => 'MemberStatusExcludedShort')),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'visible' => 0, 'position' => 800),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'position' => 805)
 	);
+
+	/**
+	 * Draft status
+	 */
+	const STATUS_DRAFT = -1;
+	/**
+	 * Validated status
+	 */
+	const STATUS_VALIDATED = 1;
+	/**
+	 * Resiliated
+	 */
+	const STATUS_RESILIATED = 0;
+	/**
+	 * Excluded
+	 */
+	const STATUS_EXCLUDED = -2;
 
 
 	/**
@@ -340,7 +356,8 @@ class Adherent extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
-		$this->statut = -1;
+		$this->statut = self::STATUS_DRAFT;
+		$this->status = $this->statut;
 		// l'adherent n'est pas public par defaut
 		$this->public = 0;
 		// les champs optionnels sont vides
@@ -691,7 +708,7 @@ class Adherent extends CommonObject
 			$sql .= ", datevalid = '".$this->db->idate($this->datevalid)."'"; // Must be modified only when validating a member
 		}
 		$sql .= ", fk_user_mod = ".($user->id > 0 ? $user->id : 'null'); // Can be null because member can be create by a guest
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		// If we change the type of membership, we set also label of new type
 		if (!empty($this->oldcopy) && $this->typeid != $this->oldcopy->typeid) {
@@ -963,7 +980,7 @@ class Adherent extends CommonObject
 		}
 
 		// Remove category
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_member WHERE fk_member = ".$rowid;
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_member WHERE fk_member = ".((int) $rowid);
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
@@ -974,7 +991,7 @@ class Adherent extends CommonObject
 
 		// Remove subscription
 		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."subscription WHERE fk_adherent = ".$rowid;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."subscription WHERE fk_adherent = ".((int) $rowid);
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -1006,7 +1023,7 @@ class Adherent extends CommonObject
 
 		// Remove adherent
 		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent WHERE rowid = ".$rowid;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent WHERE rowid = ".((int) $rowid);
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -1141,7 +1158,7 @@ class Adherent extends CommonObject
 		$this->db->begin();
 
 		// If user is linked to this member, remove old link to this member
-		$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = NULL WHERE fk_member = ".$this->id;
+		$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = NULL WHERE fk_member = ".((int) $this->id);
 		dol_syslog(get_class($this)."::setUserId", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
@@ -1152,8 +1169,8 @@ class Adherent extends CommonObject
 
 		// Set link to user
 		if ($userid > 0) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = ".$this->id;
-			$sql .= " WHERE rowid = ".$userid;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = ".((int) $this->id);
+			$sql .= " WHERE rowid = ".((int) $userid);
 			dol_syslog(get_class($this)."::setUserId", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -1489,9 +1506,10 @@ class Adherent extends CommonObject
 	 *	@param	string		$emetteur_nom		Name of cheque writer
 	 *	@param	string		$emetteur_banque	Name of bank of cheque
 	 *	@param	int     	$datesubend			Date end subscription
+	 *	@param	int     	$fk_type 			Member type id
 	 *	@return int         					rowid of record added, <0 if KO
 	 */
-	public function subscription($date, $amount, $accountid = 0, $operation = '', $label = '', $num_chq = '', $emetteur_nom = '', $emetteur_banque = '', $datesubend = 0)
+	public function subscription($date, $amount, $accountid = 0, $operation = '', $label = '', $num_chq = '', $emetteur_nom = '', $emetteur_banque = '', $datesubend = 0, $fk_type = null)
 	{
 		global $conf, $langs, $user;
 
@@ -1522,6 +1540,7 @@ class Adherent extends CommonObject
 		$subscription->amount = $amount;
 		$subscription->note = $label; // deprecated
 		$subscription->note_public = $label;
+		$subscription->fk_type = $fk_type;
 
 		$rowid = $subscription->create($user);
 		if ($rowid > 0) {
@@ -1567,9 +1586,11 @@ class Adherent extends CommonObject
 	 *	@param	string		$emetteur_nom			Name of cheque writer
 	 *	@param	string		$emetteur_banque		Name of bank of cheque
 	 *  @param	string		$autocreatethirdparty	Auto create new thirdparty if member not yet linked to a thirdparty and we request an option that generate invoice.
+	 *  @param  string      $ext_payment_id         External id of payment (for example Stripe charge id)
+	 *  @param  string      $ext_payment_site       Name of external paymentmode (for example 'stripe')
 	 *	@return int									<0 if KO, >0 if OK
 	 */
-	public function subscriptionComplementaryActions($subscriptionid, $option, $accountid, $datesubscription, $paymentdate, $operation, $label, $amount, $num_chq, $emetteur_nom = '', $emetteur_banque = '', $autocreatethirdparty = 0)
+	public function subscriptionComplementaryActions($subscriptionid, $option, $accountid, $datesubscription, $paymentdate, $operation, $label, $amount, $num_chq, $emetteur_nom = '', $emetteur_banque = '', $autocreatethirdparty = 0, $ext_payment_id = '', $ext_payment_site = '')
 	{
 		global $conf, $langs, $user, $mysoc;
 
@@ -1594,8 +1615,8 @@ class Adherent extends CommonObject
 				$inserturlid = $acct->add_url_line($insertid, $this->id, DOL_URL_ROOT.'/adherents/card.php?rowid=', $this->getFullname($langs), 'member');
 				if ($inserturlid > 0) {
 					// Update table subscription
-					$sql = "UPDATE ".MAIN_DB_PREFIX."subscription SET fk_bank=".$insertid;
-					$sql .= " WHERE rowid=".$subscriptionid;
+					$sql = "UPDATE ".MAIN_DB_PREFIX."subscription SET fk_bank=".((int) $insertid);
+					$sql .= " WHERE rowid=".((int) $subscriptionid);
 
 					dol_syslog("subscription::subscription", LOG_DEBUG);
 					$resql = $this->db->query($sql);
@@ -1749,6 +1770,8 @@ class Adherent extends CommonObject
 				$paiement->paiementid = dol_getIdFromCode($this->db, $operation, 'c_paiement', 'code', 'id', 1);
 				$paiement->num_payment = $num_chq;
 				$paiement->note_public = $label;
+				$paiement->ext_payment_id = $ext_payment_id;
+				$paiement->ext_payment_site = $ext_payment_site;
 
 				if (!$error) {
 					// Create payment line for invoice
@@ -1831,7 +1854,7 @@ class Adherent extends CommonObject
 		$now = dol_now();
 
 		// Check parameters
-		if ($this->statut == 1) {
+		if ($this->statut == self::STATUS_VALIDATED) {
 			dol_syslog(get_class($this)."::validate statut of member does not allow this", LOG_WARNING);
 			return 0;
 		}
@@ -1839,7 +1862,7 @@ class Adherent extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
-		$sql .= " statut = 1";
+		$sql .= " statut = ".self::STATUS_VALIDATED;
 		$sql .= ", datevalid = '".$this->db->idate($now)."'";
 		$sql .= ", fk_user_valid=".$user->id;
 		$sql .= " WHERE rowid = ".$this->id;
@@ -1847,7 +1870,7 @@ class Adherent extends CommonObject
 		dol_syslog(get_class($this)."::validate", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
-			$this->statut = 1;
+			$this->statut = self::STATUS_VALIDATED;
 
 			// Call trigger
 			$result = $this->call_trigger('MEMBER_VALIDATE', $user);
@@ -1883,7 +1906,7 @@ class Adherent extends CommonObject
 		$error = 0;
 
 		// Check parameters
-		if ($this->statut == 0) {
+		if ($this->statut == self::STATUS_RESILIATED) {
 			dol_syslog(get_class($this)."::resiliate statut of member does not allow this", LOG_WARNING);
 			return 0;
 		}
@@ -1891,13 +1914,13 @@ class Adherent extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
-		$sql .= " statut = 0";
+		$sql .= " statut = ".self::STATUS_RESILIATED;
 		$sql .= ", fk_user_valid=".$user->id;
 		$sql .= " WHERE rowid = ".$this->id;
 
 		$result = $this->db->query($sql);
 		if ($result) {
-			$this->statut = 0;
+			$this->statut = self::STATUS_RESILIATED;
 
 			// Call trigger
 			$result = $this->call_trigger('MEMBER_RESILIATE', $user);
@@ -1917,6 +1940,55 @@ class Adherent extends CommonObject
 		}
 	}
 
+	/**
+	 *		Functiun to exlude (set adherent.status to -2) a member
+	 *		TODO
+	 *		A private note should be added to know why the member has been excluded
+	 *		For historical purpose it add an "extra-subscription" type excluded
+	 *
+	 *		@param	User	$user		User making change
+	 *		@return	int					<0 if KO, >0 if OK
+	 */
+	public function exclude($user)
+	{
+		global $langs, $conf;
+
+		$error = 0;
+
+		// Check parameters
+		if ($this->statut == self::STATUS_EXCLUDED) {
+			dol_syslog(get_class($this)."::resiliate statut of member does not allow this", LOG_WARNING);
+			return 0;
+		}
+
+		$this->db->begin();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
+		$sql .= " statut = ".self::STATUS_EXCLUDED;
+		$sql .= ", fk_user_valid=".$user->id;
+		$sql .= " WHERE rowid = ".$this->id;
+
+		$result = $this->db->query($sql);
+		if ($result) {
+			$this->statut = self::STATUS_EXCLUDED;
+
+			// Call trigger
+			$result = $this->call_trigger('MEMBER_EXCLUDE', $user);
+			if ($result < 0) {
+				$error++;
+				$this->db->rollback();
+				return -1;
+			}
+			// End call triggers
+
+			$this->db->commit();
+			return 1;
+		} else {
+			$this->error = $this->db->error();
+			$this->db->rollback();
+			return -1;
+		}
+	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -2085,9 +2157,9 @@ class Adherent extends CommonObject
 		}
 		$label .= '</div>';
 
-		$url = DOL_URL_ROOT.'/adherents/card.php?rowid='.$this->id;
+		$url = DOL_URL_ROOT.'/adherents/card.php?rowid='.((int) $this->id);
 		if ($option == 'subscription') {
-			$url = DOL_URL_ROOT.'/adherents/subscription.php?rowid='.$this->id;
+			$url = DOL_URL_ROOT.'/adherents/subscription.php?rowid='.((int) $this->id);
 		}
 
 		if ($option != 'nolink') {
@@ -2173,7 +2245,7 @@ class Adherent extends CommonObject
 	}
 
 	/**
-	 *  Retourne le libelle du statut d'un adherent (brouillon, valide, resilie)
+	 *  Retourne le libelle du statut d'un adherent (brouillon, valide, resilie, exclu)
 	 *
 	 *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string				Label
@@ -2203,11 +2275,11 @@ class Adherent extends CommonObject
 		$labelStatus = '';
 		$labelStatusShort = '';
 
-		if ($status == -1) {
+		if ($status == self::STATUS_DRAFT) {
 			$statusType = 'status0';
 			$labelStatus = $langs->trans("MemberStatusDraft");
 			$labelStatusShort = $langs->trans("MemberStatusDraftShort");
-		} elseif ($status >= 1) {
+		} elseif ($status >= self::STATUS_VALIDATED) {
 			if ($need_subscription == 0) {
 				$statusType = 'status4';
 				$labelStatus = $langs->trans("MemberStatusNoSubscription");
@@ -2216,7 +2288,7 @@ class Adherent extends CommonObject
 				$statusType = 'status1';
 				$labelStatus = $langs->trans("MemberStatusActive");
 				$labelStatusShort = $langs->trans("MemberStatusActiveShort");
-			} elseif ($date_end_subscription < time()) {
+			} elseif ($date_end_subscription < dol_now()) {
 				$statusType = 'status3';
 				$labelStatus = $langs->trans("MemberStatusActiveLate");
 				$labelStatusShort = $langs->trans("MemberStatusActiveLateShort");
@@ -2225,10 +2297,14 @@ class Adherent extends CommonObject
 				$labelStatus = $langs->trans("MemberStatusPaid");
 				$labelStatusShort = $langs->trans("MemberStatusPaidShort");
 			}
-		} elseif ($status == 0) {
+		} elseif ($status == self::STATUS_RESILIATED) {
 			$statusType = 'status6';
 			$labelStatus = $langs->trans("MemberStatusResiliated");
 			$labelStatusShort = $langs->trans("MemberStatusResiliatedShort");
+		} elseif ($status == self::STATUS_EXCLUDED) {
+			$statusType = 'status10';
+			$labelStatus = $langs->trans("MemberStatusExcluded");
+			$labelStatusShort = $langs->trans("MemberStatusExcludedShort");
 		}
 
 		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode);
@@ -2291,11 +2367,11 @@ class Adherent extends CommonObject
 		$sql .= ", ".MAIN_DB_PREFIX."adherent_type as t";
 		$sql .= " WHERE a.fk_adherent_type = t.rowid";
 		if ($mode == 'expired') {
-			$sql .= " AND a.statut = 1";
+			$sql .= " AND a.statut = ".self::STATUS_VALIDATED;
 			$sql .= " AND a.entity IN (".getEntity('adherent').")";
 			$sql .= " AND ((a.datefin IS NULL or a.datefin < '".$this->db->idate($now)."') AND t.subscription = '1')";
 		} elseif ($mode == 'shift') {
-			$sql .= " AND a.statut = -1";
+			$sql .= " AND a.statut = ".self::STATUS_DRAFT;
 			$sql .= " AND a.entity IN (".getEntity('adherent').")";
 		}
 
@@ -2312,10 +2388,10 @@ class Adherent extends CommonObject
 				$warning_delay = $conf->adherent->subscription->warning_delay / 60 / 60 / 24;
 				$label = $langs->trans("MembersWithSubscriptionToReceive");
 				$labelShort = $langs->trans("MembersWithSubscriptionToReceiveShort");
-				$url = DOL_URL_ROOT.'/adherents/list.php?mainmenu=members&amp;statut=1&amp;filter=outofdate';
+				$url = DOL_URL_ROOT.'/adherents/list.php?mainmenu=members&amp;statut='.self::STATUS_VALIDATED.'&amp;filter=outofdate';
 			} elseif ($mode == 'shift') {
 				$warning_delay = $conf->adherent->subscription->warning_delay / 60 / 60 / 24;
-				$url = DOL_URL_ROOT.'/adherents/list.php?mainmenu=members&amp;statut=-1';
+				$url = DOL_URL_ROOT.'/adherents/list.php?mainmenu=members&amp;statut='.self::STATUS_DRAFT;
 				$label = $langs->trans("MembersListToValid");
 				$labelShort = $langs->trans("ToValidate");
 			}
@@ -2428,7 +2504,7 @@ class Adherent extends CommonObject
 		$this->birth = $now;
 		$this->photo = '';
 		$this->public = 1;
-		$this->statut = 0;
+		$this->statut = self::STATUS_DRAFT;
 
 		$this->datefin = $now;
 		$this->datevalid = $now;
@@ -2644,7 +2720,7 @@ class Adherent extends CommonObject
 		$sql .= ' a.tms as datem,';
 		$sql .= ' a.fk_user_author, a.fk_user_valid, a.fk_user_mod';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'adherent as a';
-		$sql .= ' WHERE a.rowid = '.$id;
+		$sql .= ' WHERE a.rowid = '.((int) $id);
 
 		dol_syslog(get_class($this)."::info", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -2747,7 +2823,7 @@ class Adherent extends CommonObject
 		global $conf;
 
 		//Only valid members
-		if ($this->statut <= 0) {
+		if ($this->statut != self::STATUS_VALIDATED) {
 			return false;
 		}
 		if (!$this->datefin) {

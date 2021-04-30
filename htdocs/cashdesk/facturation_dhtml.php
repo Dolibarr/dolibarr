@@ -47,6 +47,15 @@ if (!defined('NOREQUIREAJAX')) {
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php';
 
+if (empty($user->rights->cashdesk->run)) {
+	accessforbidden();
+}
+
+
+/*
+ * View
+ */
+
 top_httphead('text/html');
 
 $search = GETPOST("code", "alpha");

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2021  Florian HENRY <florian.henry@scopen.fr>
+ * Copyright (C) 2021		Frédéric France			<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +18,7 @@
  */
 
 /**
- * \file        htdocs/code/class/defaultvalues.class.php
+ * \file        htdocs/core/class/defaultvalues.class.php
  * \brief       This file is a CRUD class file for DefaultValues (Create/Read/Update/Delete)
  */
 
@@ -76,7 +77,7 @@ class DefaultValues extends CommonObject
 	 *  'help' is a 'TranslationString' to use to show a tooltip on field. You can also use 'TranslationString:keyfortooltiponlick' for a tooltip on click.
 	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
 	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
-	 *  'arraykeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
+	 *  'arrayofkeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
 	 *  'autofocusoncreate' to have field having the focus on a create form. Only 1 field should have this property set to 1.
 	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
 	 *
@@ -264,14 +265,14 @@ class DefaultValues extends CommonObject
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid' || ($key == 't.entity' && !is_array($value)) || ($key == 't.user_id' && !is_array($value))) {
 					$sqlwhere[] = $key.'='.$value;
-				} elseif (in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
+				} elseif (isset($this->fields[$key]) && in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
 					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
 				} elseif ($key == 't.page' || $key == 't.param' || $key == 't.type') {
 					$sqlwhere[] = $key.' = \''.$this->db->escape($value).'\'';
 				} elseif ($key == 'customsql') {
 					$sqlwhere[] = $value;
 				} elseif (is_array($value)) {
-					$sqlwhere[] = $key.' IN ('.implode(',', $value).')';
+					$sqlwhere[] = $key.' IN ('.$this->db->sanitize(implode(',', $value)).')';
 				} else {
 					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
 				}

@@ -30,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancycategory.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("errors", "admin", "companies", "resource", "holiday", "accountancy", "hrm"));
@@ -47,12 +48,11 @@ if (empty($user->rights->accounting->chartofaccount)) {
 
 $acts[0] = "activate";
 $acts[1] = "disable";
-$actl[0] = img_picto($langs->trans("Disabled"), 'switch_off');
-$actl[1] = img_picto($langs->trans("Activated"), 'switch_on');
+$actl[0] = img_picto($langs->trans("Disabled"), 'switch_off', 'class="size15x"');
+$actl[1] = img_picto($langs->trans("Activated"), 'switch_on', 'class="size15x"');
 
 $listoffset = GETPOST('listoffset', 'alpha');
 $listlimit = GETPOST('listlimit', 'int') > 0 ?GETPOST('listlimit', 'int') : 1000;
-$active = 1;
 
 $sortfield = GETPOST("sortfield", 'aZ09comma');
 $sortorder = GETPOST("sortorder", 'aZ09comma');
@@ -124,11 +124,7 @@ $tabfieldcheck[32] = array();
 // Complete all arrays with entries found into modules
 complete_dictionary_with_modules($taborder, $tabname, $tablib, $tabsql, $tabsqlsort, $tabfield, $tabfieldvalue, $tabfieldinsert, $tabrowid, $tabcond, $tabhelp, $tabfieldcheck);
 
-
-// Define elementList and sourceList (used for dictionary type of contacts "llx_c_type_contact")
-$elementList = array();
-$sourceList = array();
-
+$accountingcategory = new AccountancyCategory($db);
 
 
 /*
@@ -149,7 +145,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 	// Check that all fields are filled
 	$ok = 1;
 	foreach ($listfield as $f => $value) {
-		if ($value == 'formula' && empty($_POST['formula'])) {
+		if ($value == 'formula' && !GETPOST('formula')) {
 			continue;
 		}
 		if ($value == 'range_account' && empty($_POST['range_account'])) {
@@ -185,7 +181,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		}
 	}
 	if (GETPOSTISSET("code")) {
-		if ($_POST["code"] == '0') {
+		if (GETPOST("code") == '0') {
 			$ok = 0;
 			setEventMessages($langs->transnoentities('ErrorCodeCantContainZero'), null, 'errors');
 		}
@@ -247,7 +243,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 			if ($_POST[$listfieldvalue[$i]] == '' && !$listfieldvalue[$i] == 'formula') {
 				$sql .= "null"; // For vat, we want/accept code = ''
 			} else {
-				$sql .= "'".$db->escape($_POST[$listfieldvalue[$i]])."'";
+				$sql .= "'".$db->escape(GETPOST($listfieldvalue[$i]))."'";
 			}
 			$i++;
 		}
@@ -428,7 +424,7 @@ llxHeader('', $langs->trans('DictionaryAccountancyCategory'));
 
 $titre = $langs->trans($tablib[$id]);
 $linkback = '';
-$titlepicto = 'title_accountancy';
+$titlepicto = 'setup';
 
 print load_fiche_titre($titre, $linkback, $titlepicto);
 
@@ -438,426 +434,431 @@ print '<span class="opacitymedium">'.$langs->trans("AccountingAccountGroupsDesc"
 if ($action == 'delete') {
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$rowid.'&code='.$code.'&id='.$id.($search_country_id > 0 ? '&search_country_id='.$search_country_id : ''), $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete', '', 0, 1);
 }
-//var_dump($elementList);
 
-/*
- * Show a dictionary
- */
-if ($id) {
-	// Complete requete recherche valeurs avec critere de tri
-	$sql = $tabsql[$id];
+// Complete requete recherche valeurs avec critere de tri
+$sql = $tabsql[$id];
 
-	if ($search_country_id > 0) {
-		if (preg_match('/ WHERE /', $sql)) {
-			$sql .= " AND ";
-		} else {
-			$sql .= " WHERE ";
-		}
-		$sql .= " (a.fk_country = ".$search_country_id." OR a.fk_country = 0)";
+if ($search_country_id > 0) {
+	if (preg_match('/ WHERE /', $sql)) {
+		$sql .= " AND ";
+	} else {
+		$sql .= " WHERE ";
 	}
+	$sql .= " (a.fk_country = ".$search_country_id." OR a.fk_country = 0)";
+}
 
-	// If sort order is "country", we use country_code instead
-	if ($sortfield == 'country') {
-		$sortfield = 'country_code';
-	}
-	$sql .= $db->order($sortfield, $sortorder);
-	$sql .= $db->plimit($listlimit + 1, $offset);
-	//print $sql;
+// If sort order is "country", we use country_code instead
+if ($sortfield == 'country') {
+	$sortfield = 'country_code';
+}
+$sql .= $db->order($sortfield, $sortorder);
+$sql .= $db->plimit($listlimit + 1, $offset);
+//print $sql;
 
+$fieldlist = explode(',', $tabfield[$id]);
+
+print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from', 'alpha')).'">';
+
+print '<div class="div-table-responsive">';
+print '<table class="noborder centpercent">';
+
+// Form to add a new line
+if ($tabname[$id]) {
 	$fieldlist = explode(',', $tabfield[$id]);
 
-	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from', 'alpha')).'">';
+	// Line for title
+	print '<tr class="liste_titre">';
+	foreach ($fieldlist as $field => $value) {
+		// Determine le nom du champ par rapport aux noms possibles
+		// dans les dictionnaires de donnees
+		$valuetoshow = ucfirst($fieldlist[$field]); // Par defaut
+		$valuetoshow = $langs->trans($valuetoshow); // try to translate
+		$class = "left";
+		if ($fieldlist[$field] == 'type') {
+			if ($tabname[$id] == MAIN_DB_PREFIX."c_paiement") {
+				$valuetoshow = $form->textwithtooltip($langs->trans("Type"), $langs->trans("TypePaymentDesc"), 2, 1, img_help(1, ''));
+			} else {
+				$valuetoshow = $langs->trans("Type");
+			}
+		}
+		if ($fieldlist[$field] == 'code') {
+			$valuetoshow = $langs->trans("Code");
+		}
+		if ($fieldlist[$field] == 'libelle' || $fieldlist[$field] == 'label') {
+			$valuetoshow = $langs->trans("Label");
+		}
+		if ($fieldlist[$field] == 'libelle_facture') {
+			$valuetoshow = $langs->trans("LabelOnDocuments");
+		}
+		if ($fieldlist[$field] == 'country') {
+			$valuetoshow = $langs->trans("Country");
+		}
+		if ($fieldlist[$field] == 'accountancy_code') {
+			$valuetoshow = $langs->trans("AccountancyCode");
+		}
+		if ($fieldlist[$field] == 'accountancy_code_sell') {
+			$valuetoshow = $langs->trans("AccountancyCodeSell");
+		}
+		if ($fieldlist[$field] == 'accountancy_code_buy') {
+			$valuetoshow = $langs->trans("AccountancyCodeBuy");
+		}
+		if ($fieldlist[$field] == 'pcg_version' || $fieldlist[$field] == 'fk_pcg_version') {
+			$valuetoshow = $langs->trans("Pcg_version");
+		}
+		if ($fieldlist[$field] == 'range_account') {
+			$valuetoshow = $langs->trans("Comment");
+		}
+		if ($fieldlist[$field] == 'category_type') {
+			$valuetoshow = $langs->trans("Calculated");
+		}
 
-	print '<div class="div-table-responsive">';
-	print '<table class="noborder centpercent">';
+		if ($valuetoshow != '') {
+			print '<td class="'.$class.'">';
+			if (!empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) {
+				print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
+			} elseif (!empty($tabhelp[$id][$value])) {
+				print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value]);
+			} else {
+				print $valuetoshow;
+			}
+			print '</td>';
+		}
+	}
 
-	// Form to add a new line
-	if ($tabname[$id]) {
-		$fieldlist = explode(',', $tabfield[$id]);
+	print '<td>';
+	print '<input type="hidden" name="id" value="'.$id.'">';
+	print '</td>';
+	print '<td style="min-width: 26px;"></td>';
+	print '<td style="min-width: 26px;"></td>';
+	print '<td style="min-width: 26px;"></td>';
+	print '</tr>';
 
-		// Line for title
-		print '<tr class="liste_titre">';
-		foreach ($fieldlist as $field => $value) {
-			// Determine le nom du champ par rapport aux noms possibles
-			// dans les dictionnaires de donnees
-			$valuetoshow = ucfirst($fieldlist[$field]); // Par defaut
-			$valuetoshow = $langs->trans($valuetoshow); // try to translate
-			$class = "left";
-			if ($fieldlist[$field] == 'type') {
-				if ($tabname[$id] == MAIN_DB_PREFIX."c_paiement") {
-					$valuetoshow = $form->textwithtooltip($langs->trans("Type"), $langs->trans("TypePaymentDesc"), 2, 1, img_help(1, ''));
-				} else {
-					$valuetoshow = $langs->trans("Type");
+	// Line to enter new values
+	print '<tr class="oddeven nodrag nodrop nohover">';
+
+	$obj = new stdClass();
+	// If data was already input, we define them in obj to populate input fields.
+	if (GETPOST('actionadd', 'alpha')) {
+		foreach ($fieldlist as $key => $val) {
+			if (GETPOST($val) != '') {
+				$obj->$val = GETPOST($val);
+			}
+		}
+	}
+
+	$tmpaction = 'create';
+	$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
+	$reshook = $hookmanager->executeHooks('createDictionaryFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
+	$error = $hookmanager->error; $errors = $hookmanager->errors;
+
+	if (empty($reshook)) {
+		fieldListAccountingCategories($fieldlist, $obj, $tabname[$id], 'add');
+	}
+
+	print '<td colspan="4" class="right">';
+	print '<input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'">';
+	print '</td>';
+	print "</tr>";
+
+	$colspan = count($fieldlist) + 3;
+	if ($id == 32) {
+		$colspan++;
+	}
+
+	print '<tr><td colspan="'.$colspan.'">&nbsp;</td></tr>'; // Keep &nbsp; to have a line with enough height
+}
+
+// List of available record in database
+dol_syslog("htdocs/accountancy/admin/categories_list.php", LOG_DEBUG);
+
+$resql = $db->query($sql);
+if ($resql) {
+	$num = $db->num_rows($resql);
+	$i = 0;
+
+	$param = '&id='.$id;
+	if ($search_country_id > 0) {
+		$param .= '&search_country_id='.$search_country_id;
+	}
+	$paramwithsearch = $param;
+	if ($sortorder) {
+		$paramwithsearch .= '&sortorder='.$sortorder;
+	}
+	if ($sortfield) {
+		$paramwithsearch .= '&sortfield='.$sortfield;
+	}
+	if (GETPOST('from', 'alpha')) {
+		$paramwithsearch .= '&from='.GETPOST('from', 'alpha');
+	}
+	// There is several pages
+	if ($num > $listlimit) {
+		print '<tr class="none"><td class="right" colspan="'.(3 + count($fieldlist)).'">';
+		print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num > $listlimit), '<li class="pagination"><span>'.$langs->trans("Page").' '.($page + 1).'</span></li>');
+		print '</td></tr>';
+	}
+
+	// Title line with search boxes
+	print '<tr class="liste_titre liste_titre_add liste_titre_filter">';
+	$filterfound = 0;
+	foreach ($fieldlist as $field => $value) {
+		$showfield = 1; // By defaut
+
+		if ($fieldlist[$field] == 'region_id' || $fieldlist[$field] == 'country_id') {
+			$showfield = 0;
+		}
+
+		if ($showfield) {
+			if ($value == 'country') {
+				print '<td class="liste_titre">';
+				print $form->select_country($search_country_id, 'search_country_id', '', 28, 'maxwidth200 maxwidthonsmartphone');
+				print '</td>';
+				$filterfound++;
+			} else {
+				print '<td class="liste_titre"></td>';
+			}
+		}
+	}
+	print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre center">';
+	if ($filterfound) {
+		$searchpicto = $form->showFilterAndCheckAddButtons(0);
+		print $searchpicto;
+	}
+	print '</td>';
+	print '</tr>';
+
+	// Title of lines
+	print '<tr class="liste_titre">';
+	foreach ($fieldlist as $field => $value) {
+		// Determine le nom du champ par rapport aux noms possibles
+		// dans les dictionnaires de donnees
+		$showfield = 1; // By defaut
+		$class = "left";
+		$sortable = 1;
+		$valuetoshow = '';
+
+		$valuetoshow = ucfirst($fieldlist[$field]); // By defaut
+		$valuetoshow = $langs->trans($valuetoshow); // try to translate
+		if ($fieldlist[$field] == 'source') {
+			$valuetoshow = $langs->trans("Contact");
+		}
+		if ($fieldlist[$field] == 'price') {
+			$valuetoshow = $langs->trans("PriceUHT");
+		}
+		if ($fieldlist[$field] == 'taux') {
+			if ($tabname[$id] != MAIN_DB_PREFIX."c_revenuestamp") {
+				$valuetoshow = $langs->trans("Rate");
+			} else {
+				$valuetoshow = $langs->trans("Amount");
+			}
+			$class = 'center';
+		}
+		if ($fieldlist[$field] == 'type') {
+			$valuetoshow = $langs->trans("Type");
+		}
+		if ($fieldlist[$field] == 'code') {
+			$valuetoshow = $langs->trans("Code");
+		}
+		if ($fieldlist[$field] == 'libelle' || $fieldlist[$field] == 'label') {
+			$valuetoshow = $langs->trans("Label");
+		}
+		if ($fieldlist[$field] == 'country') {
+			$valuetoshow = $langs->trans("Country");
+		}
+		if ($fieldlist[$field] == 'region_id' || $fieldlist[$field] == 'country_id') {
+			$showfield = 0;
+		}
+		if ($fieldlist[$field] == 'accountancy_code') {
+			$valuetoshow = $langs->trans("AccountancyCode");
+		}
+		if ($fieldlist[$field] == 'accountancy_code_sell') {
+			$valuetoshow = $langs->trans("AccountancyCodeSell");
+			$sortable = 0;
+		}
+		if ($fieldlist[$field] == 'accountancy_code_buy') {
+			$valuetoshow = $langs->trans("AccountancyCodeBuy");
+			$sortable = 0;
+		}
+		if ($fieldlist[$field] == 'fk_pcg_version') {
+			$valuetoshow = $langs->trans("Pcg_version");
+		}
+		if ($fieldlist[$field] == 'account_parent') {
+			$valuetoshow = $langs->trans("Accountsparent");
+		}
+		if ($fieldlist[$field] == 'pcg_type') {
+			$valuetoshow = $langs->trans("Pcg_type");
+		}
+		if ($fieldlist[$field] == 'type_template') {
+			$valuetoshow = $langs->trans("TypeOfTemplate");
+		}
+		if ($fieldlist[$field] == 'range_account') {
+			$valuetoshow = $langs->trans("Comment");
+		}
+		if ($fieldlist[$field] == 'category_type') {
+			$valuetoshow = $langs->trans("Calculated");
+		}
+		// Affiche nom du champ
+		if ($showfield) {
+			print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], ($sortable ? $fieldlist[$field] : ''), ($page ? 'page='.$page.'&' : ''), $param, "", $sortfield, $sortorder, $class.' ');
+		}
+	}
+	print getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], "active", ($page ? 'page='.$page.'&' : ''), $param, '', $sortfield, $sortorder, 'center ');
+	print getTitleFieldOfList('');
+	print getTitleFieldOfList('');
+	print getTitleFieldOfList('');
+	print '</tr>';
+
+	if ($num) {
+		// Lines with values
+		while ($i < $num) {
+			$obj = $db->fetch_object($resql);
+			//print_r($obj);
+			print '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';
+			if ($action == 'edit' && ($rowid == (!empty($obj->rowid) ? $obj->rowid : $obj->code))) {
+				$tmpaction = 'edit';
+				$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
+				$reshook = $hookmanager->executeHooks('editDictionaryFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
+				$error = $hookmanager->error; $errors = $hookmanager->errors;
+
+				// Show fields
+				if (empty($reshook)) {
+					fieldListAccountingCategories($fieldlist, $obj, $tabname[$id], 'edit');
 				}
-			}
-			if ($fieldlist[$field] == 'code') {
-				$valuetoshow = $langs->trans("Code");
-			}
-			if ($fieldlist[$field] == 'libelle' || $fieldlist[$field] == 'label') {
-				$valuetoshow = $langs->trans("Label");
-			}
-			if ($fieldlist[$field] == 'libelle_facture') {
-				$valuetoshow = $langs->trans("LabelOnDocuments");
-			}
-			if ($fieldlist[$field] == 'country') {
-				$valuetoshow = $langs->trans("Country");
-			}
-			if ($fieldlist[$field] == 'accountancy_code') {
-				$valuetoshow = $langs->trans("AccountancyCode");
-			}
-			if ($fieldlist[$field] == 'accountancy_code_sell') {
-				$valuetoshow = $langs->trans("AccountancyCodeSell");
-			}
-			if ($fieldlist[$field] == 'accountancy_code_buy') {
-				$valuetoshow = $langs->trans("AccountancyCodeBuy");
-			}
-			if ($fieldlist[$field] == 'pcg_version' || $fieldlist[$field] == 'fk_pcg_version') {
-				$valuetoshow = $langs->trans("Pcg_version");
-			}
-			if ($fieldlist[$field] == 'range_account') {
-				$valuetoshow = $langs->trans("Comment");
-			}
-			if ($fieldlist[$field] == 'category_type') {
-				$valuetoshow = $langs->trans("Calculated");
-			}
 
-			if ($valuetoshow != '') {
-				print '<td class="'.$class.'">';
-				if (!empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) {
-					print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
-				} elseif (!empty($tabhelp[$id][$value])) {
-					print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value]);
+				print '<td></td>';
+				print '<td></td>';
+				print '<td class="center">';
+				print '<input type="hidden" name="page" value="'.$page.'">';
+				print '<input type="hidden" name="rowid" value="'.$rowid.'">';
+				print '<input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
+				print '<div name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'"></div>';
+				print '<input type="submit" class="button button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
+				print '</td>';
+				print '<td></td>';
+			} else {
+				$tmpaction = 'view';
+				$parameters = array('var'=>$var, 'fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
+				$reshook = $hookmanager->executeHooks('viewDictionaryFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
+
+				$error = $hookmanager->error; $errors = $hookmanager->errors;
+
+				if (empty($reshook)) {
+					foreach ($fieldlist as $field => $value) {
+						$showfield = 1;
+						$class = "left";
+						$valuetoshow = $obj->{$fieldlist[$field]};
+						if ($value == 'category_type') {
+							$valuetoshow = yn($valuetoshow);
+						} elseif ($valuetoshow == 'all') {
+							$valuetoshow = $langs->trans('All');
+						} elseif ($fieldlist[$field] == 'country') {
+							if (empty($obj->country_code)) {
+								$valuetoshow = '-';
+							} else {
+								$key = $langs->trans("Country".strtoupper($obj->country_code));
+								$valuetoshow = ($key != "Country".strtoupper($obj->country_code) ? $obj->country_code." - ".$key : $obj->country);
+							}
+						} elseif ($fieldlist[$field] == 'label' && $tabname[$id] == MAIN_DB_PREFIX.'c_country') {
+							$key = $langs->trans("Country".strtoupper($obj->code));
+							$valuetoshow = ($obj->code && $key != "Country".strtoupper($obj->code) ? $key : $obj->{$fieldlist[$field]});
+						} elseif ($fieldlist[$field] == 'label' && $tabname[$id] == MAIN_DB_PREFIX.'c_availability') {
+							$langs->loadLangs(array("propal"));
+							$key = $langs->trans("AvailabilityType".strtoupper($obj->code));
+							$valuetoshow = ($obj->code && $key != "AvailabilityType".strtoupper($obj->code) ? $key : $obj->{$fieldlist[$field]});
+						} elseif ($fieldlist[$field] == 'libelle' && $tabname[$id] == MAIN_DB_PREFIX.'c_actioncomm') {
+							$key = $langs->trans("Action".strtoupper($obj->code));
+							$valuetoshow = ($obj->code && $key != "Action".strtoupper($obj->code) ? $key : $obj->{$fieldlist[$field]});
+						} elseif ($fieldlist[$field] == 'region_id' || $fieldlist[$field] == 'country_id') {
+							$showfield = 0;
+						}
+
+						$class = 'tddict';
+						// Show value for field
+						if ($showfield) {
+							print '<!-- '.$fieldlist[$field].' --><td class="'.$class.'">'.dol_escape_htmltag($valuetoshow).'</td>';
+						}
+					}
+				}
+
+				// Can an entry be erased or disabled ?
+				$iserasable = 1; $canbedisabled = 1; $canbemodified = 1; // true by default
+				if (isset($obj->code)) {
+					if (($obj->code == '0' || $obj->code == '' || preg_match('/unknown/i', $obj->code))) {
+						$iserasable = 0; $canbedisabled = 0;
+					}
+				}
+
+				$canbemodified = $iserasable;
+
+				$url = $_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(!empty($obj->rowid) ? $obj->rowid : (!empty($obj->code) ? $obj->code : '')).'&code='.(!empty($obj->code) ?urlencode($obj->code) : '');
+				if ($param) {
+					$url .= '&'.$param;
+				}
+				$url .= '&';
+
+				// Active
+				print '<td class="center" class="nowrap">';
+				if ($canbedisabled) {
+					print '<a href="'.$url.'action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
 				} else {
-					print $valuetoshow;
+					print $langs->trans("AlwaysActive");
+				}
+				print "</td>";
+
+				// Modify link
+				if ($canbemodified) {
+					print '<td class="center"><a class="reposition editfielda" href="'.$url.'action=edit">'.img_edit().'</a></td>';
+				} else {
+					print '<td>&nbsp;</td>';
+				}
+
+				// Delete link
+				if ($iserasable) {
+					print '<td class="center">';
+					if ($user->admin) {
+						print '<a href="'.$url.'action=delete">'.img_delete().'</a>';
+					}
+					//else print '<a href="#">'.img_delete().'</a>';    // Some dictionary can be edited by other profile than admin
+					print '</td>';
+				} else {
+					print '<td>&nbsp;</td>';
+				}
+
+				// Link to setup the group
+				print '<td class="center">';
+				if (empty($obj->formula)) {
+					print '<a href="'.DOL_URL_ROOT.'/accountancy/admin/categories.php?action=display&save_lastsearch_values=1&account_category='.$obj->rowid.'">';
+					print $langs->trans("ListOfAccounts");
+					print '</a>';
+
+					// Count number of accounts into group
+					$nbofaccountintogroup = 0;
+					$listofaccountintogroup = $accountingcategory->getCptsCat($obj->rowid);
+					$nbofaccountintogroup = count($listofaccountintogroup);
+					//if ($nbofaccountintogroup > 0) {
+					print ' <span class="opacitymedium">('.$langs->trans("NAccounts", $nbofaccountintogroup).')</span>';
+					//} else {
+					//	print ' <span class="opacitymedium">(0)</span>';
+					//}
 				}
 				print '</td>';
 			}
+			print "</tr>\n";
+			$i++;
 		}
-
-		print '<td>';
-		print '<input type="hidden" name="id" value="'.$id.'">';
-		print '</td>';
-		print '<td style="min-width: 26px;"></td>';
-		print '<td style="min-width: 26px;"></td>';
-		print '<td style="min-width: 26px;"></td>';
-		print '</tr>';
-
-		// Line to enter new values
-		print '<tr class="oddeven nodrag nodrop nohover">';
-
-		$obj = new stdClass();
-		// If data was already input, we define them in obj to populate input fields.
-		if (GETPOST('actionadd', 'alpha')) {
-			foreach ($fieldlist as $key => $val) {
-				if (GETPOST($val) != '') {
-					$obj->$val = GETPOST($val);
-				}
-			}
-		}
-
-		$tmpaction = 'create';
-		$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
-		$reshook = $hookmanager->executeHooks('createDictionaryFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
-		$error = $hookmanager->error; $errors = $hookmanager->errors;
-
-		if (empty($reshook)) {
-			fieldListAccountingCategories($fieldlist, $obj, $tabname[$id], 'add');
-		}
-
-		print '<td colspan="4" class="right">';
-		print '<input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'">';
-		print '</td>';
-		print "</tr>";
-
-		$colspan = count($fieldlist) + 3;
-		if ($id == 32) {
-			$colspan++;
-		}
-
-		print '<tr><td colspan="'.$colspan.'">&nbsp;</td></tr>'; // Keep &nbsp; to have a line with enough height
 	}
-
-	// List of available record in database
-	dol_syslog("htdocs/admin/dict", LOG_DEBUG);
-	$resql = $db->query($sql);
-	if ($resql) {
-		$num = $db->num_rows($resql);
-		$i = 0;
-
-		$param = '&id='.$id;
-		if ($search_country_id > 0) {
-			$param .= '&search_country_id='.$search_country_id;
-		}
-		$paramwithsearch = $param;
-		if ($sortorder) {
-			$paramwithsearch .= '&sortorder='.$sortorder;
-		}
-		if ($sortfield) {
-			$paramwithsearch .= '&sortfield='.$sortfield;
-		}
-		if (GETPOST('from', 'alpha')) {
-			$paramwithsearch .= '&from='.GETPOST('from', 'alpha');
-		}
-		// There is several pages
-		if ($num > $listlimit) {
-			print '<tr class="none"><td class="right" colspan="'.(3 + count($fieldlist)).'">';
-			print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num > $listlimit), '<li class="pagination"><span>'.$langs->trans("Page").' '.($page + 1).'</span></li>');
-			print '</td></tr>';
-		}
-
-		// Title line with search boxes
-		print '<tr class="liste_titre liste_titre_add liste_titre_filter">';
-		$filterfound = 0;
-		foreach ($fieldlist as $field => $value) {
-			$showfield = 1; // By defaut
-
-			if ($fieldlist[$field] == 'region_id' || $fieldlist[$field] == 'country_id') {
-				$showfield = 0;
-			}
-
-			if ($showfield) {
-				if ($value == 'country') {
-					print '<td class="liste_titre">';
-					print $form->select_country($search_country_id, 'search_country_id', '', 28, 'maxwidth200 maxwidthonsmartphone');
-					print '</td>';
-					$filterfound++;
-				} else {
-					print '<td class="liste_titre"></td>';
-				}
-			}
-		}
-		print '<td class="liste_titre"></td>';
-		print '<td class="liste_titre"></td>';
-		print '<td class="liste_titre"></td>';
-		print '<td class="liste_titre center">';
-		if ($filterfound) {
-			$searchpicto = $form->showFilterAndCheckAddButtons(0);
-			print $searchpicto;
-		}
-		print '</td>';
-		print '</tr>';
-
-		// Title of lines
-		print '<tr class="liste_titre">';
-		foreach ($fieldlist as $field => $value) {
-			// Determine le nom du champ par rapport aux noms possibles
-			// dans les dictionnaires de donnees
-			$showfield = 1; // By defaut
-			$class = "left";
-			$sortable = 1;
-			$valuetoshow = '';
-
-			$valuetoshow = ucfirst($fieldlist[$field]); // By defaut
-			$valuetoshow = $langs->trans($valuetoshow); // try to translate
-			if ($fieldlist[$field] == 'source') {
-				$valuetoshow = $langs->trans("Contact");
-			}
-			if ($fieldlist[$field] == 'price') {
-				$valuetoshow = $langs->trans("PriceUHT");
-			}
-			if ($fieldlist[$field] == 'taux') {
-				if ($tabname[$id] != MAIN_DB_PREFIX."c_revenuestamp") {
-					$valuetoshow = $langs->trans("Rate");
-				} else {
-					$valuetoshow = $langs->trans("Amount");
-				}
-				$class = 'center';
-			}
-			if ($fieldlist[$field] == 'type') {
-				$valuetoshow = $langs->trans("Type");
-			}
-			if ($fieldlist[$field] == 'code') {
-				$valuetoshow = $langs->trans("Code");
-			}
-			if ($fieldlist[$field] == 'libelle' || $fieldlist[$field] == 'label') {
-				$valuetoshow = $langs->trans("Label");
-			}
-			if ($fieldlist[$field] == 'country') {
-				$valuetoshow = $langs->trans("Country");
-			}
-			if ($fieldlist[$field] == 'region_id' || $fieldlist[$field] == 'country_id') {
-				$showfield = 0;
-			}
-			if ($fieldlist[$field] == 'accountancy_code') {
-				$valuetoshow = $langs->trans("AccountancyCode");
-			}
-			if ($fieldlist[$field] == 'accountancy_code_sell') {
-				$valuetoshow = $langs->trans("AccountancyCodeSell");
-				$sortable = 0;
-			}
-			if ($fieldlist[$field] == 'accountancy_code_buy') {
-				$valuetoshow = $langs->trans("AccountancyCodeBuy");
-				$sortable = 0;
-			}
-			if ($fieldlist[$field] == 'fk_pcg_version') {
-				$valuetoshow = $langs->trans("Pcg_version");
-			}
-			if ($fieldlist[$field] == 'account_parent') {
-				$valuetoshow = $langs->trans("Accountsparent");
-			}
-			if ($fieldlist[$field] == 'pcg_type') {
-				$valuetoshow = $langs->trans("Pcg_type");
-			}
-			if ($fieldlist[$field] == 'type_template') {
-				$valuetoshow = $langs->trans("TypeOfTemplate");
-			}
-			if ($fieldlist[$field] == 'range_account') {
-				$valuetoshow = $langs->trans("Comment");
-			}
-			if ($fieldlist[$field] == 'category_type') {
-				$valuetoshow = $langs->trans("Calculated");
-			}
-			// Affiche nom du champ
-			if ($showfield) {
-				print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], ($sortable ? $fieldlist[$field] : ''), ($page ? 'page='.$page.'&' : ''), $param, "", $sortfield, $sortorder, $class.' ');
-			}
-		}
-		print getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], "active", ($page ? 'page='.$page.'&' : ''), $param, '', $sortfield, $sortorder, 'center ');
-		print getTitleFieldOfList('');
-		print getTitleFieldOfList('');
-		print getTitleFieldOfList('');
-		print '</tr>';
-
-		if ($num) {
-			// Lines with values
-			while ($i < $num) {
-				$obj = $db->fetch_object($resql);
-				//print_r($obj);
-				print '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';
-				if ($action == 'edit' && ($rowid == (!empty($obj->rowid) ? $obj->rowid : $obj->code))) {
-					$tmpaction = 'edit';
-					$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
-					$reshook = $hookmanager->executeHooks('editDictionaryFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
-					$error = $hookmanager->error; $errors = $hookmanager->errors;
-
-					// Show fields
-					if (empty($reshook)) {
-						fieldListAccountingCategories($fieldlist, $obj, $tabname[$id], 'edit');
-					}
-
-					print '<td></td>';
-					print '<td></td>';
-					print '<td class="center">';
-					print '<input type="hidden" name="page" value="'.$page.'">';
-					print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-					print '<input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
-					print '<div name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'"></div>';
-					print '<input type="submit" class="button button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
-					print '</td>';
-					print '<td></td>';
-				} else {
-					$tmpaction = 'view';
-					$parameters = array('var'=>$var, 'fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
-					$reshook = $hookmanager->executeHooks('viewDictionaryFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
-
-					$error = $hookmanager->error; $errors = $hookmanager->errors;
-
-					if (empty($reshook)) {
-						foreach ($fieldlist as $field => $value) {
-							$showfield = 1;
-							$class = "left";
-							$valuetoshow = $obj->{$fieldlist[$field]};
-							if ($value == 'category_type') {
-								$valuetoshow = yn($valuetoshow);
-							} elseif ($valuetoshow == 'all') {
-								$valuetoshow = $langs->trans('All');
-							} elseif ($fieldlist[$field] == 'country') {
-								if (empty($obj->country_code)) {
-									$valuetoshow = '-';
-								} else {
-									$key = $langs->trans("Country".strtoupper($obj->country_code));
-									$valuetoshow = ($key != "Country".strtoupper($obj->country_code) ? $obj->country_code." - ".$key : $obj->country);
-								}
-							} elseif ($fieldlist[$field] == 'label' && $tabname[$id] == MAIN_DB_PREFIX.'c_country') {
-								$key = $langs->trans("Country".strtoupper($obj->code));
-								$valuetoshow = ($obj->code && $key != "Country".strtoupper($obj->code) ? $key : $obj->{$fieldlist[$field]});
-							} elseif ($fieldlist[$field] == 'label' && $tabname[$id] == MAIN_DB_PREFIX.'c_availability') {
-								$langs->loadLangs(array("propal"));
-								$key = $langs->trans("AvailabilityType".strtoupper($obj->code));
-								$valuetoshow = ($obj->code && $key != "AvailabilityType".strtoupper($obj->code) ? $key : $obj->{$fieldlist[$field]});
-							} elseif ($fieldlist[$field] == 'libelle' && $tabname[$id] == MAIN_DB_PREFIX.'c_actioncomm') {
-								$key = $langs->trans("Action".strtoupper($obj->code));
-								$valuetoshow = ($obj->code && $key != "Action".strtoupper($obj->code) ? $key : $obj->{$fieldlist[$field]});
-							} elseif ($fieldlist[$field] == 'region_id' || $fieldlist[$field] == 'country_id') {
-								$showfield = 0;
-							}
-
-							$class = 'tddict';
-							// Show value for field
-							if ($showfield) {
-								print '<!-- '.$fieldlist[$field].' --><td class="'.$class.'">'.$valuetoshow.'</td>';
-							}
-						}
-					}
-
-					// Can an entry be erased or disabled ?
-					$iserasable = 1; $canbedisabled = 1; $canbemodified = 1; // true by default
-					if (isset($obj->code)) {
-						if (($obj->code == '0' || $obj->code == '' || preg_match('/unknown/i', $obj->code))) {
-							$iserasable = 0; $canbedisabled = 0;
-						}
-					}
-
-					$canbemodified = $iserasable;
-
-					$url = $_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(!empty($obj->rowid) ? $obj->rowid : (!empty($obj->code) ? $obj->code : '')).'&code='.(!empty($obj->code) ?urlencode($obj->code) : '');
-					if ($param) {
-						$url .= '&'.$param;
-					}
-					$url .= '&';
-
-					// Active
-					print '<td class="center" class="nowrap">';
-					if ($canbedisabled) {
-						print '<a href="'.$url.'action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
-					} else {
-						print $langs->trans("AlwaysActive");
-					}
-					print "</td>";
-
-					// Modify link
-					if ($canbemodified) {
-						print '<td class="center"><a class="reposition editfielda" href="'.$url.'action=edit">'.img_edit().'</a></td>';
-					} else {
-						print '<td>&nbsp;</td>';
-					}
-
-					// Delete link
-					if ($iserasable) {
-						print '<td class="center">';
-						if ($user->admin) {
-							print '<a href="'.$url.'action=delete">'.img_delete().'</a>';
-						}
-						//else print '<a href="#">'.img_delete().'</a>';    // Some dictionary can be edited by other profile than admin
-						print '</td>';
-					} else {
-						print '<td>&nbsp;</td>';
-					}
-
-					// Link to setup the group
-					print '<td class="center">';
-					if (empty($obj->formula)) {
-						print '<a href="'.DOL_URL_ROOT.'/accountancy/admin/categories.php?action=display&save_lastsearch_values=1&account_category='.$obj->rowid.'">';
-						print $langs->trans("ListOfAccounts");
-						print '</a>';
-					}
-					print '</td>';
-				}
-				print "</tr>\n";
-				$i++;
-			}
-		}
-	} else {
-		dol_print_error($db);
-	}
-
-	print '</table>';
-	print '</div>';
-
-	print '</form>';
+} else {
+	dol_print_error($db);
 }
+
+print '</table>';
+print '</div>';
+
+print '</form>';
 
 print '<br>';
 
@@ -879,9 +880,6 @@ function fieldListAccountingCategories($fieldlist, $obj = '', $tabname = '', $co
 {
 	global $conf, $langs, $db;
 	global $form, $mysoc;
-	global $region_id;
-	global $elementList, $sourceList, $localtax_typeList;
-	global $bc;
 
 	$formadmin = new FormAdmin($db);
 	$formcompany = new FormCompany($db);
