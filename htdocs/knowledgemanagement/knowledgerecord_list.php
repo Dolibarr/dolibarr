@@ -250,7 +250,7 @@ $now = dol_now();
 
 //$help_url="EN:Module_KnowledgeRecord|FR:Module_KnowledgeRecord_FR|ES:Módulo_KnowledgeRecord";
 $help_url = '';
-$title = $langs->trans('ListOf', $langs->transnoentitiesnoconv("KnowledgeRecords"));
+$title = $langs->trans('ListOfArticles');
 $morejs = array();
 $morecss = array();
 
@@ -382,20 +382,6 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $
 
 llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'classforhorizontalscrolloftabs');
 
-// Example : Adding jquery code
-print '<script type="text/javascript" language="javascript">
-jQuery(document).ready(function() {
-	function init_myfunc()
-	{
-		jQuery("#myid").removeAttr(\'disabled\');
-		jQuery("#myid").attr(\'disabled\',\'disabled\');
-	}
-	init_myfunc();
-	jQuery("#mybutton").click(function() {
-		init_myfunc();
-	});
-});
-</script>';
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 

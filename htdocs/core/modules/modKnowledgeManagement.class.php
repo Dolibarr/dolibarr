@@ -65,7 +65,7 @@ class modKnowledgeManagement extends DolibarrModules
 		// Module description, used if translation string 'ModuleKnowledgeManagementDesc' not found (KnowledgeManagement is name of module).
 		$this->description = "Knowledge Management (KM)";
 		// Used only if file README.md and README-LL.md not found.
-		$this->descriptionlong = "Manage a Knowledge Management (KM) database";
+		$this->descriptionlong = "Manage a Knowledge Management (KM) or Help-Desk base";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
 		$this->version = 'development';
