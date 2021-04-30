@@ -115,9 +115,12 @@ if (!empty($conf->productbatch->enabled) &&
 || ($object->element == 'stock'))
 ) {
 	print '<tr>';
-	print '<td'.($object->element == 'stock' ? '' : ' class="fieldrequired"').'>'.$langs->trans("batch_number").'</td><td colspan="3">';
+	print '<td'.($object->element == 'stock' ? '' : ' class="fieldrequired"').'>'.$langs->trans("batch_number").'</td><td>';
 	print '<input type="text" name="batch_number" size="40" value="'.GETPOST("batch_number").'">';
 	print '</td>';
+	print '<td>'.$langs->trans("StatusChangeIfNeeded").'</td>';
+	$formproduct->load_cache_productbatch_qcstatus();
+	print '<td class="valuefield">'.$formproduct->selectProductbatchQcstatus($object->fk_qcstatus, 'fk_qcstatus').'</td></tr>';
 	print '</tr>';
 	print '<tr>';
 	if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {

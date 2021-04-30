@@ -90,20 +90,9 @@ print '<td class="fieldrequired">'.$langs->trans("WarehouseTarget").'</td><td>';
 print img_picto('', 'stock').$formproduct->selectWarehouses(GETPOST('id_entrepot_destination'), 'id_entrepot_destination', 'warehouseopen,warehouseinternal', 1);
 print '</td></tr>';
 print '<tr><td class="fieldrequired">'.$langs->trans("NumberOfUnit").'</td><td><input type="text" name="nbpiece" size="10" value="'.dol_escape_htmltag(GETPOST("nbpiece")).'"></td>';
-// print '</tr>';
-// print '<tr>';
 print '<td>'.$langs->trans("StatusChangeIfNeeded").'</td>';
-print '<td class="valuefield">';
-// if ($action != 'editfk_qcstatus') {
-	$formproduct->load_cache_productbatch_qcstatus();
-	// print $formproduct->cache_productbatch_qcstatus[$object->fk_qcstatus];
-/* } else {
-if (empty($fk_qcstatus)) {
-	$fk_qcstatus = $object->fk_qcstatus;
-} */
-print $formproduct->selectProductbatchQcstatus('-1','fk_qcstatus');
-// }
-print '</td></tr>';
+$formproduct->load_cache_productbatch_qcstatus();
+print '<td class="valuefield">'.$formproduct->selectProductbatchQcstatus('0','fk_qcstatus').'</td></tr>';
 
 // Serial / Eat-by date
 if (!empty($conf->productbatch->enabled) &&

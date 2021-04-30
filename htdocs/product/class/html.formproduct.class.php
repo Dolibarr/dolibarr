@@ -672,7 +672,7 @@ class FormProduct
 			}
 		}
 	}
-        // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Return select list of productbatch status
      *
@@ -705,26 +705,17 @@ class FormProduct
                 $out .= ajax_combobox($htmlname, $events);
             }
 
-            /* if (!empty($page)) {
-                $out .= '<form method="post" action="'.$page.'">';
-                $out .= '<input type="hidden" name="action" value="setfk_qcstatus">';
-                $out .= '<input type="hidden" name="token" value="'.newToken().'">';
-            } */
-
             $out .= '<select id="'.$htmlname.'" class="flat selectfkstatus minwidth100imp noenlargeonsmartphone" name="'.$htmlname.'" '.$htmloption.'>';
             $out .= '<option value="0">&nbsp;</option>';
             $num = $this->db->num_rows($resql);
             $i = 0;
             if ($num) {
-                // $foundselected = false;
-
                 while ($i < $num) {
                     $obj = $this->db->fetch_object($resql);
                     $statusArray[$i]['code'] = $obj->code;
                     $statusArray[$i]['label'] = $obj->label;
                     $i++;
                 }
-
                 foreach ($statusArray as $row) {
                     if ($selected && ($selected == $row['code'] || $selected == $row['label'])) {
                         $out .= '<option value="'.$row['code'].'" selected>';
@@ -744,10 +735,6 @@ class FormProduct
 			if ($user->admin) {
 				$out .= ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 			}
-
-            /* if (!empty($page)) {
-                $out .= '<input type="submit" class="button valignmiddle smallpaddingimp nomargintop nomarginbottom" value="'.$langs->trans("Modify").'"></form>';
-            } */
         } else {
             dol_print_error($this->db);
         }

@@ -207,7 +207,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'setqc_frequency' && $user->rights->stock->creer && !GETPOST('cancel', 'alpha')) {
-		$result = $object->setValueFrom('qc_frequency', GETPOST('qc_frequency'), '', null, 'text', '', $user, 'PRODUCT_MODIFY');
+		$result = $object->setValueFrom('qc_frequency', GETPOST('qc_frequency'), '', null, 'int', '', $user, 'PRODUCT_MODIFY');
 		if ($result < 0) { // Prévoir un test de format de durée
 			setEventMessages($object->error, null, 'errors');
 			$action == 'editqc_frequency';
