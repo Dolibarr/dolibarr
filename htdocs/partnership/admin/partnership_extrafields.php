@@ -92,8 +92,9 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
  */
 
 $help_url = '';
+$title = $langs->trans("PartnershipSetup");
 
-llxHeader('', $langs->trans("PartnershipSetup"), $help_url);
+llxHeader('', $title, $help_url);
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
@@ -102,7 +103,7 @@ print load_fiche_titre($langs->trans("PartnershipSetup"), $linkback, 'object_par
 
 $head = partnershipAdminPrepareHead();
 
-print dol_get_fiche_head($head, 'partnership_extrafields', $langs->trans("PartnershipExtraFields"), -1, '');
+print dol_get_fiche_head($head, 'partnership_extrafields', $title, -1, 'partnership');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 

@@ -95,11 +95,6 @@ $hookmanager->initHooks(array('myobjectnote', 'globalcard')); // Note that conf-
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-// Security check - Protection if external user
-//if ($user->socid > 0) accessforbidden();
-//if ($user->socid > 0) $socid = $user->socid;
-//$result = restrictedArea($user, 'mymodule', $id);
-
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 if ($id > 0 || !empty($ref)) {
@@ -109,6 +104,13 @@ if ($id > 0 || !empty($ref)) {
 $permissionnote = $user->rights->mymodule->myobject->write; // Used by the include of actions_setnotes.inc.php
 $permissiontoadd = $user->rights->mymodule->myobject->write; // Used by the include of actions_addupdatedelete.inc.php
 
+// Security check (enable the most restrictive one)
+//if ($user->socid > 0) accessforbidden();
+//if ($user->socid > 0) $socid = $user->socid;
+//$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
+//restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
+//if (empty($conf->mymodule->enabled)) accessforbidden();
+//if (!$permissiontoread) accessforbidden();
 
 
 /*
@@ -133,7 +135,7 @@ if ($id > 0 || !empty($ref)) {
 
 	$head = myobjectPrepareHead($object);
 
-	print dol_get_fiche_head($head, 'note', $langs->trans("MyObject"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'note', '', -1, $object->picto);
 
 	// Object card
 	// ------------------------------------------------------------

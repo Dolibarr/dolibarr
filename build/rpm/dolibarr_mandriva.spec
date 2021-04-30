@@ -196,6 +196,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/includes
 %_datadir/dolibarr/htdocs/install
 %_datadir/dolibarr/htdocs/intracommreport
+%_datadir/dolibarr/htdocs/knowledgemanagement
 %_datadir/dolibarr/htdocs/langs/HOWTO-Translation.txt
 %_datadir/dolibarr/htdocs/loan
 %_datadir/dolibarr/htdocs/mailmanspip
@@ -226,6 +227,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/variants
 %_datadir/dolibarr/htdocs/webservices
 %_datadir/dolibarr/htdocs/website
+%_datadir/dolibarr/htdocs/workstation
 %_datadir/dolibarr/htdocs/zapier
 %_datadir/dolibarr/htdocs/*.ico
 %_datadir/dolibarr/htdocs/*.patch

@@ -16,6 +16,10 @@
  */
 
 
+.paddingright {
+	padding-right: 4px;
+}
+
 .opacitymedium {
 	opacity: 0.5;
 }

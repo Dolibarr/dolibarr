@@ -650,6 +650,9 @@ textarea.centpercent {
 .flip {
 	transform: scaleX(-1) translate(2px, 0);
 }
+.rotate90 {
+	transform: rotate(90deg) translate(0, 2px);
+}
 .center {
 	text-align: center;
 	margin: 0px auto;
@@ -3214,6 +3217,10 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 
 .smallpaddingimp {
 	padding: 4px !important;
+}
+input.button[name="upload"] {
+	padding: 4px !important;
+	font-size: 0.9em;
 }
 input.button.smallpaddingimp {
 	font-size: 0.8em;

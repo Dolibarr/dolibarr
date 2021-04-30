@@ -127,15 +127,14 @@ if ($action) {
  */
 
 $title = $langs->trans('PartnershipSetup');
-$tab = $langs->trans("PartnershipSetup");
 
 llxHeader('', $title);
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($title, $linkback, 'object_partnership');
+print load_fiche_titre($title, $linkback, 'title_setup');
 
 $head = partnershipAdminPrepareHead();
-print dol_get_fiche_head($head, 'settings', $tab, -1, '');
+print dol_get_fiche_head($head, 'settings', $title, -1, 'partnership');
 
 $form = new Form($db);
 

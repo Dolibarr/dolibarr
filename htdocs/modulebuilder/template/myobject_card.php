@@ -129,13 +129,13 @@ $permissionnote = $user->rights->mymodule->myobject->write; // Used by the inclu
 $permissiondellink = $user->rights->mymodule->myobject->write; // Used by the include of actions_dellink.inc.php
 $upload_dir = $conf->mymodule->multidir_output[isset($object->entity) ? $object->entity : 1];
 
-// Security check - Protection if external user
+// Security check (enable the most restrictive one)
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
-//restrictedArea($user, $object->element, $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
+//restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
 //if (empty($conf->mymodule->enabled)) accessforbidden();
-//if (empty($permissiontoread)) accessforbidden();
+//if (!$permissiontoread) accessforbidden();
 
 
 /*
@@ -310,7 +310,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$res = $object->fetch_optionals();
 
 	$head = myobjectPrepareHead($object);
-	print dol_get_fiche_head($head, 'card', $langs->trans("MyObject"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'card', $langs->trans("Workstation"), -1, $object->picto);
 
 	$formconfirm = '';
 
