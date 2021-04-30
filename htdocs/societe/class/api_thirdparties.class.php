@@ -1624,11 +1624,11 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Update specified values of a specific site gateway attached to a thirdparty
+	 * Update specified values of a specific gateway attached to a thirdparty
 	 *
-	 * @param int $id Id of thirdparty
-	 * @param string  $site Site key
-	 * @param array $request_data Request data
+	 * @param int 		$id 			Id of thirdparty
+	 * @param string  	$site 			Site key
+	 * @param array 	$request_data 	Request data
 	 *
 	 * @return array|mixed
 	 *
@@ -1645,7 +1645,7 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(401);
 		}
 
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc  = $id AND site = '$site' ";
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc = ".((int) $id)." AND site = '".$this->db->escape($site)."'";
 		$result = $this->db->query($sql);
 
 		if ($result && $this->db->num_rows($result) == 0) {
@@ -1657,7 +1657,7 @@ class Thirdparties extends DolibarrApi
 				$result = $this->db->query($sql);
 
 				if ($result && $this->db->num_rows($result) !== 0) {
-					throw new RestException(409, "You are trying to update this thirdparty SocieteAccount (gateway record) site member from $site to ".$request_data['site']." but another SocieteAccount entity already exists for this thirdparty with this site key.");
+					throw new RestException(409, "You are trying to update this thirdparty SocieteAccount (gateway record) site member from ".$site." to ".$request_data['site']." but another SocieteAccount entity already exists for this thirdparty with this site key.");
 				}
 			}
 
