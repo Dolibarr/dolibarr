@@ -554,7 +554,7 @@ if ($search_company_alias) {
 	$sql .= natural_search('s.name_alias', $search_company_alias);
 }
 if ($search_sale > 0) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$search_sale;
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $search_sale);
 }
 if ($search_user > 0) {
 	$sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='commande' AND tc.source='internal' AND ec.element_id = c.rowid AND ec.fk_socpeople = ".$search_user;
@@ -596,22 +596,22 @@ if ($search_project != '') {
 	$sql .= natural_search("p.title", $search_project);
 }
 if ($search_categ_cus > 0) {
-	$sql .= " AND cc.fk_categorie = ".$db->escape($search_categ_cus);
+	$sql .= " AND cc.fk_categorie = ".((int) $search_categ_cus);
 }
 if ($search_categ_cus == -2) {
 	$sql .= " AND cc.fk_categorie IS NULL";
 }
 if ($search_fk_cond_reglement > 0) {
-	$sql .= " AND c.fk_cond_reglement = ".$db->escape($search_fk_cond_reglement);
+	$sql .= " AND c.fk_cond_reglement = ".((int) $search_fk_cond_reglement);
 }
 if ($search_fk_shipping_method > 0) {
-	$sql .= " AND c.fk_shipping_method = ".$db->escape($search_fk_shipping_method);
+	$sql .= " AND c.fk_shipping_method = ".((int) $search_fk_shipping_method);
 }
 if ($search_fk_mode_reglement > 0) {
-	$sql .= " AND c.fk_mode_reglement = ".$db->escape($search_fk_mode_reglement);
+	$sql .= " AND c.fk_mode_reglement = ".((int) $search_fk_mode_reglement);
 }
 if ($search_fk_input_reason > 0) {
-	$sql .= " AND c.fk_input_reason = ".$db->escape($search_fk_input_reason);
+	$sql .= " AND c.fk_input_reason = ".((int) $search_fk_input_reason);
 }
 
 // Add where from extra fields
