@@ -218,6 +218,10 @@ class Products extends DolibarrApi
 			}
 			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+
+			//filer by datec || tms, Needs the filter pased as timestamp
+			$sql = str_replace('datec','UNIX_TIMESTAMP(datec)',$sql);
+			$sql = str_replace('tms','UNIX_TIMESTAMP(tms)',$sql);
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
