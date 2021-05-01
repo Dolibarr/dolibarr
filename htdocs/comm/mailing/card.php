@@ -235,7 +235,7 @@ if (empty($reshook)) {
 								$substitutionarray['__SECUREKEYPAYMENT_CONTRACTLINE__'] = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'contractline'.$obj->source_id, 2);
 							};
 							require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-							$substitutionarray['__ONLINEPAYMENT_LINK_MEMBER__'] = showOnlinePaymentUrl('membersubscription', $obj->ref);
+							$substitutionarray['__ONLINEPAYMENT_LINK_MEMBER__'] = showOnlinePaymentUrl('membersubscription', $obj->source_id);
 						}
 						/* For backward compatibility, deprecated */
 						if (!empty($conf->paypal->enabled) && !empty($conf->global->PAYPAL_SECURITY_TOKEN)) {
