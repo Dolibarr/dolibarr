@@ -25,7 +25,6 @@ require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
 require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttributeValue.class.php';
 require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination2ValuePair.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productstockentrepot.class.php';
 
 /**
  * API class for products
