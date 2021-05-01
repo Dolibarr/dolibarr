@@ -90,7 +90,7 @@ class AdherentType extends CommonObject
 	public $subscription;
 
 	/**
-	 * @var float amount for subscription if required
+	 * @var float amount for subscription
 	 */
 	public $amount;
 
