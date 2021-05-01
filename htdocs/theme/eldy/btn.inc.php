@@ -85,9 +85,9 @@ span.butAction, span.butActionDelete {
 	display: inline-block;
 	text-align: center;
 	cursor: pointer;
-	/* color: #fff; */
-	/* background: rgb(<?php echo $colorbackhmenu1 ?>); */
 	color: #444;
+    border: 1px solid transparent;	/* So for buttonRefused with a border, it will not have any flash effect */
+
 	/* border: 1px solid #aaa; */
 	/* border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25); */
 
@@ -161,17 +161,16 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 
 	white-space: nowrap !important;
 	cursor: not-allowed !important;
-	margin: 0em <?php echo ($dol_optimize_smallscreen ? '0.6' : '0.9'); ?>em;
-	padding: 0.6em <?php echo ($dol_optimize_smallscreen ? '0.6' : '0.7'); ?>em;
 	font-family: <?php print $fontlist ?> !important;
 	display: inline-block;
 	text-align: center;
 	cursor: pointer;
-	color: #999 !important;
-	border: 1px solid #ccc;
 	box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
+	color: #999 !important;
+
+	border: 1px solid #ccc;
 }
 .butActionNewRefused, .butActionNewRefused:link, .butActionNewRefused:visited, .butActionNewRefused:hover, .butActionNewRefused:active {
 	text-decoration: none !important;
