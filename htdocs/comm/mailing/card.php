@@ -233,8 +233,9 @@ if (empty($reshook)) {
 								$substitutionarray['__SECUREKEYPAYMENT_ORDER__'] = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'order'.$obj->source_id, 2);
 								$substitutionarray['__SECUREKEYPAYMENT_INVOICE__'] = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'invoice'.$obj->source_id, 2);
 								$substitutionarray['__SECUREKEYPAYMENT_CONTRACTLINE__'] = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'contractline'.$obj->source_id, 2);
-							}
-							$substitutionarray['__ONLINEPAYMENT_LINK_MEMBER__'] = '<a href="'.DOL_MAIN_URL_ROOT.'/public/payment/newpayment.php?source=membersubscription&ref='.$obj->source_id.'&securekey='.$substitutionarray['__SECUREKEYPAYMENT_MEMBER__'].'">'.DOL_MAIN_URL_ROOT.'/public/payment/newpayment.php?source=membersubscription&ref='.$obj->source_id.'&securekey='.$substitutionarray['__SECUREKEYPAYMENT_MEMBER__'].'</a>';
+							};
+							require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+							$substitutionarray['__ONLINEPAYMENT_LINK_MEMBER__'] = showOnlinePaymentUrl('membersubscription', $obj->ref);
 						}
 						/* For backward compatibility, deprecated */
 						if (!empty($conf->paypal->enabled) && !empty($conf->global->PAYPAL_SECURITY_TOKEN)) {
