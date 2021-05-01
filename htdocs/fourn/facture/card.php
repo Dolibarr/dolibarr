@@ -2257,6 +2257,10 @@ if ($action == 'create') {
 		print '</td></tr>';
 	}
 
+	if (empty($reshook)) {
+		print $object->showOptionals($extrafields, 'edit');
+	}
+
 	// Public note
 	print '<tr><td>'.$langs->trans('NotePublic').'</td>';
 	print '<td>';
@@ -2275,9 +2279,6 @@ if ($action == 'create') {
 	// print '<td><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td>';
 	print '</tr>';
 
-	if (empty($reshook)) {
-		print $object->showOptionals($extrafields, 'edit');
-	}
 
 	if (is_object($objectsrc)) {
 		print "\n<!-- ".$classname." info -->";
