@@ -148,10 +148,11 @@ function dol_getImageSize($file, $url = false)
  * 	@param	int		$src_x			Position of croping image in source image (not use if mode=0)
  * 	@param	int		$src_y			Position of croping image in source image (not use if mode=0)
  * 	@param	string	$filetowrite	Path of file to write (overwrite source file if not provided)
+ *  @param	int		$newquality		Value for the new quality of image, for supported format (use 0 for maximum/unchanged).
  *	@return	string                  File name if OK, error message if KO
  *	@see dol_convert_file()
  */
-function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, $src_y = 0, $filetowrite = '')
+function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, $src_y = 0, $filetowrite = '', $newquality = 0)
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
@@ -234,7 +235,7 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 		case 2:	// Jpg
 			$img = imagecreatefromjpeg($filetoread);
 			$extImg = '.jpg';
-			$newquality = 100; // % quality maximum
+			$newquality = ($newquality ? $newquality : '100'); // % quality maximum
 			break;
 		case 3:	// Png
 			$img = imagecreatefrompng($filetoread);
@@ -249,7 +250,7 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 		case 18: // Webp
 			$img = imagecreatefromwebp($filetoread);
 			$extImg = '.webp';
-			$newquality = '100'; // % quality maximum
+			$newquality = ($newquality ? $newquality : '100'); // % quality maximum
 			break;
 	}
 

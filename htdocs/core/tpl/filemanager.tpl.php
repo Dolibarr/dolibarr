@@ -71,7 +71,7 @@ print '<div class="inline-block toolbarbutton centpercent">';
 
 // Toolbar
 if ($permtoadd) {
-	$websitekeyandpageid = (!empty($websitekey) ? '&website='.$websitekey : '').(!empty($pageid) ? '&pageid='.$pageid : '');
+	$websitekeyandpageid = (!empty($websitekey) ? '&website='.urlencode($websitekey) : '').(!empty($pageid) ? '&pageid='.urlencode($pageid) : '');
 	print '<a id="acreatedir" href="'.DOL_URL_ROOT.'/ecm/dir_add_card.php?action=create&module='.urlencode($module).$websitekeyandpageid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?file_manager=1'.$websitekeyandpageid).'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans('ECMAddSection')).'">';
 	print img_picto('', 'folder-plus', '', false, 0, 0, '', 'size15x marginrightonly');
 	print '</a>';
@@ -202,7 +202,7 @@ if ($action == 'convertimgwebp' && $permtoadd) {
 		if (!(substr_compare($filepath, 'webp', -strlen('webp')) === 0)) {
 			if (image_format_supported($filepath) == 1) {
 				$filepathnoext = preg_replace("/\..*/", "", $filepath);
-				$result = dol_imageResizeOrCrop($filepath, 0, 0, 0, 0, 0, $filepathnoext.'.webp');
+				$result = dol_imageResizeOrCrop($filepath, 0, 0, 0, 0, 0, $filepathnoext.'.webp', 90);
 				if (!dol_is_file($result)) {
 					$error++;
 					setEventMessages($result, null, 'errors');
@@ -227,7 +227,7 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
 	print '<!-- Title for manual directories -->'."\n";
 	print '<tr class="liste_titre">'."\n";
 	print '<th class="liste_titre left">';
-	print '&nbsp;'.$langs->trans("ECMSections");
+	print '<span style="padding-left: 5px; padding-right: 5px;">'.$langs->trans("ECMSections").'</span>';
 	print '</th></tr>';
 
 	$showonrightsize = '';
@@ -238,7 +238,7 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
 	if (!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) {
 		// Show the link to "Root"
 		if ($showroot) {
-			print '<tr><td><div style="padding-left: 5px; padding-right: 5px;"><a href="'.$_SERVER["PHP_SELF"].'?file_manager=1&pageid='.$pageid.'">';
+			print '<tr><td><div style="padding-left: 5px; padding-right: 5px;"><a href="'.$_SERVER["PHP_SELF"].'?file_manager=1'.(!empty($websitekey) ? '&website='.urlencode($websitekey) : '').'&pageid='.urlencode($pageid).'">';
 			if ($module == 'medias') {
 				print $langs->trans("RootOfMedias");
 			} else {
