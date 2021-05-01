@@ -270,6 +270,7 @@ if (empty($reshook)) {
 			$tmp->fk_product = $fk_product;
 			$tmp->batch = $batch;
 			$tmp->datec = $now;
+			$tmp->qty_view = (GETPOST('qtytoadd') != '' ? price2num(GETPOST('qtytoadd', 'MS')) : null);
 
 			$result = $tmp->create($user);
 			if ($result < 0) {
@@ -599,11 +600,11 @@ if ($object->id > 0) {
 		}
 		print '<td class="right"></td>';
 		print '<td class="center">';
-		print '<input type="submit" class="button paddingright" name="addline" value="'.$langs->trans("Add").'">';
-		//print '<input type="submit" class="button paddingrightonly button-cancel" name="canceladdline" value="'.$langs->trans("Cancel").'">';
+		print '<input type="text" name="qtytoadd" class="maxwidth75" value="">';
 		print '</td>';
 		// Actions
 		print '<td class="center">';
+		print '<input type="submit" class="button paddingright" name="addline" value="'.$langs->trans("Add").'">';
 		print '</td>';
 		print '</tr>';
 	}
