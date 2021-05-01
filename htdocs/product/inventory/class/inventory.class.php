@@ -619,7 +619,12 @@ class Inventory extends CommonObject
 		$labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Canceled');
 		$labelStatusShort[self::STATUS_RECORDED] = $langs->trans('Closed');
 
-		return dolGetStatus($labelStatus[$status], $labelStatusShort[$status], '', 'status'.$status, $mode);
+		$statusType = 'status'.$status;
+		if ($status == self::STATUS_RECORDED) {
+			$statusType = 'status5';
+		}
+
+		return dolGetStatus($labelStatus[$status], $labelStatusShort[$status], '', $statusType, $mode);
 	}
 
 	/**
