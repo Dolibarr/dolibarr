@@ -548,7 +548,7 @@ class AdherentType extends CommonObject
 	 *  @param	int		$status			Filter on status of type
 	 *  @return array					List of types of members
 	 */
-	public function amount_by_type($status = null)
+	public function amountByType($status = null)
 	{
 
 		global $conf, $langs;
