@@ -2159,21 +2159,22 @@ if ($module == 'initmodule') {
 
 				// Dir for module
 				$diroflang = dol_buildpath($modulelowercase, 0);
+				$diroflang .= '/langs';
+				$langfiles = dol_dir_list($diroflang, 'files', 1, '\.lang$');
 
 				if (!preg_match('/custom/', $dirread)) {
+					// If this is not a module into custom
 					$diroflang = $dirread;
 					$diroflang .= '/langs';
-
 					$langfiles = dol_dir_list($diroflang, 'files', 1, $modulelowercase.'\.lang$');
-				} else {
-					$diroflang .= '/langs';
-
-					$langfiles = dol_dir_list($diroflang, 'files', 1, '\.lang$');
 				}
 
 				print '<table class="none">';
 				foreach ($langfiles as $langfile) {
 					$pathtofile = $modulelowercase.'/langs/'.$langfile['relativename'];
+					if (!preg_match('/custom/', $dirread)) {	// If this is not a module into custom
+						$pathtofile = 'langs/'.$langfile['relativename'];
+					}
 					print '<tr><td><span class="fa fa-file-o"></span> '.$langs->trans("LanguageFile").' '.basename(dirname($pathtofile)).' : <strong>'.$pathtofile.'</strong>';
 					print '</td><td><a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=editfile&format=txt&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 					print '</td><td><a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=confirm_removefile&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
