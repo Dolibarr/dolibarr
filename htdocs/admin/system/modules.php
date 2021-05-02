@@ -134,7 +134,7 @@ foreach ($modules as $key => $module) {
 	$newModule->name = $module->getName();
 	$newModule->version = $module->getVersion();
 	$newModule->id = $key;
-	$newModule->module_position = $module->module_position;
+	$newModule->module_position = $module->getModulePosition();
 
 	$alt = $module->name.' - '.$modules_files[$key];
 

@@ -48,7 +48,7 @@ class modPartnership extends DolibarrModules
 
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
-		$this->numero = 500000; // TODO Go on page https://wiki.dolibarr.org/index.php/List_of_modules_id to reserve an id number for your module
+		$this->numero = 58000;
 
 		// Key text used to identify module (for permissions, menus, etc...)
 		$this->rights_class = 'partnership';
