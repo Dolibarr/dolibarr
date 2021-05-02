@@ -171,6 +171,8 @@ if ($action == 'delete_section') {
 
 // Ask confirmation to build webp images
 if ($action == 'confirmconvertimgwebp') {
+	$langs->load("ecm");
+
 	$section_dir=GETPOST('section_dir', 'alpha');
 	$section=GETPOST('section', 'alpha');
 	$form = new Form($db);
