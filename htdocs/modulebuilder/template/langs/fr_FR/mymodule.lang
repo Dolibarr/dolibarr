@@ -28,6 +28,11 @@ ModuleMyModuleDesc = Description de MyModule
 MyModuleSetup = Configuration du module MyModule
 Settings = Réglages
 MyModuleSetupPage = Page de configuration du module MyModule
+MYMODULE_MYPARAM1 = Mon paramètre 1
+MYMODULE_MYPARAM1Tooltip = Mon infobulle du paramètre 1
+MYMODULE_MYPARAM2 = Mon paramètre 2
+MYMODULE_MYPARAM2Tooltip = Mon infobulle du paramètre 2
+
 
 #
 # Page À propos
