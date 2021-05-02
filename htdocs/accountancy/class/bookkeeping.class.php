@@ -1103,7 +1103,8 @@ class BookKeeping extends CommonObject
 		$sql = 'SELECT';
 		$sql .= " t.numero_compte,";
 		$sql .= " SUM(t.debit) as debit,";
-		$sql .= " SUM(t.credit) as credit";
+		$sql .= " SUM(t.credit) as credit,";
+		$sql .= " t.code_journal";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		// Manage filter
 		$sqlwhere = array();
@@ -1121,6 +1122,12 @@ class BookKeeping extends CommonObject
 					$sqlwhere[] = $key.' LIKE \''.$this->db->escape($value).'%\'';
 				} elseif ($key == 't.subledger_label') {
 					$sqlwhere[] = $key.' LIKE \''.$this->db->escape($value).'%\'';
+				} elseif ($key == 't.code_journal' && !empty($value)) {
+					if (is_array($value)) {
+						$sqlwhere[] = natural_search("t.code_journal", join(',', $value), 3, 1);
+					} else {
+						$sqlwhere[] = natural_search("t.code_journal", $value, 3, 1);
+					}
 				} else {
 					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
 				}
