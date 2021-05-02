@@ -217,7 +217,7 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 		case 4:	// IMG_WBMP
 			$imgfonction = 'imagecreatefromwbmp';
 			break;
-		case 17: // IMG_WBMP
+		case 18: // IMG_WEBP
 			$imgfonction = 'imagecreatefromwebp';
 			break;
 	}
@@ -253,7 +253,7 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 	}
 
 	// Create empty image for target
-	if ($infoImg[2] == 1) {
+	if ($infoImgTarget[2] == 1) {
 		// Compatibility image GIF
 		$imgTarget = imagecreate($newWidth, $newHeight);
 	} else {
@@ -270,8 +270,8 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 		imagesavealpha($imgTarget, true);
 	}
 
-	// Initialisation des variables selon l'extension de l'image
-	switch ($infoImg[2]) {
+	// Set transparent color according to image extension
+	switch ($infoImgTarget[2]) {
 		case 1:	// Gif
 			$trans_colour = imagecolorallocate($imgTarget, 255, 255, 255); // On procede autrement pour le format GIF
 			imagecolortransparent($imgTarget, $trans_colour);
