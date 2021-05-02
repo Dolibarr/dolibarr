@@ -210,7 +210,7 @@ print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 
 // Configuration header
 $head = knowledgemanagementAdminPrepareHead();
-print dol_get_fiche_head($head, 'knowledgemanagement', $langs->trans('ModuleKnowledgeManagementName'), -1, "knowledgemanagement");
+print dol_get_fiche_head($head, 'setup', $langs->trans('ModuleKnowledgeManagementName'), -1, "knowledgemanagement");
 
 // Setup page goes here
 echo '<span class="opacitymedium">'.$langs->trans("KnowledgeManagementSetupPage").'</span><br><br>';

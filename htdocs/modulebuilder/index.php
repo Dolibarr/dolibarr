@@ -726,9 +726,33 @@ if ($dirins && $action == 'initdoc' && !empty($module)) {
 // add Language
 if ($dirins && $action == 'addlanguage' && !empty($module)) {
 	$newlangcode = GETPOST('newlangcode', 'aZ09');
-	$srcfile = $dirins.'/'.strtolower($module).'/langs/en_US';
-	$destfile = $dirins.'/'.strtolower($module).'/langs/'.$newlangcode;
-	$result = dolCopyDir($srcfile, $destfile, 0, 0);
+
+	if ($newlangcode) {
+		$modulelowercase = strtolower($module);
+
+		// Dir for module
+		$diroflang = dol_buildpath($modulelowercase, 0);
+
+		if ($diroflang == $dirread.'/'.$modulelowercase) {
+			// This is not a custom module, we force diroflang to htdocs root
+			$diroflang = $dirread;
+
+			$srcfile = $diroflang.'/langs/en_US/'.$modulelowercase.'.lang';
+			$destfile = $diroflang.'/langs/'.$newlangcode.'/'.$modulelowercase.'.lang';
+
+			$result = dol_copy($srcfile, $destfile, 0, 0);
+			if ($result < 0) {
+				setEventMessages($langs->trans("ErrorFailToCopyFile", $srcfile, $destfile), null, 'errors');
+			}
+		} else {
+			$srcfile = $diroflang.'/langs/en_US';
+			$destfile = $diroflang.'/langs/'.$newlangcode;
+
+			$result = dolCopyDir($srcfile, $destfile, 0, 0);
+		}
+	} else {
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Language")), null, 'errors');
+	}
 }
 
 
@@ -1448,17 +1472,37 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname) {
 	$tabobj = 'deleteobject';
 }
 
+if ($dirins && $action == 'generatedoc') {
+	$modulelowercase = strtolower($module);
+
+	// Dir for module
+	$dirofmodule = dol_buildpath($modulelowercase, 0).'/doc';
+
+	$FILENAMEDOC = strtolower($module).'.html';
+
+	$util = new Utils($db);
+	$result = $util->generateDoc($module);
+
+	if ($result > 0) {
+		setEventMessages($langs->trans("DocFileGeneratedInto", $dirofmodule), null);
+	} else {
+		setEventMessages($util->error, $util->errors, 'errors');
+	}
+}
 
 if ($dirins && $action == 'generatepackage') {
 	$modulelowercase = strtolower($module);
 
+	$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
+
 	// Dir for module
-	$dir = $dirins.'/'.$modulelowercase;
+	$dir = dol_buildpath($modulelowercase, 0);
+
 	// Zip file to build
 	$FILENAMEZIP = '';
 
 	// Load module
-	dol_include_once($modulelowercase.'/core/modules/mod'.$module.'.class.php');
+	dol_include_once($pathtofile);
 	$class = 'mod'.$module;
 
 	if (class_exists($class)) {
@@ -1466,18 +1510,18 @@ if ($dirins && $action == 'generatepackage') {
 			$moduleobj = new $class($db);
 		} catch (Exception $e) {
 			$error++;
-			dol_print_error($e->getMessage());
+			dol_print_error($db, $e->getMessage());
 		}
 	} else {
 		$error++;
 		$langs->load("errors");
-		dol_print_error($langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));
+		dol_print_error($db, $langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));
 		exit;
 	}
 
 	$arrayversion = explode('.', $moduleobj->version, 3);
 	if (count($arrayversion)) {
-		$FILENAMEZIP = "module_".$modulelowercase.'-'.$arrayversion[0].'.'.$arrayversion[1].($arrayversion[2] ? ".".$arrayversion[2] : "").".zip";
+		$FILENAMEZIP = "module_".$modulelowercase.'-'.$arrayversion[0].($arrayversion[1] ? '.'.$arrayversion[1] : '').($arrayversion[2] ? '.'.$arrayversion[2] : '').'.zip';
 
 		$dirofmodule = dol_buildpath($modulelowercase, 0).'/bin';
 		$outputfilezip = $dirofmodule.'/'.$FILENAMEZIP;
@@ -1501,20 +1545,6 @@ if ($dirins && $action == 'generatepackage') {
 		$error++;
 		$langs->load("errors");
 		setEventMessages($langs->trans("ErrorCheckVersionIsDefined"), null, 'errors');
-	}
-}
-
-if ($dirins && $action == 'generatedoc') {
-	$FILENAMEDOC = strtolower($module).'.html';
-	$dirofmodule = dol_buildpath(strtolower($module), 0).'/doc';
-
-	$util = new Utils($db);
-	$result = $util->generateDoc($module);
-
-	if ($result > 0) {
-		setEventMessages($langs->trans("DocFileGeneratedInto", $dirofmodule), null);
-	} else {
-		setEventMessages($util->error, $util->errors, 'errors');
 	}
 }
 
@@ -3812,12 +3842,12 @@ if ($module == 'initmodule') {
 					$moduleobj = new $class($db);
 				} catch (Exception $e) {
 					$error++;
-					dol_print_error($e->getMessage());
+					dol_print_error($db, $e->getMessage());
 				}
 			} else {
 				$error++;
 				$langs->load("errors");
-				dol_print_error($langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));
+				dol_print_error($db, $langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));
 				exit;
 			}
 
