@@ -2155,7 +2155,21 @@ if ($module == 'initmodule') {
 				print '<br>';
 				print '<br>';
 
-				$langfiles = dol_dir_list(dol_buildpath($modulelowercase.'/langs', 0), 'files', 1, '\.lang$');
+				$modulelowercase = strtolower($module);
+
+				// Dir for module
+				$diroflang = dol_buildpath($modulelowercase, 0);
+
+				if (!preg_match('/custom/', $dirread)) {
+					$diroflang = $dirread;
+					$diroflang .= '/langs';
+
+					$langfiles = dol_dir_list($diroflang, 'files', 1, $modulelowercase.'\.lang$');
+				} else {
+					$diroflang .= '/langs';
+
+					$langfiles = dol_dir_list($diroflang, 'files', 1, '\.lang$');
+				}
 
 				print '<table class="none">';
 				foreach ($langfiles as $langfile) {
