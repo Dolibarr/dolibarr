@@ -150,7 +150,7 @@ if ($year)
 		foreach ($files as $f) {
 			$tfile = $dir.'/'.$year.'/'.$f;
 			$relativepath = $year.'/'.$f;
-			if (is_file($tfile)) {
+			if (is_file($tfile) && preg_match('/^payment/i', $f)) {
 				print '<tr class="oddeven">';
 				print '<td><a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart=facture_paiement&amp;file='.urlencode($relativepath).'">'.img_pdf().' '.$f.'</a>'.$formfile->showPreview($f, 'facture_paiement', $relativepath, 0).'</td>';
 				print '<td class="right">'.dol_print_size(dol_filesize($tfile)).'</td>';
