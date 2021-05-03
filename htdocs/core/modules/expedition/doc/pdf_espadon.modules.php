@@ -395,8 +395,7 @@ class pdf_espadon extends ModelePdfExpedition
 
 					// Notes
 					$pagenb = $pdf->getPage();
-					if (!empty($notetoshow))
-					{
+					if (!empty($notetoshow)) {
 						$tab_top -= 2;
 
 						$tab_width = $this->page_largeur - $this->marge_gauche - $this->marge_droite;
@@ -415,8 +414,7 @@ class pdf_espadon extends ModelePdfExpedition
 						$pageposafternote = $pdf->getPage();
 						$posyafter = $pdf->GetY();
 
-						if ($pageposafternote > $pageposbeforenote)
-						{
+						if ($pageposafternote > $pageposbeforenote) {
 							$pdf->rollbackTransaction(true);
 
 							// prepare pages to receive notes
@@ -440,8 +438,7 @@ class pdf_espadon extends ModelePdfExpedition
 
 							$posyafter = $pdf->GetY();
 
-							if ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + 20)))	// There is no space left for total+free text
-							{
+							if ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + 20))) {	// There is no space left for total+free text
 								$pdf->AddPage('', '', true);
 								$pagenb++;
 								$pageposafternote++;
@@ -490,8 +487,7 @@ class pdf_espadon extends ModelePdfExpedition
 							$pdf->Rect($this->marge_gauche, $tab_top - 1, $tab_width, $height_note + 1);
 
 
-							if ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + 20)))
-							{
+							if ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + 20))) {
 								// not enough space, need to add page
 								$pdf->AddPage('', '', true);
 								$pagenb++;
@@ -526,8 +522,7 @@ class pdf_espadon extends ModelePdfExpedition
 				// Loop on each lines
 				$pageposbeforeprintlines = $pdf->getPage();
 				$pagenb = $pageposbeforeprintlines;
-				for ($i = 0; $i < $nblines; $i++)
-				{
+				for ($i = 0; $i < $nblines; $i++) {
 					$curY = $nexY;
 					$pdf->SetFont('', '', $default_font_size - 1); // Into loop to work with multipage
 					$pdf->SetTextColor(0, 0, 0);

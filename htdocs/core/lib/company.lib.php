@@ -938,7 +938,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 		//E-mail
 		't.email',
 	);
-    //Social media
+	//Social media
 	//    foreach ($socialnetworks as $key => $value) {
 	//        if ($value['active']) {
 	//            $searchAddressPhoneDBFields['t.'.$key] = "t.socialnetworks->'$.".$key."'";

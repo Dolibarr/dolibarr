@@ -112,15 +112,12 @@ clearstatcache();
 
 // Show link on other years
 $year_dirs = dol_dir_list($dir, 'directories', 0, '^[0-9]{4}$', '', 'DESC');
-foreach ($year_dirs as $d)
-{
+foreach ($year_dirs as $d) {
 	print '<a href="'.$_SERVER["PHP_SELF"].'?year='.$d['name'].'">'.$d['name'].'</a> &nbsp;';
 }
 
-if ($year)
-{
-	if (is_dir($dir.'/'.$year))
-	{
+if ($year) {
+	if (is_dir($dir.'/'.$year)) {
 		if (!empty($year_dirs)) print '<br>';
 		print '<br>';
 		print '<table width="100%" class="noborder">';
