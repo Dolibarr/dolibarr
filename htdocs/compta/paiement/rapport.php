@@ -136,7 +136,6 @@ if ($year)
 {
 	if (is_dir($dir.'/'.$year))
 	{
-		$handle = opendir($dir.'/'.$year);
 
 		if ($found) print '<br>';
 		print '<br>';
@@ -147,22 +146,17 @@ if ($year)
 		print '<td class="right">'.$langs->trans("Date").'</td>';
 		print '</tr>';
 
-		if (is_resource($handle))
-		{
-			while (($file = readdir($handle)) !== false)
-			{
-				if (preg_match('/^payment/i', $file))
-				{
-					$tfile = $dir.'/'.$year.'/'.$file;
-					$relativepath = $year.'/'.$file;
-					print '<tr class="oddeven">';
-					print '<td><a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart=facture_paiement&amp;file='.urlencode($relativepath).'">'.img_pdf().' '.$file.'</a>'.$formfile->showPreview($file, 'facture_paiement', $relativepath, 0).'</td>';
-					print '<td class="right">'.dol_print_size(dol_filesize($tfile)).'</td>';
-					print '<td class="right">'.dol_print_date(dol_filemtime($tfile), "dayhour").'</td>';
-					print '</tr>';
-				}
+		$files = (scandir($dir.'/'.$year));
+		foreach ($files as $f) {
+			$tfile = $dir.'/'.$year.'/'.$f;
+			$relativepath = $year.'/'.$f;
+			if (is_file($tfile)) {
+				print '<tr class="oddeven">';
+				print '<td><a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart=facture_paiement&amp;file='.urlencode($relativepath).'">'.img_pdf().' '.$f.'</a>'.$formfile->showPreview($f, 'facture_paiement', $relativepath, 0).'</td>';
+				print '<td class="right">'.dol_print_size(dol_filesize($tfile)).'</td>';
+				print '<td class="right">'.dol_print_date(dol_filemtime($tfile), "dayhour").'</td>';
+				print '</tr>';
 			}
-			closedir($handle);
 		}
 		print '</table>';
 	}
