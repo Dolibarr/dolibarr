@@ -796,7 +796,7 @@ if ($rowid > 0) {
 		print $form->selectyesno("subscription", $object->subscription, 1);
 		print '</td></tr>';
 
-		print '<tr><td>'.$langs->trans("DefineAmountMemberType").'</td><td>';
+		print '<tr><td>'.$langs->trans("Amount").'</td><td>';
 		print '<input name="amount" size="5" value="'.price($object->amount).'">';
 		print '</td></tr>';
 
