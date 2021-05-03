@@ -6794,7 +6794,7 @@ class Form
 				{
 					throw new RestException(503, 'Error when validating parameter sqlfilters '.$objecttmp->filter);
 				}*/
-				$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+				$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 				$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'Form::forgeCriteriaCallback', $objecttmp->filter).")";
 			}
 		}
