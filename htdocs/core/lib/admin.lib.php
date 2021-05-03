@@ -519,7 +519,7 @@ function dolibarr_del_const($db, $name, $entity = 1)
 	}
 	$sql .= ")";
 	if ($entity >= 0) {
-		$sql .= " AND entity = ".$entity;
+		$sql .= " AND entity = ".((int) $entity);
 	}
 
 	dol_syslog("admin.lib::dolibarr_del_const", LOG_DEBUG);

@@ -206,6 +206,9 @@ if ($action == 'writebookkeeping') {
 	$now = dol_now();
 	$error = 0;
 
+	$accountingaccountexpense = new AccountingAccount($db);
+	$accountingaccountexpense->fetch(null, $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT, true);
+
 	foreach ($taber as $key => $val) {		// Loop on each expense report
 		$errorforline = 0;
 
@@ -227,10 +230,9 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->fk_docdet = $val["fk_expensereportdet"];
 					$bookkeeping->subledger_account = $tabuser[$key]['user_accountancy_code'];
 					$bookkeeping->subledger_label = $tabuser[$key]['name'];
-					$bookkeeping->numero_compte = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
 
-					$accountingaccount->fetch(null, $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT, true);
-					$bookkeeping->label_compte = $accountingaccount->label;
+					$bookkeeping->numero_compte = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
+					$bookkeeping->label_compte = $accountingaccountexpense->label;
 
 					$bookkeeping->label_operation = $tabuser[$key]['name'];
 					$bookkeeping->montant = $mt;

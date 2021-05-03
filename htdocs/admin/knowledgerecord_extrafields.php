@@ -103,7 +103,7 @@ print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 
 $head = knowledgemanagementAdminPrepareHead();
 
-print dol_get_fiche_head($head, 'knowledgerecord_extrafields', $langs->trans("KnowledgeRecordExtraFields"), -1, 'knowledgemanagement');
+print dol_get_fiche_head($head, 'extra', $langs->trans("KnowledgeRecordExtraFields"), -1, 'knowledgemanagement');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
