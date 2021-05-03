@@ -2366,7 +2366,7 @@ class User extends CommonObject
 	 * 	Use this->id,this->lastname, this->firstname
 	 *
 	 *	@param	int		$withpictoimg				Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small)
-	 *	@param	string	$option						On what the link point to ('leave', 'nolink', )
+	 *	@param	string	$option						On what the link point to ('leave', 'accountancy', 'nolink', )
 	 *  @param  integer $infologin      			0=Add default info tooltip, 1=Add complete info tooltip, -1=No info tooltip
 	 *  @param	integer	$notooltip					1=Disable tooltip on picto and name
 	 *  @param	int		$maxlen						Max length of visible user name
@@ -2416,6 +2416,9 @@ class User extends CommonObject
 		}
 		if (!empty($this->admin)) {
 			$label .= '<br><b>'.$langs->trans("Administrator").'</b>: '.yn($this->admin);
+		}
+		if (!empty($this->accountancy_code) || $option == 'accountancy') {
+			$label .= '<br><b>'.$langs->trans("AccountancyCode").'</b>: '.$this->accountancy_code;
 		}
 		$company = '';
 		if (!empty($this->socid)) {	// Add thirdparty for external users

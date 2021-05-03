@@ -302,7 +302,9 @@ if (!empty($conf->global->BANK_DISABLE_DIRECT_INPUT)) {
 print '</tr>';
 
 print '<tr class="oddeven">';
-print '<td>'.$langs->trans("ACCOUNTANCY_COMBO_FOR_AUX").'</td>';
+print '<td>'.$langs->trans("ACCOUNTANCY_COMBO_FOR_AUX");
+print ' - <span class="opacitymedium">'.$langs->trans("NotRecommended").'</span>';
+print '</td>';
 
 if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
 	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&action=setACCOUNTANCY_COMBO_FOR_AUX&value=0">';

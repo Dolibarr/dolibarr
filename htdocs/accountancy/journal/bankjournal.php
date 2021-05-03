@@ -120,7 +120,8 @@ if (!GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))
 $sql  = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type, b.fk_account,";
 $sql .= " ba.courant, ba.ref as baref, ba.account_number, ba.fk_accountancy_journal,";
 $sql .= " soc.code_compta, soc.code_compta_fournisseur, soc.rowid as socid, soc.nom as name, soc.email as email, bu1.type as typeop_company,";
-$sql .= " u.accountancy_code, u.rowid as userid, u.lastname as lastname, u.firstname as firstname, u.email as useremail, bu2.type as typeop_user,";
+$sql .= " u.accountancy_code, u.rowid as userid, u.lastname as lastname, u.firstname as firstname, u.email as useremail, u.statut as userstatus,";
+$sql .= " bu2.type as typeop_user,";
 $sql .= " bu3.type as typeop_payment, bu4.type as typeop_payment_supplier";
 $sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 $sql .= " JOIN ".MAIN_DB_PREFIX."bank_account as ba on b.fk_account=ba.rowid";
@@ -259,7 +260,8 @@ if ($result) {
 			'lastname' => $obj->lastname,
 			'firstname' => $obj->firstname,
 			'email' => $obj->useremail,
-			'accountancy_code' => $compta_user
+			'accountancy_code' => $compta_user,
+			'status' => $obj->userstatus
 		);
 
 		// Variable bookkeeping ($obj->rowid is Bank Id)
@@ -328,8 +330,10 @@ if ($result) {
 					$userstatic->email = $tabuser[$obj->rowid]['email'];
 					$userstatic->firstname = $tabuser[$obj->rowid]['firstname'];
 					$userstatic->lastname = $tabuser[$obj->rowid]['lastname'];
+					$userstatic->statut = $tabuser[$obj->rowid]['status'];
+					$userstatic->accountancy_code = $tabuser[$obj->rowid]['accountancy_code'];
 					if ($userstatic->id > 0) {
-						$tabpay[$obj->rowid]["soclib"] = $userstatic->getNomUrl(1, '', 30);
+						$tabpay[$obj->rowid]["soclib"] = $userstatic->getNomUrl(1, 'accountancy', 0);
 					} else {
 						$tabpay[$obj->rowid]["soclib"] = '???'; // Should not happen, but happens with old data when id of user was not saved on expense report payment.
 					}
