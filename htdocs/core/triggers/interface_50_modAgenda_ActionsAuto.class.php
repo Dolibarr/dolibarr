@@ -110,6 +110,17 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
 			$object->sendtoid = 0;
 			$object->socid = $object->id;
+		} elseif ($action == 'COMPANY_MODIFY') {
+				// Load translation files required by the page
+				$langs->loadLangs(array("agenda", "other", "companies"));
+
+				if (empty($object->actionmsg2)) {
+					$object->actionmsg2 = $langs->transnoentities("COMPANY_MODIFYInDolibarr", $object->name);
+				}
+				$object->actionmsg = $langs->transnoentities("COMPANY_MODIFYInDolibarr", $object->name);
+
+				$object->sendtoid = 0;
+				$object->socid = $object->id;
 		} elseif ($action == 'COMPANY_SENTBYMAIL') {
 			// Load translation files required by the page
 			$langs->loadLangs(array("agenda", "other", "orders"));
@@ -128,6 +139,17 @@ class InterfaceActionsAuto extends DolibarrTriggers
 				$object->actionmsg2 = $langs->transnoentities("CONTACT_CREATEInDolibarr", $object->getFullName($langs));
 			}
 			$object->actionmsg = $langs->transnoentities("CONTACT_CREATEInDolibarr", $object->getFullName($langs));
+
+			$object->sendtoid = array($object->id => $object->id);
+			$object->socid = $object->socid;
+		} elseif ($action == 'CONTACT_MODIFY') {
+			// Load translation files required by the page
+			$langs->loadLangs(array("agenda", "other", "companies"));
+
+			if (empty($object->actionmsg2)) {
+				$object->actionmsg2 = $langs->transnoentities("CONTACT_MODIFYInDolibarr", $object->name);
+			}
+			$object->actionmsg = $langs->transnoentities("CONTACT_MODIFYInDolibarr", $object->name);
 
 			$object->sendtoid = array($object->id => $object->id);
 			$object->socid = $object->socid;
