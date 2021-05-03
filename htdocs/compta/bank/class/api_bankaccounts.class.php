@@ -199,10 +199,6 @@ class BankAccounts extends DolibarrApi
 			throw new RestException(401);
 		}
 
-		if ($bankaccount_from_id === $bankaccount_to_id) {
-			throw new RestException(422, 'bankaccount_from_id and bankaccount_to_id must be different !');
-		}
-
 		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 		$accountfrom = new Account($this->db);
@@ -225,6 +221,14 @@ class BankAccounts extends DolibarrApi
 			if (!$amount_to || empty($amount_to)) {
 				throw new RestException(422, 'You must provide amount_to value since bankaccount_from and bankaccount_to does not share the same currency.');
 			}
+		}
+
+		if ($amount_to < 0) {
+			throw new RestException(422, 'You must provide a positive value for amount.');
+		}
+
+		if ($accountto->id == $accountfrom->id) {
+			throw new RestException(422, 'bankaccount_from_id and bankaccount_to_id must be different !');
 		}
 
 		$this->db->begin();

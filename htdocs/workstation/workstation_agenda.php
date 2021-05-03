@@ -82,12 +82,10 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->workstation->multidir_output[$object->entity]."/".$object->id;
 }
 
-// Security check - Protection if external user
-//if ($user->socid > 0) accessforbidden();
-//if ($user->socid > 0) $socid = $user->socid;
-//$result = restrictedArea($user, 'workstation', $object->id);
-
 $permissiontoadd = $user->rights->workstation->workstation->write; // Used by the include of actions_addupdatedelete.inc.php
+
+// Security check
+restrictedArea($user, $object->element, $object->id, '', 'workstation');
 
 
 /*
@@ -125,7 +123,7 @@ $form = new Form($db);
 if ($object->id > 0) {
 	$title = $langs->trans("Agenda");
 	//if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$title;
-	$help_url = '';
+	$help_url = 'EN:Module_Workstation';
 	llxHeader('', $title, $help_url);
 
 	if (!empty($conf->notification->enabled)) {
@@ -134,7 +132,7 @@ if ($object->id > 0) {
 	$head = workstationPrepareHead($object);
 
 
-	print dol_get_fiche_head($head, 'agenda', $langs->trans("Workstation"), -1, 'mrp');
+	print dol_get_fiche_head($head, 'agenda', $langs->trans("Workstation"), -1, 'workstation');
 
 	// Object card
 	// ------------------------------------------------------------

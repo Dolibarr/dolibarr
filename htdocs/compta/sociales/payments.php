@@ -38,7 +38,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsocialcontrib.class.php';
 
-
 $hookmanager = new HookManager($db);
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
@@ -47,12 +46,6 @@ $hookmanager->initHooks(array('specialexpensesindex'));
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills', 'hrm'));
 
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'tax|salaries', '', '', 'charges|');
-
 $year = GETPOST("year", 'int');
 $search_sc_type = GETPOST('search_sc_type', 'int');
 
@@ -60,7 +53,7 @@ $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) {
+if (empty($page) || $page < 0) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
@@ -73,9 +66,11 @@ if (!$sortorder) {
 	$sortorder = "DESC";
 }
 
-if (empty($conf->tax->enabled) || empty($user->rights->tax->charges->lire)) {
-	accessforbidden();
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
 }
+$result = restrictedArea($user, 'tax', '', 'chargesociales', 'charges');
 
 
 /*
@@ -104,8 +99,9 @@ $accountlinestatic = new AccountLine($db);
 $formsocialcontrib = new FormSocialContrib($db);
 
 $title = $langs->trans("SocialContributionsPayments");
+$help_url = '';
 
-llxHeader('', $title);
+llxHeader('', $title, $help_url);
 
 
 $param = '';
@@ -300,10 +296,12 @@ while ($i < min($num, $limit)) {
 	}
 
 	// Type payment
-	print '<td>';
+	$labelpayment = '';
 	if ($obj->payment_code) {
-		print $langs->trans("PaymentTypeShort".$obj->payment_code).' ';
+		$labelpayment = $langs->trans("PaymentTypeShort".$obj->payment_code);
 	}
+	print '<td class="tdoverflowmax150" title="'.$labelpayment.'">';
+	print $labelpayment;
 	print '</td>';
 
 	print '<td>'.$obj->num_payment.'</td>';
@@ -311,12 +309,12 @@ while ($i < min($num, $limit)) {
 	// Account
 	if (!empty($conf->banque->enabled)) {
 		// Bank transaction
-		print '<td>';
+		print '<td class="nowraponall">';
 		$accountlinestatic->id = $obj->fk_bank;
 		print $accountlinestatic->getNomUrl(1);
 		print '</td>';
 
-		print '<td>';
+		print '<td class="nowraponall">';
 		if ($obj->bid > 0) {
 			$accountstatic->id = $obj->bid;
 			$accountstatic->ref = $obj->bref;
@@ -334,12 +332,14 @@ while ($i < min($num, $limit)) {
 		}
 		print '</td>';
 	}
+
 	// Expected to pay
-	print '<td class="right">'.price($obj->total).'</td>';
+	print '<td class="right"><span class="amount">'.price($obj->total).'</span></td>';
+
 	// Paid
 	print '<td class="right">';
 	if ($obj->totalpaye) {
-		print price($obj->totalpaye);
+		print '<span class="amount">'.price($obj->totalpaye).'</span>';
 	}
 	print '</td>';
 

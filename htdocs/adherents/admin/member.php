@@ -8,7 +8,8 @@
  * Copyright (C) 2011-2012 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012      J. Fernando Lagrange <fernando@demo-tic.org>
  * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
- * Copyright (C) 2020-2021  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2020-2021 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2021      Waël Almoman         <info@almoman.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +34,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "members"));
@@ -101,10 +103,11 @@ if ($action == 'set_default') {
 	}
 } elseif ($action == 'updateall') {
 	$db->begin();
-	$res1 = $res2 = $res3 = $res4 = $res5 = $res6 = 0;
+	$res1 = $res2 = $res3 = $res4 = $res5 = $res6 = $res7 = 0;
 	$res1 = dolibarr_set_const($db, 'ADHERENT_LOGIN_NOT_REQUIRED', GETPOST('ADHERENT_LOGIN_NOT_REQUIRED', 'alpha') ? 0 : 1, 'chaine', 0, '', $conf->entity);
 	$res2 = dolibarr_set_const($db, 'ADHERENT_MAIL_REQUIRED', GETPOST('ADHERENT_MAIL_REQUIRED', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res3 = dolibarr_set_const($db, 'ADHERENT_DEFAULT_SENDINFOBYMAIL', GETPOST('ADHERENT_DEFAULT_SENDINFOBYMAIL', 'alpha'), 'chaine', 0, '', $conf->entity);
+	$res3 = dolibarr_set_const($db, 'ADHERENT_CREATE_EXTERNAL_USER_LOGIN', GETPOST('ADHERENT_CREATE_EXTERNAL_USER_LOGIN', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res4 = dolibarr_set_const($db, 'ADHERENT_BANK_USE', GETPOST('ADHERENT_BANK_USE', 'alpha'), 'chaine', 0, '', $conf->entity);
 	// Use vat for invoice creation
 	if ($conf->facture->enabled) {
@@ -215,6 +218,11 @@ print "</td></tr>\n";
 // Send mail information is on by default
 print '<tr class="oddeven"><td>'.$langs->trans("MemberSendInformationByMailByDefault").'</td><td>';
 print $form->selectyesno('ADHERENT_DEFAULT_SENDINFOBYMAIL', (!empty($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL) ? $conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL : 0), 1);
+print "</td></tr>\n";
+
+// Create an external user login for each new member subscription validated
+print '<tr class="oddeven"><td>'.$langs->trans("MemberCreateAnExternalUserForSubscriptionValidated").'</td><td>';
+print $form->selectyesno('ADHERENT_CREATE_EXTERNAL_USER_LOGIN', (!empty($conf->global->ADHERENT_CREATE_EXTERNAL_USER_LOGIN) ? $conf->global->ADHERENT_CREATE_EXTERNAL_USER_LOGIN : 0), 1);
 print "</td></tr>\n";
 
 // Insert subscription into bank account

@@ -97,11 +97,6 @@ if (!GETPOST('search_type_id', 'int')) {
 
 $childids = $user->getAllChildIds(1);
 
-// Security check
-$socid = GETPOST("socid", "int");
-if ($user->socid) $socid = $user->socid;
-$result = restrictedArea($user, 'salaries', '', '', '');
-
 // Initialize array of search criterias
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
@@ -118,6 +113,13 @@ foreach ($object->fields as $key => $val) {
 $permissiontoread = $user->rights->salaries->read;
 $permissiontoadd = $user->rights->salaries->write;
 $permissiontodelete = $user->rights->salaries->delete;
+
+// Security check
+$socid = GETPOST("socid", "int");
+if ($user->socid > 0) {
+	$socid = $user->socid;
+}
+restrictedArea($user, 'salaries', 0, 'salary', '');
 
 
 /*
@@ -516,7 +518,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	}
 
 	// Amount
-	print '<td class="nowrap right">'.price($obj->amount).'</td>';
+	print '<td class="nowrap right"><span class="amount">'.price($obj->amount).'</span></td>';
 	if (!$i) $totalarray['nbfield']++;
 	if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'totalttcfield';
 	$totalarray['val']['totalttcfield'] += $obj->amount;

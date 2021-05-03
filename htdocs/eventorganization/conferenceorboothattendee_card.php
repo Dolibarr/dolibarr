@@ -110,7 +110,12 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	$error = 0;
 
-	$backurlforlist = dol_buildpath('/eventorganization/conferenceorboothattendee_list.php', 1);
+	if (!empty($withproject)) {
+		$backurlforlist = dol_buildpath('/eventorganization/conferenceorboothattendee_list.php?withproject=1', 1);
+	} else {
+		$backurlforlist = dol_buildpath('/eventorganization/conferenceorboothattendee_list.php', 1);
+	}
+
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
@@ -492,7 +497,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href="'.dol_buildpath('/eventorganization/conferenceorboothattendee_list.php', 1).'?restore_lastsearch_values=1&conforboothid='.$confOrBooth->id .'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.dol_buildpath('/eventorganization/conferenceorboothattendee_list.php', 1).'?restore_lastsearch_values=1&conforboothid='.$confOrBooth->id .$withProjectUrl.'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
 	/*

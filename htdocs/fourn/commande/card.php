@@ -122,24 +122,24 @@ if ($id > 0 || !empty($ref)) {
 }
 
 // Common permissions
-$usercanread = $user->rights->fournisseur->commande->lire;
-$usercancreate			= $user->rights->fournisseur->commande->creer;
-$usercandelete			= $user->rights->fournisseur->commande->supprimer;
+$usercanread	= ($user->rights->fournisseur->commande->lire || $user->rights->supplier_order->lire);
+$usercancreate	= ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer);
+$usercandelete	= ($user->rights->fournisseur->commande->supprimer || $user->rights->supplier_order->supprimer);
 
 // Advanced permissions
-$usercanvalidate		= ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($usercancreate)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->supplier_order_advance->validate)));
+$usercanvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($usercancreate)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->supplier_order_advance->validate)));
 
 // Additional area permissions
 $usercanapprove			= $user->rights->fournisseur->commande->approuver;
-$usercanapprovesecond = $user->rights->fournisseur->commande->approve2;
-$usercanorder = $user->rights->fournisseur->commande->commander;
+$usercanapprovesecond	= $user->rights->fournisseur->commande->approve2;
+$usercanorder			= $user->rights->fournisseur->commande->commander;
 $usercanreceived		= $user->rights->fournisseur->commande->receptionner;
 
 // Permissions for includes
-$permissionnote			= $usercancreate; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $usercancreate; // Used by the include of actions_dellink.inc.php
-$permissiontoedit = $usercancreate; // Used by the include of actions_lineupdown.inc.php
-$permissiontoadd		= $usercancreate; // Used by the include of actions_addupdatedelete.inc.php
+$permissionnote		= $usercancreate; // Used by the include of actions_setnotes.inc.php
+$permissiondellink	= $usercancreate; // Used by the include of actions_dellink.inc.php
+$permissiontoedit	= $usercancreate; // Used by the include of actions_lineupdown.inc.php
+$permissiontoadd	= $usercancreate; // Used by the include of actions_addupdatedelete.inc.php
 
 
 /*
@@ -2438,7 +2438,7 @@ if ($action == 'create') {
 				}
 
 				if (in_array($object->statut, array(3, 4, 5))) {
-					if ($conf->fournisseur->enabled && $usercanreceived) {
+					if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled)) && $usercanreceived) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/dispatch.php?id='.$object->id.'">'.$labelofbutton.'</a></div>';
 					} else {
 						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$labelofbutton.'</a></div>';
@@ -2464,8 +2464,8 @@ if ($action == 'create') {
 			// Create bill
 			//if (! empty($conf->facture->enabled))
 			//{
-			if (!empty($conf->fournisseur->enabled) && ($object->statut >= 2 && $object->statut != 7 && $object->billed != 1)) {  // statut 2 means approved, 7 means canceled
-				if ($user->rights->fournisseur->facture->creer) {
+			if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_invoice->enabled)) && ($object->statut >= 2 && $object->statut != 7 && $object->billed != 1)) {  // statut 2 means approved, 7 means canceled
+				if ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer) {
 					print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
 				}
 			}
@@ -2477,7 +2477,7 @@ if ($action == 'create') {
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
 				} else {
 					if (!empty($object->linkedObjectsIds['invoice_supplier'])) {
-						if ($user->rights->fournisseur->facture->creer) {
+						if ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer) {
 							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
 						}
 					} else {

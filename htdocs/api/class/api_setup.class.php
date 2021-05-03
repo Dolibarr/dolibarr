@@ -1647,8 +1647,8 @@ class Setup extends DolibarrApi
 		$file_list = array('missing' => array(), 'updated' => array());
 
 		// Local file to compare to
-		$xmlshortfile = GETPOST('xmlshortfile') ?GETPOST('xmlshortfile') : '/install/filelist-'.DOL_VERSION.'.xml';
-		$xmlfile = DOL_DOCUMENT_ROOT.$xmlshortfile;
+		$xmlshortfile = dol_sanitizeFileName(GETPOST('xmlshortfile', 'alpha') ? GETPOST('xmlshortfile', 'alpha') : 'filelist-'.DOL_VERSION.(empty($conf->global->MAIN_FILECHECK_LOCAL_SUFFIX) ? '' : $conf->global->MAIN_FILECHECK_LOCAL_SUFFIX).'.xml'.(empty($conf->global->MAIN_FILECHECK_LOCAL_EXT) ? '' : $conf->global->MAIN_FILECHECK_LOCAL_EXT));
+		$xmlfile = DOL_DOCUMENT_ROOT.'/install/'.$xmlshortfile;
 		// Remote file to compare to
 		$xmlremote = ($target == 'default' ? '' : $target);
 		if (empty($xmlremote) && !empty($conf->global->MAIN_FILECHECK_URL)) {
@@ -1661,6 +1661,10 @@ class Setup extends DolibarrApi
 		if (empty($xmlremote)) {
 			$xmlremote = 'https://www.dolibarr.org/files/stable/signatures/filelist-'.DOL_VERSION.'.xml';
 		}
+		if ($xmlremote && !preg_match('/^https?:\/\//', $xmlremote)) {
+			$langs->load("errors");
+			throw new RestException(500, $langs->trans("ErrorURLMustStartWithHttp", $xmlremote));
+		}
 
 		if ($target == 'local') {
 			if (dol_is_file($xmlfile)) {
@@ -1669,7 +1673,7 @@ class Setup extends DolibarrApi
 				throw new RestException(500, $langs->trans('XmlNotFound').': '.$xmlfile);
 			}
 		} else {
-			$xmlarray = getURLContent($xmlremote);
+			$xmlarray = getURLContent($xmlremote, 'GET', '', 1, array(), array('http', 'https'), 0);	// Accept http or https links on external remote server only
 
 			// Return array('content'=>response,'curl_error_no'=>errno,'curl_error_msg'=>errmsg...)
 			if (!$xmlarray['curl_error_no'] && $xmlarray['http_code'] != '400' && $xmlarray['http_code'] != '404') {

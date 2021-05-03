@@ -36,14 +36,17 @@ $langs->loadLangs(array('compta', 'bills'));
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
 
+$object = new ChargeSociales($db);
+if ($id > 0) {
+	$object->fetch($id);
+}
+
 // Security check
 $socid = GETPOST('socid', 'int');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'tax', $id, 'chargesociales', 'charges');
-
-$object = new ChargeSociales($db);
+$result = restrictedArea($user, 'tax', $object->id, 'chargesociales', 'charges');
 
 
 /*

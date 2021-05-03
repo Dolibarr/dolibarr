@@ -38,12 +38,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills'));
 
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'tax|salaries', '', '', 'charges|');
-
 $mode = GETPOST("mode", 'alpha');
 $year = GETPOST("year", 'int');
 $filtre = GETPOST("filtre", 'alpha');
@@ -67,6 +61,15 @@ if (!$sortfield) {
 if (!$sortorder) {
 	$sortorder = "DESC";
 }
+
+$object = new Tva($db);
+
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+//$result = restrictedArea($user, 'tax|salaries', '', '', 'charges|');
+$result = restrictedArea($user, 'tax', '', 'tva', 'charges');
 
 
 /*
@@ -233,11 +236,11 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 			// Expected to pay
 			print '<td class="right"><span class="amount">'.price($obj->total).'</span></td>';
 			// Paid
-			print '<td class="right">';
+			print '<td class="right"><span class="amount">';
 			if ($obj->totalpaye) {
 				print price($obj->totalpaye);
 			}
-			print '</td>';
+			print '</span></td>';
 			print '</tr>';
 
 			$total = $total + $obj->total;
@@ -245,6 +248,8 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 			$totalpaye = $totalpaye + $obj->totalpaye;
 			$i++;
 		}
+
+		// Total
 		print '<tr class="liste_total"><td colspan="3" class="liste_total">'.$langs->trans("Total").'</td>';
 		print '<td class="liste_total right"></td>'; // A total here has no sense
 		print '<td align="center" class="liste_total">&nbsp;</td>';

@@ -897,7 +897,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			if (!empty($conf->global->CHECKLASTVERSION_EXTERNALMODULE)) {	// This is a bad practice to activate a synch external access during building of a page. 1 external module can hang the application.
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 				if (!empty($objMod->url_last_version)) {
-					$newversion = getURLContent($objMod->url_last_version);
+					$newversion = getURLContent($objMod->url_last_version, 'GET', '', 1, array(), array('http', 'https'), 0);	// Accept http or https links on external remote server only
 					if (isset($newversion['content'])) {
 						if (version_compare($newversion['content'], $versiontrans) > 0) {
 							print "&nbsp;<span class='butAction' title='".$langs->trans('LastStableVersion')."'>".$newversion['content']."</span>";

@@ -228,26 +228,26 @@ print '<tr class="liste_titre_filter">';
 
 if ($arrayfields['name']['checked']) {
 	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" name="search_name" size="8" value="'.$search_name.'">';
+	print '<input class="flat" type="text" name="search_name" size="8" value="'.dol_escape_htmltag($search_name).'">';
 	print '</td>';
 }
 if ($arrayfields['version']['checked']) {
 	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" name="search_version" size="8" value="'.$search_version.'">';
+	print '<input class="flat" type="text" name="search_version" size="6" value="'.dol_escape_htmltag($search_version).'">';
 	print '</td>';
 }
 if ($arrayfields['id']['checked']) {
 	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" name="search_id" size="8" value="'.$search_id.'">';
-	print '</td>';
-}
-if ($arrayfields['module_position']['checked']) {
-	print '<td class="liste_titre left">';
+	print '<input class="flat" type="text" name="search_id" size="6 value="'.dol_escape_htmltag($search_id).'">';
 	print '</td>';
 }
 if ($arrayfields['permission']['checked']) {
 	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" name="search_permission" size="8" value="'.$search_permission.'">';
+	print '<input class="flat" type="text" name="search_permission" size="8" value="'.dol_escape_htmltag($search_permission).'">';
+	print '</td>';
+}
+if ($arrayfields['module_position']['checked']) {
+	print '<td class="liste_titre left">';
 	print '</td>';
 }
 
@@ -267,13 +267,13 @@ if ($arrayfields['version']['checked']) {
 	print_liste_field_titre($arrayfields['version']['label'], $_SERVER["PHP_SELF"], "version", "", "", "", $sortfield, $sortorder);
 }
 if ($arrayfields['id']['checked']) {
-	print_liste_field_titre($arrayfields['id']['label'], $_SERVER["PHP_SELF"], "id", "", "", "", $sortfield, $sortorder);
-}
-if ($arrayfields['module_position']['checked']) {
-	print_liste_field_titre($arrayfields['module_position']['label'], $_SERVER["PHP_SELF"], "module_position", "", "", "", $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['id']['label'], $_SERVER["PHP_SELF"], "id", "", "", "", $sortfield, $sortorder, 'nowraponall ');
 }
 if ($arrayfields['permission']['checked']) {
 	print_liste_field_titre($arrayfields['permission']['label'], $_SERVER["PHP_SELF"], "permission", "", "", "", $sortfield, $sortorder);
+}
+if ($arrayfields['module_position']['checked']) {
+	print_liste_field_titre($arrayfields['module_position']['label'], $_SERVER["PHP_SELF"], "module_position", "", "", "", $sortfield, $sortorder);
 }
 
 // Fields from hook
@@ -289,36 +289,29 @@ if ($sortfield == "name" && $sortorder == "asc") {
 	usort($moduleList, function (stdClass $a, stdClass $b) {
 		return strcasecmp($a->name, $b->name);
 	});
-}
-if ($sortfield == "name" && $sortorder == "desc") {
+} elseif ($sortfield == "name" && $sortorder == "desc") {
 	usort($moduleList, function (stdClass $a, stdClass $b) {
 		return strcasecmp($b->name, $a->name);
 	});
-}
-if ($sortfield == "version" && $sortorder == "asc") {
+} elseif ($sortfield == "version" && $sortorder == "asc") {
 	usort($moduleList, function (stdClass $a, stdClass $b) {
 		return strcasecmp($a->version, $b->version);
 	});
-}
-if ($sortfield == "version" && $sortorder == "desc") {
+} elseif ($sortfield == "version" && $sortorder == "desc") {
 	usort($moduleList, function (stdClass $a, stdClass $b) {
 		return strcasecmp($b->version, $a->version);
 	});
-}
-if ($sortfield == "id" && $sortorder == "asc") {
+} elseif ($sortfield == "id" && $sortorder == "asc") {
 	usort($moduleList, "compareIdAsc");
-}
-if ($sortfield == "id" && $sortorder == "desc") {
+} elseif ($sortfield == "id" && $sortorder == "desc") {
 	usort($moduleList, "compareIdDesc");
-}
-if ($sortfield == "permission" && $sortorder == "asc") {
+} elseif ($sortfield == "permission" && $sortorder == "asc") {
 	usort($moduleList, "comparePermissionIdsAsc");
-}
-if ($sortfield == "permission" && $sortorder == "desc") {
+} elseif ($sortfield == "permission" && $sortorder == "desc") {
 	usort($moduleList, "comparePermissionIdsDesc");
+} else {
+	$moduleList = dol_sort_array($moduleList, 'module_position');
 }
-
-$moduleList = dol_sort_array($moduleList, 'module_position');
 
 foreach ($moduleList as $module) {
 	print '<tr class="oddeven">';
@@ -338,10 +331,6 @@ foreach ($moduleList as $module) {
 		print '<td class="center">'.$module->id.'</td>';
 	}
 
-	if ($arrayfields['module_position']['checked']) {
-		print '<td class="center">'.$module->module_position.'</td>';
-	}
-
 	if ($arrayfields['permission']['checked']) {
 		$idperms = '';
 
@@ -357,7 +346,11 @@ foreach ($moduleList as $module) {
 			}
 		}
 
-		print '<td>'.($idperms ? $idperms : "&nbsp;").'</td>';
+		print '<td><span class="opacitymedium">'.($idperms ? $idperms : "&nbsp;").'</span></td>';
+	}
+
+	if ($arrayfields['module_position']['checked']) {
+		print '<td class="center">'.$module->module_position.'</td>';
 	}
 
 	print '<td></td>';
@@ -394,11 +387,11 @@ $db->close();
   */
 function compareIdAsc(stdClass $a, stdClass $b)
 {
-	if ($a->id == $b->id) {
+	if ((int) $a->id == (int) $b->id) {
 		return 0;
 	}
 
-	return $a->id > $b->id ? -1 : 1;
+	return ((int) $a->id < (int) $b->id) ? -1 : 1;
 }
 
  /**
@@ -410,11 +403,11 @@ function compareIdAsc(stdClass $a, stdClass $b)
   */
 function compareIdDesc(stdClass $a, stdClass $b)
 {
-	if ($a->id == $b->id) {
+	if ((int) $a->id == (int) $b->id) {
 		return 0;
 	}
 
-	return $b->id > $a->id ? -1 : 1;
+	return ((int) $b->id < (int) $a->id) ? -1 : 1;
 }
 
  /**
@@ -441,7 +434,7 @@ function comparePermissionIdsAsc(stdClass $a, stdClass $b)
 		return 0;
 	}
 
-	return $a->permission[0] > $b->permission[0] ? -1 : 1;
+	return $a->permission[0] < $b->permission[0] ? -1 : 1;
 }
 
  /**
@@ -468,5 +461,5 @@ function comparePermissionIdsDesc(stdClass $a, stdClass $b)
 		return 0;
 	}
 
-	return $a->permission[0] > $b->permission[0] ? 1 : -1;
+	return $b->permission[0] < $a->permission[0] ? -1 : 1;
 }

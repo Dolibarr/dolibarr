@@ -108,13 +108,6 @@ if (!GETPOST('search_type_id', 'int')) {
 
 $childids = $user->getAllChildIds(1);
 
-// Security check
-$socid = GETPOST("socid", "int");
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'salaries', '', '', '');
-
 // Initialize array of search criterias
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
@@ -160,6 +153,13 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 $permissiontoread = $user->rights->salaries->read;
 $permissiontoadd = $user->rights->salaries->write;
 $permissiontodelete = $user->rights->salaries->delete;
+
+// Security check
+$socid = GETPOST("socid", "int");
+if ($user->socid) {
+	$socid = $user->socid;
+}
+restrictedArea($user, 'salaries', '', 'salary', '');
 
 
 /*
@@ -364,10 +364,10 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 // List of mass actions available
 $arrayofmassactions = array(
-	//'presend'=>$langs->trans("SendByMail"),
-	//'buildsepa'=>$langs->trans("BuildSepa"),	// TODO
+	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
+	//'buildsepa'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("BuildSepa"),	// TODO
 );
-//if ($permissiontodelete) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+//if ($permissiontodelete) $arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) {
 	$arrayofmassactions = array();
 }

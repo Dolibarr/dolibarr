@@ -55,9 +55,10 @@ if (!$res) {
 
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-dol_include_once('/eventorganization/class/conferenceorbooth.class.php');
-dol_include_once('/eventorganization/lib/eventorganization_conferenceorbooth.lib.php');
-
+require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class.php';
+require_once DOL_DOCUMENT_ROOT.'/eventorganization/lib/eventorganization_conferenceorbooth.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("eventorganization@eventorganization", "companies", "other", "mails"));
 
@@ -66,10 +67,12 @@ $ref    = GETPOST('ref', 'alpha');
 $lineid = GETPOST('lineid', 'int');
 $socid  = GETPOST('socid', 'int');
 $action = GETPOST('action', 'aZ09');
+$withproject = GETPOST('withproject', 'int');
 
 // Initialize technical objects
 $object = new ConferenceOrBooth($db);
 $extrafields = new ExtraFields($db);
+$projectstatic = new Project($db);
 $diroutputmassaction = $conf->eventorganization->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('conferenceorboothcontact', 'globalcard')); // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
@@ -85,7 +88,7 @@ if ($user->socid > 0) {
 $isdraft = (($object->status== $object::STATUS_DRAFT) ? 1 : 0);
 $result = restrictedArea($user, 'eventorganization', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
 
-$permission = $user->rights->eventorganization->conferenceorbooth->write;
+$permission = $user->rights->eventorganization->write;
 
 
 /*
@@ -98,7 +101,7 @@ if ($action == 'addcontact' && $permission) {	// Add a new contact
 	$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 
 	if ($result >= 0) {
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id.(!empty($withproject)?'&withproject=1':''));
 		exit;
 	} else {
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
@@ -116,7 +119,7 @@ if ($action == 'addcontact' && $permission) {	// Add a new contact
 	$result = $object->delete_contact($lineid);
 
 	if ($result >= 0) {
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id.(!empty($withproject)?'&withproject=1':''));
 		exit;
 	} else {
 		dol_print_error($db);
@@ -144,9 +147,21 @@ $userstatic = new User($db);
 /* View and edit mode                                                         */
 /*                                                                             */
 /* *************************************************************************** */
+
+$result = $projectstatic->fetch($object->fk_project);
+if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) {
+	$projectstatic->fetchComments();
+}
+if (!empty($projectstatic->socid)) {
+	$projectstatic->fetch_thirdparty();
+}
+$withProjectUrl='';
+$object->project = clone $projectstatic;
+
 if (!empty($withproject)) {
 	// Tabs for project
 	$tab = 'eventorganisation';
+	$withProjectUrl="&withproject=1";
 	$head = project_prepare_head($projectstatic);
 	print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public ? 'projectpub' : 'project'), 0, '', '');
 
@@ -204,7 +219,7 @@ if (!empty($withproject)) {
 			print '<br>';
 		}
 		if (!empty($conf->eventorganization->enabled)) {
-			print '<input type="checkbox" disabled name="usage_organize_event"'.(GETPOSTISSET('usage_organize_event') ? (GETPOST('usage_organize_event', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_organize_event ? ' checked="checked"' : '')).'"> ';
+			print '<input type="checkbox" disabled name="usage_organize_event"'.(GETPOSTISSET('usage_organize_event') ? (GETPOST('usage_organize_event', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_organize_event ? ' checked="checked"' : '')).'"> ';
 			$htmltext = $langs->trans("EventOrganizationDescriptionLong");
 			print $form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext);
 		}
@@ -265,6 +280,38 @@ if (!empty($withproject)) {
 		print "</td></tr>";
 	}
 
+	print '<tr><td>';
+	$typeofdata = 'checkbox:'.($projectstatic->accept_conference_suggestions ? ' checked="checked"' : '');
+	$htmltext = $langs->trans("AllowUnknownPeopleSuggestConfHelp");
+	print $form->editfieldkey('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', '', $projectstatic, 0, $typeofdata, '', 0, 0, 'projectid', $htmltext);
+	print '</td><td>';
+	print $form->editfieldval('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', '1', $projectstatic, 0, $typeofdata, '', 0, 0, '', 0, '', 'projectid');
+	print "</td></tr>";
+
+	print '<tr><td>';
+	$typeofdata = 'checkbox:'.($projectstatic->accept_booth_suggestions ? ' checked="checked"' : '');
+	$htmltext = $langs->trans("AllowUnknownPeopleSuggestBoothHelp");
+	print $form->editfieldkey('AllowUnknownPeopleSuggestBooth', 'accept_booth_suggestions', '', $projectstatic, 0, $typeofdata, '', 0, 0, 'projectid', $htmltext);
+	print '</td><td>';
+	print $form->editfieldval('AllowUnknownPeopleSuggestBooth', 'accept_booth_suggestions', '1', $projectstatic, 0, $typeofdata, '', 0, 0, '', 0, '', 'projectid');
+	print "</td></tr>";
+
+	print '<tr><td>';
+	print $form->editfieldkey('PriceOfRegistration', 'price_registration', '', $projectstatic, 0, 'amount', '', 0, 0, 'projectid');
+	print '</td><td>';
+	print $form->editfieldval('PriceOfRegistration', 'price_registration', $projectstatic->price_registration, $projectstatic, 0, 'amount', '', 0, 0, '', 0, '', 'projectid');
+	print "</td></tr>";
+
+	print '<tr><td>';
+	print $form->editfieldkey('PriceOfBooth', 'price_booth', '', $projectstatic, 0, 'amount', '', 0, 0, 'projectid');
+	print '</td><td>';
+	print $form->editfieldval('PriceOfBooth', 'price_booth', $projectstatic->price_booth, $projectstatic, 0, 'amount', '', 0, 0, '', 0, '', 'projectid');
+	print "</td></tr>";
+
+	print '<tr><td valign="middle">'.$langs->trans("EventOrganizationICSLink").'</td><td>';
+	print '';
+	print "</td></tr>";
+
 	print '</table>';
 
 	print '</div>';
@@ -282,7 +329,7 @@ if ($object->id) {
 	/*
 	 * Show tabs
 	 */
-	$head = conferenceorboothPrepareHead($object);
+	$head = conferenceorboothPrepareHead($object, $withproject);
 
 	print dol_get_fiche_head($head, 'contact', $langs->trans("ConferenceOrBooth"), -1, $object->picto);
 

@@ -7,6 +7,7 @@
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2016      Josep Lluís Amador   <joseplluis@lliuretic.cat>
  * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2021      Noé Cendrier         <noe.cendrier@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,10 +51,10 @@ if (!empty($conf->commande->enabled)) {
 if (!empty($conf->supplier_proposal->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 }
-if (!empty($conf->fournisseur->enabled)) {
+if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_invoice->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 }
-if (!empty($conf->fournisseur->enabled)) {
+if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 }
 if (!empty($conf->contrat->enabled)) {
@@ -360,6 +361,18 @@ print '<br>';
  */
 
 $listofreferent = array(
+'entrepot'=>array(
+	'name'=>"Warehouse",
+	'title'=>"ListWarehouseAssociatedProject",
+	'class'=>'Entrepot',
+	'table'=>'entrepot',
+	'datefieldname'=>'date_entrepot',
+	'urlnew'=>DOL_URL_ROOT.'/product/stock/card.php?action=create&projectid='.$id,
+	'lang'=>'entrepot',
+	'buttonnew'=>'AddWarehouse',
+	'project_field'=>'fk_project',
+	'testnew'=>$user->rights->stock->creer,
+	'test'=>$conf->stock->enabled && $user->rights->stock->lire),
 'propal'=>array(
 	'name'=>"Proposals",
 	'title'=>"ListProposalsAssociatedProject",
@@ -425,8 +438,8 @@ $listofreferent = array(
 	'urlnew'=>DOL_URL_ROOT.'/fourn/commande/card.php?action=create&projectid='.$id, // No socid parameter here, the socid is often the customer and we create a supplier object
 	'lang'=>'suppliers',
 	'buttonnew'=>'AddSupplierOrder',
-	'testnew'=>$user->rights->fournisseur->commande->creer,
-	'test'=>$conf->supplier_order->enabled && $user->rights->fournisseur->commande->lire),
+	'testnew'=>($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer),
+	'test'=>$conf->supplier_order->enabled && ($user->rights->fournisseur->commande->lire || $user->rights->supplier_order->lire)),
 'invoice_supplier'=>array(
 	'name'=>"BillsSuppliers",
 	'title'=>"ListSupplierInvoicesAssociatedProject",
@@ -437,8 +450,8 @@ $listofreferent = array(
 	'urlnew'=>DOL_URL_ROOT.'/fourn/facture/card.php?action=create&projectid='.$id, // No socid parameter here, the socid is often the customer and we create a supplier object
 	'lang'=>'suppliers',
 	'buttonnew'=>'AddSupplierInvoice',
-	'testnew'=>$user->rights->fournisseur->facture->creer,
-	'test'=>$conf->supplier_invoice->enabled && $user->rights->fournisseur->facture->lire),
+	'testnew'=>($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer),
+	'test'=>$conf->supplier_invoice->enabled && ($user->rights->fournisseur->facture->lire || $user->rights->supplier_invoice->lire)),
 'contract'=>array(
 	'name'=>"Contracts",
 	'title'=>"ListContractAssociatedProject",

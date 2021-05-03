@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2021		Waël Almoman			<info@almoman.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,10 +99,11 @@ $FULLTAG = GETPOST('FULLTAG');
 if (empty($FULLTAG)) {
 	$FULLTAG = GETPOST('fulltag');
 }
-$source = GETPOST('s', 'alpha') ?GETPOST('s', 'alpha') : GETPOST('source', 'alpha');
+$source = GETPOST('s', 'alpha') ? GETPOST('s', 'alpha') : GETPOST('source', 'alpha');
 $ref = GETPOST('ref');
 
 $suffix = GETPOST("suffix", 'aZ09');
+$membertypeid = GETPOST("membertypeid", 'int');
 
 
 // Detect $paymentmethod
@@ -339,7 +341,8 @@ if ($ispaymentok) {
 		$user->rights->facture = new stdClass();
 	}
 	if (empty($user->rights->adherent)) {
-		$user->rights->adherent = new stdClass(); $user->rights->adherent->cotisation = new stdClass();
+		$user->rights->adherent = new stdClass();
+		$user->rights->adherent->cotisation = new stdClass();
 	}
 	$user->rights->societe->creer = 1;
 	$user->rights->facture->creer = 1;
@@ -460,7 +463,7 @@ if ($ispaymentok) {
 				if (!$error) {
 					dol_syslog("Call ->subscription to create subscription", LOG_DEBUG, 0, '_payment');
 
-					$crowid = $object->subscription($datesubscription, $amount, $accountid, $operation, $label, $num_chq, $emetteur_nom, $emetteur_banque, $datesubend);
+					$crowid = $object->subscription($datesubscription, $amount, $accountid, $operation, $label, $num_chq, $emetteur_nom, $emetteur_banque, $datesubend, $membertypeid);
 					if ($crowid <= 0) {
 						$error++;
 						$errmsg = $object->error;
@@ -620,6 +623,26 @@ if ($ispaymentok) {
 						}
 
 						$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
+
+						// Create external user
+						if (!empty($conf->global->ADHERENT_CREATE_EXTERNAL_USER_LOGIN)) {
+							$infouserlogin = '';
+							$nuser = new User($db);
+							$tmpuser = dol_clone($object);
+
+							$result = $nuser->create_from_member($tmpuser, $object->login);
+							$newpassword = $nuser->setPassword($user, '');
+
+							if ($result < 0) {
+								$outputlangs->load("errors");
+								$postactionmessages[] = 'Error in create external user : '.$nuser->error;
+							} else {
+								$infouserlogin = $outputlangs->trans("Login").': '.$nuser->login.' '."\n".$outputlangs->trans("Password").': '.$newpassword;
+								$postactionmessages[] = $langs->trans("NewUserCreated", $nuser->login);
+							}
+							$substitutionarray['__MEMBER_USER_LOGIN_INFORMATION__'] = $infouserlogin;
+						}
+
 						complete_substitutions_array($substitutionarray, $outputlangs, $object);
 						$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
 						$texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnSubscription()), $substitutionarray, $outputlangs);

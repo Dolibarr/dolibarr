@@ -121,7 +121,10 @@ elseif ($action == 'setaddress' && $user->rights->expedition->creer)
  * View
  */
 
-llxHeader('', $langs->trans('Order'), 'EN:Customers_Orders|FR:expeditions_Clients|ES:Pedidos de clientes');
+
+$help_url = 'EN:Module_Shipments|FR:Module_Expéditions|ES:M&oacute;dulo_Expediciones|DE:Modul_Lieferungen';
+
+llxHeader('', $langs->trans('Order'), $help_url);
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);

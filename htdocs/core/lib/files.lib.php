@@ -50,7 +50,7 @@ function dol_basename($pathfile)
  *  @param	array		$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview.*\.png)$','^\.')). Exclude is checked both into fullpath and into basename (So '^xxx' may exclude 'xxx/dirscanned/...' and dirscanned/xxx').
  *  @param	string		$sortcriteria	Sort criteria ('','fullname','relativename','name','date','size')
  *  @param	string		$sortorder		Sort order (SORT_ASC, SORT_DESC)
- *	@param	int			$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only
+ *	@param	int			$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only, 4=Force load of perm
  *  @param	int			$nohook			Disable all hooks
  *  @param	string		$relativename	For recursive purpose only. Must be "" at first call.
  *  @param	string		$donotfollowsymlinks	Do not follow symbolic links
@@ -67,6 +67,7 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 
 	$loaddate = ($mode == 1 || $mode == 2) ?true:false;
 	$loadsize = ($mode == 1 || $mode == 3) ?true:false;
+	$loadperm = ($mode == 1 || $mode == 4) ?true:false;
 
 	// Clean parameters
 	$path = preg_replace('/([\\/]+)$/i', '', $path);
@@ -141,6 +142,9 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 							if ($loadsize || $sortcriteria == 'size') {
 								$filesize = dol_filesize($path."/".$file);
 							}
+							if ($loadperm || $sortcriteria == 'perm') {
+								$fileperm = dol_fileperm($path."/".$file);
+							}
 
 							if (!$filter || preg_match('/'.$filter.'/i', $file)) {	// We do not search key $filter into all $path, only into $file part
 								$reg = array();
@@ -154,6 +158,7 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 									"fullname" => $path.'/'.$file,
 									"date" => $filedate,
 									"size" => $filesize,
+									"perm" => $fileperm,
 									"type" => 'dir'
 								);
 							}
@@ -585,6 +590,18 @@ function dol_filemtime($pathoffile)
 {
 	$newpathoffile = dol_osencode($pathoffile);
 	return @filemtime($newpathoffile); // @Is to avoid errors if files does not exists
+}
+
+/**
+ * Return permissions of a file
+ *
+ * @param 	string		$pathoffile		Path of file
+ * @return 	integer						File permissions
+ */
+function dol_fileperm($pathoffile)
+{
+	$newpathoffile = dol_osencode($pathoffile);
+	return fileperms($newpathoffile);
 }
 
 /**
@@ -1544,7 +1561,9 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 	if (!empty($_FILES[$varfiles])) { // For view $_FILES[$varfiles]['error']
 		dol_syslog('dol_add_file_process upload_dir='.$upload_dir.' allowoverwrite='.$allowoverwrite.' donotupdatesession='.$donotupdatesession.' savingdocmask='.$savingdocmask, LOG_DEBUG);
 
-		if (dol_mkdir($upload_dir) >= 0) {
+		$result = dol_mkdir($upload_dir);
+		//      var_dump($result);exit;
+		if ($result >= 0) {
 			$TFile = $_FILES[$varfiles];
 			if (!is_array($TFile['name'])) {
 				foreach ($TFile as $key => &$val) {
@@ -1647,6 +1666,8 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 				$res = 1;
 				setEventMessages($langs->trans("FileTransferComplete"), null, 'mesgs');
 			}
+		} else {
+			setEventMessages($langs->trans("ErrorFailedToCreateDir", $upload_dir), null, 'errors');
 		}
 	} elseif ($link) {
 		require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
@@ -1840,14 +1861,15 @@ function deleteFilesIntoDatabaseIndex($dir, $file, $mode = 'uploaded')
 
 
 /**
- * 	Convert an image file into another format.
- *  This need Imagick php extension.
+ * 	Convert an image file or a PDF into another image format.
+ *  This need Imagick php extension. You can use dol_imageResizeOrCrop() for a function that need GD.
  *
  *  @param	string	$fileinput  Input file name
  *  @param  string	$ext        Format of target file (It is also extension added to file if fileoutput is not provided).
  *  @param	string	$fileoutput	Output filename
  *  @param  string  $page       Page number if we convert a PDF into png
  *  @return	int					<0 if KO, 0=Nothing done, >0 if OK
+ *  @see dol_imageResizeOrCrop()
  */
 function dol_convert_file($fileinput, $ext = 'png', $fileoutput = '', $page = '')
 {

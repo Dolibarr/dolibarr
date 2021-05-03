@@ -92,6 +92,7 @@ SearchAllDesc=Le champ doit-il être utilisé pour effectuer une recherche à pa
 SpecDefDesc=Entrez ici toute la documentation que vous souhaitez joindre au module et qui n'a pas encore été définis dans d'autres onglets. Vous pouvez utiliser .md ou, mieux, la syntaxe enrichie .asciidoc.
 LanguageDefDesc=Entrez dans ces fichiers, toutes les clés et la traduction pour chaque fichier de langue.
 MenusDefDesc=Définissez ici les menus fournis par votre module
+ImportExportProfiles=You will find here the Export or Import profiles provided by your module
 DictionariesDefDesc=Définissez ici les dictionnaires fournis par le module
 PermissionsDefDesc=Définissez ici les nouvelles permissions fournies par votre module
 MenusDefDescTooltip=Les menus fournis par votre module / application sont définis dans le tableau <strong>$this->menus</strong> dans le fichier descripteur de module. Vous pouvez modifier manuellement ce fichier ou utiliser l'éditeur intégré. <br><br> Remarque: une fois définis (et les modules réactivés), les menus sont également visibles dans l'éditeur de menus mis à la disposition des utilisateurs administrateurs sur %s.

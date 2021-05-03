@@ -90,6 +90,9 @@ if (!$error && $massaction == 'confirm_presend') {
 		if ($objecttmp->element == 'expensereport') {
 			$thirdparty = new User($db);
 		}
+		if ($objecttmp->element == 'partnership' && $conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') {
+			$thirdparty = new Adherent($db);
+		}
 		if ($objecttmp->element == 'holiday') {
 			$thirdparty = new User($db);
 		}
@@ -106,6 +109,9 @@ if (!$error && $massaction == 'confirm_presend') {
 				}
 				if ($objecttmp->element == 'expensereport') {
 					$thirdpartyid = $objecttmp->fk_user_author;
+				}
+				if ($objecttmp->element == 'partnership' && $conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') {
+					$thirdpartyid = $objecttmp->fk_member;
 				}
 				if ($objecttmp->element == 'holiday') {
 					$thirdpartyid = $objecttmp->fk_user;
@@ -250,6 +256,10 @@ if (!$error && $massaction == 'confirm_presend') {
 						$fuser = new User($db);
 						$fuser->fetch($objectobj->fk_user_author);
 						$sendto = $fuser->email;
+					} elseif ($objectobj->element == 'partnership' && $conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') {
+						$fadherent = new Adherent($db);
+						$fadherent->fetch($objectobj->fk_member);
+						$sendto = $fadherent->email;
 					} elseif ($objectobj->element == 'holiday') {
 						$fuser = new User($db);
 						$fuser->fetch($objectobj->fk_user);
@@ -1262,42 +1272,6 @@ if (!$error && $massaction == 'validate' && $permissiontoadd) {
 			$db->rollback();
 		}
 		//var_dump($listofobjectthirdparties);exit;
-	}
-}
-
-// Closed records
-if (!$error && $massaction == 'closed' && $objectclass == "Propal" && $permissiontoclose) {
-	$db->begin();
-
-	$objecttmp = new $objectclass($db);
-	$nbok = 0;
-	foreach ($toselect as $toselectid) {
-		$result = $objecttmp->fetch($toselectid);
-		if ($result > 0) {
-			$result = $objecttmp->cloture($user, 3);
-			if ($result <= 0) {
-				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
-				$error++;
-				break;
-			} else {
-				$nbok++;
-			}
-		} else {
-			setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
-			$error++;
-			break;
-		}
-	}
-
-	if (!$error) {
-		if ($nbok > 1) {
-			setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
-		} else {
-			setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
-		}
-		$db->commit();
-	} else {
-		$db->rollback();
 	}
 }
 

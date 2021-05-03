@@ -157,10 +157,17 @@ class Facture extends CommonInvoice
 	public $total_ttc = 0;
 	public $revenuestamp;
 
-	//! Fermeture apres paiement partiel: discount_vat, badcustomer, abandon
-	//! Fermeture alors que aucun paiement: replaced (si remplace), abandon
+	/**
+	 * ! Closing after partial payment: discount_vat, badsupplier, abandon
+	 * ! Closing when no payment: replaced, abandoned
+	 * @var string Close code
+	 */
 	public $close_code;
-	//! Commentaire si mis a paye sans paiement complet
+
+	/**
+	 * ! Comment if paid without full payment
+	 * @var string Close note
+	 */
 	public $close_note;
 
 	/**
@@ -303,8 +310,8 @@ class Facture extends CommonInvoice
 		//'remise' =>array('type'=>'double', 'label'=>'Remise', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
 		'close_code' =>array('type'=>'varchar(16)', 'label'=>'EarlyClosingReason', 'enabled'=>1, 'visible'=>-1, 'position'=>92),
 		'close_note' =>array('type'=>'varchar(128)', 'label'=>'EarlyClosingComment', 'enabled'=>1, 'visible'=>-1, 'position'=>93),
-		'total' =>array('type'=>'double(24,8)', 'label'=>'AmountHT', 'enabled'=>1, 'visible'=>-1, 'position'=>95, 'isameasure'=>1),
-		'tva' =>array('type'=>'double(24,8)', 'label'=>'AmountVAT', 'enabled'=>1, 'visible'=>-1, 'position'=>100, 'isameasure'=>1),
+		'total_ht' =>array('type'=>'double(24,8)', 'label'=>'AmountHT', 'enabled'=>1, 'visible'=>-1, 'position'=>95, 'isameasure'=>1),
+		'total_tva' =>array('type'=>'double(24,8)', 'label'=>'AmountVAT', 'enabled'=>1, 'visible'=>-1, 'position'=>100, 'isameasure'=>1),
 		'localtax1' =>array('type'=>'double(24,8)', 'label'=>'LT1', 'enabled'=>1, 'visible'=>-1, 'position'=>110, 'isameasure'=>1),
 		'localtax2' =>array('type'=>'double(24,8)', 'label'=>'LT2', 'enabled'=>1, 'visible'=>-1, 'position'=>120, 'isameasure'=>1),
 		'revenuestamp' =>array('type'=>'double(24,8)', 'label'=>'RevenueStamp', 'enabled'=>1, 'visible'=>-1, 'position'=>115, 'isameasure'=>1),
@@ -1572,7 +1579,7 @@ class Facture extends CommonInvoice
 		}
 
 		$sql = 'SELECT f.rowid,f.entity,f.ref,f.ref_client,f.ref_ext,f.ref_int,f.type,f.fk_soc';
-		$sql .= ', f.tva, f.localtax1, f.localtax2, f.total, f.total_ttc, f.revenuestamp';
+		$sql .= ', f.total_tva, f.localtax1, f.localtax2, f.total_ht, f.total_ttc, f.revenuestamp';
 		$sql .= ', f.remise_percent, f.remise_absolue, f.remise';
 		$sql .= ', f.datef as df, f.date_pointoftax';
 		$sql .= ', f.date_lim_reglement as dlr';
@@ -1632,8 +1639,8 @@ class Facture extends CommonInvoice
 				$this->datem = $this->db->jdate($obj->datem);
 				$this->remise_percent		= $obj->remise_percent;
 				$this->remise_absolue		= $obj->remise_absolue;
-				$this->total_ht				= $obj->total;
-				$this->total_tva			= $obj->tva;
+				$this->total_ht				= $obj->total_ht;
+				$this->total_tva			= $obj->total_tva;
 				$this->total_localtax1		= $obj->localtax1;
 				$this->total_localtax2		= $obj->localtax2;
 				$this->total_ttc			= $obj->total_ttc;
@@ -1961,10 +1968,10 @@ class Facture extends CommonInvoice
 		$sql .= " remise_absolue=".(isset($this->remise_absolue) ? $this->db->escape($this->remise_absolue) : "null").",";
 		$sql .= " close_code=".(isset($this->close_code) ? "'".$this->db->escape($this->close_code)."'" : "null").",";
 		$sql .= " close_note=".(isset($this->close_note) ? "'".$this->db->escape($this->close_note)."'" : "null").",";
-		$sql .= " tva=".(isset($this->total_tva) ? $this->total_tva : "null").",";
+		$sql .= " total_tva=".(isset($this->total_tva) ? $this->total_tva : "null").",";
 		$sql .= " localtax1=".(isset($this->total_localtax1) ? $this->total_localtax1 : "null").",";
 		$sql .= " localtax2=".(isset($this->total_localtax2) ? $this->total_localtax2 : "null").",";
-		$sql .= " total=".(isset($this->total_ht) ? $this->total_ht : "null").",";
+		$sql .= " total_ht=".(isset($this->total_ht) ? $this->total_ht : "null").",";
 		$sql .= " total_ttc=".(isset($this->total_ttc) ? $this->total_ttc : "null").",";
 		$sql .= " revenuestamp=".((isset($this->revenuestamp) && $this->revenuestamp != '') ? $this->db->escape($this->revenuestamp) : "null").",";
 		$sql .= " fk_statut=".(isset($this->statut) ? $this->db->escape($this->statut) : "null").",";
@@ -2237,14 +2244,14 @@ class Facture extends CommonInvoice
 			$sql .= ' AND fk_facture_line IS NULL';
 			$resql = $this->db->query($sql);
 
-			// If invoice has consumned discounts
+			// If invoice has consumed discounts
 			$this->fetch_lines();
 			$list_rowid_det = array();
 			foreach ($this->lines as $key => $invoiceline) {
 				$list_rowid_det[] = $invoiceline->id;
 			}
 
-			// Consumned discounts are freed
+			// Consumed discounts are freed
 			if (count($list_rowid_det)) {
 				$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
 				$sql .= ' SET fk_facture = NULL, fk_facture_line = NULL';
@@ -2536,8 +2543,8 @@ class Facture extends CommonInvoice
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			// On desaffecte de la facture les remises liees
-			// car elles n'ont pas ete utilisees vu que la facture est abandonnee.
+			// Bound discounts are deducted from the invoice
+			// as they have not been used since the invoice is abandoned.
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
 			$sql .= ' SET fk_facture = NULL';
 			$sql .= ' WHERE fk_facture = '.$this->id;
@@ -3659,7 +3666,7 @@ class Facture extends CommonInvoice
 
 		$this->db->begin();
 
-		// Libere remise liee a ligne de facture
+		// Free discount linked to invoice line
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
 		$sql .= ' SET fk_facture_line = NULL';
 		$sql .= ' WHERE fk_facture_line = '.((int) $rowid);
@@ -4207,7 +4214,7 @@ class Facture extends CommonInvoice
 
 		$clause = " WHERE";
 
-		$sql = "SELECT f.rowid, f.date_lim_reglement as datefin,f.fk_statut, f.total";
+		$sql = "SELECT f.rowid, f.date_lim_reglement as datefin,f.fk_statut, f.total_ht";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 		if (!$user->rights->societe->client->voir && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON f.fk_soc = sc.fk_soc";

@@ -427,7 +427,7 @@ class Tva extends CommonObject
 	{
         // phpcs:enable
 
-		$sql = "SELECT sum(f.tva) as amount";
+		$sql = "SELECT sum(f.total_tva) as amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f WHERE f.paye = 1";
 		if ($year) {
 			$sql .= " AND f.datef >= '".$this->db->escape($year)."-01-01' AND f.datef <= '".$this->db->escape($year)."-12-31' ";

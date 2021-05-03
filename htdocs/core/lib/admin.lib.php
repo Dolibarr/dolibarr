@@ -534,24 +534,23 @@ function dolibarr_del_const($db, $name, $entity = 1)
 }
 
 /**
- *	Recupere une constante depuis la base de donnees.
+ *	Get the value of a setup constant from database
  *
  *	@param	    DoliDB		$db         Database handler
- *	@param	    string		$name		Nom de la constante
+ *	@param	    string		$name		Name of constant
  *	@param	    int			$entity		Multi company id
- *	@return     string      			Valeur de la constante
+ *	@return     string      			Value of constant
  *
  *	@see		dolibarr_del_const(), dolibarr_set_const(), dol_set_user_param()
  */
 function dolibarr_get_const($db, $name, $entity = 1)
 {
-	global $conf;
 	$value = '';
 
 	$sql = "SELECT ".$db->decrypt('value')." as value";
 	$sql .= " FROM ".MAIN_DB_PREFIX."const";
 	$sql .= " WHERE name = ".$db->encrypt($name, 1);
-	$sql .= " AND entity = ".$entity;
+	$sql .= " AND entity = ".((int) $entity);
 
 	dol_syslog("admin.lib::dolibarr_get_const", LOG_DEBUG);
 	$resql = $db->query($sql);
@@ -571,7 +570,7 @@ function dolibarr_get_const($db, $name, $entity = 1)
  *	@param	    DoliDB		$db         Database handler
  *	@param	    string		$name		Name of constant
  *	@param	    string		$value		Value of constant
- *	@param	    string		$type		Type of constant ('chaine by default)
+ *	@param	    string		$type		Type of constant. Deprecated, only strings are allowed for $value. Caller must json encode/decode to store other type of data.
  *	@param	    int			$visible	Is constant visible in Setup->Other page (0 by default)
  *	@param	    string		$note		Note on parameter
  *	@param	    int			$entity		Multi company id (0 means all entities)
@@ -599,7 +598,7 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
 	$sql .= " WHERE name = ".$db->encrypt($name, 1);
 	if ($entity >= 0) {
-		$sql .= " AND entity = ".$entity;
+		$sql .= " AND entity = ".((int) $entity);
 	}
 
 	dol_syslog("admin.lib::dolibarr_set_const", LOG_DEBUG);
@@ -610,7 +609,7 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 		$sql .= " VALUES (";
 		$sql .= $db->encrypt($name, 1);
 		$sql .= ", ".$db->encrypt($value, 1);
-		$sql .= ",'".$db->escape($type)."',".$visible.",'".$db->escape($note)."',".$entity.")";
+		$sql .= ",'".$db->escape($type)."',".((int) $visible).",'".$db->escape($note)."',".((int) $entity).")";
 
 		//print "sql".$value."-".pg_escape_string($value)."-".$sql;exit;
 		//print "xx".$db->escape($value);
@@ -1229,14 +1228,14 @@ function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tab
 
 						// We discard modules according to features level (PS: if module is activated we always show it)
 						$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
-						if ($objMod->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2 && !$conf->global->$const_name) {
+						if ($objMod->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2 && empty(getDolGlobalString($const_name))) {
 							$modulequalified = 0;
 						}
-						if ($objMod->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && !$conf->global->$const_name) {
+						if ($objMod->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1 && empty(getDolGlobalString($const_name))) {
 							$modulequalified = 0;
 						}
 						//If module is not activated disqualified
-						if (empty($conf->global->$const_name)) {
+						if (empty(getDolGlobalString($const_name))) {
 							$modulequalified = 0;
 						}
 
@@ -1885,14 +1884,14 @@ function email_admin_prepare_head()
 		$head[$h][2] = 'common';
 		$h++;
 
-		if ($conf->mailing->enabled) {
+		if (!empty($conf->mailing->enabled)) {
 			$head[$h][0] = DOL_URL_ROOT."/admin/mails_emailing.php";
 			$head[$h][1] = $langs->trans("OutGoingEmailSetupForEmailing", $langs->transnoentitiesnoconv("EMailing"));
 			$head[$h][2] = 'common_emailing';
 			$h++;
 		}
 
-		if ($conf->ticket->enabled) {
+		if (!empty($conf->ticket->enabled)) {
 			$head[$h][0] = DOL_URL_ROOT."/admin/mails_ticket.php";
 			$head[$h][1] = $langs->trans("OutGoingEmailSetupForEmailing", $langs->transnoentitiesnoconv("Ticket"));
 			$head[$h][2] = 'common_ticket';

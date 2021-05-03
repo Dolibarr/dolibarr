@@ -60,6 +60,8 @@ if ($id > 0 || !empty($ref)) {
 $permissionnote = $user->rights->workstation->workstation->write; // Used by the include of actions_setnotes.inc.php
 $permissiontoadd = $user->rights->workstation->workstation->write; // Used by the include of actions_addupdatedelete.inc.php
 
+// Security check
+restrictedArea($user, $object->element, $object->id, '', 'workstation');
 
 
 /*
@@ -75,8 +77,8 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, 
 
 $form = new Form($db);
 
-//$help_url='EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes';
-$help_url = '';
+$help_url = 'EN:Module_Workstation';
+
 llxHeader('', $langs->trans('Workstation'), $help_url);
 
 if ($id > 0 || !empty($ref)) {

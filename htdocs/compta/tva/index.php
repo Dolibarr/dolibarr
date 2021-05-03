@@ -62,7 +62,7 @@ $socid = GETPOST('socid', 'int');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'tax', '', '', 'charges');
+$result = restrictedArea($user, 'tax', '', 'tva', 'charges');
 
 
 /**
@@ -106,8 +106,8 @@ function pt($db, $sql, $date)
 			if ($obj->mode == 'claimed' && !empty($previousmode)) {
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">'.$previousmonth."</td>\n";
-				print '<td class="nowrap right">'.price($amountclaimed)."</td>\n";
-				print '<td class="nowrap right">'.price($amountpaid)."</td>\n";
+				print '<td class="nowrap right"><span class="amount">'.price($amountclaimed)."</span></td>\n";
+				print '<td class="nowrap right"><span class="amount">'.price($amountpaid)."</span></td>\n";
 				print "</tr>\n";
 
 				$amountclaimed = 0;
@@ -126,8 +126,8 @@ function pt($db, $sql, $date)
 			if ($obj->mode == 'paid') {
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">'.$obj->dm."</td>\n";
-				print '<td class="nowrap right">'.price($amountclaimed)."</td>\n";
-				print '<td class="nowrap right">'.price($amountpaid)."</td>\n";
+				print '<td class="nowrap right"><span class="amount">'.price($amountclaimed)."</span></td>\n";
+				print '<td class="nowrap right"><span class="amount">'.price($amountpaid)."</span></td>\n";
 				print "</tr>\n";
 				$amountclaimed = 0;
 				$amountpaid = 0;
@@ -438,7 +438,7 @@ if ($refresh === true) {
 				$x_coll_sum += $temp_vat;
 			}
 		}
-		print '<td class="nowrap right">' . price(price2num($x_coll_sum, 'MT')) . '</td>';
+		print '<td class="nowrap right"><span class="amount">' . price(price2num($x_coll_sum, 'MT')) . '</span></td>';
 
 		$x_paye_sum = 0;
 		foreach (array_keys($x_paye) as $rate) {
@@ -478,7 +478,7 @@ if ($refresh === true) {
 				$x_paye_sum += $temp_vat;
 			}
 		}
-		print '<td class="nowrap right">' . price(price2num($x_paye_sum, 'MT')) . '</td>';
+		print '<td class="nowrap right"><span class="amount">' . price(price2num($x_paye_sum, 'MT')) . '</span></td>';
 
 		$subtotalcoll = $subtotalcoll + $x_coll_sum;
 		$subtotalpaye = $subtotalpaye + $x_paye_sum;
@@ -487,10 +487,11 @@ if ($refresh === true) {
 		$total = $total + $diff;
 		$subtotal = price2num($subtotal + $diff, 'MT');
 
-		print '<td class="nowrap right">' . price(price2num($diff, 'MT')) . '</td>' . "\n";
+		print '<td class="nowrap right"><span class="amount">' . price(price2num($diff, 'MT')) . '</span></td>' . "\n";
 		print "<td>&nbsp;</td>\n";
 		print "</tr>\n";
 
+		// Total
 		$i++;
 		$m++;
 		if ($i > 2) {

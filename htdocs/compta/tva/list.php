@@ -28,13 +28,6 @@
 
 require '../../main.inc.php';
 
-// Security check
-$socid = GETPOST('socid', 'int');
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'tax', '', '', 'charges');
-
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -98,6 +91,13 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('salestaxeslist'));
 $object = new Tva($db);
+
+// Security check
+$socid = GETPOST('socid', 'int');
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'tax', '', 'tva', 'charges');
 
 
 /*
@@ -509,7 +509,7 @@ while ($i < min($num, $limit)) {
 	// Amount
 	if (!empty($arrayfields['t.amount']['checked'])) {
 		$total = $total + $obj->amount;
-		print '<td class="nowrap right">' . price($obj->amount) . '</td>';
+		print '<td class="nowrap right"><span class="amount">' . price($obj->amount) . '</span></td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

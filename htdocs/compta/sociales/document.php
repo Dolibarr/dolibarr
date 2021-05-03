@@ -45,13 +45,6 @@ $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'tax', $id, 'chargesociales', 'charges');
-
-
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -78,6 +71,12 @@ if ($id > 0) {
 
 $upload_dir = $conf->tax->dir_output.'/'.dol_sanitizeFileName($object->ref);
 $modulepart = 'tax';
+
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'tax', $object->id, 'chargesociales', 'charges');
 
 
 /*
@@ -166,9 +165,9 @@ if ($object->id) {
 
 	$modulepart = 'tax';
 	$permission = $user->rights->tax->charges->creer;
-	$permtoedit = $user->rights->fournisseur->facture->creer;
+	$permtoedit = $user->rights->tax->charges->creer;
 	$param = '&id='.$object->id;
-	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {
 	print $langs->trans("ErrorUnknown");
 }
