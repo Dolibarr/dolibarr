@@ -513,7 +513,7 @@ function getNumberInvoicesPieChart($mode)
 			foreach ($dataseries as $key=>$value) {
 				$total+=$value[1];
 			}
-			$colorseries = array($badgeStatus8,$badgeStatus1,$badgeStatus3,$badgeStatus2,$badgeStatus4,$badgeStatus0);
+			$colorseries = array($badgeStatus8, $badgeStatus1, $badgeStatus3, $badgeStatus2, $badgeStatus4, $badgeStatus11);
 			if ($conf->use_javascript_ajax) {
 				$result = '<div class="div-table-responsive-no-min">';
 				$result .= '<table class="noborder nohover centpercent">';
