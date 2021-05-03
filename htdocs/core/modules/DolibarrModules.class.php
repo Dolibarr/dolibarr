@@ -800,6 +800,23 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		return $ret;
 	}
 
+	/**
+	 * Gives the module position
+	 *
+	 * @return int  	Module position (an external module should never return a value lower than 100000. 1-100000 are reserved for core)
+	 */
+	public function getModulePosition()
+	{
+		if (in_array($this->version, array('dolibarr', 'experimental', 'development'))) {	// core module
+			return $this->module_position;
+		} else {																			// external module
+			if ($this->module_position >= 100000) {
+				return $this->module_position;
+			} else {
+				return $this->module_position + 100000;
+			}
+		}
+	}
 
 	/**
 	 * Tells if module is core or external

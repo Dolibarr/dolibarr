@@ -158,17 +158,18 @@ class Products extends DolibarrApi
 	 *
 	 * Get a list of products
 	 *
-	 * @param  string $sortfield  Sort field
-	 * @param  string $sortorder  Sort order
-	 * @param  int    $limit      Limit for list
-	 * @param  int    $page       Page number
-	 * @param  int    $mode       Use this param to filter list (0 for all, 1 for only product, 2 for only service)
-	 * @param  int    $category   Use this param to filter list by category
-	 * @param  string $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.tobuy:=:0) and (t.tosell:=:1)"
-	 * @param  bool   $ids_only   Return only IDs of product instead of all properties (faster, above all if list is long)
-	 * @return array                Array of product objects
+	 * @param  string $sortfield  			Sort field
+	 * @param  string $sortorder  			Sort order
+	 * @param  int    $limit      			Limit for list
+	 * @param  int    $page       			Page number
+	 * @param  int    $mode       			Use this param to filter list (0 for all, 1 for only product, 2 for only service)
+	 * @param  int    $category   			Use this param to filter list by category
+	 * @param  string $sqlfilters 			Other criteria to filter answers separated by a comma. Syntax example "(t.tobuy:=:0) and (t.tosell:=:1)"
+	 * @param  bool   $ids_only   			Return only IDs of product instead of all properties (faster, above all if list is long)
+	 * @param  int    $variant_filter   	Use this param to filter list (0 = all, 1=products without variants, 2=parent of variants, 3=variants only)
+	 * @return array                		Array of product objects
 	 */
-	public function index($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '', $ids_only = false)
+	public function index($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '', $ids_only = false, $variant_filter = 0)
 	{
 		global $db, $conf;
 
@@ -186,6 +187,18 @@ class Products extends DolibarrApi
 			$sql .= ", ".MAIN_DB_PREFIX."categorie_product as c";
 		}
 		$sql .= ' WHERE t.entity IN ('.getEntity('product').')';
+
+		if ($variant_filter == 1) {
+			$sql .= ' AND t.rowid not in (select distinct fk_product_parent from '.MAIN_DB_PREFIX.'product_attribute_combination)';
+			$sql .= ' AND t.rowid not in (select distinct fk_product_child from '.MAIN_DB_PREFIX.'product_attribute_combination)';
+		}
+		if ($variant_filter == 2) {
+			$sql .= ' AND t.rowid in (select distinct fk_product_parent from '.MAIN_DB_PREFIX.'product_attribute_combination)';
+		}
+		if ($variant_filter == 3) {
+			$sql .= ' AND t.rowid in (select distinct fk_product_child from '.MAIN_DB_PREFIX.'product_attribute_combination)';
+		}
+
 		// Select products of given category
 		if ($category > 0) {
 			$sql .= " AND c.fk_categorie = ".$this->db->escape($category);
@@ -203,7 +216,8 @@ class Products extends DolibarrApi
 			if (!DolibarrApi::_checkFilters($sqlfilters)) {
 				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+			//var_dump($sqlfilters);exit;
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';	// We must accept datc:<:2020-01-01 10:10:10
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
@@ -836,9 +850,10 @@ class Products extends DolibarrApi
 			if (!DolibarrApi::_checkFilters($sqlfilters)) {
 				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
+
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
 			if ($page < 0) {
@@ -962,7 +977,7 @@ class Products extends DolibarrApi
 			if (!DolibarrApi::_checkFilters($sqlfilters)) {
 				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
@@ -1553,7 +1568,8 @@ class Products extends DolibarrApi
 	/**
 	 * Get product variants.
 	 *
-	 * @param  int $id ID of Product
+	 * @param  int 	$id 			ID of Product
+	 * @param  int  $includestock   Default value 0. If parameter is set to 1 the response will contain stock data of each variant
 	 * @return array
 	 *
 	 * @throws RestException 500
@@ -1561,7 +1577,7 @@ class Products extends DolibarrApi
 	 *
 	 * @url GET {id}/variants
 	 */
-	public function getVariants($id)
+	public function getVariants($id, $includestock = 0)
 	{
 		if (!DolibarrApiAccess::$user->rights->produit->lire) {
 			throw new RestException(401);
@@ -1574,6 +1590,13 @@ class Products extends DolibarrApi
 			$prodc2vp = new ProductCombination2ValuePair($this->db);
 			$combinations[$key]->attributes = $prodc2vp->fetchByFkCombination((int) $combination->id);
 			$combinations[$key] = $this->_cleanObjectDatas($combinations[$key]);
+
+			if ($includestock==1) {
+				$productModel = new Product($this->db);
+				$productModel->fetch((int) $combination->fk_product_child);
+				$productModel->load_stock();
+				$combinations[$key]->stock_warehouse = $this->_cleanObjectDatas($productModel)->stock_warehouse;
+			}
 		}
 
 		return $combinations;

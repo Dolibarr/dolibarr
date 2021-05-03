@@ -359,6 +359,7 @@ print '</td></tr>';
 if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {	// What is this for ?
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("BankAccountForBankTransfer").'</td><td>';
+	print img_picto('', 'bank_account').' ';
 	$form->select_comptes($conf->global->STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS, 'STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS', 0, '', 1);
 	print '</td></tr>';
 }

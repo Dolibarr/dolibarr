@@ -170,6 +170,10 @@ if [ $res -ne 0 ]; then
 	exit
 fi 
 
+if [ -s "$mydir/initdemopostsql.sql" ]; then
+	mysql -P$port $base < "$mydir/initdemopostsql.sql"
+fi 
+
 
 if [ "x$res" = "x0" ]
 then

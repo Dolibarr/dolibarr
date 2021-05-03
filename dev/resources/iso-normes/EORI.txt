@@ -1,0 +1,6 @@
+EORI
+
+https://en.wikipedia.org/wiki/EORI_number
+
+in Dolibarr avaiable since v13 
+- it is set to field 'profid5'

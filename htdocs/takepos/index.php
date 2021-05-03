@@ -1029,7 +1029,7 @@ if ($conf->global->TAKEPOS_DIRECT_PAYMENT) {
 // BAR RESTAURANT specific menu
 if ($conf->global->TAKEPOS_BAR_RESTAURANT) {
 	if ($conf->global->TAKEPOS_ORDER_PRINTERS) {
-		$menus[$r++] = array('title'=>$langs->trans("Order"), 'action'=>'TakeposPrintingOrder();');
+		$menus[$r++] = array('title'=>'<span class="fa fa-blender-phone paddingrightonly"></span><div class="trunc">'.$langs->trans("Order").'</span>', 'action'=>'TakeposPrintingOrder();');
 	}
 	//Button to print receipt before payment
 	if ($conf->global->TAKEPOS_BAR_RESTAURANT) {
