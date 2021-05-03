@@ -1592,24 +1592,36 @@ class FormMail extends Form
 				$tmparray['__SECUREKEYPAYMENT__'] = $conf->global->PAYMENT_SECURITY_TOKEN;
 				if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
 					if ($conf->adherent->enabled) {
-						$tmparray['__ONLINEPAYMENTLINK_MEMBER__'] = 'OnlinePaymentLinkUniquePerMember';
 						$tmparray['__SECUREKEYPAYMENT_MEMBER__'] = 'SecureKeyPAYMENTUniquePerMember';
 					}
 					if ($conf->donation->enabled) {
-						$tmparray['__ONLINEPAYMENTLINK_DONATION__'] = 'OnlinePaymentLinkUniquePerDonation';
 						$tmparray['__SECUREKEYPAYMENT_DONATION__'] = 'SecureKeyPAYMENTUniquePerDonation';
 					}
 					if ($conf->facture->enabled) {
-						$tmparray['__ONLINEPAYMENTLINK_INVOICE__'] = 'OnlinePaymentLinkUniquePerInvoice';
 						$tmparray['__SECUREKEYPAYMENT_INVOICE__'] = 'SecureKeyPAYMENTUniquePerInvoice';
 					}
 					if ($conf->commande->enabled) {
-						$tmparray['__ONLINEPAYMENTLINK_ORDER__'] = 'OnlinePaymentLinkUniquePerOrder';
 						$tmparray['__SECUREKEYPAYMENT_ORDER__'] = 'SecureKeyPAYMENTUniquePerOrder';
 					}
 					if ($conf->contrat->enabled) {
-						$tmparray['__ONLINEPAYMENTLINK_CONTRACTLINE__'] = 'OnlinePaymentLinkUniquePerContractLine';
 						$tmparray['__SECUREKEYPAYMENT_CONTRACTLINE__'] = 'SecureKeyPAYMENTUniquePerContractLine';
+					}
+
+					//Online payement link
+					if ($conf->adherent->enabled) {
+						$tmparray['__ONLINEPAYMENTLINK_MEMBER__'] = 'OnlinePaymentLinkUniquePerMember';
+					}
+					if ($conf->donation->enabled) {
+						$tmparray['__ONLINEPAYMENTLINK_DONATION__'] = 'OnlinePaymentLinkUniquePerDonation';
+					}
+					if ($conf->facture->enabled) {
+						$tmparray['__ONLINEPAYMENTLINK_INVOICE__'] = 'OnlinePaymentLinkUniquePerInvoice';
+					}
+					if ($conf->commande->enabled) {
+						$tmparray['__ONLINEPAYMENTLINK_ORDER__'] = 'OnlinePaymentLinkUniquePerOrder';
+					}
+					if ($conf->contrat->enabled) {
+						$tmparray['__ONLINEPAYMENTLINK_CONTRACTLINE__'] = 'OnlinePaymentLinkUniquePerContractLine';
 					}
 				}
 			} else {
