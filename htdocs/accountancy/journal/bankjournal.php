@@ -547,7 +547,7 @@ if (!$error && $action == 'writebookkeeping') {
 					$bookkeeping->fk_docdet = $val["fk_bank"];
 					$bookkeeping->numero_compte = $k;
 
-					$accountingaccount->fetch(null, $k, true);
+					$accountingaccount->fetch(null, $k, true);	// $k is accounting bank account. TODO We should use a cache here to avoid this fetch
 					$bookkeeping->label_compte = $accountingaccount->label;
 
 					$bookkeeping->label_operation = $reflabel;
