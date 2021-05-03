@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2016       Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2016       Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2016-2020  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2016-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -30,6 +30,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancyexport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
@@ -38,9 +39,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("accountancy", "compta"));
 
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-$sortorder = GETPOST("sortorder", 'alpha');
-$sortfield = GETPOST("sortfield", 'alpha');
 $action = GETPOST('action', 'aZ09');
 
 // Load variable for pagination
@@ -60,7 +58,7 @@ $pagenext = $page + 1;
 $show_subgroup = GETPOST('show_subgroup', 'alpha');
 $search_date_start = dol_mktime(0, 0, 0, GETPOST('date_startmonth', 'int'), GETPOST('date_startday', 'int'), GETPOST('date_startyear', 'int'));
 $search_date_end = dol_mktime(23, 59, 59, GETPOST('date_endmonth', 'int'), GETPOST('date_endday', 'int'), GETPOST('date_endyear', 'int'));
-
+$search_ledger_code = GETPOST('search_ledger_code', 'array');
 $search_accountancy_code_start = GETPOST('search_accountancy_code_start', 'alpha');
 if ($search_accountancy_code_start == - 1) {
 	$search_accountancy_code_start = '';
@@ -134,6 +132,12 @@ if (!empty($search_accountancy_code_end)) {
 	$filter['t.numero_compte<='] = $search_accountancy_code_end;
 	$param .= '&amp;search_accountancy_code_end='.$search_accountancy_code_end;
 }
+if (!empty($search_ledger_code)) {
+	$filter['t.code_journal'] = $search_ledger_code;
+	foreach ($search_ledger_code as $code) {
+		$param .= '&search_ledger_code[]='.urlencode($code);
+	}
+}
 
 if (empty($conf->accounting->enabled)) {
 	accessforbidden();
@@ -157,6 +161,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_date_end = '';
 	$search_accountancy_code_start = '';
 	$search_accountancy_code_end = '';
+	$search_ledger_code = array();
 	$filter = array();
 }
 
@@ -264,6 +269,13 @@ if ($action != 'export_csv') {
 	$colspan = (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE) ? 5 : 4);
 
 	print '<table class="liste '.($moreforfilter ? "listwithfilterbefore" : "").'">';
+
+	print '<tr class="liste_titre_filter">';
+	print '<td class="liste_titre">';
+	print $langs->trans('Journals');
+	print $formaccounting->multi_select_journal($search_ledger_code, 'search_ledger_code', 0, 1, 1, 1);
+	print '</td>';
+	print '</tr>';
 
 	print '<tr class="liste_titre_filter">';
 	print '<td class="liste_titre" colspan="'.$colspan.'">';
