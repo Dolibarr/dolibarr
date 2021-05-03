@@ -203,6 +203,7 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 		}
 	}
 
+	// Test function to read source image exists
 	$imgfonction = '';
 	switch ($infoImg[2]) {
 		case 1:	// IMG_GIF
@@ -225,6 +226,34 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 		if (!function_exists($imgfonction)) {
 			// Fonctions de conversion non presente dans ce PHP
 			return 'Read of image not possible. This PHP does not support GD functions '.$imgfonction;
+		}
+	}
+
+	// Test function to write target image exists
+	if ($filetowrite) {
+		$imgfonction = '';
+		switch ($newExt) {
+			case 'gif':	// IMG_GIF
+				$imgfonction = 'imagecreatefromgif';
+				break;
+			case 'jpg':	// IMG_JPG
+				$imgfonction = 'imagecreatefromjpeg';
+				break;
+			case 'png':	// IMG_PNG
+				$imgfonction = 'imagecreatefrompng';
+				break;
+			case 'bmp':	// IMG_WBMP
+				$imgfonction = 'imagecreatefromwbmp';
+				break;
+			case 'webp': // IMG_WEBP
+				$imgfonction = 'imagecreatefromwebp';
+				break;
+		}
+		if ($imgfonction) {
+			if (!function_exists($imgfonction)) {
+				// Fonctions de conversion non presente dans ce PHP
+				return 'Write of image not possible. This PHP does not support GD functions '.$imgfonction;
+			}
 		}
 	}
 
