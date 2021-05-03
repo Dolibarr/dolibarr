@@ -59,13 +59,13 @@ function pdf_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'pdf_admin');
 
-	if (!empty($conf->adherent->enabled)) {
+	if (1 == 2 && !empty($conf->adherent->enabled)) {
 		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_adherent.php';
 		$head[$h][1] = $langs->trans("Adherent");
 		$head[$h][2] = 'adherent';
 		$h++;
 	}
-	if (!empty($conf->projet->enabled)) {
+	if (1 == 2 && !empty($conf->projet->enabled)) {
 		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_project.php';
 		$head[$h][1] = $langs->trans("Project");
 		$head[$h][2] = 'project';
@@ -77,49 +77,49 @@ function pdf_admin_prepare_head()
 		$head[$h][2] = 'proposal';
 		$h++;
 	}
-	if (!empty($conf->commande->enabled)) {
+	if (1 == 2 && !empty($conf->commande->enabled)) {
 		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_order.php';
 		$head[$h][1] = $langs->trans("Order");
 		$head[$h][2] = 'order';
 		$h++;
 	}
-	if (!empty($conf->facture->enabled)) {
+	if (1 == 2 && !empty($conf->facture->enabled)) {
 		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_invoice.php';
 		$head[$h][1] = $langs->trans("Invoice");
 		$head[$h][2] = 'invoice';
 		$h++;
 	}
-	if (!empty($conf->expedition->enabled)) {
+	if (1 == 2 && !empty($conf->expedition->enabled)) {
 		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_shipment.php';
 		$head[$h][1] = $langs->trans("Sendings");
 		$head[$h][2] = 'shipment';
 		$h++;
 	}
-	if (!empty($conf->reception->enabled)) {
+	if (1 == 2 && !empty($conf->reception->enabled)) {
 		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_reception.php';
 		$head[$h][1] = $langs->trans("Reception");
 		$head[$h][2] = 'reception';
 		$h++;
 	}
-	if (!empty($conf->ticket->enabled)) {
-		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_Ticket.php';
+	if (1 == 2 && !empty($conf->ticket->enabled)) {
+		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_ticket.php';
 		$head[$h][1] = $langs->trans("Ticket");
 		$head[$h][2] = 'ticket';
 		$h++;
 	}
-	if (!empty($conf->ficheinter->enabled)) {
+	if (1 == 2 && !empty($conf->ficheinter->enabled)) {
 		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_intervention.php';
 		$head[$h][1] = $langs->trans("Intervention");
 		$head[$h][2] = 'intervention';
 		$h++;
 	}
-	if (!empty($conf->supplier_proposal->enabled)) {
+	if (1 == 2 && !empty($conf->supplier_proposal->enabled)) {
 		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_supplierproposal.php';
 		$head[$h][1] = $langs->trans("SupplierProposal");
 		$head[$h][2] = 'supplierproposal';
 		$h++;
 	}
-	if (!empty($conf->fournisseur->enabled)) {
+	if (1 == 2 && !empty($conf->fournisseur->enabled)) {
 		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_supplierorder.php';
 		$head[$h][1] = $langs->trans("SupplierOrder");
 		$head[$h][2] = 'supplierorder';
@@ -130,31 +130,31 @@ function pdf_admin_prepare_head()
 		$head[$h][2] = 'supplierinvoice';
 		$h++;
 	}
-	if (!empty($conf->recruitment->enabled)) {
+	if (1 == 2 && !empty($conf->recruitment->enabled)) {
 		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_recruitment.php';
 		$head[$h][1] = $langs->trans("Recruitment");
 		$head[$h][2] = 'recruitment';
 		$h++;
 	}
-	if (!empty($conf->contrat->enabled)) {
+	if (1 == 2 && !empty($conf->contrat->enabled)) {
 		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_contrat.php';
 		$head[$h][1] = $langs->trans("Contrat");
 		$head[$h][2] = 'contrat';
 		$h++;
 	}
-	if (!empty($conf->stock->enabled)) {
+	if (1 == 2 && !empty($conf->stock->enabled)) {
 		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_stock.php';
 		$head[$h][1] = $langs->trans("Stock");
 		$head[$h][2] = 'stock';
 		$h++;
 	}
-	if (!empty($conf->holiday->enabled)) {
+	if (1 == 2 && !empty($conf->holiday->enabled)) {
 		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_holiday.php';
 		$head[$h][1] = $langs->trans("Holidays");
 		$head[$h][2] = 'holiday';
 		$h++;
 	}
-	if (!empty($conf->expensereport->enabled)) {
+	if (1 == 2 && !empty($conf->expensereport->enabled)) {
 		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_expensereport.php';
 		$head[$h][1] = $langs->trans("Trips");
 		$head[$h][2] = 'expensereport';
