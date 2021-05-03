@@ -460,7 +460,7 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping->numero_compte = $k;
 
 						$accountingaccount->fetch($k, null, true);
-						$bookkeeping->label_compte = $accountingaccount->label;
+						$bookkeeping->label_compte = $accountingaccount->label;		// TODO Use a cache for each label from $k.
 
 						$bookkeeping->label_operation = dol_trunc($companystatic->name, 16).' - '.$invoicestatic->ref.' - '.$langs->trans("VAT").' '.join(', ', $def_tva[$key][$k]).' %'.($numtax ? ' - Localtax '.$numtax : '');
 						$bookkeeping->montant = $mt;
