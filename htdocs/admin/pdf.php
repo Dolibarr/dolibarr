@@ -182,7 +182,7 @@ print load_fiche_titre($langs->trans("DictionaryPaperFormat"), '', '');
 
 print '<div class="div-table-responsive-no-min">';
 print '<table summary="more" class="noborder centpercent">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
 $selected = (isset($conf->global->MAIN_PDF_FORMAT) ? $conf->global->MAIN_PDF_FORMAT : '');
 if (empty($selected)) {
@@ -219,7 +219,7 @@ print load_fiche_titre($langs->trans("PDFAddressForging"), '', '');
 
 print '<div class="div-table-responsive-no-min">';
 print '<table summary="more" class="noborder centpercent">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
 // Hide VAT Intra on address
 
@@ -266,7 +266,7 @@ $text = '';
 if ($mysoc->useLocalTax(1) || $mysoc->useLocalTax(2)) {
 	if ($mysoc->useLocalTax(1)) {
 		$locales = $langs->transcountry("LT1", $mysoc->country_code);
-		$text = '<tr class="oddeven"><td>'.$langs->trans("HideLocalTaxOnPDF", $langs->transcountry("LT1", $mysoc->country_code)).'</td><td>';
+		$text = '<tr class="oddeven"><td class="titlefieldmiddle">'.$langs->trans("HideLocalTaxOnPDF", $langs->transcountry("LT1", $mysoc->country_code)).'</td><td>';
 		if ($conf->use_javascript_ajax) {
 			$text .= ajax_constantonoff('MAIN_PDF_MAIN_HIDE_SECOND_TAX');
 		} else {
@@ -278,7 +278,7 @@ if ($mysoc->useLocalTax(1) || $mysoc->useLocalTax(2)) {
 	if ($mysoc->useLocalTax(2)) {
 		$locales .= ($locales ? ' & ' : '').$langs->transcountry("LT2", $mysoc->country_code);
 
-		$text .= '<tr class="oddeven"><td>'.$langs->trans("HideLocalTaxOnPDF", $langs->transcountry("LT2", $mysoc->country_code)).'</td><td>';
+		$text .= '<tr class="oddeven"><td class="titlefieldmiddle">'.$langs->trans("HideLocalTaxOnPDF", $langs->transcountry("LT2", $mysoc->country_code)).'</td><td>';
 		if ($conf->use_javascript_ajax) {
 			$text .= ajax_constantonoff('MAIN_PDF_MAIN_HIDE_THIRD_TAX');
 		} else {
@@ -293,10 +293,11 @@ if ($mysoc->useLocalTax(1) || $mysoc->useLocalTax(2)) {
 	$title .= ' - '.$langs->trans("PDFLocaltax", $locales);
 }
 
+
 print load_fiche_titre($title, '', '');
 
 print '<table summary="more" class="noborder centpercent">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
 // Hide any information on Sale tax / VAT
 

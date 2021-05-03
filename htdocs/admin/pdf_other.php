@@ -89,7 +89,7 @@ print '<input type="hidden" name="action" value="update">';
 
 print '<div class="div-table-responsive-no-min">';
 print '<table summary="more" class="noborder centpercent">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
 print '<tr class="oddeven"><td>'.$langs->trans("MAIN_GENERATE_PROPOSALS_WITH_PICTURE").'</td><td>';
 if ($conf->use_javascript_ajax) {
