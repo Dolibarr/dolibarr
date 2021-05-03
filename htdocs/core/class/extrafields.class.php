@@ -1330,7 +1330,10 @@ class ExtraFields
 		}
 		elseif ($type == 'checkbox')
 		{
-			$value_arr = explode(',', $value);
+			$value_arr = $value;
+			if (!is_array($value)) {
+				$value_arr = explode(',', $value);
+			}
 			$out = $form->multiselectarray($keyprefix.$key.$keysuffix, (empty($param['options']) ?null:$param['options']), $value_arr, '', 0, '', 0, '100%');
 		}
 		elseif ($type == 'radio')
