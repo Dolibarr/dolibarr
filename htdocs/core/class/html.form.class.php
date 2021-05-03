@@ -868,9 +868,10 @@ class Form
 	 *  @param	int		$disablefavorites		1=Disable favorites,
 	 *  @param	int		$addspecialentries		1=Add dedicated entries for group of countries (like 'European Economic Community', ...)
 	 *  @param	array	$exclude_country_code	Array of country code (iso2) to exclude
+	 *  @param	int		$hideflags				Hide flags
 	 *  @return string           				HTML string with select
 	 */
-	public function select_country($selected = '', $htmlname = 'country_id', $htmloption = '', $maxlength = 0, $morecss = 'minwidth300', $usecodeaskey = '', $showempty = 1, $disablefavorites = 0, $addspecialentries = 0, $exclude_country_code = array())
+	public function select_country($selected = '', $htmlname = 'country_id', $htmloption = '', $maxlength = 0, $morecss = 'minwidth300', $usecodeaskey = '', $showempty = 1, $disablefavorites = 0, $addspecialentries = 0, $exclude_country_code = array(), $hideflags = 0)
 	{
 		// phpcs:enable
 		global $conf, $langs, $mysoc;
@@ -955,8 +956,10 @@ class Form
 					}
 					if ($row['code_iso']) {
 						$labeltoshow .= ' <span class="opacitymedium">('.$row['code_iso'].')</span>';
-						$tmpflag = picto_from_langcode($row['code_iso'], 'class="saturatemedium marginrightonly"');
-						$labeltoshow = $tmpflag.' '.$labeltoshow;
+						if (empty($hideflags)) {
+							$tmpflag = picto_from_langcode($row['code_iso'], 'class="saturatemedium marginrightonly"');
+							$labeltoshow = $tmpflag.' '.$labeltoshow;
+						}
 					}
 
 					if ($selected && $selected != '-1' && ($selected == $row['rowid'] || $selected == $row['code_iso'] || $selected == $row['code_iso3'] || $selected == $row['label'])) {

@@ -475,7 +475,7 @@ if ($result) {
 	print '<td class="liste_titre right"><input type="text" class="flat maxwidth50 right" name="search_vat" placeholder="%" size="1" value="'.dol_escape_htmltag($search_vat).'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth75imp" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"></td>';
 	print '<td class="liste_titre">';
-	print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth125', 'code2', 1, 0, 1);
+	print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth125', 'code2', 1, 0, 1, null, 1);
 	//print '<input type="text" class="flat maxwidth50" name="search_country" value="' . dol_escape_htmltag($search_country) . '">';
 	print '</td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_tvaintra" value="'.dol_escape_htmltag($search_tvaintra).'"></td>';
@@ -712,8 +712,8 @@ if ($result) {
 		print '<td>'.$objp->tva_intra.'</td>';
 
 		// Found accounts
-		print '<td>';
-		$s = '<span class="small">1. '.(($objp->type_l == 1) ? $langs->trans("DefaultForService") : $langs->trans("DefaultForProduct")).': </span>';
+		print '<td class="small">';
+		$s = '1. '.(($objp->type_l == 1) ? $langs->trans("DefaultForService") : $langs->trans("DefaultForProduct")).': ';
 		$shelp = '';
 		if ($suggestedaccountingaccountbydefaultfor == 'eec') {
 			$shelp .= $langs->trans("SaleEEC");
@@ -724,7 +724,7 @@ if ($result) {
 		print $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
 		if ($objp->product_id > 0) {
 			print '<br>';
-			$s = '<span class="small">2. '.(($objp->type_l == 1) ? $langs->trans("ThisService") : $langs->trans("ThisProduct")).': </span>';
+			$s = '2. '.(($objp->type_l == 1) ? $langs->trans("ThisService") : $langs->trans("ThisProduct")).': ';
 			$shelp = ''; $ttype = 'help';
 			if ($suggestedaccountingaccountfor == 'eec') {
 				$shelp = $langs->trans("SaleEEC");
@@ -741,7 +741,7 @@ if ($result) {
 		} else {
 			if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
 				print '<br>';
-				$s = '<span class="small">2. '.(($objp->type_l == 1) ? $langs->trans("ThisService") : $langs->trans("ThisProduct")).': </span>';
+				$s = '2. '.(($objp->type_l == 1) ? $langs->trans("ThisService") : $langs->trans("ThisProduct")).': ';
 				$shelp = '';
 				$s .= $langs->trans("NotDefined");
 				print $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
@@ -749,7 +749,7 @@ if ($result) {
 		}
 		if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
 			print '<br>';
-			$s = '<span class="small">3. '.(($objp->type_l == 1) ? $langs->trans("ServiceForThisThirdparty") : $langs->trans("ProductForThisThirdparty")).': </span>';
+			$s = '3. '.(($objp->type_l == 1) ? $langs->trans("ServiceForThisThirdparty") : $langs->trans("ProductForThisThirdparty")).': ';
 			$shelp = '';
 			$s .= ($objp->code_sell_t > 0 ? length_accountg($objp->code_sell_t) : '<span style="'.$code_sell_t_notset.'">'.$langs->trans("NotDefined").'</span>');
 			print $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
