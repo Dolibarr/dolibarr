@@ -77,7 +77,7 @@ function pdf_admin_prepare_head()
 		$head[$h][2] = 'proposal';
 		$h++;
 	}
-	if (1 == 2 && !empty($conf->commande->enabled)) {
+	if (!empty($conf->commande->enabled)) {
 		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_order.php';
 		$head[$h][1] = $langs->trans("Order");
 		$head[$h][2] = 'order';
