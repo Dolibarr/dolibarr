@@ -113,7 +113,7 @@ function pdf_admin_prepare_head()
 		$head[$h][2] = 'intervention';
 		$h++;
 	}
-	if (1 == 2 && !empty($conf->supplier_proposal->enabled)) {
+	if (!empty($conf->supplier_proposal->enabled)) {
 		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_supplierproposal.php';
 		$head[$h][1] = $langs->trans("SupplierProposal");
 		$head[$h][2] = 'supplierproposal';

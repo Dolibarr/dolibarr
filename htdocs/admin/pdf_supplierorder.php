@@ -90,8 +90,6 @@ print '<table summary="more" class="noborder centpercent">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
 
-print '<tr class="oddeven"><td>'.$langs->trans("").'</td><td>';
-
 print '</td></tr>';
 
 print '</table>';
