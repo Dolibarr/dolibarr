@@ -1103,8 +1103,7 @@ class BookKeeping extends CommonObject
 		$sql = 'SELECT';
 		$sql .= " t.numero_compte,";
 		$sql .= " SUM(t.debit) as debit,";
-		$sql .= " SUM(t.credit) as credit,";
-		$sql .= " t.code_journal";
+		$sql .= " SUM(t.credit) as credit";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		// Manage filter
 		$sqlwhere = array();

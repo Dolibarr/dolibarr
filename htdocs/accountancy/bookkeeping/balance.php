@@ -254,6 +254,12 @@ if ($action != 'export_csv') {
 	$moreforfilter .= '<label for="show_subgroup">'.$langs->trans('ShowSubtotalByGroup').'</label>: ';
 	$moreforfilter .= '<input type="checkbox" name="show_subgroup" id="show_subgroup" value="show_subgroup"'.($show_subgroup == 'show_subgroup' ? ' checked' : '').'>';
 
+	$moreforfilter .= '</div>';
+
+	$moreforfilter .= '<div class="divsearchfield">';
+
+	$moreforfilter .= $langs->trans("Journal");
+	$moreforfilter .= $formaccounting->multi_select_journal($search_ledger_code, 'search_ledger_code', 0, 1, 1, 1);
 
 	$moreforfilter .= '</div>';
 
@@ -266,24 +272,16 @@ if ($action != 'export_csv') {
 		print '</div>';
 	}
 
+
 	$colspan = (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE) ? 5 : 4);
 
 	print '<table class="liste '.($moreforfilter ? "listwithfilterbefore" : "").'">';
 
 	print '<tr class="liste_titre_filter">';
-	print '<td class="liste_titre">';
-	print $langs->trans('Journals');
-	print $formaccounting->multi_select_journal($search_ledger_code, 'search_ledger_code', 0, 1, 1, 1);
-	print '</td>';
-	print '</tr>';
-
-	print '<tr class="liste_titre_filter">';
 	print '<td class="liste_titre" colspan="'.$colspan.'">';
-	print $langs->trans('From');
-	print $formaccounting->select_account($search_accountancy_code_start, 'search_accountancy_code_start', 1, array(), 1, 1, '');
+	print $formaccounting->select_account($search_accountancy_code_start, 'search_accountancy_code_start', $langs->trans('From'), array(), 1, 1, '', 'accounts');
 	print ' ';
-	print $langs->trans('to');
-	print $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', 1, array(), 1, 1, '');
+	print $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', $langs->trans('to'), array(), 1, 1, '', 'accounts');
 	print '</td>';
 	print '<td class="liste_titre center">';
 	$searchpicto = $form->showFilterButtons();
