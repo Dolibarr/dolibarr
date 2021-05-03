@@ -515,7 +515,7 @@ while ($i < min($num, $limit)) {
 
 
 		// Fields from hook
-		$parameters = ['arrayfields' => $arrayfields, 'obj' => $obj];
+		$parameters = array('arrayfields' => $arrayfields, 'obj' => $obj);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters);    // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 
