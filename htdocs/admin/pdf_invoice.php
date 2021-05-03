@@ -90,8 +90,13 @@ print '<table summary="more" class="noborder centpercent">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
 
-print '<tr class="oddeven"><td>'.$langs->trans("").'</td><td>';
-
+print '<tr class="oddeven"><td>'.$langs->trans("MAIN_GENERATE_INVOICES_WITH_PICTURE").'</td><td>';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('MAIN_GENERATE_INVOICES_WITH_PICTURE');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("MAIN_GENERATE_INVOICES_WITH_PICTURE", $arrval, $conf->global->MAIN_GENERATE_INVOICES_WITH_PICTURE);
+}
 print '</td></tr>';
 
 print '</table>';
