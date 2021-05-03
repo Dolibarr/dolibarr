@@ -1114,8 +1114,9 @@ class pdf_sponge extends ModelePDFFactures
 
 		$pdf->SetFont('', '', $default_font_size - 1);
 
-		// If France, show VAT mention if not applicable
-		if ($this->emetteur->country_code == 'FR' && empty($mysoc->tva_assuj)) {
+		// If France or if option MAIN_GENERATE_DOCUMENTS_MENTION_ZERO_VAT is set and VAT is null, show VAT mention if not applicable
+		$tvaisnull = ((!empty($this->tva) && count($this->tva) == 1 && isset($this->tva['0.000']) && is_float($this->tva['0.000'])) ? true : false);
+		if ($this->emetteur->country_code == 'FR' && (empty($mysoc->tva_assuj) || (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_MENTION_ZERO_VAT) && $tvaisnull ))) {
 			$pdf->SetFont('', 'B', $default_font_size - 2);
 			$pdf->SetXY($this->marge_gauche, $posy);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("VATIsNotUsedForInvoice"), 0, 'L', 0);

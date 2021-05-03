@@ -400,6 +400,7 @@ PDF=PDF
 PDFDesc=Options globales sur la génération des PDF
 PDFAddressForging=Règles pour le contenu des sections Adresse
 HideAnyVATInformationOnPDF=Masquer toutes les informations relatives à la Taxe de vente / TVA sur les PDF générés
+SowVATIsNotUsedForDocumentWithZeroVat=Si l'expéditeur est français et que la TVA totale est nulle, indiquer la mention TVA non applicable sur le PDF générés
 PDFRulesForSalesTax=Règles pour la taxe de vente / TVA
 PDFLocaltax=Règles pour %s
 HideLocalTaxOnPDF=Cacher le taux de %s dans la colonne Taxe

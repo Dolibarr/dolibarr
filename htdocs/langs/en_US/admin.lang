@@ -401,6 +401,7 @@ PDF=PDF
 PDFDesc=Global options for PDF generation
 PDFAddressForging=Rules for address section
 HideAnyVATInformationOnPDF=Hide all information related to Sales Tax / VAT
+SowVATIsNotUsedForInvoiceIfZeroVat=If the sender is French and total VAT is zero, indicate the VAT not applicable on the generated PDF
 PDFRulesForSalesTax=Rules for Sales Tax / VAT
 PDFLocaltax=Rules for %s
 HideLocalTaxOnPDF=Hide %s rate in column Sale Tax / VAT
