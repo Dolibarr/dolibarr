@@ -425,7 +425,8 @@ if ($action != 'export_csv') {
 		} else {
 			print '<td class="nowraponall right">'.price(price2num($line->debit - $line->credit, 'MT')).'</td>';
 		}
-		print '<td class="center">'.$link;
+		print '<td class="center">';
+		print $link;
 		print '</td>';
 		print "</tr>\n";
 
