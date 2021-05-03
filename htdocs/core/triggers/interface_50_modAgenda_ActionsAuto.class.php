@@ -111,16 +111,16 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$object->sendtoid = 0;
 			$object->socid = $object->id;
 		} elseif ($action == 'COMPANY_MODIFY') {
-				// Load translation files required by the page
-				$langs->loadLangs(array("agenda", "other", "companies"));
+			// Load translation files required by the page
+			$langs->loadLangs(array("agenda", "other", "companies"));
 
-				if (empty($object->actionmsg2)) {
-					$object->actionmsg2 = $langs->transnoentities("COMPANY_MODIFYInDolibarr", $object->name);
-				}
-				$object->actionmsg = $langs->transnoentities("COMPANY_MODIFYInDolibarr", $object->name);
+			if (empty($object->actionmsg2)) {
+				$object->actionmsg2 = $langs->transnoentities("COMPANY_MODIFYInDolibarr", $object->name);
+			}
+			$object->actionmsg = $langs->transnoentities("COMPANY_MODIFYInDolibarr", $object->name);
 
-				$object->sendtoid = 0;
-				$object->socid = $object->id;
+			$object->sendtoid = 0;
+			$object->socid = $object->id;
 		} elseif ($action == 'COMPANY_SENTBYMAIL') {
 			// Load translation files required by the page
 			$langs->loadLangs(array("agenda", "other", "orders"));
