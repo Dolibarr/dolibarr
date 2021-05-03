@@ -468,3 +468,25 @@ create table llx_knowledgemanagement_knowledgerecord_extrafields
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
+
+create table llx_c_type_transaction
+(
+    id				integer      AUTO_INCREMENT PRIMARY KEY,
+    code			varchar(12)  NOT NULL,
+    label			varchar(32),
+    active          tinyint DEFAULT 1  NOT NULL
+)ENGINE=innodb;
+
+ALTER TABLE llx_c_type_transaction ADD UNIQUE INDEX uk_c_type_transaction(code);
+
+insert into llx_c_type_transaction (code, label, active) values ('STANDARD', 'Standard', 1);
+
+ALTER TABLE llx_product_perentity ADD COLUMN fk_c_type_transaction integer NULL after fk_product;
+ALTER TABLE llx_product_perentity DROP INDEX uk_product_perentity;
+ALTER TABLE llx_product_perentity ADD UNIQUE INDEX uk_product_perentity (fk_product, fk_c_type_transaction, entity);
+ALTER TABLE llx_propaldet ADD COLUMN fk_c_type_transaction integer NULL after fk_product;
+ALTER TABLE llx_commandedet ADD COLUMN fk_c_type_transaction integer NULL after fk_product;
+ALTER TABLE llx_facturedet ADD COLUMN fk_c_type_transaction integer NULL after fk_product;
+ALTER TABLE llx_commande_fournisseurdet ADD COLUMN fk_c_type_transaction integer NULL after fk_product;
+ALTER TABLE llx_supplier_proposaldet ADD COLUMN fk_c_type_transaction integer NULL after fk_product;
+ALTER TABLE llx_facture_fourn_det ADD COLUMN fk_c_type_transaction integer NULL after fk_product;

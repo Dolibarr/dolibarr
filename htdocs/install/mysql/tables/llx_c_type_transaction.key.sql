@@ -1,4 +1,4 @@
--- ===================================================================
+-- ========================================================================
 -- Copyright (C) 2021		Open-Dsi	<support@open-dsi.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -12,10 +12,8 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
--- ===================================================================
+-- ========================================================================
 
-ALTER TABLE llx_product_perentity ADD INDEX idx_product_perentity_fk_product (fk_product);
-
-ALTER TABLE llx_product_perentity ADD UNIQUE INDEX uk_product_perentity (fk_product, fk_type_transaction, entity);
+ALTER TABLE llx_c_type_transaction ADD UNIQUE INDEX uk_c_type_transaction(code);

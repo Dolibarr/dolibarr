@@ -1,8 +1,9 @@
 -- ===================================================================
--- Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2007-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
--- Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+-- Copyright (C) 2007		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+-- Copyright (C) 2007-2009	Laurent Destailleur		<eldy@users.sourceforge.net>
+-- Copyright (C) 2010-2012	Juanjo Menent			<jmenent@2byte.es>
+-- Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
+-- Copyright (C) 2021		Open-Dsi				<support@open-dsi.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -25,6 +26,7 @@ create table llx_commande_fournisseurdet
   fk_commande                integer      NOT NULL,
   fk_parent_line             integer      NULL,
   fk_product                 integer,
+  fk_c_type_transaction      integer	  NULL,
   ref                        varchar(50),               -- supplier product ref
   label                      varchar(255),              -- product label
   description                text,

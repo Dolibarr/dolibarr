@@ -20,6 +20,7 @@ create table llx_product_perentity
 (
   rowid         				integer AUTO_INCREMENT PRIMARY KEY,
   fk_product	   				integer,
+  fk_c_type_transaction         integer,                            -- Type transaction
   entity             			integer DEFAULT 1 NOT NULL,      	-- multi company id
   accountancy_code_sell         varchar(32),                        -- Selling accountancy code
   accountancy_code_sell_intra   varchar(32),                        -- Selling accountancy code for vat intracommunity

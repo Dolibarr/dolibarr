@@ -1,5 +1,6 @@
 -- ========================================================================
--- Copyright (C) 2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2015		Laurent Destailleur	<eldy@users.sourceforge.net>
+-- Copyright (C) 2021		Open-Dsi			<support@open-dsi.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -20,6 +21,7 @@ CREATE TABLE llx_supplier_proposaldet (
   fk_supplier_proposal integer NOT NULL,
   fk_parent_line integer DEFAULT NULL,
   fk_product integer DEFAULT NULL,
+  fk_c_type_transaction integer	NULL,
   label varchar(255) DEFAULT NULL,
   description text,
   fk_remise_except integer DEFAULT NULL,

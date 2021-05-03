@@ -2,7 +2,8 @@
 -- Copyright (C) 2002-2003	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
 -- Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
 -- Copyright (C) 2010		Juanjo Menent			<jmenent@2byte.es>
--- Copyright (C) 2012      Cédric Salvador      <csalvador@gpcsolutions.fr>
+-- Copyright (C) 2012		Cédric Salvador			<csalvador@gpcsolutions.fr>
+-- Copyright (C) 2021		Open-Dsi				<support@open-dsi.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -25,6 +26,7 @@ create table llx_propaldet
   fk_propal							integer		NOT NULL,
   fk_parent_line					integer		NULL,
   fk_product						integer		NULL,
+  fk_c_type_transaction             integer	 NULL,
   label								varchar(255) DEFAULT NULL,
   description						text,
   fk_remise_except					integer      NULL,               -- Lien vers table des remises fixes
