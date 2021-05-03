@@ -12,6 +12,7 @@
  * Copyright (C) 2015-2016  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2019       Lenin Rivas           	<lenin.rivas@servcom-it.com>
  * Copyright (C) 2020       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2021		Anthony Berton       	<bertonanthony@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +34,137 @@
  *	\brief      Set of functions used for PDF generation
  *	\ingroup    core
  */
+
+
+/**
+ *  Return array head with list of tabs to view object informations.
+ *
+ *  @return	array   	        head array with tabs
+ */
+function pdf_admin_prepare_head()
+{
+	global $langs, $conf, $user;
+
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = DOL_URL_ROOT.'/admin/pdf.php';
+	$head[$h][1] = $langs->trans("Général");
+	$head[$h][2] = 'general';
+	$h++;
+
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'pdf_admin');
+
+	if (1 == 2 && !empty($conf->adherent->enabled)) {
+		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_adherent.php';
+		$head[$h][1] = $langs->trans("Adherent");
+		$head[$h][2] = 'adherent';
+		$h++;
+	}
+	if (1 == 2 && !empty($conf->projet->enabled)) {
+		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_project.php';
+		$head[$h][1] = $langs->trans("Project");
+		$head[$h][2] = 'project';
+		$h++;
+	}
+	if (!empty($conf->propal->enabled)) {
+		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_proposal.php';
+		$head[$h][1] = $langs->trans("Proposal");
+		$head[$h][2] = 'proposal';
+		$h++;
+	}
+	if (1 == 2 && !empty($conf->commande->enabled)) {
+		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_order.php';
+		$head[$h][1] = $langs->trans("Order");
+		$head[$h][2] = 'order';
+		$h++;
+	}
+	if (1 == 2 && !empty($conf->facture->enabled)) {
+		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_invoice.php';
+		$head[$h][1] = $langs->trans("Invoice");
+		$head[$h][2] = 'invoice';
+		$h++;
+	}
+	if (1 == 2 && !empty($conf->expedition->enabled)) {
+		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_shipment.php';
+		$head[$h][1] = $langs->trans("Sendings");
+		$head[$h][2] = 'shipment';
+		$h++;
+	}
+	if (1 == 2 && !empty($conf->reception->enabled)) {
+		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_reception.php';
+		$head[$h][1] = $langs->trans("Reception");
+		$head[$h][2] = 'reception';
+		$h++;
+	}
+	if (1 == 2 && !empty($conf->ticket->enabled)) {
+		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_ticket.php';
+		$head[$h][1] = $langs->trans("Ticket");
+		$head[$h][2] = 'ticket';
+		$h++;
+	}
+	if (1 == 2 && !empty($conf->ficheinter->enabled)) {
+		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_intervention.php';
+		$head[$h][1] = $langs->trans("Intervention");
+		$head[$h][2] = 'intervention';
+		$h++;
+	}
+	if (1 == 2 && !empty($conf->supplier_proposal->enabled)) {
+		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_supplierproposal.php';
+		$head[$h][1] = $langs->trans("SupplierProposal");
+		$head[$h][2] = 'supplierproposal';
+		$h++;
+	}
+	if (1 == 2 && !empty($conf->fournisseur->enabled)) {
+		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_supplierorder.php';
+		$head[$h][1] = $langs->trans("SupplierOrder");
+		$head[$h][2] = 'supplierorder';
+		$h++;
+
+		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_supplierinvoice.php';
+		$head[$h][1] = $langs->trans("SuppliersInvoice");
+		$head[$h][2] = 'supplierinvoice';
+		$h++;
+	}
+	if (1 == 2 && !empty($conf->recruitment->enabled)) {
+		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_recruitment.php';
+		$head[$h][1] = $langs->trans("Recruitment");
+		$head[$h][2] = 'recruitment';
+		$h++;
+	}
+	if (1 == 2 && !empty($conf->contrat->enabled)) {
+		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_contrat.php';
+		$head[$h][1] = $langs->trans("Contrat");
+		$head[$h][2] = 'contrat';
+		$h++;
+	}
+	if (1 == 2 && !empty($conf->stock->enabled)) {
+		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_stock.php';
+		$head[$h][1] = $langs->trans("Stock");
+		$head[$h][2] = 'stock';
+		$h++;
+	}
+	if (1 == 2 && !empty($conf->holiday->enabled)) {
+		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_holiday.php';
+		$head[$h][1] = $langs->trans("Holidays");
+		$head[$h][2] = 'holiday';
+		$h++;
+	}
+	if (1 == 2 && !empty($conf->expensereport->enabled)) {
+		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_expensereport.php';
+		$head[$h][1] = $langs->trans("Trips");
+		$head[$h][2] = 'expensereport';
+		$h++;
+	}
+
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'pdf_admin', 'remove');
+
+	return $head;
+}
 
 
 /**

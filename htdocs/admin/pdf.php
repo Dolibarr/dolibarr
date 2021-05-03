@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'languages', 'other', 'companies', 'products', 'members', 'stocks'));
+$langs->loadLangs(array('admin', 'languages', 'other', 'companies', 'products', 'members', 'stocks', 'Trips'));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -160,6 +160,10 @@ if (class_exists('TCPDI')) {
 }
 
 print load_fiche_titre($langs->trans("PDF"), '', 'title_setup');
+
+$head = pdf_admin_prepare_head();
+
+print dol_get_fiche_head($head, 'general', $langs->trans("PDF"), -1, 'pdf');
 
 print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("PDFDesc"), $s)."</span><br>\n";
 print "<br>\n";

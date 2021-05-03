@@ -717,7 +717,7 @@ if ($rowid > 0) {
 					print '</td>';
 				} else {
 					print '<td class="nowrap left">';
-					if ($objp->subscription == 'yes') {
+					if (!empty($objp->subscription)) {
 						print $langs->trans("SubscriptionNotReceived");
 						if ($objp->status > 0) {
 							print " ".img_warning();
