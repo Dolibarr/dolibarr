@@ -285,9 +285,11 @@ print '<tr class="oddeven"><td>'.$langs->trans("HideAnyVATInformationOnPDF").'</
 print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT', (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) ? $conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT : 0, 1);
 print '</td></tr>';
 
-print '<tr class="oddeven"><td>'.$langs->trans("SowVATIsNotUsedForDocumentWithZeroVat").'</td><td>';
-print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_MENTION_ZERO_VAT', (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_MENTION_ZERO_VAT)) ? $conf->global->MAIN_GENERATE_DOCUMENTS_MENTION_ZERO_VAT : 0, 1);
-print '</td></tr>';
+if ($mysoc->country_code == 'FR' && !empty($mysoc->tva_assuj)) {
+	print '<tr class="oddeven"><td>'.$langs->trans("SowVATIsNotUsedForDocumentWithZeroVat").'</td><td>';
+	print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_MENTION_ZERO_VAT', (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_MENTION_ZERO_VAT)) ? $conf->global->MAIN_GENERATE_DOCUMENTS_MENTION_ZERO_VAT : 0, 1);
+	print '</td></tr>';
+}
 
 // Locataxes
 print $text;
