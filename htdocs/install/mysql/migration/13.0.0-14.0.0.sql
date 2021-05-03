@@ -468,3 +468,6 @@ create table llx_knowledgemanagement_knowledgerecord_extrafields
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
+
+-- add default amount by member type
+ALTER TABLE llx_adherent_type ADD COLUMN amount DOUBLE(24,8) NULL DEFAULT NULL AFTER subscription;
