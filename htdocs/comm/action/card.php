@@ -1220,6 +1220,8 @@ if ($action == 'create')
 	$doleditor->Create();
 	print '</td></tr>';
 
+
+
 	// Other attributes
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -2043,6 +2045,11 @@ if ($id > 0)
 		// Description
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td class="wordbreak">';
 		print dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->note_private));
+		print '</td></tr>';
+
+		// Numero de telephone
+		print '<tr><td class="tdtop">'.$langs->trans("Téléphone").'</td><td class="wordbreak">';
+		print '<a href=tel:'.$contact->phone_mobile.'>'.$contact->phone_mobile.'</a>';
 		print '</td></tr>';
 
 		// Other attributes
