@@ -170,7 +170,10 @@ elseif ($action == 'setdoc')
         $res4 = dolibarr_del_const($this->db, 'EXPENSEREPORT_PROJECT_IS_REQUIRED');
     }
 
-	if (!$res1 > 0 || !$res2 > 0 || !$res3 > 0 || !$res4) $error++;
+	$dates = GETPOST('EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH', 'int');
+	$res5 = dolibarr_set_const($db, 'EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH', intval($dates), 'chaine', 0, '', $conf->entity);
+
+	if (!$res1 > 0 || !$res2 > 0 || !$res3 > 0 || !$res4 > 0 || !$res5 > 0) $error++;
 
  	if (!$error)
 	{
@@ -499,6 +502,12 @@ if ($conf->projet->enabled) {
     print $form->selectyesno('EXPENSEREPORT_PROJECT_IS_REQUIRED', empty($conf->global->EXPENSEREPORT_PROJECT_IS_REQUIRED) ? 0 : 1, 1);
     print '</td></tr>';
 }
+
+print '<tr class="oddeven"><td>';
+print $langs->trans('PrefillExpenseReportDatesWithCurrentMonth');
+print '</td><td class="right">';
+print $form->selectyesno('EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH', empty($conf->global->EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH) ? 0 : 1, 1);
+print '</td></tr>';
 
 print '</table>';
 
