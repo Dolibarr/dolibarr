@@ -59,8 +59,6 @@ if ($action == 'update') {
 	exit;
 }
 
-
-
 /*
  * View
  */
@@ -113,14 +111,12 @@ if (!empty($conf->propal->enabled)) {
 }
 
 
-if (!empty($conf->commande->enabled)) {
+if (1==2 && !empty($conf->commande->enabled)) {
 	print load_fiche_titre($langs->trans("Order"), '', '');
-
-	print "<br>\n";
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table summary="more" class="noborder centpercent">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
 	print '</table>';
 	print '</div>';
@@ -128,11 +124,9 @@ if (!empty($conf->commande->enabled)) {
 if (!empty($conf->facture->enabled)) {
 	print load_fiche_titre($langs->trans("Invoices"), '', '');
 
-	print "<br>\n";
-
 	print '<div class="div-table-responsive-no-min">';
 	print '<table summary="more" class="noborder centpercent">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
 
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_GENERATE_INVOICES_WITH_PICTURE").'</td><td>';
@@ -146,50 +140,42 @@ if (!empty($conf->facture->enabled)) {
 	print '</table>';
 	print '</div>';
 }
-if (!empty($conf->expedition->enabled)) {
+if (1==2 && !empty($conf->expedition->enabled)) {
 	print load_fiche_titre($langs->trans("Sendings"), '', '');
 
-	print "<br>\n";
-
 	print '<div class="div-table-responsive-no-min">';
 	print '<table summary="more" class="noborder centpercent">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
 	print '</table>';
 	print '</div>';
 }
-if (!empty($conf->reception->enabled)) {
+if (1==2 && !empty($conf->reception->enabled)) {
 	print load_fiche_titre($langs->trans("Reception"), '', '');
 
-	print "<br>\n";
-
 	print '<div class="div-table-responsive-no-min">';
 	print '<table summary="more" class="noborder centpercent">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
 	print '</table>';
 	print '</div>';
 }
-if (!empty($conf->ticket->enabled)) {
+if (1==2 && !empty($conf->ticket->enabled)) {
 	print load_fiche_titre($langs->trans("Ticket"), '', '');
 
-	print "<br>\n";
-
 	print '<div class="div-table-responsive-no-min">';
 	print '<table summary="more" class="noborder centpercent">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
 	print '</table>';
 	print '</div>';
 }
-if (!empty($conf->ficheinter->enabled)) {
+if (1==2 && !empty($conf->ficheinter->enabled)) {
 	print load_fiche_titre($langs->trans("Intervention"), '', '');
-
-	print "<br>\n";
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table summary="more" class="noborder centpercent">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
 	print '</table>';
 	print '</div>';
@@ -197,11 +183,9 @@ if (!empty($conf->ficheinter->enabled)) {
 if (!empty($conf->supplier_proposal->enabled)) {
 	print load_fiche_titre($langs->trans("SupplierProposal"), '', '');
 
-	print "<br>\n";
-
 	print '<div class="div-table-responsive-no-min">';
 	print '<table summary="more" class="noborder centpercent">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
 
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_GENERATE_SUPPLIER_PROPOSAL_WITH_PICTURE").'</td><td>';
@@ -215,75 +199,63 @@ if (!empty($conf->supplier_proposal->enabled)) {
 	print '</table>';
 	print '</div>';
 }
-if (!empty($conf->fournisseur->enabled)) {
+if (1==2 && !empty($conf->fournisseur->enabled)) {
 	print load_fiche_titre($langs->trans("SupplierOrder"), '', '');
 
-	print "<br>\n";
-
 	print '<div class="div-table-responsive-no-min">';
 	print '<table summary="more" class="noborder centpercent">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
 	print '</table>';
 	print '</div>';
 }
-if (!empty($conf->recruitment->enabled)) {
+if (1==2 && !empty($conf->recruitment->enabled)) {
 	print load_fiche_titre($langs->trans("Recruitment"), '', '');
 
-	print "<br>\n";
-
 	print '<div class="div-table-responsive-no-min">';
 	print '<table summary="more" class="noborder centpercent">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
 	print '</table>';
 	print '</div>';
 }
-if (!empty($conf->contrat->enabled)) {
+if (1==2 && !empty($conf->contrat->enabled)) {
 	print load_fiche_titre($langs->trans("Contrat"), '', '');
 
-	print "<br>\n";
-
 	print '<div class="div-table-responsive-no-min">';
 	print '<table summary="more" class="noborder centpercent">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
 	print '</table>';
 	print '</div>';
 }
-if (!empty($conf->stock->enabled)) {
+if (1==2 && !empty($conf->stock->enabled)) {
 	print load_fiche_titre($langs->trans("Stock"), '', '');
 
-	print "<br>\n";
-
 	print '<div class="div-table-responsive-no-min">';
 	print '<table summary="more" class="noborder centpercent">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
 	print '</table>';
 	print '</div>';
 }
-if (!empty($conf->holiday->enabled)) {
+if (1==2 && !empty($conf->holiday->enabled)) {
 	print load_fiche_titre($langs->trans("Holidays"), '', '');
 
-	print "<br>\n";
-
 	print '<div class="div-table-responsive-no-min">';
 	print '<table summary="more" class="noborder centpercent">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
 
 	print '</table>';
 	print '</div>';
 }
-if (!empty($conf->expensereport->enabled)) {
+if (1==2 && !empty($conf->expensereport->enabled)) {
 	print load_fiche_titre($langs->trans("Trips"), '', '');
-
-	print "<br>\n";
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table summary="more" class="noborder centpercent">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
 	print '</table>';
 	print '</div>';
