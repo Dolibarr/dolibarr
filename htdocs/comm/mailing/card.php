@@ -223,11 +223,11 @@ if (empty($reshook)) {
 						}
 						if ($onlinepaymentenabled && !empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 							require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-							$substitutionarray['__ONLINEPAYMENTLINK_MEMBER__'] = getOnlinePaymentUrl(0, 'member', $obj->source_id);
-							$substitutionarray['__ONLINEPAYMENTLINK_DONATION__'] = getOnlinePaymentUrl(0, 'donation', $obj->source_id);
-							$substitutionarray['__ONLINEPAYMENTLINK_ORDER__'] = getOnlinePaymentUrl(0, 'order', $obj->source_id);
-							$substitutionarray['__ONLINEPAYMENTLINK_INVOICE__'] = getOnlinePaymentUrl(0, 'invoice', $obj->source_id);
-							$substitutionarray['__ONLINEPAYMENTLINK_CONTRACTLINE__'] = getOnlinePaymentUrl(0, 'contractline', $obj->source_id);
+							$substitutionarray['__ONLINEPAYMENTLINK_MEMBER__'] = getHtmlOnlinePaymentLink('member', $obj->source_id);
+							$substitutionarray['__ONLINEPAYMENTLINK_DONATION__'] = getHtmlOnlinePaymentLink('donation', $obj->source_id);
+							$substitutionarray['__ONLINEPAYMENTLINK_ORDER__'] = getHtmlOnlinePaymentLink('order', $obj->source_id);
+							$substitutionarray['__ONLINEPAYMENTLINK_INVOICE__'] = getHtmlOnlinePaymentLink('invoice', $obj->source_id);
+							$substitutionarray['__ONLINEPAYMENTLINK_CONTRACTLINE__'] = getHtmlOnlinePaymentLink('contractline', $obj->source_id);
 
 							$substitutionarray['__SECUREKEYPAYMENT__'] = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
 							if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
