@@ -32,6 +32,16 @@
 
 -- Missing in v13 or lower
 
+ALTER TABLE llx_accounting_bookkeeping DROP INDEX idx_accounting_bookkeeping_numero_compte;
+ALTER TABLE llx_accounting_bookkeeping DROP INDEX idx_accounting_bookkeeping_code_journal;
+
+ALTER TABLE llx_accounting_bookkeeping ADD INDEX idx_accounting_bookkeeping_fk_docdet (fk_docdet);
+ALTER TABLE llx_accounting_bookkeeping ADD INDEX idx_accounting_bookkeeping_doc_date (doc_date);
+ALTER TABLE llx_accounting_bookkeeping ADD INDEX idx_accounting_bookkeeping_numero_compte (numero_compte, entity);
+ALTER TABLE llx_accounting_bookkeeping ADD INDEX idx_accounting_bookkeeping_code_journal (code_journal, entity);
+
+ALTER TABLE llx_accounting_bookkeeping ADD INDEX idx_accounting_bookkeeping_piece_num (piece_num, entity);
+
 ALTER TABLE llx_recruitment_recruitmentcandidature MODIFY COLUMN email_msgid VARCHAR(175);
 
 ALTER TABLE llx_asset CHANGE COLUMN amount amount_ht double(24,8) DEFAULT NULL;
@@ -307,7 +317,8 @@ create table llx_product_perentity
     accountancy_code_sell_export  varchar(32),                        -- Selling accountancy code for vat export
     accountancy_code_buy          varchar(32),                        -- Buying accountancy code
     accountancy_code_buy_intra    varchar(32),                        -- Buying accountancy code for vat intracommunity
-    accountancy_code_buy_export   varchar(32)                  		-- Buying accountancy code for vat import
+    accountancy_code_buy_export   varchar(32),                     	  -- Buying accountancy code for vat import
+    pmp double(24,8)
 )ENGINE=innodb;
 
 ALTER TABLE llx_product_perentity ADD INDEX idx_product_perentity_fk_product (fk_product);
@@ -490,3 +501,7 @@ ALTER TABLE llx_facturedet ADD COLUMN fk_c_type_transaction integer NULL after f
 ALTER TABLE llx_commande_fournisseurdet ADD COLUMN fk_c_type_transaction integer NULL after fk_product;
 ALTER TABLE llx_supplier_proposaldet ADD COLUMN fk_c_type_transaction integer NULL after fk_product;
 ALTER TABLE llx_facture_fourn_det ADD COLUMN fk_c_type_transaction integer NULL after fk_product;
+
+-- add default amount by member type
+ALTER TABLE llx_adherent_type ADD COLUMN amount DOUBLE(24,8) NULL DEFAULT NULL AFTER subscription;
+

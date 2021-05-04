@@ -187,7 +187,7 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 	$imgHeight = $infoImg[1]; // Hauteur de l'image
 
 	$imgTargetName = ($filetowrite ? $filetowrite : $file);
-	$infoImgTarget = getimagesize($imgTargetName); 	// Get data about target image
+	$newExt = strtolower(pathinfo($imgTargetName, PATHINFO_EXTENSION));
 
 	if ($mode == 0) {	// If resize, we check parameters
 		if (!empty($filetowrite) && $filetowrite != $file && $newWidth <= 0 && $newHeight <= 0) {
@@ -203,6 +203,7 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 		}
 	}
 
+	// Test function to read source image exists
 	$imgfonction = '';
 	switch ($infoImg[2]) {
 		case 1:	// IMG_GIF
@@ -225,6 +226,34 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 		if (!function_exists($imgfonction)) {
 			// Fonctions de conversion non presente dans ce PHP
 			return 'Read of image not possible. This PHP does not support GD functions '.$imgfonction;
+		}
+	}
+
+	// Test function to write target image exists
+	if ($filetowrite) {
+		$imgfonction = '';
+		switch ($newExt) {
+			case 'gif':	// IMG_GIF
+				$imgfonction = 'imagecreatefromgif';
+				break;
+			case 'jpg':	// IMG_JPG
+				$imgfonction = 'imagecreatefromjpeg';
+				break;
+			case 'png':	// IMG_PNG
+				$imgfonction = 'imagecreatefrompng';
+				break;
+			case 'bmp':	// IMG_WBMP
+				$imgfonction = 'imagecreatefromwbmp';
+				break;
+			case 'webp': // IMG_WEBP
+				$imgfonction = 'imagecreatefromwebp';
+				break;
+		}
+		if ($imgfonction) {
+			if (!function_exists($imgfonction)) {
+				// Fonctions de conversion non presente dans ce PHP
+				return 'Write of image not possible. This PHP does not support GD functions '.$imgfonction;
+			}
 		}
 	}
 
@@ -253,7 +282,7 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 	}
 
 	// Create empty image for target
-	if ($infoImgTarget[2] == 1) {
+	if ($newExt == 'gif') {
 		// Compatibility image GIF
 		$imgTarget = imagecreate($newWidth, $newHeight);
 	} else {
@@ -271,22 +300,22 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 	}
 
 	// Set transparent color according to image extension
-	switch ($infoImgTarget[2]) {
-		case 1:	// Gif
+	switch ($newExt) {
+		case 'gif':	// Gif
 			$trans_colour = imagecolorallocate($imgTarget, 255, 255, 255); // On procede autrement pour le format GIF
 			imagecolortransparent($imgTarget, $trans_colour);
 			break;
-		case 2:	// Jpg
+		case 'jpg':	// Jpg
 			$trans_colour = imagecolorallocatealpha($imgTarget, 255, 255, 255, 0);
 			break;
-		case 3:	// Png
+		case 'png':	// Png
 			imagealphablending($imgTarget, false); // Pour compatibilite sur certain systeme
 			$trans_colour = imagecolorallocatealpha($imgTarget, 255, 255, 255, 127); // Keep transparent channel
 			break;
-		case 4:	// Bmp
+		case 'bmp':	// Bmp
 			$trans_colour = imagecolorallocatealpha($imgTarget, 255, 255, 255, 0);
 			break;
-		case 18: // Webp
+		case 'webp': // Webp
 			$trans_colour = imagecolorallocatealpha($imgTarget, 255, 255, 255, 127);
 			break;
 	}
@@ -301,8 +330,6 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 	// Check if permission are ok
 	//$fp = fopen($imgTargetName, "w");
 	//fclose($fp);
-
-	$newExt = strtolower(pathinfo($imgTargetName, PATHINFO_EXTENSION));
 
 	// Create image on disk (overwrite file if exists)
 	switch ($newExt) {

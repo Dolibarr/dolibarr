@@ -1620,10 +1620,12 @@ if ($action == 'create') {
 		if ($object->statut == $object::STATUS_DRAFT && $user->rights->facture->creer && $action != 'valid' && $action != 'editline') {
 			if ($action != 'editline') {
 				// Add free products/services
-				$object->formAddObjectLine(0, $mysoc, $object->thirdparty); // No date selector for template invoice
 
 				$parameters = array();
 				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+				if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				if (empty($reshook))
+					$object->formAddObjectLine(0, $mysoc, $object->thirdparty); // No date selector for template invoice
 			}
 		}
 
