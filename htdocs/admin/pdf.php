@@ -182,7 +182,7 @@ print load_fiche_titre($langs->trans("DictionaryPaperFormat"), '', '');
 
 print '<div class="div-table-responsive-no-min">';
 print '<table summary="more" class="noborder centpercent">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
 $selected = (isset($conf->global->MAIN_PDF_FORMAT) ? $conf->global->MAIN_PDF_FORMAT : '');
 if (empty($selected)) {
@@ -219,12 +219,16 @@ print load_fiche_titre($langs->trans("PDFAddressForging"), '', '');
 
 print '<div class="div-table-responsive-no-min">';
 print '<table summary="more" class="noborder centpercent">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
 // Hide VAT Intra on address
 
 print '<tr class="oddeven"><td>'.$langs->trans("ShowVATIntaInAddress").'</td><td>';
-print $form->selectyesno('MAIN_TVAINTRA_NOT_IN_ADDRESS', (!empty($conf->global->MAIN_TVAINTRA_NOT_IN_ADDRESS)) ? $conf->global->MAIN_TVAINTRA_NOT_IN_ADDRESS : 0, 1);
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('MAIN_TVAINTRA_NOT_IN_ADDRESS');
+} else {
+	print $form->selectyesno('MAIN_TVAINTRA_NOT_IN_ADDRESS', (!empty($conf->global->MAIN_TVAINTRA_NOT_IN_ADDRESS)) ? $conf->global->MAIN_TVAINTRA_NOT_IN_ADDRESS : 0, 1);
+}
 print '</td></tr>';
 
 // Show prof id in address into pdf
@@ -240,7 +244,11 @@ for ($i = 1; $i <= 6; $i++) {
 	if ($pid) {
 		print '<tr class="oddeven"><td>'.$langs->trans("ShowProfIdInAddress").' - '.$pid.'</td><td>';
 		$keyforconstant = 'MAIN_PROFID'.$i.'_IN_ADDRESS';
-		print $form->selectyesno($keyforconstant, isset($conf->global->$keyforconstant) ? $conf->global->$keyforconstant : 0, 1, $noCountryCode);
+		if ($conf->use_javascript_ajax) {
+			print ajax_constantonoff($keyforconstant);
+		} else {
+			print $form->selectyesno($keyforconstant, isset($conf->global->$keyforconstant) ? $conf->global->$keyforconstant : 0, 1, $noCountryCode);
+		}
 		print '</td></tr>';
 	}
 }
@@ -258,16 +266,24 @@ $text = '';
 if ($mysoc->useLocalTax(1) || $mysoc->useLocalTax(2)) {
 	if ($mysoc->useLocalTax(1)) {
 		$locales = $langs->transcountry("LT1", $mysoc->country_code);
-		$text = '<tr class="oddeven"><td>'.$langs->trans("HideLocalTaxOnPDF", $langs->transcountry("LT1", $mysoc->country_code)).'</td><td>';
-		$text .= $form->selectyesno('MAIN_PDF_MAIN_HIDE_SECOND_TAX', (!empty($conf->global->MAIN_PDF_MAIN_HIDE_SECOND_TAX)) ? $conf->global->MAIN_PDF_MAIN_HIDE_SECOND_TAX : 0, 1);
+		$text = '<tr class="oddeven"><td class="titlefieldmiddle">'.$langs->trans("HideLocalTaxOnPDF", $langs->transcountry("LT1", $mysoc->country_code)).'</td><td>';
+		if ($conf->use_javascript_ajax) {
+			$text .= ajax_constantonoff('MAIN_PDF_MAIN_HIDE_SECOND_TAX');
+		} else {
+			$text .= $form->selectyesno('MAIN_PDF_MAIN_HIDE_SECOND_TAX', (!empty($conf->global->MAIN_PDF_MAIN_HIDE_SECOND_TAX)) ? $conf->global->MAIN_PDF_MAIN_HIDE_SECOND_TAX : 0, 1);
+		}
 		$text .= '</td></tr>';
 	}
 
 	if ($mysoc->useLocalTax(2)) {
 		$locales .= ($locales ? ' & ' : '').$langs->transcountry("LT2", $mysoc->country_code);
 
-		$text .= '<tr class="oddeven"><td>'.$langs->trans("HideLocalTaxOnPDF", $langs->transcountry("LT2", $mysoc->country_code)).'</td><td>';
-		$text .= $form->selectyesno('MAIN_PDF_MAIN_HIDE_THIRD_TAX', (!empty($conf->global->MAIN_PDF_MAIN_HIDE_THIRD_TAX)) ? $conf->global->MAIN_PDF_MAIN_HIDE_THIRD_TAX : 0, 1);
+		$text .= '<tr class="oddeven"><td class="titlefieldmiddle">'.$langs->trans("HideLocalTaxOnPDF", $langs->transcountry("LT2", $mysoc->country_code)).'</td><td>';
+		if ($conf->use_javascript_ajax) {
+			$text .= ajax_constantonoff('MAIN_PDF_MAIN_HIDE_THIRD_TAX');
+		} else {
+			$text .= $form->selectyesno('MAIN_PDF_MAIN_HIDE_THIRD_TAX', (!empty($conf->global->MAIN_PDF_MAIN_HIDE_THIRD_TAX)) ? $conf->global->MAIN_PDF_MAIN_HIDE_THIRD_TAX : 0, 1);
+		}
 		$text .= '</td></tr>';
 	}
 }
@@ -277,15 +293,20 @@ if ($mysoc->useLocalTax(1) || $mysoc->useLocalTax(2)) {
 	$title .= ' - '.$langs->trans("PDFLocaltax", $locales);
 }
 
+
 print load_fiche_titre($title, '', '');
 
 print '<table summary="more" class="noborder centpercent">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
 // Hide any information on Sale tax / VAT
 
 print '<tr class="oddeven"><td>'.$langs->trans("HideAnyVATInformationOnPDF").'</td><td>';
-print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT', (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) ? $conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT : 0, 1);
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT');
+} else {
+	print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT', (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) ? $conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT : 0, 1);
+}
 print '</td></tr>';
 
 // Locataxes
@@ -321,13 +342,21 @@ if (!empty($conf->projet->enabled)) {
 //Invert sender and recipient
 
 print '<tr class="oddeven"><td>'.$langs->trans("SwapSenderAndRecipientOnPDF").'</td><td>';
-print $form->selectyesno('MAIN_INVERT_SENDER_RECIPIENT', (!empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) ? $conf->global->MAIN_INVERT_SENDER_RECIPIENT : 0, 1);
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('MAIN_INVERT_SENDER_RECIPIENT');
+} else {
+	print $form->selectyesno('MAIN_INVERT_SENDER_RECIPIENT', (!empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) ? $conf->global->MAIN_INVERT_SENDER_RECIPIENT : 0, 1);
+}
 print '</td></tr>';
 
 // Place customer adress to the ISO location
 
 print '<tr class="oddeven"><td>'.$langs->trans("PlaceCustomerAddressToIsoLocation").'</td><td>';
-print $form->selectyesno('MAIN_PDF_USE_ISO_LOCATION', (!empty($conf->global->MAIN_PDF_USE_ISO_LOCATION)) ? $conf->global->MAIN_PDF_USE_ISO_LOCATION : 0, 1);
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('MAIN_PDF_USE_ISO_LOCATION');
+} else {
+	print $form->selectyesno('MAIN_PDF_USE_ISO_LOCATION', (!empty($conf->global->MAIN_PDF_USE_ISO_LOCATION)) ? $conf->global->MAIN_PDF_USE_ISO_LOCATION : 0, 1);
+}
 print '</td></tr>';
 
 // Use 2 languages into PDF
@@ -345,25 +374,41 @@ print '</td></tr>';
 //Desc
 
 print '<tr class="oddeven"><td>'.$langs->trans("HideDescOnPDF").'</td><td>';
-print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_HIDE_DESC', (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC)) ? $conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC : 0, 1);
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('MAIN_GENERATE_DOCUMENTS_HIDE_DESC');
+} else {
+	print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_HIDE_DESC', (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC)) ? $conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC : 0, 1);
+}
 print '</td></tr>';
 
 //Ref
 
 print '<tr class="oddeven"><td>'.$langs->trans("HideRefOnPDF").'</td><td>';
-print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_HIDE_REF', (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF)) ? $conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF : 0, 1);
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('MAIN_GENERATE_DOCUMENTS_HIDE_REF');
+} else {
+	print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_HIDE_REF', (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF)) ? $conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF : 0, 1);
+}
 print '</td></tr>';
 
 //Details
 
 print '<tr class="oddeven"><td>'.$langs->trans("HideDetailsOnPDF").'</td><td>';
-print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS', (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS)) ? $conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS : 0, 1);
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS');
+} else {
+	print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS', (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS)) ? $conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS : 0, 1);
+}
 print '</td></tr>';
 
 // SHOW_SUBPRODUCT_REF_IN_PDF - Option to show the detail of product ref for kits.
 
 print '<tr class="oddeven"><td>'.$langs->trans("SHOW_SUBPRODUCT_REF_IN_PDF", $langs->transnoentitiesnoconv("AssociatedProductsAbility"), $langs->transnoentitiesnoconv("Products")).'</td><td>';
-print $form->selectyesno('SHOW_SUBPRODUCT_REF_IN_PDF', (!empty($conf->global->SHOW_SUBPRODUCT_REF_IN_PDF)) ? $conf->global->SHOW_SUBPRODUCT_REF_IN_PDF : 0, 1);
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('SHOW_SUBPRODUCT_REF_IN_PDF');
+} else {
+	print $form->selectyesno('SHOW_SUBPRODUCT_REF_IN_PDF', (!empty($conf->global->SHOW_SUBPRODUCT_REF_IN_PDF)) ? $conf->global->SHOW_SUBPRODUCT_REF_IN_PDF : 0, 1);
+}
 print '</td></tr>';
 
 // Show more details in footer
