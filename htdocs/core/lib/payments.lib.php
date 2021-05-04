@@ -27,7 +27,8 @@
  * @param Paiement $object Current payment object
  * @return array Tabs for the payment section
  */
-function payment_prepare_head(Paiement $object) {
+function payment_prepare_head(Paiement $object)
+{
 	global $langs, $conf;
 
 	$h = 0;
@@ -61,7 +62,8 @@ function payment_prepare_head(Paiement $object) {
  * @param 	int		$id		ID of bank line
  * @return 	array 			Tabs for the Bankline section
  */
-function bankline_prepare_head($id) {
+function bankline_prepare_head($id)
+{
 	global $langs, $conf;
 
 	$h = 0;
@@ -95,7 +97,8 @@ function bankline_prepare_head($id) {
  * @param Paiement $object Current payment object
  * @return array Tabs for the payment section
  */
-function payment_supplier_prepare_head(Paiement $object) {
+function payment_supplier_prepare_head(Paiement $object)
+{
 	global $langs, $conf;
 
 	$h = 0;
@@ -128,7 +131,8 @@ function payment_supplier_prepare_head(Paiement $object) {
  * @param	string	$paymentmethod		Filter on this payment method (''=none, 'paypal', ...)
  * @return	array						Array of valid payment method
  */
-function getValidOnlinePaymentMethods($paymentmethod = '') {
+function getValidOnlinePaymentMethods($paymentmethod = '')
+{
 	global $conf, $langs;
 
 	$validpaymentmethod = array();
@@ -158,7 +162,8 @@ function getValidOnlinePaymentMethods($paymentmethod = '') {
  * @param	string	$ref		Ref of object
  * @return	string				Url string
  */
-function showOnlinePaymentUrl($type, $ref) {
+function showOnlinePaymentUrl($type, $ref)
+{
 	global $langs;
 
 	// Load translation files required by the page
@@ -182,7 +187,8 @@ function showOnlinePaymentUrl($type, $ref) {
  * @param	string	$label		Text or HTML tag to display, if empty it display the URL
  * @return	string			Url string
  */
-function getHtmlOnlinePaymentLink($type, $ref, $label='') {
+function getHtmlOnlinePaymentLink($type, $ref, $label = '')
+{
 	$url = getOnlinePaymentUrl(0, $type, $ref);
 	$label = $label ? $label : $url;
 	return'<a href="'.$url.'" target="_blank">'.$label.'</a>';
@@ -200,7 +206,8 @@ function getHtmlOnlinePaymentLink($type, $ref, $label='') {
  * @param   string  $localorexternal  0=Url for browser, 1=Url for external access
  * @return	string				      Url string
  */
-function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag = 'your_tag', $localorexternal = 0) {
+function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag = 'your_tag', $localorexternal = 0)
+{
 	global $conf, $dolibarr_main_url_root;
 
 	$ref = str_replace(' ', '', $ref);
@@ -365,7 +372,8 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag
  * @param	Object		$object			Object related to payment
  * @return	void
  */
-function htmlPrintOnlinePaymentFooter($fromcompany, $langs, $addformmessage = 0, $suffix = '', $object = null) {
+function htmlPrintOnlinePaymentFooter($fromcompany, $langs, $addformmessage = 0, $suffix = '', $object = null)
+{
 	global $conf;
 
 	// Juridical status
