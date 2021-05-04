@@ -2182,7 +2182,7 @@ class ExpenseReport extends CommonObject
 	 * @param   integer    $date_fin       End date
 	 * @return  int                        <0 if KO, >0 if OK
 	 */
-	public function periode_existe($fuser, $date_debut, $date_fin)
+	public function periode_existe($fuser, $date_debut, $date_fin, $return_id = false)
 	{
 		// phpcs:enable
 		$sql = "SELECT rowid, date_debut, date_fin";
@@ -2199,8 +2199,6 @@ class ExpenseReport extends CommonObject
 				$date_d_form = $date_debut;
 				$date_f_form = $date_fin;
 
-				$existe = false;
-
 				while ($i < $num_rows)
 				{
 					$objp = $this->db->fetch_object($result);
@@ -2208,13 +2206,14 @@ class ExpenseReport extends CommonObject
 					$date_d_req = $this->db->jdate($objp->date_debut); // 3
 					$date_f_req = $this->db->jdate($objp->date_fin); // 4
 
-					if (!($date_f_form < $date_d_req || $date_d_form > $date_f_req)) $existe = true;
+					if (!($date_f_form < $date_d_req || $date_d_form > $date_f_req)) {
+                        return $return_id ? $objp->rowid : 1;
+                    }
 
 					$i++;
 				}
 
-				if ($existe) return 1;
-				else return 0;
+                return 0;
 			} else {
 				return 0;
 			}
