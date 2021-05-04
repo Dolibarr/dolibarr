@@ -80,37 +80,237 @@ print dol_get_fiche_head($head, 'other', $langs->trans("other"), -1, 'pdf');
 
 print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("PDFOtherDesc"), $s)."</span><br>\n";
 print "<br>\n";
-
-print load_fiche_titre($langs->trans("Proposal"), '', '');
-
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
-print '<div class="div-table-responsive-no-min">';
-print '<table summary="more" class="noborder centpercent">';
-print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+if (!empty($conf->propal->enabled)) {
+	print load_fiche_titre($langs->trans("Proposal"), '', '');
 
-print '<tr class="oddeven"><td>'.$langs->trans("MAIN_GENERATE_PROPOSALS_WITH_PICTURE").'</td><td>';
-if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('MAIN_GENERATE_PROPOSALS_WITH_PICTURE');
-} else {
-	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("MAIN_GENERATE_PROPOSALS_WITH_PICTURE", $arrval, $conf->global->MAIN_GENERATE_PROPOSALS_WITH_PICTURE);
+	print '<div class="div-table-responsive-no-min">';
+	print '<table summary="more" class="noborder centpercent">';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_GENERATE_PROPOSALS_WITH_PICTURE").'</td><td>';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('MAIN_GENERATE_PROPOSALS_WITH_PICTURE');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("MAIN_GENERATE_PROPOSALS_WITH_PICTURE", $arrval, $conf->global->MAIN_GENERATE_PROPOSALS_WITH_PICTURE);
+	}
+	print '</td></tr>';
+
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING").'</td><td>';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING", $arrval, $conf->global->MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING);
+	}
+	print '</td></tr>';
+	print '</table>';
+	print '</div>';
 }
-print '</td></tr>';
 
-print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING").'</td><td>';
-if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING');
-} else {
-	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING", $arrval, $conf->global->MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING);
+
+if (!empty($conf->commande->enabled)) {
+
+	print load_fiche_titre($langs->trans("Order"), '', '');
+
+	print "<br>\n";
+
+	print '<div class="div-table-responsive-no-min">';
+	print '<table summary="more" class="noborder centpercent">';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+
+	print '</table>';
+	print '</div>';
+
 }
-print '</td></tr>';
+if (!empty($conf->facture->enabled)) {
 
-print '</table>';
-print '</div>';
+	print load_fiche_titre($langs->trans("Invoices"), '', '');
+
+	print "<br>\n";
+
+	print '<div class="div-table-responsive-no-min">';
+	print '<table summary="more" class="noborder centpercent">';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+
+
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_GENERATE_INVOICES_WITH_PICTURE").'</td><td>';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('MAIN_GENERATE_INVOICES_WITH_PICTURE');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("MAIN_GENERATE_INVOICES_WITH_PICTURE", $arrval, $conf->global->MAIN_GENERATE_INVOICES_WITH_PICTURE);
+	}
+	print '</td></tr>';
+
+	print '</table>';
+	print '</div>';
+
+}
+if (!empty($conf->expedition->enabled)) {
+
+	print load_fiche_titre($langs->trans("Sendings"), '', '');
+
+	print "<br>\n";
+
+	print '<div class="div-table-responsive-no-min">';
+	print '<table summary="more" class="noborder centpercent">';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+
+	print '</table>';
+	print '</div>';
+
+}
+if (!empty($conf->reception->enabled)) {
+
+	print load_fiche_titre($langs->trans("Reception"), '', '');
+
+	print "<br>\n";
+
+	print '<div class="div-table-responsive-no-min">';
+	print '<table summary="more" class="noborder centpercent">';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+
+	print '</table>';
+	print '</div>';
+}
+if (!empty($conf->ticket->enabled)) {
+
+	print load_fiche_titre($langs->trans("Ticket"), '', '');
+
+	print "<br>\n";
+
+	print '<div class="div-table-responsive-no-min">';
+	print '<table summary="more" class="noborder centpercent">';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+
+	print '</table>';
+	print '</div>';
+}
+if (!empty($conf->ficheinter->enabled)) {
+
+	print load_fiche_titre($langs->trans("Intervention"), '', '');
+
+	print "<br>\n";
+
+	print '<div class="div-table-responsive-no-min">';
+	print '<table summary="more" class="noborder centpercent">';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+
+	print '</table>';
+	print '</div>';
+}
+if (!empty($conf->supplier_proposal->enabled)) {
+	print load_fiche_titre($langs->trans("SupplierProposal"), '', '');
+
+	print "<br>\n";
+
+	print '<div class="div-table-responsive-no-min">';
+	print '<table summary="more" class="noborder centpercent">';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+
+
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_GENERATE_SUPPLIER_PROPOSAL_WITH_PICTURE").'</td><td>';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('MAIN_GENERATE_SUPPLIER_PROPOSAL_WITH_PICTURE');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("MAIN_GENERATE_SUPPLIER_PROPOSAL_WITH_PICTURE", $arrval, $conf->global->MAIN_GENERATE_SUPPLIER_PROPOSAL_WITH_PICTURE);
+	}
+	print '</td></tr>';
+	print '</table>';
+	print '</div>';
+
+}
+if (!empty($conf->fournisseur->enabled)) {
+
+	print load_fiche_titre($langs->trans("SupplierOrder"), '', '');
+
+	print "<br>\n";
+
+	print '<div class="div-table-responsive-no-min">';
+	print '<table summary="more" class="noborder centpercent">';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+
+	print '</table>';
+	print '</div>';
+	
+}
+if (!empty($conf->recruitment->enabled)) {
+
+	print load_fiche_titre($langs->trans("Recruitment"), '', '');
+
+	print "<br>\n";
+
+	print '<div class="div-table-responsive-no-min">';
+	print '<table summary="more" class="noborder centpercent">';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+
+	print '</table>';
+	print '</div>';
+	
+}
+if (!empty($conf->contrat->enabled)) {
+
+	print load_fiche_titre($langs->trans("Contrat"), '', '');
+
+	print "<br>\n";
+
+	print '<div class="div-table-responsive-no-min">';
+	print '<table summary="more" class="noborder centpercent">';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+
+	print '</table>';
+	print '</div>';
+	
+}
+if (!empty($conf->stock->enabled)) {
+
+	print load_fiche_titre($langs->trans("Stock"), '', '');
+
+	print "<br>\n";
+
+	print '<div class="div-table-responsive-no-min">';
+	print '<table summary="more" class="noborder centpercent">';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+
+	print '</table>';
+	print '</div>';
+	
+}
+if (!empty($conf->holiday->enabled)) {
+
+	print load_fiche_titre($langs->trans("Holidays"), '', '');
+
+	print "<br>\n";
+
+	print '<div class="div-table-responsive-no-min">';
+	print '<table summary="more" class="noborder centpercent">';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+
+
+	print '</table>';
+	print '</div>';
+	
+}
+if (!empty($conf->expensereport->enabled)) {
+
+	print load_fiche_titre($langs->trans("Trips"), '', '');
+
+	print "<br>\n";
+
+	print '<div class="div-table-responsive-no-min">';
+	print '<table summary="more" class="noborder centpercent">';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+
+	print '</table>';
+	print '</div>';
+	
+}
 
 
 print '<br><div class="center">';
