@@ -1753,7 +1753,7 @@ if ($action != 'dopayment') {
 			print '<br><br><span class="amountpaymentcomplete size15x">'.$langs->trans("DonationPaid").'</span>';
 		} else {
 			// Membership can be paid and we still allow to make renewal
-			if ($source == 'membersubscription' && $object->datefin > dol_now()) {
+			if (($source == 'member' || $source == 'membersubscription') && $object->datefin > dol_now()) {
 				$langs->load("members");
 				print '<br><span class="amountpaymentcomplete size15x">'.$langs->trans("MembershipPaid", dol_print_date($object->datefin, 'day')).'</span><br>';
 				print '<div class="opacitymedium margintoponly">'.$langs->trans("PaymentWillBeRecordedForNextPeriod").'</div>';
