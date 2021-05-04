@@ -4926,6 +4926,7 @@ class Facture extends CommonInvoice
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 		$formmail = new FormMail($this->db);
 
 		$now = dol_now();
