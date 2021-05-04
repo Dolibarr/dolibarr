@@ -143,7 +143,9 @@ class printing_printipp extends PrintingDriver
 		$ipp->setUserName($this->userid);
 		// Set default number of copy
 		$ipp->setCopies(1);
-		if (!empty($this->user)) $ipp->setAuthentication($this->user, $this->password);
+		if (!empty($this->user)) {
+			$ipp->setAuthentication($this->user, $this->password);
+		}
 
 		// select printer uri for module order, propal,...
 		$sql = "SELECT rowid,printer_id,copy FROM ".MAIN_DB_PREFIX."printing WHERE module = '".$this->db->escape($module)."' AND driver = 'printipp' AND userid = ".$user->id;
@@ -156,8 +158,7 @@ class printing_printipp extends PrintingDriver
 				// Set number of copy
 				$ipp->setCopies($obj->copy);
 			} else {
-				if (!empty($conf->global->PRINTIPP_URI_DEFAULT))
-				{
+				if (!empty($conf->global->PRINTIPP_URI_DEFAULT)) {
 					dol_syslog("Will use default printer conf->global->PRINTIPP_URI_DEFAULT = ".$conf->global->PRINTIPP_URI_DEFAULT);
 					$ipp->setPrinterURI($conf->global->PRINTIPP_URI_DEFAULT);
 				} else {
@@ -171,7 +172,9 @@ class printing_printipp extends PrintingDriver
 		}
 
 		$fileprint = $conf->{$module}->dir_output;
-		if ($subdir != '') $fileprint .= '/'.$subdir;
+		if ($subdir != '') {
+			$fileprint .= '/'.$subdir;
+		}
 		$fileprint .= '/'.$file;
 		$ipp->setData($fileprint);
 		try {
@@ -180,7 +183,9 @@ class printing_printipp extends PrintingDriver
 			$this->errors[] = $e->getMessage();
 			$error++;
 		}
-		if ($error == 0) $this->errors[] = 'PRINTIPP: Job added';
+		if ($error == 0) {
+			$this->errors[] = 'PRINTIPP: Job added';
+		}
 
 		return $error;
 	}

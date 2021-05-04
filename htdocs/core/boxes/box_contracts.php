@@ -78,8 +78,7 @@ class box_contracts extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastContracts", $max));
 
-		if ($user->rights->contrat->lire)
-		{
+		if ($user->rights->contrat->lire) {
 			$contractstatic = new Contrat($this->db);
 			$thirdpartytmp = new Societe($this->db);
 
@@ -87,18 +86,26 @@ class box_contracts extends ModeleBoxes
 			$sql .= " c.rowid, c.ref, c.statut as fk_statut, c.date_contrat, c.datec, c.fin_validite, c.date_cloture";
 			$sql .= ", c.ref_customer, c.ref_supplier";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
-			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			if (!$user->rights->societe->client->voir && !$user->socid) {
+				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			}
 			$sql .= " WHERE c.fk_soc = s.rowid";
 			$sql .= " AND c.entity = ".$conf->entity;
-			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-			if ($user->socid) $sql .= " AND s.rowid = ".$user->socid;
-			if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql .= " ORDER BY c.date_contrat DESC, c.ref DESC ";
-			else $sql .= " ORDER BY c.tms DESC, c.ref DESC ";
+			if (!$user->rights->societe->client->voir && !$user->socid) {
+				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+			}
+			if ($user->socid) {
+				$sql .= " AND s.rowid = ".$user->socid;
+			}
+			if (! empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE)) {
+				$sql .= " ORDER BY c.date_contrat DESC, c.ref DESC ";
+			} else {
+				$sql .= " ORDER BY c.tms DESC, c.ref DESC ";
+			}
 			$sql .= $this->db->plimit($max, 0);
 
 			$resql = $this->db->query($sql);
-			if ($resql)
-			{
+			if ($resql) {
 				$num = $this->db->num_rows($resql);
 				$now = dol_now();
 
@@ -106,8 +113,7 @@ class box_contracts extends ModeleBoxes
 
 				$langs->load("contracts");
 
-				while ($line < $num)
-				{
+				while ($line < $num) {
 					$objp = $this->db->fetch_object($resql);
 
 					$datec = $this->db->jdate($objp->datec);
@@ -162,11 +168,12 @@ class box_contracts extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num == 0)
+				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center opacitymedium"',
 						'text'=>$langs->trans("NoRecordedContracts"),
 					);
+				}
 
 				$this->db->free($resql);
 			} else {

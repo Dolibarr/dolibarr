@@ -42,12 +42,20 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-if (!empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+if (!empty($conf->adherent->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+}
 
 $langs->loadLangs(array("companies", "commercial", "bills", "banks", "users"));
-if (!empty($conf->categorie->enabled)) $langs->load("categories");
-if (!empty($conf->incoterm->enabled)) $langs->load("incoterm");
-if (!empty($conf->notification->enabled)) $langs->load("mails");
+if (!empty($conf->categorie->enabled)) {
+	$langs->load("categories");
+}
+if (!empty($conf->incoterm->enabled)) {
+	$langs->load("incoterm");
+}
+if (!empty($conf->notification->enabled)) {
+	$langs->load("mails");
+}
 
 $mesg = ''; $error = 0; $errors = array();
 
@@ -56,8 +64,12 @@ $cancel     = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $confirm	= GETPOST('confirm');
 $socid = GETPOST('socid', 'int') ?GETPOST('socid', 'int') : GETPOST('id', 'int');
-if ($user->socid) $socid = $user->socid;
-if (empty($socid) && $action == 'view') $action = 'create';
+if ($user->socid) {
+	$socid = $user->socid;
+}
+if (empty($socid) && $action == 'view') {
+	$action = 'create';
+}
 
 $object = new Societe($db);
 $extrafields = new ExtraFields($db);
@@ -68,8 +80,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('thirdpartycontact', 'globalcard'));
 
-if ($object->fetch($socid) <= 0 && $action == 'view')
-{
+if ($object->fetch($socid) <= 0 && $action == 'view') {
 	$langs->load("errors");
 	print($langs->trans('ErrorRecordNotFound'));
 	exit;
@@ -78,8 +89,7 @@ if ($object->fetch($socid) <= 0 && $action == 'view')
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $canvas = $object->canvas ? $object->canvas : GETPOST("canvas");
 $objcanvas = null;
-if (!empty($canvas))
-{
+if (!empty($canvas)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
 	$objcanvas = new Canvas($db, $action);
 	$objcanvas->getCanvas('thirdparty', 'card', $canvas);
@@ -87,7 +97,9 @@ if (!empty($canvas))
 
 // Security check
 $result = restrictedArea($user, 'societe', $socid, '&societe', '', 'fk_soc', 'rowid', 0);
-if (empty($user->rights->societe->contact->lire)) accessforbidden();
+if (empty($user->rights->societe->contact->lire)) {
+	accessforbidden();
+}
 
 
 /*
@@ -96,15 +108,14 @@ if (empty($user->rights->societe->contact->lire)) accessforbidden();
 
 $parameters = array('id'=>$socid, 'objcanvas'=>$objcanvas);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
-if (empty($reshook))
-{
-	if ($cancel)
-	{
+if (empty($reshook)) {
+	if ($cancel) {
 		$action = '';
-		if (!empty($backtopage))
-		{
+		if (!empty($backtopage)) {
 			header("Location: ".$backtopage);
 			exit;
 		}
@@ -124,21 +135,26 @@ $formfile = new FormFile($db);
 $formadmin = new FormAdmin($db);
 $formcompany = new FormCompany($db);
 
-if ($socid > 0 && empty($object->id))
-{
+if ($socid > 0 && empty($object->id)) {
 	$result = $object->fetch($socid);
-	if ($result <= 0) dol_print_error('', $object->error);
+	if ($result <= 0) {
+		dol_print_error('', $object->error);
+	}
 }
 
 $title = $langs->trans("ThirdParty");
-if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title = $object->name." - ".$langs->trans('Card');
+if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+	$title = $object->name." - ".$langs->trans('Card');
+}
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('', $title, $help_url);
 
 $countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
 
-if (!empty($object->id)) $res = $object->fetch_optionals();
+if (!empty($object->id)) {
+	$res = $object->fetch_optionals();
+}
 //if ($res < 0) { dol_print_error($db); exit; }
 
 
@@ -154,11 +170,9 @@ print dol_get_fiche_end();
 
 print '<br>';
 
-if ($action != 'presend')
-{
+if ($action != 'presend') {
 	// Contacts list
-	if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
-	{
+	if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
 		$result = show_contacts($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id);
 	}
 }

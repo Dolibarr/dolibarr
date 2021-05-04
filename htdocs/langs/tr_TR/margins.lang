@@ -16,12 +16,13 @@ MarginDetails=Kar oranı ayrıntıları
 ProductMargins=Ürün kar oranları
 CustomerMargins=Müşteri kar oranları
 SalesRepresentativeMargins=Satış temsilcisi kar oranları
+ContactOfInvoice=Contact of invoice
 UserMargins=Kullanıcı kar oranları
 ProductService=Ürün veya Hizmet
 AllProducts=Bütün ürünler ve hizmetler
 ChooseProduct/Service=Ürün veya hizmet seç
 ForceBuyingPriceIfNull=Eğer tanımlanmamışsa alış/maliyet fiyatını satış fiyatına zorla
-ForceBuyingPriceIfNullDetails=Eğer alış/maliyet fiyatı tanımlanmamışsa ve bu seçenek "AÇIK" ise satırda oran sıfır olacaktır (alış/maliyet fiyatı = satış fiyatı) aksi durumda ("KAPALI") ve oran önerilen varsayılana eşit olacaktır.
+ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0 on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100% if no default value can be found).
 MARGIN_METHODE_FOR_DISCOUNT=Genel indirimler için kar oranı yöntemi
 UseDiscountAsProduct=Ürün olarak
 UseDiscountAsService=Hizmet olarak
@@ -36,7 +37,7 @@ CostPrice=Maliyet fiyatı
 UnitCharges=Birim masrafları
 Charges=Masraflar
 AgentContactType=Ticari temsilci ilgili tipi
-AgentContactTypeDetails=Satış temsilcisine göre kar oranı raporu için kullanılacak kişi türünü (faturala bağlantılı) tanımla
+AgentContactTypeDetails=Define what contact type (linked on invoices) will be used for margin report per contact/address. Note that reading statistics on a contact is not reliable since in most cases the contact may not be defined explicitely on the invoices.
 rateMustBeNumeric=Kar oran sayısal bir değer olmalı
 markRateShouldBeLesserThan100=Yayınlanmış kar oranı 100 den daha düşük olmalı
 ShowMarginInfos=Kar oranı bilgisi göster

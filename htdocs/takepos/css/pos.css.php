@@ -27,14 +27,26 @@
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled because need to load personalized language
 //if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');	// Not disabled to increase speed. Language code is found on url.
-if (!defined('NOREQUIRESOC'))    define('NOREQUIRESOC', '1');
+if (!defined('NOREQUIRESOC')) {
+	define('NOREQUIRESOC', '1');
+}
 //if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');	// Not disabled because need to do translations
-if (!defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
-if (!defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
-if (!defined('NOLOGIN'))         define('NOLOGIN', 1); // File must be accessed by logon page so without login
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', 1);
+}
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', 1);
+}
+if (!defined('NOLOGIN')) {
+	define('NOLOGIN', 1); // File must be accessed by logon page so without login
+}
 //if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU',1);  // We need top menu content
-if (!defined('NOREQUIREHTML'))   define('NOREQUIREHTML', 1);
-if (!defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX', '1');
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', 1);
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
 
 
 define('ISLOADEDBYSTEELSHEET', '1');
@@ -48,25 +60,30 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 // Define css type
 top_httphead('text/css');
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-if (empty($dolibarr_nocache)) header('Cache-Control: max-age=10800, public, must-revalidate');
-else header('Cache-Control: no-cache');
+if (empty($dolibarr_nocache)) {
+	header('Cache-Control: max-age=10800, public, must-revalidate');
+} else {
+	header('Cache-Control: no-cache');
+}
 
 
-require DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
-if (defined('THEME_ONLY_CONSTANT')) return;
+include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+if (defined('THEME_ONLY_CONSTANT')) {
+	return;
+}
 
 ?>
 
 html,body {
-    box-sizing: border-box;
+	box-sizing: border-box;
 	padding:0px;
-    margin:0;
-    height:100%;
+	margin:0;
+	height:100%;
 	width:100%;
 }
 
 .bodytakepos {
-    background-color: #EEE;
+	background-color: #EEE;
 }
 
 .center {
@@ -74,14 +91,14 @@ html,body {
 }
 
 button.calcbutton.poscolorblue {
-    background-color: #0066AA;
+	background-color: #0066AA;
 }
 
 button.calcbutton2.poscolordelete {
 	background: rgb(255, 188, 185);
-    color: #633;
-    /*background-color: #884444;
-    color: #fff;*/
+	color: #633;
+	/*background-color: #884444;
+	color: #fff;*/
 }
 
 button.calcbutton {
@@ -96,19 +113,19 @@ button.calcbutton {
 	width: calc(25% - 2px);
 	height: calc(25% - 2px);
 	font-weight: bold;
-    background-color: #8c907e;
-    color: #fff;
-    /* border-color: unset; */
-    border-width: 0;
-    margin: 1px;
+	background-color: #8c907e;
+	color: #fff;
+	/* border-color: unset; */
+	border-width: 0;
+	margin: 1px;
 	font-size: 14pt;
-    border-radius: 3px;
+	border-radius: 3px;
 }
 
 button.calcbutton2 {
-    color: #fff;
-    background-color: #5555AA;
-    border-width: 0px;
+	color: #fff;
+	background-color: #5555AA;
+	border-width: 0px;
 	display: inline-block;
 	position: relative;
 	padding: 0;
@@ -122,7 +139,7 @@ button.calcbutton2 {
 	font-weight: bold;
 	font-size: 10pt;
 	margin: 1px;
-    border-radius: 3px;
+	border-radius: 3px;
 }
 
 button.calcbutton2 .iconwithlabel {
@@ -142,7 +159,7 @@ button.calcbutton3 {
 	height: calc(25% - 2px);
 	font-size: 14pt;
 	margin: 1px;
-    border-radius: 3px;
+	border-radius: 3px;
 }
 
 button.productbutton {
@@ -157,20 +174,20 @@ button.productbutton {
 	width: calc(100% - 2px);
 	height: calc(100% - 2px);
 	font-weight: bold;
-    background-color: #a3a6a3;
-    color: #fff;
-    /* border-color: unset; */
-    border-width: 0;
-    margin: 1px;
+	background-color: #a3a6a3;
+	color: #fff;
+	/* border-color: unset; */
+	border-width: 0;
+	margin: 1px;
 	font-size: 14pt;
-    border-radius: 3px;
+	border-radius: 3px;
 }
 
 button.actionbutton {
-    background: #EABCA6;
-    border: 2px solid #EEE;
-    min-height: 40px;
-    border-radius: 3px;
+	background: #EABCA6;
+	border: 2px solid #EEE;
+	min-height: 40px;
+	border-radius: 3px;
 }
 
 button.actionbutton {
@@ -185,7 +202,7 @@ button.actionbutton {
 	width: calc(33.33% - 2px);
 	height: calc(25% - 2px);
 	margin: 1px;
-   	border-width: 0;
+	   border-width: 0;
 }
 
 button.item_value {
@@ -202,10 +219,10 @@ button.item_value.selected {
 }
 
 div[aria-describedby="dialog-info"] button:before {
-    content: "\f788";
-    font-family: "Font Awesome 5 Free";
-    font-weight: 900;
-    padding-right: 5px;
+	content: "\f788";
+	font-family: "Font Awesome 5 Free";
+	font-weight: 900;
+	padding-right: 5px;
 }
 div[aria-describedby="dialog-info"].ui-dialog .ui-dialog-buttonpane {
 	border-width: 0;
@@ -216,7 +233,7 @@ div[aria-describedby="dialog-info"].ui-dialog .ui-dialog-buttonpane {
 }
 
 .fa.fa-trash:before {
-    font-size: 1.5em;
+	font-size: 1.5em;
 }
 
 
@@ -249,11 +266,11 @@ div.wrapper2{
 }
 
 img.imgwrapper {
-    max-width: 100%;
+	max-width: 100%;
 }
 
 button:active{
-    background:black;
+	background:black;
 	color: white;
 }
 
@@ -270,7 +287,7 @@ div.description{
 	text-align:center;
 
 	padding-top: 30px;
-    background: -webkit-linear-gradient(top, rgba(250,250,250,0), rgba(250,250,250,0.5), rgba(250,250,250,0.95), rgba(250,250,250,1));
+	background: -webkit-linear-gradient(top, rgba(250,250,250,0), rgba(250,250,250,0.5), rgba(250,250,250,0.95), rgba(250,250,250,1));
 }
 
 div.catwatermark{
@@ -288,17 +305,17 @@ div.catwatermark{
 
 table.postablelines tr td {
 	line-height: unset;
-    padding-top: 3px;
-    padding-bottom: 3px;
+	padding-top: 3px;
+	padding-bottom: 3px;
 }
 
 .posinvoiceline td {
-    height: 40px !important;
-    background-color: var(--colorbacklineimpair1);
+	height: 40px !important;
+	background-color: var(--colorbacklineimpair1);
 }
 
 .postablelines td.linecolht {
-    line-height: 1.3em !important;
+	line-height: 1.3em !important;
 }
 
 div.paymentbordline
@@ -414,11 +431,11 @@ div.paymentbordline
 }
 
 tr.selected, tr.selected td {
-    /* font-weight: bold; */
+	/* font-weight: bold; */
 	background-color: rgb(240,230,210) !important;
 }
 .order {
-    color: limegreen;
+	color: limegreen;
 }
 
 .colorwhite {
@@ -442,13 +459,13 @@ tr.selected, tr.selected td {
 
 .centerinmiddle {
 	transform: translate(0,-50%);
-    position: relative;
-    top: 50%;
+	position: relative;
+	top: 50%;
 }
 .trunc {
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
 }
 
 p.description_content{
@@ -457,11 +474,11 @@ p.description_content{
 }
 div.description_content {
 	display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: <?php echo $conf->global->TAKEPOS_LINES_TO_SHOW; ?>;
-    overflow: hidden;
-    padding-left: 2px;
-    padding-right: 2px;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: <?php echo $conf->global->TAKEPOS_LINES_TO_SHOW; ?>;
+	overflow: hidden;
+	padding-left: 2px;
+	padding-right: 2px;
 }
 
 .header{
@@ -488,7 +505,7 @@ div.description_content {
 	height: 100%;
 }
 .topnav .tmenu {
-    display: block;
+	display: block;
 }
 
 .topnav a{
@@ -498,8 +515,8 @@ div.description_content {
 }
 .topnav .login_block_other a {
 	padding: 5px 10px;
-    margin-left: 4px;
-    font-size: 1.3em;
+	margin-left: 4px;
+	font-size: 1.3em;
 }
 
 @media screen and (max-width: 767px) {
@@ -515,8 +532,8 @@ div.description_content {
 
 .topnav-left a {
 	padding: 7px 4px 7px 4px;
-    margin: 8px;
-    margin-left: 4px;
+	margin: 8px;
+	margin-left: 4px;
 }
 .topnav-left a:hover, .topnav .login_block_other a:hover {
 	background-color: #ddd;
@@ -534,27 +551,27 @@ div.description_content {
 	border-bottom: none !important;
 	margin-left: 6px;
 	font-size: 1.3em;
-    max-width: 250px;
-    border-radius: 5px;
+	max-width: 250px;
+	border-radius: 5px;
 }
 
 div#moreinfo, div#infowarehouse {
-    color: #aaa;
-    padding: 0 8px 0 8px;
+	color: #aaa;
+	padding: 0 8px 0 8px;
 }
 
 .productprice {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    background: var(--colorbackhmenu1);
-    color: var(--colortextbackhmenu);
-    font-size: 2em;
-    padding: 5px;
-    border-radius: 2px;
-    opacity: 0.9;
-    padding-left: 8px;
-    padding-right: 8px;
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	background: var(--colorbackhmenu1);
+	color: var(--colortextbackhmenu);
+	font-size: 2em;
+	padding: 5px;
+	border-radius: 2px;
+	opacity: 0.9;
+	padding-left: 8px;
+	padding-right: 8px;
 }
 
 
@@ -604,9 +621,9 @@ div#moreinfo, div#infowarehouse {
 
 @media screen and (max-width: 767px) {
 	.header {
-	    position: sticky;
-	    top: 0;
-	    z-index: 10;
+		position: sticky;
+		top: 0;
+		z-index: 10;
 	}
 
 	.topnav input[type="text"] {
@@ -634,7 +651,7 @@ div#moreinfo, div#infowarehouse {
 	}
 
 	div#moreinfo, div#infowarehouse {
-	    padding: 0 5px 0 5px;
+		padding: 0 5px 0 5px;
 	}
 
 	div.div1 {
@@ -659,7 +676,7 @@ div#moreinfo, div#infowarehouse {
 	}
 
 	button.calcbutton, button.calcbutton2 {
-	    min-height: 30px;
+		min-height: 30px;
 	}
 
 	.takepospay {
@@ -734,7 +751,7 @@ div#moreinfo, div#infowarehouse {
   border: none;
   color: white;
   background-color: #8c907e;
-  padding: 14px 28px;
+  padding: 14px 0px;
   font-size: 16px;
   cursor: pointer;
   text-align: center;

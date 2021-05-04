@@ -27,37 +27,70 @@
 // $trackid='ord'.$object->id;
 
 
-if ($massaction == 'predeletedraft')
-{
+if ($massaction == 'predeletedraft') {
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassDraftDeletion"), $langs->trans("ConfirmMassDeletionQuestion", count($toselect)), "delete", null, '', 0, 200, 500, 1);
 }
 
-if ($massaction == 'predelete')
-{
+if ($massaction == 'predelete') {
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassDeletion"), $langs->trans("ConfirmMassDeletionQuestion", count($toselect)), "delete", null, '', 0, 200, 500, 1);
 }
 
-if ($massaction == 'presend')
-{
+if ($massaction == 'preaffecttag') {
+	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+	$categ = new Categorie($db);
+	$categ_types=array();
+	$categ_type_array=$categ->getMapList();
+	foreach ($categ_type_array as $categdef) {
+		if (isset($object) && $categdef['obj_table']==$object->table_element) {
+			if (!array_key_exists($categdef['code'], $categ_types)) {
+				$categ_types[$categdef['code']] = array('code'=>$categdef['code'],'label'=>$langs->trans($categdef['obj_class']));
+			}
+		}
+		if (isset($objecttmp) && $categdef['obj_table']==$objecttmp->table_element) {
+			if (!array_key_exists($categdef['code'], $categ_types)) {
+				$categ_types[$categdef['code']] = array('code'=>$categdef['code'],'label'=>$langs->trans($categdef['obj_class']));
+			}
+		}
+	}
+
+	$formquestion = array();
+	if (!empty($categ_types)) {
+		foreach ($categ_types as $categ_type) {
+			$cate_arbo = $form->select_all_categories($categ_type['code'], null, 'parent', null, null, 1);
+			$formquestion[]=array('type' => 'other',
+					'name' => 'affecttag_'.$categ_type['code'],
+					'label' => $langs->trans("Tag").' '.$categ_type['label'],
+					'value' => $form->multiselectarray('contcats_'.$categ_type['code'], $cate_arbo, GETPOST('contcats_'.$categ_type['code'], 'array'), null, null, null, null, '60%'));
+		}
+		$formquestion[]=array('type' => 'other',
+				'name' => 'affecttag_type',
+				'label' => '',
+				'value' => '<input type="hidden" name="affecttag_type"  id="affecttag_type" value="'.implode(",", array_keys($categ_types)).'"/>');
+		print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmAffectTag"), $langs->trans("ConfirmAffectTagQuestion", count($toselect)), "affecttag", $formquestion, 1, 0, 200, 500, 1);
+	} else {
+		setEventMessage('CategTypeNotFound');
+	}
+}
+
+if ($massaction == 'presend') {
 	$langs->load("mails");
 
 	$listofselectedid = array();
 	$listofselectedthirdparties = array();
 	$listofselectedref = array();
 
-	if (!GETPOST('cancel', 'alpha'))
-	{
-		foreach ($arrayofselected as $toselectid)
-		{
+	if (!GETPOST('cancel', 'alpha')) {
+		foreach ($arrayofselected as $toselectid) {
 			$result = $objecttmp->fetch($toselectid);
-			if ($result > 0)
-			{
+			if ($result > 0) {
 				$listofselectedid[$toselectid] = $toselectid;
 				$thirdpartyid = ($objecttmp->fk_soc ? $objecttmp->fk_soc : $objecttmp->socid);
-				if ($objecttmp->element == 'societe')
+				if ($objecttmp->element == 'societe') {
 					$thirdpartyid = $objecttmp->id;
-				if ($objecttmp->element == 'expensereport')
+				}
+				if ($objecttmp->element == 'expensereport') {
 					$thirdpartyid = $objecttmp->fk_user_author;
+				}
 				$listofselectedthirdparties[$thirdpartyid] = $thirdpartyid;
 				$listofselectedref[$thirdpartyid][$toselectid] = $objecttmp->ref;
 			}
@@ -77,24 +110,20 @@ if ($massaction == 'presend')
 	$formmail->withform = -1;
 	$formmail->fromtype = (GETPOST('fromtype') ? GETPOST('fromtype') : (!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE) ? $conf->global->MAIN_MAIL_DEFAULT_FROMTYPE : 'user'));
 
-	if ($formmail->fromtype === 'user')
-	{
+	if ($formmail->fromtype === 'user') {
 		$formmail->fromid = $user->id;
 	}
 	$formmail->trackid = $trackid;
-	if (!empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2)) // If bit 2 is set
-	{
+	if (!empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2)) { // If bit 2 is set
 		include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 		$formmail->frommail = dolAddEmailTrackId($formmail->frommail, $trackid);
 	}
 	$formmail->withfrom = 1;
 	$liste = $langs->trans("AllRecipientSelected", count($arrayofselected));
-	if (count($listofselectedthirdparties) == 1) // Only 1 different recipient selected, we can suggest contacts
-	{
+	if (count($listofselectedthirdparties) == 1) { // Only 1 different recipient selected, we can suggest contacts
 		$liste = array();
 		$thirdpartyid = array_shift($listofselectedthirdparties);
-		if ($objecttmp->element == 'expensereport')
-		{
+		if ($objecttmp->element == 'expensereport') {
 			$fuser = new User($db);
 			$fuser->fetch($thirdpartyid);
 			$liste['thirdparty'] = $fuser->getFullName($langs)." &lt;".$fuser->email."&gt;";
@@ -150,8 +179,7 @@ if ($massaction == 'presend')
 	$formmail->param['models_id'] = GETPOST('modelmailselected', 'int');
 	$formmail->param['id'] = join(',', $arrayofselected);
 	// $formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
-	if (!empty($conf->global->MAILING_LIMIT_SENDBYWEB) && count($listofselectedthirdparties) > $conf->global->MAILING_LIMIT_SENDBYWEB)
-	{
+	if (!empty($conf->global->MAILING_LIMIT_SENDBYWEB) && count($listofselectedthirdparties) > $conf->global->MAILING_LIMIT_SENDBYWEB) {
 		$langs->load("errors");
 		print img_warning().' '.$langs->trans('WarningNumberOfRecipientIsRestrictedInMassAction', $conf->global->MAILING_LIMIT_SENDBYWEB);
 		print ' - <a href="javascript: window.history.go(-1)">'.$langs->trans("GoBack").'</a>';

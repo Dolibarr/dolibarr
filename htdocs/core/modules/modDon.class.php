@@ -23,7 +23,7 @@
  *	\brief      Module to manage the follow-up of the donations
  *	\file       htdocs/core/modules/modDon.class.php
  *	\ingroup    donations
- *	\brief      Description and activation file for module Donation
+ *	\brief      Description and activation file for the module Donation
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';

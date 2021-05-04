@@ -33,7 +33,7 @@ Depends: libapache2-mod-php5 | libapache2-mod-php5filter | php5-cgi | php5-fpm |
 Recommends: apache2 | lighttpd | httpd,
     mariadb-server | virtual-mysql-server,
 # Required PHP extensions for debian 9 but we can't add them into a Depends, it does not exists on debian 7 and 8
-    php-xml, php-mbstring
+    php-xml, php-mbstring, php-intl
 Suggests: www-browser, php5-geoip
 Description: Web based software to manage a company or foundation
  Dolibarr ERP & CRM is an easy to use open source/free software package for 

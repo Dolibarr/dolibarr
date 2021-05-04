@@ -31,8 +31,7 @@ require_once dirname(__FILE__).'/../../htdocs/product/stock/class/mouvementstock
 require_once dirname(__FILE__).'/../../htdocs/product/stock/class/entrepot.class.php';
 require_once dirname(__FILE__).'/../../htdocs/product/class/product.class.php';
 
-if (empty($user->id))
-{
+if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
 	$user->getrights();
@@ -77,66 +76,68 @@ class MouvementStockTest extends PHPUnit\Framework\TestCase
 	}
 
 	/**
-     * setUpBeforeClass
-     *
-     * @return void
-     */
-    public static function setUpBeforeClass()
-    {
-    	global $conf,$user,$langs,$db;
+	 * setUpBeforeClass
+	 *
+	 * @return void
+	 */
+	public static function setUpBeforeClass()
+	{
+		global $conf,$user,$langs,$db;
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
-    	print __METHOD__."\n";
-    }
+		print __METHOD__."\n";
+	}
 
-    /**
-     * tearDownAfterClass
-     *
-     * @return	void
-     */
-    public static function tearDownAfterClass()
-    {
-    	global $conf,$user,$langs,$db;
+	/**
+	 * tearDownAfterClass
+	 *
+	 * @return	void
+	 */
+	public static function tearDownAfterClass()
+	{
+		global $conf,$user,$langs,$db;
 		$db->rollback();
 
 		print __METHOD__."\n";
-    }
+	}
 
 	/**
 	 * Init phpunit tests
 	 *
 	 * @return	void
 	 */
-    protected function setUp()
-    {
-    	global $conf,$user,$langs,$db;
+	protected function setUp()
+	{
+		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		if (empty($conf->productbatch->enabled)) { print "\n".__METHOD__." module Lot/Serial must be enabled.\n"; die(); }
+		if (empty($conf->productbatch->enabled)) {
+			print "\n".__METHOD__." module Lot/Serial must be enabled.\n"; die();
+		}
 
 		print __METHOD__."\n";
-    }
+	}
 	/**
 	 * End phpunit tests
 	 *
 	 * @return	void
 	 */
-    protected function tearDown()
-    {
-    	print __METHOD__."\n";
-    }
+	protected function tearDown()
+	{
+		print __METHOD__."\n";
+	}
 
-    /**
-     * testMouvementCreate
-     *
-     * @return	MouvementStock
-     */
-    public function testMouvementCreate()
-    {
-    	global $conf,$user,$langs,$db;
+	/**
+	 * testMouvementCreate
+	 *
+	 * @return	MouvementStock
+	 */
+	public function testMouvementCreate()
+	{
+		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
@@ -201,76 +202,76 @@ class MouvementStockTest extends PHPUnit\Framework\TestCase
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals(-3, $result, 'Test to check we can t create a movement for a lot with a different eatby date');
 
-    	// Do a list of movement into warehouse 1
+		// Do a list of movement into warehouse 1
 
-    	// Create an input movement (type = 3) of price 9.9 -> should update PMP to 9.9
+		// Create an input movement (type = 3) of price 9.9 -> should update PMP to 9.9
 		$result=$localobject->reception($user, $product1id, $warehouse1id, 10, 9.9, 'Movement for unit test 1', '', '', '', '', 0, 'Inventory Code Test');
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertGreaterThan(0, $result, 'Return code of 0 was expected for the reception test 1');
+		print __METHOD__." result=".$result."\n";
+		$this->assertGreaterThan(0, $result, 'Return code of 0 was expected for the reception test 1');
 
-    	// Create an input movement (type = 3) of price 9.7 -> should update PMP to 9.9/9.7 = 9.8
-    	$result=$localobject->reception($user, $product1id, $warehouse1id, 10, 9.7, 'Movement for unit test 2', '', '', '', '', 0, 'Inventory Code Test');
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertGreaterThan(0, $result);
+		// Create an input movement (type = 3) of price 9.7 -> should update PMP to 9.9/9.7 = 9.8
+		$result=$localobject->reception($user, $product1id, $warehouse1id, 10, 9.7, 'Movement for unit test 2', '', '', '', '', 0, 'Inventory Code Test');
+		print __METHOD__." result=".$result."\n";
+		$this->assertGreaterThan(0, $result);
 
-    	// Create an output movement (type = 2) of price 9.7 -> should update PMP to 9.9/9.7 = 9.8
-    	$result=$localobject->livraison($user, $product1id, $warehouse1id, 5, 999, 'Movement for unit test 3', '', '', '', '', 0, 'Inventory Code Test');
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertGreaterThan(0, $result);
+		// Create an output movement (type = 2) of price 9.7 -> should update PMP to 9.9/9.7 = 9.8
+		$result=$localobject->livraison($user, $product1id, $warehouse1id, 5, 999, 'Movement for unit test 3', '', '', '', '', 0, 'Inventory Code Test');
+		print __METHOD__." result=".$result."\n";
+		$this->assertGreaterThan(0, $result);
 
-    	// Create an output movement (type = 1) of price 9.7 -> should update PMP to 9.9/9.7 = 9.8
-    	$result=$localobject->_create($user, $product1id, $warehouse1id, 1, 0, 0, 'Input from transfer', 'Transfert X');
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertGreaterThan(0, $result);
+		// Create an output movement (type = 1) of price 9.7 -> should update PMP to 9.9/9.7 = 9.8
+		$result=$localobject->_create($user, $product1id, $warehouse1id, 1, 0, 0, 'Input from transfer', 'Transfert X');
+		print __METHOD__." result=".$result."\n";
+		$this->assertGreaterThan(0, $result);
 
-    	// Create an output movement (type = 1) of price 9.7 -> should update PMP to 9.9/9.7 = 9.8
-    	$result=$localobject->_create($user, $product1id, $warehouse1id, -2, 1, 0, 'Output from transfer', 'Transfert Y');
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertGreaterThan(0, $result);
+		// Create an output movement (type = 1) of price 9.7 -> should update PMP to 9.9/9.7 = 9.8
+		$result=$localobject->_create($user, $product1id, $warehouse1id, -2, 1, 0, 'Output from transfer', 'Transfert Y');
+		print __METHOD__." result=".$result."\n";
+		$this->assertGreaterThan(0, $result);
 
 
-    	// Do same but into warehouse 2
+		// Do same but into warehouse 2
 
-    	// Create an input movement (type = 3) of price 9.9 -> should update PMP to 9.9
-    	$result=$localobject->reception($user, $product1id, $warehouse2id, 10, 9.9, 'Movement for unit test 1 wh 2', '', '', '', '', 0, 'Inventory Code Test 2');
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertGreaterThan(0, $result);
+		// Create an input movement (type = 3) of price 9.9 -> should update PMP to 9.9
+		$result=$localobject->reception($user, $product1id, $warehouse2id, 10, 9.9, 'Movement for unit test 1 wh 2', '', '', '', '', 0, 'Inventory Code Test 2');
+		print __METHOD__." result=".$result."\n";
+		$this->assertGreaterThan(0, $result);
 
-    	// Create an input movement (type = 3) of price 9.7 -> should update PMP to 9.9/9.7 = 9.8
-    	$result=$localobject->reception($user, $product1id, $warehouse2id, 10, 9.7, 'Movement for unit test 2 wh 2', '', '', '', '', 0, 'Inventory Code Test 2');
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertGreaterThan(0, $result);
+		// Create an input movement (type = 3) of price 9.7 -> should update PMP to 9.9/9.7 = 9.8
+		$result=$localobject->reception($user, $product1id, $warehouse2id, 10, 9.7, 'Movement for unit test 2 wh 2', '', '', '', '', 0, 'Inventory Code Test 2');
+		print __METHOD__." result=".$result."\n";
+		$this->assertGreaterThan(0, $result);
 
-    	// Create an output movement (type = 2) of price 9.7 -> should update PMP to 9.9/9.7 = 9.8
-    	$result=$localobject->livraison($user, $product1id, $warehouse2id, 5, 999, 'Movement for unit test 3 wh 2', '', '', '', '', 0, 'Inventory Code Test 2');
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertGreaterThan(0, $result);
+		// Create an output movement (type = 2) of price 9.7 -> should update PMP to 9.9/9.7 = 9.8
+		$result=$localobject->livraison($user, $product1id, $warehouse2id, 5, 999, 'Movement for unit test 3 wh 2', '', '', '', '', 0, 'Inventory Code Test 2');
+		print __METHOD__." result=".$result."\n";
+		$this->assertGreaterThan(0, $result);
 
-    	// Create an output movement (type = 1) of price 9.7 -> should update PMP to 9.9/9.7 = 9.8
-    	$result=$localobject->_create($user, $product1id, $warehouse2id, 1, 0, 0, 'Input from transfer wh 2', 'Transfert X 2');
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertGreaterThan(0, $result);
+		// Create an output movement (type = 1) of price 9.7 -> should update PMP to 9.9/9.7 = 9.8
+		$result=$localobject->_create($user, $product1id, $warehouse2id, 1, 0, 0, 'Input from transfer wh 2', 'Transfert X 2');
+		print __METHOD__." result=".$result."\n";
+		$this->assertGreaterThan(0, $result);
 
-    	// Create an output movement (type = 1) of price 9.7 -> should update PMP to 9.9/9.7 = 9.8
-    	$result=$localobject->_create($user, $product1id, $warehouse2id, -2, 1, 0, 'Output from transfer wh 2', 'Transfert Y 2');
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertGreaterThan(0, $result);
+		// Create an output movement (type = 1) of price 9.7 -> should update PMP to 9.9/9.7 = 9.8
+		$result=$localobject->_create($user, $product1id, $warehouse2id, -2, 1, 0, 'Output from transfer wh 2', 'Transfert Y 2');
+		print __METHOD__." result=".$result."\n";
+		$this->assertGreaterThan(0, $result);
 
-    	return $localobject;
-    }
+		return $localobject;
+	}
 
-    /**
-     * testMouvementCheck
-     *
-     * @param	MouvementStock		$localobject	Movement object we created
-     * @return	MouvementStock
-     *
-     * @depends	testMouvementCreate
-     * The depends says test is run only if previous is ok
-     */
-    public function testMouvementCheck($localobject)
-    {
-    	global $conf,$user,$langs,$db;
+	/**
+	 * testMouvementCheck
+	 *
+	 * @param	MouvementStock		$localobject	Movement object we created
+	 * @return	MouvementStock
+	 *
+	 * @depends	testMouvementCreate
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testMouvementCheck($localobject)
+	{
+		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
@@ -284,12 +285,12 @@ class MouvementStockTest extends PHPUnit\Framework\TestCase
 		$producttotest = new Product($db);
 		$producttotest->fetch($productid);
 
-    	print __METHOD__." producttotest->stock_reel=".$producttotest->stock_reel."\n";
-    	$this->assertEquals($producttotest->stock_reel, 28);	// 28 is result of stock movement defined into testMouvementCreate
+		print __METHOD__." producttotest->stock_reel=".$producttotest->stock_reel."\n";
+		$this->assertEquals($producttotest->stock_reel, 28);	// 28 is result of stock movement defined into testMouvementCreate
 
-    	print __METHOD__." producttotest->pmp=".$producttotest->pmp."\n";
-    	$this->assertEquals($producttotest->pmp, 9.8);
+		print __METHOD__." producttotest->pmp=".$producttotest->pmp."\n";
+		$this->assertEquals($producttotest->pmp, 9.8);
 
-    	return $localobject;
-    }
+		return $localobject;
+	}
 }

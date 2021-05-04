@@ -120,8 +120,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
 		$mysoc->code_client = $old_code_client;
 		$mysoc->typent_code = $old_code_type;
 
-		if (!$numExample)
-		{
+		if (!$numExample) {
 			$numExample = 'NotConfigured';
 		}
 		return $numExample;
@@ -143,18 +142,19 @@ class mod_facture_mercure extends ModeleNumRefFactures
 
 		// Get Mask value
 		$mask = '';
-		if (is_object($invoice) && $invoice->type == 1)
-		{
+		if (is_object($invoice) && $invoice->type == 1) {
 			$mask = $conf->global->FACTURE_MERCURE_MASK_REPLACEMENT;
-			if (!$mask)
-			{
+			if (!$mask) {
 				$mask = $conf->global->FACTURE_MERCURE_MASK_INVOICE;
 			}
-		} elseif (is_object($invoice) && $invoice->type == 2) $mask = $conf->global->FACTURE_MERCURE_MASK_CREDIT;
-		elseif (is_object($invoice) && $invoice->type == 3) $mask = $conf->global->FACTURE_MERCURE_MASK_DEPOSIT;
-		else $mask = $conf->global->FACTURE_MERCURE_MASK_INVOICE;
-		if (!$mask)
-		{
+		} elseif (is_object($invoice) && $invoice->type == 2) {
+			$mask = $conf->global->FACTURE_MERCURE_MASK_CREDIT;
+		} elseif (is_object($invoice) && $invoice->type == 3) {
+			$mask = $conf->global->FACTURE_MERCURE_MASK_DEPOSIT;
+		} else {
+			$mask = $conf->global->FACTURE_MERCURE_MASK_INVOICE;
+		}
+		if (!$mask) {
 			$this->error = 'NotConfigured';
 			return 0;
 		}
@@ -167,7 +167,9 @@ class mod_facture_mercure extends ModeleNumRefFactures
 		$entity = getEntity('invoicenumber', 1, $invoice);
 
 		$numFinal = get_next_value($db, $mask, 'facture', 'ref', $where, $objsoc, $invoice->date, $mode, false, null, $entity);
-		if (!preg_match('/([0-9])+/', $numFinal)) $this->error = $numFinal;
+		if (!preg_match('/([0-9])+/', $numFinal)) {
+			$this->error = $numFinal;
+		}
 
 		return  $numFinal;
 	}

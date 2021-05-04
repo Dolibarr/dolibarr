@@ -67,14 +67,12 @@ class FormSocialContrib
 		// phpcs:enable
 		global $conf, $db, $langs, $user, $mysoc;
 
-		if (empty($mysoc->country_id) && empty($mysoc->country_code))
-		{
+		if (empty($mysoc->country_id) && empty($mysoc->country_code)) {
 			print $langs->trans("ErrorSetupOfCountryMustBeDone");
 			return;
 		}
 
-		if (!empty($mysoc->country_id))
-		{
+		if (!empty($mysoc->country_id)) {
 			$sql = "SELECT c.id, c.libelle as type";
 			$sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
 			$sql .= " WHERE c.active = 1";
@@ -90,28 +88,35 @@ class FormSocialContrib
 
 		dol_syslog("Form::select_type_socialcontrib", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $this->db->num_rows($resql);
-			if ($num)
-			{
+			if ($num) {
 				print '<select class="'.($morecss ? $morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.'">';
 				$i = 0;
 
-				if ($useempty) print '<option value="0">&nbsp;</option>';
-				while ($i < $num)
-				{
+				if ($useempty) {
+					print '<option value="0">&nbsp;</option>';
+				}
+				while ($i < $num) {
 					$obj = $this->db->fetch_object($resql);
 					print '<option value="'.$obj->id.'"';
-					if ($obj->id == $selected) print ' selected';
+					if ($obj->id == $selected) {
+						print ' selected';
+					}
 					print '>'.dol_trunc($obj->type, $maxlen);
 					$i++;
 				}
 				print '</select>';
-				if ($user->admin && $help) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-				if (!empty($conf->use_javascript_ajax)) print ajax_combobox($htmlname);
+				if ($user->admin && $help) {
+					print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+				}
+				if (!empty($conf->use_javascript_ajax)) {
+					print ajax_combobox($htmlname);
+				}
 			} else {
-				if (empty($noerrorifempty)) print $langs->trans("ErrorNoSocialContributionForSellerCountry", $mysoc->country_code);
+				if (empty($noerrorifempty)) {
+					print $langs->trans("ErrorNoSocialContributionForSellerCountry", $mysoc->country_code);
+				}
 			}
 		} else {
 			dol_print_error($this->db);

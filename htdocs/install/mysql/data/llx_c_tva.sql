@@ -23,15 +23,21 @@
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 
---
+-- 
 -- Ne pas placer de commentaire en fin de ligne, ce fichier est parsé lors
 -- de l'install et tous les sigles '--' sont supprimés.
 --
 
 --
--- Taux TVA
--- Source des taux: http://fr.wikipedia.org/wiki/Taxe_sur_la_valeur_ajout%C3%A9e
+-- FR:
+-- Taux TVA 
+-- Source des taux: https://fr.wikipedia.org/wiki/Taxe_sur_la_valeur_ajout%C3%A9e
 --
+-- EN:
+-- VAT - value-added tax 
+-- Source:  https://en.wikipedia.org/wiki/Value-added_tax 
+--
+
 
 delete from llx_c_tva;
 

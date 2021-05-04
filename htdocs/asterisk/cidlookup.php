@@ -33,15 +33,13 @@ $phone = GETPOST('phone');
 $notfound = $langs->trans("Unknown");
 
 // Security check
-if (empty($conf->clicktodial->enabled))
-{
+if (empty($conf->clicktodial->enabled)) {
 	print "Error: Module Click to dial is not enabled.\n";
 	exit;
 }
 
 // Check parameters
-if (empty($phone))
-{
+if (empty($phone)) {
 	print "Error: Url must be called with parameter phone=phone to search\n";
 	exit;
 }
@@ -57,11 +55,9 @@ $sql .= $db->plimit(1);
 
 dol_syslog('cidlookup search information with phone '.$phone, LOG_DEBUG);
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$obj = $db->fetch_object($resql);
-	if ($obj)
-	{
+	if ($obj) {
 		$found = $obj->name;
 	} else {
 		$found = $notfound;

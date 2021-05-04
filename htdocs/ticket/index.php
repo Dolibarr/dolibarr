@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) - 2013-2016    Jean-François FERRY     <hello@librethic.io>
  * Copyright (C) - 2019         Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2021		Frédéric France				<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticketstats.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 $hookmanager = new HookManager($db);
 
@@ -44,6 +46,7 @@ $msg_id = GETPOST('msg_id', 'int');
 
 $action = GETPOST('action', 'aZ09');
 
+$socid = 0;
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -70,6 +73,7 @@ $object = new Ticket($db);
 /*
  * View
  */
+$resultboxes = FormOther::getBoxesArea($user, "11"); // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
 
 $form = new Form($db);
 $tickesupstatic = new Ticket($db);
@@ -77,7 +81,7 @@ $tickesupstatic = new Ticket($db);
 llxHeader('', $langs->trans('TicketsIndex'), '');
 
 $linkback = '';
-print load_fiche_titre($langs->trans('TicketsIndex'), $linkback, 'ticket');
+print load_fiche_titre($langs->trans('TicketsIndex'), $resultboxes['selectboxlist'], 'ticket');
 
 
 $dir = '';
@@ -112,7 +116,12 @@ $startyear = $endyear - 1;
 $WIDTH = (($shownb && $showtot) || !empty($conf->dol_optimize_smallscreen)) ? '100%' : '80%';
 $HEIGHT = '200';
 
-print '<div class="fichecenter"><div class="fichethirdleft">';
+print '<div class="clearboth"></div>';
+print '<div class="fichecenter fichecenterbis">';
+
+print '<div class="twocolumns">';
+
+print '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
 
 /*
  * Statistics area
@@ -120,11 +129,13 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 $tick = array(
 	'unread' => 0,
 	'read' => 0,
+	'needmoreinfo' => 0,
 	'answered' => 0,
 	'assigned' => 0,
 	'inprogress' => 0,
 	'waiting' => 0,
 	'closed' => 0,
+	'canceled' => 0,
 	'deleted' => 0,
 );
 
@@ -137,7 +148,7 @@ $sql .= ' WHERE t.entity IN ('.getEntity('ticket').')';
 $sql .= dolSqlDateFilter('datec', 0, 0, $endyear);
 
 if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND t.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
+	$sql .= " AND t.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 
 // External users restriction
@@ -146,7 +157,7 @@ if ($user->socid > 0) {
 } else {
 	// For internals users,
 	if (!empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) && !$user->rights->ticket->manage) {
-		$sql .= " AND t.fk_user_assign = ".$user->id;
+		$sql .= " AND t.fk_user_assign = ".((int) $user->id);
 	}
 }
 $sql .= " GROUP BY t.fk_statut";
@@ -181,7 +192,7 @@ if ($result) {
 		}
 	}
 
-	include_once DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
 	$dataseries = array();
 	$colorseries = array();
@@ -279,8 +290,13 @@ print '</div>';
 // Build graphic number of object
 $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '<br>'."\n";
 
+print $resultboxes['boxlista'];
+
+print '</div>'."\n";
+
+print '<div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
 
 /*
  * Latest tickets
@@ -310,7 +326,7 @@ if ($user->socid > 0) {
 	$sql .= " AND t.fk_soc= ".((int) $user->socid);
 } else {
 	// Restricted to assigned user only
-	if ($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY && !$user->rights->ticket->manage) {
+	if (!empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) && !$user->rights->ticket->manage) {
 		$sql .= " AND t.fk_user_assign=".$user->id;
 	}
 }
@@ -389,20 +405,31 @@ if ($result) {
 
 		$db->free($result);
 	} else {
-		print '<tr><td colspan="6" class="opacitymedium">'.$langs->trans('NoUnreadTicketsFound').'</td></tr>';
+		print '<tr><td colspan="6"><span class="opacitymedium">'.$langs->trans('NoUnreadTicketsFound').'</span></td></tr>';
 	}
 
 	print "</table>";
 	print '</div>';
+
+	print '<br>';
 } else {
 	dol_print_error($db);
 }
 
-print '</div></div></div>';
+
+print $resultboxes['boxlistb'];
+
+print '</div>';
+print '</div>';
+print '</div>';
+
+
 print '<div style="clear:both"></div>';
 
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardTickets', $parameters, $object); // Note that $action and $object may have been modified by hook
+
+
 
 // End of page
 llxFooter('');

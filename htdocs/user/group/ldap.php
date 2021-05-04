@@ -33,40 +33,38 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 // Load translation files required by page
 $langs->loadLangs(array('companies', 'ldap', 'users', 'admin'));
 
-// Users/Groups management only in master entity if transverse mode
-if (!empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
-{
-	accessforbidden();
-}
-
-$canreadperms = true;
-if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS))
-{
-	$canreadperms = ($user->admin || $user->rights->user->group_advance->read);
-}
-
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
 
 $socid = 0;
-if ($user->socid > 0) $socid = $user->socid;
+if ($user->socid > 0) {
+	$socid = $user->socid;
+}
 
 $object = new Usergroup($db);
 $object->fetch($id);
 $object->getrights();
+
+// Users/Groups management only in master entity if transverse mode
+if (!empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE) {
+	accessforbidden();
+}
+
+$canreadperms = true;
+if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+	$canreadperms = ($user->admin || $user->rights->user->group_advance->read);
+}
 
 
 /*
  * Actions
  */
 
-if ($action == 'dolibarr2ldap')
-{
+if ($action == 'dolibarr2ldap') {
 	$ldap = new Ldap();
 	$result = $ldap->connect_bind();
 
-	if ($result > 0)
-	{
+	if ($result > 0) {
 		$info = $object->_load_ldap_info();
 
 		// Get a gid number for objectclass PosixGroup
@@ -80,8 +78,7 @@ if ($action == 'dolibarr2ldap')
 		$result = $ldap->update($dn, $info, $user, $olddn);
 	}
 
-	if ($result >= 0)
-	{
+	if ($result >= 0) {
 		setEventMessages($langs->trans("GroupSynchronized"), null, 'mesgs');
 	} else {
 		setEventMessages($ldap->error, $ldap->errors, 'errors');
@@ -111,12 +108,10 @@ print '<div class="underbanner clearboth"></div>';
 print '<table class="border centpercent">';
 
 // Name (already in dol_banner, we keep it to have the GlobalGroup picto, but we should move it in dol_banner)
-if (!empty($conf->mutlicompany->enabled))
-{
+if (!empty($conf->mutlicompany->enabled)) {
 	print '<tr><td class="titlefield">'.$langs->trans("Name").'</td>';
 	print '<td class="valeur">'.$object->name;
-	if (!$object->entity)
-	{
+	if (!$object->entity) {
 		print img_picto($langs->trans("GlobalGroup"), 'redstar');
 	}
 	print "</td></tr>\n";
@@ -148,19 +143,19 @@ print dol_get_fiche_end();
 
 
 /*
- * Barre d'actions
+ * Action bar
  */
-
 print '<div class="tabsAction">';
 
-if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
-{
+if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap') {
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=dolibarr2ldap">'.$langs->trans("ForceSynchronize").'</a>';
 }
 
 print "</div>\n";
 
-if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap') print "<br>\n";
+if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap') {
+	print "<br>\n";
+}
 
 
 
@@ -177,8 +172,7 @@ print '</tr>';
 // Lecture LDAP
 $ldap = new Ldap();
 $result = $ldap->connect_bind();
-if ($result > 0)
-{
+if ($result > 0) {
 	$info = $object->_load_ldap_info();
 	$dn = $object->_load_ldap_dn($info, 1);
 	$search = "(".$object->_load_ldap_dn($info, 2).")";
@@ -188,10 +182,8 @@ if ($result > 0)
 	//var_dump($records);
 
 	// Show tree
-	if (((!is_numeric($records)) || $records != 0) && (!isset($records['count']) || $records['count'] > 0))
-	{
-		if (!is_array($records))
-		{
+	if (((!is_numeric($records)) || $records != 0) && (!isset($records['count']) || $records['count'] > 0)) {
+		if (!is_array($records)) {
 			print '<tr class="oddeven"><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
 		} else {
 			$result = show_ldap_content($records, 0, $records['count'], true);

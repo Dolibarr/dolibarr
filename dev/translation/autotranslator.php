@@ -32,8 +32,8 @@ $path=dirname(__FILE__).'/';
 
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
-    echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-    exit;
+	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
+	exit;
 }
 
 // Include Dolibarr environment
@@ -56,10 +56,10 @@ $dir=DOL_DOCUMENT_ROOT."/langs";
 
 // Check parameters
 if (! isset($argv[3])) {
-    print "Usage:   ".$script_file."  lang_code_src lang_code_dest|all APIKEY [langfile.lang]\n";
-    print "Example: ".$script_file."  en_US         pt_PT              123456\n";
-    print "Rem:     lang_code to use can be found on https://translate.google.com\n";
-    exit;
+	print "Usage:   ".$script_file."  lang_code_src lang_code_dest|all APIKEY [langfile.lang]\n";
+	print "Example: ".$script_file."  en_US         pt_PT              123456\n";
+	print "Rem:     lang_code to use can be found on https://translate.google.com\n";
+	exit;
 }
 
 // Show parameters
@@ -67,21 +67,17 @@ print 'Argument 1='.$argv[1]."\n";
 print 'Argument 2='.$argv[2]."\n";
 print 'Argument 3='.$argv[3]."\n";
 $file='';
-if (isset($argv[4]))
-{
+if (isset($argv[4])) {
 	$file=$argv[4];
 	print 'Argument 4='.$argv[4]."\n";
 }
 print 'Files will be generated/updated in directory '.$dir."\n";
 
-if ($argv[2] != 'all')
-{
-	if (! is_dir($dir.'/'.$argv[2]))
-	{
+if ($argv[2] != 'all') {
+	if (! is_dir($dir.'/'.$argv[2])) {
 		print 'Create directory '.$dir.'/'.$argv[2]."\n";
 		$result=mkdir($dir.'/'.$argv[2]);
-		if (! $result)
-		{
+		if (! $result) {
 			$db->close();
 			return -1;
 		}

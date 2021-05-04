@@ -52,6 +52,7 @@ CREATE OR REPLACE FUNCTION DAY(TIMESTAMP WITH TIME ZONE) RETURNS INTEGER AS $$ S
 CREATE OR REPLACE FUNCTION DAY(DATE) RETURNS INTEGER AS $$ SELECT EXTRACT(DAY FROM $1)::INTEGER; $$ LANGUAGE SQL IMMUTABLE;
 
 CREATE OR REPLACE FUNCTION dol_util_rebuild_sequences() RETURNS integer as $body$ DECLARE sequencedefs RECORD; c integer ; BEGIN FOR sequencedefs IN SELECT DISTINCT constraint_column_usage.table_name as tablename, constraint_column_usage.table_name as tablename, constraint_column_usage.column_name as columnname, replace(replace(columns.column_default,'''::regclass)',''),'nextval(''','') as sequencename from information_schema.constraint_column_usage, information_schema.columns, information_schema.sequences where constraint_column_usage.table_schema ='public' AND columns.table_schema = 'public' AND columns.table_name=constraint_column_usage.table_name AND constraint_column_usage.column_name IN ('rowid','id') AND constraint_column_usage.column_name = columns.column_name AND columns.column_default is not null AND replace(replace(columns.column_default,'''::regclass)',''),'nextval(''','')=sequence_name LOOP EXECUTE 'select max('||sequencedefs.columnname||') from ' || sequencedefs.tablename INTO c; IF c is null THEN c = 0; END IF; IF c is not null THEN c = c+ 1; END IF; EXECUTE 'alter sequence ' || sequencedefs.sequencename ||' restart  with ' || c; END LOOP; RETURN 1; END; $body$ LANGUAGE plpgsql;
+-- You can call the function with SELECT dol_util_rebuild_sequences();
 
 CREATE OR REPLACE FUNCTION dol_util_triggerall(DoEnable boolean) RETURNS integer AS $BODY$ DECLARE mytables RECORD; BEGIN FOR mytables IN SELECT relname FROM pg_class WHERE relhastriggers IS TRUE AND relkind = 'r' AND NOT relname LIKE 'pg_%' LOOP IF DoEnable THEN EXECUTE 'ALTER TABLE ' || mytables.relname || ' ENABLE TRIGGER ALL'; ELSE  EXECUTE 'ALTER TABLE ' || mytables.relname || ' DISABLE TRIGGER ALL'; END IF; END LOOP; RETURN 1; END; $BODY$ LANGUAGE plpgsql;
 
@@ -168,6 +169,7 @@ CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_recruitment_recruitm
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_recruitment_recruitmentjobposition_extrafields FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_recruitment_recruitmentcandidature FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_recruitment_recruitmentcandidature_extrafields FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_salary FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_societe FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_societe_address FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_societe_extrafields FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();

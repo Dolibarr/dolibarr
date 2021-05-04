@@ -119,8 +119,7 @@ class RejetPrelevement
 
 		$result = $this->db->query($sql);
 
-		if (!$result)
-		{
+		if (!$result) {
 			dol_syslog("RejetPrelevement::create Erreur 4");
 			dol_syslog("RejetPrelevement::create Erreur 4 $sql");
 			$error++;
@@ -129,10 +128,9 @@ class RejetPrelevement
 		// Tag the line to refused
 		$sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_lignes ";
 		$sql .= " SET statut = 3";
-		$sql .= " WHERE rowid = ".$id;
+		$sql .= " WHERE rowid = ".((int) $id);
 
-		if (!$this->db->query($sql))
-		{
+		if (!$this->db->query($sql)) {
 			dol_syslog("RejetPrelevement::create Erreur 5");
 			$error++;
 		}
@@ -184,15 +182,14 @@ class RejetPrelevement
 			//Tag invoice as unpaid
 			dol_syslog("RejetPrelevement::Create set_unpaid fac ".$fac->ref);
 
-			$fac->set_unpaid($user);
+			$fac->setUnpaid($user);
 
 			//TODO: Must be managed by notifications module
 			// Send email to sender of the standing order request
 			$this->_send_email($fac);
 		}
 
-		if ($error == 0)
-		{
+		if ($error == 0) {
 			dol_syslog("RejetPrelevement::Create Commit");
 			$this->db->commit();
 		} else {
@@ -221,11 +218,9 @@ class RejetPrelevement
 		$sql .= " AND pfd.fk_facture".($this->type == 'bank-transfer' ? '_fourn=' : '=').$fac->id;
 
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $this->db->num_rows($resql);
-			if ($num > 0)
-			{
+			if ($num > 0) {
 				$row = $this->db->fetch_row($resql);
 				$userid = $row[0];
 			}
@@ -233,8 +228,7 @@ class RejetPrelevement
 			dol_syslog("RejetPrelevement::_send_email Erreur lecture user");
 		}
 
-		if ($userid > 0)
-		{
+		if ($userid > 0) {
 			$emuser = new User($this->db);
 			$emuser->fetch($userid);
 
@@ -288,22 +282,22 @@ class RejetPrelevement
 		 //Returns all invoices of a withdrawal
 		$sql = "SELECT f.rowid as facid, pl.amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture as pf";
-		if ($this->type == 'bank-transfer')	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as f ON (pf.fk_facture_fourn = f.rowid)";
-		else $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON (pf.fk_facture = f.rowid)";
+		if ($this->type == 'bank-transfer') {
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as f ON (pf.fk_facture_fourn = f.rowid)";
+		} else {
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON (pf.fk_facture = f.rowid)";
+		}
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_lignes as pl ON (pf.fk_prelevement_lignes = pl.rowid)";
 		$sql .= " WHERE pf.fk_prelevement_lignes = ".$this->id;
 		$sql .= " AND f.entity IN  (".getEntity('invoice').")";
 
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $this->db->num_rows($resql);
 
-			if ($num)
-			{
+			if ($num) {
 				$i = 0;
-				while ($i < $num)
-				{
+				while ($i < $num) {
 					$row = $this->db->fetch_row($resql);
 					if (!$amounts) {
 						$arr[$i] = $row[0];
@@ -338,10 +332,8 @@ class RejetPrelevement
 		$sql .= " WHERE pr.fk_prelevement_lignes =".$rowid;
 
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			if ($this->db->num_rows($resql))
-			{
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id = $rowid;

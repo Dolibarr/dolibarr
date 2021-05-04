@@ -36,7 +36,7 @@ class Members extends DolibarrApi
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
-	static $FIELDS = array(
+	public static $FIELDS = array(
 		'morphy',
 		'typeid'
 	);
@@ -240,7 +240,7 @@ class Members extends DolibarrApi
 			if (!DolibarrApi::_checkFilters($sqlfilters)) {
 				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
@@ -325,9 +325,11 @@ class Members extends DolibarrApi
 		}
 
 		foreach ($request_data as $field => $value) {
-			if ($field == 'id') continue;
+			if ($field == 'id') {
+				continue;
+			}
 			// Process the status separately because it must be updated using
-			// the validate() and resiliate() methods of the class Adherent.
+			// the validate(), resiliate() and exclude() methods of the class Adherent.
 			if ($field == 'statut') {
 				if ($value == '0') {
 					$result = $member->resiliate(DolibarrApiAccess::$user);
@@ -338,6 +340,11 @@ class Members extends DolibarrApi
 					$result = $member->validate(DolibarrApiAccess::$user);
 					if ($result < 0) {
 						throw new RestException(500, 'Error when validating member: '.$member->error);
+					}
+				} elseif ($value == '-2') {
+					$result = $member->exclude(DolibarrApiAccess::$user);
+					if ($result < 0) {
+						throw new RestException(500, 'Error when excluding member: '.$member->error);
 					}
 				}
 			} else {
@@ -399,8 +406,9 @@ class Members extends DolibarrApi
 	{
 		$member = array();
 		foreach (Members::$FIELDS as $field) {
-			if (!isset($data[$field]))
+			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
+			}
 			$member[$field] = $data[$field];
 		}
 		return $member;
