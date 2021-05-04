@@ -72,8 +72,6 @@ $backtopage = GETPOST('backtopage', 'alpha');
  * Actions
  */
 
-// None
-
 
 /*
  * View
