@@ -146,7 +146,6 @@ if (!empty($conf->facture->enabled)) {
 		print $form->selectarray("MAIN_GENERATE_INVOICES_WITH_PICTURE", $arrval, $conf->global->MAIN_GENERATE_INVOICES_WITH_PICTURE);
 	}
 	print '</td></tr>';
-
 	print '</table>';
 	print '</div>';
 
