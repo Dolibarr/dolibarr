@@ -2183,11 +2183,42 @@ class Product extends CommonObject
 		} else {
 			$sql .= " ppe.accountancy_code_buy, ppe.accountancy_code_buy_intra, ppe.accountancy_code_buy_export, ppe.accountancy_code_sell, ppe.accountancy_code_sell_intra, ppe.accountancy_code_sell_export,";
 		}
-		$sql .= " p.stock,p.pmp, p.datec, p.tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.batch_mask, p.fk_unit,";
+
+		//For MultiCompany
+		//PMP per entity & Stocks Sharings stock_reel includes only stocks shared with this entity
+		$separatedEntityPMP = false;
+		$separatedStock = false;
+		if (!empty($conf->global->MULTICOMPANY_PRODUCT_SHARING_ENABLED)) {
+			if (!empty($conf->global->MULTICOMPANY_PMP_PER_ENTITY_ENABLED)) {
+				$checkPMPPerEntity = $this->db->query("SELECT pmp FROM " . MAIN_DB_PREFIX . "product_perentity WHERE fk_product  = ".((int) $id)." AND entity = ".(int) $conf->entity);
+				if ($this->db->num_rows($checkPMPPerEntity)>0) {
+					$separatedEntityPMP = true;
+				}
+			}
+			global $mc;
+			$separatedStock = true;
+			$visibleWarehousesEntities = $conf->entity;
+			if (isset($mc->sharings['stock']) && !empty($mc->sharings['stock'])) {
+				$visibleWarehousesEntities .= "," . implode(",", $mc->sharings['stock']);
+			}
+		}
+		if ($separatedStock) {
+			$sql .= " SUM(sp.reel) as stock,";
+		} else {
+			$sql .= " p.stock,";
+		}
+		if ($separatedEntityPMP) {
+			$sql .= " pa.pmp, p.datec, p.tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.batch_mask, p.fk_unit,";
+		} else {
+			$sql .= " p.pmp, p.datec, p.tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.batch_mask, p.fk_unit,";
+		}
 		$sql .= " p.fk_price_expression, p.price_autogen, p.model_pdf";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
-		if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+		if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) || $separatedEntityPMP) {
 			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);
+		}
+		if ($separatedStock) {
+			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_stock as sp ON sp.fk_product = p.rowid";
 		}
 		if ($id) {
 			$sql .= " WHERE p.rowid = ".((int) $id);
@@ -2201,6 +2232,12 @@ class Product extends CommonObject
 				$sql .= " AND p.barcode = '".$this->db->escape($barcode)."'";
 			}
 		}
+		if ($separatedStock) {
+			$sql .= " AND sp.fk_entrepot IN (
+				SELECT rowid
+				FROM ".MAIN_DB_PREFIX."entrepot	WHERE entity IN (" . $this->db->sanitize($visibleWarehousesEntities)	."))";
+		}
+
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

@@ -49,7 +49,7 @@ function pdf_admin_prepare_head()
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/pdf.php';
-	$head[$h][1] = $langs->trans("Général");
+	$head[$h][1] = $langs->trans("Common");
 	$head[$h][2] = 'general';
 	$h++;
 
@@ -59,107 +59,17 @@ function pdf_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'pdf_admin');
 
-	if (1 == 2 && !empty($conf->adherent->enabled)) {
-		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_adherent.php';
-		$head[$h][1] = $langs->trans("Adherent");
-		$head[$h][2] = 'adherent';
-		$h++;
-	}
-	if (1 == 2 && !empty($conf->projet->enabled)) {
-		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_project.php';
-		$head[$h][1] = $langs->trans("Project");
-		$head[$h][2] = 'project';
-		$h++;
-	}
 	if (!empty($conf->propal->enabled)) {
 		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_proposal.php';
 		$head[$h][1] = $langs->trans("Proposal");
 		$head[$h][2] = 'proposal';
 		$h++;
 	}
-	if (1 == 2 && !empty($conf->commande->enabled)) {
-		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_order.php';
-		$head[$h][1] = $langs->trans("Order");
-		$head[$h][2] = 'order';
-		$h++;
-	}
-	if (!empty($conf->facture->enabled)) {
-		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_invoice.php';
-		$head[$h][1] = $langs->trans("Invoice");
-		$head[$h][2] = 'invoice';
-		$h++;
-	}
-	if (1 == 2 && !empty($conf->expedition->enabled)) {
-		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_shipment.php';
-		$head[$h][1] = $langs->trans("Sendings");
-		$head[$h][2] = 'shipment';
-		$h++;
-	}
-	if (1 == 2 && !empty($conf->reception->enabled)) {
-		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_reception.php';
-		$head[$h][1] = $langs->trans("Reception");
-		$head[$h][2] = 'reception';
-		$h++;
-	}
-	if (1 == 2 && !empty($conf->ticket->enabled)) {
-		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_ticket.php';
-		$head[$h][1] = $langs->trans("Ticket");
-		$head[$h][2] = 'ticket';
-		$h++;
-	}
-	if (1 == 2 && !empty($conf->ficheinter->enabled)) {
-		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_intervention.php';
-		$head[$h][1] = $langs->trans("Intervention");
-		$head[$h][2] = 'intervention';
-		$h++;
-	}
-	if (!empty($conf->supplier_proposal->enabled)) {
-		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_supplierproposal.php';
-		$head[$h][1] = $langs->trans("SupplierProposal");
-		$head[$h][2] = 'supplierproposal';
-		$h++;
-	}
-	if (1 == 2 && !empty($conf->fournisseur->enabled)) {
-		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_supplierorder.php';
-		$head[$h][1] = $langs->trans("SupplierOrder");
-		$head[$h][2] = 'supplierorder';
-		$h++;
 
-		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_supplierinvoice.php';
-		$head[$h][1] = $langs->trans("SuppliersInvoice");
-		$head[$h][2] = 'supplierinvoice';
-		$h++;
-	}
-	if (1 == 2 && !empty($conf->recruitment->enabled)) {
-		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_recruitment.php';
-		$head[$h][1] = $langs->trans("Recruitment");
-		$head[$h][2] = 'recruitment';
-		$h++;
-	}
-	if (1 == 2 && !empty($conf->contrat->enabled)) {
-		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_contrat.php';
-		$head[$h][1] = $langs->trans("Contrat");
-		$head[$h][2] = 'contrat';
-		$h++;
-	}
-	if (1 == 2 && !empty($conf->stock->enabled)) {
-		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_stock.php';
-		$head[$h][1] = $langs->trans("Stock");
-		$head[$h][2] = 'stock';
-		$h++;
-	}
-	if (1 == 2 && !empty($conf->holiday->enabled)) {
-		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_holiday.php';
-		$head[$h][1] = $langs->trans("Holidays");
-		$head[$h][2] = 'holiday';
-		$h++;
-	}
-	if (1 == 2 && !empty($conf->expensereport->enabled)) {
-		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_expensereport.php';
-		$head[$h][1] = $langs->trans("Trips");
-		$head[$h][2] = 'expensereport';
-		$h++;
-	}
+	$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_other.php';
+	$head[$h][1] = $langs->trans("Other");
+	$head[$h][2] = 'other';
+	$h++;
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'pdf_admin', 'remove');
 
