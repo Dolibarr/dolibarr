@@ -167,7 +167,7 @@ elseif ($action == 'setdoc')
         $projects = GETPOST('EXPENSEREPORT_PROJECT_IS_REQUIRED', 'int');
         $res4 = dolibarr_set_const($db, 'EXPENSEREPORT_PROJECT_IS_REQUIRED', intval($projects), 'chaine', 0, '', $conf->entity);
     } else {
-        $res4 = dolibarr_del_const($this->db, 'EXPENSEREPORT_PROJECT_IS_REQUIRED');
+        $res4 = dolibarr_del_const($this->db, 'EXPENSEREPORT_PROJECT_IS_REQUIRED', $conf->entity);
     }
 
 	$dates = GETPOST('EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH', 'int');
