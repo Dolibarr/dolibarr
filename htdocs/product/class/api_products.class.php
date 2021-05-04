@@ -223,7 +223,7 @@ class Products extends DolibarrApi
 		}
 
 		//this query will return total products with the filters given
-		$sqlTotals =  str_replace('SELECT t.rowid, t.ref, t.ref_ext','SELECT count(t.rowid) as total',$sql);		
+		$sqlTotals =  str_replace('SELECT t.rowid, t.ref, t.ref_ext', 'SELECT count(t.rowid) as total', $sql);
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
@@ -260,7 +260,7 @@ class Products extends DolibarrApi
 		}
 
 		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
-		if($pagination_data){
+		if ($pagination_data) {
 			$totalsResult = $this->db->query($sqlTotals);
 			$total = $this->db->fetch_object($totalsResult)->total;
 
@@ -269,12 +269,12 @@ class Products extends DolibarrApi
 
 			$obj_ret['data'] = $tmp;
 			$obj_ret['pagination'] = [
-				'total' => (int)$total,
+				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => ceil((int)$total/$limit),
+				'page_count' => ceil((int) $total/$limit),
 				'limit' => $limit
 			];
-		}		
+		}
 
 		return $obj_ret;
 	}
