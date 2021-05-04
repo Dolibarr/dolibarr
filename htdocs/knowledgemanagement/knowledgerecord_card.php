@@ -123,7 +123,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 
 
 $permissiontoread = $user->rights->knowledgemanagement->knowledgerecord->read;
-$permissiontoreply = $user->rights->knowledgemanagement->knowledgerecord->reply;
+$permissiontovalidate = $user->rights->knowledgemanagement->knowledgerecord->write;
 $permissiontoadd = $user->rights->knowledgemanagement->knowledgerecord->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontodelete = $user->rights->knowledgemanagement->knowledgerecord->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
 $permissionnote = $user->rights->knowledgemanagement->knowledgerecord->write; // Used by the include of actions_setnotes.inc.php
@@ -461,12 +461,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			if ($object->status == $object::STATUS_VALIDATED) {
 				print dolGetButtonAction($langs->trans('SetToDraft'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_setdraft&confirm=yes', '', $permissiontoadd);
 			}
-			if ($object->status == $object::STATUS_VALIDATED && $permissiontoreply) {
+			if ($object->status == $object::STATUS_VALIDATED && $permissiontovalidate) {
 				print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit', '', $permissiontoadd);
 			}
 			// Validate
 			if ($object->status == $object::STATUS_DRAFT) {
-				if ((empty($object->table_element_line) || (is_array($object->lines) && count($object->lines) > 0)) && $permissiontoreply) {
+				if ((empty($object->table_element_line) || (is_array($object->lines) && count($object->lines) > 0)) && $permissiontovalidate) {
 					print dolGetButtonAction($langs->trans('ValidateReply'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_validate&confirm=yes', '', $permissiontoadd);
 				} else {
 					$langs->load("errors");

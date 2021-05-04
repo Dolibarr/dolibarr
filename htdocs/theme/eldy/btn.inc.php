@@ -86,7 +86,7 @@ span.butAction, span.butActionDelete {
 	text-align: center;
 	cursor: pointer;
 	color: #444;
-    border: 1px solid transparent;	/* So for buttonRefused with a border, it will not have any flash effect */
+	border: 1px solid transparent;	/* So for buttonRefused with a border, it will not have any flash effect */
 
 	/* border: 1px solid #aaa; */
 	/* border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25); */

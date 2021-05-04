@@ -37,13 +37,13 @@ function knowledgemanagementAdminPrepareHead()
 
 	$head[$h][0] = dol_buildpath("/admin/knowledgemanagement.php", 1);
 	$head[$h][1] = $langs->trans("Setup");
-	$head[$h][2] = 'settings';
+	$head[$h][2] = 'setup';
 	$h++;
 
 
 	$head[$h][0] = dol_buildpath("admin/knowledgerecord_extrafields.php", 1);
 	$head[$h][1] = $langs->trans("ExtraFields");
-	$head[$h][2] = 'settings';
+	$head[$h][2] = 'extra';
 	$h++;
 
 	/*$head[$h][0] = dol_buildpath("/knowledgemanagement/admin/about.php", 1);

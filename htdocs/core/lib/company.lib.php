@@ -754,7 +754,7 @@ function isInEEC($object)
 		return false;
 	}
 
-	$country_code_in_EEC = getCountriesInEEC();
+	$country_code_in_EEC = getCountriesInEEC();		// This make a database call but there is a cache done into $conf->cache['country_code_in_EEC']
 
 	//print "dd".$object->country_code;
 	return in_array($object->country_code, $country_code_in_EEC);
@@ -939,11 +939,11 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 		't.email',
 	);
 	//Social media
-	foreach ($socialnetworks as $key => $value) {
-		if ($value['active']) {
-			$searchAddressPhoneDBFields['t.'.$key] = "t.socialnetworks->'$.".$key."'";
-		}
-	}
+	//    foreach ($socialnetworks as $key => $value) {
+	//        if ($value['active']) {
+	//            $searchAddressPhoneDBFields['t.'.$key] = "t.socialnetworks->'$.".$key."'";
+	//        }
+	//    }
 
 	if (!$sortorder) {
 		$sortorder = "ASC";

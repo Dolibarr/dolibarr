@@ -154,6 +154,7 @@ class AdherentTest extends PHPUnit\Framework\TestCase
 		$localobject->statut=1;
 		$localobject->label='Adherent type test';
 		$localobject->subscription=1;
+		$localobject->amount=0;
 		$localobject->vote=1;
 		$localobject->company='Old company label';
 		$result=$localobject->create($user);

@@ -6586,6 +6586,14 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 	font-family: "Font Awesome 5 Free" !important;
 }
 
+
+/* ============================================================================== */
+/* CSS style used for jCrop                                                       */
+/* ============================================================================== */
+
+.jcrop-holder { background: unset !important; }
+
+
 /* ============================================================================== */
 /* CSS style used for jFlot                                                       */
 /* ============================================================================== */

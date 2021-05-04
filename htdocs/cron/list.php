@@ -68,7 +68,7 @@ $mode = GETPOST('mode', 'aZ09');
 $search_status = (GETPOSTISSET('search_status') ?GETPOST('search_status', 'int') : GETPOST('status', 'int'));
 $search_label = GETPOST("search_label", 'alpha');
 $search_module_name = GETPOST("search_module_name", 'alpha');
-$search_lastresult = GETPOST("search_lastresult", "alpha");
+$search_lastresult = GETPOST("search_lastresult", "alphawithlgt");
 $securitykey = GETPOST('securitykey', 'alpha');
 
 $outputdir = $conf->cron->dir_output;
