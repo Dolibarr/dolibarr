@@ -1925,13 +1925,14 @@ class User extends CommonObject
 	 *  Change password of a user
 	 *
 	 *  @param	User	$user             		Object user of user requesting the change (not the user for who we change the password). May be unknown.
-	 *  @param  string	$password         		New password in clear text (to generate if not provided)
-	 *	@param	int		$changelater			1=Change password only after clicking on confirm email
+	 *  @param  string	$password         		New password, in clear text or already encrypted (to generate if not provided)
+	 *	@param	int		$changelater			0=Default, 1=Save password into pass_temp to change password only after clicking on confirm email
 	 *	@param	int		$notrigger				1=Does not launch triggers
 	 *	@param	int		$nosyncmember	        Do not synchronize linked member
+	 *  @param	int		$passwordalreadycrypted 0=Value is cleartext password, 1=Value is crypted value.
 	 *  @return string 			          		If OK return clear password, 0 if no change, < 0 if error
 	 */
-	public function setPassword($user, $password = '', $changelater = 0, $notrigger = 0, $nosyncmember = 0)
+	public function setPassword($user, $password = '', $changelater = 0, $notrigger = 0, $nosyncmember = 0, $passwordalreadycrypted = 0)
 	{
 		global $conf, $langs;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
@@ -1946,9 +1947,11 @@ class User extends CommonObject
 		}
 
 		// Crypt password
-		$password_crypted = dol_hash($password);
+		if (empty($passwordalreadycrypted)) {
+			$password_crypted = dol_hash($password);
+		}
 
-		// Mise a jour
+		// Update password
 		if (!$changelater) {
 			if (!is_object($this->oldcopy)) {
 				$this->oldcopy = clone $this;
@@ -2018,8 +2021,8 @@ class User extends CommonObject
 				return -1;
 			}
 		} else {
-			// We store clear password in password temporary field.
-			// After receiving confirmation link, we will crypt it and store it in pass_crypted
+			// We store password in password temporary field.
+			// After receiving confirmation link, we will erase and store it in pass_crypted
 			$sql = "UPDATE ".MAIN_DB_PREFIX."user";
 			$sql .= " SET pass_temp = '".$this->db->escape($password)."'";
 			$sql .= " WHERE rowid = ".$this->id;
@@ -2035,7 +2038,6 @@ class User extends CommonObject
 		}
 	}
 
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Send new password by email
@@ -2048,7 +2050,7 @@ class User extends CommonObject
 	public function send_password($user, $password = '', $changelater = 0)
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $conf, $langs, $mysoc;
 		global $dolibarr_main_url_root;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
@@ -2079,7 +2081,7 @@ class User extends CommonObject
 			$appli = $conf->global->MAIN_APPLICATION_TITLE;
 		}
 
-		$subject = $outputlangs->transnoentitiesnoconv("SubjectNewPassword", $appli);
+		$subject = '['.$mysoc->name.'] '.$outputlangs->transnoentitiesnoconv("SubjectNewPassword", $appli);
 
 		// Define $urlwithroot
 		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
@@ -2099,16 +2101,22 @@ class User extends CommonObject
 
 			dol_syslog(get_class($this)."::send_password changelater is off, url=".$url);
 		} else {
-			$url = $urlwithroot.'/user/passwordforgotten.php?action=validatenewpassword&username='.urlencode($this->login)."&passwordhash=".dol_hash($password);
+			global $dolibarr_main_instance_unique_id;
 
-			$mesg .= $outputlangs->transnoentitiesnoconv("RequestToResetPasswordReceived")."\n";
-			$mesg .= $outputlangs->transnoentitiesnoconv("NewKeyWillBe")." :\n\n";
-			$mesg .= $outputlangs->transnoentitiesnoconv("Login")." = ".$this->login."\n";
-			$mesg .= $outputlangs->transnoentitiesnoconv("Password")." = ".$password."\n\n";
-			$mesg .= "\n";
-			$mesg .= $outputlangs->transnoentitiesnoconv("YouMustClickToChange")." :\n";
-			$mesg .= $url."\n\n";
-			$mesg .= $outputlangs->transnoentitiesnoconv("ForgetIfNothing")."\n\n";
+			//print $password.'-'.$this->id.'-'.$dolibarr_main_instance_unique_id;
+			$url = $urlwithroot.'/user/passwordforgotten.php?action=validatenewpassword';
+			$url .= '&username='.urlencode($this->login)."&passworduidhash=".urlencode(dol_hash($password.'-'.$this->id.'-'.$dolibarr_main_instance_unique_id));
+
+			$msgishtml = 1;
+
+			$mesg .= $outputlangs->transnoentitiesnoconv("RequestToResetPasswordReceived")."<br>\n";
+			$mesg .= $outputlangs->transnoentitiesnoconv("NewKeyWillBe")." :<br>\n<br>\n";
+			$mesg .= '<strong>'.$outputlangs->transnoentitiesnoconv("Login")."</strong> = ".$this->login."<br>\n";
+			$mesg .= '<strong>'.$outputlangs->transnoentitiesnoconv("Password")."</strong> = ".$password."<br>\n<br>\n";
+			$mesg .= "<br>\n";
+			$mesg .= $outputlangs->transnoentitiesnoconv("YouMustClickToChange")." :<br>\n";
+			$mesg .= '<a href="'.$url.'" rel="noopener">'.$outputlangs->transnoentitiesnoconv("ConfirmPasswordChange").'</a>'."<br>\n<br>\n";
+			$mesg .= $outputlangs->transnoentitiesnoconv("ForgetIfNothing")."<br>\n<br>\n";
 
 			dol_syslog(get_class($this)."::send_password changelater is on, url=".$url);
 		}
@@ -2358,7 +2366,7 @@ class User extends CommonObject
 	 * 	Use this->id,this->lastname, this->firstname
 	 *
 	 *	@param	int		$withpictoimg				Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small)
-	 *	@param	string	$option						On what the link point to ('leave', 'nolink', )
+	 *	@param	string	$option						On what the link point to ('leave', 'accountancy', 'nolink', )
 	 *  @param  integer $infologin      			0=Add default info tooltip, 1=Add complete info tooltip, -1=No info tooltip
 	 *  @param	integer	$notooltip					1=Disable tooltip on picto and name
 	 *  @param	int		$maxlen						Max length of visible user name
@@ -2408,6 +2416,9 @@ class User extends CommonObject
 		}
 		if (!empty($this->admin)) {
 			$label .= '<br><b>'.$langs->trans("Administrator").'</b>: '.yn($this->admin);
+		}
+		if (!empty($this->accountancy_code) || $option == 'accountancy') {
+			$label .= '<br><b>'.$langs->trans("AccountancyCode").'</b>: '.$this->accountancy_code;
 		}
 		$company = '';
 		if (!empty($this->socid)) {	// Add thirdparty for external users

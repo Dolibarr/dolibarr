@@ -143,6 +143,7 @@ input {
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
 	background-color: var(--inputbackgroundcolor);
 	color: var(--colortext);
+	border-radius: 2px;
 }
 select.vmenusearchselectcombo {
 	background-color: unset;
@@ -648,6 +649,9 @@ textarea.centpercent {
 
 .flip {
 	transform: scaleX(-1) translate(2px, 0);
+}
+.rotate90 {
+	transform: rotate(90deg) translate(0, 2px);
 }
 .center {
 	text-align: center;
@@ -1354,6 +1358,9 @@ table[summary="list_of_modules"] .fa-cog {
 .width125 { width: 125px; }
 .width150 { width: 150px; }
 .width200 { width: 200px; }
+.width300 { width: 300px; }
+.width400 { width: 400px; }
+.width500 { width: 500px; }
 .maxwidth25  { max-width: 25px; }
 .maxwidth50  { max-width: 50px; }
 .maxwidth75  { max-width: 75px; }
@@ -1726,13 +1733,13 @@ div.blockvmenulogo
 	margin-left: 11px;
 	margin-right: 9px;
 	padding: 0;
-	height: <?php echo $disableimages ? '20' : '32'; ?>px;
+	height: <?php echo $disableimages ? '20' : '35'; ?>px;
 	/* width: 100px; */
 	max-width: 100px;
 	vertical-align: middle;
 }
 .backgroundforcompanylogo {
-	background-color: rgba(255,255,255,0.7);
+	background-color: rgba(255,255,255,0.2);
 	border-radius: 4px;
 }
 .menulogocontainer img.mycompany {
@@ -2607,7 +2614,7 @@ table.login_table_securitycode tr td {
 }
 
 div.backgroundsemitransparent {
-	background:rgba(255,255,255,0.6);
+	background:rgba(255,255,255,0.68);
 	padding-left: 10px;
 	padding-right: 10px;
 }
@@ -3210,6 +3217,10 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 
 .smallpaddingimp {
 	padding: 4px !important;
+}
+input.button[name="upload"] {
+	padding: 4px !important;
+	font-size: 0.9em;
 }
 input.button.smallpaddingimp {
 	font-size: 0.8em;
@@ -3819,7 +3830,7 @@ tr.liste_titre_sel th, th.liste_titre_sel, tr.liste_titre_sel td, td.liste_titre
 	font-family: <?php print $fontlist ?>;
 	font-weight: normal;
 	border-bottom: 1px solid #FDFFFF;
-	text-decoration: underline;
+	/* text-decoration: underline; */
 }
 input.liste_titre {
 	background: transparent;
@@ -4409,7 +4420,7 @@ div.backgreypublicpayment { background-color: #f0f0f0; padding: 20px; border-bot
 	color: #222;
 	opacity: 0.3;
 }
-#dolpaymenttable { min-width: 290px; font-size: 16px; }	/* Width must have min to make stripe input area visible. Lower than 320 makes input area crazy for credit card that need zip code */
+#dolpaymenttable { min-width: 320px; font-size: 16px; }	/* Width must have min to make stripe input area visible. Lower than 320 makes input area crazy for credit card that need zip code */
 #tablepublicpayment { border: 1px solid #CCCCCC !important; width: 100%; padding: 20px; }
 #tablepublicpayment .CTableRow1  { background-color: #F0F0F0 !important; }
 #tablepublicpayment tr.liste_total { border-bottom: 1px solid #CCCCCC !important; }
@@ -6399,12 +6410,13 @@ div.tabsElem a.tab {
 .ticketlargemargin {
 	padding-left: 50px;
 	padding-right: 50px;
-	padding-top: 10px;
+	padding-top: 30px;
 }
 @media only screen and (max-width: 767px)
 {
 	.ticketlargemargin {
 		padding-left: 5px; padding-right: 5px;
+		padding-top: 10px;
 	}
 	.ticketpublicarea {
 		margin-left: 10px;
@@ -6722,6 +6734,13 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 {
 	font-family: "Font Awesome 5 Free" !important;
 }
+
+/* ============================================================================== */
+/* CSS style used for jCrop                                                       */
+/* ============================================================================== */
+
+.jcrop-holder { background: unset !important; }
+
 
 /* ============================================================================== */
 /* CSS style used for jFlot                                                       */

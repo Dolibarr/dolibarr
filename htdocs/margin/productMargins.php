@@ -198,7 +198,7 @@ $sql .= ' AND f.entity IN ('.getEntity('invoice').')';
 $sql .= " AND f.fk_statut NOT IN (".$db->sanitize(implode(', ', $invoice_status_except_list)).")";
 $sql .= " AND d.fk_facture = f.rowid";
 if ($id > 0) {
-	$sql .= " AND d.fk_product =".$id;
+	$sql .= " AND d.fk_product =".((int) $id);
 }
 if (!empty($TSelectedCats)) {
 	$sql .= ' AND cp.fk_categorie IN ('.$db->sanitize(implode(',', $TSelectedCats)).')';

@@ -275,12 +275,12 @@ if ($id) {
 		$num = $db->num_rows($result);
 		$i = 0;
 
-		$urladd = "&amp;id=".$id;
+		$urladd = "&id=".urlencode($id);
 
 		print_barre_liste($langs->trans("Bills"), $page, "factures.php", $urladd, $sortfield, $sortorder, '', $num, 0, '');
 
 		print"\n<!-- debut table -->\n";
-		print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+		print '<table class="noborder" width="100%" cellpadding="4">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Invoice").'</td><td>'.$langs->trans("ThirdParty").'</td><td class="right">'.$langs->trans("Amount").'</td><td class="right">'.$langs->trans("Status").'</td>';
 		print '</tr>';

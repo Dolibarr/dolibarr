@@ -59,7 +59,7 @@ dol_include_once('/partnership/class/partnership.class.php');
 dol_include_once('/partnership/lib/partnership.lib.php');
 
 // Load translation files required by the page
-$langs->loadLangs(array("partnership@partnership", "companies", "other", "mails"));
+$langs->loadLangs(array("partnership", "companies", "other", "mails"));
 
 $id     = (GETPOST('id') ?GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
 $ref    = GETPOST('ref', 'alpha');

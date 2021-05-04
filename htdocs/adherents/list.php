@@ -318,7 +318,7 @@ if ($sall) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
 }
 if ($search_type > 0) {
-	$sql .= " AND t.rowid=".$db->escape($search_type);
+	$sql .= " AND t.rowid=".((int) $search_type);
 }
 if ($search_filter == 'withoutsubscription') {
 	$sql .= " AND (datefin IS NULL OR t.subscription = 0)";
@@ -543,8 +543,8 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 // List of mass actions available
 $arrayofmassactions = array(
-	//'presend'=>img_picto('', 'email').$langs->trans("SendByMail"),
-	//'builddoc'=>img_picto('', 'pdf').$langs->trans("PDFMerge"),
+	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').'&ensp;'.$langs->trans("SendByMail"),
+	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 );
 if ($user->rights->adherent->creer) {
 	$arrayofmassactions['close'] = img_picto('', 'close_title', 'class="pictofixedwidth"').$langs->trans("Resiliate");
@@ -1063,7 +1063,7 @@ while ($i < min($num, $limit)) {
 			print '</td>';
 		} else {
 			print '<td class="nowrap left">';
-			if ($obj->subscription == 'yes') {
+			if (!empty($obj->subscription)) {
 				print $langs->trans("SubscriptionNotReceived");
 				if ($obj->statut > 0) {
 					print " ".img_warning();

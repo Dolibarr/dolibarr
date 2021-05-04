@@ -1390,6 +1390,9 @@ table[summary="list_of_modules"] .fa-cog {
 .width125 { width: 125px; }
 .width150 { width: 150px; }
 .width200 { width: 200px; }
+.width300 { width: 300px; }
+.width400 { width: 400px; }
+.width500 { width: 500px; }
 .maxwidth25  { max-width: 25px; }
 .maxwidth50  { max-width: 50px; }
 .maxwidth75  { max-width: 75px; }
@@ -1997,6 +2000,9 @@ div.nopadding {
 	margin : 0px auto;
 }
 
+td.nobordernopadding.widthpictotitle.col-picto {
+	opacity: 0.9;
+}
 .pictotitle {
 	margin-<?php echo $right; ?>: 8px;
 	margin-bottom: 4px;
@@ -6579,6 +6585,14 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 {
 	font-family: "Font Awesome 5 Free" !important;
 }
+
+
+/* ============================================================================== */
+/* CSS style used for jCrop                                                       */
+/* ============================================================================== */
+
+.jcrop-holder { background: unset !important; }
+
 
 /* ============================================================================== */
 /* CSS style used for jFlot                                                       */

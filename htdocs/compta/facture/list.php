@@ -550,7 +550,7 @@ if ($search_product_category > 0) {
 	$sql .= " AND cp.fk_categorie = ".$db->escape($search_product_category);
 }
 if ($socid > 0) {
-	$sql .= ' AND s.rowid = '.$socid;
+	$sql .= ' AND s.rowid = '.((int) $socid);
 }
 if ($userid) {
 	if ($userid == -1) {
@@ -1284,10 +1284,6 @@ if ($resql) {
 		print '<td class="liste_titre right">';
 		print '</td>';
 	}
-	if (!empty($arrayfields['f.date_closing']['checked'])) {
-		print '<td class="liste_titre">';
-		print '</td>';
-	}
 	if (!empty($arrayfields['total_pa']['checked'])) {
 		print '<td class="liste_titre right">';
 		print '</td>';
@@ -1322,6 +1318,11 @@ if ($resql) {
 		print '<td class="liste_titre">';
 		print '</td>';
 	}
+	// Date closing
+	if (!empty($arrayfields['f.date_closing']['checked'])) {
+		print '<td class="liste_titre">';
+		print '</td>';
+	}
 	if (!empty($arrayfields['f.note_public']['checked'])) {
 		// Note public
 		print '<td class="liste_titre">';
@@ -1335,7 +1336,7 @@ if ($resql) {
 	// Status
 	if (!empty($arrayfields['f.fk_statut']['checked'])) {
 		print '<td class="liste_titre maxwidthonsmartphone right">';
-		$liststatus = array('0'=>$langs->trans("BillShortStatusDraft"), '1'=>$langs->trans("BillShortStatusNotPaid"), '2'=>$langs->trans("BillShortStatusPaid"), '1,2'=>$langs->trans("BillShortStatusNotPaid").'+'.$langs->trans("BillShortStatusPaid"), '3'=>$langs->trans("BillShortStatusCanceled"));
+		$liststatus = array('0'=>$langs->trans("BillShortStatusDraft"), '1'=>$langs->trans("BillShortStatusNotPaid"), '0,1'=>$langs->trans("BillShortStatusDraft").'+'.$langs->trans("BillShortStatusNotPaid"), '2'=>$langs->trans("BillShortStatusPaid"), '1,2'=>$langs->trans("BillShortStatusNotPaid").'+'.$langs->trans("BillShortStatusPaid"), '3'=>$langs->trans("BillShortStatusCanceled"));
 		print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', '', 1);
 		print '</td>';
 	}

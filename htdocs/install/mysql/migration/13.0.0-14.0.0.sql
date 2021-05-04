@@ -26,9 +26,23 @@
 -- To set a field as NOT NULL:                 -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET NOT NULL;
 -- To set a field as default NULL:             -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET DEFAULT NULL;
 -- Note: fields with type BLOB/TEXT can't have default value.
+-- To rebuild sequence for postgresql after insert by forcing id autoincrement fields: 
+-- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
 
 -- Missing in v13 or lower
+
+ALTER TABLE llx_accounting_bookkeeping DROP INDEX idx_accounting_bookkeeping_numero_compte;
+ALTER TABLE llx_accounting_bookkeeping DROP INDEX idx_accounting_bookkeeping_code_journal;
+
+ALTER TABLE llx_accounting_bookkeeping ADD INDEX idx_accounting_bookkeeping_fk_docdet (fk_docdet);
+ALTER TABLE llx_accounting_bookkeeping ADD INDEX idx_accounting_bookkeeping_doc_date (doc_date);
+ALTER TABLE llx_accounting_bookkeeping ADD INDEX idx_accounting_bookkeeping_numero_compte (numero_compte, entity);
+ALTER TABLE llx_accounting_bookkeeping ADD INDEX idx_accounting_bookkeeping_code_journal (code_journal, entity);
+
+ALTER TABLE llx_accounting_bookkeeping ADD INDEX idx_accounting_bookkeeping_piece_num (piece_num, entity);
+
+ALTER TABLE llx_recruitment_recruitmentcandidature MODIFY COLUMN email_msgid VARCHAR(175);
 
 ALTER TABLE llx_asset CHANGE COLUMN amount amount_ht double(24,8) DEFAULT NULL;
 ALTER TABLE llx_asset ADD COLUMN amount_vat double(24,8) DEFAULT NULL;
@@ -47,6 +61,8 @@ UPDATE llx_c_country SET eec = 1 WHERE code IN ('AT','BE','BG','CY','CZ','DE','D
 
 
 -- For v14
+
+ALTER TABLE llx_export_model MODIFY COLUMN type varchar(64);
 
 create table llx_accounting_groups_account
 (
@@ -253,7 +269,7 @@ create table llx_salary
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   ref             varchar(30) NULL,           -- payment reference number (currently NULL because there is no numbering manager yet)
   label           varchar(255),
-  tms             timestamp,
+  tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   datec           datetime,                   -- Create date
   fk_user         integer NOT NULL,
   datep           date,                       -- payment date
@@ -273,15 +289,15 @@ create table llx_salary
   fk_user_modif   integer                     -- user making last change
 ) ENGINE=innodb;
 
-ALTER TABLE llx_payment_salary CHANGE COLUMN fk_user fk_user integer NULL;
+-- VMYSQL4.1 ALTER TABLE llx_payment_salary CHANGE COLUMN fk_user fk_user integer NULL;
+-- VPGSQL8.2 ALTER TABLE llx_payment_salary ALTER COLUMN fk_user DROP NOT NULL;
 ALTER TABLE llx_payment_salary ADD COLUMN fk_salary integer;
 
 INSERT INTO llx_salary (rowid, ref, fk_user, amount, fk_projet, fk_typepayment, label, datesp, dateep, entity, note, fk_bank, paye) SELECT ps.rowid, ps.rowid, ps.fk_user, ps.amount, ps.fk_projet, ps.fk_typepayment, ps.label, ps.datesp, ps.dateep, ps.entity, ps.note, ps.fk_bank, 1 FROM llx_payment_salary ps WHERE ps.fk_salary IS NULL;
 UPDATE llx_payment_salary SET fk_salary = rowid WHERE fk_salary IS NULL;
 UPDATE llx_payment_salary SET ref = rowid WHERE ref IS NULL;
 
-ALTER TABLE llx_salary CHANGE paye paye smallint default 0 NOT NULL;
-
+ALTER TABLE llx_salary ALTER COLUMN paye set default 0;
 
 DELETE FROM llx_boxes WHERE box_id IN (SELECT rowid FROM llx_boxes_def WHERE file IN ('box_graph_ticket_by_severity', 'box_ticket_by_severity.php', 'box_nb_ticket_last_x_days.php', 'box_nb_tickets_type.php', 'box_new_vs_close_ticket.php'));
 DELETE FROM llx_boxes_def WHERE file IN ('box_graph_ticket_by_severity', 'box_ticket_by_severity.php', 'box_nb_ticket_last_x_days.php', 'box_nb_tickets_type.php', 'box_new_vs_close_ticket.php');
@@ -301,7 +317,8 @@ create table llx_product_perentity
     accountancy_code_sell_export  varchar(32),                        -- Selling accountancy code for vat export
     accountancy_code_buy          varchar(32),                        -- Buying accountancy code
     accountancy_code_buy_intra    varchar(32),                        -- Buying accountancy code for vat intracommunity
-    accountancy_code_buy_export   varchar(32)                  		-- Buying accountancy code for vat import
+    accountancy_code_buy_export   varchar(32),                     	  -- Buying accountancy code for vat import
+    pmp double(24,8)
 )ENGINE=innodb;
 
 ALTER TABLE llx_product_perentity ADD INDEX idx_product_perentity_fk_product (fk_product);
@@ -424,3 +441,44 @@ ALTER TABLE llx_facture_fourn ADD COLUMN date_closing datetime DEFAULT NULL afte
 ALTER TABLE llx_facture_fourn ADD COLUMN fk_user_closing integer DEFAULT NULL after fk_user_valid;
 
 ALTER TABLE llx_entrepot ADD COLUMN fk_project INTEGER DEFAULT NULL AFTER entity; -- project associated to warehouse if any
+
+-- Add external payement suport for donation
+ALTER TABLE llx_payment_donation ADD COLUMN ext_payment_site  varchar(128) AFTER note;
+ALTER TABLE llx_payment_donation ADD COLUMN ext_payment_id  varchar(128) AFTER note;
+
+-- Rebuild sequence for postgres only after query INSERT INTO llx_salary(rowid, ...
+-- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
+
+UPDATE llx_const SET value = 'github' WHERE __DECRYPT('name')__ = 'MAIN_BUGTRACK_ENABLELINK' AND __DECRYPT('value')__ = 1;
+
+ALTER TABLE llx_facture_fourn_det ADD COLUMN fk_remise_except integer DEFAULT NULL after remise_percent;
+ALTER TABLE llx_facture_fourn_det ADD UNIQUE INDEX uk_fk_remise_except (fk_remise_except, fk_facture_fourn);
+
+CREATE TABLE llx_knowledgemanagement_knowledgerecord(
+	-- BEGIN MODULEBUILDER FIELDS
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
+	ref varchar(128) NOT NULL, 
+	date_creation datetime NOT NULL, 
+	tms timestamp, 
+	last_main_doc varchar(255), 
+	fk_user_creat integer NOT NULL, 
+	fk_user_modif integer, 
+	fk_user_valid integer, 
+	import_key varchar(14), 
+	model_pdf varchar(255), 
+	question text NOT NULL, 
+	answer text, 
+	status integer NOT NULL
+	-- END MODULEBUILDER FIELDS
+) ENGINE=innodb;
+
+create table llx_knowledgemanagement_knowledgerecord_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+
+-- add default amount by member type
+ALTER TABLE llx_adherent_type ADD COLUMN amount DOUBLE(24,8) NULL DEFAULT NULL AFTER subscription;

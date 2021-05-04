@@ -133,7 +133,9 @@ IncludeDocGeneration=我想從項目產生一些文件
 IncludeDocGenerationHelp=如果選中此選項，將產生一些代碼以在記錄上增加“產生文件”框。
 ShowOnCombobox=在組合框中顯示數值
 KeyForTooltip=Key for tooltip
-CSSClass=CSS類別
+CSSClass=CSS for edit/create form
+CSSViewClass=CSS for read form
+CSSListClass=CSS for list
 NotEditable=無法編輯
 ForeignKey=外部金鑰
 TypeOfFieldsHelp=Type of fields:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] ('1' means we add a + button after the combo to create the record, 'filter' can be 'status=1 AND fk_user = __USER_ID AND entity IN (__SHARED_ENTITIES__)' for example)

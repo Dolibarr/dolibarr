@@ -166,7 +166,6 @@ GlobalVariableUpdaterType1=Dados WebService
 GlobalVariableUpdaterHelp1=Analisa os dados WebService de URL especificada, NS especifica o namespace, valor especifica a localização de valor relevante, os dados devem conter os dados para enviar e método é o método chamando WS
 PropalMergePdfProductActualFile=Usar arquivos para adicionar em PDF Azur são / é
 PropalMergePdfProductChooseFile=Selecione os arquivos PDF
-IncludingProductWithTag=Incluindo produto/serviço com tag
 DefaultPriceRealPriceMayDependOnCustomer=Preço padrão, o preço real pode depender do cliente
 NbOfQtyInProposals=Qtde nas Propostas
 ClinkOnALinkOfColumn=Clique no link da coluna %s para ter uma visão detalhada...

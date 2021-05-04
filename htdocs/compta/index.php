@@ -75,6 +75,9 @@ $maxOpenCount = empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->globa
 $hookmanager->initHooks(array('invoiceindex'));
 
 
+$maxofloop = (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD);
+
+
 /*
  * Actions
  */
@@ -99,9 +102,11 @@ print load_fiche_titre($langs->trans("AccountancyTreasuryArea"), '', 'bill');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-print getCustomerInvoicePieChart($socid);
+//print getCustomerInvoicePieChart($socid);
+print getNumberInvoicesPieChart('customers');
 print '<br>';
-print getPurchaseInvoicePieChart($socid);
+print getNumberInvoicesPieChart('fourn');
+//print getPurchaseInvoicePieChart($socid);
 print '<br>';
 print getCustomerInvoiceDraftTable($max, $socid);
 print '<br>';

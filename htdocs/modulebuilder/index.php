@@ -340,6 +340,8 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 	}
 }
 
+
+// init API
 if ($dirins && $action == 'initapi' && !empty($module)) {
 	$modulename = ucfirst($module); // Force first letter in uppercase
 	$objectname = $tabobj;
@@ -374,6 +376,9 @@ if ($dirins && $action == 'initapi' && !empty($module)) {
 		setEventMessages($langs->trans('ErrorFailToCreateFile', $destfile), null, 'errors');
 	}
 }
+
+
+// init PHPUnit
 if ($dirins && $action == 'initphpunit' && !empty($module)) {
 	$modulename = ucfirst($module); // Force first letter in uppercase
 	$objectname = $tabobj;
@@ -407,6 +412,9 @@ if ($dirins && $action == 'initphpunit' && !empty($module)) {
 		setEventMessages($langs->trans('ErrorFailToCreateFile', $destfile), null, 'errors');
 	}
 }
+
+
+// init ExtraFields
 if ($dirins && $action == 'initsqlextrafields' && !empty($module)) {
 	$modulename = ucfirst($module); // Force first letter in uppercase
 	$objectname = $tabobj;
@@ -450,6 +458,9 @@ if ($dirins && $action == 'initsqlextrafields' && !empty($module)) {
 	}
 	// TODO Enable in class the property $isextrafieldmanaged = 1
 }
+
+
+// init Hook
 if ($dirins && $action == 'inithook' && !empty($module)) {
 	dol_mkdir($dirins.'/'.strtolower($module).'/class');
 	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
@@ -480,6 +491,9 @@ if ($dirins && $action == 'inithook' && !empty($module)) {
 		setEventMessages($langs->trans('ErrorFailToCreateFile', $destfile), null, 'errors');
 	}
 }
+
+
+// init Trigger
 if ($dirins && $action == 'inittrigger' && !empty($module)) {
 	dol_mkdir($dirins.'/'.strtolower($module).'/core/triggers');
 	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
@@ -510,6 +524,9 @@ if ($dirins && $action == 'inittrigger' && !empty($module)) {
 		setEventMessages($langs->trans('ErrorFailToCreateFile', $destfile), null, 'errors');
 	}
 }
+
+
+// init Widget
 if ($dirins && $action == 'initwidget' && !empty($module)) {
 	dol_mkdir($dirins.'/'.strtolower($module).'/core/boxes');
 	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
@@ -540,6 +557,9 @@ if ($dirins && $action == 'initwidget' && !empty($module)) {
 		setEventMessages($langs->trans('ErrorFailToCreateFile', $destfile), null, 'errors');
 	}
 }
+
+
+// init CSS
 if ($dirins && $action == 'initcss' && !empty($module)) {
 	dol_mkdir($dirins.'/'.strtolower($module).'/css');
 	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
@@ -576,6 +596,8 @@ if ($dirins && $action == 'initcss' && !empty($module)) {
 	}
 }
 
+
+// init JS
 if ($dirins && $action == 'initjs' && !empty($module)) {
 	dol_mkdir($dirins.'/'.strtolower($module).'/js');
 	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
@@ -611,6 +633,9 @@ if ($dirins && $action == 'initjs' && !empty($module)) {
 		setEventMessages($langs->trans('ErrorFailToCreateFile', $destfile), null, 'errors');
 	}
 }
+
+
+// init CLI
 if ($dirins && $action == 'initcli' && !empty($module)) {
 	dol_mkdir($dirins.'/'.strtolower($module).'/scripts');
 	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
@@ -646,6 +671,9 @@ if ($dirins && $action == 'initcli' && !empty($module)) {
 		setEventMessages($langs->trans('ErrorFailToCreateFile', $destfile), null, 'errors');
 	}
 }
+
+
+// init Doc
 if ($dirins && $action == 'initdoc' && !empty($module)) {
 	dol_mkdir($dirins.'/'.strtolower($module).'/doc');
 	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
@@ -694,13 +722,41 @@ if ($dirins && $action == 'initdoc' && !empty($module)) {
 	}
 }
 
+
+// add Language
 if ($dirins && $action == 'addlanguage' && !empty($module)) {
 	$newlangcode = GETPOST('newlangcode', 'aZ09');
-	$srcfile = $dirins.'/'.strtolower($module).'/langs/en_US';
-	$destfile = $dirins.'/'.strtolower($module).'/langs/'.$newlangcode;
-	$result = dolCopyDir($srcfile, $destfile, 0, 0);
+
+	if ($newlangcode) {
+		$modulelowercase = strtolower($module);
+
+		// Dir for module
+		$diroflang = dol_buildpath($modulelowercase, 0);
+
+		if ($diroflang == $dirread.'/'.$modulelowercase) {
+			// This is not a custom module, we force diroflang to htdocs root
+			$diroflang = $dirread;
+
+			$srcfile = $diroflang.'/langs/en_US/'.$modulelowercase.'.lang';
+			$destfile = $diroflang.'/langs/'.$newlangcode.'/'.$modulelowercase.'.lang';
+
+			$result = dol_copy($srcfile, $destfile, 0, 0);
+			if ($result < 0) {
+				setEventMessages($langs->trans("ErrorFailToCopyFile", $srcfile, $destfile), null, 'errors');
+			}
+		} else {
+			$srcfile = $diroflang.'/langs/en_US';
+			$destfile = $diroflang.'/langs/'.$newlangcode;
+
+			$result = dolCopyDir($srcfile, $destfile, 0, 0);
+		}
+	} else {
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Language")), null, 'errors');
+	}
 }
 
+
+// remove/delete File
 if ($dirins && $action == 'confirm_removefile' && !empty($module)) {
 	$relativefilename = dol_sanitizePathName(GETPOST('file', 'none'));
 	if ($relativefilename) {
@@ -726,6 +782,7 @@ if ($dirins && $action == 'confirm_removefile' && !empty($module)) {
 	}
 }
 
+
 // Build the $fields array from SQL table (initfromtablename)
 if ($dirins && $action == 'initobject' && $module && GETPOST('createtablearray', 'alpha')) {
 	$tablename = GETPOST('initfromtablename', 'alpha');
@@ -750,7 +807,7 @@ if ($dirins && $action == 'initobject' && $module && GETPOST('createtablearray',
 		 *  'help' is a string visible as a tooltip on field
 		 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
 		 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
-		 *  'arraykeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
+		 *  'arrayofkeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
 		 */
 
 		/*public $fields=array(
@@ -1415,17 +1472,37 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname) {
 	$tabobj = 'deleteobject';
 }
 
+if ($dirins && $action == 'generatedoc') {
+	$modulelowercase = strtolower($module);
+
+	// Dir for module
+	$dirofmodule = dol_buildpath($modulelowercase, 0).'/doc';
+
+	$FILENAMEDOC = strtolower($module).'.html';
+
+	$util = new Utils($db);
+	$result = $util->generateDoc($module);
+
+	if ($result > 0) {
+		setEventMessages($langs->trans("DocFileGeneratedInto", $dirofmodule), null);
+	} else {
+		setEventMessages($util->error, $util->errors, 'errors');
+	}
+}
 
 if ($dirins && $action == 'generatepackage') {
 	$modulelowercase = strtolower($module);
 
+	$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
+
 	// Dir for module
-	$dir = $dirins.'/'.$modulelowercase;
+	$dir = dol_buildpath($modulelowercase, 0);
+
 	// Zip file to build
 	$FILENAMEZIP = '';
 
 	// Load module
-	dol_include_once($modulelowercase.'/core/modules/mod'.$module.'.class.php');
+	dol_include_once($pathtofile);
 	$class = 'mod'.$module;
 
 	if (class_exists($class)) {
@@ -1433,18 +1510,18 @@ if ($dirins && $action == 'generatepackage') {
 			$moduleobj = new $class($db);
 		} catch (Exception $e) {
 			$error++;
-			dol_print_error($e->getMessage());
+			dol_print_error($db, $e->getMessage());
 		}
 	} else {
 		$error++;
 		$langs->load("errors");
-		dol_print_error($langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));
+		dol_print_error($db, $langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));
 		exit;
 	}
 
 	$arrayversion = explode('.', $moduleobj->version, 3);
 	if (count($arrayversion)) {
-		$FILENAMEZIP = "module_".$modulelowercase.'-'.$arrayversion[0].'.'.$arrayversion[1].($arrayversion[2] ? ".".$arrayversion[2] : "").".zip";
+		$FILENAMEZIP = "module_".$modulelowercase.'-'.$arrayversion[0].($arrayversion[1] ? '.'.$arrayversion[1] : '').($arrayversion[2] ? '.'.$arrayversion[2] : '').'.zip';
 
 		$dirofmodule = dol_buildpath($modulelowercase, 0).'/bin';
 		$outputfilezip = $dirofmodule.'/'.$FILENAMEZIP;
@@ -1468,20 +1545,6 @@ if ($dirins && $action == 'generatepackage') {
 		$error++;
 		$langs->load("errors");
 		setEventMessages($langs->trans("ErrorCheckVersionIsDefined"), null, 'errors');
-	}
-}
-
-if ($dirins && $action == 'generatedoc') {
-	$FILENAMEDOC = strtolower($module).'.html';
-	$dirofmodule = dol_buildpath(strtolower($module), 0).'/doc';
-
-	$util = new Utils($db);
-	$result = $util->generateDoc($module);
-
-	if ($result > 0) {
-		setEventMessages($langs->trans("DocFileGeneratedInto", $dirofmodule), null);
-	} else {
-		setEventMessages($util->error, $util->errors, 'errors');
 	}
 }
 
@@ -2092,11 +2155,26 @@ if ($module == 'initmodule') {
 				print '<br>';
 				print '<br>';
 
-				$langfiles = dol_dir_list(dol_buildpath($modulelowercase.'/langs', 0), 'files', 1, '\.lang$');
+				$modulelowercase = strtolower($module);
+
+				// Dir for module
+				$diroflang = dol_buildpath($modulelowercase, 0);
+				$diroflang .= '/langs';
+				$langfiles = dol_dir_list($diroflang, 'files', 1, '\.lang$');
+
+				if (!preg_match('/custom/', $dirread)) {
+					// If this is not a module into custom
+					$diroflang = $dirread;
+					$diroflang .= '/langs';
+					$langfiles = dol_dir_list($diroflang, 'files', 1, $modulelowercase.'\.lang$');
+				}
 
 				print '<table class="none">';
 				foreach ($langfiles as $langfile) {
 					$pathtofile = $modulelowercase.'/langs/'.$langfile['relativename'];
+					if (!preg_match('/custom/', $dirread)) {	// If this is not a module into custom
+						$pathtofile = 'langs/'.$langfile['relativename'];
+					}
 					print '<tr><td><span class="fa fa-file-o"></span> '.$langs->trans("LanguageFile").' '.basename(dirname($pathtofile)).' : <strong>'.$pathtofile.'</strong>';
 					print '</td><td><a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=editfile&format=txt&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 					print '</td><td><a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=confirm_removefile&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
@@ -3779,12 +3857,12 @@ if ($module == 'initmodule') {
 					$moduleobj = new $class($db);
 				} catch (Exception $e) {
 					$error++;
-					dol_print_error($e->getMessage());
+					dol_print_error($db, $e->getMessage());
 				}
 			} else {
 				$error++;
 				$langs->load("errors");
-				dol_print_error($langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));
+				dol_print_error($db, $langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));
 				exit;
 			}
 
