@@ -1669,7 +1669,23 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 					{
 						print 'background: #f0f0f0;';
 						print 'border-left: 5px solid #'.$colortouse.';';
-					} else {
+					} elseif ($event->type_code == 'AC_RDV') { //Rendez-Vous
+						print 'background: #FAE364;';
+						print 'border-left: 5px solid #'.dol_color_minus($colortouse, -3).';';
+					} elseif ($event->type_code == 'AC_TEL') { //Appel téléphonique
+						print 'background: #E9593A;';
+						print 'border-left: 5px solid #'.dol_color_minus($colortouse, -3).';';
+					} elseif ($event->type_code == 'AC_EMAIL') { //Envoi email
+						print 'background: #DD5AE9;';
+						print 'border-left: 5px solid #'.dol_color_minus($colortouse, -3).';';
+					} elseif ($event->type_code == 'AC_INT') { //Intervention sur site
+						print 'background: #32E5D9;';
+						print 'border-left: 5px solid #'.dol_color_minus($colortouse, -3).';';
+					} elseif ($event->type_code == 'AC_OTH') { //Autre
+						print 'background: #E5E95A;';
+						print 'border-left: 5px solid #'.dol_color_minus($colortouse, -3).';';
+					}
+					else {
 						print 'background: #f0f0f0;';
 						print 'border-left: 5px solid #'.dol_color_minus($colortouse, -3).';';
 						//print 'background: -webkit-gradient(linear, left top, left bottom, from(#'.dol_color_minus($colortouse, -3).'), to(#'.dol_color_minus($colortouse, -1).'));';
@@ -1739,7 +1755,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 						} else {
 							if ($showinfo)
 							{
-								print $langs->trans("EventOnFullDay")."<br>\n";
+								//print $langs->trans("EventOnFullDay")."<br>\n";
 							}
 						}
 
@@ -1802,7 +1818,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 								$contact->fetch($contact_id);
 								$cachecontacts[$contact_id] = $contact;
 							} else $contact = $cachecontacts[$contact_id];
-							if ($linerelatedto) $linerelatedto .= '&nbsp;';
+							if ($linerelatedto) $linerelatedto .= '<br>';
 							if (!empty($contact->id)) $linerelatedto .= $contact->getNomUrl(1, '', 0);
 						}
 						if (!empty($event->fk_element) && $event->fk_element > 0 && !empty($event->elementtype) && !empty($conf->global->AGENDA_SHOW_LINKED_OBJECT))
@@ -1811,7 +1827,10 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 							if ($linerelatedto) $linerelatedto .= '<br>';
 							$linerelatedto .= dolGetElementUrl($event->fk_element, $event->elementtype, 1);
 						}
-						if ($linerelatedto) print '<br>'.$linerelatedto;
+						if ($linerelatedto) print '<br>'.$linerelatedto.'<br>';
+						if (!empty($contact_id) && $contact_id > 0){
+							print '<a href=tel:'.$contact->phone_mobile.'>'.img_picto('', 'object_phoning').' '.$contact->phone_mobile.'</a>';
+						}
 					}
 
 					// Show location
