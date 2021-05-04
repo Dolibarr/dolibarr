@@ -449,8 +449,18 @@ if ($conf->use_javascript_ajax) {
 }
 print '</td></tr>';
 
+print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_PDF_AUTOUPDATE").'</td><td>';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('MAIN_DISABLE_PDF_AUTOUPDATE');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("MAIN_DISABLE_PDF_AUTOUPDATE", $arrval, $conf->global->MAIN_DISABLE_PDF_AUTOUPDATE);
+}
+print '</td></tr>';
+
 print '</table>';
 print '</div>';
+
 
 print '<br><div class="center">';
 print '<input class="button button-save" type="submit" name="save" value="'.$langs->trans("Save").'">';

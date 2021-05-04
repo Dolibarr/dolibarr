@@ -1983,6 +1983,7 @@ MAIN_PDF_MARGIN_BOTTOM=Bottom margin on PDF
 MAIN_DOCUMENTS_LOGO_HEIGHT=Height for logo on PDF
 MAIN_GENERATE_PROPOSALS_WITH_PICTURE=Include the first image of the product into the line
 MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING=Add electronic sign in PDF
+MAIN_DISABLE_PDF_AUTOUPDATE=Disable automatic generation of PDF each time we add/update/delete a product line (we can still build document by clicking on "Generate"). This option may increase interface speed on servers with low CPU.
 MAIN_GENERATE_INVOICES_WITH_PICTURE=Include the first image of the product into the line
 MAIN_GENERATE_SUPPLIER_PROPOSAL_WITH_PICTURE=Include the first image of the product into the line
 MAIN_DOCUMENTS_WITH_PICTURE_WIDTH=Width product picture for line on PDF
