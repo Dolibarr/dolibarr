@@ -265,9 +265,10 @@ if (empty($reshook)) {
 						}
 						//$substitutionisok=true;
 
+						$moreinheader = '';
 						complete_substitutions_array($substitutionarray, $langs);
 						$newsubject = make_substitutions($subject, $substitutionarray);
-						$newmessage = make_substitutions($message, $substitutionarray);
+						$newmessage = make_substitutions($message, $substitutionarray, null, 0, $moreinheader);
 
 						$arr_file = array();
 						$arr_mime = array();
@@ -285,7 +286,7 @@ if (empty($reshook)) {
 
 						// Mail making
 						$trackid = 'emailing-'.$obj->fk_mailing.'-'.$obj->rowid;
-						$mail = new CMailFile($newsubject, $sendto, $from, $newmessage, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $errorsto, $arr_css, $trackid, '', 'emailing');
+						$mail = new CMailFile($newsubject, $sendto, $from, $newmessage, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $errorsto, $arr_css, $trackid, $moreinheader, 'emailing');
 
 						if ($mail->error) {
 							$res = 0;

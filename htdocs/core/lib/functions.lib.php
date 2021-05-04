@@ -7206,10 +7206,11 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
  *  @param	Translate	$outputlangs					Output language
  *  @param	int			$converttextinhtmlifnecessary	0=Convert only value into HTML if text is already in HTML
  *  													1=Will also convert initial $text into HTML if we try to insert one value that is HTML
+ * 	@param  string      $moreinheader					Header for CMailer module
  * 	@return string  		    						Output string after substitutions
  *  @see	complete_substitutions_array(), getCommonSubstitutionArray()
  */
-function make_substitutions($text, $substitutionarray, $outputlangs = null, $converttextinhtmlifnecessary = 0)
+function make_substitutions($text, $substitutionarray, $outputlangs = null, $converttextinhtmlifnecessary = 0, &$moreinheader = null)
 {
 	global $conf, $langs;
 
@@ -7312,8 +7313,11 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 			} else {
 				$value = dol_nl2br("$value");
 			}
-
 			$text = str_replace("$key", "$value", $text); // We must keep the " to work when value is 123.5 for example
+		}
+		if ($key == '__UNSUBSCRIBE__' && (isset($moreinheader))) {
+			$tmptext = explode('"', $text);
+			$moreinheader = "List-Unsubscribe: <".$tmptext[1].">\n";
 		}
 	}
 
