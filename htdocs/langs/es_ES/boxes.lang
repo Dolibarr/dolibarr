@@ -112,9 +112,9 @@ BoxTitleLastCustomerShipments=Últimos %s envíos a clientes
 NoRecordedShipments=Ningún envío a clientes registrado
 BoxCustomersOutstandingBillReached=Clientes con límite pendiente alcanzado
 # Pages
-UsersHome=Home users and groups
-MembersHome=Home Membership
-ThirdpartiesHome=Home Thirdparties
-TicketsHome=Home Tickets
-AccountancyHome=Home Accountancy
+UsersHome=Usuarios y grupos internos
+MembersHome=Afiliados internos
+ThirdpartiesHome=Terceros internos
+TicketsHome=Tickets internos
+AccountancyHome=Contabilidad interna
 ValidatedProjects=Proyectos validados

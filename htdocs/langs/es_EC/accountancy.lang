@@ -183,7 +183,6 @@ NoNewRecordSaved=No más registro para calendarizar
 ListOfProductsWithoutAccountingAccount=Lista de productos no vinculados a ninguna cuenta contable
 ChangeBinding=Cambiar la encuadernación
 Accounted=Contabilizado en el libro mayor
-NotYetAccounted=Aún no contabilizado en el libro mayor
 ShowTutorial=Tutorial de presentación
 NotReconciled=No conciliado
 ApplyMassCategories=Aplicar categorías de masas

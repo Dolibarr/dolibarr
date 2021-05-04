@@ -249,8 +249,8 @@ TicketLogReopen=服務單%s已重新打開
 # Public pages
 #
 TicketSystem=服務單系統
-ShowListTicketWithTrackId=從追蹤編號顯示服務單清單
-ShowTicketWithTrackId=從追蹤編號顯示服務單
+ShowListTicketWithTrackId=以追蹤編號顯示服務單清單
+ShowTicketWithTrackId=以追蹤編號查詢服務單
 TicketPublicDesc=您可以從現有編號建立支援服務單或進行檢查。
 YourTicketSuccessfullySaved=服務單已成功儲存！
 MesgInfosPublicTicketCreatedWithTrackId=已建立一個新的服務單，其ID為%s和參考%s。
@@ -267,7 +267,7 @@ TicketEmailPleaseDoNotReplyToThisEmail=請不要直接回覆此電子郵件！�
 TicketPublicInfoCreateTicket=此表格使您可以在我們的管理系統中記錄支援服務單。
 TicketPublicPleaseBeAccuratelyDescribe=請準確描述問題。提供盡可能多的訊息使我們能夠正確辨別您的要求。
 TicketPublicMsgViewLogIn=請輸入服務單追蹤編號
-TicketTrackId=公開追踪編號
+TicketTrackId=公用追踪編號
 OneOfTicketTrackId=您的追蹤編號之一
 ErrorTicketNotFound=無法找到追蹤編號%s的服務單!
 Subject=主題

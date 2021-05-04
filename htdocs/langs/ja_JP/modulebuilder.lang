@@ -85,7 +85,7 @@ ListOfPermissionsDefined=定義された権限のリスト
 SeeExamples=こちらの例をご覧ください
 EnabledDesc=このフィールドをアクティブにする条件(例：1または$ conf-> global-> MYMODULE_MYOPTION)
 VisibleDesc=フィールドは表示されているか？ (例：0 =表示されない、1 =リストおよび作成/更新/表示フォームで表示、2 =リストでのみ表示、3 =作成/更新/表示フォームでのみ表示(リストではない)、4 =リストおよび更新/表示フォームでのみ表示(作成しない)、5 =リストおよび表示フォームでのみ表示(作成しない、更新しない)<br> <br>負の値を使用すると、フィールドはデフォルトでリストに表示されないが、表示用に選択できる)。 <br> <br>これは、次のような式にできる。例: <br> preg_match('/public/', $_SERVER['PHP_SELF'])?0:<br>($user->rights->holiday->define_holiday ? 1 : 0)
-DisplayOnPdfDesc=互換性のあるPDFドキュメントでこのフィールドを表示する。「位置」フィールドで位置を管理できる。<br/>現在、既知の互換性のあるPDFモデルは次のとおり  : eratosthene (order), espadon (ship), sponge (invoices), cyan (propal/quotation), cornas (supplier order)<br/><br/><strong>ドキュメントに対して :</strong><br/>0 = 非表示 <br/>1 = 表示<br/>2 = 空でない場合のみ表示<br/><br/><strong>ドキュメント行に対して :</strong><br/>0 = 非表示 <br/>1 = カラム内で表示<br/>3 = 説明欄の後の行説明カラムの中で表示<br/>4 = 空でない場合のみ、説明欄の後の行説明カラムの中で表示
+DisplayOnPdfDesc=互換性のあるPDFドキュメントにこのフィールドを表示する。 "Position" フィールドで位置を管理できる。<br>現在、既知の互換性のあるPDFモデルは次のとおり : eratosthene (注文), espadon (発送), sponge (請求), cyan (提案/見積), cornas (仕入発注)<br><br><strong>ドキュメントの場合:</strong><br>0 = 非表示 <br>1 = 表示<br>2 = 空でない場合のみ表示<br><br><strong>ドキュメント行の場合 :</strong><br>0 = 非表示 <br>1 = カラムに表示<br>3 = 説明の後の説明カラムに表示<br>4 = 空でない場合のみ、説明の後の説明カラムに表示
 DisplayOnPdf=PDFで表示
 IsAMeasureDesc=フィールドの値を累積して、合計をリストに入れることはできるか？ (例：1または0)
 SearchAllDesc=クイック検索ツールから検索するためにフィールドが使用されているか？ (例：1または0)

@@ -14,46 +14,42 @@
 # along with this program.  If not, see .
 
 #
-# Générique
+# Generic
 #
 
-# Module label 'Module Base de connaissance'
-ModuleKnowledgeManagementName = Base de connaissance
+# Module label 'ModuleKnowledgeManagementName'
+ModuleKnowledgeManagementName = Knowledge Management System
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc = Base de connaissance
+ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk base
 
 #
-# Page d'administration
+# Admin page
 #
-KnowledgeManagementSetup = Configuration du module Base de connaissance
-Settings = Réglages
-KnowledgeManagementSetupPage = Page de configuration du module Base de connaissance
+KnowledgeManagementSetup = Knowledge Management System setup
+Settings = Paramètres
+KnowledgeManagementSetupPage = Knowledge Management System setup page
+
 
 #
-# Page À propos
+# About page
 #
 About = À propos
-KnowledgeManagementAbout = À propos de la Base de connaissance
-KnowledgeManagementAboutPage = Page à propos de la Base de connaissance
+KnowledgeManagementAbout = A propos de la base de connaissances
+KnowledgeManagementAboutPage = A propos de la base de connaissances
 
 #
-# Page d'exemple
+# Sample page
 #
-MyPageName = Nom de ma page
+KnowledgeManagementArea = Base de connaissances
 
-#
-# Box d'exemple
-#
-MyWidget = Mon widget
-MyWidgetDescription = Description de mon widget
 
 #
 # Menu
 #
-MenuKnowledgeRecord = Registres de connaissances
-ListKnowledgeRecord = Liste
-NewKnowledgeRecord = Nouveau registre de connaissance
-Reply = Répondre
-KnowledgeRecords = registres de connaissances
-KnowledgeRecord = registre de connaissances
-KnowledgeRecordExtraFields = Attributs supplémentaires pour les registres de connaissance
+MenuKnowledgeRecord = Knowledge base
+ListOfArticles = List of articles
+NewKnowledgeRecord = New article
+ValidateReply = Validate solution
+KnowledgeRecords = Articles
+KnowledgeRecord = Article
+KnowledgeRecordExtraFields = Extrafields for Article

@@ -4,9 +4,9 @@
 NoErrorCommitIsDone=Nessun errore, committiamo
 # Errors
 ErrorButCommitIsDone=Sono stati trovati errori ma si convalida ugualmente
-ErrorBadEMail=Email %s is wrong
-ErrorBadMXDomain=Email %s seems wrong (domain has no valid MX record)
-ErrorBadUrl=L'URL %s è sbagliato
+ErrorBadEMail=Email %s is incorrect
+ErrorBadMXDomain=Email %s seems incorrect (domain has no valid MX record)
+ErrorBadUrl=Url %s is incorrect
 ErrorBadValueForParamNotAString=Bad value for your parameter. It appends generally when translation is missing.
 ErrorRefAlreadyExists=Reference <b>%s</b> already exists.
 ErrorLoginAlreadyExists=L'utente %s esiste già.
@@ -46,8 +46,8 @@ ErrorWrongDate=La data non è corretta!
 ErrorFailedToWriteInDir=Impossibile scrivere nella directory %s
 ErrorFoundBadEmailInFile=Sintassi email errata nelle righe %s del file (ad esempio alla riga %s con email = %s)
 ErrorUserCannotBeDelete=User cannot be deleted. Maybe it is associated to Dolibarr entities.
-ErrorFieldsRequired=Mancano alcuni campi obbligatori.
-ErrorSubjectIsRequired=Il titolo della email è obbligatorio
+ErrorFieldsRequired=Some required fields have been left blank.
+ErrorSubjectIsRequired=The email subject is required
 ErrorFailedToCreateDir=Impossibile creare la directory. Verifica che l'utente del server Web abbia i permessi per scrivere nella directory Dolibarr. Se il parametro <b>safe_mode</b> è abilitato in PHP, verifica che i file php di Dolibarr appartengano all'utente o al gruppo del server web (per esempio www-data).
 ErrorNoMailDefinedForThisUser=Nessun indirizzo memorizzato per questo utente
 ErrorSetupOfEmailsNotComplete=Setup of emails is not complete
@@ -226,6 +226,7 @@ ErrorAPageWithThisNameOrAliasAlreadyExists=The page/container <strong>%s</strong
 ErrorDuringChartLoad=Error when loading chart of accounts. If few accounts were not loaded, you can still enter them manually.
 ErrorBadSyntaxForParamKeyForContent=Bad syntax for param keyforcontent. Must have a value starting with %s or %s
 ErrorVariableKeyForContentMustBeSet=Error, the constant with name %s (with text content to show) or %s (with external url to show) must be set.
+ErrorURLMustEndWith=URL %s must end %s
 ErrorURLMustStartWithHttp=URL %s must start with http:// or https://
 ErrorHostMustNotStartWithHttp=Host name %s must NOT start with http:// or https://
 ErrorNewRefIsAlreadyUsed=Error, the new reference is already used
@@ -296,3 +297,4 @@ WarningAvailableOnlyForHTTPSServers=Available only if using HTTPS secured connec
 WarningModuleXDisabledSoYouMayMissEventHere=Module %s has not been enabled. So you may miss a lot of event here.
 ErrorActionCommPropertyUserowneridNotDefined=User's owner is required
 ErrorActionCommBadType=Selected event type (id: %n, code: %s) do not exist in Event Type dictionary
+CheckVersionFail=Version check fail
