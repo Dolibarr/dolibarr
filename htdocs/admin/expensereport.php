@@ -163,7 +163,14 @@ elseif ($action == 'setdoc')
 	$amounts = GETPOST('EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY', 'int');
 	$res3 = dolibarr_set_const($db, 'EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY', intval($amounts), 'chaine', 0, '', $conf->entity);
 
-	if (!$res1 > 0 || !$res2 > 0 || !$res3 > 0) $error++;
+    if ($conf->projet->enabled) {
+        $projects = GETPOST('EXPENSEREPORT_PROJECT_IS_REQUIRED', 'int');
+        $res4 = dolibarr_set_const($db, 'EXPENSEREPORT_PROJECT_IS_REQUIRED', intval($projects), 'chaine', 0, '', $conf->entity);
+    } else {
+        $res4 = dolibarr_del_const($this->db, 'EXPENSEREPORT_PROJECT_IS_REQUIRED');
+    }
+
+	if (!$res1 > 0 || !$res2 > 0 || !$res3 > 0 || !$res4) $error++;
 
  	if (!$error)
 	{
@@ -484,6 +491,14 @@ print $langs->trans('ForceExpenseReportsLineAmountsIncludingTaxesOnly');
 print '</td><td class="right">';
 print $form->selectyesno('EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY', empty($conf->global->EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY) ? 0 : 1, 1);
 print '</td></tr>';
+
+if ($conf->projet->enabled) {
+    print '<tr class="oddeven"><td>';
+    print $langs->trans('ProjectIsRequiredOnExpenseReports');
+    print '</td><td class="right">';
+    print $form->selectyesno('EXPENSEREPORT_PROJECT_IS_REQUIRED', empty($conf->global->EXPENSEREPORT_PROJECT_IS_REQUIRED) ? 0 : 1, 1);
+    print '</td></tr>';
+}
 
 print '</table>';
 
