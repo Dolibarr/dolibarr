@@ -401,7 +401,7 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 		$result=$localobject->getOutstandingBills();
 
 		print __METHOD__." id=".$id." result=".var_export($result, true)."\n";
-		$this->assertLessThan($result, 0);
+		$this->assertTrue(array_key_exists('opened', $result), 'Result of getOutstandingBills failed');
 
 		return $id;
 	}
