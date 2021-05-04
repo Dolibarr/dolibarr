@@ -114,7 +114,6 @@ if (!empty($conf->propal->enabled)) {
 
 
 if (!empty($conf->commande->enabled)) {
-
 	print load_fiche_titre($langs->trans("Order"), '', '');
 
 	print "<br>\n";
@@ -125,10 +124,8 @@ if (!empty($conf->commande->enabled)) {
 
 	print '</table>';
 	print '</div>';
-
 }
 if (!empty($conf->facture->enabled)) {
-
 	print load_fiche_titre($langs->trans("Invoices"), '', '');
 
 	print "<br>\n";
@@ -148,10 +145,8 @@ if (!empty($conf->facture->enabled)) {
 	print '</td></tr>';
 	print '</table>';
 	print '</div>';
-
 }
 if (!empty($conf->expedition->enabled)) {
-
 	print load_fiche_titre($langs->trans("Sendings"), '', '');
 
 	print "<br>\n";
@@ -162,10 +157,8 @@ if (!empty($conf->expedition->enabled)) {
 
 	print '</table>';
 	print '</div>';
-
 }
 if (!empty($conf->reception->enabled)) {
-
 	print load_fiche_titre($langs->trans("Reception"), '', '');
 
 	print "<br>\n";
@@ -178,7 +171,6 @@ if (!empty($conf->reception->enabled)) {
 	print '</div>';
 }
 if (!empty($conf->ticket->enabled)) {
-
 	print load_fiche_titre($langs->trans("Ticket"), '', '');
 
 	print "<br>\n";
@@ -191,7 +183,6 @@ if (!empty($conf->ticket->enabled)) {
 	print '</div>';
 }
 if (!empty($conf->ficheinter->enabled)) {
-
 	print load_fiche_titre($langs->trans("Intervention"), '', '');
 
 	print "<br>\n";
@@ -223,10 +214,8 @@ if (!empty($conf->supplier_proposal->enabled)) {
 	print '</td></tr>';
 	print '</table>';
 	print '</div>';
-
 }
 if (!empty($conf->fournisseur->enabled)) {
-
 	print load_fiche_titre($langs->trans("SupplierOrder"), '', '');
 
 	print "<br>\n";
@@ -237,10 +226,8 @@ if (!empty($conf->fournisseur->enabled)) {
 
 	print '</table>';
 	print '</div>';
-	
 }
 if (!empty($conf->recruitment->enabled)) {
-
 	print load_fiche_titre($langs->trans("Recruitment"), '', '');
 
 	print "<br>\n";
@@ -251,10 +238,8 @@ if (!empty($conf->recruitment->enabled)) {
 
 	print '</table>';
 	print '</div>';
-	
 }
 if (!empty($conf->contrat->enabled)) {
-
 	print load_fiche_titre($langs->trans("Contrat"), '', '');
 
 	print "<br>\n";
@@ -265,10 +250,8 @@ if (!empty($conf->contrat->enabled)) {
 
 	print '</table>';
 	print '</div>';
-	
 }
 if (!empty($conf->stock->enabled)) {
-
 	print load_fiche_titre($langs->trans("Stock"), '', '');
 
 	print "<br>\n";
@@ -279,10 +262,8 @@ if (!empty($conf->stock->enabled)) {
 
 	print '</table>';
 	print '</div>';
-	
 }
 if (!empty($conf->holiday->enabled)) {
-
 	print load_fiche_titre($langs->trans("Holidays"), '', '');
 
 	print "<br>\n";
@@ -294,10 +275,8 @@ if (!empty($conf->holiday->enabled)) {
 
 	print '</table>';
 	print '</div>';
-	
 }
 if (!empty($conf->expensereport->enabled)) {
-
 	print load_fiche_titre($langs->trans("Trips"), '', '');
 
 	print "<br>\n";
@@ -308,7 +287,6 @@ if (!empty($conf->expensereport->enabled)) {
 
 	print '</table>';
 	print '</div>';
-	
 }
 
 
