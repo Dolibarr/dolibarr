@@ -4912,8 +4912,9 @@ class Facture extends CommonInvoice
 		$nbMailSend = 0;
 		$errorsMsg = array();
 
+		$langs->load("bills");
+
 		if (empty($conf->facture->enabled)) {	// Should not happen. If module disabled, cron job should not be visible.
-			$langs->load("bills");
 			$this->output .= $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Facture"));
 			return 0;
 		}
@@ -4930,6 +4931,8 @@ class Facture extends CommonInvoice
 		$formmail = new FormMail($this->db);
 
 		$now = dol_now();
+		$tmpidate = dol_get_first_hour(dol_time_plus_duree($now, $nbdays, 'd'), 'gmt');
+
 		$tmpinvoice = new Facture($this->db);
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -4942,16 +4945,18 @@ class Facture extends CommonInvoice
 			$sql .= ", ".MAIN_DB_PREFIX."c_paiement as cp";
 		}
 		$sql .= " WHERE f.paye = 0";
-		$sql .= " AND f.date_lim_reglement = '".$this->db->idate(dol_get_first_hour(dol_time_plus_duree($now, -1 * $nbdays, 'd'), 'gmt'), 'gmt')."'";
+		$sql .= " AND f.date_lim_reglement = '".$this->db->idate($tmpidate, 'gmt')."'";
 		$sql .= " AND f.entity IN (".getEntity('facture').")";
 		if (!empty($paymentmode) && $paymentmode != 'all') {
 			$sql .= " AND f.fk_mode_reglement = cp.id AND cp.code = '".$this->db->escape($paymentmode)."'";
 		}
 		// TODO Add filter to check there is no payment started
 		$sql .= $this->db->order("date_lim_reglement", "ASC");
+
 		$resql = $this->db->query($sql);
-		$tmpidate=$this->db->idate(dol_get_first_hour(dol_time_plus_duree($now, -1 * $nbdays, 'd'), 'gmt'), 'gmt');
-		$this->output .= 'Search unpaid invoices with due date = '.$tmpidate.'<br>';
+
+		$stmpidate = dol_print_date($tmpidate, 'day', 'gmt');
+		$this->output .= $langs->trans("SearchUnpaidInvoicesWithDueDate", $stmpidate).'<br>';
 
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
@@ -4964,6 +4969,7 @@ class Facture extends CommonInvoice
 						$outputlangs = new Translate('', $conf);
 						if ($tmpinvoice->thirdparty->default_lang) {
 							$outputlangs->setDefaultLang($tmpinvoice->thirdparty->default_lang);
+							$outputlangs->loadLangs(array("main", "bills"));
 						} else {
 							$outputlangs = $langs;
 						}
@@ -4971,8 +4977,8 @@ class Facture extends CommonInvoice
 						// Select email template
 						$arraymessage = $formmail->getEMailTemplate($this->db, 'facture_send', $user, $outputlangs, (is_numeric($template) ? $template : 0), 1, (is_numeric($template) ? '' : $template));
 						if (is_numeric($arraymessage) && $arraymessage <= 0) {
-							$langs->load("bills");
-							$this->output .= $langs->trans('FailedToFindEmailTemplate', $template);
+							$langs->load("errors");
+							$this->output .= $langs->trans('ErrorFailedToFindEmailTemplate', $template);
 							return 0;
 						}
 
@@ -4980,15 +4986,17 @@ class Facture extends CommonInvoice
 						$errormesg = '';
 
 						// Make substitution in email content
-						$substitutionarray = getCommonSubstitutionArray($langs, 0, '', $this);
+						$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, '', $tmpinvoice);
 
-						complete_substitutions_array($substitutionarray, $langs, $this);
+						complete_substitutions_array($substitutionarray, $outputlangs, $tmpinvoice);
 
 						// Content
-						$sendContent = make_substitutions($langs->trans($arraymessage->content), $substitutionarray);
+						$content = $outputlangs->transnoentitiesnoconv($arraymessage->content);
+
+						$sendContent = make_substitutions($content, $substitutionarray, $outputlangs, 1);
 
 						//Topic
-						$sendTopic = (!empty($arraymessage->topic)) ? $arraymessage->topic : html_entity_decode($langs->trans('EventReminder'));
+						$sendTopic = (!empty($arraymessage->topic)) ? $arraymessage->topic : $outputlangs->transnoentitiesnoconv('InformationMessage');
 
 						// Recipient
 						$res = $tmpinvoice->fetch_thirdparty();
