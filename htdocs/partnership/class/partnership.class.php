@@ -61,7 +61,7 @@ class Partnership extends CommonObject
 	/**
 	 * @var string String with name of icon for partnership. Must be the part after the 'object_' into object_partnership.png
 	 */
-	public $picto = 'partnership@partnership';
+	public $picto = 'partnership';
 
 
 	const STATUS_DRAFT = 0;
@@ -89,7 +89,7 @@ class Partnership extends CommonObject
 	 *  'help' is a 'TranslationString' to use to show a tooltip on field. You can also use 'TranslationString:keyfortooltiponlick' for a tooltip on click.
 	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
 	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
-	 *  'arraykeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
+	 *  'arrayofkeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
 	 *  'autofocusoncreate' to have field having the focus on a create form. Only 1 field should have this property set to 1.
 	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
 	 *
@@ -1059,7 +1059,7 @@ class Partnership extends CommonObject
 		// phpcs:enable
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
-			//$langs->load("partnership@partnership");
+			//$langs->load("partnership");
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
 			$this->labelStatus[self::STATUS_ACCEPTED] = $langs->trans('Accepted');
 			$this->labelStatus[self::STATUS_REFUSED] = $langs->trans('Refused');
@@ -1166,7 +1166,7 @@ class Partnership extends CommonObject
 	public function getNextNumRef()
 	{
 		global $langs, $conf;
-		$langs->load("partnership@partnership");
+		$langs->load("partnership");
 
 		if (empty($conf->global->PARTNERSHIP_ADDON)) {
 			$conf->global->PARTNERSHIP_ADDON = 'mod_partnership_standard';
@@ -1231,7 +1231,7 @@ class Partnership extends CommonObject
 		$result = 0;
 		$includedocgeneration = 0;
 
-		$langs->load("partnership@partnership");
+		$langs->load("partnership");
 
 		if (!dol_strlen($modele)) {
 			$modele = 'standard_partnership';

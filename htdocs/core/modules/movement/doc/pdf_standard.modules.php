@@ -295,7 +295,7 @@ class pdf_stdandard extends ModelePDFMovement
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot as pl ON m.batch = pl.batch AND m.fk_product = pl.fk_product";
 		$sql .= " WHERE m.fk_product = p.rowid";
 		if ($msid > 0) {
-			$sql .= " AND m.rowid = ".$msid;
+			$sql .= " AND m.rowid = ".((int) $msid);
 		}
 		$sql .= " AND m.fk_entrepot = e.rowid";
 		$sql .= " AND e.entity IN (".getEntity('stock').")";
@@ -303,13 +303,13 @@ class pdf_stdandard extends ModelePDFMovement
 			$sql .= " AND p.fk_product_type = 0";
 		}
 		if ($id > 0) {
-			$sql .= " AND e.rowid ='".$id."'";
+			$sql .= " AND e.rowid = ".((int) $id);
 		}
 		if ($month > 0) {
 			if ($year > 0) {
 				$sql .= " AND m.datem BETWEEN '".$this->db->idate(dol_get_first_day($year, $month, false))."' AND '".$this->db->idate(dol_get_last_day($year, $month, false))."'";
 			} else {
-				$sql .= " AND date_format(m.datem, '%m') = '$month'";
+				$sql .= " AND date_format(m.datem, '%m') = '".((int) $month)."'";
 			}
 		} elseif ($year > 0) {
 			$sql .= " AND m.datem BETWEEN '".$this->db->idate(dol_get_first_day($year, 1, false))."' AND '".$this->db->idate(dol_get_last_day($year, 12, false))."'";

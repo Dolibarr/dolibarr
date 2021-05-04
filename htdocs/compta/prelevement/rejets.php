@@ -99,7 +99,7 @@ if ($type == 'bank-transfer') {
 	$sql .= " AND p.type = 'debit-order'";
 }
 if ($socid) {
-	$sql .= " AND s.rowid = ".$socid;
+	$sql .= " AND s.rowid = ".((int) $socid);
 }
 $sql .= $db->order($sortfield, $sortorder);
 $sql .= $db->plimit($limit + 1, $offset);
@@ -113,7 +113,7 @@ if ($result) {
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num);
 	print"\n<!-- debut table -->\n";
-	print '<table class="noborder tagtable liste" width="100%" cellspacing="0" cellpadding="4">';
+	print '<table class="noborder tagtable liste" width="100%" cellpadding="4">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Line", $_SERVER["PHP_SELF"], "p.ref", '', $param);
 	print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", '', $param);

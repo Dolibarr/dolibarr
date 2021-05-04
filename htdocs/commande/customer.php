@@ -105,7 +105,7 @@ if (dol_strlen($begin)) {
 	$sql .= " AND s.nom like '".$db->escape($begin)."'";
 }
 if ($socid > 0) {
-	$sql .= " AND s.rowid = ".$socid;
+	$sql .= " AND s.rowid = ".((int) $socid);
 }
 $sql .= " AND c.fk_statut in (1, 2) AND c.facture = 0";
 $sql .= " GROUP BY s.nom";

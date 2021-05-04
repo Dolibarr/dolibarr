@@ -48,7 +48,7 @@ class modPartnership extends DolibarrModules
 
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
-		$this->numero = 500000; // TODO Go on page https://wiki.dolibarr.org/index.php/List_of_modules_id to reserve an id number for your module
+		$this->numero = 58000;
 
 		// Key text used to identify module (for permissions, menus, etc...)
 		$this->rights_class = 'partnership';
@@ -86,7 +86,7 @@ class modPartnership extends DolibarrModules
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
 		// To use a supported fa-xxx css style of font awesome, use this->picto='xxx'
-		$this->picto = 'generic';
+		$this->picto = 'partnership';
 
 		// Define some features supported by module (triggers, login, substitutions, menus, css, etc...)
 		$this->module_parts = array(
@@ -144,7 +144,7 @@ class modPartnership extends DolibarrModules
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
 
 		// The language file dedicated to your module
-		$this->langfiles = array("partnership@partnership");
+		$this->langfiles = array("partnership");
 
 		// Prerequisites
 		$this->phpmin = array(5, 6); // Minimum version of PHP required by module

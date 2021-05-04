@@ -100,7 +100,7 @@ class Users extends DolibarrApi
 			if (!DolibarrApi::_checkFilters($sqlfilters)) {
 				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
@@ -312,7 +312,6 @@ class Users extends DolibarrApi
 			if (in_array($field, array('pass_crypted', 'pass_indatabase', 'pass_indatabase_crypted', 'pass_temp', 'api_key'))) {
 				// This properties can't be set/modified with API
 				throw new RestException(401, 'The property '.$field." can't be set/modified using the APIs");
-				continue;
 			}
 			/*if ($field == 'pass') {
 				if (empty(DolibarrApiAccess::$user->rights->user->user->password)) {
@@ -366,7 +365,6 @@ class Users extends DolibarrApi
 			if (in_array($field, array('pass_crypted', 'pass_indatabase', 'pass_indatabase_crypted', 'pass_temp', 'api_key'))) {
 				// This properties can't be set/modified with API
 				throw new RestException(401, 'The property '.$field." can't be set/modified using the APIs");
-				continue;
 			}
 			if ($field == 'pass') {
 				if ($this->useraccount->id != DolibarrApiAccess::$user->id && empty(DolibarrApiAccess::$user->rights->user->user->password)) {
@@ -537,7 +535,7 @@ class Users extends DolibarrApi
 			if (!DolibarrApi::_checkFilters($sqlfilters)) {
 				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 

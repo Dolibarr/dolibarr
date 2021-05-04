@@ -109,7 +109,7 @@ if (empty($reshook)) {
 		$object->fk_project = GETPOST('projectid', 'int');
 		$object->label = (string) GETPOST("libelle", "alpha");
 		$object->description = (string) GETPOST("desc", "alpha");
-		$object->statut      = GETPOST("statut");
+		$object->statut = GETPOST("statut", "int");
 		$object->lieu = (string) GETPOST("lieu", "alpha");
 		$object->address = (string) GETPOST("address", "alpha");
 		$object->zip = (string) GETPOST("zipcode", "alpha");
@@ -137,7 +137,7 @@ if (empty($reshook)) {
 						header("Location: ".$backtopage);
 						exit;
 					} else {
-						header("Location: card.php?id=".$id);
+						header("Location: card.php?id=".urlencode($id));
 						exit;
 					}
 				} else {
@@ -166,9 +166,9 @@ if (empty($reshook)) {
 	}
 
 	// Modification entrepot
-	if ($action == 'update' && $cancel <> $langs->trans("Cancel")) {
+	if ($action == 'update' && !$cancel) {
 		if ($object->fetch($id)) {
-			$object->label = GETPOST("libelle");
+			$object->label 		 = GETPOST("libelle");
 			$object->fk_parent   = GETPOST("fk_parent");
 			$object->fk_project = GETPOST('projectid');
 			$object->description = GETPOST("desc");
@@ -178,8 +178,8 @@ if (empty($reshook)) {
 			$object->zip         = GETPOST("zipcode");
 			$object->town        = GETPOST("town");
 			$object->country_id  = GETPOST("country_id");
-			$object->phone = GETPOST("phone");
-			$object->fax = GETPOST("fax");
+			$object->phone 		 = GETPOST("phone");
+			$object->fax 		 = GETPOST("fax");
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -460,8 +460,10 @@ if ($action == 'create') {
 				print '</td></tr>';
 			}
 
+			print '<tr>';
+
 			// Description
-			print '<tr><td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>'.nl2br($object->description).'</td></tr>';
+			print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>'.dol_htmlentitiesbr($object->description).'</td></tr>';
 
 			$calcproductsunique = $object->nb_different_products();
 			$calcproducts = $object->nb_products();
@@ -571,6 +573,9 @@ if ($action == 'create') {
 
 			print '<table class="noborder centpercent">';
 			print "<tr class=\"liste_titre\">";
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
+			print $hookmanager->resPrint;
 			print_liste_field_titre("Product", "", "p.ref", "&amp;id=".$id, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("Label", "", "p.label", "&amp;id=".$id, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("NumberOfUnit", "", "ps.reel", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
@@ -591,20 +596,52 @@ if ($action == 'create') {
 			if ($user->rights->stock->creer) {
 				print_liste_field_titre('');
 			}
+			// Hook fields
+			$parameters = array('sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+			$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
+			print $hookmanager->resPrint;
 			print "</tr>\n";
 
 			$totalunit = 0;
 			$totalvalue = $totalvaluesell = 0;
 
-			$sql = "SELECT p.rowid as rowid, p.ref, p.label as produit, p.tobatch, p.fk_product_type as type, p.pmp as ppmp, p.price, p.price_ttc, p.entity,";
+			//For MultiCompany PMP per entity
+			$separatedPMP = false;
+			if (!empty($conf->global->MULTICOMPANY_PRODUCT_SHARING_ENABLED) && !empty($conf->global->MULTICOMPANY_PMP_PER_ENTITY_ENABLED)) {
+				$separatedPMP = true;
+			}
+
+			$sql = "SELECT p.rowid as rowid, p.ref, p.label as produit, p.tobatch, p.fk_product_type as type, p.price, p.price_ttc, p.entity,";
+			if ($separatedPMP) {
+				$sql .= " pa.pmp as ppmp,";
+			} else {
+				$sql .= " p.pmp as ppmp,";
+			}
 			$sql .= " ps.reel as value";
 			if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 				$sql .= ",fk_unit";
 			}
+			// Add fields from hooks
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
+			if ($reshook > 0) {			//Note that $sql is replaced if reshook > 0
+				$sql = "";
+			}
+			$sql .= $hookmanager->resPrint;
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_stock as ps, ".MAIN_DB_PREFIX."product as p";
+
+			if ($separatedPMP) {
+				$sql .= ", ".MAIN_DB_PREFIX."product_perentity as pa";
+			}
+
 			$sql .= " WHERE ps.fk_product = p.rowid";
 			$sql .= " AND ps.reel <> 0"; // We do not show if stock is 0 (no product in this warehouse)
 			$sql .= " AND ps.fk_entrepot = ".$object->id;
+
+			if ($separatedPMP) {
+				$sql .= " AND pa.fk_product = p.rowid AND pa.entity = ". (int) $conf->entity;
+			}
+
 			$sql .= $db->order($sortfield, $sortorder);
 
 			dol_syslog('List products', LOG_DEBUG);
@@ -635,6 +672,9 @@ if ($action == 'create') {
 
 					//print '<td>'.dol_print_date($objp->datem).'</td>';
 					print '<tr class="oddeven">';
+					$parameters = array('obj'=>$objp);
+					$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
+					print $hookmanager->resPrint;
 					print "<td>";
 					$productstatic->id = $objp->rowid;
 					$productstatic->ref = $objp->ref;

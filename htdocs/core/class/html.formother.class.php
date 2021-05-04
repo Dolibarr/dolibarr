@@ -1174,14 +1174,15 @@ class FormOther
 	        	jQuery("#boxcombo").change(function() {
 	        	var boxid=jQuery("#boxcombo").val();
 	        		if (boxid > 0) {
+						console.log("A box widget has been selected for addition, we call ajax page to add it.")
 	            		var left_list = cleanSerialize(jQuery("#boxhalfleft").sortable("serialize"));
 	            		var right_list = cleanSerialize(jQuery("#boxhalfright").sortable("serialize"));
 	            		var boxorder = \'A:\' + left_list + \'-B:\' + right_list;
 	    				jQuery.ajax({
-	    					url: \''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&boxid=\'+boxid+\'&zone='.$areacode.'&userid='.$user->id.'\',
-	    			        async: false
-	    		        });
-	        			window.location.search=\'mainmenu='.GETPOST("mainmenu", "aZ09").'&leftmenu='.GETPOST('leftmenu', "aZ09").'&action=addbox&boxid=\'+boxid;
+	    					url: \''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&boxid=\'+boxid+\'&zone='.$areacode.'&userid='.$user->id.'\'
+	    		        }).done(function() {
+	        				window.location.search=\'mainmenu='.GETPOST("mainmenu", "aZ09").'&leftmenu='.GETPOST('leftmenu', "aZ09").'\';
+						});
 	                }
 	        	});';
 			if (!count($arrayboxtoactivatelabel)) {

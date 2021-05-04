@@ -16,12 +16,13 @@ MarginDetails=Marginaldetaljer
 ProductMargins=Produktmarginaler
 CustomerMargins=Kundmarginaler
 SalesRepresentativeMargins=Återförsäljares marginaler
+ContactOfInvoice=Contact of invoice
 UserMargins=Användarmarginaler
 ProductService=Produkt eller tjänst
 AllProducts=Alla produkter och tjänster
 ChooseProduct/Service=Välj produkt eller tjänst
 ForceBuyingPriceIfNull=Tvinga köp / kostpris till försäljningspris om det inte är definierat
-ForceBuyingPriceIfNullDetails=Om köp- / kostnadskursen inte definieras, och detta alternativ "ON" kommer marginalen att vara noll på raden (köp / kostnadskurs = försäljningspris), annars ("OFF"), marginal motsvarar föreslagen standard.
+ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0 on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100% if no default value can be found).
 MARGIN_METHODE_FOR_DISCOUNT=Marginalmetod för globala rabatter
 UseDiscountAsProduct=Som produkt
 UseDiscountAsService=Som tjänst
@@ -36,7 +37,7 @@ CostPrice=Kostnadspris
 UnitCharges=Enhetspris
 Charges=Avgifter
 AgentContactType=Handelsagentens kontakttyp
-AgentContactTypeDetails=Definiera vad kontakttyp (länkad på fakturor) kommer att användas för marginalrapport per försäljning representant
+AgentContactTypeDetails=Define what contact type (linked on invoices) will be used for margin report per contact/address. Note that reading statistics on a contact is not reliable since in most cases the contact may not be defined explicitely on the invoices.
 rateMustBeNumeric=Betyg måste vara ett numeriskt värde
 markRateShouldBeLesserThan100=Mark takt bör vara lägre än 100
 ShowMarginInfos=Visa marginal information

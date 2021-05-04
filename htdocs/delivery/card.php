@@ -659,7 +659,7 @@ if ($action == 'create') {    // Create. Seems to no be used
 			}
 			print "\n";
 
-			print '<table width="100%" cellspacing="2"><tr><td width="50%" valign="top">';
+			print '<div class="fichecenter"><div class="fichehalfleft">';
 
 			/*
 			  * Documents generated
@@ -687,11 +687,11 @@ if ($action == 'create') {    // Create. Seems to no be used
 			}
 
 
-			print '</td><td valign="top" width="50%">';
+			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
-			// Rien a droite
+			// Nothing on right
 
-			print '</td></tr></table>';
+			print '</div></div></div>';
 		} else {
 			/* Expedition non trouvee */
 			print "Expedition inexistante ou acces refuse";

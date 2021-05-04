@@ -133,7 +133,9 @@ IncludeDocGeneration=Jeg vil generere nogle dokumenter fra objektet
 IncludeDocGenerationHelp=Hvis du markerer dette, vil nogle koder genereres for at tilføje en kasse "Generer dokument" på posten.
 ShowOnCombobox=Vis værdi til combobox
 KeyForTooltip=Nøgle til værktøjstip
-CSSClass=CSS Class
+CSSClass=CSS til redigering / oprettelse af formular
+CSSViewClass=CSS til læst form
+CSSListClass=CSS til liste
 NotEditable=Ikke redigerbar
 ForeignKey=Fremmed nøgle
 TypeOfFieldsHelp=Felttype:<br> varchar (99), dobbelt (24,8), reel, tekst, html, datetime, tidsstempel, heltal, heltal: ClassName: relative path / to / classfile.class.php [: 1 [: filter]] ( '1' betyder, at vi tilføjer en + knap efter kombinationsboksen for at oprette posten, 'filter' kan være 'status = 1 OG fk_user = __USER_ID OG enhed IN (__SHARED_ENTITIES__)' for eksempel)

@@ -225,7 +225,7 @@ class Form
 				$ret .= '<input type="hidden" name="token" value="'.newToken().'">';
 				$ret .= '<input type="hidden" name="'.$paramid.'" value="'.$object->id.'">';
 				if (empty($notabletag)) {
-					$ret .= '<table class="nobordernopadding centpercent" cellpadding="0" cellspacing="0">';
+					$ret .= '<table class="nobordernopadding centpercent">';
 				}
 				if (empty($notabletag)) {
 					$ret .= '<tr><td>';
@@ -868,9 +868,10 @@ class Form
 	 *  @param	int		$disablefavorites		1=Disable favorites,
 	 *  @param	int		$addspecialentries		1=Add dedicated entries for group of countries (like 'European Economic Community', ...)
 	 *  @param	array	$exclude_country_code	Array of country code (iso2) to exclude
+	 *  @param	int		$hideflags				Hide flags
 	 *  @return string           				HTML string with select
 	 */
-	public function select_country($selected = '', $htmlname = 'country_id', $htmloption = '', $maxlength = 0, $morecss = 'minwidth300', $usecodeaskey = '', $showempty = 1, $disablefavorites = 0, $addspecialentries = 0, $exclude_country_code = array())
+	public function select_country($selected = '', $htmlname = 'country_id', $htmloption = '', $maxlength = 0, $morecss = 'minwidth300', $usecodeaskey = '', $showempty = 1, $disablefavorites = 0, $addspecialentries = 0, $exclude_country_code = array(), $hideflags = 0)
 	{
 		// phpcs:enable
 		global $conf, $langs, $mysoc;
@@ -955,8 +956,10 @@ class Form
 					}
 					if ($row['code_iso']) {
 						$labeltoshow .= ' <span class="opacitymedium">('.$row['code_iso'].')</span>';
-						$tmpflag = picto_from_langcode($row['code_iso'], 'class="saturatemedium marginrightonly"');
-						$labeltoshow = $tmpflag.' '.$labeltoshow;
+						if (empty($hideflags)) {
+							$tmpflag = picto_from_langcode($row['code_iso'], 'class="saturatemedium marginrightonly"');
+							$labeltoshow = $tmpflag.' '.$labeltoshow;
+						}
 					}
 
 					if ($selected && $selected != '-1' && ($selected == $row['rowid'] || $selected == $row['code_iso'] || $selected == $row['code_iso3'] || $selected == $row['label'])) {
@@ -5171,7 +5174,7 @@ class Form
 			$ret .= '<form method="post" action="'.$page.'" name="form'.$htmlname.'">';
 			$ret .= '<input type="hidden" name="action" value="set'.$htmlname.'">';
 			$ret .= '<input type="hidden" name="token" value="'.newToken().'">';
-			$ret .= '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+			$ret .= '<table class="nobordernopadding">';
 			$ret .= '<tr><td>';
 			$ret .= $this->selectDate($selected, $htmlname, $displayhour, $displaymin, 1, 'form'.$htmlname, 1, 0);
 			$ret .= '</td>';
@@ -5475,7 +5478,7 @@ class Form
 			print '<form method="post" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="set_contact">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
-			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+			print '<table class="nobordernopadding">';
 			print '<tr><td>';
 			print $this->selectcontacts($societe->id, $selected, $htmlname);
 			$num = $this->num;
@@ -6791,7 +6794,7 @@ class Form
 				{
 					throw new RestException(503, 'Error when validating parameter sqlfilters '.$objecttmp->filter);
 				}*/
-				$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+				$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 				$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'Form::forgeCriteriaCallback', $objecttmp->filter).")";
 			}
 		}

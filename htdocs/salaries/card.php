@@ -213,10 +213,11 @@ if ($action == 'add' && empty($cancel)) {
 	}
 
 	if (!$error) {
+		$db->begin();
+
 		$ret = $object->create($user);
 		if ($ret < 0) $error++;
 		if (!empty($auto_create_paiement) && !$error) {
-			$db->begin();
 			// Create a line of payments
 			$paiement = new PaymentSalary($db);
 			$paiement->chid         = $object->id;
@@ -243,15 +244,11 @@ if ($action == 'add' && empty($cancel)) {
 					setEventMessages($paiement->error, null, 'errors');
 				}
 			}
-
-			if (!$error) {
-				$db->commit();
-			} else {
-				$db->rollback();
-			}
 		}
 
 		if (empty($error)) {
+			$db->commit();
+
 			if (GETPOST('saveandnew', 'alpha')) {
 				setEventMessages($langs->trans("RecordSaved"), '', 'mesgs');
 				header("Location: card.php?action=create&fk_project=" . urlencode($projectid) . "&accountid=" . urlencode($accountid) . '&paymenttype=' . urlencode(GETPOST('paymenttype', 'az09')) . '&datepday=' . GETPOST("datepday", 'int') . '&datepmonth=' . GETPOST("datepmonth", 'int') . '&datepyear=' . GETPOST("datepyear", 'int'));
@@ -260,6 +257,8 @@ if ($action == 'add' && empty($cancel)) {
 				header("Location: " . $_SERVER['PHP_SELF'] . '?id=' . $object->id);
 				exit;
 			}
+		} else {
+			$db->rollback();
 		}
 	}
 
@@ -526,10 +525,12 @@ if ($action == 'create') {
 	}
 
 	// Bouton Save payment
-/*	print '<tr class="hide_if_no_auto_create_payment"><td>';
+	/*
+	print '<tr class="hide_if_no_auto_create_payment"><td>';
 	print $langs->trans("ClosePaidSalaryAutomatically");
 	print '</td><td><input type="checkbox" checked value="1" name="closepaidsalary"></td></tr>';
-*/
+	*/
+
 	// Other attributes
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook

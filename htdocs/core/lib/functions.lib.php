@@ -686,11 +686,11 @@ function GETPOSTINT($paramname, $method = 0, $filter = null, $options = null, $n
 /**
  *  Return a value after checking on a rule.
  *
- *  @param  string  $out	     Value to get/check
- *  @param  string  $check	     Type of check
+ *  @param  string  $out	     Value to check/clear.
+ *  @param  string  $check	     Type of check/sanitizing
  *  @param  int     $filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
  *  @param  mixed   $options     Options to pass to filter_var when $check is set to 'custom'
- *  @return string|array         Value found (string or array), or '' if check fails
+ *  @return string|array         Value sanitized (string or array). It may be '' if format check fails.
  */
 function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = null)
 {
@@ -2197,8 +2197,8 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 			if ($tzoutput == 'tzserver') {
 				$to_gmt = false;
 				$offsettzstring = @date_default_timezone_get(); // Example 'Europe/Berlin' or 'Indian/Reunion'
-				$offsettz = 0;
-				$offsetdst = 0;
+				$offsettz = 0;	// Timezone offset with server timezone, so 0
+				$offsetdst = 0;	// Dst offset with server timezone, so 0
 			} elseif ($tzoutput == 'tzuser' || $tzoutput == 'tzuserrel') {
 				$to_gmt = true;
 				$offsettzstring = (empty($_SESSION['dol_tz_string']) ? 'UTC' : $_SESSION['dol_tz_string']); // Example 'Europe/Berlin' or 'Indian/Reunion'
@@ -2290,7 +2290,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 		dol_print_error("Functions.lib::dol_print_date function called with a bad value from page ".$_SERVER["PHP_SELF"]);
 		return '';
 	} elseif (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?:?([0-9]+)?/i', $time, $reg)) {    // Still available to solve problems in extrafields of type date
-		// This part of code should not be used.
+		// This part of code should not be used anymore.
 		dol_syslog("Functions.lib::dol_print_date function called with a bad value from page ".$_SERVER["PHP_SELF"], LOG_WARNING);
 		//if (function_exists('debug_print_backtrace')) debug_print_backtrace();
 		// Date has format 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS'
@@ -2308,7 +2308,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 		if ($time < 100000000000) {	// Protection against bad date values
 			$timetouse = $time + $offsettz + $offsetdst; // TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
 
-			$ret = adodb_strftime($format, $timetouse, $to_gmt);
+			$ret = adodb_strftime($format, $timetouse, $to_gmt);	// If to_gmt = false then adodb_strftime use TZ of server
 		} else {
 			$ret = 'Bad value '.$time.' for date';
 		}
@@ -2318,7 +2318,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 		$timetouse = $time + $offsettz + $offsetdst; // TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
 
 		// Here ret is string in PHP setup language (strftime was used). Now we convert to $outputlangs.
-		$month = adodb_strftime('%m', $timetouse);
+		$month = adodb_strftime('%m', $timetouse, $to_gmt);		// If to_gmt = false then adodb_strftime use TZ of server
 		$month = sprintf("%02d", $month); // $month may be return with format '06' on some installation and '6' on other, so we force it to '06'.
 		if ($encodetooutput) {
 			$monthtext = $outputlangs->transnoentities('Month'.$month);
@@ -2334,9 +2334,10 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 		//return $ret;
 	}
 	if (preg_match('/__a__/i', $format)) {
+		//print "time=$time offsettz=$offsettz offsetdst=$offsetdst offsettzstring=$offsettzstring";
 		$timetouse = $time + $offsettz + $offsetdst; // TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
 
-		$w = adodb_strftime('%w', $timetouse); // TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
+		$w = adodb_strftime('%w', $timetouse, $to_gmt);		// If to_gmt = false then adodb_strftime use TZ of server
 		$dayweek = $outputlangs->transnoentitiesnoconv('Day'.$w);
 		$ret = str_replace('__A__', $dayweek, $ret);
 		$ret = str_replace('__a__', dol_substr($dayweek, 0, 3), $ret);
@@ -2353,7 +2354,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
  *
  *	@param	int			$timestamp      Timestamp
  *	@param	boolean		$fast           Fast mode. deprecated.
- *  @param	string		$forcetimezone	'' to use the PHP server timezone. Or use a form like 'Europe/Paris' or '+0200' to force timezone.
+ *  @param	string		$forcetimezone	'' to use the PHP server timezone. Or use a form like 'gmt', 'Europe/Paris' or '+0200' to force timezone.
  *	@return	array						Array of informations
  *										'seconds' => $secs,
  *										'minutes' => $min,
@@ -2375,7 +2376,7 @@ function dol_getdate($timestamp, $fast = false, $forcetimezone = '')
 		$datetimeobj = new DateTime();
 		$datetimeobj->setTimestamp($timestamp); // Use local PHP server timezone
 		if ($forcetimezone) {
-			$datetimeobj->setTimezone(new DateTimeZone($forcetimezone)); //  (add timezone relative to the date entered)
+			$datetimeobj->setTimezone(new DateTimeZone($forcetimezone == 'gmt' ? 'UTC' : $forcetimezone)); //  (add timezone relative to the date entered)
 		}
 		$arrayinfo = array(
 			'year'=>((int) date_format($datetimeobj, 'Y')),
@@ -3505,48 +3506,34 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		}
 	} else {
 		$pictowithouttext = preg_replace('/(\.png|\.gif|\.svg)$/', '', $picto);
+		$pictowithouttext = str_replace('object_', '', $pictowithouttext);
 		if (empty($srconly) && in_array($pictowithouttext, array(
 				'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
 				'accountancy', 'account', 'accountline', 'action', 'add', 'address', 'angle-double-down', 'angle-double-up', 'asset',
-				'bank_account', 'barcode', 'bank', 'bill', 'billa', 'billr', 'billd', 'bookmark', 'bom', 'building',
+				'bank_account', 'barcode', 'bank', 'bill', 'billa', 'billr', 'billd', 'bookmark', 'bom', 'bug', 'building',
 				'cash-register', 'category', 'chart', 'check', 'clock', 'close_title', 'cog', 'collab', 'company', 'contact', 'country', 'contract', 'cron', 'cubes',
-				'delete', 'dolly', 'dollyrevert', 'donation', 'download', 'edit', 'ellipsis-h', 'email', 'eraser', 'establishment', 'external-link-alt', 'external-link-square-alt',
+				'delete', 'dolly', 'dollyrevert', 'donation', 'download', 'dynamicprice',
+				'edit', 'ellipsis-h', 'email', 'eraser', 'establishment', 'expensereport', 'external-link-alt', 'external-link-square-alt',
 				'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'autofill', 'folder', 'folder-open', 'folder-plus',
 				'globe', 'globe-americas', 'graph', 'grip', 'grip_title', 'group',
 				'help', 'holiday',
-				'images', 'info', 'intervention', 'inventory', 'intracommreport',
+				'images', 'incoterm', 'info', 'intervention', 'inventory', 'intracommreport', 'knowledgemanagement',
 				'label', 'language', 'link', 'list', 'listlight', 'loan', 'lot', 'long-arrow-alt-right',
 				'margin', 'map-marker-alt', 'member', 'meeting', 'money-bill-alt', 'movement', 'mrp', 'note', 'next',
-				'object_accounting', 'object_account', 'object_accountline', 'object_action', 'object_asset', 'object_bank_account', 'object_barcode', 'object_bill', 'object_billr', 'object_billa', 'object_billd', 'object_bom',
-				'object_category', 'object_conferenceorbooth', 'object_conversation', 'object_bookmark', 'object_bug', 'object_building', 'object_clock', 'object_collab', 'object_dolly', 'object_dollyrevert',
-				'object_folder', 'object_folder-open','object_generic',
-				'object_list-alt', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
-				'object_cash-register', 'object_company', 'object_contact', 'object_contract', 'object_cron', 'object_donation', 'object_dynamicprice', 'object_establishment',
-				'object_globe', 'object_holiday', 'object_hrm', 'object_invoice', 'object_intervention', 'object_inventory', 'object_intracommreport', 'object_label',
-				'object_margin', 'object_members', 'object_money-bill-alt', 'object_multicurrency', 'object_order', 'object_payment',
-				'object_lot', 'object_mrp', 'object_other',
-				'object_payment', 'object_pdf', 'object_product', 'object_propal',
-				'object_paragraph', 'object_poll', 'object_printer', 'object_project', 'object_projectpub', 'object_propal', 'object_resource', 'object_rss', 'object_projecttask',
-				'object_reception', 'object_recruitmentjobposition', 'object_recruitmentcandidature',
-				'object_salary', 'object_shipment', 'object_share-alt', 'object_supplier_invoice', 'object_supplier_invoicea', 'object_supplier_invoiced', 'object_supplier_order', 'object_supplier_proposal', 'object_service', 'object_stock',
-				'object_technic', 'object_ticket', 'object_trip', 'object_user', 'object_group', 'object_member',
-				'object_phoning', 'object_phoning_mobile', 'object_phoning_fax', 'object_email', 'object_website', 'object_movement', 'object_workstation',
 				'off', 'on', 'order',
-				'paiment', 'play', 'pdf', 'phone', 'playdisabled', 'previous', 'poll', 'pos', 'printer', 'product', 'propal', 'stock', 'resize', 'service', 'stats', 'trip',
+				'paiment', 'paragraph', 'play', 'pdf', 'phone', 'playdisabled', 'previous', 'poll', 'pos', 'printer', 'product', 'propal', 'stock', 'resize', 'service', 'stats', 'trip',
 				'setup', 'share-alt', 'sign-out', 'split', 'stripe', 'stripe-s', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'vcard', 'wrench',
 				'github', 'jabber', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
 				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top', 'commercial', 'companies',
 				'generic', 'home', 'hrm', 'members', 'products', 'invoicing',
-				'payment', 'pencil-ruler', 'preview', 'project', 'projectpub', 'projecttask', 'refresh', 'salary', 'shipment', 'supplier_invoice', 'technic', 'ticket',
+				'partnership', 'payment', 'pencil-ruler', 'preview', 'project', 'projectpub', 'projecttask', 'refresh', 'salary', 'shipment', 'supplier_invoice', 'technic', 'ticket',
 				'error', 'warning',
 				'recruitmentcandidature', 'recruitmentjobposition', 'resource',
 				'shapes', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
 				'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda',
-				'user-cog', 'website', 'workstation',
+				'uncheck', 'user-cog', 'website', 'workstation',
 				'conferenceorbooth', 'eventorganization'
 			))) {
-			$pictowithouttext = str_replace('object_', '', $pictowithouttext);
-
 			$fakey = $pictowithouttext;
 			$facolor = '';
 			$fasize = '';
@@ -3566,13 +3553,14 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'donation'=>'file-alt', 'dynamicprice'=>'hand-holding-usd',
 				'setup'=>'cog', 'companies'=>'building', 'products'=>'cube', 'commercial'=>'suitcase', 'invoicing'=>'coins',
 				'accounting'=>'search-dollar', 'category'=>'tag', 'dollyrevert'=>'dolly',
-				'hrm'=>'user-tie', 'margin'=>'calculator', 'members'=>'user-friends', 'ticket'=>'ticket-alt', 'globe'=>'external-link-alt', 'lot'=>'barcode',
+				'hrm'=>'user-tie', 'incoterm'=>'truck-loading',
+				'margin'=>'calculator', 'members'=>'user-friends', 'ticket'=>'ticket-alt', 'globe'=>'external-link-alt', 'lot'=>'barcode',
 				'email'=>'at', 'establishment'=>'building',
 				'edit'=>'pencil-alt', 'graph'=>'chart-line', 'grip_title'=>'arrows-alt', 'grip'=>'arrows-alt', 'help'=>'question-circle',
 				'generic'=>'file', 'holiday'=>'umbrella-beach',
-				'info'=>'info-circle', 'inventory'=>'boxes', 'intracommreport'=>'globe-europe', 'label'=>'layer-group', 'loan'=>'money-bill-alt',
+				'info'=>'info-circle', 'inventory'=>'boxes', 'intracommreport'=>'globe-europe', 'knowledgemanagement'=>'ticket-alt', 'label'=>'layer-group', 'loan'=>'money-bill-alt',
 				'member'=>'user-alt', 'meeting'=>'chalkboard-teacher', 'mrp'=>'cubes', 'next'=>'arrow-alt-circle-right',
-				'trip'=>'wallet', 'group'=>'users', 'movement'=>'people-carry',
+				'trip'=>'wallet', 'expensereport'=>'wallet', 'group'=>'users', 'movement'=>'people-carry',
 				'sign-out'=>'sign-out-alt',
 				'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on', 'check'=>'check', 'bookmark'=>'star', 'bookmark'=>'star',
 				'bank'=>'university', 'close_title'=>'times', 'delete'=>'trash', 'edit'=>'pencil-alt', 'filter'=>'filter',
@@ -3581,14 +3569,14 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'error'=>'exclamation-triangle', 'warning'=>'exclamation-triangle',
 				'other'=>'square',
 				'playdisabled'=>'play', 'pdf'=>'file-pdf',  'poll'=>'check-double', 'pos'=>'cash-register', 'preview'=>'binoculars', 'project'=>'project-diagram', 'projectpub'=>'project-diagram', 'projecttask'=>'tasks', 'propal'=>'file-signature',
-				'payment'=>'money-check-alt', 'phoning'=>'phone', 'phoning_mobile'=>'mobile-alt', 'phoning_fax'=>'fax', 'previous'=>'arrow-alt-circle-left', 'printer'=>'print', 'product'=>'cube', 'service'=>'concierge-bell',
+				'partnership'=>'handshake', 'payment'=>'money-check-alt', 'phoning'=>'phone', 'phoning_mobile'=>'mobile-alt', 'phoning_fax'=>'fax', 'previous'=>'arrow-alt-circle-left', 'printer'=>'print', 'product'=>'cube', 'service'=>'concierge-bell',
 				'reception'=>'dolly', 'recruitmentjobposition'=>'id-card-alt', 'recruitmentcandidature'=>'id-badge',
 				'resize'=>'crop', 'supplier_order'=>'dol-order_supplier', 'supplier_proposal'=>'file-signature',
 				'refresh'=>'redo', 'resource'=>'laptop-house',
 				'salary'=>'wallet', 'shipment'=>'dolly', 'stock'=>'box-open', 'stats' => 'chart-bar', 'split'=>'code-branch', 'stripe'=>'stripe-s', 'supplier_invoice'=>'file-invoice-dollar', 'technic'=>'cogs', 'ticket'=>'ticket-alt',
 				'timespent'=>'clock', 'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'university', 'title_hrm'=>'umbrella-beach',
 				'title_agenda'=>'calendar-alt',
-				'uparrow'=>'share', 'vcard'=>'address-card',
+				'uncheck'=>'times', 'uparrow'=>'share', 'vcard'=>'address-card',
 				'jabber'=>'comment-o',
 				'website'=>'globe-americas', 'workstation'=>'pallet',
 				'conferenceorbooth'=>'chalkboard-teacher', 'eventorganization'=>'project-diagram'
@@ -3624,10 +3612,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			if (in_array($pictowithouttext, array('dollyrevert', 'member', 'members', 'contract', 'group', 'resource', 'shipment'))) {
 				$morecss = 'em092';
 			}
-			if (in_array($pictowithouttext, array('conferenceorbooth', 'collab', 'eventorganization', 'holiday', 'project', 'workstation'))) {
+			if (in_array($pictowithouttext, array('conferenceorbooth', 'collab', 'eventorganization', 'holiday', 'info', 'project', 'workstation'))) {
 				$morecss = 'em088';
 			}
-			if (in_array($pictowithouttext, array('intervention', 'info', 'payment', 'loan', 'stock', 'technic'))) {
+			if (in_array($pictowithouttext, array('intervention', 'payment', 'loan', 'partnership', 'stock', 'technic'))) {
 				$morecss = 'em080';
 			}
 
@@ -3648,21 +3636,23 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'bill'=>'infobox-commande', 'billa'=>'infobox-commande', 'billr'=>'infobox-commande', 'billd'=>'infobox-commande',
 				'conferenceorbooth'=>'infobox-project',
 				'cash-register'=>'infobox-bank_account', 'contract'=>'infobox-contrat', 'check'=>'font-status4', 'collab'=>'infobox-action', 'conversation'=>'infobox-contrat',
-				'donation'=>'infobox-commande', 'dollyrevert'=>'flip', 'ecm'=>'infobox-action',
+				'donation'=>'infobox-commande', 'dolly'=>'infobox-commande',  'dollyrevert'=>'flip infobox-order_supplier',
+				'ecm'=>'infobox-action', 'eventorganization'=>'infobox-project',
 				'hrm'=>'infobox-adherent', 'group'=>'infobox-adherent', 'intervention'=>'infobox-contrat',
+				'incoterm'=>'infobox-supplier_proposal',
 				'multicurrency'=>'infobox-bank_account',
 				'members'=>'infobox-adherent', 'member'=>'infobox-adherent', 'money-bill-alt'=>'infobox-bank_account',
 				'order'=>'infobox-commande',
 				'user'=>'infobox-adherent', 'users'=>'infobox-adherent',
 				'error'=>'pictoerror', 'warning'=>'pictowarning', 'switch_on'=>'font-status4',
-				'holiday'=>'infobox-holiday', 'info'=>'opacityhigh', 'invoice'=>'infobox-commande', 'loan'=>'infobox-bank_account',
-				'eventorganization'=>'infobox-project',
+				'holiday'=>'infobox-holiday', 'info'=>'opacityhigh', 'invoice'=>'infobox-commande',
+				'knowledgemanagement'=>'infobox-contrat rotate90', 'loan'=>'infobox-bank_account',
 				'payment'=>'infobox-bank_account', 'poll'=>'infobox-adherent', 'pos'=>'infobox-bank_account', 'project'=>'infobox-project', 'projecttask'=>'infobox-project', 'propal'=>'infobox-propal',
 				'reception'=>'flip', 'recruitmentjobposition'=>'infobox-adherent', 'recruitmentcandidature'=>'infobox-adherent',
 				'resource'=>'infobox-action',
-				'salary'=>'infobox-bank_account', 'supplier_invoice'=>'infobox-order_supplier', 'supplier_invoicea'=>'infobox-order_supplier', 'supplier_invoiced'=>'infobox-order_supplier',
+				'salary'=>'infobox-bank_account', 'shipment'=>'infobox-commande', 'supplier_invoice'=>'infobox-order_supplier', 'supplier_invoicea'=>'infobox-order_supplier', 'supplier_invoiced'=>'infobox-order_supplier',
 				'supplier_order'=>'infobox-order_supplier', 'supplier_proposal'=>'infobox-supplier_proposal',
-				'ticket'=>'infobox-contrat', 'title_accountancy'=>'infobox-bank_account', 'title_hrm'=>'infobox-holiday', 'trip'=>'infobox-expensereport', 'title_agenda'=>'infobox-action',
+				'ticket'=>'infobox-contrat', 'title_accountancy'=>'infobox-bank_account', 'title_hrm'=>'infobox-holiday', 'expensereport'=>'infobox-expensereport', 'trip'=>'infobox-expensereport', 'title_agenda'=>'infobox-action',
 				//'title_setup'=>'infobox-action', 'tools'=>'infobox-action',
 				'list-alt'=>'imgforviewmode', 'calendar'=>'imgforviewmode', 'calendarweek'=>'imgforviewmode', 'calendarmonth'=>'imgforviewmode', 'calendarday'=>'imgforviewmode', 'calendarperuser'=>'imgforviewmode'
 			);
@@ -3676,11 +3666,14 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'cog'=>'#999', 'companies'=>'#6c6aa8', 'company'=>'#6c6aa8', 'contact'=>'#6c6aa8', 'cron'=>'#555',
 				'dynamicprice'=>'#a69944',
 				'edit'=>'#444', 'note'=>'#999', 'error'=>'', 'help'=>'#bbb', 'listlight'=>'#999', 'language'=>'#555',
-				'dolly'=>'#a69944', 'dollyrevert'=>'#a69944', 'lot'=>'#a69944',
+				//'dolly'=>'#a69944', 'dollyrevert'=>'#a69944',
+				'lot'=>'#a69944',
 				'map-marker-alt'=>'#aaa', 'mrp'=>'#a69944', 'product'=>'#a69944', 'service'=>'#a69944', 'inventory'=>'#a69944', 'stock'=>'#a69944', 'movement'=>'#a69944',
 				'other'=>'#ddd',
-				'playdisabled'=>'#ccc', 'printer'=>'#444', 'projectpub'=>'#986c6a', 'reception'=>'#a69944', 'resize'=>'#444', 'rss'=>'#cba',
-				'shipment'=>'#a69944', 'stats'=>'#444', 'switch_off'=>'#999', 'technic'=>'#999', 'timespent'=>'#555', 'uparrow'=>'#555', 'user-cog'=>'#999', 'country'=>'#aaa', 'globe-americas'=>'#aaa',
+				'partnership'=>'#6c6aa8', 'playdisabled'=>'#ccc', 'printer'=>'#444', 'projectpub'=>'#986c6a', 'reception'=>'#a69944', 'resize'=>'#444', 'rss'=>'#cba',
+				//'shipment'=>'#a69944',
+				'stats'=>'#444', 'switch_off'=>'#999', 'technic'=>'#999', 'timespent'=>'#555',
+				'uncheck'=>'#800', 'uparrow'=>'#555', 'user-cog'=>'#999', 'country'=>'#aaa', 'globe-americas'=>'#aaa',
 				'website'=>'#304', 'workstation'=>'#a69944'
 			);
 			if (isset($arrayconvpictotocolor[$pictowithouttext])) {
@@ -7104,6 +7097,11 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				} else {
 					$substitutionarray['__DIRECTDOWNLOAD_URL_CONTRACT__'] = '';
 				}
+				if (!empty($conf->global->SUPPLIER_PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD) && is_object($object) && $object->element == 'supplier_proposal') {
+					$substitutionarray['__DIRECTDOWNLOAD_URL_SUPPLIER_PROPOSAL__'] = $object->getLastMainDocLink($object->element);
+				} else {
+					$substitutionarray['__DIRECTDOWNLOAD_URL_SUPPLIER_PROPOSAL__'] = '';
+				}
 
 				if (is_object($object) && $object->element == 'propal') {
 					$substitutionarray['__URL_PROPOSAL__'] = DOL_MAIN_URL_ROOT."/comm/propal/card.php?id=".$object->id;
@@ -7116,6 +7114,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				}
 				if (is_object($object) && $object->element == 'contrat') {
 					$substitutionarray['__URL_CONTRACT__'] = DOL_MAIN_URL_ROOT."/contrat/card.php?id=".$object->id;
+				}
+				if (is_object($object) && $object->element == 'supplier_proposal') {
+					$substitutionarray['__URL_SUPPLIER_PROPOSAL__'] = DOL_MAIN_URL_ROOT."/supplier_proposal/card.php?id=".$object->id;
 				}
 			}
 
@@ -7998,7 +7999,7 @@ function dol_validElement($element)
 }
 
 /**
- * 	Return img flag of country for a language code or country code
+ * 	Return img flag of country for a language code or country code.
  *
  * 	@param	string	$codelang	Language code ('en_IN', 'fr_CA', ...) or ISO Country code on 2 characters in uppercase ('IN', 'FR')
  *  @param	string	$moreatt	Add more attribute on img tag (For example 'style="float: right"' or 'class="saturatemedium"')
@@ -9709,7 +9710,18 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 
 	$tag = !empty($attr['href']) ? 'a' : 'span';
 
-	return '<div class="inline-block divButAction"><'.$tag.' '.$compiledAttributes.'>'.$html.'</'.$tag.'></div>';
+	return '<'.$tag.' '.$compiledAttributes.'>'.$html.'</'.$tag.'>';
+}
+
+/**
+ * Add space between dolGetButtonTitle
+ *
+ * @param string $moreClass more css class label
+ * @return string html of title separator
+ */
+function dolGetButtonTitleSeparator($moreClass = "")
+{
+	return '<span class="button-title-separator '.$moreClass.'" ></span>';
 }
 
 /**
@@ -9720,7 +9732,7 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
  * @param string    $iconClass  class for icon element (Example: 'fa fa-file')
  * @param string    $url        the url for link
  * @param string    $id         attribute id of button
- * @param int       $status     0 no user rights, 1 active, -1 Feature Disabled, -2 disable Other reason use helpText as tooltip
+ * @param int       $status     0 no user rights, 1 active, 2 current action or selected, -1 Feature Disabled, -2 disable Other reason use helpText as tooltip
  * @param array     $params     various params for future : recommended rather than adding more function arguments
  * @return string               html button
  */
@@ -9755,7 +9767,9 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
 		$useclassfortooltip = 0;
 	}
 
-	if ($status <= 0) {
+	if ($status == 2) {
+		$attr['class'] .= ' btnTitleSelected';
+	} elseif ($status <= 0) {
 		$attr['class'] .= ' refused';
 
 		$attr['href'] = '';

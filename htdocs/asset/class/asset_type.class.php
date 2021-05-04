@@ -188,7 +188,7 @@ class AssetType extends CommonObject
 		$sql .= "accountancy_code_depreciation_asset = '".$this->db->escape($this->accountancy_code_depreciation_asset)."',";
 		$sql .= "accountancy_code_depreciation_expense = '".$this->db->escape($this->accountancy_code_depreciation_expense)."',";
 		$sql .= "note = '".$this->db->escape($this->note)."'";
-		$sql .= " WHERE rowid =".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$result = $this->db->query($sql);
 		if ($result) {

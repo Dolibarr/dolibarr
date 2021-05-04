@@ -802,7 +802,7 @@ if ($urllogo) {
 
 
 print '<!-- Form to send a payment -->'."\n";
-print '<!-- creditor = '.$creditor.' -->'."\n";
+print '<!-- creditor = '.dol_escape_htmltag($creditor).' -->'."\n";
 // Additionnal information for each payment system
 if (!empty($conf->paypal->enabled)) {
 	print '<!-- PAYPAL_API_SANDBOX = '.$conf->global->PAYPAL_API_SANDBOX.' -->'."\n";
@@ -1444,20 +1444,18 @@ if ($source == 'member' || $source == 'membersubscription') {
 		print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("LastMemberType");
 		print '</td><td class="CTableRow'.($var ? '1' : '2').'">'.dol_escape_htmltag($member->type);
 		print "</td></tr>\n";
-	}
 
-	if (!empty($conf->global->MEMBER_SUBSCRIPTION_AMOUNT_BY_TYPE)) {
+		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
+		$adht = new AdherentType($db);
 		// Amount by member type
-		$amountbytype = array();		// TODO Read the amount of subscription into table of types
+		$amountbytype = $adht->amountByType(1);
 		// Set the member type
 		$member->typeid = (int) (GETPOSTISSET("typeid") ? GETPOST("typeid", 'int') : $member->typeid);
 		// If we change the type of membership, we set also label of new type
 		$member->type = dol_getIdFromCode($db, $member->typeid, 'adherent_type', 'rowid', 'libelle');
 		// Set amount for the subscription
-		$amount = (!empty($member->last_subscription_amount)) ? $member->last_subscription_amount : $amountbytype[$member->typeid];
+		$amount = (!empty($amountbytype[$member->typeid])) ? $amountbytype[$member->typeid]  : $member->last_subscription_amount;
 		// list member type
-		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
-		$adht = new AdherentType($db);
 		if ( !$action) {
 			$form = new Form($db); // so we can call method selectarray
 			print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("NewSubscription");
@@ -1587,9 +1585,10 @@ if ($source == 'donation') {
 	$object = $don;
 
 	if ($action != 'dopayment') { // Do not change amount if we just click on first dopayment
-		$amount = $subscription->total_ttc;
 		if (GETPOST("amount", 'alpha')) {
 			$amount = GETPOST("amount", 'alpha');
+		} else {
+			$amount = $don->getRemainToPay();
 		}
 		$amount = price2num($amount);
 	}

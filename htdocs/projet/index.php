@@ -95,9 +95,14 @@ $projectset = ($mine ? $mine : (empty($user->rights->projet->all->lire) ? 0 : 2)
 $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, $projectset, 1);
 //var_dump($projectsListId);
 
-llxHeader("", $langs->trans("Projects"), "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos");
 
-$title = $langs->trans("ProjectsArea");
+$title = $langs->trans('ProjectsArea');
+
+$help_url = 'EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos|DE:Modul_Projekte';
+
+llxHeader('', $title, $help_url);
+
+
 //if ($mine) $title=$langs->trans("MyProjectsArea");
 
 
