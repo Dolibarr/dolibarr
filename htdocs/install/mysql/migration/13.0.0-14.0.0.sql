@@ -187,6 +187,7 @@ ALTER TABLE llx_mrp_production ADD COLUMN origin_type varchar(10) AFTER origin_i
 
 ALTER TABLE llx_fichinter ADD COLUMN last_main_doc varchar(255) AFTER model_pdf;
 ALTER TABLE llx_projet ADD COLUMN last_main_doc varchar(255) AFTER model_pdf;
+ALTER TABLE llx_expensereport ADD COLUMN last_main_doc varchar(255) DEFAULT NULL AFTER model_pdf;
 
 create table llx_payment_vat
 (
