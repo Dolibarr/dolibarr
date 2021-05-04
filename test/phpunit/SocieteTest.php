@@ -379,7 +379,7 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 
 
 	/**
-	 * testSocieteDelete
+	 * testGetOutstandingBills
 	 *
 	 * @param   int     $id     Id of company
 	 * @return  int
