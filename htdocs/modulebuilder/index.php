@@ -2500,7 +2500,7 @@ if ($module == 'initmodule') {
 						$urloflist = $dirread.'/'.$pathtolist;
 						$urlofcard = $dirread.'/'.$pathtocard;
 
-						print '<div class="fichehalfleft">';
+						print '<div class="fichehalfleft small">';
 						print '<span class="fa fa-file-o"></span> '.$langs->trans("ClassFile").' : <strong>'.($realpathtoclass ? '' : '<strike>').$pathtoclass.($realpathtoclass ? '' : '</strike>').'</strong>';
 						print ' <a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=editfile&format=php&file='.urlencode($pathtoclass).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 						print '<br>';
@@ -2580,7 +2580,7 @@ if ($module == 'initmodule') {
 						print '<br>';
 						print '</div>';
 
-						print '<div class="fichehalfleft">';
+						print '<div class="fichehalfleft small">';
 						print '<span class="fa fa-file-o"></span> '.$langs->trans("PageForList").' : <strong><a href="'.$urloflist.'" target="_test">'.($realpathtolist ? '' : '<strike>').$pathtolist.($realpathtolist ? '' : '</strike>').'</a></strong>';
 						print ' <a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=editfile&format=php&file='.urlencode($pathtolist).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 						print '<br>';
@@ -2666,7 +2666,7 @@ if ($module == 'initmodule') {
 
 							print '<!-- Table with properties of object -->'."\n";
 							print '<div class="div-table-responsive">';
-							print '<table class="noborder">';
+							print '<table class="noborder small">';
 							print '<tr class="liste_titre">';
 							print '<th>'.$langs->trans("Property");
 							print ' (<a class="" href="https://wiki.dolibarr.org/index.php/Language_and_development_rules#Table_and_fields_structures" target="_blank">'.$langs->trans("SeeExamples").'</a>)';
