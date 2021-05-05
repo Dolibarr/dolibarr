@@ -206,6 +206,9 @@ if ($action == 'writebookkeeping') {
 	$now = dol_now();
 	$error = 0;
 
+	$accountingaccountexpense = new AccountingAccount($db);
+	$accountingaccountexpense->fetch(null, $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT, true);
+
 	foreach ($taber as $key => $val) {		// Loop on each expense report
 		$errorforline = 0;
 
@@ -225,12 +228,12 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->doc_type = 'expense_report';
 					$bookkeeping->fk_doc = $key;
 					$bookkeeping->fk_docdet = $val["fk_expensereportdet"];
+
 					$bookkeeping->subledger_account = $tabuser[$key]['user_accountancy_code'];
 					$bookkeeping->subledger_label = $tabuser[$key]['name'];
-					$bookkeeping->numero_compte = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
 
-					$accountingaccount->fetch(null, $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT, true);
-					$bookkeeping->label_compte = $accountingaccount->label;
+					$bookkeeping->numero_compte = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
+					$bookkeeping->label_compte = $accountingaccountexpense->label;
 
 					$bookkeeping->label_operation = $tabuser[$key]['name'];
 					$bookkeeping->montant = $mt;
@@ -274,10 +277,13 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping->doc_type = 'expense_report';
 						$bookkeeping->fk_doc = $key;
 						$bookkeeping->fk_docdet = $val["fk_expensereportdet"];
+
 						$bookkeeping->subledger_account = '';
 						$bookkeeping->subledger_label = '';
+
 						$bookkeeping->numero_compte = $k;
 						$bookkeeping->label_compte = $accountingaccount->label;
+
 						$bookkeeping->label_operation = $accountingaccount->label;
 						$bookkeeping->montant = $mt;
 						$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
@@ -322,6 +328,9 @@ if ($action == 'writebookkeeping') {
 
 				foreach ($arrayofvat[$key] as $k => $mt) {
 					if ($mt) {
+						$accountingaccount->fetch($k, null, true);	// TODO Use a cache for label
+						$account_label = $accountingaccount->label;
+
 						// get compte id and label
 						$bookkeeping = new BookKeeping($db);
 						$bookkeeping->doc_date = $val["date"];
@@ -330,12 +339,12 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping->doc_type = 'expense_report';
 						$bookkeeping->fk_doc = $key;
 						$bookkeeping->fk_docdet = $val["fk_expensereportdet"];
+
 						$bookkeeping->subledger_account = '';
 						$bookkeeping->subledger_label = '';
-						$bookkeeping->numero_compte = $k;
 
-						$accountingaccount->fetch($k, null, true);
-						$bookkeeping->label_compte = $accountingaccount->label;
+						$bookkeeping->numero_compte = $k;
+						$bookkeeping->label_compte = $account_label;
 
 						$bookkeeping->label_operation = $langs->trans("VAT").' '.join(', ', $def_tva[$key][$k]).' %';
 						$bookkeeping->montant = $mt;

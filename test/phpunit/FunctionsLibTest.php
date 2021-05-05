@@ -61,6 +61,11 @@ if (! defined("NOLOGIN")) {
 	define("NOLOGIN", '1');       // If this page is public (can be called outside logged session)
 }
 
+print "\n".$langs->trans("CurrentTimeZone").' : '.getServerTimeZoneString();
+print "\n".$langs->trans("CurrentHour").' : '.dol_print_date(dol_now('gmt'), 'dayhour', 'tzserver');
+print "\n";
+
+
 /**
  * Class for PHPUnit tests
  *
@@ -1376,16 +1381,16 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 
 		$conf->global->MAIN_START_WEEK = 0;
 
-		$tmp=dol_getdate(24*60*60+1);		// 2/1/1970 and 1 second = friday
-		$this->assertEquals(5, $tmp['wday']);
+		$tmp=dol_getdate(24*60*60+1, false, 'UTC');		// 2/1/1970 and 1 second = friday
+		$this->assertEquals(5, $tmp['wday'], 'Bad value of day in week');
 
 		$conf->global->MAIN_START_WEEK = 1;
 
-		$tmp=dol_getdate(1);				// 1/1/1970 and 1 second = thirday
-		$this->assertEquals(4, $tmp['wday']);
+		$tmp=dol_getdate(1, false, 'UTC');				// 1/1/1970 and 1 second = thirday
+		$this->assertEquals(4, $tmp['wday'], 'Bad value of day in week');
 
-		$tmp=dol_getdate(24*60*60+1);		// 2/1/1970 and 1 second = friday
-		$this->assertEquals(5, $tmp['wday']);
+		$tmp=dol_getdate(24*60*60+1, false, 'UTC');		// 2/1/1970 and 1 second = friday
+		$this->assertEquals(5, $tmp['wday'], 'Bad value of day in week');
 
 		$tmp=dol_getdate(1, false, "Europe/Paris");						// 1/1/1970 and 1 second = thirday
 		$this->assertEquals(1970, $tmp['year']);
@@ -1417,38 +1422,36 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals(0, $tmp['minutes']);
 		$this->assertEquals(1, $tmp['seconds']);
 
-		$conf->global->MAIN_USE_OLD_FUNCTIONS_FOR_GETDATE = 1;
-
-		$tmp=dol_getdate(1);						// 1/1/1970 and 1 second = thirday
+		$tmp=dol_getdate(1, false, 'UTC');						// 1/1/1970 and 1 second = thirday
 		$this->assertEquals(1970, $tmp['year']);
 		$this->assertEquals(1, $tmp['mon']);
 		$this->assertEquals(1, $tmp['mday']);
 		$this->assertEquals(4, $tmp['wday']);
 		$this->assertEquals(0, $tmp['yday']);
 		// We must disable this because on CI, timezone is may be UTC or something else
-		//$this->assertEquals(1, $tmp['hours']);		// We are winter, so we are GMT+1 even during summer
+		//$this->assertEquals(1, $tmp['hours']);	// We are winter, so we are GMT+1 even during summer
 		$this->assertEquals(0, $tmp['minutes']);
 		$this->assertEquals(1, $tmp['seconds']);
 
-		$tmp=dol_getdate(15638401);					// 1/7/1970 and 1 second = wednesday
+		$tmp=dol_getdate(15638401, false, 'UTC');				// 1/7/1970 and 1 second = wednesday
 		$this->assertEquals(1970, $tmp['year']);
 		$this->assertEquals(7, $tmp['mon']);
 		$this->assertEquals(1, $tmp['mday']);
 		$this->assertEquals(3, $tmp['wday']);
 		$this->assertEquals(181, $tmp['yday']);
 		// We must disable this because on CI, timezone is may be UTC or something else
-		//$this->assertEquals(1, $tmp['hours']);		// There is no daylight in 1970, so we are GMT+1 even during summer
+		//$this->assertEquals(1, $tmp['hours']);	// There is no daylight in 1970, so we are GMT+1 even during summer
 		$this->assertEquals(0, $tmp['minutes']);
 		$this->assertEquals(1, $tmp['seconds']);
 
-		$tmp=dol_getdate(1593561601);				// 1/7/2020 and 1 second = wednesday
+		$tmp=dol_getdate(1593561601, false, 'UTC');				// 1/7/2020 and 1 second = wednesday
 		$this->assertEquals(2020, $tmp['year']);
 		$this->assertEquals(7, $tmp['mon']);
 		$this->assertEquals(1, $tmp['mday']);
 		$this->assertEquals(3, $tmp['wday']);
 		$this->assertEquals(182, $tmp['yday']);		// 182 and not 181, due to the 29th february
 		// We must disable this because on CI, timezone is may be UTC or something else
-		//$this->assertEquals(2, $tmp['hours']);		// There is a daylight, so we are GMT+2
+		//$this->assertEquals(2, $tmp['hours']);	// There is a daylight, so we are GMT+2
 		$this->assertEquals(0, $tmp['minutes']);
 		$this->assertEquals(1, $tmp['seconds']);
 
@@ -1463,13 +1466,33 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	 */
 	public function testMakeSubstitutions()
 	{
-		global $conf, $langs;
+		global $conf, $langs, $mysoc;
 		$langs->load("main");
 
-		$substit=array("AAA"=>'Not used', "BBB"=>'Not used', "CCC"=>"C replaced");
-		$chaine='This is a string with __[MAIN_THEME]__ and __(DIRECTION)__ and __CCC__';
+		// Try simple replacement
+		$substit = array("__AAA__"=>'Not used', "__BBB__"=>'Not used', "__CCC__"=>"C replaced", "DDD"=>"D replaced");
+		$substit += getCommonSubstitutionArray($langs);
+
+		$chaine = 'This is a string with theme constant __[MAIN_THEME]__ and __(DIRECTION)__ and __CCC__ and DDD and __MYCOMPANY_NAME__ and __YEAR__';
 		$newstring = make_substitutions($chaine, $substit);
-		$this->assertEquals($newstring, 'This is a string with eldy and ltr and __C replaced__');
+		print __METHOD__." ".$newstring."\n";
+		$this->assertEquals($newstring, 'This is a string with theme constant eldy and ltr and C replaced and D replaced and '.$mysoc->name.' and '.dol_print_date(dol_now(), '%Y', 'gmt'));
+
+		// Try mix HTML not HTML, no change on initial text
+		$substit = array("__NOHTML__"=>'No html', "__HTML__"=>'<b>HTML</b>');
+
+		$chaine = "This is a text with\nNew line\nThen\n__NOHTML__\nThen\n__HTML__";
+		$newstring = make_substitutions($chaine, $substit, $langs);
+		print __METHOD__." ".$newstring."\n";
+		$this->assertEquals($newstring, "This is a text with\nNew line\nThen\nNo html\nThen\n<b>HTML</b>", 'Test on make_substitutions with conversion of inserted values only');
+
+		// Try mix HTML not HTML, accept to change initial text
+		$substit = array("__NOHTML__"=>'No html', "__HTML__"=>'<b>HTML</b>');
+
+		$chaine = "This is a text with\nNew line\nThen\n__NOHTML__\nThen\n__HTML__";
+		$newstring = make_substitutions($chaine, $substit, $langs, 1);
+		print __METHOD__." ".$newstring."\n";
+		$this->assertEquals($newstring, "This is a text with<br>\nNew line<br>\nThen<br>\nNo html<br>\nThen<br>\n<b>HTML</b>", 'Test on make_substitutions with full conversion of text accepted');
 
 		return true;
 	}

@@ -72,6 +72,7 @@ class DolibarrApi
 		//$this->r->setSupportedFormats('jsonFormat');
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Check and convert a string depending on its type/name.
 	 *
@@ -82,8 +83,9 @@ class DolibarrApi
 	 * @param	stdClass	$object		Object
 	 * @return 	string					Value cleaned
 	 */
-	protected function checkValForAPI($field, $value, $object)
+	protected function _checkValForAPI($field, $value, $object)
 	{
+		// phpcs:enable
 		// TODO Use type detected in $object->fields
 		if (in_array($field, array('note', 'note_private', 'note_public', 'desc', 'description'))) {
 			return checkVal($value, 'restricthtml');
@@ -307,8 +309,9 @@ class DolibarrApi
 	/**
 	 * Function to forge a SQL criteria
 	 *
-	 * @param  array    $matches       Array of found string by regex search. Example: "t.ref:like:'SO-%'" or "t.date_creation:<:'20160101'" or "t.nature:is:NULL"
-	 * @return string                  Forged criteria. Example: "t.field like 'abc%'"
+	 * @param  array    $matches    Array of found string by regex search.
+	 * 								Example: "t.ref:like:'SO-%'" or "t.date_creation:<:'20160101'" or "t.date_creation:<:'2016-01-01 12:30:00'" or "t.nature:is:NULL"
+	 * @return string               Forged criteria. Example: "t.field like 'abc%'"
 	 */
 	protected static function _forge_criteria_callback($matches)
 	{
@@ -319,18 +322,26 @@ class DolibarrApi
 		if (empty($matches[1])) {
 			return '';
 		}
-		$tmp = explode(':', $matches[1]);
+		$tmp = explode(':', $matches[1], 3);
+
 		if (count($tmp) < 3) {
 			return '';
 		}
 
-		$tmpescaped = $tmp[2];
+		$operand = preg_replace('/[^a-z0-9\._]/i', '', trim($tmp[0]));
+
+		$operator = strtoupper(preg_replace('/[^a-z<>=]/i', '', trim($tmp[1])));
+
+		$tmpescaped = trim($tmp[2]);
 		$regbis = array();
-		if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {
+		if ($operator == 'IN') {
+			$tmpescaped = "(".$db->sanitize($tmpescaped, 1).")";
+		} elseif (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {
 			$tmpescaped = "'".$db->escape($regbis[1])."'";
 		} else {
-			$tmpescaped = $db->escape($tmpescaped);
+			$tmpescaped = $db->sanitize($db->escape($tmpescaped));
 		}
-		return $db->escape($tmp[0]).' '.strtoupper($db->escape($tmp[1]))." ".$tmpescaped;
+
+		return $db->escape($operand).' '.$db->escape($operator)." ".$tmpescaped;
 	}
 }

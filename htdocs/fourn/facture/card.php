@@ -2257,6 +2257,10 @@ if ($action == 'create') {
 		print '</td></tr>';
 	}
 
+	if (empty($reshook)) {
+		print $object->showOptionals($extrafields, 'edit');
+	}
+
 	// Public note
 	print '<tr><td>'.$langs->trans('NotePublic').'</td>';
 	print '<td>';
@@ -2275,9 +2279,6 @@ if ($action == 'create') {
 	// print '<td><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td>';
 	print '</tr>';
 
-	if (empty($reshook)) {
-		print $object->showOptionals($extrafields, 'edit');
-	}
 
 	if (is_object($objectsrc)) {
 		print "\n<!-- ".$classname." info -->";
@@ -3327,10 +3328,12 @@ if ($action == 'create') {
 		if ($object->statut == FactureFournisseur::STATUS_DRAFT && $usercancreate) {
 			if ($action != 'editline') {
 				// Add free products/services
-				$object->formAddObjectLine(1, $societe, $mysoc);
 
 				$parameters = array();
 				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+				if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				if (empty($reshook))
+					$object->formAddObjectLine(1, $societe, $mysoc);
 			}
 		}
 

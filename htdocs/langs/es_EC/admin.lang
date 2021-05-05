@@ -815,7 +815,6 @@ LogoSquarredDesc=Debe ser un icono cuadriculado (ancho = alto). Este logotipo se
 DoNotSuggestPaymentMode=No sugiera
 OwnerOfBankAccount=Dueño de una cuenta bancaria %s
 BankModuleNotActive=Módulo Cuentas bancarias no habilitado.
-ShowBugTrackLink=Mostrar enlace "<strong> %s </strong>"
 DelaysOfToleranceDesc=Establezca el retraso antes de que aparezca un ícono de alerta %s en la pantalla para el elemento tardío.
 Delays_MAIN_DELAY_ORDERS_TO_PROCESS=Orden no procesada
 Delays_MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS=Orden de compra no procesada

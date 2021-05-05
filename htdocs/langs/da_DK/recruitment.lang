@@ -72,5 +72,5 @@ YourCandidatureAnswerMessage=Tak for din ansøgning. <br> ...
 JobClosedTextCandidateFound=Jobpositionen er lukket. Stillingen er besat.
 JobClosedTextCanceled=Jobpositionen er lukket.
 ExtrafieldsJobPosition=Supplerende attributter (jobstillinger)
-ExtrafieldsCandidatures=Supplerende attributter (jobansøgninger)
+ExtrafieldsApplication=Supplerende attributter (jobansøgninger)
 MakeOffer=Giv et tilbud

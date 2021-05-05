@@ -161,7 +161,7 @@ class AgendaEvents extends DolibarrApi
 			if (!DolibarrApi::_checkFilters($sqlfilters)) {
 				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
@@ -217,7 +217,7 @@ class AgendaEvents extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
-			$this->actioncomm->$field = $this->checkValForAPI($field, $value, $this->actioncomm);
+			$this->actioncomm->$field = $this->_checkValForAPI($field, $value, $this->actioncomm);
 		}
 		/*if (isset($request_data["lines"])) {
 		  $lines = array();
@@ -270,7 +270,7 @@ class AgendaEvents extends DolibarrApi
 				continue;
 			}
 
-			$this->actioncomm->$field = $this->checkValForAPI($field, $value, $this->actioncomm);
+			$this->actioncomm->$field = $this->_checkValForAPI($field, $value, $this->actioncomm);
 		}
 
 		if ($this->actioncomm->update(DolibarrApiAccess::$user, 1) > 0) {

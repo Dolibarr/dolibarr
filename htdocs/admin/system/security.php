@@ -128,32 +128,13 @@ if ($test) {
 }
 print '<br>';
 
-print '<br>';
-print '<br>';
-print load_fiche_titre($langs->trans("ConfigurationFile").' ('.$conffile.')', '', 'folder');
 
-print '<strong>'.$langs->trans("dolibarr_main_prod").'</strong>: '.$dolibarr_main_prod;
-if (empty($dolibarr_main_prod)) {
-	print ' &nbsp; '.img_picto('', 'warning').' '.$langs->trans("IfYouAreOnAProductionSetThis", 1);
-}
-print '<br>';
-
-print '<strong>'.$langs->trans("dolibarr_nocsrfcheck").'</strong>: '.$dolibarr_nocsrfcheck;
-if (!empty($dolibarr_nocsrfcheck)) {
-	print img_picto('', 'warning').' &nbsp;  '.$langs->trans("IfYouAreOnAProductionSetThis", 0);
-}
-print '<br>';
-
-print '<strong>'.$langs->trans("dolibarr_main_restrict_ip").'</strong>: '.$dolibarr_main_restrict_ip;
-/*if (empty($dolibarr_main_restrict_ip)) {
-	print ' &nbsp; '.img_picto('', 'warning').' '.$langs->trans("IfYouAreOnAProductionSetThis", 1);
-}*/
-print '<br>';
+// OS Permissions
 
 print '<br>';
 print '<br>';
 print '<br>';
-print load_fiche_titre($langs->trans("PermissionsOnFiles"), '', 'folder');
+print load_fiche_titre($langs->trans("OSSetup").' - '.$langs->trans("PermissionsOnFiles"), '', 'folder');
 
 print '<strong>'.$langs->trans("PermissionsOnFilesInWebRoot").'</strong>: ';
 $arrayoffilesinroot = dol_dir_list(DOL_DOCUMENT_ROOT, 'all', 1, '', array('\/custom'), 'name', SORT_ASC, 4, 1, '', 1);
@@ -205,37 +186,35 @@ if ($perms) {
 }
 print '<br>';
 
-print '<br>';
+
+// File conf.php
 
 print '<br>';
 print '<br>';
-print load_fiche_titre($langs->trans("Modules"), '', 'folder');
+print '<br>';
+print load_fiche_titre($langs->trans("ConfigurationFile").' ('.$conffile.')', '', 'folder');
 
-// Module log
-print '<strong>'.$langs->trans("Syslog").'</strong>: ';
-$test = empty($conf->syslog->enabled);
-if ($test) {
-	print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotRiskOfLeakWithThis");
-} else {
-	if ($conf->global->SYSLOG_LEVEL > LOG_NOTICE) {
-		print img_picto('', 'warning').' '.$langs->trans("ModuleActivatedMayExposeInformation", $langs->transnoentities("Syslog"));
-	} else {
-		print img_picto('', 'tick.png').' '.$langs->trans("ModuleSyslogActivatedButLevelNotTooVerbose", $langs->transnoentities("Syslog"), $conf->global->SYSLOG_LEVEL);
-	}
-	//print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
+print '<strong>$dolibarr_main_prod</strong>: '.$dolibarr_main_prod;
+if (empty($dolibarr_main_prod)) {
+	print ' &nbsp; '.img_picto('', 'warning').' '.$langs->trans("IfYouAreOnAProductionSetThis", 1);
 }
 print '<br>';
 
-// Module debugbar
-print '<strong>'.$langs->trans("DebugBar").'</strong>: ';
-$test = empty($conf->debugbar->enabled);
-if ($test) {
-	print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotRiskOfLeakWithThis");
-} else {
-	print img_picto('', 'error').' '.$langs->trans("ModuleActivatedDoNotUseInProduction", $langs->transnoentities("DebugBar"));
-	//print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
+print '<strong>$dolibarr_nocsrfcheck</strong>: '.$dolibarr_nocsrfcheck;
+if (!empty($dolibarr_nocsrfcheck)) {
+	print img_picto('', 'warning').' &nbsp;  '.$langs->trans("IfYouAreOnAProductionSetThis", 0);
 }
 print '<br>';
+
+print '<strong>$dolibarr_main_restrict_ip</strong>: ';
+if (empty($dolibarr_main_restrict_ip)) {
+	print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
+	//print ' <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("IPsOfUsers")).')</span>';
+}
+print '<br>';
+
+
+// Menu security
 
 print '<br>';
 print '<br>';
@@ -276,7 +255,6 @@ if (!empty($conf->global->MAIN_ANTIVIRUS_COMMAND)) {
 	}
 }
 print '<br>';
-
 print '<br>';
 
 $securityevent = new Events($db);
@@ -299,9 +277,66 @@ if (!empty($eventstolog) && is_array($eventstolog)) {
 			}
 		}
 	}
+	print '<br>';
 } else {
 	print img_warning().' '.$langs->trans("NoSecurityEventsAreAduited", $langs->transnoentities("Home").' - '.$langs->transnoentities("Setup").' - '.$langs->transnoentities("Audit")).'<br>';
 }
+
+
+// Modules/Applications
+
+print '<br>';
+print '<br>';
+print '<br>';
+print load_fiche_titre($langs->trans("Modules"), '', 'folder');
+
+// Module log
+print '<strong>'.$langs->trans("Syslog").'</strong>: ';
+$test = empty($conf->syslog->enabled);
+if ($test) {
+	print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotRiskOfLeakWithThis");
+} else {
+	if ($conf->global->SYSLOG_LEVEL > LOG_NOTICE) {
+		print img_picto('', 'warning').' '.$langs->trans("ModuleActivatedWithTooHighLogLevel", $langs->transnoentities("Syslog"));
+	} else {
+		print img_picto('', 'tick.png').' '.$langs->trans("ModuleSyslogActivatedButLevelNotTooVerbose", $langs->transnoentities("Syslog"), $conf->global->SYSLOG_LEVEL);
+	}
+	//print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
+}
+print '<br>';
+
+// Module debugbar
+print '<strong>'.$langs->trans("DebugBar").'</strong>: ';
+$test = empty($conf->debugbar->enabled);
+if ($test) {
+	print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotRiskOfLeakWithThis");
+} else {
+	print img_picto('', 'error').' '.$langs->trans("ModuleActivatedDoNotUseInProduction", $langs->transnoentities("DebugBar"));
+	//print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php'.'">XDebug admin page</a>';
+}
+print '<br>';
+
+
+// APIs
+
+print '<br>';
+print '<br>';
+print '<br>';
+print load_fiche_titre($langs->trans("API"), '', 'folder');
+
+if (empty($conf->api->enabled) && empty($conf->webservices->enabled)) {
+	print $langs->trans("APIsAreNotEnabled");
+} else {
+	if (!empty($conf->webservices->enabled)) {
+		print $langs->trans('YouEnableDeprecatedWSAPIsUseRESTAPIsInstead')."<br>\n";
+		print '<br>';
+	}
+	if (!empty($conf->api->enabled)) {
+		print '<strong>API_ENDPOINT_RULES</strong> = '.(empty($conf->global->API_ENDPOINT_RULES) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->API_ENDPOINT_RULES)."<br>\n";
+		print '<br>';
+	}
+}
+
 
 print '<br><br>';
 

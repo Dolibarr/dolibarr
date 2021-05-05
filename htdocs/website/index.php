@@ -26,6 +26,7 @@ define('NOSCANPOSTFORINJECTION', 1);
 define('NOSTYLECHECK', 1);
 define('USEDOLIBARREDITOR', 1);
 define('FORCE_CKEDITOR', 1); // We need CKEditor, even if module is off.
+if (!defined('DISABLE_JS_GRAHP')) define('DISABLE_JS_GRAPH', 1);
 
 //header('X-XSS-Protection:0');	// Disable XSS filtering protection of some browsers (note: use of Content-Security-Policy is more efficient). Disabled as deprecated.
 

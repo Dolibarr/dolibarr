@@ -1,13 +1,16 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Standard Buchhaltungskonto für Benutzer Partner
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Standard Buchhaltungskonto für Gehaltszahlungen
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Das in der Benutzerkarte hinterlegte Konto wird nur für die Nebenbücher verwendet. Dieses Konto wird für das Hauptbuch und als Vorgabewert für die Nebenbücher verwendet, wenn beim Benutzer kein Konto hinterlegt ist.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Buchhaltungs-Konto für Löhne
+CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Lassen Sie beim Erstellen eines Gehalts standardmäßig die Option "Gesamtzahlung automatisch erstellen" leer
 Salary=Lohn
 Salaries=Löhne
-NewSalaryPayment=Neue Lohnzahlung
+NewSalary=Neues Gehalt
+NewSalaryPayment=Neue Gehaltskarte
 AddSalaryPayment=Gehaltszahlung hinzufügen
 SalaryPayment=Lohnzahlung
 SalariesPayments=Lohnzahlungen
+SalariesPaymentsOf=Gehaltszahlungen von %s
 ShowSalaryPayment=Zeige Lohnzahlung
 THM=Durchschnittlicher Stundensatz
 TJM=Durchschnittlicher Tagessatz

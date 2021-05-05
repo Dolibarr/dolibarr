@@ -32,6 +32,16 @@
 
 -- Missing in v13 or lower
 
+ALTER TABLE llx_accounting_bookkeeping DROP INDEX idx_accounting_bookkeeping_numero_compte;
+ALTER TABLE llx_accounting_bookkeeping DROP INDEX idx_accounting_bookkeeping_code_journal;
+
+ALTER TABLE llx_accounting_bookkeeping ADD INDEX idx_accounting_bookkeeping_fk_docdet (fk_docdet);
+ALTER TABLE llx_accounting_bookkeeping ADD INDEX idx_accounting_bookkeeping_doc_date (doc_date);
+ALTER TABLE llx_accounting_bookkeeping ADD INDEX idx_accounting_bookkeeping_numero_compte (numero_compte, entity);
+ALTER TABLE llx_accounting_bookkeeping ADD INDEX idx_accounting_bookkeeping_code_journal (code_journal, entity);
+
+ALTER TABLE llx_accounting_bookkeeping ADD INDEX idx_accounting_bookkeeping_piece_num (piece_num, entity);
+
 ALTER TABLE llx_recruitment_recruitmentcandidature MODIFY COLUMN email_msgid VARCHAR(175);
 
 ALTER TABLE llx_asset CHANGE COLUMN amount amount_ht double(24,8) DEFAULT NULL;
@@ -259,7 +269,7 @@ create table llx_salary
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   ref             varchar(30) NULL,           -- payment reference number (currently NULL because there is no numbering manager yet)
   label           varchar(255),
-  tms             timestamp,
+  tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   datec           datetime,                   -- Create date
   fk_user         integer NOT NULL,
   datep           date,                       -- payment date
@@ -307,7 +317,8 @@ create table llx_product_perentity
     accountancy_code_sell_export  varchar(32),                        -- Selling accountancy code for vat export
     accountancy_code_buy          varchar(32),                        -- Buying accountancy code
     accountancy_code_buy_intra    varchar(32),                        -- Buying accountancy code for vat intracommunity
-    accountancy_code_buy_export   varchar(32)                  		-- Buying accountancy code for vat import
+    accountancy_code_buy_export   varchar(32),                     	  -- Buying accountancy code for vat import
+    pmp double(24,8)
 )ENGINE=innodb;
 
 ALTER TABLE llx_product_perentity ADD INDEX idx_product_perentity_fk_product (fk_product);
@@ -442,3 +453,32 @@ UPDATE llx_const SET value = 'github' WHERE __DECRYPT('name')__ = 'MAIN_BUGTRACK
 
 ALTER TABLE llx_facture_fourn_det ADD COLUMN fk_remise_except integer DEFAULT NULL after remise_percent;
 ALTER TABLE llx_facture_fourn_det ADD UNIQUE INDEX uk_fk_remise_except (fk_remise_except, fk_facture_fourn);
+
+CREATE TABLE llx_knowledgemanagement_knowledgerecord(
+	-- BEGIN MODULEBUILDER FIELDS
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
+	ref varchar(128) NOT NULL, 
+	date_creation datetime NOT NULL, 
+	tms timestamp, 
+	last_main_doc varchar(255), 
+	fk_user_creat integer NOT NULL, 
+	fk_user_modif integer, 
+	fk_user_valid integer, 
+	import_key varchar(14), 
+	model_pdf varchar(255), 
+	question text NOT NULL, 
+	answer text, 
+	status integer NOT NULL
+	-- END MODULEBUILDER FIELDS
+) ENGINE=innodb;
+
+create table llx_knowledgemanagement_knowledgerecord_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+
+-- add default amount by member type
+ALTER TABLE llx_adherent_type ADD COLUMN amount DOUBLE(24,8) NULL DEFAULT NULL AFTER subscription;

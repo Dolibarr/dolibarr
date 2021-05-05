@@ -785,7 +785,7 @@ if ($action == 'create') {
 				print '<tr>';
 				print '<td>'.$langs->trans("Project").'</td><td colspan="2">';
 				print img_picto('', 'project', 'class="paddingright"');
-				$numprojet = $formproject->select_projects($soc->id, $projectid, 'projectid', 0);
+				print $formproject->select_projects((empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $soc->id : -1), $projectid, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1, 0, 'maxwidth500');
 				print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
 				print '</td>';
 				print '</tr>';

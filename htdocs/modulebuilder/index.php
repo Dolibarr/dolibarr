@@ -726,9 +726,33 @@ if ($dirins && $action == 'initdoc' && !empty($module)) {
 // add Language
 if ($dirins && $action == 'addlanguage' && !empty($module)) {
 	$newlangcode = GETPOST('newlangcode', 'aZ09');
-	$srcfile = $dirins.'/'.strtolower($module).'/langs/en_US';
-	$destfile = $dirins.'/'.strtolower($module).'/langs/'.$newlangcode;
-	$result = dolCopyDir($srcfile, $destfile, 0, 0);
+
+	if ($newlangcode) {
+		$modulelowercase = strtolower($module);
+
+		// Dir for module
+		$diroflang = dol_buildpath($modulelowercase, 0);
+
+		if ($diroflang == $dirread.'/'.$modulelowercase) {
+			// This is not a custom module, we force diroflang to htdocs root
+			$diroflang = $dirread;
+
+			$srcfile = $diroflang.'/langs/en_US/'.$modulelowercase.'.lang';
+			$destfile = $diroflang.'/langs/'.$newlangcode.'/'.$modulelowercase.'.lang';
+
+			$result = dol_copy($srcfile, $destfile, 0, 0);
+			if ($result < 0) {
+				setEventMessages($langs->trans("ErrorFailToCopyFile", $srcfile, $destfile), null, 'errors');
+			}
+		} else {
+			$srcfile = $diroflang.'/langs/en_US';
+			$destfile = $diroflang.'/langs/'.$newlangcode;
+
+			$result = dolCopyDir($srcfile, $destfile, 0, 0);
+		}
+	} else {
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Language")), null, 'errors');
+	}
 }
 
 
@@ -783,7 +807,7 @@ if ($dirins && $action == 'initobject' && $module && GETPOST('createtablearray',
 		 *  'help' is a string visible as a tooltip on field
 		 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
 		 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
-		 *  'arraykeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
+		 *  'arrayofkeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
 		 */
 
 		/*public $fields=array(
@@ -1448,17 +1472,37 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname) {
 	$tabobj = 'deleteobject';
 }
 
+if ($dirins && $action == 'generatedoc') {
+	$modulelowercase = strtolower($module);
+
+	// Dir for module
+	$dirofmodule = dol_buildpath($modulelowercase, 0).'/doc';
+
+	$FILENAMEDOC = strtolower($module).'.html';
+
+	$util = new Utils($db);
+	$result = $util->generateDoc($module);
+
+	if ($result > 0) {
+		setEventMessages($langs->trans("DocFileGeneratedInto", $dirofmodule), null);
+	} else {
+		setEventMessages($util->error, $util->errors, 'errors');
+	}
+}
 
 if ($dirins && $action == 'generatepackage') {
 	$modulelowercase = strtolower($module);
 
+	$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
+
 	// Dir for module
-	$dir = $dirins.'/'.$modulelowercase;
+	$dir = dol_buildpath($modulelowercase, 0);
+
 	// Zip file to build
 	$FILENAMEZIP = '';
 
 	// Load module
-	dol_include_once($modulelowercase.'/core/modules/mod'.$module.'.class.php');
+	dol_include_once($pathtofile);
 	$class = 'mod'.$module;
 
 	if (class_exists($class)) {
@@ -1466,18 +1510,18 @@ if ($dirins && $action == 'generatepackage') {
 			$moduleobj = new $class($db);
 		} catch (Exception $e) {
 			$error++;
-			dol_print_error($e->getMessage());
+			dol_print_error($db, $e->getMessage());
 		}
 	} else {
 		$error++;
 		$langs->load("errors");
-		dol_print_error($langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));
+		dol_print_error($db, $langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));
 		exit;
 	}
 
 	$arrayversion = explode('.', $moduleobj->version, 3);
 	if (count($arrayversion)) {
-		$FILENAMEZIP = "module_".$modulelowercase.'-'.$arrayversion[0].'.'.$arrayversion[1].($arrayversion[2] ? ".".$arrayversion[2] : "").".zip";
+		$FILENAMEZIP = "module_".$modulelowercase.'-'.$arrayversion[0].($arrayversion[1] ? '.'.$arrayversion[1] : '').($arrayversion[2] ? '.'.$arrayversion[2] : '').'.zip';
 
 		$dirofmodule = dol_buildpath($modulelowercase, 0).'/bin';
 		$outputfilezip = $dirofmodule.'/'.$FILENAMEZIP;
@@ -1501,20 +1545,6 @@ if ($dirins && $action == 'generatepackage') {
 		$error++;
 		$langs->load("errors");
 		setEventMessages($langs->trans("ErrorCheckVersionIsDefined"), null, 'errors');
-	}
-}
-
-if ($dirins && $action == 'generatedoc') {
-	$FILENAMEDOC = strtolower($module).'.html';
-	$dirofmodule = dol_buildpath(strtolower($module), 0).'/doc';
-
-	$util = new Utils($db);
-	$result = $util->generateDoc($module);
-
-	if ($result > 0) {
-		setEventMessages($langs->trans("DocFileGeneratedInto", $dirofmodule), null);
-	} else {
-		setEventMessages($util->error, $util->errors, 'errors');
 	}
 }
 
@@ -2125,11 +2155,26 @@ if ($module == 'initmodule') {
 				print '<br>';
 				print '<br>';
 
-				$langfiles = dol_dir_list(dol_buildpath($modulelowercase.'/langs', 0), 'files', 1, '\.lang$');
+				$modulelowercase = strtolower($module);
+
+				// Dir for module
+				$diroflang = dol_buildpath($modulelowercase, 0);
+				$diroflang .= '/langs';
+				$langfiles = dol_dir_list($diroflang, 'files', 1, '\.lang$');
+
+				if (!preg_match('/custom/', $dirread)) {
+					// If this is not a module into custom
+					$diroflang = $dirread;
+					$diroflang .= '/langs';
+					$langfiles = dol_dir_list($diroflang, 'files', 1, $modulelowercase.'\.lang$');
+				}
 
 				print '<table class="none">';
 				foreach ($langfiles as $langfile) {
 					$pathtofile = $modulelowercase.'/langs/'.$langfile['relativename'];
+					if (!preg_match('/custom/', $dirread)) {	// If this is not a module into custom
+						$pathtofile = 'langs/'.$langfile['relativename'];
+					}
 					print '<tr><td><span class="fa fa-file-o"></span> '.$langs->trans("LanguageFile").' '.basename(dirname($pathtofile)).' : <strong>'.$pathtofile.'</strong>';
 					print '</td><td><a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=editfile&format=txt&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 					print '</td><td><a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=confirm_removefile&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
@@ -2455,7 +2500,7 @@ if ($module == 'initmodule') {
 						$urloflist = $dirread.'/'.$pathtolist;
 						$urlofcard = $dirread.'/'.$pathtocard;
 
-						print '<div class="fichehalfleft">';
+						print '<div class="fichehalfleft small">';
 						print '<span class="fa fa-file-o"></span> '.$langs->trans("ClassFile").' : <strong>'.($realpathtoclass ? '' : '<strike>').$pathtoclass.($realpathtoclass ? '' : '</strike>').'</strong>';
 						print ' <a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=editfile&format=php&file='.urlencode($pathtoclass).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 						print '<br>';
@@ -2535,7 +2580,7 @@ if ($module == 'initmodule') {
 						print '<br>';
 						print '</div>';
 
-						print '<div class="fichehalfleft">';
+						print '<div class="fichehalfleft small">';
 						print '<span class="fa fa-file-o"></span> '.$langs->trans("PageForList").' : <strong><a href="'.$urloflist.'" target="_test">'.($realpathtolist ? '' : '<strike>').$pathtolist.($realpathtolist ? '' : '</strike>').'</a></strong>';
 						print ' <a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=editfile&format=php&file='.urlencode($pathtolist).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 						print '<br>';
@@ -2621,7 +2666,7 @@ if ($module == 'initmodule') {
 
 							print '<!-- Table with properties of object -->'."\n";
 							print '<div class="div-table-responsive">';
-							print '<table class="noborder">';
+							print '<table class="noborder small">';
 							print '<tr class="liste_titre">';
 							print '<th>'.$langs->trans("Property");
 							print ' (<a class="" href="https://wiki.dolibarr.org/index.php/Language_and_development_rules#Table_and_fields_structures" target="_blank">'.$langs->trans("SeeExamples").'</a>)';
@@ -2644,7 +2689,7 @@ if ($module == 'initmodule') {
 							print '<th class="center">'.$langs->trans("CSSClass").'</th>';
 							print '<th class="center">'.$langs->trans("CSSViewClass").'</th>';
 							print '<th class="center">'.$langs->trans("CSSListClass").'</th>';
-							print '<th class="center">'.$langs->trans("KeyForTooltip").'</th>';
+							print '<th>'.$langs->trans("KeyForTooltip").'</th>';
 							print '<th class="center">'.$langs->trans("ShowOnCombobox").'</th>';
 							//print '<th class="center">'.$langs->trans("Disabled").'</th>';
 							print '<th>'.$langs->trans("Comment").'</th>';
@@ -2659,26 +2704,26 @@ if ($module == 'initmodule') {
 							if (!empty($properties)) {
 								// Line to add a property
 								print '<tr>';
-								print '<td><input class="text maxwidth75" name="propname" value="'.dol_escape_htmltag(GETPOST('propname', 'alpha')).'"></td>';
-								print '<td><input class="text maxwidth75" name="proplabel" value="'.dol_escape_htmltag(GETPOST('proplabel', 'alpha')).'"></td>';
-								print '<td><input class="text maxwidth75" name="proptype" value="'.dol_escape_htmltag(GETPOST('proptype', 'alpha')).'"></td>';
-								print '<td><input class="text maxwidth75" name="proparrayofkeyval" value="'.dol_escape_htmltag(GETPOST('proparrayofkeyval', 'restricthtml')).'"></td>';
-								print '<td class="center"><input class="text" size="2" name="propnotnull" value="'.dol_escape_htmltag(GETPOST('propnotnull', 'alpha')).'"></td>';
-								print '<td><input class="text maxwidth50" name="propdefault" value="'.dol_escape_htmltag(GETPOST('propdefault', 'alpha')).'"></td>';
-								print '<td class="center"><input class="text" size="2" name="propindex" value="'.dol_escape_htmltag(GETPOST('propindex', 'alpha')).'"></td>';
-								print '<td class="center"><input class="text" size="2" name="propforeignkey" value="'.dol_escape_htmltag(GETPOST('propforeignkey', 'alpha')).'"></td>';
-								print '<td class="right"><input class="text right" size="2" name="propposition" value="'.dol_escape_htmltag(GETPOST('propposition', 'alpha')).'"></td>';
-								print '<td class="center"><input class="text" size="2" name="propenabled" value="'.dol_escape_htmltag(GETPOST('propenabled', 'alpha')).'"></td>';
-								print '<td class="center"><input class="text" size="2" name="propvisible" value="'.dol_escape_htmltag(GETPOST('propvisible', 'alpha')).'"></td>';
-								print '<td class="center"><input class="text" size="2" name="propnoteditable" value="'.dol_escape_htmltag(GETPOST('propnoteditable', 'alpha')).'"></td>';
-								print '<td class="center"><input class="text" size="2" name="propsearchall" value="'.dol_escape_htmltag(GETPOST('propsearchall', 'alpha')).'"></td>';
-								print '<td class="center"><input class="text" size="2" name="propisameasure" value="'.dol_escape_htmltag(GETPOST('propisameasure', 'alpha')).'"></td>';
-								print '<td class="center"><input class="text" size="2" name="propcss" value="'.dol_escape_htmltag(GETPOST('propcss', 'alpha')).'"></td>';
-								print '<td class="center"><input class="text" size="2" name="propcssview" value="'.dol_escape_htmltag(GETPOST('propcssview', 'alpha')).'"></td>';
-								print '<td class="center"><input class="text" size="2" name="propcsslist" value="'.dol_escape_htmltag(GETPOST('propcsslist', 'alpha')).'"></td>';
-								print '<td class="center"><input class="text" size="2" name="prophelp" value="'.dol_escape_htmltag(GETPOST('prophelp', 'alpha')).'"></td>';
-								print '<td class="center"><input class="text" size="2" name="propshowoncombobox" value="'.dol_escape_htmltag(GETPOST('propshowoncombobox', 'alpha')).'"></td>';
-								//print '<td class="center"><input class="text" size="2" name="propdisabled" value="'.dol_escape_htmltag(GETPOST('propdisabled', 'alpha')).'"></td>';
+								print '<td><input type="text" class="maxwidth75" name="propname" value="'.dol_escape_htmltag(GETPOST('propname', 'alpha')).'"></td>';
+								print '<td><input type="text" class="maxwidth75" name="proplabel" value="'.dol_escape_htmltag(GETPOST('proplabel', 'alpha')).'"></td>';
+								print '<td><input type="text" class="maxwidth75" name="proptype" value="'.dol_escape_htmltag(GETPOST('proptype', 'alpha')).'"></td>';
+								print '<td><input type="text" class="maxwidth75" name="proparrayofkeyval" value="'.dol_escape_htmltag(GETPOST('proparrayofkeyval', 'restricthtml')).'"></td>';
+								print '<td class="center"><input type="text" class="center maxwidth50" name="propnotnull" value="'.dol_escape_htmltag(GETPOST('propnotnull', 'alpha')).'"></td>';
+								print '<td><input type="text" class="center maxwidth50" name="propdefault" value="'.dol_escape_htmltag(GETPOST('propdefault', 'alpha')).'"></td>';
+								print '<td class="center"><input type="text" class="center maxwidth50" name="propindex" value="'.dol_escape_htmltag(GETPOST('propindex', 'alpha')).'"></td>';
+								print '<td class="center"><input type="text" class="maxwidth100" name="propforeignkey" value="'.dol_escape_htmltag(GETPOST('propforeignkey', 'alpha')).'"></td>';
+								print '<td class="right"><input type="text" class="right" size="2" name="propposition" value="'.dol_escape_htmltag(GETPOST('propposition', 'alpha')).'"></td>';
+								print '<td class="center"><input type="text" class="center maxwidth50" name="propenabled" value="'.dol_escape_htmltag(GETPOST('propenabled', 'alpha')).'"></td>';
+								print '<td class="center"><input type="text" class="center maxwidth50" name="propvisible" value="'.dol_escape_htmltag(GETPOST('propvisible', 'alpha')).'"></td>';
+								print '<td class="center"><input type="text" class="center maxwidth50" name="propnoteditable" value="'.dol_escape_htmltag(GETPOST('propnoteditable', 'alpha')).'"></td>';
+								print '<td class="center"><input type="text" class="center maxwidth50" name="propsearchall" value="'.dol_escape_htmltag(GETPOST('propsearchall', 'alpha')).'"></td>';
+								print '<td class="center"><input type="text" class="center maxwidth50" name="propisameasure" value="'.dol_escape_htmltag(GETPOST('propisameasure', 'alpha')).'"></td>';
+								print '<td class="center"><input type="text" class="maxwidth50" name="propcss" value="'.dol_escape_htmltag(GETPOST('propcss', 'alpha')).'"></td>';
+								print '<td class="center"><input type="text" class="maxwidth50" name="propcssview" value="'.dol_escape_htmltag(GETPOST('propcssview', 'alpha')).'"></td>';
+								print '<td class="center"><input type="text" class="maxwidth50" name="propcsslist" value="'.dol_escape_htmltag(GETPOST('propcsslist', 'alpha')).'"></td>';
+								print '<td><input type="text" size="2" name="prophelp" value="'.dol_escape_htmltag(GETPOST('prophelp', 'alpha')).'"></td>';
+								print '<td class="center"><input type="text" class="center maxwidth50" name="propshowoncombobox" value="'.dol_escape_htmltag(GETPOST('propshowoncombobox', 'alpha')).'"></td>';
+								//print '<td class="center"><input type="text" size="2" name="propdisabled" value="'.dol_escape_htmltag(GETPOST('propdisabled', 'alpha')).'"></td>';
 								print '<td><input class="text maxwidth100" name="propcomment" value="'.dol_escape_htmltag(GETPOST('propcomment', 'alpha')).'"></td>';
 								print '<td class="center">';
 								print '<input class="button" type="submit" name="add" value="'.$langs->trans("Add").'">';
@@ -2737,23 +2782,27 @@ if ($module == 'initmodule') {
 										print '<input name="proptype" value="'.dol_escape_htmltag($proptype).'"></input>';
 										print '</td>';
 										print '<td class="tdoverflowmax200">';
-										print '<input name="proparrayofkeyval" value="'.dol_escape_htmltag(json_encode($proparrayofkeyval)).'">';
+										print '<input name="proparrayofkeyval" value="';
+										if (isset($proparrayofkeyval)) {
+											print dol_escape_htmltag(json_encode($proparrayofkeyval));
+										}
+										print '">';
 										print '</input>';
 										print '</td>';
 										print '<td>';
-										print '<input class="center" name="propnotnull" size="2" value="'.dol_escape_htmltag($propnotnull).'">';
+										print '<input class="center width50" name="propnotnull" value="'.dol_escape_htmltag($propnotnull).'">';
 										print '</td>';
 										print '<td>';
-										print '<input class="center" name="propdefault" value="'.dol_escape_htmltag($propdefault).'">';
+										print '<input class="maxwidth50" name="propdefault" value="'.dol_escape_htmltag($propdefault).'">';
 										print '</td>';
-										print '<td>';
-										print '<input class="center" name="propindex" size="2" value="'.dol_escape_htmltag($propindex).'">';
+										print '<td class="center">';
+										print '<input class="center maxwidth50" name="propindex" value="'.dol_escape_htmltag($propindex).'">';
 										print '</td>';
 										print '<td>';
 										print '<input class="center" name="propforeignkey" value="'.dol_escape_htmltag($propforeignkey).'">';
 										print '</td>';
 										print '<td>';
-										print '<input class="right" name="propposition" value="'.dol_escape_htmltag($propposition).'">';
+										print '<input class="right width50" name="propposition" value="'.dol_escape_htmltag($propposition).'">';
 										print '</td>';
 										print '<td>';
 										print '<input class="center" name="propenabled" size="2" value="'.dol_escape_htmltag($propenabled).'">';
@@ -2762,7 +2811,7 @@ if ($module == 'initmodule') {
 										print '<input class="center" name="propvisible" size="2" value="'.dol_escape_htmltag($propvisible).'">';
 										print '</td>';
 										print '<td>';
-										print '<input class="center" name="propnotable" size="2" value="'.dol_escape_htmltag($propnotable).'">';
+										print '<input class="center" name="propnoeditable" size="2" value="'.dol_escape_htmltag($propnoteditable).'">';
 										print '</td>';
 										print '<td>';
 										print '<input class="center" name="propsearchall" size="2" value="'.dol_escape_htmltag($propsearchall).'">';
@@ -2771,22 +2820,22 @@ if ($module == 'initmodule') {
 										print '<input class="center" name="propisameasure" size="2" value="'.dol_escape_htmltag($propisameasure).'">';
 										print '</td>';
 										print '<td>';
-										print '<input class="center" name="propcss" value="'.dol_escape_htmltag($propcss).'">';
+										print '<input class="center maxwidth50" name="propcss" value="'.dol_escape_htmltag($propcss).'">';
 										print '</td>';
 										print '<td>';
-										print '<input class="center" name="propcssview" value="'.dol_escape_htmltag($propcssview).'">';
+										print '<input class="center maxwidth50" name="propcssview" value="'.dol_escape_htmltag($propcssview).'">';
 										print '</td>';
 										print '<td>';
-										print '<input class="center" name="propcsslist" value="'.dol_escape_htmltag($propcsslist).'">';
+										print '<input class="center maxwidth50" name="propcsslist" value="'.dol_escape_htmltag($propcsslist).'">';
 										print '</td>';
 										print '<td>';
-										print '<input class="center" name="prophelp" value="'.dol_escape_htmltag($prophelp).'">';
+										print '<input class="maxwidth100" name="prophelp" value="'.dol_escape_htmltag($prophelp).'">';
 										print '</td>';
 										print '<td>';
-										print '<input class="center" name="propshowoncombobox" size="2" value="'.dol_escape_htmltag($propshowoncombobox).'">';
+										print '<input class="center maxwidth50" name="propshowoncombobox" value="'.dol_escape_htmltag($propshowoncombobox).'">';
 										print '</td>';
 										print '<td>';
-										print '<input name="propcomment" value="'.dol_escape_htmltag($propcomment).'">';
+										print '<input class="maxwidth100" name="propcomment" value="'.dol_escape_htmltag($propcomment).'">';
 										print '</td>';
 										print '<td class="center">';
 										print '<input class="button smallpaddingimp" type="submit" name="edit" value="'.$langs->trans("Save").'">';
@@ -3812,12 +3861,12 @@ if ($module == 'initmodule') {
 					$moduleobj = new $class($db);
 				} catch (Exception $e) {
 					$error++;
-					dol_print_error($e->getMessage());
+					dol_print_error($db, $e->getMessage());
 				}
 			} else {
 				$error++;
 				$langs->load("errors");
-				dol_print_error($langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));
+				dol_print_error($db, $langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));
 				exit;
 			}
 

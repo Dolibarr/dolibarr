@@ -324,7 +324,6 @@ MaxSizeList=Longitud máxima para la lista
 DefaultMaxSizeList=Longitud máxima predeterminada para listas
 CompanyInfo=Empresa / Organización
 CompanyAddress=DIrección
-ShowBugTrackLink=Show link "<strong>%s</strong>"
 DelaysOfToleranceBeforeWarning=Retardo antes de mostrar una alerta de advertencia por:
 MiscellaneousDesc=Todos los demás parámetros relacionados con la seguridad se definen aquí.
 LimitsSetup=Límites / configuración de precisión

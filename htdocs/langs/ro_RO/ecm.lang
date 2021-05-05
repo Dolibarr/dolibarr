@@ -42,6 +42,6 @@ ExtraFieldsEcmFiles=Extracâmpuri Fişiere ECM
 ExtraFieldsEcmDirectories=Extracâmpuri Directoare ECM
 ECMSetup=Configurare ECM
 GenerateImgWebp=Duplică toate imaginile cu o altă versiune în format .webp
-ConfirmGenerateImgWebp=Dacă confirmi, vei genera o imagine în format .webp pentru toate imaginile aflate în prezent în acest folder și subfolderul său...
+ConfirmGenerateImgWebp=Dacă confirmi, vei genera o imagine în format .webp pentru toate imaginile aflate în prezent în acest folder (subfolderele nu sunt incluse)... 
 ConfirmImgWebpCreation=Confirmă duplicarea tuturor imaginilor
 SucessConvertImgWebp=Imaginile au fost duplicate cu succes

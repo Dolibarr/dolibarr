@@ -98,3 +98,4 @@ $badgeStatus7 = '#277d1e';
 $badgeStatus8 = '#993013';
 $badgeStatus9 = '#e7f0f0';
 $badgeStatus10 = '#993013';
+$badgeStatus11 = '#15a540';

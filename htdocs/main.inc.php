@@ -1579,7 +1579,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 				print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
 			}
 			// Chart
-			if (empty($conf->global->MAIN_JS_GRAPH) || $conf->global->MAIN_JS_GRAPH == 'chart') {
+			if ((empty($conf->global->MAIN_JS_GRAPH) || $conf->global->MAIN_JS_GRAPH == 'chart') && !defined('DISABLE_JS_GRAPH')) {
 				print '<script src="'.DOL_URL_ROOT.'/includes/nnnick/chartjs/dist/Chart.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
 			}
 

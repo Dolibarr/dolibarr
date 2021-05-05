@@ -69,5 +69,3 @@ EditInLineOnOff=El modo &#39;Editar en línea&#39; es %s
 ShowSubContainersOnOff=El modo para ejecutar &#39;contenido dinámico&#39; es %s
 GlobalCSSorJS=Archivo global CSS / JS / Header del sitio web
 TranslationLinks=Enlaces de Traducción
-ErrorFaviconSize=Favicon must be of size 32x32
-FaviconTooltip=Upload an image which needs to be a png of 32x32
