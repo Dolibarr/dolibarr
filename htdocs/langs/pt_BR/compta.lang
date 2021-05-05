@@ -100,7 +100,6 @@ CheckReceipt=Depósito de cheque
 CheckReceiptShort=Depósito de cheque
 LastCheckReceiptShort=Últimos %s recibos de cheque
 NoWaitingChecks=Sem cheques a depositar.
-DateChequeReceived=Data introdução de dados de recepção cheque
 NbOfCheques=Nº. de cheques
 PaySocialContribution=Quitar um encargo fiscal/social
 DeleteSocialContribution=Excluir um pagamento taxa social ou fiscal

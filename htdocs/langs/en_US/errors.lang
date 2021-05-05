@@ -262,6 +262,7 @@ ErrorDateIsInFuture=Error, the date can't be in the future
 ErrorAnAmountWithoutTaxIsRequired=Error, amount is mandatory
 ErrorAPercentIsRequired=Error, please fill in the percentage correctly
 ErrorYouMustFirstSetupYourChartOfAccount=You must first setup your chart of account
+ErrorFailedToFindEmailTemplate=Failed to find template with code name %s
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.

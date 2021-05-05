@@ -2,9 +2,9 @@
 ErrorCompanyNameAlreadyExists=نام شرکت %s از قبل، وجود داشته است. لطفا نام دیگری برگزینید.
 ErrorSetACountryFirst=ابتدا کشور را تعیین کنید
 SelectThirdParty=انتخاب شخص‌سوم
-ConfirmDeleteCompany=آیا مطمئن هستید که می‌خواهید این شرکت و همۀ اطلاعات مربوطه را حذف کنید؟
+ConfirmDeleteCompany=Are you sure you want to delete this company and all related information?
 DeleteContact=حذف یک طرف‌تماس/نشانی
-ConfirmDeleteContact=آیا مطمئن هستید که می‌خواهید این طرف‌تماس و همۀ اطلاعات مربوطه را حذف کنید؟
+ConfirmDeleteContact=Are you sure you want to delete this contact and all related information?
 MenuNewThirdParty=شخص‌سوم جدید
 MenuNewCustomer=مشتری جدید
 MenuNewProspect=مشتری‌احتمالی جدید
@@ -69,7 +69,7 @@ PhoneShort=تلفن
 Skype=اسکایپ
 Call=تماس
 Chat=گفتگوی اینترنتی
-PhonePro=تلفن کاری
+PhonePro=Bus. phone
 PhonePerso=تلفن شخصی
 PhoneMobile=تلفن همراه
 No_Email=عدم تمایل به دریافت رایانامه‌های جمعی
@@ -331,7 +331,7 @@ CustomerCodeDesc=کد مشتری، منحصربه‌فرد برای همۀ مش�
 SupplierCodeDesc=کد فروشنده، منحصر‌به‌فرد برای همۀ فروشندگان
 RequiredIfCustomer=در صورتی‌که شخص‌سوم یک مشتری یا مشتری‌احتمالی است، الزامی است
 RequiredIfSupplier=در صورتی که شخص‌سوم، فروشنده است، الزامی است
-ValidityControledByModule=اعتبار توسط واحد مربوطه مورد بررسی قرار می‌گیرد
+ValidityControledByModule=Validity controlled by the module
 ThisIsModuleRules=مقررات این واحد
 ProspectToContact=مشتری‌احتمالی به طرف‌تماس
 CompanyDeleted= شرکت "%s" از پایگاه داده حذف شد.
@@ -439,12 +439,12 @@ ListSuppliersShort=فهرست فروشندگان
 ListProspectsShort=فهرست مشتریان احتمالی
 ListCustomersShort=فهرست مشتریان
 ThirdPartiesArea=شخص‌های سوم/طرف‌های تماس
-LastModifiedThirdParties=Latest %s modified Third Parties
-UniqueThirdParties=تعداد کل شخص‌سوم‌ها
+LastModifiedThirdParties=Latest %s Third Parties which were modified
+UniqueThirdParties=Total number of Third Parties
 InActivity=باز
 ActivityCeased=بسته
 ThirdPartyIsClosed=شخص‌سوم بسته شده است
-ProductsIntoElements=فهرست محصولات/خدمات به %s
+ProductsIntoElements=List of products/services mapped to %s
 CurrentOutstandingBill=صورت‌حساب‌های درانتظار کنونی
 OutstandingBill=حداکثر تعداد صورت‌حساب‌های درانتظار
 OutstandingBillReached=حداکثر تعداد رسیدن به صورت‌حساب‌های درانتظار
@@ -454,7 +454,7 @@ LeopardNumRefModelDesc=این کد آزاد است و می‌تواند در ه�
 ManagingDirectors=نام مدیر (مدیرعامل، مدیر، رئیس...)()
 MergeOriginThirdparty=نسخه‌برداری از شخص سوم (شخص‌سومی که می‌خواهید حذف کنید)
 MergeThirdparties=ادغام شخص‌سوم‌ها
-ConfirmMergeThirdparties=آیا مطمئن هستید می‌خواهید این شخص سوم را با مورد موجود ادغام کنید؟ همۀ اشیاء پیوند شده (صورت‌حساب، سفارش، ...) به شخص سوم کنونی منتقل خواهد شد و سپس این شخص سوم حذف خواهد شد
+ConfirmMergeThirdparties=Are you sure you want to merge the chosen third party with the current one? All linked objects (invoices, orders, ...) will be moved to the current third party, after which the chosen third party will be deleted.
 ThirdpartiesMergeSuccess=شخص‌سوم‌ها با هم ادغام شدند
 SaleRepresentativeLogin=مشخصات‌ورود نماینده فروش
 SaleRepresentativeFirstname=نام نمایندۀ فروش

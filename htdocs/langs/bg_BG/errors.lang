@@ -4,9 +4,9 @@
 NoErrorCommitIsDone=Няма грешка, но се ангажираме.
 # Errors
 ErrorButCommitIsDone=Намерени са грешки, но ние валидираме въпреки това.
-ErrorBadEMail=Имейл %s е грешен
-ErrorBadMXDomain=Email %s seems wrong (domain has no valid MX record)
-ErrorBadUrl=URL адрес %s е грешен
+ErrorBadEMail=Email %s is incorrect
+ErrorBadMXDomain=Email %s seems incorrect (domain has no valid MX record)
+ErrorBadUrl=Url %s is incorrect
 ErrorBadValueForParamNotAString=Неправилна стойност за вашия параметър. Обикновено се добавя, когато преводът липсва.
 ErrorRefAlreadyExists=Reference <b>%s</b> already exists.
 ErrorLoginAlreadyExists=Потребител %s вече съществува.
@@ -46,8 +46,8 @@ ErrorWrongDate=Датата не е правилна!
 ErrorFailedToWriteInDir=Неуспешно записване в директория %s
 ErrorFoundBadEmailInFile=Открит е неправилен имейл синтаксис в %s реда на файла (примерен ред %s с имейл=%s)
 ErrorUserCannotBeDelete=Потребителят не може да бъде изтрит. Може би е свързан с обекти в Dolibarr.
-ErrorFieldsRequired=Някои задължителни полета не са попълнени.
-ErrorSubjectIsRequired=Необходима е тема на имейл
+ErrorFieldsRequired=Some required fields have been left blank.
+ErrorSubjectIsRequired=The email subject is required
 ErrorFailedToCreateDir=Неуспешно създаване на директория. Уверете се, че уеб сървър потребител има разрешение да пишат в Dolibarr документи. Ако параметър <b>safe_mode</b> е разрешен в тази PHP, проверете дали Dolibarr PHP файлове притежава за потребителя на уеб сървъра (или група).
 ErrorNoMailDefinedForThisUser=Няма дефиниран имейл за този потребител
 ErrorSetupOfEmailsNotComplete=Setup of emails is not complete
@@ -226,6 +226,7 @@ ErrorAPageWithThisNameOrAliasAlreadyExists=Страницата/контейне
 ErrorDuringChartLoad=Грешка при зареждане на диаграмата на сметките. Ако някои сметки не са заредени, може да ги въведете ръчно.
 ErrorBadSyntaxForParamKeyForContent=Неправилен синтаксис за параметър keyforcontent. Трябва да има стойност, започваща с %s или %s
 ErrorVariableKeyForContentMustBeSet=Грешка, трябва да бъде зададена константа с име %s (с текстово съдържание за показване) или %s (с външен url за показване).
+ErrorURLMustEndWith=URL %s must end %s
 ErrorURLMustStartWithHttp=URL адресът %s трябва да започва с http:// или https://
 ErrorHostMustNotStartWithHttp=Host name %s must NOT start with http:// or https://
 ErrorNewRefIsAlreadyUsed=Грешка, новата референция вече е използвана
@@ -296,3 +297,4 @@ WarningAvailableOnlyForHTTPSServers=Available only if using HTTPS secured connec
 WarningModuleXDisabledSoYouMayMissEventHere=Module %s has not been enabled. So you may miss a lot of event here.
 ErrorActionCommPropertyUserowneridNotDefined=User's owner is required
 ErrorActionCommBadType=Selected event type (id: %n, code: %s) do not exist in Event Type dictionary
+CheckVersionFail=Version check fail

@@ -589,3 +589,4 @@ FacParentLine=Invoice Line Parent
 SituationTotalRayToRest=Remainder to pay without taxe
 PDFSituationTitle=Situation n° %d
 SituationTotalProgress=Total progress %d %%
+SearchUnpaidInvoicesWithDueDate=Search unpaid invoices with a due date = %s

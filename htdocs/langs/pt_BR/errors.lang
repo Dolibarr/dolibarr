@@ -1,8 +1,6 @@
 # Dolibarr language file - Source file is en_US - errors
 NoErrorCommitIsDone=Sem erros, garantimos
 ErrorButCommitIsDone=Erros foram encontrados mas, apesar disso, validamos
-ErrorBadEMail=E-mail %s está errado
-ErrorBadUrl=O URL %s está errado
 ErrorBadValueForParamNotAString=Valor ruim para o seu parâmetro por falta, possivelmente, de tradução.
 ErrorRecordNotFound=Registro não encontrado.
 ErrorFailToCopyFile=Houve uma falha ao copiar o arquivo '<b>%s</b>' para '<b>%s</b>'.
@@ -33,8 +31,6 @@ ErrorBadDateFormat=O valor '%s' tem o formato de data errada
 ErrorWrongDate=A data não está correta!
 ErrorFailedToWriteInDir=Houve uma falha ao escrever no diretório %s
 ErrorFoundBadEmailInFile=Encontrado uma sintaxe de e-mail incorreta para as linhas %s no arquivo (por exemplo, linha %s com e-mail = %s)
-ErrorFieldsRequired=Alguns campos obrigatórios não foram preenchidos.
-ErrorSubjectIsRequired=O campo do e-mail é obrigatório
 ErrorFailedToCreateDir=Error na creação de uma carpeta. Compruebe que 0 usuario del servidor Web tiene derechos de escritura en las carpetas de documentos de Dolibarr. Si 0  parámetro <b>safe_mode</b> está ativo en este PHP, Compruebe que los archivos php dolibarr pertencen ao usuario del servidor Web.
 ErrorNoMailDefinedForThisUser=Nenhum e-mail definido para este usuário
 ErrorFeatureNeedJavascript=Esta funcionalidade requer que o javascript seja ativado para funcionar. Altere isto em Configuração >> Aparência.
