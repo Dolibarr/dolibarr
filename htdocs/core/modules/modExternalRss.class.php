@@ -21,7 +21,7 @@
  *	\brief      Module pour inclure des informations externes RSS
  *	\file       htdocs/core/modules/modExternalRss.class.php
  *	\ingroup    externalrss
- *	\brief      Fichier de description et activation du module externalrss
+ *	\brief      Description and activation file for the module externalrss
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
@@ -83,7 +83,7 @@ class modExternalRss extends DolibarrModules
 	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *		It also creates data directories
 	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
 	public function init($options = '')
@@ -98,12 +98,10 @@ class modExternalRss extends DolibarrModules
 		$sql .= " WHERE name like 'EXTERNAL_RSS_TITLE_%'";
 		$sql .= " AND entity = ".$conf->entity;
 		$result = $this->db->query($sql);
-		if ($result)
-		{
-			while ($obj = $this->db->fetch_object($result))
-			{
-				if (preg_match('/EXTERNAL_RSS_TITLE_([0-9]+)/i', $obj->name, $reg))
-				{
+		if ($result) {
+			while ($obj = $this->db->fetch_object($result)) {
+				$reg = array();
+				if (preg_match('/EXTERNAL_RSS_TITLE_([0-9]+)/i', $obj->name, $reg)) {
 					// Definie la boite si on a trouvee une ancienne configuration
 					//$this->boxes[$reg[1]][0] = "(ExternalRSSInformations)";
 					$this->boxes[$reg[1]]['file'] = "box_external_rss.php";
@@ -118,21 +116,21 @@ class modExternalRss extends DolibarrModules
 		return $this->_init($sql, $options);
 	}
 
-    /**
+	/**
 	 *		Function called when module is disabled.
 	 *      Remove from database constants, boxes and permissions from Dolibarr database.
 	 *		Data directories are not deleted
 	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
-     */
-    public function remove($options = '')
-    {
+	 */
+	public function remove($options = '')
+	{
 		$sql = array();
 
 		// Delete old declarations of RSS box
 		$this->boxes[0]['file'] = "box_external_rss.php";
 
 		return $this->_remove($sql, $options);
-    }
+	}
 }

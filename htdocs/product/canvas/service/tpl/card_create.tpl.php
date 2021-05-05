@@ -16,8 +16,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || !is_object($conf))
-{
+if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
@@ -32,7 +31,7 @@ $statutarray = array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOn
 
 <?php
 print load_fiche_titre($langs->trans("NewService"), '', 'service');
-dol_fiche_head('');
+print dol_get_fiche_head('');
 ?>
 
 <?php dol_htmloutput_errors($this->control->tpl['error'], $this->control->tpl['errors']); ?>
@@ -50,7 +49,9 @@ dol_fiche_head('');
 <tr>
 <td class="fieldrequired" width="20%"><?php echo $langs->trans("Ref"); ?></td>
 <td><input name="ref" size="40" maxlength="32" value="<?php echo $object->ref; ?>">
-<?php if ($refalreadyexists == 1) echo $langs->trans("RefAlreadyExists"); ?>
+<?php if ($refalreadyexists == 1) {
+	echo $langs->trans("RefAlreadyExists");
+} ?>
 </td></tr>
 
 <tr>

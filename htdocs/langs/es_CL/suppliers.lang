@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Vendedores
 SuppliersInvoice=Factura del proveedor
+SupplierInvoices=Facturas del vendedor
 ShowSupplierInvoice=Mostrar factura del vendedor
 NewSupplier=Nuevo vendedor
 ListOfSuppliers=Lista de proveedores
@@ -35,5 +36,4 @@ SupplierReputation=Reputación del vendedor
 DoNotOrderThisProductToThisSupplier=No ordene
 NotTheGoodQualitySupplier=Baja calidad
 AllProductServicePrices=Todos los precios de productos/servicios
-AllProductReferencesOfSupplier=Todas las referencias de productos / servicios del vendedor.
 BuyingPriceNumShort=Precios del proveedor

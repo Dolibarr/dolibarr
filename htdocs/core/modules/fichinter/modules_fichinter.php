@@ -140,11 +140,17 @@ abstract class ModeleNumRefFicheinter
 		global $langs;
 		$langs->load("admin");
 
-		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
-		elseif ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-		elseif ($this->version == 'dolibarr') return DOL_VERSION;
-		elseif ($this->version) return $this->version;
-		else return $langs->trans("NotAvailable");
+		if ($this->version == 'development') {
+			return $langs->trans("VersionDevelopment");
+		} elseif ($this->version == 'experimental') {
+			return $langs->trans("VersionExperimental");
+		} elseif ($this->version == 'dolibarr') {
+			return DOL_VERSION;
+		} elseif ($this->version) {
+			return $this->version;
+		} else {
+			return $langs->trans("NotAvailable");
+		}
 	}
 }
 
@@ -173,10 +179,8 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails = 0,
 	$srctemplatepath = '';
 
 	// Positionne modele sur le nom du modele de fichinter a utiliser
-	if (!dol_strlen($modele))
-	{
-		if (!empty($conf->global->FICHEINTER_ADDON_PDF))
-		{
+	if (!dol_strlen($modele)) {
+		if (!empty($conf->global->FICHEINTER_ADDON_PDF)) {
 			$modele = $conf->global->FICHEINTER_ADDON_PDF;
 		} else {
 			$modele = 'soleil';
@@ -185,37 +189,38 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails = 0,
 
 	// If selected modele is a filename template (then $modele="modelname:filename")
 	$tmp = explode(':', $modele, 2);
-	if (!empty($tmp[1]))
-	{
+	if (!empty($tmp[1])) {
 		$modele = $tmp[0];
 		$srctemplatepath = $tmp[1];
 	}
 
 	// Search template files
-	$file = ''; $classname = ''; $filefound = 0;
+	$file = '';
+	$classname = '';
+	$filefound = 0;
 	$dirmodels = array('/');
-	if (is_array($conf->modules_parts['models'])) $dirmodels = array_merge($dirmodels, $conf->modules_parts['models']);
-	foreach ($dirmodels as $reldir)
-	{
-		foreach (array('doc', 'pdf') as $prefix)
-		{
+	if (is_array($conf->modules_parts['models'])) {
+		$dirmodels = array_merge($dirmodels, $conf->modules_parts['models']);
+	}
+	foreach ($dirmodels as $reldir) {
+		foreach (array('doc', 'pdf') as $prefix) {
 			$file = $prefix."_".$modele.".modules.php";
 
 			// On verifie l'emplacement du modele
 			$file = dol_buildpath($reldir."core/modules/fichinter/doc/".$file, 0);
-			if (file_exists($file))
-			{
+			if (file_exists($file)) {
 				$filefound = 1;
 				$classname = $prefix.'_'.$modele;
 				break;
 			}
 		}
-		if ($filefound) break;
+		if ($filefound) {
+			break;
+		}
 	}
 
 	// Charge le modele
-	if ($filefound)
-	{
+	if ($filefound) {
 		require_once $file;
 
 		$obj = new $classname($db);
@@ -223,8 +228,7 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails = 0,
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
 		$sav_charset_output = $outputlangs->charset_output;
-		if ($obj->write_file($object, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref) > 0)
-		{
+		if ($obj->write_file($object, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref) > 0) {
 			$outputlangs->charset_output = $sav_charset_output;
 
 			// We delete old preview

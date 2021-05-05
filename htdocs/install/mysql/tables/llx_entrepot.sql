@@ -23,8 +23,9 @@ create table llx_entrepot
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   ref             varchar(255) NOT NULL,
   datec           datetime,
-  tms             timestamp,
+  tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   entity          integer DEFAULT 1 NOT NULL,	-- multi company id
+  fk_project	  integer DEFAULT NULL,			-- project associated to warehouse if any
   description     text,
   lieu            varchar(64),					-- resume lieu situation
   address         varchar(255),

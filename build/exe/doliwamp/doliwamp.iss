@@ -41,7 +41,7 @@ Compression=lzma
 SolidCompression=yes
 WizardImageFile=build\exe\doliwamp\doliwamp.bmp
 WizardSmallImageFile=build\exe\doliwamp\doliwampsmall.bmp
-SetupIconFile=doc\images\dolibarr.ico
+SetupIconFile=doc\images\dolibarr_favicon.ico
 ;To say the installer must be ran as admin
 PrivilegesRequired=admin
 DisableProgramGroupPage=yes
@@ -104,8 +104,8 @@ Source: "build\exe\doliwamp\UsedPort.exe"; DestDir: "{app}\"; Flags: ignoreversi
 ; Value OK: apache 2.2.6,  php 5.2.5 (5.2.11, 5.3.0 and 5.3.1 fails if php_exif, php_pgsql, php_zip is on), mysql 5.0.45
 ; Value OK: apache 2.2.11, php 5.3.0 (if no php_exif, php_pgsql, php_zip), mysql 5.0.45
 ; Value OK: apache 2.4.9,  php 5.5.12, mysql 5.0.45 instead of 5.6.17 (wampserver2.5-Apache-2.4.9-Mysql-5.6.17-php5.5.12-32b.exe)
-; Value To test: apache 2.4.41, php 7.3.12, mysql 5.0.45 instead of 5.6.17 (wampserver2.5-Apache-2.4.9-Mysql-5.6.17-php5.5.12-32b.exe)
-Source: "C:\Program Files\Wamp\apps\phpmyadmin4.1.14\*.*"; DestDir: "{app}\apps\phpmyadmin4.1.14"; Flags: ignoreversion recursesubdirs; Excludes: "config.inc.php,wampserver.conf,*.log,*_log,darkblue_orange"
+; Value OK: apache 2.4.41, php 7.3.12, mariadb10.4.10 (wampserver3.2.0_x64.exe)
+Source: "C:\wamp64\apps\phpmyadmin4.9.2\*.*"; DestDir: "{app}\apps\phpmyadmin4.9.2"; Flags: ignoreversion recursesubdirs; Excludes: "config.inc.php,wampserver.conf,*.log,*_log,darkblue_orange"
 ;Source: "C:\Program Files\Wamp\bin\apache\apache2.4.9\*.*"; DestDir: "{app}\bin\apache\apache2.4.9"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,httpd.conf,wampserver.conf,*.log,*_log"
 Source: "C:\wamp64\bin\apache\apache2.4.41\*.*"; DestDir: "{app}\bin\apache\apache2.4.41"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,httpd.conf,wampserver.conf,*.log,*_log"
 ;Source: "C:\Program Files\Wamp\bin\php\php5.5.12\*.*"; DestDir: "{app}\bin\php\php5.5.12"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,phpForApache.ini,wampserver.conf,*.log,*_log"
@@ -118,7 +118,7 @@ Source: "C:\wamp64\bin\mariadb\mariadb10.4.10\*.*"; DestDir: "{app}\bin\mariadb\
 ;Source: "build\exe\doliwamp\mysql\*.*"; DestDir: "{app}\bin\mariadb\data\mysql"; Flags: onlyifdoesntexist ignoreversion recursesubdirs; Excludes: ".gitignore,.project,CVS\*,Thumbs.db"
 
 ; Dolibarr
-Source: "htdocs\*.*"; DestDir: "{app}\www\dolibarr\htdocs"; Flags: ignoreversion recursesubdirs; Excludes: ".gitignore,.project,CVS\*,Thumbs.db,custom\*,custom2\*,documents\*,includes\ckeditor\_source\*,includes\savant\*,includes\phpmailer\*,jquery\plugins\template\*,nltechno*\*,sabre\sabre\*\tests,PHPExcel\Shared\PDF\*,PHPExcel\Shared\PCLZip\*,tcpdf\fonts\dejavu-fonts-ttf-2.33\*,tcpdf\fonts\freefont-20100919\*,tcpdf\fonts\utils\*,*\conf.php,*\conf.php.mysql,*\conf.php.old,*\conf.php.postgres,*\conf.php.sav,*\install.forced.php"
+Source: "htdocs\*.*"; DestDir: "{app}\www\dolibarr\htdocs"; Flags: ignoreversion recursesubdirs; Excludes: ".gitignore,.project,CVS\*,Thumbs.db,custom\*,custom2\*,documents\*,includes\ckeditor\_source\*,includes\savant\*,includes\phpmailer\*,jquery\plugins\template\*,nltechno*\*,sabre\sabre\*\tests,tcpdf\fonts\dejavu-fonts-ttf-2.33\*,tcpdf\fonts\freefont-20100919\*,tcpdf\fonts\utils\*,*\conf.php,*\conf.php.mysql,*\conf.php.old,*\conf.php.postgres,*\conf.php.sav,*\install.forced.php"
 Source: "dev\*.*"; DestDir: "{app}\www\dolibarr\dev"; Flags: ignoreversion recursesubdirs; Excludes: ".gitignore,.project,CVS\*,Thumbs.db,dbmodel\*,fpdf\*,initdata\*,initdemo\*,iso-normes\*,licence\*,phpcheckstyle\*,phpunit\*,samples\*,test\*,uml\*,vagrant\*,xdebug\*"
 Source: "doc\*.*"; DestDir: "{app}\www\dolibarr\doc"; Flags: ignoreversion recursesubdirs; Excludes: ".gitignore,.project,CVS\*,Thumbs.db,wiki\*,plaquette\*,dev\*,images\dolibarr_screenshot2.png,images\dolibarr_screenshot3.png,images\dolibarr_screenshot4.png,images\dolibarr_screenshot5.png,images\dolibarr_screenshot6.png,images\dolibarr_screenshot7.png,images\dolibarr_screenshot8.png,images\dolibarr_screenshot9.png,images\dolibarr_screenshot10.png,images\dolibarr_screenshot11.png,images\dolibarr_screenshot12.png"
 Source: "scripts\*.*"; DestDir: "{app}\www\dolibarr\scripts"; Flags: ignoreversion recursesubdirs; Excludes: ".gitignore,.project,CVS\*,Thumbs.db,product\materiel.net.php,product\import-product.php"
@@ -519,7 +519,7 @@ begin
 	    // check that we don't try an upgrade (mysql upgrade no supported)
 	    //----------------------------------------------
 
-	    if FileExists (pathWithSlashes+'/bin/mysql/mysql5.0.45'+phpVersion+'/bin/mysqld-nt.exe') then
+	    if FileExists (pathWithSlashes+'/bin/mysql/mysql5.0.45/bin/mysqld-nt.exe') then
 	    begin
 	      MsgBox('An existing installation using an old version of Mysql exists. Sorry, upgrade with this installer is not possible.', mbInformation, MB_OK);
 	      Abort();
@@ -590,13 +590,24 @@ begin
 	      
 	      if browser = 'iexplore.exe' then
 	      begin
+		    if FileExists (winPath+'/SystemApps/Microsoft.MicrosoftEdge_8wekyb3d8bbwe/MicrosoftEdge.exe')  then
+		    begin
+		      if MsgBox(CustomMessage('MicrosoftEdgeDetected'),mbConfirmation,MB_YESNO) = IDYES then
+		      begin
+		        browser := winPath+'/SystemApps/Microsoft.MicrosoftEdge_8wekyb3d8bbwe/MicrosoftEdge.exe';
+		      end;
+		    end;
+		  end;
+
+	      if browser = 'iexplore.exe' then
+	      begin
             if FileExists (pfPath+'/Internet Explorer/iexplore.exe')  then
             begin
-               GetOpenFileName(CustomMessage('ChooseDefaultBrowser'), browser, pfPath+'/Internet Explorer','exe files (*.exe)|*.exe|All files (*.*)|*.*' ,'exe');
+               GetOpenFileName(CustomMessage('ChooseDefaultBrowser'), browser, pfPath+'/Internet Explorer', 'exe files (*.exe)|*.exe|All files (*.*)|*.*' ,'exe');
 	        end
 	        else
 	        begin
-               GetOpenFileName(CustomMessage('ChooseDefaultBrowser'), browser, winPath,'exe files (*.exe)|*.exe|All files (*.*)|*.*' ,'exe');
+               GetOpenFileName(CustomMessage('ChooseDefaultBrowser'), browser, winPath, 'exe files (*.exe)|*.exe|All files (*.*)|*.*' ,'exe');
 	        end;
 	      end;
 	

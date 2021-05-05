@@ -29,8 +29,7 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/class/html.form.class.php';
 
-if (empty($user->id))
-{
+if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
 	$user->getrights();
@@ -75,46 +74,46 @@ class FormTest extends PHPUnit\Framework\TestCase
 	}
 
 	/**
-     * setUpBeforeClass
-     *
-     * @return void
-     */
-  	public static function setUpBeforeClass()
-    {
-    	global $conf,$user,$langs,$db;
+	 * setUpBeforeClass
+	 *
+	 * @return void
+	 */
+	public static function setUpBeforeClass()
+	{
+		global $conf,$user,$langs,$db;
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
-    	print __METHOD__."\n";
-    }
+		print __METHOD__."\n";
+	}
 
-    /**
-     * tearDownAfterClass
-     *
-     * @return	void
-     */
-    public static function tearDownAfterClass()
-    {
-    	global $conf,$user,$langs,$db;
+	/**
+	 * tearDownAfterClass
+	 *
+	 * @return	void
+	 */
+	public static function tearDownAfterClass()
+	{
+		global $conf,$user,$langs,$db;
 		$db->rollback();
 
 		print __METHOD__."\n";
-    }
+	}
 
 	/**
 	 * Init phpunit tests
 	 *
 	 * @return	void
 	 */
-    protected function setUp()
-    {
-    	global $conf,$user,$langs,$db;
+	protected function setUp()
+	{
+		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
 		print __METHOD__."\n";
-    }
+	}
 
 	/**
 	 * End phpunit tests
@@ -122,18 +121,18 @@ class FormTest extends PHPUnit\Framework\TestCase
 	 * @return	void
 	 */
 	protected function tearDown()
-    {
-    	print __METHOD__."\n";
-    }
+	{
+		print __METHOD__."\n";
+	}
 
-    /**
-     * testSelectProduitsList
-     *
-     * @return int
-     */
-    public function testSelectProduitsList()
-    {
-    	global $conf,$user,$langs,$db;
+	/**
+	 * testSelectProduitsList
+	 *
+	 * @return int
+	 */
+	public function testSelectProduitsList()
+	{
+		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
@@ -142,16 +141,16 @@ class FormTest extends PHPUnit\Framework\TestCase
 		$localobject=new Form($this->savdb);
 		$result=$localobject->select_produits_list('', 'productid', '', 5, 0, '', 1, 2, 1);
 
-    	$this->assertEquals(count($result), 5);
-    	print __METHOD__." result=".$result."\n";
+		$this->assertEquals(count($result), 5);
+		print __METHOD__." count result=".count($result)."\n";
 
-    	$conf->global->ENTREPOT_EXTRA_STATUS = 1;
+		$conf->global->ENTREPOT_EXTRA_STATUS = 1;
 
-    	// Exclude stock in warehouseinternal
-    	$result=$localobject->select_produits_list('', 'productid', '', 5, 0, '', 1, 2, 1, 0, '1', 0, '', 0, 'warehouseclosed,warehouseopen');
-    	$this->assertEquals(count($result), 5);
-    	print __METHOD__." result=".$result."\n";
+		// Exclude stock in warehouseinternal
+		$result=$localobject->select_produits_list('', 'productid', '', 5, 0, '', 1, 2, 1, 0, '1', 0, '', 0, 'warehouseclosed,warehouseopen');
+		$this->assertEquals(count($result), 5);
+		print __METHOD__." count result=".count($result)."\n";
 
-    	return $result;
-    }
+		return $result;
+	}
 }

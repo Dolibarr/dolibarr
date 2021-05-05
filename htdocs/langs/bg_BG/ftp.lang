@@ -1,14 +1,14 @@
 # Dolibarr language file - Source file is en_US - ftp
-FTPClientSetup=Настройка на модул "FTP клиент"
+FTPClientSetup=Настройка на модул FTP клиент
 NewFTPClient=Настройка на нова FTP връзка
-FTPArea=FTP
+FTPArea=Секция с FTP
 FTPAreaDesc=Този екран ви показва съдържанието на FTP сървъра
-SetupOfFTPClientModuleNotComplete=Настройките на модула "FTP клиент" изглежда, че не са пълни
+SetupOfFTPClientModuleNotComplete=Настройката на клиентския FTP модул изглежда непълна
 FTPFeatureNotSupportedByYourPHP=Вашият PHP не поддържа FTP функции
-FailedToConnectToFTPServer=Не може да се свържете с FTP сървър (сървър %s, порт %s)
-FailedToConnectToFTPServerWithCredentials=Не можете да се логнете към FTP сървър-а със зададените име и парола
-FTPFailedToRemoveFile=Неуспешно премахване на файла <b>%s.</b>
-FTPFailedToRemoveDir=Неуспешно премахване на директорията <b>%s</b> (Проверете правата и дали директорията е празна).
+FailedToConnectToFTPServer=Неуспешно свързване с FTP сървър (сървър %s, порт %s)
+FailedToConnectToFTPServerWithCredentials=Неуспешно влизане в FTP сървър с дефинираните потребителско име / парола
+FTPFailedToRemoveFile=Неуспешно премахване на файл <b>%s</b>.
+FTPFailedToRemoveDir=Неуспешно премахване на директория <b>%s</b>: проверете правата и дали директорията е празна.
 FTPPassiveMode=Пасивен режим
-ChooseAFTPEntryIntoMenu=Choose a FTP entry into menu...
-FailedToGetFile=Неуспешно взимане на файлове %s
+ChooseAFTPEntryIntoMenu=Изберете FTP сайт от менюто...
+FailedToGetFile=Неуспешно получаване на файлове %s

@@ -26,7 +26,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
 // Load translation files required by the page
 $langs->load("admin");
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 $sortfield = 'file';
 $sortorder = 'ASC';
@@ -66,8 +68,7 @@ print getTitleFieldOfList($langs->trans("Active"), 0, $_SERVER["PHP_SELF"], 'act
 print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], 'none', "", $param, ($align ? 'align="'.$align.'"' : ''), $sortfield, $sortorder, '', 1)."\n";
 print '</tr>';
 
-foreach ($triggers as $trigger)
-{
+foreach ($triggers as $trigger) {
 	print '<tr class="oddeven">';
 	print '<td class="tdtop" width="32">'.$trigger['picto'].'</td>';
 	print '<td class="tdtop">'.$trigger['file'].'</td>';

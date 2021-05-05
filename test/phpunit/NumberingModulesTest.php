@@ -28,8 +28,7 @@ global $conf,$user,$langs,$db;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 
-if (empty($user->id))
-{
+if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
 	$user->getrights();
@@ -74,66 +73,66 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 	}
 
 	/**
-     * setUpBeforeClass
-     *
-     * @return void
-     */
-    public static function setUpBeforeClass()
-    {
-    	global $conf,$user,$langs,$db;
+	 * setUpBeforeClass
+	 *
+	 * @return void
+	 */
+	public static function setUpBeforeClass()
+	{
+		global $conf,$user,$langs,$db;
 
-    	$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
-    	print __METHOD__."\n";
-    }
+		print __METHOD__."\n";
+	}
 
-    /**
-     * tearDownAfterClass
-     *
-     * @return	void
-     */
-    public static function tearDownAfterClass()
-    {
-    	global $conf,$user,$langs,$db;
+	/**
+	 * tearDownAfterClass
+	 *
+	 * @return	void
+	 */
+	public static function tearDownAfterClass()
+	{
+		global $conf,$user,$langs,$db;
 		$db->rollback();
 
 		print __METHOD__."\n";
-    }
+	}
 
 	/**
 	 * Init phpunit tests
 	 *
 	 * @return	void
 	 */
-    protected function setUp()
-    {
-    	global $conf,$user,$langs,$db;
+	protected function setUp()
+	{
+		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
 		print __METHOD__."\n";
-    }
+	}
 
 	/**
 	 * End phpunit tests
 	 *
 	 * @return	void
 	 */
-    protected function tearDown()
-    {
-    	print __METHOD__."\n";
-    }
+	protected function tearDown()
+	{
+		print __METHOD__."\n";
+	}
 
-    /**
-     * testFactureMercure
-     *
-     * @return int
-     */
-    public function testFactureMercure()
-    {
-    	global $conf,$user,$langs,$db,$mysoc;
+	/**
+	 * testFactureMercure
+	 *
+	 * @return int
+	 */
+	public function testFactureMercure()
+	{
+		global $conf,$user,$langs,$db,$mysoc;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
@@ -237,13 +236,13 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 		$result2=$localobject2->create($user, 1);
 		$result3=$localobject2->validate($user, $result);
 		print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('192101-0001', $result);			// counter must be reseted to 1
-    	$result=$localobject2->is_erasable();
-    	print __METHOD__." is_erasable=".$result."\n";
-    	$this->assertGreaterThanOrEqual(1, $result);						// Can be deleted
-    	$result=$localobject->is_erasable();
-    	print __METHOD__." is_erasable=".$result."\n";
-    	$this->assertGreaterThanOrEqual(1, $result);						// Case 1 can be deleted (because there was a reset for case 2)
+		$this->assertEquals('192101-0001', $result);			// counter must be reseted to 1
+		$result=$localobject2->is_erasable();
+		print __METHOD__." is_erasable=".$result."\n";
+		$this->assertGreaterThanOrEqual(1, $result);						// Can be deleted
+		$result=$localobject->is_erasable();
+		print __METHOD__." is_erasable=".$result."\n";
+		$this->assertGreaterThanOrEqual(1, $result);						// Case 1 can be deleted (because there was a reset for case 2)
 
 		// Same but we add month before year and use a year on 2 digits
 		$conf->global->FACTURE_MERCURE_MASK_CREDIT='[mm}{yy}-{0000@1}';
@@ -268,319 +267,319 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 		$result2=$localobject2->create($user, 1);
 		$result3=$localobject2->validate($user, $result);
 		print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('0125-0002', $result, 'Test for {mm}{yy}-{0000@1} 2st invoice');			// counter must be now 2
-    	$result=$localobject2->is_erasable();
-    	print __METHOD__." is_erasable=".$result."\n";
-    	$this->assertGreaterThanOrEqual(1, $result);						// Can be deleted
-    	$result=$localobject->is_erasable();
-    	print __METHOD__." is_erasable=".$result."\n";
-    	$this->assertLessThanOrEqual(0, $result);						// Case 1 can not be deleted (because there is an invoice 2)
+		$this->assertEquals('0125-0002', $result, 'Test for {mm}{yy}-{0000@1} 2st invoice');			// counter must be now 2
+		$result=$localobject2->is_erasable();
+		print __METHOD__." is_erasable=".$result."\n";
+		$this->assertGreaterThanOrEqual(1, $result);						// Can be deleted
+		$result=$localobject->is_erasable();
+		print __METHOD__." is_erasable=".$result."\n";
+		$this->assertLessThanOrEqual(0, $result);						// Case 1 can not be deleted (because there is an invoice 2)
 		$localobject3=new Facture($this->savdb);
 		$localobject3->initAsSpecimen();
 		$localobject3->date=dol_mktime(12, 0, 0, 1, 1, 1926);	// we use following year for third invoice (and there is a reset required)
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject3);
 		print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('0126-0001', $result, 'Test for {mm}{yy}-{0000@1} 3rd invoice');			// counter must be now 1
+		$this->assertEquals('0126-0001', $result, 'Test for {mm}{yy}-{0000@1} 3rd invoice');			// counter must be now 1
 
-    	// Try an offset when an invoice already exists
-    	$conf->global->FACTURE_MERCURE_MASK_CREDIT='{yyyy}{mm}-{0000+9990}';
-    	$conf->global->FACTURE_MERCURE_MASK_INVOICE='{yyyy}{mm}-{0000+9990}';
-    	$result=$numbering->getNextValue($mysoc, $localobject2);
+		// Try an offset when an invoice already exists
+		$conf->global->FACTURE_MERCURE_MASK_CREDIT='{yyyy}{mm}-{0000+9990}';
+		$conf->global->FACTURE_MERCURE_MASK_INVOICE='{yyyy}{mm}-{0000+9990}';
+		$result=$numbering->getNextValue($mysoc, $localobject2);
 
 		// Now we try with a different fiscal month (forced by mask)
-    	$conf->global->FACTURE_MERCURE_MASK_CREDIT='{yyyy}{mm}-{0000@6}';
-    	$conf->global->FACTURE_MERCURE_MASK_INVOICE='{yyyy}{mm}-{0000@6}';
+		$conf->global->FACTURE_MERCURE_MASK_CREDIT='{yyyy}{mm}-{0000@6}';
+		$conf->global->FACTURE_MERCURE_MASK_INVOICE='{yyyy}{mm}-{0000@6}';
 
-    	$localobject=new Facture($this->savdb);
-    	$localobject->initAsSpecimen();
-    	$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1930);	// we use year 1930 to be sure to not have existing invoice for this year
-    	$numbering=new mod_facture_mercure();
-    	$result=$numbering->getNextValue($mysoc, $localobject, 'last');
-    	print __METHOD__." result for last=".$result."\n";
-    	$this->assertEquals('', $result);						// no existing ref into reset range
-    	$result=$numbering->getNextValue($mysoc, $localobject);
-    	$result2=$localobject->create($user, 1);
-    	$result3=$localobject->validate($user, $result);
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('193001-0001', $result);			// counter must start to 1
-    	$result=$numbering->getNextValue($mysoc, $localobject, 'last');
-    	print __METHOD__." result for last=".$result."\n";
-    	$this->assertEquals('193001-0001', $result);			// last ref into reset range should be same than last created
+		$localobject=new Facture($this->savdb);
+		$localobject->initAsSpecimen();
+		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1930);	// we use year 1930 to be sure to not have existing invoice for this year
+		$numbering=new mod_facture_mercure();
+		$result=$numbering->getNextValue($mysoc, $localobject, 'last');
+		print __METHOD__." result for last=".$result."\n";
+		$this->assertEquals('', $result);						// no existing ref into reset range
+		$result=$numbering->getNextValue($mysoc, $localobject);
+		$result2=$localobject->create($user, 1);
+		$result3=$localobject->validate($user, $result);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('193001-0001', $result);			// counter must start to 1
+		$result=$numbering->getNextValue($mysoc, $localobject, 'last');
+		print __METHOD__." result for last=".$result."\n";
+		$this->assertEquals('193001-0001', $result);			// last ref into reset range should be same than last created
 
-    	$localobject=new Facture($this->savdb);
-    	$localobject->initAsSpecimen();
-    	$localobject->date=dol_mktime(12, 0, 0, 12, 1, 1930);	// we use same year but fiscal month after
-    	$numbering=new mod_facture_mercure();
-    	$result=$numbering->getNextValue($mysoc, $localobject, 'last');
-    	print __METHOD__." result for last=".$result."\n";
-    	$this->assertEquals('', $result);						// last ref into reset range should be ''
-    	$result=$numbering->getNextValue($mysoc, $localobject);
-    	$result2=$localobject->create($user, 1);
-    	$result3=$localobject->validate($user, $result);
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('193012-0001', $result);	// counter must be reset to 1
+		$localobject=new Facture($this->savdb);
+		$localobject->initAsSpecimen();
+		$localobject->date=dol_mktime(12, 0, 0, 12, 1, 1930);	// we use same year but fiscal month after
+		$numbering=new mod_facture_mercure();
+		$result=$numbering->getNextValue($mysoc, $localobject, 'last');
+		print __METHOD__." result for last=".$result."\n";
+		$this->assertEquals('', $result);						// last ref into reset range should be ''
+		$result=$numbering->getNextValue($mysoc, $localobject);
+		$result2=$localobject->create($user, 1);
+		$result3=$localobject->validate($user, $result);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('193012-0001', $result);	// counter must be reset to 1
 
-    	$localobject=new Facture($this->savdb);
-    	$localobject->initAsSpecimen();
-    	$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1931);	// we use same fiscal year but different year
-    	$numbering=new mod_facture_mercure();
-    	$result=$numbering->getNextValue($mysoc, $localobject);
-    	$result2=$localobject->create($user, 1);
-    	$result3=$localobject->validate($user, $result);
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('193101-0002', $result);	// counter must be 2
+		$localobject=new Facture($this->savdb);
+		$localobject->initAsSpecimen();
+		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1931);	// we use same fiscal year but different year
+		$numbering=new mod_facture_mercure();
+		$result=$numbering->getNextValue($mysoc, $localobject);
+		$result2=$localobject->create($user, 1);
+		$result3=$localobject->validate($user, $result);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('193101-0002', $result);	// counter must be 2
 
-    	$localobject=new Facture($this->savdb);
-    	$localobject->initAsSpecimen();
-    	$localobject->date=dol_mktime(12, 0, 0, 12, 1, 1931);	// we use different fiscal year but same year
-    	$numbering=new mod_facture_mercure();
-    	$result=$numbering->getNextValue($mysoc, $localobject);
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('193112-0001', $result);	// counter must be reset to 1
-
-
-    	// Now we try with a different fiscal month (defined by SOCIETE_FISCAL_MONTH_START)
-    	$conf->global->SOCIETE_FISCAL_MONTH_START=6;
-    	$conf->global->FACTURE_MERCURE_MASK_CREDIT='{yyyy}{mm}-{0000@0}';
-    	$conf->global->FACTURE_MERCURE_MASK_INVOICE='{yyyy}{mm}-{0000@0}';
-
-    	$localobject=new Facture($this->savdb);
-    	$localobject->initAsSpecimen();
-    	$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1940);	// we use year 1940 to be sure to not have existing invoice for this year
-    	$numbering=new mod_facture_mercure();
-    	$result=$numbering->getNextValue($mysoc, $localobject);
-    	$result2=$localobject->create($user, 1);
-    	$result3=$localobject->validate($user, $result);
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('194001-0001', $result);	// counter must start to 1
-
-    	$localobject=new Facture($this->savdb);
-    	$localobject->initAsSpecimen();
-    	$localobject->date=dol_mktime(12, 0, 0, 12, 1, 1940);	// we use same year but fiscal month after
-    	$numbering=new mod_facture_mercure();
-    	$result=$numbering->getNextValue($mysoc, $localobject);
-    	$result2=$localobject->create($user, 1);
-    	$result3=$localobject->validate($user, $result);
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('194012-0001', $result);	// counter must be reset to 1
-
-    	$localobject=new Facture($this->savdb);
-    	$localobject->initAsSpecimen();
-    	$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1941);	// we use same fiscal year but different year
-    	$numbering=new mod_facture_mercure();
-    	$result=$numbering->getNextValue($mysoc, $localobject);
-    	$result2=$localobject->create($user, 1);
-    	$result3=$localobject->validate($user, $result);
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('194101-0002', $result);	// counter must be 2
-
-    	$localobject=new Facture($this->savdb);
-    	$localobject->initAsSpecimen();
-    	$localobject->date=dol_mktime(12, 0, 0, 12, 1, 1941);	// we use different discal year but same year
-    	$numbering=new mod_facture_mercure();
-    	$result=$numbering->getNextValue($mysoc, $localobject);
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('194112-0001', $result);	// counter must be reset to 1
+		$localobject=new Facture($this->savdb);
+		$localobject->initAsSpecimen();
+		$localobject->date=dol_mktime(12, 0, 0, 12, 1, 1931);	// we use different fiscal year but same year
+		$numbering=new mod_facture_mercure();
+		$result=$numbering->getNextValue($mysoc, $localobject);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('193112-0001', $result);	// counter must be reset to 1
 
 
-    	// Now we try with a different fiscal month (defined by SOCIETE_FISCAL_MONTH_START) and we always want year of element
-    	$conf->global->SOCIETE_FISCAL_MONTH_START=6;
-    	$conf->global->FACTURE_MERCURE_MASK_CREDIT='{yyyy}{mm}-{0000@=}';
-    	$conf->global->FACTURE_MERCURE_MASK_INVOICE='{yyyy}{mm}-{0000@=}';
+		// Now we try with a different fiscal month (defined by SOCIETE_FISCAL_MONTH_START)
+		$conf->global->SOCIETE_FISCAL_MONTH_START=6;
+		$conf->global->FACTURE_MERCURE_MASK_CREDIT='{yyyy}{mm}-{0000@0}';
+		$conf->global->FACTURE_MERCURE_MASK_INVOICE='{yyyy}{mm}-{0000@0}';
 
-    	$localobject=new Facture($this->savdb);
-    	$localobject->initAsSpecimen();
-    	$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1950);	// we use year 1950 to be sure to not have existing invoice for this year
-    	$numbering=new mod_facture_mercure();
-    	$result=$numbering->getNextValue($mysoc, $localobject);
-    	$result2=$localobject->create($user, 1);
-    	$result3=$localobject->validate($user, $result);
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('195001-0001', $result);	// counter must start to 1
+		$localobject=new Facture($this->savdb);
+		$localobject->initAsSpecimen();
+		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1940);	// we use year 1940 to be sure to not have existing invoice for this year
+		$numbering=new mod_facture_mercure();
+		$result=$numbering->getNextValue($mysoc, $localobject);
+		$result2=$localobject->create($user, 1);
+		$result3=$localobject->validate($user, $result);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('194001-0001', $result);	// counter must start to 1
 
-    	$localobject=new Facture($this->savdb);
-    	$localobject->initAsSpecimen();
-    	$localobject->date=dol_mktime(12, 0, 0, 12, 1, 1950);	// we use same year but fiscal month after
-    	$numbering=new mod_facture_mercure();
-    	$result=$numbering->getNextValue($mysoc, $localobject);
-    	$result2=$localobject->create($user, 1);
-    	$result3=$localobject->validate($user, $result);
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('195012-0001', $result);	// counter must be reset to 1
+		$localobject=new Facture($this->savdb);
+		$localobject->initAsSpecimen();
+		$localobject->date=dol_mktime(12, 0, 0, 12, 1, 1940);	// we use same year but fiscal month after
+		$numbering=new mod_facture_mercure();
+		$result=$numbering->getNextValue($mysoc, $localobject);
+		$result2=$localobject->create($user, 1);
+		$result3=$localobject->validate($user, $result);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('194012-0001', $result);	// counter must be reset to 1
 
-    	$localobject=new Facture($this->savdb);
-    	$localobject->initAsSpecimen();
-    	$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1951);	// we use same fiscal year but different year
-    	$numbering=new mod_facture_mercure();
-    	$result=$numbering->getNextValue($mysoc, $localobject);
-    	$result2=$localobject->create($user, 1);
-    	$result3=$localobject->validate($user, $result);
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('195101-0002', $result);	// counter must be 2
+		$localobject=new Facture($this->savdb);
+		$localobject->initAsSpecimen();
+		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1941);	// we use same fiscal year but different year
+		$numbering=new mod_facture_mercure();
+		$result=$numbering->getNextValue($mysoc, $localobject);
+		$result2=$localobject->create($user, 1);
+		$result3=$localobject->validate($user, $result);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('194101-0002', $result);	// counter must be 2
 
-    	$localobject=new Facture($this->savdb);
-    	$localobject->initAsSpecimen();
-    	$localobject->date=dol_mktime(12, 0, 0, 12, 1, 1951);	// we use different discal year but same year
-    	$numbering=new mod_facture_mercure();
-    	$result=$numbering->getNextValue($mysoc, $localobject);
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('195112-0001', $result);	// counter must be reset to 1
-
-
-    	// Now we try with a different fiscal month (defined by SOCIETE_FISCAL_MONTH_START) and we always want start year
-    	$conf->global->SOCIETE_FISCAL_MONTH_START=6;
-    	$conf->global->FACTURE_MERCURE_MASK_CREDIT='{yyyy}{mm}-{0000@-}';
-    	$conf->global->FACTURE_MERCURE_MASK_INVOICE='{yyyy}{mm}-{0000@-}';
-
-    	$localobject=new Facture($this->savdb);
-    	$localobject->initAsSpecimen();
-    	$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1960);	// we use year 1960 to be sure to not have existing invoice for this year
-    	$numbering=new mod_facture_mercure();
-    	$result=$numbering->getNextValue($mysoc, $localobject);
-    	$result2=$localobject->create($user, 1);
-    	$result3=$localobject->validate($user, $result);
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('195901-0001', $result);	// counter must start to 1
-
-    	$localobject=new Facture($this->savdb);
-    	$localobject->initAsSpecimen();
-    	$localobject->date=dol_mktime(12, 0, 0, 12, 1, 1960);	// we use same year but fiscal month after
-    	$numbering=new mod_facture_mercure();
-    	$result=$numbering->getNextValue($mysoc, $localobject);
-    	$result2=$localobject->create($user, 1);
-    	$result3=$localobject->validate($user, $result);
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('196012-0001', $result);	// counter must be reset to 1
-
-    	$localobject=new Facture($this->savdb);
-    	$localobject->initAsSpecimen();
-    	$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1961);	// we use same fiscal year but different year
-    	$numbering=new mod_facture_mercure();
-    	$result=$numbering->getNextValue($mysoc, $localobject);
-    	$result2=$localobject->create($user, 1);
-    	$result3=$localobject->validate($user, $result);
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('196001-0002', $result);	// counter must be 2
-
-    	$localobject=new Facture($this->savdb);
-    	$localobject->initAsSpecimen();
-    	$localobject->date=dol_mktime(12, 0, 0, 12, 1, 1961);	// we use different discal year but same year
-    	$numbering=new mod_facture_mercure();
-    	$result=$numbering->getNextValue($mysoc, $localobject);
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('196112-0001', $result);	// counter must be reset to 1
+		$localobject=new Facture($this->savdb);
+		$localobject->initAsSpecimen();
+		$localobject->date=dol_mktime(12, 0, 0, 12, 1, 1941);	// we use different discal year but same year
+		$numbering=new mod_facture_mercure();
+		$result=$numbering->getNextValue($mysoc, $localobject);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('194112-0001', $result);	// counter must be reset to 1
 
 
-    	// Now we try with a different fiscal month (defined by SOCIETE_FISCAL_MONTH_START) and we always want end year
-    	$conf->global->SOCIETE_FISCAL_MONTH_START=6;
-    	$conf->global->FACTURE_MERCURE_MASK_CREDIT='{yyyy}{mm}-{0000@+}';
-    	$conf->global->FACTURE_MERCURE_MASK_INVOICE='{yyyy}{mm}-{0000@+}';
+		// Now we try with a different fiscal month (defined by SOCIETE_FISCAL_MONTH_START) and we always want year of element
+		$conf->global->SOCIETE_FISCAL_MONTH_START=6;
+		$conf->global->FACTURE_MERCURE_MASK_CREDIT='{yyyy}{mm}-{0000@=}';
+		$conf->global->FACTURE_MERCURE_MASK_INVOICE='{yyyy}{mm}-{0000@=}';
 
-    	$localobject=new Facture($this->savdb);
-    	$localobject->initAsSpecimen();
-    	$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1970);	// we use year 1970 to be sure to not have existing invoice for this year
-    	$numbering=new mod_facture_mercure();
-    	$result=$numbering->getNextValue($mysoc, $localobject);
-    	$result2=$localobject->create($user, 1);
-    	$result3=$localobject->validate($user, $result);
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('197001-0001', $result);	// counter must start to 1
+		$localobject=new Facture($this->savdb);
+		$localobject->initAsSpecimen();
+		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1950);	// we use year 1950 to be sure to not have existing invoice for this year
+		$numbering=new mod_facture_mercure();
+		$result=$numbering->getNextValue($mysoc, $localobject);
+		$result2=$localobject->create($user, 1);
+		$result3=$localobject->validate($user, $result);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('195001-0001', $result);	// counter must start to 1
 
-    	$localobject=new Facture($this->savdb);
-    	$localobject->initAsSpecimen();
-    	$localobject->date=dol_mktime(12, 0, 0, 12, 1, 1970);	// we use same year but fiscal month after
-    	$numbering=new mod_facture_mercure();
-    	$result=$numbering->getNextValue($mysoc, $localobject);
-    	$result2=$localobject->create($user, 1);
-    	$result3=$localobject->validate($user, $result);
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('197112-0001', $result);	// counter must be reset to 1
+		$localobject=new Facture($this->savdb);
+		$localobject->initAsSpecimen();
+		$localobject->date=dol_mktime(12, 0, 0, 12, 1, 1950);	// we use same year but fiscal month after
+		$numbering=new mod_facture_mercure();
+		$result=$numbering->getNextValue($mysoc, $localobject);
+		$result2=$localobject->create($user, 1);
+		$result3=$localobject->validate($user, $result);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('195012-0001', $result);	// counter must be reset to 1
 
-    	$localobject=new Facture($this->savdb);
-    	$localobject->initAsSpecimen();
-    	$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1971);	// we use same fiscal year but different year
-    	$numbering=new mod_facture_mercure();
-    	$result=$numbering->getNextValue($mysoc, $localobject);
-    	$result2=$localobject->create($user, 1);
-    	$result3=$localobject->validate($user, $result);
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('197101-0002', $result);	// counter must be 2
+		$localobject=new Facture($this->savdb);
+		$localobject->initAsSpecimen();
+		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1951);	// we use same fiscal year but different year
+		$numbering=new mod_facture_mercure();
+		$result=$numbering->getNextValue($mysoc, $localobject);
+		$result2=$localobject->create($user, 1);
+		$result3=$localobject->validate($user, $result);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('195101-0002', $result);	// counter must be 2
 
-    	$localobject=new Facture($this->savdb);
-    	$localobject->initAsSpecimen();
-    	$localobject->date=dol_mktime(12, 0, 0, 12, 1, 1971);	// we use different fiscal year but same year
-    	$numbering=new mod_facture_mercure();
-    	$result=$numbering->getNextValue($mysoc, $localobject);
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('197212-0001', $result);	// counter must be reset to 1
-
-    	// Now we try with a reset every month (@99)
-    	$conf->global->SOCIETE_FISCAL_MONTH_START=6;
-    	$conf->global->FACTURE_MERCURE_MASK_CREDIT='{yyyy}{mm}-{0000@99}';
-    	$conf->global->FACTURE_MERCURE_MASK_INVOICE='{yyyy}{mm}-{0000@99}';
-
-    	$localobject=new Facture($this->savdb);
-    	$localobject->initAsSpecimen();
-    	$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1980);	// we use year 1980 to be sure to not have existing invoice for this year
-    	$numbering=new mod_facture_mercure();
-    	$result=$numbering->getNextValue($mysoc, $localobject);
-    	$result2=$localobject->create($user, 1);
-    	$result3=$localobject->validate($user, $result);
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('198001-0001', $result);	// counter must start to 1
-
-    	$localobject=new Facture($this->savdb);
-    	$localobject->initAsSpecimen();
-    	$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1980);	// we use year 1980 to be sure to not have existing invoice for this year
-    	$numbering=new mod_facture_mercure();
-    	$result=$numbering->getNextValue($mysoc, $localobject);
-    	$result2=$localobject->create($user, 1);
-    	$result3=$localobject->validate($user, $result);
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('198001-0002', $result);	// counter must start to 2
-
-    	$localobject=new Facture($this->savdb);
-    	$localobject->initAsSpecimen();
-    	$localobject->date=dol_mktime(12, 0, 0, 2, 1, 1980);	// we use year 1980 to be sure to not have existing invoice for this year
-    	$numbering=new mod_facture_mercure();
-    	$result=$numbering->getNextValue($mysoc, $localobject);
-    	$result2=$localobject->create($user, 1);
-    	$result3=$localobject->validate($user, $result);
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('198002-0001', $result);	// counter must start to 1
-
-    	$localobject=new Facture($this->savdb);
-    	$localobject->initAsSpecimen();
-    	$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1981);	// we use year 1981 to be sure to not have existing invoice for this year
-    	$numbering=new mod_facture_mercure();
-    	$result=$numbering->getNextValue($mysoc, $localobject);
-    	$result2=$localobject->create($user, 1);
-    	$result3=$localobject->validate($user, $result);
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('198101-0001', $result);	// counter must start to 1
-
-    	// Test with {t} tag
-    	$conf->global->SOCIETE_FISCAL_MONTH_START=1;
-    	$conf->global->FACTURE_MERCURE_MASK_CREDIT='{t}{yyyy}{mm}-{0000}';
-    	$conf->global->FACTURE_MERCURE_MASK_INVOICE='{t}{yyyy}{mm}-{0000}';
-
-    	$tmpthirdparty=new Societe($this->savdb);
-    	$tmpthirdparty->initAsSpecimen();
-    	$tmpthirdparty->typent_code = 'TE_ABC';
-
-    	$localobject=new Facture($this->savdb);
-    	$localobject->initAsSpecimen();
-    	$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1982);	// we use year 1982 to be sure to not have existing invoice for this year
-    	$numbering=new mod_facture_mercure();
-    	$result=$numbering->getNextValue($tmpthirdparty, $localobject);
-    	$result2=$localobject->create($user, 1);
-    	$result3=$localobject->validate($user, $result);
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('A198201-0001', $result);	// counter must start to 1
+		$localobject=new Facture($this->savdb);
+		$localobject->initAsSpecimen();
+		$localobject->date=dol_mktime(12, 0, 0, 12, 1, 1951);	// we use different discal year but same year
+		$numbering=new mod_facture_mercure();
+		$result=$numbering->getNextValue($mysoc, $localobject);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('195112-0001', $result);	// counter must be reset to 1
 
 
+		// Now we try with a different fiscal month (defined by SOCIETE_FISCAL_MONTH_START) and we always want start year
+		$conf->global->SOCIETE_FISCAL_MONTH_START=6;
+		$conf->global->FACTURE_MERCURE_MASK_CREDIT='{yyyy}{mm}-{0000@-}';
+		$conf->global->FACTURE_MERCURE_MASK_INVOICE='{yyyy}{mm}-{0000@-}';
 
-    	return $result;
-    }
+		$localobject=new Facture($this->savdb);
+		$localobject->initAsSpecimen();
+		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1960);	// we use year 1960 to be sure to not have existing invoice for this year
+		$numbering=new mod_facture_mercure();
+		$result=$numbering->getNextValue($mysoc, $localobject);
+		$result2=$localobject->create($user, 1);
+		$result3=$localobject->validate($user, $result);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('195901-0001', $result);	// counter must start to 1
+
+		$localobject=new Facture($this->savdb);
+		$localobject->initAsSpecimen();
+		$localobject->date=dol_mktime(12, 0, 0, 12, 1, 1960);	// we use same year but fiscal month after
+		$numbering=new mod_facture_mercure();
+		$result=$numbering->getNextValue($mysoc, $localobject);
+		$result2=$localobject->create($user, 1);
+		$result3=$localobject->validate($user, $result);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('196012-0001', $result);	// counter must be reset to 1
+
+		$localobject=new Facture($this->savdb);
+		$localobject->initAsSpecimen();
+		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1961);	// we use same fiscal year but different year
+		$numbering=new mod_facture_mercure();
+		$result=$numbering->getNextValue($mysoc, $localobject);
+		$result2=$localobject->create($user, 1);
+		$result3=$localobject->validate($user, $result);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('196001-0002', $result);	// counter must be 2
+
+		$localobject=new Facture($this->savdb);
+		$localobject->initAsSpecimen();
+		$localobject->date=dol_mktime(12, 0, 0, 12, 1, 1961);	// we use different discal year but same year
+		$numbering=new mod_facture_mercure();
+		$result=$numbering->getNextValue($mysoc, $localobject);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('196112-0001', $result);	// counter must be reset to 1
+
+
+		// Now we try with a different fiscal month (defined by SOCIETE_FISCAL_MONTH_START) and we always want end year
+		$conf->global->SOCIETE_FISCAL_MONTH_START=6;
+		$conf->global->FACTURE_MERCURE_MASK_CREDIT='{yyyy}{mm}-{0000@+}';
+		$conf->global->FACTURE_MERCURE_MASK_INVOICE='{yyyy}{mm}-{0000@+}';
+
+		$localobject=new Facture($this->savdb);
+		$localobject->initAsSpecimen();
+		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1970);	// we use year 1970 to be sure to not have existing invoice for this year
+		$numbering=new mod_facture_mercure();
+		$result=$numbering->getNextValue($mysoc, $localobject);
+		$result2=$localobject->create($user, 1);
+		$result3=$localobject->validate($user, $result);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('197001-0001', $result);	// counter must start to 1
+
+		$localobject=new Facture($this->savdb);
+		$localobject->initAsSpecimen();
+		$localobject->date=dol_mktime(12, 0, 0, 12, 1, 1970);	// we use same year but fiscal month after
+		$numbering=new mod_facture_mercure();
+		$result=$numbering->getNextValue($mysoc, $localobject);
+		$result2=$localobject->create($user, 1);
+		$result3=$localobject->validate($user, $result);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('197112-0001', $result);	// counter must be reset to 1
+
+		$localobject=new Facture($this->savdb);
+		$localobject->initAsSpecimen();
+		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1971);	// we use same fiscal year but different year
+		$numbering=new mod_facture_mercure();
+		$result=$numbering->getNextValue($mysoc, $localobject);
+		$result2=$localobject->create($user, 1);
+		$result3=$localobject->validate($user, $result);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('197101-0002', $result);	// counter must be 2
+
+		$localobject=new Facture($this->savdb);
+		$localobject->initAsSpecimen();
+		$localobject->date=dol_mktime(12, 0, 0, 12, 1, 1971);	// we use different fiscal year but same year
+		$numbering=new mod_facture_mercure();
+		$result=$numbering->getNextValue($mysoc, $localobject);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('197212-0001', $result);	// counter must be reset to 1
+
+		// Now we try with a reset every month (@99)
+		$conf->global->SOCIETE_FISCAL_MONTH_START=6;
+		$conf->global->FACTURE_MERCURE_MASK_CREDIT='{yyyy}{mm}-{0000@99}';
+		$conf->global->FACTURE_MERCURE_MASK_INVOICE='{yyyy}{mm}-{0000@99}';
+
+		$localobject=new Facture($this->savdb);
+		$localobject->initAsSpecimen();
+		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1980);	// we use year 1980 to be sure to not have existing invoice for this year
+		$numbering=new mod_facture_mercure();
+		$result=$numbering->getNextValue($mysoc, $localobject);
+		$result2=$localobject->create($user, 1);
+		$result3=$localobject->validate($user, $result);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('198001-0001', $result);	// counter must start to 1
+
+		$localobject=new Facture($this->savdb);
+		$localobject->initAsSpecimen();
+		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1980);	// we use year 1980 to be sure to not have existing invoice for this year
+		$numbering=new mod_facture_mercure();
+		$result=$numbering->getNextValue($mysoc, $localobject);
+		$result2=$localobject->create($user, 1);
+		$result3=$localobject->validate($user, $result);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('198001-0002', $result);	// counter must start to 2
+
+		$localobject=new Facture($this->savdb);
+		$localobject->initAsSpecimen();
+		$localobject->date=dol_mktime(12, 0, 0, 2, 1, 1980);	// we use year 1980 to be sure to not have existing invoice for this year
+		$numbering=new mod_facture_mercure();
+		$result=$numbering->getNextValue($mysoc, $localobject);
+		$result2=$localobject->create($user, 1);
+		$result3=$localobject->validate($user, $result);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('198002-0001', $result);	// counter must start to 1
+
+		$localobject=new Facture($this->savdb);
+		$localobject->initAsSpecimen();
+		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1981);	// we use year 1981 to be sure to not have existing invoice for this year
+		$numbering=new mod_facture_mercure();
+		$result=$numbering->getNextValue($mysoc, $localobject);
+		$result2=$localobject->create($user, 1);
+		$result3=$localobject->validate($user, $result);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('198101-0001', $result);	// counter must start to 1
+
+		// Test with {t} tag
+		$conf->global->SOCIETE_FISCAL_MONTH_START=1;
+		$conf->global->FACTURE_MERCURE_MASK_CREDIT='{t}{yyyy}{mm}-{0000}';
+		$conf->global->FACTURE_MERCURE_MASK_INVOICE='{t}{yyyy}{mm}-{0000}';
+
+		$tmpthirdparty=new Societe($this->savdb);
+		$tmpthirdparty->initAsSpecimen();
+		$tmpthirdparty->typent_code = 'TE_ABC';
+
+		$localobject=new Facture($this->savdb);
+		$localobject->initAsSpecimen();
+		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1982);	// we use year 1982 to be sure to not have existing invoice for this year
+		$numbering=new mod_facture_mercure();
+		$result=$numbering->getNextValue($tmpthirdparty, $localobject);
+		$result2=$localobject->create($user, 1);
+		$result3=$localobject->validate($user, $result);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('A198201-0001', $result);	// counter must start to 1
+
+
+
+		return $result;
+	}
 }

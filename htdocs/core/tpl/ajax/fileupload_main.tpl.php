@@ -16,8 +16,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || !is_object($conf))
-{
+if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
@@ -25,22 +24,22 @@ if (empty($conf) || !is_object($conf))
 ?>
 
 <!-- START TEMPLATE FILE UPLOAD MAIN -->
-<script type="text/javascript">
+<script>
 window.locale = {
-    "fileupload": {
-        "errors": {
-            "maxFileSize": "<?php echo $langs->trans('FileIsTooBig'); ?>",
-            "minFileSize": "<?php echo $langs->trans('FileIsTooSmall'); ?>",
-            "acceptFileTypes": "<?php echo $langs->trans('FileTypeNotAllowed'); ?>",
-            "maxNumberOfFiles": "<?php echo $langs->trans('MaxNumberOfFilesExceeded'); ?>",
-            "uploadedBytes": "<?php echo $langs->trans('UploadedBytesExceedFileSize'); ?>",
-            "emptyResult": "<?php echo $langs->trans('EmptyFileUploadResult'); ?>"
-        },
-        "error": "<?php echo $langs->trans('Error'); ?>",
-        "start": "<?php echo $langs->trans('Start'); ?>",
-        "cancel": "<?php echo $langs->trans('Cancel'); ?>",
-        "destroy": "<?php echo $langs->trans('Delete'); ?>"
-    }
+	"fileupload": {
+		"errors": {
+			"maxFileSize": "<?php echo $langs->trans('FileIsTooBig'); ?>",
+			"minFileSize": "<?php echo $langs->trans('FileIsTooSmall'); ?>",
+			"acceptFileTypes": "<?php echo $langs->trans('FileTypeNotAllowed'); ?>",
+			"maxNumberOfFiles": "<?php echo $langs->trans('MaxNumberOfFilesExceeded'); ?>",
+			"uploadedBytes": "<?php echo $langs->trans('UploadedBytesExceedFileSize'); ?>",
+			"emptyResult": "<?php echo $langs->trans('EmptyFileUploadResult'); ?>"
+		},
+		"error": "<?php echo $langs->trans('Error'); ?>",
+		"start": "<?php echo $langs->trans('Start'); ?>",
+		"cancel": "<?php echo $langs->trans("Cancel"); ?>",
+		"destroy": "<?php echo $langs->trans('Delete'); ?>"
+	}
 };
 
 $(function () {
@@ -82,7 +81,7 @@ $(function () {
 							});
 						}
 					},
-					"<?php echo $langs->trans('Cancel'); ?>": function() {
+					"<?php echo $langs->trans("Cancel"); ?>": function() {
 						$( "#confirm-delete" ).dialog( "close" );
 					}
 				}

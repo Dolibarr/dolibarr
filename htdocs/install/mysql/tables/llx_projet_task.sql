@@ -25,7 +25,7 @@ create table llx_projet_task
   fk_projet				integer NOT NULL,
   fk_task_parent		integer DEFAULT 0 NOT NULL,
   datec					datetime,						-- date creation
-  tms					timestamp,						-- date creation/modification
+  tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,						-- last modification date
   dateo					datetime,						-- date start task
   datee					datetime,						-- date end task
   datev					datetime,						-- date validation

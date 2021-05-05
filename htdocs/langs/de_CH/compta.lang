@@ -26,6 +26,5 @@ ThirdPartyMustBeEditAsCustomer=Geschäftspartner muss als Kunde definiert werden
 Pcg_type=PCG Typ
 Pcg_subtype=PCG Subtyp
 InvoiceLinesToDispatch=versandbereite Rechnungszeilen
-ToCreateAPredefinedInvoice=Um eine Rechnungsvorlage zu erstellen, erstellen Sie eine Standard-Rechnung und klicken dann (ohne Freigabe) auf den Knopf "%s".
 CalculationRuleDesc=Zur Berechnung der Gesamt-MwSt. gibt es zwei Methoden: <br>Methode 1 rundet die Steuer in jeder Zeile und addiert zum Schluss. <br>Methode 2 summiert alle Steuer-Zeilen und rundet am Ende. <br>Das endgültige Ergebnis kann sich in wenigen Cent unterscheiden. Standardmodus ist <b>Modus %s.</b>
 LinkedFichinter=Mit einem Eingriff verknüpfen

@@ -35,7 +35,7 @@ $langs->loadLangs(array("mrp", "companies"));
 // Get parameters
 $id = GETPOST('id', 'int');
 $ref        = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
@@ -48,17 +48,19 @@ $hookmanager->initHooks(array('monote', 'globalcard')); // Note that conf->hooks
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
+// Load object
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+if ($id > 0 || !empty($ref)) {
+	$upload_dir = $conf->mrp->multidir_output[$object->entity]."/".$object->id;
+}
+
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
-//$result = restrictedArea($user, 'mrp', $id);
+$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
+$result = restrictedArea($user, 'mrp', $object->id, 'mrp_mo', '', 'fk_soc', 'rowid', $isdraft);
 
-// Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
-if ($id > 0 || !empty($ref)) $upload_dir = $conf->mrp->multidir_output[$object->entity]."/".$object->id;
-
-$permissionnote = 1;
-//$permissionnote=$user->rights->mrp->creer;	// Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->rights->mrp->write;	// Used by the include of actions_setnotes.inc.php
 
 
 
@@ -80,13 +82,12 @@ $formproject = new FormProjets($db);
 $help_url = '';
 llxHeader('', $langs->trans('Mo'), $help_url);
 
-if ($id > 0 || !empty($ref))
-{
+if ($id > 0 || !empty($ref)) {
 	$object->fetch_thirdparty();
 
 	$head = moPrepareHead($object);
 
-	dol_fiche_head($head, 'note', $langs->trans("MO"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'note', $langs->trans("ManufacturingOrder"), -1, $object->picto);
 
 	// Object card
 	// ------------------------------------------------------------
@@ -99,14 +100,13 @@ if ($id > 0 || !empty($ref))
 	// Thirdparty
 	$morehtmlref .= $langs->trans('ThirdParty').' : '.(is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	// Project
-	if (!empty($conf->projet->enabled))
-	{
+	if (!empty($conf->projet->enabled)) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-		if ($permissiontoadd)
-		{
-			if ($action != 'classify')
+		if ($permissiontoadd) {
+			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+			}
 			if ($action == 'classify') {
 				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->fk_soc, $object->fk_project, 'projectid', 0, 0, 1, 1);
 				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
@@ -142,7 +142,7 @@ if ($id > 0 || !empty($ref))
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 // End of page

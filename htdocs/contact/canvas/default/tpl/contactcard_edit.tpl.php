@@ -16,8 +16,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || !is_object($conf))
-{
+if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
@@ -152,8 +151,8 @@ if (!empty($this->control->tpl['contact_element'])) {
 
 <tr>
 	<td colspan="4" class="center">
-	<input type="submit" class="button" name="save" value="<?php echo $langs->trans("Save"); ?>">&nbsp;
-	<input type="submit" class="button" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>">
+	<input type="submit" class="button button-save" name="save" value="<?php echo $langs->trans("Save"); ?>">&nbsp;
+	<input type="submit" class="button button-cancel" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>">
 	</td>
 </tr>
 

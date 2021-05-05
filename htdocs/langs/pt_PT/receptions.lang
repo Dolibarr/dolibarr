@@ -43,3 +43,5 @@ ProductQtyInSuppliersReceptionAlreadyRecevied=Quantidade de produtos da encomend
 ValidateOrderFirstBeforeReception=Você deve primeiro validar a encomenda antes de poder fazer recepções.
 ReceptionsNumberingModules=Numbering module for receptions
 ReceptionsReceiptModel=Document templates for receptions
+NoMorePredefinedProductToDispatch=No more predefined products to dispatch
+

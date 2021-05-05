@@ -34,5 +34,5 @@ CREATE TABLE llx_resource
   import_key			varchar(14),
   extraparams			varchar(255),					-- for stock other parameters with json format
   fk_country          integer DEFAULT NULL,          -- Optional id of original country
-  tms         			  timestamp
+  tms         			  timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 )ENGINE=innodb;

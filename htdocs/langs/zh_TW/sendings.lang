@@ -30,6 +30,7 @@ OtherSendingsForSameOrder=此訂單的其他出貨清單
 SendingsAndReceivingForSameOrder=此訂單的出貨貨品和收據
 SendingsToValidate=出貨驗證
 StatusSendingCanceled=已取消
+StatusSendingCanceledShort=已取消
 StatusSendingDraft=草案
 StatusSendingValidated=已驗證（產品出貨或已經出貨）
 StatusSendingProcessed=已處理
@@ -42,7 +43,7 @@ ConfirmValidateSending=您確定要使用參考<b>%s</b>驗證此出貨嗎？
 ConfirmCancelSending=您確定要取消此出貨嗎？
 DocumentModelMerou=Merou A5 範本
 WarningNoQtyLeftToSend=警告，沒有等待出貨的產品。
-StatsOnShipmentsOnlyValidated=出貨統計已被驗證。使用的日期是出貨確認日期（計劃的交貨日期並非總是已知的）。
+StatsOnShipmentsOnlyValidated=Statistics are only for validated shipments. Date used is the date of validation of shipment (planned delivery date is not always known)
 DateDeliveryPlanned=預計交貨日期
 RefDeliveryReceipt=參考交貨收據
 StatusReceipt=交貨收據狀態
@@ -65,6 +66,7 @@ ValidateOrderFirstBeforeShipment=您必須先驗證訂單，然後才能進行�
 # Sending methods
 # ModelDocument
 DocumentModelTyphon=交貨收據的更完整文件模型（商標...）
+DocumentModelStorm=更完整的文件模型，可用於交貨單和域外兼容性（logo...）
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=常數EXPEDITION_ADDON_NUMBER未定義
 SumOfProductVolumes=產品體積總和
 SumOfProductWeights=產品重量總和

@@ -44,7 +44,9 @@ function report_header($reportname, $notused, $period, $periodlink, $description
 
 	print "\n\n<!-- start banner of report -->\n";
 
-	if (!empty($varlink)) $varlink = '?'.$varlink;
+	if (!empty($varlink)) {
+		$varlink = '?'.$varlink;
+	}
 
 	$head = array();
 
@@ -56,10 +58,9 @@ function report_header($reportname, $notused, $period, $periodlink, $description
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].$varlink.'">'."\n";
 	print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 
-	dol_fiche_head($head, 'report');
+	print dol_get_fiche_head($head, 'report');
 
-	foreach ($moreparam as $key => $value)
-	{
+	foreach ($moreparam as $key => $value) {
 		 print '<input type="hidden" name="'.$key.'" value="'.$value.'">'."\n";
 	}
 
@@ -69,21 +70,24 @@ function report_header($reportname, $notused, $period, $periodlink, $description
 
 	// Ligne de titre
 	print '<tr>';
-	print '<td width="110">'.$langs->trans("ReportName").'</td>';
+	print '<td width="150">'.$langs->trans("ReportName").'</td>';
 	print '<td>';
 	print $reportname;
 	print '</td>';
-	if ($variante) print '<td></td>';
+	if ($variante) {
+		print '<td></td>';
+	}
 	print '</tr>'."\n";
 
 	// Calculation mode
-	if ($calcmode)
-	{
+	if ($calcmode) {
 		print '<tr>';
-		print '<td width="110">'.$langs->trans("CalculationMode").'</td>';
+		print '<td width="150">'.$langs->trans("CalculationMode").'</td>';
 		print '<td>';
 		print $calcmode;
-		if ($variante) print '<td></td>';
+		if ($variante) {
+			print '<td></td>';
+		}
 		print '</td>';
 		print '</tr>'."\n";
 	}
@@ -92,8 +96,12 @@ function report_header($reportname, $notused, $period, $periodlink, $description
 	print '<tr>';
 	print '<td>'.$langs->trans("ReportPeriod").'</td>';
 	print '<td>';
-	if ($period) print $period;
-	if ($variante) print '<td class="nowraponall">'.$periodlink.'</td>';
+	if ($period) {
+		print $period;
+	}
+	if ($variante) {
+		print '<td class="nowraponall">'.$periodlink.'</td>';
+	}
 	print '</td>';
 	print '</tr>'."\n";
 
@@ -101,7 +109,9 @@ function report_header($reportname, $notused, $period, $periodlink, $description
 	print '<tr>';
 	print '<td>'.$langs->trans("ReportDescription").'</td>';
 	print '<td>'.$description.'</td>';
-	if ($variante) print '<td></td>';
+	if ($variante) {
+		print '<td></td>';
+	}
 	print '</tr>'."\n";
 
 	// Ligne d'export
@@ -110,12 +120,14 @@ function report_header($reportname, $notused, $period, $periodlink, $description
 	print '<td>';
 	print dol_print_date($builddate, 'dayhour');
 	print '</td>';
-	if ($variante) print '<td>'.($exportlink ? $langs->trans("Export").': '.$exportlink : '').'</td>';
+	if ($variante) {
+		print '<td>'.($exportlink ? $langs->trans("Export").': '.$exportlink : '').'</td>';
+	}
 	print '</tr>'."\n";
 
 	print '</table>'."\n";
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center"><input type="submit" class="button" name="submit" value="'.$langs->trans("Refresh").'"></div>';
 

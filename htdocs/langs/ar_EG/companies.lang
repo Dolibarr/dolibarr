@@ -1,12 +1,9 @@
 # Dolibarr language file - Source file is en_US - companies
-ThirdPartyProspects=فرص
-ThirdPartyProspectsStats=فرص
 ThirdPartyCustomers=عملاء
 ThirdPartyCustomersStats=عملاء
 ThirdPartySuppliers=موردين
 OverAllOrders=الطلبات
 OverAllSupplierProposals=طلبات عروض اسعار
 Customer=عميل
-Contact=Contact
 InActivity=افتح
 ActivityCeased=مقفول

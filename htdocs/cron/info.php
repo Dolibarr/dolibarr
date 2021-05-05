@@ -30,25 +30,29 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 $langs->loadLangs(array('admin', 'cron'));
 
 // Security check
-if (!$user->rights->cron->read) accessforbidden();
+if (!$user->rights->cron->read) {
+	accessforbidden();
+}
 
 $id = GETPOST('id', 'int');
 
-$mesg = '';
+$object = new Cronjob($db);
+
 
 /*
  * View
-*/
+ */
+
+$form = new Form($db);	// $form is required as global value into dol_banner_tab
 
 llxHeader('', $langs->trans("CronInfo"));
 
-$object = new Cronjob($db);
 $object->fetch($id);
 $object->info($id);
 
 $head = cron_prepare_head($object);
 
-dol_fiche_head($head, 'info', $langs->trans("CronTask"), -1, 'cron');
+print dol_get_fiche_head($head, 'info', $langs->trans("CronTask"), -1, 'cron');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/cron/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 

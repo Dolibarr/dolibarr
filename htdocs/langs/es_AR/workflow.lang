@@ -10,6 +10,6 @@ descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Clasificar su propuesta de origen como
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Clasificar su propuesta de origen como facturada cuando la factura de cliente esté validada (y el monto de la factura sea el mismo que el total de su propuesta firmada)
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Clasificar su orden de venta como facturada cuando la factura de cliente esté validada (y el monto de la factura sea el mismo que el total de su orden)
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Clasificar su orden de venta como facturada cuando la factura del cliente esté marcada como "Pagada" (y el monto de la factura sea el mismo que el total de su orden)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Clasificar su orden de venta como enviada cuando el viaje esté validado (y la cantidad enviada en todos sus viajes sea la misma que en el pedido para actualizar)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Clasificar su pedido vinculado como enviado cuando el envío esté validado (y la cantidad enviada en todos los envíos sea la misma que en el pedido a actualizar)
 descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Clasificar su propuesta de origen de proveedor como facturada cuando la factura del proveedor esté validada (y que el monto de la factura sea el mismo que el total de su propuesta)
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Clasificar su orden de compra como facturada cuando la factura de proveedor esté validada (y el monto de la factura sea el mismo que el total de su orden)

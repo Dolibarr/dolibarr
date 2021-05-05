@@ -29,8 +29,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("install", "other", "admin"));
 
-if (!$user->admin)
+if (!$user->admin) {
 	accessforbidden();
+}
 
 
 /*
@@ -55,8 +56,12 @@ print '<tr class="oddeven"><td width="300">'.$langs->trans("BrowserOS").'</td><t
 print '<tr class="oddeven"><td width="300">'.$langs->trans("Version").'</td><td colspan="2">'.$tmp['browserversion'].'</td></tr>'."\n";
 print '<tr class="oddeven"><td width="300">'.$langs->trans("Layout").' (phone/tablet/classic)</td><td colspan="2">'.$tmp['layout'].'</td></tr>'."\n";
 print '<tr class="oddeven"><td width="300">'.$langs->trans("IPAddress").'</td><td colspan="2">'.dol_escape_htmltag($_SERVER['REMOTE_ADDR']);
-if (!empty($_SERVER['HTTP_CLIENT_IP'])) print ' (HTTP_CLIENT_IP='.dol_escape_htmltag($_SERVER['HTTP_CLIENT_IP']).')';
-if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) print ' (HTTP_X_FORWARDED_FOR='.dol_escape_htmltag($_SERVER['HTTP_X_FORWARDED_FOR']).')';
+if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+	print ' (HTTP_CLIENT_IP='.dol_escape_htmltag($_SERVER['HTTP_CLIENT_IP']).')';
+}
+if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+	print ' (HTTP_X_FORWARDED_FOR='.dol_escape_htmltag($_SERVER['HTTP_X_FORWARDED_FOR']).')';
+}
 print '</td></tr>'."\n";
 print '<tr class="oddeven"><td width="300">'.$langs->trans("SessionName").'</td><td colspan="2">'.session_name().'</td></tr>'."\n";
 print '<tr class="oddeven"><td width="300">'.$langs->trans("SessionId").'</td><td colspan="2">'.session_id().'</td></tr>'."\n";
