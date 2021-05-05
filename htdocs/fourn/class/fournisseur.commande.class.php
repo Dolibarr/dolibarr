@@ -1990,7 +1990,12 @@ class CommandeFournisseur extends CommonOrder
 				if ($product > 0) {
 					// $price should take into account discount (except if option STOCK_EXCLUDE_DISCOUNT_FOR_PMP is on)
 					$mouv->origin = &$this;
-					$result = $mouv->reception($user, $product, $entrepot, $qty, $price, $comment, $eatby, $sellby, $batch);
+					if(!empty($conf->global->RETROCESSION_ALLOW_NEGATIVE_DISPATCH) && $qty < 0){
+						$result = $mouv->livraison($user, $product, $entrepot, $qty*(-1), $price, $comment, $eatby, $sellby, $batch);
+					}
+					else{
+						$result = $mouv->reception($user, $product, $entrepot, $qty, $price, $comment, $eatby, $sellby, $batch);
+					}                    
 					if ($result < 0) {
 						$this->error = $mouv->error;
 						$this->errors = $mouv->errors;
