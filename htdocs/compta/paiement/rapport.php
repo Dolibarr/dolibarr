@@ -109,36 +109,18 @@ print '<br>';
 clearstatcache();
 
 // Show link on other years
-$linkforyear = array();
-$found = 0;
-if (is_dir($dir))
+$year_dirs = dol_dir_list($dir, 'directories', 0, '^[0-9]{4}$', '', 'DESC');
+foreach ($year_dirs as $d)
 {
-	$handle = opendir($dir);
-	if (is_resource($handle))
-	{
-		while (($file = readdir($handle)) !== false)
-		{
-			if (is_dir($dir.'/'.$file) && !preg_match('/^\./', $file) && is_numeric($file))
-			{
-				$found = 1;
-				$linkforyear[] = $file;
-			}
-		}
-	}
-}
-asort($linkforyear);
-foreach ($linkforyear as $cursoryear)
-{
-	print '<a href="'.$_SERVER["PHP_SELF"].'?year='.$cursoryear.'">'.$cursoryear.'</a> &nbsp;';
+	print '<a href="'.$_SERVER["PHP_SELF"].'?year='.$d['name'].'">'.$d['name'].'</a> &nbsp;';
 }
 
+$found = true;
 if ($year)
 {
 	if (is_dir($dir.'/'.$year))
 	{
-		$handle = opendir($dir.'/'.$year);
-
-		if ($found) print '<br>';
+		if (!empty($year_dirs)) print '<br>';
 		print '<br>';
 		print '<table width="100%" class="noborder">';
 		print '<tr class="liste_titre">';
@@ -147,22 +129,14 @@ if ($year)
 		print '<td class="right">'.$langs->trans("Date").'</td>';
 		print '</tr>';
 
-		if (is_resource($handle))
-		{
-			while (($file = readdir($handle)) !== false)
-			{
-				if (preg_match('/^payment/i', $file))
-				{
-					$tfile = $dir.'/'.$year.'/'.$file;
-					$relativepath = $year.'/'.$file;
-					print '<tr class="oddeven">';
-					print '<td><a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart=facture_paiement&amp;file='.urlencode($relativepath).'">'.img_pdf().' '.$file.'</a>'.$formfile->showPreview($file, 'facture_paiement', $relativepath, 0).'</td>';
-					print '<td class="right">'.dol_print_size(dol_filesize($tfile)).'</td>';
-					print '<td class="right">'.dol_print_date(dol_filemtime($tfile), "dayhour").'</td>';
-					print '</tr>';
-				}
-			}
-			closedir($handle);
+		$files = (dol_dir_list($dir.'/'.$year, 'files', 0, '^payments-[0-9]{4}-[0-9]{2}\.pdf$', '', 'name', 'DESC', 1));
+		foreach ($files as $f) {
+			$relativepath = $f['level1name'].'/'.$f['name'];
+			print '<tr class="oddeven">';
+			print '<td><a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart=facture_paiement&amp;file='.urlencode($relativepath).'">'.img_pdf().' '.$f['name'].'</a>'.$formfile->showPreview($f['name'], 'facture_paiement', $relativepath, 0).'</td>';
+			print '<td class="right">'.dol_print_size($f['size']).'</td>';
+			print '<td class="right">'.dol_print_date($f['date'], "dayhour").'</td>';
+			print '</tr>';
 		}
 		print '</table>';
 	}
