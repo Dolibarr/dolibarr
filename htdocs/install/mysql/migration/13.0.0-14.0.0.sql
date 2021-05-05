@@ -376,7 +376,7 @@ ALTER TABLE llx_product ADD COLUMN batch_mask VARCHAR(32) NULL;
 ALTER TABLE llx_product ADD COLUMN lifetime VARCHAR(6);
 ALTER TABLE llx_product ADD COLUMN qc_frequency INT;
 
-ALTER TABLE llx_product_batch ADD COLUMN fk_qcstatus VARCHAR(16);
+ALTER TABLE llx_stock_mouvement ADD COLUMN fk_qcstatus VARCHAR(16);
 
 ALTER TABLE llx_product_lot ADD COLUMN eol_date datetime;
 ALTER TABLE llx_product_lot ADD COLUMN manufacturing_date datetime;
