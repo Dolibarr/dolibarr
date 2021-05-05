@@ -87,7 +87,7 @@ if (!defined('JS_JQUERY_DISABLE_DROPDOWN'))
 				  var lastopendropdown = null;
 
                   // Click onto the link "link to" or "hamburger", toggle dropdown
-				  $(".dropdown dt a").on(\'click\', function () {
+				  $(document).on(\'click\', \'.dropdown dt a\', function () {
                   	  console.log("toggle dropdown dt a");
 
                       //$(this).parent().parent().find(\'dd ul\').slideToggle(\'fast\');
