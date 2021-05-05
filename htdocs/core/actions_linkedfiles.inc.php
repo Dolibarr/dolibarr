@@ -44,6 +44,10 @@ if (GETPOST('sendit', 'alpha') && !empty($conf->global->MAIN_UPLOAD_DOC)) {
 					setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
 				}
 			}
+			if (preg_match('/__.*__/', $_FILES['userfile']['name'][$key])) {
+				$error++;
+				setEventMessages($langs->trans('ErrorWrongFileName'), null, 'errors');
+			}
 		}
 
 		if (!$error) {
