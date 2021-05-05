@@ -3217,6 +3217,8 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 
 .smallpaddingimp {
 	padding: 4px !important;
+	padding-left: 7px !important;
+	padding-right: 7px !important;
 }
 input.button[name="upload"] {
 	padding: 4px !important;
