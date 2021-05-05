@@ -31,7 +31,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('stocks', 'other', 'productbatch'));
@@ -216,16 +215,6 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'setfk_qcstatus' && $user->rights->stock->creer && !GETPOST('cancel', 'alpha')) {
-		$result = $object->setValueFrom('fk_qcstatus', GETPOST('fk_qcstatus') ? GETPOST('fk_qcstatus') : null, '', null, 'text', '', $user, 'PRODUCT_MODIFY');
-		if ($result < 0) {
-			setEventMessages($object->error, null, 'errors');
-			$action == 'editfk_qcstatus';
-		} else {
-			$action = 'view';
-		}
-	}
-
 	$triggermodname = 'PRODUCT_LOT_MODIFY'; // Name of trigger action code to execute when we modify record
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
@@ -374,7 +363,6 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 $formfile = new FormFile($db);
-$formproduct = new FormProduct($db);
 
 $title = $langs->trans("ProductLot");
 $help_url = '';
@@ -510,23 +498,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<td>'.$form->editfieldval($langs->trans('FirstUseDate'), 'commissionning_date', $object->commissionning_date, $object, $user->rights->stock->creer, 'datepicker').'</td>';
 		print '</tr>';
 		print '<tr><td>'.$form->editfieldkey($langs->trans('QCFrequency'), 'qc_frequency', $object->qc_frequency, $object, $user->rights->stock->creer).'</td>';
-		print '<td>'.$form->editfieldval($langs->trans('QCFrequency'), 'qc_frequency', $object->qc_frequency, $object, $user->rights->stock->creer, 'string').'</td>';
+		print '<td>'.$form->editfieldval($langs->trans('QCFrequency'), 'qc_frequency', $object->qc_frequency, $object, $user->rights->stock->creer, 'numeric').'</td>';
 		print '</tr>';
-		/* print '<tr>';
-		print '<td class="maxwidthonsmartphone">';
-		print $form->editfieldkey("Status", 'fk_qcstatus', $object->fk_qcstatus, $object, $user->rights->stock->creer);
-		print '</td>';
-		print '<td class="valuefield">';
-		if ($action != 'editfk_qcstatus') {
-			$formproduct->load_cache_productbatch_qcstatus();
-			print $formproduct->cache_productbatch_qcstatus[$object->fk_qcstatus];
-		} else {
-		if (empty($fk_qcstatus)) {
-			$fk_qcstatus = $object->fk_qcstatus;
-		}
-		print $formproduct->select_productbatch_qcstatus($fk_qcstatus,'?id='.$object->id);
-		}
-		print '</td></tr>'; */
 	}
 
 	// Other attributes

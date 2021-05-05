@@ -38,6 +38,6 @@ EndOfLife=End of life
 ManufacturingDate=Manufacturing date
 DestructionDate=Destruction date
 FirstUseDate=First use date
-QCFrequency=Quality control frequency
+QCFrequency=Quality control frequency (in days)
 InWorkingOrder=In working order
 OutOfOrder=Out of order
