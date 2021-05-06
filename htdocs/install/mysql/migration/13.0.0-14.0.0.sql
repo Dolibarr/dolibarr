@@ -59,10 +59,10 @@ insert into llx_c_actioncomm (id, code, type, libelle, module, active, position)
 
 UPDATE llx_c_country SET eec = 1 WHERE code IN ('AT','BE','BG','CY','CZ','DE','DK','EE','ES','FI','FR','GR','HR','NL','HU','IE','IM','IT','LT','LU','LV','MC','MT','PL','PT','RO','SE','SK','SI');
 
+ALTER TABLE llx_export_model MODIFY COLUMN type varchar(64);
+
 
 -- For v14
-
-ALTER TABLE llx_export_model MODIFY COLUMN type varchar(64);
 
 create table llx_accounting_groups_account
 (
