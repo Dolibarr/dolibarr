@@ -96,6 +96,7 @@ EvntOrgCancelled = Cancelled
 #
 # Public page
 #
+SuggestForm = Suggestion page
 RegisterPage = Page for conferences or booth
 EvntOrgRegistrationWelcomeMessage = Welcome on the conference or booth suggestion page.
 EvntOrgRegistrationHelpMessage = Here, you can suggest a new conference or a new booth for the project

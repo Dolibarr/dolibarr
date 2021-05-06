@@ -242,10 +242,6 @@ if (empty($reshook) && $action == 'add') {
 		$langs->load("errors");
 		$errmsg .= $langs->trans("ErrorBadEMail", GETPOST("email"))."<br>\n";
 	}
-	if (!GETPOST("country_id")) {
-		$error++;
-		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Country"))."<br>\n";
-	}
 
 	if (!$error) {
 		// Getting the thirdparty or creating it
@@ -377,22 +373,28 @@ if (empty($reshook) && $action == 'add') {
 				$error++;
 				$errmsg .= $conforbooth->error;
 			} else {
-				// If this is a paying booth, we have to redirect to payment page and create an invoice
-				$conforbooth->status = CONFERENCEORBOOTH::STATUS_SUGGESTED;
-				$conforbooth->update($user);
-				// Sending mail
-				require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-				$formmail = new FormMail($db);
-				// Set output language
-				$outputlangs = new Translate('', $conf);
-				$outputlangs->setDefaultLang(empty($thirdparty->default_lang) ? $mysoc->default_lang : $thirdparty->default_lang);
-				// Load traductions files required by page
-				$outputlangs->loadLangs(array("main", "members"));
-				// Get email content from template
-				$arraydefaultmessage = null;
+				// Adding the contact to the project
+				/*$resultaddcontact = $conforbooth->add_contact($contact);
+				if ($resultaddcontact<0) {
+					$error++;
+					$errmsg .= $conforbooth->error;
+				} else {*/
+					$conforbooth->status = CONFERENCEORBOOTH::STATUS_SUGGESTED;
+					$conforbooth->update($user);
 
-				$labeltouse = $conf->global->EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT;
+					// Sending mail
+					require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+					$formmail = new FormMail($db);
+					// Set output language
+					$outputlangs = new Translate('', $conf);
+					$outputlangs->setDefaultLang(empty($thirdparty->default_lang) ? $mysoc->default_lang : $thirdparty->default_lang);
+					// Load traductions files required by page
+					$outputlangs->loadLangs(array("main", "members"));
+					// Get email content from template
+					$arraydefaultmessage = null;
+
+					$labeltouse = $conf->global->EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT;
 				if (!empty($labeltouse)) {
 					$arraydefaultmessage = $formmail->getEMailTemplate($db, 'eventorganization_send', $user, $outputlangs, $labeltouse, 1, '');
 				}
@@ -402,26 +404,27 @@ if (empty($reshook) && $action == 'add') {
 					$msg     = $arraydefaultmessage->content;
 				}
 
-				$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $thirdparty);
-				complete_substitutions_array($substitutionarray, $outputlangs, $object);
+					$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $thirdparty);
+					complete_substitutions_array($substitutionarray, $outputlangs, $object);
 
-				$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
-				$texttosend = make_substitutions($msg, $substitutionarray, $outputlangs);
+					$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
+					$texttosend = make_substitutions($msg, $substitutionarray, $outputlangs);
 
-				$sendto = $thirdparty->email;
-				$from = $conf->global->MAILING_EMAIL_FROM;
-				$urlback = $_SERVER["REQUEST_URI"];
+					$sendto = $thirdparty->email;
+					$from = $conf->global->MAILING_EMAIL_FROM;
+					$urlback = $_SERVER["REQUEST_URI"];
 
-				$ishtml = dol_textishtml($texttosend); // May contain urls
+					$ishtml = dol_textishtml($texttosend); // May contain urls
 
-				$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, array(), array(), array(), '', '', 0, $ishtml);
+					$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, array(), array(), array(), '', '', 0, $ishtml);
 
-				$result = $mailfile->sendfile();
+					$result = $mailfile->sendfile();
 				if ($result) {
 					dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_payment');
 				} else {
 					dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
 				}
+				//}
 			}
 		}
 	}

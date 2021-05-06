@@ -377,7 +377,14 @@ if (empty($reshook) && $action == 'add') {
 				$error++;
 				$errmsg .= $conforbooth->error;
 			} else {
-				// If this is a paying booth, we have to redirect to payment page and create an invoice
+				// Adding the contact to the project
+				/*$resultaddcontact = $conforbooth->add_contact($contact);
+				if ($resultaddcontact<0) {
+					$error++;
+					$errmsg .= $conforbooth->error;
+				} else {*/
+
+					// If this is a paying booth, we have to redirect to payment page and create an invoice
 				if (!empty(floatval($project->price_booth))) {
 					$productforinvoicerow = new Product($db);
 					$resultprod = $productforinvoicerow->fetch($conf->global->SERVICE_BOOTH_LOCATION);
@@ -484,6 +491,7 @@ if (empty($reshook) && $action == 'add') {
 						dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
 					}
 				}
+				//}
 			}
 		}
 	}
