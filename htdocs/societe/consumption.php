@@ -352,7 +352,7 @@ if (!empty($sql_select)) {
 		$sql .= " AND ".$doc_number." LIKE '%".$db->escape($sref)."%'";
 	}
 	if ($sprod_fulldescr) {
-		$sql .= " AND (d.description LIKE '%".$db->escape($sprod_fulldescr)."%'";
+		$sql .= " AND (d.description LIKE '%".$db->escape($sprod_fulldescr)."%' OR d.description LIKE '%".$db->escape(dol_htmlentities($sprod_fulldescr))."%'";
 		if (GETPOST('type_element') != 'fichinter') {
 			$sql .= " OR p.ref LIKE '%".$db->escape($sprod_fulldescr)."%'";
 		}

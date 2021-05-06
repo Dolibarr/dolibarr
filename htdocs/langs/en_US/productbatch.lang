@@ -1,4 +1,4 @@
-# ProductBATCH language file - en_US - ProductBATCH
+# ProductBATCH language file - Source file is en_US - ProductBATCH
 ManageLotSerial=Use lot/serial number
 ProductStatusOnBatch=Yes (lot required)
 ProductStatusOnSerial=Yes (unique serial number required)
@@ -39,5 +39,7 @@ ManufacturingDate=Manufacturing date
 DestructionDate=Destruction date
 FirstUseDate=First use date
 QCFrequency=Quality control frequency (in days)
-InWorkingOrder=In working order
+
+#Traceability - qc status
 OutOfOrder=Out of order
+InWorkingOrder=In working order

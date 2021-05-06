@@ -151,6 +151,10 @@ if ($action == 'presend') {
 		$fuser = new User($db);
 		$fuser->fetch($object->fk_user_author);
 		$liste['thirdparty'] = $fuser->getFullName($outputlangs)." <".$fuser->email.">";
+	} elseif ($object->element == 'partnership' && $conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') {
+		$fadherent = new Adherent($db);
+		$fadherent->fetch($object->fk_member);
+		$liste['member'] = $fadherent->getFullName($outputlangs)." <".$fadherent->email.">";
 	} elseif ($object->element == 'societe') {
 		foreach ($object->thirdparty_and_contact_email_array(1) as $key => $value) {
 			$liste[$key] = $value;

@@ -6809,6 +6809,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__MEMBER_CIVILITY__'] = '__MEMBER_CIVILITY__';
 				$substitutionarray['__MEMBER_FIRSTNAME__'] = '__MEMBER_FIRSTNAME__';
 				$substitutionarray['__MEMBER_LASTNAME__'] = '__MEMBER_LASTNAME__';
+				$substitutionarray['__MEMBER_USER_LOGIN_INFORMATION__'] = 'Login and pass of the external user account';
 				/*$substitutionarray['__MEMBER_NOTE_PUBLIC__'] = '__MEMBER_NOTE_PUBLIC__';
 				$substitutionarray['__MEMBER_NOTE_PRIVATE__'] = '__MEMBER_NOTE_PRIVATE__';*/
 			}
@@ -6884,6 +6885,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				}
 				$substitutionarray['__MEMBER_FIRSTNAME__'] = (isset($object->firstname) ? $object->firstname : '');
 				$substitutionarray['__MEMBER_LASTNAME__'] = (isset($object->lastname) ? $object->lastname : '');
+				$substitutionarray['__MEMBER_USER_LOGIN_INFORMATION__'] = '';
 				if (method_exists($object, 'getFullName')) {
 					$substitutionarray['__MEMBER_FULLNAME__'] = $object->getFullName($outputlangs);
 				}
@@ -9384,7 +9386,8 @@ function getDictvalue($tablename, $field, $id, $checkentity = false, $rowidfield
 
 	if (!isset($dictvalues[$tablename])) {
 		$dictvalues[$tablename] = array();
-		$sql = 'SELECT * FROM '.$tablename.' WHERE 1'; // Here select * is allowed as it is generic code and we don't have list of fields
+
+		$sql = 'SELECT * FROM '.$tablename.' WHERE 1 = 1'; // Here select * is allowed as it is generic code and we don't have list of fields
 		if ($checkentity) {
 			$sql .= ' AND entity IN (0,'.getEntity($tablename).')';
 		}
@@ -9673,6 +9676,7 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 	$class = 'butAction';
 	if ($actionType == 'danger' || $actionType == 'delete') {
 		$class = 'butActionDelete';
+		if (strpos($url, 'token=') === false) $url .= '&token='.newToken();
 	}
 
 	$attr = array(

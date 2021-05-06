@@ -1680,6 +1680,28 @@ class Account extends CommonObject
 		$this->owner_address   = 'Owner address';
 		$this->country_id      = 1;
 	}
+
+	/**
+	 * Function used to replace a thirdparty id with another one.
+	 *
+	 * @param DoliDB 	$db 			Database handler
+	 * @param int 		$origin_id 		Old thirdparty id
+	 * @param int 		$dest_id 		New thirdparty id
+	 * @return bool
+	 */
+	public static function replaceThirdparty($db, $origin_id, $dest_id)
+	{
+		$sql = "UPDATE ".MAIN_DB_PREFIX."bank_url SET url_id = ".((int) $dest_id)." WHERE url_id = ".((int) $origin_id)." AND type='company'";
+
+		if (!$db->query($sql))
+		{
+			//if ($ignoreerrors) return true; // TODO Not enough. If there is A-B on kept thirdarty and B-C on old one, we must get A-B-C after merge. Not A-B.
+			//$this->errors = $db->lasterror();
+			return false;
+		} else {
+			return true;
+		}
+	}
 }
 
 

@@ -100,7 +100,7 @@ $hookmanager->initHooks(array('admin'));
 // Put here declaration of dictionaries properties
 
 // Sort order to show dictionary (0 is space). All other dictionaries (added by modules) will be at end of this.
-$taborder = array(9, 0, 4, 3, 2, 0, 1, 8, 19, 16, 39, 27, 40, 38, 0, 5, 11, 0, 32, 33, 34, 0, 6, 0, 29, 0, 7, 24, 28, 17, 35, 36, 0, 10, 23, 12, 13, 0, 14, 0, 22, 20, 18, 21, 41, 0, 15, 30, 0, 37, 42, 0, 25, 0);
+$taborder = array(9, 0, 4, 3, 2, 0, 1, 8, 19, 16, 39, 27, 40, 38, 0, 5, 11, 0, 32, 33, 34, 0, 6, 0, 29, 0, 7, 24, 28, 17, 35, 36, 0, 10, 23, 12, 13, 0, 14, 0, 22, 20, 18, 21, 41, 0, 15, 30, 0, 37, 42, 0, 25, 0, 43, 0);
 
 // Name of SQL tables of dictionaries
 $tabname = array();
@@ -146,6 +146,7 @@ $tabname[39] = MAIN_DB_PREFIX."c_prospectcontactlevel";
 $tabname[40] = MAIN_DB_PREFIX."c_stcommcontact";
 $tabname[41] = MAIN_DB_PREFIX."c_transport_mode";
 $tabname[42] = MAIN_DB_PREFIX."c_product_nature";
+$tabname[43] = MAIN_DB_PREFIX."c_productbatch_qcstatus";
 
 // Dictionary labels
 $tablib = array();
@@ -191,6 +192,7 @@ $tablib[39] = "DictionaryProspectContactLevel";
 $tablib[40] = "DictionaryProspectContactStatus";
 $tablib[41] = "DictionaryTransportMode";
 $tablib[42] = "DictionaryProductNature";
+$tablib[43] = "DictionaryBatchStatus";
 
 // Requests to extract data
 $tabsql = array();
@@ -236,6 +238,7 @@ $tabsql[39] = "SELECT code, label as libelle, sortorder, active FROM ".MAIN_DB_P
 $tabsql[40] = "SELECT id      as rowid, code, libelle, picto, active FROM ".MAIN_DB_PREFIX."c_stcommcontact";
 $tabsql[41] = "SELECT rowid as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_transport_mode";
 $tabsql[42] = "SELECT rowid as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_product_nature";
+$tabsql[43] = "SELECT rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_productbatch_qcstatus";
 
 // Criteria to sort dictionaries
 $tabsqlsort = array();
@@ -281,6 +284,7 @@ $tabsqlsort[39] = "sortorder ASC";
 $tabsqlsort[40] = "code ASC";
 $tabsqlsort[41] = "code ASC";
 $tabsqlsort[42] = "code ASC";
+$tabsqlsort[43] = "code ASC";
 
 // Field names in select result for dictionary display
 $tabfield = array();
@@ -326,6 +330,7 @@ $tabfield[39] = "code,libelle,sortorder";
 $tabfield[40] = "code,libelle,picto";
 $tabfield[41] = "code,label";
 $tabfield[42] = "code,label";
+$tabfield[43] = "code,label";
 
 // Edit field names for editing a record
 $tabfieldvalue = array();
@@ -371,6 +376,7 @@ $tabfieldvalue[39] = "code,libelle,sortorder";
 $tabfieldvalue[40] = "code,libelle,picto";
 $tabfieldvalue[41] = "code,label";
 $tabfieldvalue[42] = "code,label";
+$tabfieldvalue[43] = "code,label";
 
 // Field names in the table for inserting a record
 $tabfieldinsert = array();
@@ -417,6 +423,7 @@ $tabfieldinsert[39] = "code,label,sortorder";
 $tabfieldinsert[40] = "code,libelle,picto";
 $tabfieldinsert[41] = "code,label";
 $tabfieldinsert[42] = "code,label";
+$tabfieldinsert[43] = "code,label";
 
 // Rowid name of field depending if field is autoincrement on or off..
 // Use "" if id field is "rowid" and has autoincrement on
@@ -464,6 +471,7 @@ $tabrowid[39] = "code";
 $tabrowid[40] = "id";
 $tabrowid[41] = "";
 $tabrowid[42] = "rowid";
+$tabrowid[43] = "rowid";
 
 // Condition to show dictionary in setup page
 $tabcond = array();
@@ -509,6 +517,7 @@ $tabcond[39] = (!empty($conf->societe->enabled) && empty($conf->global->SOCIETE_
 $tabcond[40] = (!empty($conf->societe->enabled) && !empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES));
 $tabcond[41] = !empty($conf->intracommreport->enabled);
 $tabcond[42] = !empty($conf->product->enabled);
+$tabcond[43] = !empty($conf->product->enabled && !empty($conf->productbatch->enabled));
 
 // List of help for fields
 $tabhelp = array();
@@ -554,6 +563,7 @@ $tabhelp[39] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[40] = array('code'=>$langs->trans("EnterAnyCode"), 'picto'=>$langs->trans("PictoHelp"));
 $tabhelp[41] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[42] = array('code'=>$langs->trans("EnterAnyCode"));
+$tabhelp[43] = array('code'=>$langs->trans("EnterAnyCode"));
 
 // List of check for fields (NOT USED YET)
 $tabfieldcheck = array();
@@ -599,6 +609,7 @@ $tabfieldcheck[39] = array();
 $tabfieldcheck[40] = array();
 $tabfieldcheck[41] = array();
 $tabfieldcheck[42] = array();
+$tabfieldcheck[43] = array();
 
 // Complete all arrays with entries found into modules
 complete_dictionary_with_modules($taborder, $tabname, $tablib, $tabsql, $tabsqlsort, $tabfield, $tabfieldvalue, $tabfieldinsert, $tabrowid, $tabcond, $tabhelp, $tabfieldcheck);
@@ -1967,6 +1978,9 @@ if ($id) {
 								$valuetoshow = $obj->state_code;
 							} elseif ($value == 'label' && $tabname[$id] == MAIN_DB_PREFIX.'c_product_nature') {
 								$langs->load("products");
+								$valuetoshow = $langs->trans($obj->{$value});
+							} elseif ($fieldlist[$field] == 'label' && $tabname[$id] == MAIN_DB_PREFIX.'c_productbatch_qcstatus') {
+								$langs->load("productbatch");
 								$valuetoshow = $langs->trans($obj->{$value});
 							}
 							$class .= ($class ? ' ' : '').'tddict';
