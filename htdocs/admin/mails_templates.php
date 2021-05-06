@@ -160,18 +160,14 @@ if (empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES)) {
 
 $tabhelp = array();
 $tabhelp[25] = array(
-	'topic'=>$helpsubstit,
+	'topic'=>'<span class="small">'.$helpsubstit.'</span>',
 	'joinfiles'=>$langs->trans('AttachMainDocByDefault'),
-	'content'=>$helpsubstit,
-	'content_lines'=>$helpsubstitforlines,
+	'content'=>'<span class="small">'.$helpsubstit.'</span>',
+	'content_lines'=>'<span class="small">'.$helpsubstitforlines.'</span>',
 	'type_template'=>$langs->trans("TemplateForElement"),
 	'private'=>$langs->trans("TemplateIsVisibleByOwnerOnly"),
 	'position'=>$langs->trans("PositionIntoComboList")
 );
-
-// List of check for fields (NOT USED YET)
-$tabfieldcheck = array();
-$tabfieldcheck[25] = array();
 
 
 $elementList = array();

@@ -3496,7 +3496,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'delete', 'dolly', 'dollyrevert', 'donation', 'download', 'dynamicprice',
 				'edit', 'ellipsis-h', 'email', 'eraser', 'establishment', 'expensereport', 'external-link-alt', 'external-link-square-alt',
 				'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'autofill', 'folder', 'folder-open', 'folder-plus',
-				'globe', 'globe-americas', 'graph', 'grip', 'grip_title', 'group',
+				'generate', 'globe', 'globe-americas', 'graph', 'grip', 'grip_title', 'group',
 				'help', 'holiday',
 				'images', 'incoterm', 'info', 'intervention', 'inventory', 'intracommreport', 'knowledgemanagement',
 				'label', 'language', 'link', 'list', 'listlight', 'loan', 'lot', 'long-arrow-alt-right',
@@ -3534,7 +3534,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'donation'=>'file-alt', 'dynamicprice'=>'hand-holding-usd',
 				'setup'=>'cog', 'companies'=>'building', 'products'=>'cube', 'commercial'=>'suitcase', 'invoicing'=>'coins',
 				'accounting'=>'search-dollar', 'category'=>'tag', 'dollyrevert'=>'dolly',
-				'hrm'=>'user-tie', 'incoterm'=>'truck-loading',
+				'generate'=>'plus-square', 'hrm'=>'user-tie', 'incoterm'=>'truck-loading',
 				'margin'=>'calculator', 'members'=>'user-friends', 'ticket'=>'ticket-alt', 'globe'=>'external-link-alt', 'lot'=>'barcode',
 				'email'=>'at', 'establishment'=>'building',
 				'edit'=>'pencil-alt', 'graph'=>'chart-line', 'grip_title'=>'arrows-alt', 'grip'=>'arrows-alt', 'help'=>'question-circle',
@@ -4496,7 +4496,7 @@ function dol_print_error($db = '', $error = '', $errors = null)
 		}
 		$langs->loadLangs(array("main", "errors")); // Reload main because language may have been set only on previous line so we have to reload files we need.
 		// This should not happen, except if there is a bug somewhere. Enabled and check log in such case.
-		print 'This website or feature is currently temporarly not available or failed after a technical error.<br><br>This may be due to a maintenance operation. Current status of operation are on next line...<br><br>'."\n";
+		print 'This website or feature is currently temporarly not available or failed after a technical error.<br><br>This may be due to a maintenance operation. Current status of operation ('.dol_print_date(dol_now(), 'dayhourrfc').') are on next line...<br><br>'."\n";
 		print $langs->trans("DolibarrHasDetectedError").'. ';
 		print $langs->trans("YouCanSetOptionDolibarrMainProdToZero");
 		define("MAIN_CORE_ERROR", 1);

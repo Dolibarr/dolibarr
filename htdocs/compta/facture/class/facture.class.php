@@ -4990,13 +4990,13 @@ class Facture extends CommonInvoice
 
 						complete_substitutions_array($substitutionarray, $outputlangs, $tmpinvoice);
 
+						// Topic
+						$sendTopic = make_substitutions(empty($arraymessage->topic) ? $outputlangs->transnoentitiesnoconv('InformationMessage') : $arraymessage->topic, $substitutionarray, $outputlangs, 1);
+
 						// Content
 						$content = $outputlangs->transnoentitiesnoconv($arraymessage->content);
 
 						$sendContent = make_substitutions($content, $substitutionarray, $outputlangs, 1);
-
-						//Topic
-						$sendTopic = (!empty($arraymessage->topic)) ? $arraymessage->topic : $outputlangs->transnoentitiesnoconv('InformationMessage');
 
 						// Recipient
 						$res = $tmpinvoice->fetch_thirdparty();

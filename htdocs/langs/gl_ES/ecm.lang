@@ -42,6 +42,6 @@ ExtraFieldsEcmFiles=Extrafields en ficheiros ECM
 ExtraFieldsEcmDirectories=Extrafields en directorios ECM
 ECMSetup=Configuración ECM
 GenerateImgWebp=Duplica todas as imaxes con outra versión con formato .webp 
-ConfirmGenerateImgWebp=Se confirma, xerará unha imaxe en formato .webp para todas as imaxes incluídas neste cartafol e no cartafol fillo ... 
+ConfirmGenerateImgWebp=Se confirma, xerará unha imaxe en formato .webp para todas as imaxes actuais deste cartafol (as subcarpetas non están incluídas) ...
 ConfirmImgWebpCreation=Confirmar a duplicación de todas as imaxes
 SucessConvertImgWebp=Imaxes duplicadas correctamente

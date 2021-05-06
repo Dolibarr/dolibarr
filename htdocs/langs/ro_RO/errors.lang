@@ -4,9 +4,9 @@
 NoErrorCommitIsDone=Nicio eroare, dăm commit
 # Errors
 ErrorButCommitIsDone=Erori constatate dar încă nevalidate
-ErrorBadEMail=Emailul %s este greșit
-ErrorBadMXDomain=Email-ul %s pare greșit (domeniul nu are nicio înregistrare MX validă)
-ErrorBadUrl=Url-ul %s este greşit
+ErrorBadEMail=Adresa de email %s este incorectă
+ErrorBadMXDomain=Adresa de email %s pare incorectă (domeniul nu are o înregistrare MX validă)
+ErrorBadUrl=Url-ul %s este incorect
 ErrorBadValueForParamNotAString=Valoare greșită pentru parametru. Se adaugă,  în general, atunci când traducerea lipsește.
 ErrorRefAlreadyExists=Referinţa <b>%s</b> există deja.
 ErrorLoginAlreadyExists=Login-ul %s există deja.
@@ -226,6 +226,7 @@ ErrorAPageWithThisNameOrAliasAlreadyExists=Pagina/containerul <strong>%s</strong
 ErrorDuringChartLoad=Eroare la încărcarea schemei de conturi. În cazul în care câteva conturi nu au fost încărcate, le puteți introduce în continuare manual.
 ErrorBadSyntaxForParamKeyForContent=Sintaxă greşită pentru parametru keyforcontent. Trebuie să aibă o valoare începând cu %s sau %s
 ErrorVariableKeyForContentMustBeSet=Eroare, trebuie să fie setată constanta cu numele %s (cu conținut de text care trebuie afișat) sau %s (cu adresa URL externă de afișat).
+ErrorURLMustEndWith=URL-ul %s trebuie să se termine cu %s
 ErrorURLMustStartWithHttp=URL-ul %s trebuie să înceapă cu http:// sau https://
 ErrorHostMustNotStartWithHttp=Numele gazdei %s NU trebuie să înceapă cu http:// sau https://
 ErrorNewRefIsAlreadyUsed=Eroare, noua referintă este deja utilizată
@@ -296,3 +297,4 @@ WarningAvailableOnlyForHTTPSServers=Disponibil numai dacă se utilizează conexi
 WarningModuleXDisabledSoYouMayMissEventHere=Modulul %s nu a fost activat. Este posibil să pierdeți o mulțime de evenimente aici. 
 ErrorActionCommPropertyUserowneridNotDefined=Utilizatorul deţinător este obligatoriu
 ErrorActionCommBadType=Tipul evenimentului selectat (id: %n, cod: %s) nu există în dicţionarul Tipuri evenimente
+CheckVersionFail=Verificarea versiunii a eşuat

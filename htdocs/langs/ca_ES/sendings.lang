@@ -43,7 +43,7 @@ ConfirmValidateSending=Estàs segur que vols validar aquest enviament amb refer�
 ConfirmCancelSending=Esteu segur que voleu cancel·lar aquest enviament?
 DocumentModelMerou=Model Merou A5
 WarningNoQtyLeftToSend=Alerta, cap producte en espera d'enviament.
-StatsOnShipmentsOnlyValidated=Estadístiques realitzades únicament sobre les expedicions validades
+StatsOnShipmentsOnlyValidated=Statistics are only for validated shipments. Date used is the date of validation of shipment (planned delivery date is not always known)
 DateDeliveryPlanned=Data prevista d'entrega
 RefDeliveryReceipt=Referència del rebut de lliurament
 StatusReceipt=Estat del rebut de lliurament
@@ -59,7 +59,7 @@ ProductQtyInCustomersOrdersRunning=Quantitat de producte en comandes de venda ob
 ProductQtyInSuppliersOrdersRunning=Quantitat de producte en comandes de compra obertes
 ProductQtyInShipmentAlreadySent=Quantitat de producte de comandes de vendes obertes ja enviades
 ProductQtyInSuppliersShipmentAlreadyRecevied=Quantitat de producte de comandes de compra obertes ja rebudes
-NoProductToShipFoundIntoStock=No s'ha trobat cap producte per enviar al magatzem <b>%s</b>. Corregiu l'estoc o torneu enrere per triar un altre magatzem.
+NoProductToShipFoundIntoStock=No s'ha trobat cap producte per a enviar al magatzem <b>%s</b>. Corregiu l'estoc o torneu enrere per a triar un altre magatzem.
 WeightVolShort=Pes/Vol.
 ValidateOrderFirstBeforeShipment=S'ha de validar la comanda abans de fer expedicions.
 

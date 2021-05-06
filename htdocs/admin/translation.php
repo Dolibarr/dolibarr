@@ -36,11 +36,11 @@ if (!$user->admin) {
 
 $id = GETPOST('rowid', 'int');
 $action = GETPOST('action', 'aZ09');
+$optioncss = GETPOST('optionscss', 'aZ09');
 
 $langcode = GETPOST('langcode', 'alphanohtml');
 $transkey = GETPOST('transkey', 'alphanohtml');
 $transvalue = GETPOST('transvalue', 'restricthtml');
-
 
 $mode = GETPOST('mode', 'aZ09') ? GETPOST('mode', 'aZ09') : 'searchkey';
 
@@ -537,8 +537,8 @@ if ($mode == 'searchkey') {
 				// retrieve rowid
 				$sql = "SELECT rowid";
 				$sql .= " FROM ".MAIN_DB_PREFIX."overwrite_trans";
-				$sql .= " WHERE transkey = '".$db->escape($key)."'";
-				$sql .= " AND entity IN (".getEntity('overwrite_trans').")";
+				$sql .= " WHERE entity IN (".getEntity('overwrite_trans').")";
+				$sql .= " AND transkey = '".$db->escape($key)."'";
 				dol_syslog("translation::select from table", LOG_DEBUG);
 				$result = $db->query($sql);
 				if ($result) {
