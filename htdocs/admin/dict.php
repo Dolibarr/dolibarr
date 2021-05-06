@@ -100,7 +100,7 @@ $hookmanager->initHooks(array('admin'));
 // Put here declaration of dictionaries properties
 
 // Sort order to show dictionary (0 is space). All other dictionaries (added by modules) will be at end of this.
-$taborder = array(9, 0, 4, 3, 2, 0, 1, 8, 19, 16, 39, 27, 40, 38, 0, 5, 11, 0, 32, 33, 34, 0, 6, 0, 29, 0, 7, 24, 28, 17, 35, 36, 0, 10, 23, 12, 13, 0, 14, 0, 22, 20, 18, 21, 41, 0, 15, 30, 0, 37, 42, 0, 25, 0, 43, 0);
+$taborder = array(9, 0, 4, 3, 2, 0, 1, 8, 19, 16, 39, 27, 40, 38, 0, 5, 11, 0, 32, 33, 34, 0, 6, 0, 29, 0, 24, 28, 17, 35, 36, 0, 10, 23, 12, 13, 7, 0, 14, 0, 22, 20, 18, 21, 41, 0, 15, 30, 0, 37, 42, 0, 25, 0, 43, 0);
 
 // Name of SQL tables of dictionaries
 $tabname = array();
@@ -565,57 +565,56 @@ $tabhelp[41] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[42] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[43] = array('code'=>$langs->trans("EnterAnyCode"));
 
-// List of check for fields (NOT USED YET)
-$tabfieldcheck = array();
-$tabfieldcheck[1]  = array();
-$tabfieldcheck[2]  = array();
-$tabfieldcheck[3]  = array();
-$tabfieldcheck[4]  = array();
-$tabfieldcheck[5]  = array();
-$tabfieldcheck[6]  = array();
-$tabfieldcheck[7]  = array();
-$tabfieldcheck[8]  = array();
-$tabfieldcheck[9]  = array();
-$tabfieldcheck[10] = array();
-$tabfieldcheck[11] = array();
-$tabfieldcheck[12] = array();
-$tabfieldcheck[13] = array();
-$tabfieldcheck[14] = array();
-$tabfieldcheck[15] = array();
-$tabfieldcheck[16] = array();
-$tabfieldcheck[17] = array();
-$tabfieldcheck[18] = array();
-$tabfieldcheck[19] = array();
-$tabfieldcheck[20] = array();
-$tabfieldcheck[21] = array();
-$tabfieldcheck[22] = array();
-$tabfieldcheck[23] = array();
-$tabfieldcheck[24] = array();
-$tabfieldcheck[25] = array();
-//$tabfieldcheck[26] = array();
-$tabfieldcheck[27] = array();
-$tabfieldcheck[28] = array();
-$tabfieldcheck[29] = array();
-$tabfieldcheck[30] = array();
-//$tabfieldcheck[31] = array();
-$tabfieldcheck[32] = array();
-$tabfieldcheck[33] = array();
-$tabfieldcheck[34] = array();
-$tabfieldcheck[35] = array();
-$tabfieldcheck[36] = array();
-$tabfieldcheck[37] = array();
-$tabfieldcheck[38] = array();
-$tabfieldcheck[39] = array();
-$tabfieldcheck[40] = array();
-$tabfieldcheck[41] = array();
-$tabfieldcheck[42] = array();
-$tabfieldcheck[43] = array();
-
 // Table to store complete informations (will replace all other table). Key is table name.
-$tabcomplete = array();
+$tabcomplete = array(
+	'c_forme_juridique'=>array('picto'=>'company'),
+	'c_departements'=>array('picto'=>'country'),
+	'c_regions'=>array('picto'=>'country'),
+	'c_country'=>array('picto'=>'country'),
+	'c_civility'=>array('picto'=>'contact'),
+	'c_actioncomm'=>array('picto'=>'action'),
+	'c_chargesociales'=>array('picto'=>'bill'),
+	'c_typent'=>array('picto'=>'company'),
+	'c_currencies'=>array('picto'=>'multicurrency'),
+	'c_tva'=>array('picto'=>'bill'),
+	'c_type_contact'=>array('picto'=>'contact'),
+	'c_payment_term'=>array('picto'=>'bill'),
+	'c_paiement'=>array('picto'=>'bill'),
+	'c_ecotaxe'=>array('picto'=>'bill'),
+	'c_paper_format'=>array('picto'=>'generic'),
+	'c_prospectlevel'=>array('picto'=>'company'),
+	'c_type_fees'=>array('picto'=>'trip'),
+	'c_effectif'=>array('picto'=>'company'),
+	'c_input_method'=>array('picto'=>'order'),
+	'c_input_reason'=>array('picto'=>'order'),
+	'c_availability'=>array('picto'=>'shipment'),
+	'c_shipment_mode'=>array('picto'=>'shipment'),
+	'c_revenuestamp'=>array('picto'=>'bill'),
+	'c_type_resource'=>array('picto'=>'resource'),
+	'c_type_container'=>array('picto'=>'website'),
+	'c_stcomm'=>array('picto'=>'company'),
+	'c_holiday_types'=>array('picto'=>'holiday'),
+	'c_lead_status'=>array('picto'=>'project'),
+	'c_format_cards'=>array('picto'=>'generic'),
+	'c_hrm_public_holiday'=>array('picto'=>'holiday'),
+	'c_hrm_department'=>array('picto'=>'hrm'),
+	'c_hrm_function'=>array('picto'=>'hrm'),
+	'c_exp_tax_cat'=>array('picto'=>'expensereport'),
+	'c_exp_tax_range'=>array('picto'=>'expensereport'),
+	'c_units'=>array('picto'=>'product'),
+	'c_socialnetworks'=>array('picto'=>'share-alt'),
+	'c_product_nature'=>array('picto'=>'product'),
+	'c_transport_mode'=>array('picto'=>'incoterm'),
+	'c_prospectcontactlevel'=>array('picto'=>'company'),
+	'c_stcommcontact'=>array('picto'=>'company'),
+	'c_product_nature'=>array('picto'=>'product'),
+	'c_productbatch_qcstatus'=>array('picto'=>'batch'),
+
+);
+
 
 // Complete all arrays with entries found into modules
-complete_dictionary_with_modules($taborder, $tabname, $tablib, $tabsql, $tabsqlsort, $tabfield, $tabfieldvalue, $tabfieldinsert, $tabrowid, $tabcond, $tabhelp, $tabfieldcheck, $tabcomplete);
+complete_dictionary_with_modules($taborder, $tabname, $tablib, $tabsql, $tabsqlsort, $tabfield, $tabfieldvalue, $tabfieldinsert, $tabrowid, $tabcond, $tabhelp, $tabcomplete);
 
 // Defaut sortorder
 if (empty($sortfield)) {

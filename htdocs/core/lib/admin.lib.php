@@ -1189,11 +1189,10 @@ function unActivateModule($value, $requiredby = 1)
  * 	@param		array		$tabrowid			Tabrowid
  * 	@param		array		$tabcond			Tabcond
  * 	@param		array		$tabhelp			Tabhelp
- *  @param		array		$tabfieldcheck		Tabfieldcheck
  *  @param		array		$tabcomplete   		Tab complete (will replace all other in future). Key is table name.
  * 	@return		int			1
  */
-function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tabsql, &$tabsqlsort, &$tabfield, &$tabfieldvalue, &$tabfieldinsert, &$tabrowid, &$tabcond, &$tabhelp, &$tabfieldcheck, &$tabcomplete)
+function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tabsql, &$tabsqlsort, &$tabfield, &$tabfieldvalue, &$tabfieldinsert, &$tabrowid, &$tabcond, &$tabhelp, &$tabcomplete)
 {
 	global $db, $modules, $conf, $langs;
 
@@ -1325,7 +1324,6 @@ function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tab
 									foreach ($objMod->dictionaries['tabfieldcheck'] as $key => $val) {
 										$tmptablename = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $tabnamerelwithkey[$key]);
 										$nbtabfieldcheck++;
-										$tabfieldcheck[] = $val;
 										$tabcomplete[$tmptablename]['fieldcheck'] = $val;
 									}
 								}
