@@ -1123,7 +1123,7 @@ class pdf_gme extends ModelePDFPropales
 	private function pageGarde(&$pdf, $object, $outputlangs, $rowid, $extralabels){
 		//Image PDG (modifier le chemin de l'image en fonction de la photo souhaitée)
 
-		$pdf->Image($this->urlImageGme,0,0,210,0,'JPG');
+		$pdf->Image($this->urlImageGme,0,0,210,190);
 
 		//object extrafields
 		$object->fetch($rowid);
