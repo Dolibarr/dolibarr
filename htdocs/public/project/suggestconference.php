@@ -469,7 +469,7 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="newmember">'.
 print '<input type="hidden" name="token" value="'.newToken().'" / >';
 print '<input type="hidden" name="entity" value="'.$entity.'" />';
 print '<input type="hidden" name="action" value="add" />';
-print '<input type="hidden" name="id" value="'.$encodedid.'" />';
+print '<input type="hidden" name="id" value="'.$id.'" />';
 print '<input type="hidden" name="securekey" value="'.$securekeyreceived.'" />';
 
 print '<br>';
@@ -564,18 +564,9 @@ print dol_get_fiche_end();
 // Show all action buttons
 print '<div class="center">';
 print '<br>';
-// Output introduction text
-if ($project->accept_conference_suggestions) {
-	print '<input type="submit" value="'.$langs->trans("SuggestConference").'" name="suggestconference"  id="suggestconference" class="button">';
-	print '<br><br>';
-}
-print '<input type="submit" value="'.$langs->trans("ViewAndVote").'" name="viewandvote" id="viewandvote" class="button">';
+print '<input type="submit" value="'.$langs->trans("SuggestConference").'" name="suggestconference"  id="suggestconference" class="button">';
 print '<br><br>';
-if ($project->accept_booth_suggestions) {
-	print '<input type="submit" value="'.$langs->trans("SuggestBooth").'" name="suggestbooth" id="suggestbooth" class="button">';
-}
-print '</div>';
-print '<br><br>';
+
 
 
 
