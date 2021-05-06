@@ -374,11 +374,11 @@ if (empty($reshook) && $action == 'add') {
 				$errmsg .= $conforbooth->error;
 			} else {
 				// Adding the contact to the project
-				/*$resultaddcontact = $conforbooth->add_contact($contact);
+				$resultaddcontact = $conforbooth->add_contact($contact->id, 'SPEAKER');
 				if ($resultaddcontact<0) {
 					$error++;
 					$errmsg .= $conforbooth->error;
-				} else {*/
+				} else {
 					$conforbooth->status = CONFERENCEORBOOTH::STATUS_SUGGESTED;
 					$conforbooth->update($user);
 
@@ -395,14 +395,14 @@ if (empty($reshook) && $action == 'add') {
 					$arraydefaultmessage = null;
 
 					$labeltouse = $conf->global->EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT;
-				if (!empty($labeltouse)) {
-					$arraydefaultmessage = $formmail->getEMailTemplate($db, 'eventorganization_send', $user, $outputlangs, $labeltouse, 1, '');
-				}
+					if (!empty($labeltouse)) {
+						$arraydefaultmessage = $formmail->getEMailTemplate($db, 'eventorganization_send', $user, $outputlangs, $labeltouse, 1, '');
+					}
 
-				if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
-					$subject = $arraydefaultmessage->topic;
-					$msg     = $arraydefaultmessage->content;
-				}
+					if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
+						$subject = $arraydefaultmessage->topic;
+						$msg     = $arraydefaultmessage->content;
+					}
 
 					$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $thirdparty);
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
@@ -419,12 +419,12 @@ if (empty($reshook) && $action == 'add') {
 					$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, array(), array(), array(), '', '', 0, $ishtml);
 
 					$result = $mailfile->sendfile();
-				if ($result) {
-					dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_payment');
-				} else {
-					dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
+					if ($result) {
+						dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_payment');
+					} else {
+						dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
+					}
 				}
-				//}
 			}
 		}
 	}
