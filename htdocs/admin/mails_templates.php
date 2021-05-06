@@ -333,13 +333,13 @@ if (empty($reshook)) {
 			}
 		}
 
-		// Si verif ok et action add, on ajoute la ligne
+		// If previous test is ok action is add, we add the line
 		if ($ok && GETPOST('actionadd')) {
 			// Add new entry
 			$sql = "INSERT INTO ".$tabname[$id]." (";
 			// List of fields
 			$sql .= $tabfieldinsert[$id];
-			$sql .= ",active)";
+            $sql .= ", active, enabled)";
 			$sql .= " VALUES(";
 
 			// List of values
@@ -390,7 +390,7 @@ if (empty($reshook)) {
 				}
 				$i++;
 			}
-			$sql .= ", 1)";
+			$sql .= ", 1, 1)";
 
 			dol_syslog("actionadd", LOG_DEBUG);
 			$result = $db->query($sql);
