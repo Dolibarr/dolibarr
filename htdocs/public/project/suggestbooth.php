@@ -242,7 +242,7 @@ if (empty($reshook) && $action == 'add') {
 		$langs->load("errors");
 		$errmsg .= $langs->trans("ErrorBadEMail", GETPOST("email"))."<br>\n";
 	}
-	if (!GETPOST("country_id")) {
+	if (!GETPOST("country_id") && !empty(floatval($project->price_booth))) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Country"))."<br>\n";
 	}
@@ -407,6 +407,7 @@ if (empty($reshook) && $action == 'add') {
 							$contact->errors = $facture->errors;
 							$error++;
 						} else {
+							$db->commit();
 							$facture->add_object_linked($contact->element, $contact->id);
 						}
 					}
@@ -572,10 +573,10 @@ print '</td><td><input type="text" name="label" class="minwidth150" value="'.dol
 print '<tr><td>'.$langs->trans("Note").'<FONT COLOR="red">*</FONT></td>'."\n";
 print '<td><input type="text" name="note" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('note')).'"></td></tr>'."\n";
 // Start Date
-print '<tr><td>'.$langs->trans("DateStart").'</td>'."\n";
+print '<tr><td>'.$langs->trans("DateStart").'<FONT COLOR="red">*</FONT></td>'."\n";
 print '<td><input type="date" name="datestart" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('datestart')).'"></td></tr>'."\n";
 // End Date
-print '<tr><td>'.$langs->trans("DateEnd").'</td>'."\n";
+print '<tr><td>'.$langs->trans("DateEnd").'<FONT COLOR="red">*</FONT></td>'."\n";
 print '<td><input type="date" name="dateend" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('dateend')).'"></td></tr>'."\n";
 // Address
 print '<tr><td>'.$langs->trans("Address").'</td><td>'."\n";
@@ -587,7 +588,11 @@ print ' / ';
 print $formcompany->select_ziptown(GETPOST('town'), 'town', array('zipcode', 'selectcountry_id', 'state_id'), 0, 1);
 print '</td></tr>';
 // Country
-print '<tr><td>'.$langs->trans('Country').'<FONT COLOR="red">*</FONT></td><td>';
+print '<tr><td>'.$langs->trans('Country');
+if (!empty(floatval($project->price_booth))) {
+	print '<FONT COLOR="red">*</FONT>';
+}
+print '</td><td>';
 $country_id = GETPOST('country_id');
 if (!$country_id && !empty($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE)) {
 	$country_id = getCountry($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE, 2, $db, $langs);
