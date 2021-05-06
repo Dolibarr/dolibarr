@@ -50,7 +50,7 @@ include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 $langs->loadLangs(array("main", "cashdesk", "companies"));
 
-$place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Ba or Restaurant
+$place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant
 
 $facid = GETPOST('facid', 'int');
 
@@ -318,5 +318,6 @@ if (!empty($conf->global->TAKEPOS_FOOTER) || !empty($conf->global->{$constFreeTe
 <script type="text/javascript">
 	window.print();
 </script>
+
 </body>
 </html>

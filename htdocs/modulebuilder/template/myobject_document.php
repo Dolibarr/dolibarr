@@ -157,7 +157,7 @@ if ($object->id) {
 	 */
 	$head = myobjectPrepareHead($object);
 
-	print dol_get_fiche_head($head, 'document', $langs->trans("MyObject"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'document', '', -1, $object->picto);
 
 
 	// Build file list
@@ -240,7 +240,7 @@ if ($object->id) {
 	//$relativepathwithnofile='myobject/' . dol_sanitizeFileName($object->id).'/';
 	$relativepathwithnofile = 'myobject/'.dol_sanitizeFileName($object->ref).'/';
 
-	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {
 	accessforbidden('', 0, 1);
 }

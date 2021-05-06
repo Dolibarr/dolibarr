@@ -770,7 +770,7 @@ if (empty($reshook)) {
 		}
 
 		/*$line = new FactureLigne($db);
-		$line->fetch(GETPOST('lineid'));
+		$line->fetch(GETPOST('lineid', 'int'));
 		$percent = $line->get_prev_progress($object->id);
 
 		if (GETPOST('progress') < $percent)
@@ -823,7 +823,7 @@ if (empty($reshook)) {
 		// Update line
 		if (!$error) {
 			$result = $object->updateline(
-				GETPOST('lineid'),
+				GETPOST('lineid', 'int'),
 				$description,
 				$pu_ht,
 				$qty,
@@ -1597,7 +1597,7 @@ if ($action == 'create') {
 
 
 		// Lines
-		print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#add' : '#line_'.GETPOST('lineid')).'" method="POST">
+		print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#add' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">
         	<input type="hidden" name="token" value="' . newToken().'">
         	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
         	<input type="hidden" name="mode" value="">

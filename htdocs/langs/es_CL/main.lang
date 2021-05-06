@@ -180,7 +180,6 @@ UnitPriceHTCurrency=Precio unitario (excl.) (Moneda)
 UnitPriceTTC=Precio unitario
 PriceU=ARRIBA.
 PriceUHT=P.U. (net)
-PriceUHTCurrency=U.P (moneda)
 PriceUTTC=ARRIBA. (inc. impuesto)
 Amount=Cantidad
 AmountInvoice=Importe de la factura
@@ -460,8 +459,6 @@ Miscellaneous=Diverso
 GroupBy=Agrupar por...
 RemoveString=Eliminar la cadena '%s'
 SomeTranslationAreUncomplete=Algunos de los idiomas ofrecidos pueden estar solo parcialmente traducidos o pueden contener errores. Ayude a corregir su idioma registrándose en <a href="https://transifex.com/projects/p/dolibarr/" target="_blank">https://transifex.com/projects/p/dolibarr/</a> para agregar sus mejoras.
-DirectDownloadLink=Enlace de descarga directa (público / externo)
-DirectDownloadInternalLink=Enlace de descarga directa (debe registrarse y necesita permisos)
 DownloadDocument=Descargar documento
 ActualizeCurrency=Actualizar la tasa de cambio
 ModuleBuilder=Módulo y generador de aplicaciones

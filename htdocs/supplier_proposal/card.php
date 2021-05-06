@@ -112,7 +112,7 @@ $usercansend = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->
 
 // Additional area permissions
 $usercanclose = $user->rights->supplier_proposal->cloturer;
-$usercancreateorder = $user->rights->fournisseur->commande->creer;
+$usercancreateorder = ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer);
 
 // Permissions for includes
 $permissionnote = $usercancreate; // Used by the include of actions_setnotes.inc.php
@@ -1743,7 +1743,7 @@ if ($action == 'create') {
 	// Show object lines
 	$result = $object->getLinesArray();
 
-	print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#add' : '#line_'.GETPOST('lineid')).'" method="POST">
+	print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#add' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">
 	<input type="hidden" name="token" value="' . newToken().'">
 	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
 	<input type="hidden" name="mode" value="">
@@ -1859,7 +1859,7 @@ if ($action == 'create') {
 				}
 
 				// Create an order
-				if (!empty($conf->fournisseur->enabled) && $object->statut == SupplierProposal::STATUS_SIGNED) {
+				if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled)) && $object->statut == SupplierProposal::STATUS_SIGNED) {
 					if ($usercancreateorder) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddOrder").'</a></div>';
 					}

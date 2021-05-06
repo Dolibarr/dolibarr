@@ -131,7 +131,7 @@ InvoiceLinesDone=Linhas vinculadas de faturas
 ExpenseReportLines=Linhas de relatórios de despesas para vincular
 ExpenseReportLinesDone=Linhas vinculadas de relatórios de despesas
 IntoAccount=Vincular linha com a conta contabilística
-TotalForAccount=Total for accounting account
+TotalForAccount=Total accounting account
 
 
 Ventilate=Vincular
@@ -209,7 +209,7 @@ Codejournal=Diário
 JournalLabel=Journal label
 NumPiece=Número da peça
 TransactionNumShort=Núm. de transação
-AccountingCategory=Grupos personalizados
+AccountingCategory=Custom group
 GroupByAccountAccounting=Group by general ledger account
 GroupBySubAccountAccounting=Group by subledger account
 AccountingAccountGroupsDesc=Você pode definir aqui alguns grupos de conta contábil. Eles serão usados ​​para relatórios contábeis personalizados.
@@ -402,7 +402,29 @@ UseMenuToSetBindindManualy=Linhas ainda não encadernadas, use o menu <a href="%
 
 ## Import
 ImportAccountingEntries=Entradas contábeis
+ImportAccountingEntriesFECFormat=Accounting entries - FEC format
+FECFormatJournalCode=Code journal (JournalCode)
+FECFormatJournalLabel=Label journal (JournalLib)
+FECFormatEntryNum=Piece number (EcritureNum)
+FECFormatEntryDate=Piece date (EcritureDate)
+FECFormatGeneralAccountNumber=General account number (CompteNum)
+FECFormatGeneralAccountLabel=General account label (CompteLib)
+FECFormatSubledgerAccountNumber=Subledger account number (CompAuxNum)
+FECFormatSubledgerAccountLabel=Subledger account number (CompAuxLib)
+FECFormatPieceRef=Piece ref (PieceRef)
+FECFormatPieceDate=Piece date creation (PieceDate)
+FECFormatLabelOperation=Label operation (EcritureLib)
+FECFormatDebit=Debit (Debit)
+FECFormatCredit=Credit (Credit)
+FECFormatReconcilableCode=Reconcilable code (EcritureLet)
+FECFormatReconcilableDate=Reconcilable date (DateLet)
+FECFormatValidateDate=Piece date validated (ValidDate)
+FECFormatMulticurrencyAmount=Multicurrency amount (Montantdevise)
+FECFormatMulticurrencyCode=Multicurrency code (Idevise)
+
 DateExport=Date export
 WarningReportNotReliable=Atenção, este relatório não é baseado no Ledger, portanto, não contém transações modificadas manualmente no Ledger. Se a sua periodização estiver atualizada, a visão da contabilidade será mais precisa.
 ExpenseReportJournal=Diário de relatórios de despesas
 InventoryJournal=Diário de Inventário
+
+NAccounts=%s accounts

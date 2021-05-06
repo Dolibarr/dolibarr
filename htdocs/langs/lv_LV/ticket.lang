@@ -70,6 +70,8 @@ Deleted=Dzēsts
 # Dict
 Type=Veids
 Severity=Smagums
+TicketGroupIsPublic=Group is public
+TicketGroupIsPublicDesc=If a ticket group is public, it will be visible in the form when creating a ticket from the public interface
 
 # Email templates
 MailToSendTicketMessage=Lai nosūtītu e-pastu no pieteikuma
@@ -114,8 +116,8 @@ TicketsShowModuleLogo=Parādiet moduļa logotipi publiskajā saskarnē
 TicketsShowModuleLogoHelp=Iespējojiet šo opciju, lai slēptu logotipa moduli publiskās saskarnes lapās
 TicketsShowCompanyLogo=Parādīt uzņēmuma logotipi publiskā saskarnē
 TicketsShowCompanyLogoHelp=Iespējojiet šo opciju, lai slēptu galvenā uzņēmuma logotipi publiskās saskarnes lapās
-TicketsEmailAlsoSendToMainAddress=Arī nosūtiet paziņojumu uz galveno e-pasta adresi
-TicketsEmailAlsoSendToMainAddressHelp=Iespējojiet šo opciju, lai nosūtītu e-pastu uz adresi "Paziņojuma e-pasta adrese" (skatiet iestatījumu zemāk).
+TicketsEmailAlsoSendToMainAddress=Also send a notification to the main email address
+TicketsEmailAlsoSendToMainAddressHelp=Enable this option to also send an email to the address defined into setup "%s" (see tab "%s")
 TicketsLimitViewAssignedOnly=Ierobežot displeju līdz pašreizējam lietotājam piešķirtajām biļetēm (nav efektīvs ārējiem lietotājiem, vienmēr ierobežojiet to ar trešo personu, kurai tie ir atkarīgi)
 TicketsLimitViewAssignedOnlyHelp=Tiks redzamas tikai pašreizējam lietotājam piešķirtās biļetes. Neattiecas uz lietotāju ar biļešu pārvaldīšanas tiesībām.
 TicketsActivatePublicInterface=Aktivizēt publisko saskarni
@@ -123,13 +125,13 @@ TicketsActivatePublicInterfaceHelp=Publiskā saskarne ļauj apmeklētājiem izve
 TicketsAutoAssignTicket=Automātiski piešķirt lietotāju, kas izveidojis biļeti
 TicketsAutoAssignTicketHelp=Veidojot biļeti, lietotājs var automātiski piešķirt biļeti.
 TicketNumberingModules=Čeku numerācijas modulis
-TicketsModelModule=Document templates for tickets
+TicketsModelModule=Biļešu dokumentu veidnes
 TicketNotifyTiersAtCreation=Paziņot trešajai pusei radīšanas laikā
 TicketsDisableCustomerEmail=Vienmēr atspējojiet e-pasta ziņojumus, ja biļete tiek veidota no publiskās saskarnes
-TicketsPublicNotificationNewMessage=Sūtiet e-pastu (s), kad tiek pievienots jauns ziņojums
+TicketsPublicNotificationNewMessage=Send email(s) when a new message/comment is added to a ticket
 TicketsPublicNotificationNewMessageHelp=Sūtiet e-pastu (s), kad no publiskās saskarnes tiek pievienots jauns ziņojums (piešķirtajam lietotājam vai paziņojumu e-pastu uz (atjaunināt) un / vai paziņojumu e-pastu uz)
 TicketPublicNotificationNewMessageDefaultEmail=Paziņojumu e-pasts adresātam (atjaunināt)
-TicketPublicNotificationNewMessageDefaultEmailHelp=Sūtiet pa e-pastu jaunu ziņojumu paziņojumus uz šo adresi, ja biļetei nav piešķirts lietotājs vai lietotājam nav e-pasta.
+TicketPublicNotificationNewMessageDefaultEmailHelp=Send an email to this address for each new message notifications if the ticket doesn't have a user assigned to it or if the user doesn't have any known email.
 #
 # Index & list page
 #
@@ -302,3 +304,13 @@ BoxLastModifiedTicket=Jaunākie labotie pieteikumi
 BoxLastModifiedTicketDescription=Jaunākās %s lanbotās biļetes
 BoxLastModifiedTicketContent=
 BoxLastModifiedTicketNoRecordedTickets=Nav nesen labotu pieteikumu
+BoxTicketType=Number of open tickets by type
+BoxTicketSeverity=Number of open tickets by severity
+BoxNoTicketSeverity=No tickets opened
+BoxTicketLastXDays=Number of new tickets by days the last %s days
+BoxTicketLastXDayswidget = Number of new tickets by days the last X days
+BoxNoTicketLastXDays=No new tickets the last %s days
+BoxNumberOfTicketByDay=Number of new tickets by day
+BoxNewTicketVSClose=Number of today's new tickets versus today's closed tickets
+TicketCreatedToday=Ticket created today
+TicketClosedToday=Ticket closed today

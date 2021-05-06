@@ -129,21 +129,21 @@ $staticcontratligne = new ContratLigne($db);
 $companystatic = new Societe($db);
 
 $arrayfields = array(
-	'c.ref'=>array('label'=>$langs->trans("Contract"), 'checked'=>1, 'position'=>80),
-	'p.description'=>array('label'=>$langs->trans("Service"), 'checked'=>1, 'position'=>80),
-	's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1, 'position'=>90),
-	'cd.tva_tx'=>array('label'=>$langs->trans("VAT"), 'checked'=>0, 'position'=>100),
-	'cd.subprice'=>array('label'=>$langs->trans("PriceUHT"), 'checked'=>0, 'position'=>105),
-	'cd.qty'=>array('label'=>$langs->trans("Qty"), 'checked'=>0, 'position'=>108),
-	'cd.total_ht'=>array('label'=>$langs->trans("TotalHT"), 'checked'=>0, 'position'=>109),
-	'cd.total_tva'=>array('label'=>$langs->trans("TotalVAT"), 'checked'=>0, 'position'=>110),
-	'cd.date_ouverture_prevue'=>array('label'=>$langs->trans("DateStartPlannedShort"), 'checked'=>(($mode == "" || $mode == -1) || $mode == "0"), 'position'=>150),
-	'cd.date_ouverture'=>array('label'=>$langs->trans("DateStartRealShort"), 'checked'=>(($mode == "" || $mode == -1) || $mode > 0), 'position'=>160),
-	'cd.date_fin_validite'=>array('label'=>$langs->trans("DateEndPlannedShort"), 'checked'=>(($mode == "" || $mode == -1) || $mode < 5), 'position'=>170),
-	'cd.date_cloture'=>array('label'=>$langs->trans("DateEndRealShort"), 'checked'=>(($mode == "" || $mode == -1) || $mode >= 5), 'position'=>180),
+	'c.ref'=>array('label'=>"Contract", 'checked'=>1, 'position'=>80),
+	'p.description'=>array('label'=>"Service", 'checked'=>1, 'position'=>80),
+	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1, 'position'=>90),
+	'cd.tva_tx'=>array('label'=>"VATRate", 'checked'=>-1, 'position'=>100),
+	'cd.subprice'=>array('label'=>"PriceUHT", 'checked'=>-1, 'position'=>105),
+	'cd.qty'=>array('label'=>"Qty", 'checked'=>-1, 'position'=>108),
+	'cd.total_ht'=>array('label'=>"TotalHT", 'checked'=>-1, 'position'=>109),
+	'cd.total_tva'=>array('label'=>"TotalVAT", 'checked'=>-1, 'position'=>110),
+	'cd.date_ouverture_prevue'=>array('label'=>"DateStartPlannedShort", 'checked'=>(($mode == "" || $mode == -1) || $mode == "0"), 'position'=>150),
+	'cd.date_ouverture'=>array('label'=>"DateStartRealShort", 'checked'=>(($mode == "" || $mode == -1) || $mode > 0), 'position'=>160),
+	'cd.date_fin_validite'=>array('label'=>"DateEndPlannedShort", 'checked'=>(($mode == "" || $mode == -1) || $mode < 5), 'position'=>170),
+	'cd.date_cloture'=>array('label'=>"DateEndRealShort", 'checked'=>(($mode == "" || $mode == -1) || $mode >= 5), 'position'=>180),
 	//'cd.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
-	'cd.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
-	'status'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000)
+	'cd.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
+	'status'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000)
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
@@ -288,7 +288,7 @@ if ($search_service) {
 	$sql .= " AND (p.ref LIKE '%".$db->escape($search_service)."%' OR p.description LIKE '%".$db->escape($search_service)."%' OR cd.description LIKE '%".$db->escape($search_service)."%')";
 }
 if ($socid > 0) {
-	$sql .= " AND s.rowid = ".$socid;
+	$sql .= " AND s.rowid = ".((int) $socid);
 }
 
 $filter_dateouvertureprevue_start = dol_mktime(0, 0, 0, $opouvertureprevuemonth, $opouvertureprevueday, $opouvertureprevueyear);
@@ -432,10 +432,10 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 // List of mass actions available
 $arrayofmassactions = array(
-	//'presend'=>$langs->trans("SendByMail"),
-	//'builddoc'=>$langs->trans("PDFMerge"),
+	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
+	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 );
-//if ($user->rights->contrat->supprimer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+//if ($user->rights->contrat->supprimer) $arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 //if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
@@ -515,6 +515,12 @@ if (!empty($arrayfields['c.ref']['checked'])) {
 if (!empty($arrayfields['p.description']['checked'])) {
 	print_liste_field_titre($arrayfields['p.description']['label'], $_SERVER["PHP_SELF"], "p.description", "", $param, "", $sortfield, $sortorder);
 }
+if (!empty($arrayfields['cd.tva_tx']['checked'])) {
+	print_liste_field_titre($arrayfields['cd.tva_tx']['label'], $_SERVER["PHP_SELF"], "cd.tva_tx", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+}
+if (!empty($arrayfields['cd.subprice']['checked'])) {
+	print_liste_field_titre($arrayfields['cd.subprice']['label'], $_SERVER["PHP_SELF"], "cd.subprice", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+}
 if (!empty($arrayfields['cd.qty']['checked'])) {
 	print_liste_field_titre($arrayfields['cd.qty']['label'], $_SERVER["PHP_SELF"], "cd.qty", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 }
@@ -523,12 +529,6 @@ if (!empty($arrayfields['cd.total_ht']['checked'])) {
 }
 if (!empty($arrayfields['cd.total_tva']['checked'])) {
 	print_liste_field_titre($arrayfields['cd.total_tva']['label'], $_SERVER["PHP_SELF"], "cd.total_tva", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
-}
-if (!empty($arrayfields['cd.tva_tx']['checked'])) {
-	print_liste_field_titre($arrayfields['cd.tva_tx']['label'], $_SERVER["PHP_SELF"], "cd.tva_tx", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
-}
-if (!empty($arrayfields['cd.subprice']['checked'])) {
-	print_liste_field_titre($arrayfields['cd.subprice']['label'], $_SERVER["PHP_SELF"], "cd.subprice", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 }
 if (!empty($arrayfields['s.nom']['checked'])) {
 	print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, "", $sortfield, $sortorder);
@@ -578,6 +578,14 @@ if (!empty($arrayfields['p.description']['checked'])) {
 	print '</td>';
 }
 // detail lines
+if (!empty($arrayfields['cd.tva_tx']['checked'])) {
+	print '<td class="liste_titre">';
+	print '</td>';
+}
+if (!empty($arrayfields['cd.subprice']['checked'])) {
+	print '<td class="liste_titre">';
+	print '</td>';
+}
 if (!empty($arrayfields['cd.qty']['checked'])) {
 	print '<td class="liste_titre">';
 	print '</td>';
@@ -587,14 +595,6 @@ if (!empty($arrayfields['cd.total_ht']['checked'])) {
 	print '</td>';
 }
 if (!empty($arrayfields['cd.total_tva']['checked'])) {
-	print '<td class="liste_titre">';
-	print '</td>';
-}
-if (!empty($arrayfields['cd.tva_tx']['checked'])) {
-	print '<td class="liste_titre">';
-	print '</td>';
-}
-if (!empty($arrayfields['cd.subprice']['checked'])) {
 	print '<td class="liste_titre">';
 	print '</td>';
 }
@@ -669,7 +669,7 @@ if (!empty($arrayfields['status']['checked'])) {
 		'4&filter=expired'=>$langs->trans("ServiceStatusLate"),
 		'5'=>$langs->trans("ServiceStatusClosed")
 	);
-	print $form->selectarray('search_status', $arrayofstatus, (strstr($search_status, ',') ?-1 : $search_status), 1, 0, '', 0, 0, 0, '', 'maxwidth100onsmartphone');
+	print $form->selectarray('search_status', $arrayofstatus, (strstr($search_status, ',') ?-1 : $search_status), 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100');
 	print '</td>';
 }
 // Action column
@@ -736,38 +736,6 @@ while ($i < min($num, $limit)) {
 		}
 	}
 
-	if (!empty($arrayfields['cd.qty']['checked'])) {
-		print '<td>';
-		print $obj->qty;
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	if (!empty($arrayfields['cd.total_ht']['checked'])) {
-		print '<td class="right">';
-		print price($obj->total_ht);
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-		if (!$i) {
-			$totalarray['pos'][$totalarray['nbfield']] = 'cd.total_ht';
-		}
-		$totalarray['val']['cd.total_ht'] += $obj->total_ht;
-	}
-	if (!empty($arrayfields['cd.total_tva']['checked'])) {
-		print '<td class="right">';
-		print price($obj->total_tva);
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-		if (!$i) {
-			$totalarray['pos'][$totalarray['nbfield']] = 'cd.total_tva';
-		}
-		$totalarray['val']['cd.total_tva'] += $obj->total_tva;
-	}
 	if (!empty($arrayfields['cd.tva_tx']['checked'])) {
 		print '<td class="right">';
 		print price2num($obj->tva_tx).'%';
@@ -784,11 +752,42 @@ while ($i < min($num, $limit)) {
 			$totalarray['nbfield']++;
 		}
 	}
-
+	if (!empty($arrayfields['cd.qty']['checked'])) {
+		print '<td class="right">';
+		print $obj->qty;
+		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+	if (!empty($arrayfields['cd.total_ht']['checked'])) {
+		print '<td class="right">';
+		print '<span class="amount">'.price($obj->total_ht).'</span>';
+		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+		if (!$i) {
+			$totalarray['pos'][$totalarray['nbfield']] = 'cd.total_ht';
+		}
+		$totalarray['val']['cd.total_ht'] += $obj->total_ht;
+	}
+	if (!empty($arrayfields['cd.total_tva']['checked'])) {
+		print '<td class="right">';
+		print '<span class="amount">'.price($obj->total_tva).'</span>';
+		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+		if (!$i) {
+			$totalarray['pos'][$totalarray['nbfield']] = 'cd.total_tva';
+		}
+		$totalarray['val']['cd.total_tva'] += $obj->total_tva;
+	}
 
 	// Third party
 	if (!empty($arrayfields['s.nom']['checked'])) {
-		print '<td>';
+		print '<td class="tdoverflowmax100">';
 		print $companystatic->getNomUrl(1, 'customer', 28);
 		print '</td>';
 		if (!$i) {

@@ -99,7 +99,7 @@ if ($type == 'bank-transfer') {
 	$sql .= " AND p.type = 'debit-order'";
 }
 if ($socid) {
-	$sql .= " AND s.rowid = ".$socid;
+	$sql .= " AND s.rowid = ".((int) $socid);
 }
 $sql .= $db->order($sortfield, $sortorder);
 $sql .= $db->plimit($limit + 1, $offset);

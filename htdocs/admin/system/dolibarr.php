@@ -139,8 +139,8 @@ if (preg_match('/[a-z]+/i', $version)) {
 }
 
 print '</td></tr>'."\n";
-print '<tr class="oddeven"><td>'.$langs->trans("VersionLastUpgrade").' ('.$langs->trans("Database").')</td><td>'.$conf->global->MAIN_VERSION_LAST_UPGRADE.'</td></tr>'."\n";
-print '<tr class="oddeven"><td>'.$langs->trans("VersionLastInstall").'</td><td>'.$conf->global->MAIN_VERSION_LAST_INSTALL.'</td></tr>'."\n";
+print '<tr class="oddeven"><td>'.$langs->trans("VersionLastUpgrade").' ('.$langs->trans("Database").')</td><td>'.getDolGlobalString('MAIN_VERSION_LAST_UPGRADE').'</td></tr>'."\n";
+print '<tr class="oddeven"><td>'.$langs->trans("VersionLastInstall").'</td><td>'.getDolGlobalString('MAIN_VERSION_LAST_INSTALL').'</td></tr>'."\n";
 print '</table>';
 print '</div>';
 print '<br>';

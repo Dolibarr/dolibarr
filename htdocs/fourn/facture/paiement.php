@@ -369,7 +369,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= ' WHERE f.fk_soc = s.rowid';
-	$sql .= ' AND f.rowid = '.$facid;
+	$sql .= ' AND f.rowid = '.((int) $facid);
 	if (!$user->rights->societe->client->voir && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	}
@@ -483,6 +483,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 			print '</td>';
 			if (!empty($conf->banque->enabled)) {
 				print '<tr><td class="fieldrequired">'.$langs->trans('Account').'</td><td>';
+				print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 				$form->select_comptes(empty($accountid) ? $obj->fk_account : $accountid, 'accountid', 0, '', 2);
 				print '</td></tr>';
 			} else {

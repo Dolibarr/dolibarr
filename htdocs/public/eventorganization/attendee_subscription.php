@@ -85,8 +85,7 @@ $email = GETPOST("email");
 $societe = GETPOST("societe");
 
 // Getting id from Post and decoding it
-$encodedid = GETPOST('id');
-$id = dol_decode($encodedid, $dolibarr_main_instance_unique_id);
+$id = GETPOST('id');
 
 $conference = new ConferenceOrBooth($db);
 $resultconf = $conference->fetch($id);
@@ -248,9 +247,8 @@ if (empty($reshook) && $action == 'add') {
 
 		// If the attendee has already paid
 		if ($confattendee->status == 1) {
-			$encodedid = dol_encode($id, $dolibarr_main_instance_unique_id);
 			$securekeyurl = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 2);
-			$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?id='.$encodedid.'&securekey='.$securekeyurl;
+			$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?id='.$id.'&securekey='.$securekeyurl;
 			Header("Location: ".$redirection);
 			exit;
 		}
@@ -374,15 +372,15 @@ if (empty($reshook) && $action == 'add') {
 					$valid = true;
 					$sourcetouse = 'conferencesubscription';
 					$reftouse = $facture->id;
-					$redirection = $dolibarr_main_url_root . '/public/payment/newpayment.php?source=' . $sourcetouse . '&ref=' . $reftouse;
+					$redirection = $dolibarr_main_url_root.'/public/payment/newpayment.php?source='.$sourcetouse.'&ref='.$reftouse;
 					if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 						if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-							$redirection .= '&securekey=' . dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . $sourcetouse . $reftouse, 2); // Use the source in the hash to avoid duplicates if the references are identical
+							$redirection .= '&securekey='.dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . $sourcetouse . $reftouse, 2); // Use the source in the hash to avoid duplicates if the references are identical
 						} else {
-							$redirection .= '&securekey=' . $conf->global->PAYMENT_SECURITY_TOKEN;
+							$redirection .= '&securekey='.$conf->global->PAYMENT_SECURITY_TOKEN;
 						}
 					}
-					Header("Location: " . $redirection);
+					Header("Location: ".$redirection);
 					exit;
 				}
 			}
@@ -392,8 +390,8 @@ if (empty($reshook) && $action == 'add') {
 			$confattendee->setStatut(1);
 
 			// Sending mail
-			require_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
-			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
+			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 			$formmail = new FormMail($db);
 			// Set output language
 			$outputlangs = new Translate('', $conf);
@@ -410,7 +408,7 @@ if (empty($reshook) && $action == 'add') {
 
 			if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
 				$subject = $arraydefaultmessage->topic;
-				$msg = $arraydefaultmessage->content;
+				$msg     = $arraydefaultmessage->content;
 			}
 
 			$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $thirdparty);
@@ -429,23 +427,19 @@ if (empty($reshook) && $action == 'add') {
 
 			$result = $mailfile->sendfile();
 			if ($result) {
-				dol_syslog("EMail sent to " . $sendto, LOG_DEBUG, 0, '_payment');
+				dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_payment');
 			} else {
-				dol_syslog("Failed to send EMail to " . $sendto, LOG_ERR, 0, '_payment');
+				dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
 			}
 
 			$encodedid = dol_encode($id, $dolibarr_main_instance_unique_id);
-			$securekeyurl = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY . 'conferenceorbooth' . $id, 2);
-			$redirection = $dolibarr_main_url_root . '/public/eventorganization/subscriptionok.php?id=' . $encodedid . '&securekey=' . $securekeyurl;
-			Header("Location: " . $redirection);
+			$securekeyurl = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 2);
+			$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?id='.$id.'&securekey='.$securekeyurl;
+			Header("Location: ".$redirection);
 			exit;
 		}
 		//Header("Location: ".$urlback);
 		//exit;
-	}
-
-	if (!$error) {
-		$db->commit();
 	} else {
 		$db->rollback();
 	}
@@ -482,7 +476,7 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="newmember">'.
 print '<input type="hidden" name="token" value="'.newToken().'" / >';
 print '<input type="hidden" name="entity" value="'.$entity.'" />';
 print '<input type="hidden" name="action" value="add" />';
-print '<input type="hidden" name="id" value="'.$encodedid.'" />';
+print '<input type="hidden" name="id" value="'.$id.'" />';
 print '<input type="hidden" name="securekey" value="'.$securekeyreceived.'" />';
 
 print '<br>';

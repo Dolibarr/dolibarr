@@ -1390,6 +1390,9 @@ table[summary="list_of_modules"] .fa-cog {
 .width125 { width: 125px; }
 .width150 { width: 150px; }
 .width200 { width: 200px; }
+.width300 { width: 300px; }
+.width400 { width: 400px; }
+.width500 { width: 500px; }
 .maxwidth25  { max-width: 25px; }
 .maxwidth50  { max-width: 50px; }
 .maxwidth75  { max-width: 75px; }
@@ -2284,8 +2287,8 @@ li.tmenu, li.tmenusel {
 li.tmenu:hover {
 	opacity: .50; /* show only a slight shadow */
 }
-li.tmenusel {
-	text-decoration: underline;
+li.tmenusel a.tmenusel {
+	text-decoration: underline !important;
 }
 .tmenuend .tmenuleft { width: 0px; }
 .tmenuend { display: none; }

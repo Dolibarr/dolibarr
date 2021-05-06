@@ -239,7 +239,10 @@ if (empty($reshook)) {
 $form = new Form($db);
 $formfile = new FormFile($db);
 
-llxHeader('', $langs->trans("BOM"), '');
+
+$title = $langs->trans('BOM');
+$help_url ='EN:Module_BOM';
+llxHeader('', $title, $help_url);
 
 // Example : Adding jquery code
 print '<script type="text/javascript" language="javascript">

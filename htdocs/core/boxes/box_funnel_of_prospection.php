@@ -36,6 +36,8 @@ class box_funnel_of_prospection extends ModeleBoxes
 	public $boxlabel = "BoxTitleFunnelOfProspection";
 	public $depends = array("projet");
 
+	public $version = 'development';
+
 	/**
 	 * @var DoliDB Database handler.
 	 */

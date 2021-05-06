@@ -73,19 +73,43 @@ print '<div class="inline-block toolbarbutton centpercent">';
 if ($permtoadd) {
 	$websitekeyandpageid = (!empty($websitekey) ? '&website='.$websitekey : '').(!empty($pageid) ? '&pageid='.$pageid : '');
 	print '<a href="'.DOL_URL_ROOT.'/ecm/dir_add_card.php?action=create&module='.urlencode($module).$websitekeyandpageid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?file_manager=1'.$websitekeyandpageid).'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans('ECMAddSection')).'">';
-	print '<img class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
+	print img_picto('', 'folder-plus', '', false, 0, 0, '', 'size15x marginrightonly');
 	print '</a>';
 } else {
 	print '<a href="#" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.$langs->trans("NotAllowed").'">';
-	print '<img class="toolbarbutton disabled" border="0" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
+	print img_picto('', 'folder-plus', 'disabled', false, 0, 0, '', 'size15x marginrightonly');
 	print '</a>';
 }
 if ($module == 'ecm') {
 	$tmpurl = ((!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) ? '#' : ($_SERVER["PHP_SELF"].'?action=refreshmanual'.($module ? '&amp;module='.$module : '').($section ? '&amp;section='.$section : '')));
 	print '<a href="'.$tmpurl.'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans('ReSyncListOfDir')).'">';
-	print '<img id="refreshbutton" class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/view-refresh.png">';
+	print img_picto('', 'refresh', 'id="refreshbutton"', false, 0, 0, '', 'size15x marginrightonly');
 	print '</a>';
 }
+if ($permtoadd && GETPOSTISSET('website')) {	// If on file manager to manage medias of a web site
+	print '<a id="generateimgwebp" href="'.$_SERVER["PHP_SELF"].'?action=confirmconvertimgwebp&website='.$website->ref.'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans("GenerateImgWebp")).'">';
+	print img_picto('', 'images', '', false, 0, 0, '', 'size15x flip marginrightonly');
+	print '</a>';
+}
+if ($permtoadd && $module == 'ecm') {	// If on file manager medias in ecm
+	print '<a id="generateimgwebp" href="'.$_SERVER["PHP_SELF"].'?action=confirmconvertimgwebp" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans("GenerateImgWebp")).'">';
+	print img_picto('', 'images', '', false, 0, 0, '', 'size15x flip marginrightonly');
+	print '</a>';
+}
+print "<script>
+$(\"#generateimgwebp\").on(\"click\",function(){
+	try{
+		console.log(\"We click to generate webp image, we set current dir into hidden vars\");
+		section_dir = $(\".directory.expanded\")[$(\".directory.expanded\").length-1].children[0].rel
+		section=$(\".directory.expanded\")[$(\".directory.expanded\").length-1].children[0].id.split('_')[2]
+	}catch{
+		section_dir = '/'
+		section=0
+	}
+	console.log(\"We add hiden vars in href of button to create webp \");
+	$(\"#generateimgwebp\").attr(\"href\",$(\"#generateimgwebp\").attr(\"href\")+'&section_dir='+section_dir+'&section='+section)
+  })
+</script>";
 
 // Start "Add new file" area
 $nameforformuserfile = 'formuserfileecm';
@@ -133,6 +157,53 @@ if ($action == 'delete_section') {
 }
 // End confirm
 
+if ($action == 'confirmconvertimgwebp') {
+	$section_dir=GETPOST('section_dir', 'alpha');
+	$section=GETPOST('section', 'alpha');
+	$form = new Form($db);
+	$formquestion['section_dir']=array('type'=>'hidden', 'value'=>$section_dir, 'name'=>'section_dir');
+	$formquestion['section']=array('type'=>'hidden', 'value'=>$section, 'name'=>'section');
+	if ($module == 'medias') {
+		$formquestion['website']=array('type'=>'hidden', 'value'=>$website->ref, 'name'=>'website');
+	}
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans('ConfirmImgWebpCreation'), $langs->trans('ConfirmGenerateImgWebp', $object->ref), 'convertimgwebp', $formquestion, "yes", 1);
+	$action = 'file_manager';
+}
+
+if ($action == 'convertimgwebp' && $permtoadd) {
+	if ($module == 'medias') {
+		$imagefolder = $conf->website->dir_output.'/'.$websitekey.'/medias/'.dol_sanitizeFileName(GETPOST('section_dir', 'alpha'));
+	} else {
+		$imagefolder = $conf->ecm->dir_output.'/'.dol_sanitizePathName(GETPOST('section_dir', 'alpha'));
+	}
+
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+
+	$regeximgext = getListOfPossibleImageExt();
+
+	$filelist = dol_dir_list($imagefolder, "all", 0, $regeximgext);
+
+	foreach ($filelist as $filename) {
+		$filepath = $filename['fullname'];
+		if (!(substr_compare($filepath, 'webp', -strlen('webp')) === 0)) {
+			if (image_format_supported($filepath) == 1) {
+				$filepathnoext = preg_replace("/\..*/", "", $filepath);
+				$result = dol_imageResizeOrCrop($filepath, 0, 0, 0, 0, 0, $filepathnoext.'.webp');
+				if (!dol_is_file($result)) {
+					$error++;
+					setEventMessages($result, null, 'errors');
+				}
+			}
+		}
+		if ($error) {
+			break;
+		}
+	}
+	if (!$error) {
+		setEventMessages($langs->trans('SucessConvertImgWebp'), null);
+	}
+	$action = 'file_manager';
+}
 
 if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg_match('/refresh/i', $action) || $action == 'delete') {
 	$langs->load("ecm");

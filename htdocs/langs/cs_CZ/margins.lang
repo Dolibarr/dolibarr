@@ -22,7 +22,7 @@ ProductService=Produkt nebo služba
 AllProducts=Všechny produkty a služby
 ChooseProduct/Service=Zvolte produkt nebo službu
 ForceBuyingPriceIfNull=Nákup síly/cena za cenu prodejní ceny, pokud není definována
-ForceBuyingPriceIfNullDetails=Není-li cena nákupu / cena stanovena a tato volba je zapnutá, bude marže nulová na řádku (cena nákupu / prodejní cena = prodejní cena), v opačném případě ("OFF") se marge rovná navrhovanému selhání.
+ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0 on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100% if no default value can be found).
 MARGIN_METHODE_FOR_DISCOUNT=Metoda marže pro globální slevy
 UseDiscountAsProduct=Jako produkt
 UseDiscountAsService=Jako služba

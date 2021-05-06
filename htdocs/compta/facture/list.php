@@ -550,7 +550,7 @@ if ($search_product_category > 0) {
 	$sql .= " AND cp.fk_categorie = ".$db->escape($search_product_category);
 }
 if ($socid > 0) {
-	$sql .= ' AND s.rowid = '.$socid;
+	$sql .= ' AND s.rowid = '.((int) $socid);
 }
 if ($userid) {
 	if ($userid == -1) {
@@ -944,10 +944,10 @@ if ($resql) {
 	$param .= $hookmanager->resPrint;
 
 	$arrayofmassactions = array(
-		'validate'=>$langs->trans("Validate"),
-		'generate_doc'=>$langs->trans("ReGeneratePDF"),
-		'builddoc'=>$langs->trans("PDFMerge"),
-		'presend'=>$langs->trans("SendByMail"),
+		'validate'=>img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate"),
+		'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
+		'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
+		'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 		//'makepayment'=>$langs->trans("InvoicePaymentsLimits"),   TODO Blank page when using this
 	);
 	if ($conf->prelevement->enabled && !empty($user->rights->prelevement->bons->creer)) {
@@ -956,9 +956,9 @@ if ($resql) {
 	}
 	if ($user->rights->facture->supprimer) {
 		if (!empty($conf->global->INVOICE_CAN_REMOVE_DRAFT_ONLY)) {
-			$arrayofmassactions['predeletedraft'] = $langs->trans("Deletedraft");
+			$arrayofmassactions['predeletedraft'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Deletedraft");
 		} elseif (!empty($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED)) {	// mass deletion never possible on invoices on such situation
-			$arrayofmassactions['predelete'] = $langs->trans("Delete");
+			$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 		}
 	}
 	if (in_array($massaction, array('presend', 'predelete'))) {
@@ -1284,10 +1284,6 @@ if ($resql) {
 		print '<td class="liste_titre right">';
 		print '</td>';
 	}
-	if (!empty($arrayfields['f.date_closing']['checked'])) {
-		print '<td class="liste_titre">';
-		print '</td>';
-	}
 	if (!empty($arrayfields['total_pa']['checked'])) {
 		print '<td class="liste_titre right">';
 		print '</td>';
@@ -1322,6 +1318,11 @@ if ($resql) {
 		print '<td class="liste_titre">';
 		print '</td>';
 	}
+	// Date closing
+	if (!empty($arrayfields['f.date_closing']['checked'])) {
+		print '<td class="liste_titre">';
+		print '</td>';
+	}
 	if (!empty($arrayfields['f.note_public']['checked'])) {
 		// Note public
 		print '<td class="liste_titre">';
@@ -1335,7 +1336,7 @@ if ($resql) {
 	// Status
 	if (!empty($arrayfields['f.fk_statut']['checked'])) {
 		print '<td class="liste_titre maxwidthonsmartphone right">';
-		$liststatus = array('0'=>$langs->trans("BillShortStatusDraft"), '1'=>$langs->trans("BillShortStatusNotPaid"), '2'=>$langs->trans("BillShortStatusPaid"), '1,2'=>$langs->trans("BillShortStatusNotPaid").'+'.$langs->trans("BillShortStatusPaid"), '3'=>$langs->trans("BillShortStatusCanceled"));
+		$liststatus = array('0'=>$langs->trans("BillShortStatusDraft"), '1'=>$langs->trans("BillShortStatusNotPaid"), '0,1'=>$langs->trans("BillShortStatusDraft").'+'.$langs->trans("BillShortStatusNotPaid"), '2'=>$langs->trans("BillShortStatusPaid"), '1,2'=>$langs->trans("BillShortStatusNotPaid").'+'.$langs->trans("BillShortStatusPaid"), '3'=>$langs->trans("BillShortStatusCanceled"));
 		print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', '', 1);
 		print '</td>';
 	}

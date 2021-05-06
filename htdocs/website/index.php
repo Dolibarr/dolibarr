@@ -943,10 +943,45 @@ if ($action == 'addcontainer' && $usercanedit) {
 			}
 		}
 	} else {
+		$newaliasnames = '';
+		if (!$error && GETPOST('WEBSITE_ALIASALT', 'alpha')) {
+			$arrayofaliastotest = explode(',', str_replace(array('<', '>'), '', GETPOST('WEBSITE_ALIASALT', 'alpha')));
+			$websitepagetemp = new WebsitePage($db);
+			foreach ($arrayofaliastotest as $aliastotest) {
+				$aliastotest = trim(preg_replace('/\.php$/i', '', $aliastotest));
+
+				// Disallow alias name pageX (already used to save the page with id)
+				if (preg_match('/^page\d+/i', $aliastotest)) {
+					$error++;
+					$langs->load("errors");
+					setEventMessages("Alias name 'pageX' is not allowed", null, 'errors');
+					$action = 'createcontainer';
+					break;
+				} else {
+					$result = $websitepagetemp->fetch(0, $object->id, $aliastotest);
+					if ($result < 0) {
+						$error++;
+						$langs->load("errors");
+						setEventMessages($websitepagetemp->error, $websitepagetemp->errors, 'errors');
+						$action = 'createcontainer';
+						break;
+					}
+					if ($result > 0) {
+						$error++;
+						$langs->load("errors");
+						setEventMessages($langs->trans("ErrorAPageWithThisNameOrAliasAlreadyExists", $websitepagetemp->pageurl), null, 'errors');
+						$action = 'createcontainer';
+						break;
+					}
+					$newaliasnames .= ($newaliasnames ? ', ' : '').$aliastotest;
+				}
+			}
+		}
+
 		$objectpage->title = str_replace(array('<', '>'), '', GETPOST('WEBSITE_TITLE', 'alphanohtml'));
 		$objectpage->type_container = GETPOST('WEBSITE_TYPE_CONTAINER', 'aZ09');
 		$objectpage->pageurl = GETPOST('WEBSITE_PAGENAME', 'alpha');
-		$objectpage->aliasalt = str_replace(array('<', '>'), '', GETPOST('WEBSITE_ALIASALT', 'alphanohtml'));
+		$objectpage->aliasalt = $newaliasnames;
 		$objectpage->description = str_replace(array('<', '>'), '', GETPOST('WEBSITE_DESCRIPTION', 'alphanohtml'));
 		$objectpage->lang = GETPOST('WEBSITE_LANG', 'aZ09');
 		$objectpage->otherlang = GETPOST('WEBSITE_OTHERLANG', 'aZ09comma');
@@ -1327,7 +1362,11 @@ if ($action == 'updatecss' && $usercanedit) {
 				}
 				$filetoread = realpath(dol_osencode($_FILES['addedfile']['tmp_name']));
 				$filesize = getimagesize($filetoread);
-				if ($filesize[0] != 32 || $filesize[1] != 32) {
+				if ($filesize[0] != $filesize[1]) {
+					$error++;
+					setEventMessages($langs->trans('ErrorFaviconMustBeASquaredImage'), array(), 'errors');
+				}
+				if (! $error && ($filesize[0] != 16 && $filesize[0] != 32 && $filesize[0] != 64)) {
 					$error++;
 					setEventMessages($langs->trans('ErrorFaviconSize'), array(), 'errors');
 				}
@@ -1632,15 +1671,20 @@ if ($action == 'updatemeta' && $usercanedit) {
 			$action = 'editmeta';
 		}
 	}
+
+	$newaliasnames = '';
 	if (!$error && GETPOST('WEBSITE_ALIASALT', 'alpha')) {
-		$arrayofaliastotest = explode(',', GETPOST('WEBSITE_ALIASALT', 'alpha'));
+		$arrayofaliastotest = explode(',', str_replace(array('<', '>'), '', GETPOST('WEBSITE_ALIASALT', 'alpha')));
+
 		$websitepagetemp = new WebsitePage($db);
 		foreach ($arrayofaliastotest as $aliastotest) {
+			$aliastotest = trim(preg_replace('/\.php$/i', '', $aliastotest));
+
 			// Disallow alias name pageX (already used to save the page with id)
 			if (preg_match('/^page\d+/i', $aliastotest)) {
 				$error++;
 				$langs->load("errors");
-				setEventMessages("Alias 'pageX' is not allowed", null, 'errors');
+				setEventMessages("Alias name 'pageX' is not allowed", null, 'errors');
 				$action = 'editmeta';
 				break;
 			} else {
@@ -1659,6 +1703,7 @@ if ($action == 'updatemeta' && $usercanedit) {
 					$action = 'editmeta';
 					break;
 				}
+				$newaliasnames .= ($newaliasnames ? ', ' : '').$aliastotest;
 			}
 		}
 	}
@@ -1669,7 +1714,7 @@ if ($action == 'updatemeta' && $usercanedit) {
 		$objectpage->title = str_replace(array('<', '>'), '', GETPOST('WEBSITE_TITLE', 'alphanohtml'));
 		$objectpage->type_container = GETPOST('WEBSITE_TYPE_CONTAINER', 'aZ09');
 		$objectpage->pageurl = GETPOST('WEBSITE_PAGENAME', 'alpha');
-		$objectpage->aliasalt = str_replace(array('<', '>'), '', GETPOST('WEBSITE_ALIASALT', 'alphanohtml'));
+		$objectpage->aliasalt = $newaliasnames;
 		$objectpage->lang = GETPOST('WEBSITE_LANG', 'aZ09');
 		$objectpage->otherlang = GETPOST('WEBSITE_OTHERLANG', 'aZ09comma');
 		$objectpage->description = str_replace(array('<', '>'), '', GETPOST('WEBSITE_DESCRIPTION', 'alphanohtml'));
@@ -2209,15 +2254,23 @@ $tempdir = $conf->website->dir_output.'/'.$websitekey.'/';
 // Generate web site sitemaps
 if ($action == 'generatesitemaps' && $usercanedit) {
 	$domtree = new DOMDocument('1.0', 'UTF-8');
-	$root = $domtree->createElementNS('http://www.sitemaps.org/schemas/sitemap/0.9', 'urlset');
-	$domtree->formatOutput = true;
-	$xmlname = 'sitemap.'.$websitekey.'.xml';
 
-	$sql = "SELECT wp.type_container , wp.pageurl, wp.lang, wp.tms as tms, w.virtualhost";
+	$root = $domtree->createElementNS('http://www.sitemaps.org/schemas/sitemap/0.9', 'urlset');
+	$root->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:xhtml', 'http://www.w3.org/1999/xhtml');
+
+	$domtree->formatOutput = true;
+
+	$xmlname = 'sitemap.xml';
+
+	$sql = "SELECT wp.rowid, wp.type_container , wp.pageurl, wp.lang, wp.fk_page, wp.tms as tms,";
+	$sql .= " w.virtualhost, w.fk_default_home";
 	$sql .= " FROM ".MAIN_DB_PREFIX."website_page as wp, ".MAIN_DB_PREFIX."website as w";
 	$sql .= " WHERE wp.type_container IN ('page', 'blogpost')";
 	$sql .= " AND wp.fk_website = w.rowid";
+	$sql .= " AND wp.status = ".WebsitePage::STATUS_VALIDATED;
+	$sql .= " AND wp.pageurl NOT IN ('404', '500', '501', '503')";
 	$sql .= " AND w.ref = '".dol_escape_json($websitekey)."'";
+	$sql .= " ORDER BY wp.tms DESC, wp.rowid DESC";
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num_rows = $db->num_rows($resql);
@@ -2226,18 +2279,116 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 			while ($i < $num_rows) {
 				$objp = $db->fetch_object($resql);
 				$url = $domtree->createElement('url');
-				$pageurl = $objp->pageurl;
+
+				$shortlangcode = '';
 				if ($objp->lang) {
-					$pageurl = $objp->lang.'/'.$pageurl;
+					$shortlangcode = substr($objp->lang, 0, 2); // en_US or en-US -> en
 				}
+				if (empty($shortlangcode)) {
+					$shortlangcode = substr($object->lang, 0, 2); // Use short lang code of website
+				}
+
+				// Forge $pageurl, adding language prefix if it is an alternative language
+				$pageurl = $objp->pageurl.'.php';
+				if ($objp->fk_default_home == $objp->rowid) {
+					$pageurl = '';
+				} else {
+					if ($shortlangcode != substr($object->lang, 0, 2)) {
+						$pageurl = $shortlangcode.'/'.$pageurl;
+					}
+				}
+
 				if ($objp->virtualhost) {
 					$domainname = $objp->virtualhost;
 				}
-				$loc = $domtree->createElement('loc', 'http://'.$domainname.'/'.$pageurl);
-				$lastmod = $domtree->createElement('lastmod', $db->jdate($objp->tms));
+				if (! preg_match('/^http/i', $domainname)) {
+					$domainname .= 'https://'.$domainname;
+				}
+				//$pathofpage = $dolibarr_main_url_root.'/'.$pageurl.'.php';
+
+				// URL of sitemaps must end with trailing slash if page is ''
+				$loc = $domtree->createElement('loc', $domainname.'/'.$pageurl);
+				$lastmod = $domtree->createElement('lastmod', dol_print_date($db->jdate($objp->tms), 'dayrfc', 'gmt'));
+				$changefreq = $domtree->createElement('changefreq', 'weekly');	// TODO Manage other values
+				$priority = $domtree->createElement('priority', '1');
 
 				$url->appendChild($loc);
 				$url->appendChild($lastmod);
+				// Add suggested frequency for refresh
+				if (!empty($conf->global->WEBSITE_SITEMAPS_ADD_WEEKLY_FREQ)) {
+					$url->appendChild($changefreq);
+				}
+				// Add higher priority for home page
+				if ($objp->fk_default_home == $objp->rowid) {
+					$url->appendChild($priority);
+				}
+
+				// Now add alternate language entries
+				if ($object->isMultiLang()) {
+					$alternatefound = 0;
+
+					// Add page "translation of"
+					$translationof = $objp->fk_page;
+					if ($translationof) {
+						$tmppage = new WebsitePage($db);
+						$tmppage->fetch($translationof);
+						if ($tmppage->id > 0) {
+							$tmpshortlangcode = '';
+							if ($tmppage->lang) {
+								$tmpshortlangcode = preg_replace('/[_-].*$/', '', $tmppage->lang); // en_US or en-US -> en
+							}
+							if (empty($tmpshortlangcode)) {
+								$tmpshortlangcode = preg_replace('/[_-].*$/', '', $object->lang); // en_US or en-US -> en
+							}
+							if ($tmpshortlangcode != $shortlangcode) {
+								$xhtmllink = $domtree->createElement('xhtml:link', '');
+								$xhtmllink->setAttribute("rel", "alternante");
+								$xhtmllink->setAttribute("hreflang", $tmpshortlangcode);
+								$xhtmllink->setAttribute("href", $domainname.($objp->fk_default_home == $tmppage->id ? '/' : (($tmpshortlangcode != substr($object->lang, 0, 2)) ? '/'.$tmpshortlangcode : '').'/'.$tmppage->pageurl.'.php'));
+								$url->appendChild($xhtmllink);
+
+								$alternatefound++;
+							}
+						}
+					}
+
+					// Add "has translation pages"
+					$sql = 'SELECT rowid as id, lang, pageurl from '.MAIN_DB_PREFIX.'website_page';
+					$sql .= ' WHERE status = '.WebsitePage::STATUS_VALIDATED.' AND fk_page IN ('.$db->sanitize($objp->rowid.($translationof ? ', '.$translationof : '')).")";
+					$resqlhastrans = $db->query($sql);
+					if ($resqlhastrans) {
+						$num_rows_hastrans = $db->num_rows($resqlhastrans);
+						if ($num_rows_hastrans > 0) {
+							while ($objhastrans = $db->fetch_object($resqlhastrans)) {
+								$tmpshortlangcode = '';
+								if ($objhastrans->lang) {
+									$tmpshortlangcode = preg_replace('/[_-].*$/', '', $objhastrans->lang); // en_US or en-US -> en
+								}
+								if ($tmpshortlangcode != $shortlangcode) {
+									$xhtmllink = $domtree->createElement('xhtml:link', '');
+									$xhtmllink->setAttribute("rel", "alternate");
+									$xhtmllink->setAttribute("hreflang", $tmpshortlangcode);
+									$xhtmllink->setAttribute("href", $domainname.($objp->fk_default_home == $objhastrans->id ? '/' : (($tmpshortlangcode != substr($object->lang, 0, 2) ? '/'.$tmpshortlangcode : '')).'/'.$objhastrans->pageurl.'.php'));
+									$url->appendChild($xhtmllink);
+
+									$alternatefound++;
+								}
+							}
+						}
+					} else {
+						dol_print_error($db);
+					}
+
+					if ($alternatefound) {
+						// Add myself
+						$xhtmllink = $domtree->createElement('xhtml:link', '');
+						$xhtmllink->setAttribute("rel", "alternate");
+						$xhtmllink->setAttribute("hreflang", $shortlangcode);
+						$xhtmllink->setAttribute("href", $domainname.'/'.$pageurl);
+						$url->appendChild($xhtmllink);
+					}
+				}
+
 				$root->appendChild($url);
 				$i++;
 			}
@@ -2246,7 +2397,7 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 				if (!empty($conf->global->MAIN_UMASK)) {
 					@chmod($tempdir.$xmlname, octdec($conf->global->MAIN_UMASK));
 				}
-				setEventMessages($langs->trans("SitemapGenerated"), null, 'mesgs');
+				setEventMessages($langs->trans("SitemapGenerated", $xmlname), null, 'mesgs');
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
@@ -2254,6 +2405,8 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 	} else {
 		dol_print_error($db);
 	}
+
+	// Add the entry Sitemap: into the robot file.
 	$robotcontent = @file_get_contents($filerobot);
 	$result = preg_replace('/<?php // BEGIN PHP[^?]END PHP ?>\n/ims', '', $robotcontent);
 	if ($result) {
@@ -2262,7 +2415,7 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 	$robotsitemap = "Sitemap: ".$domainname."/".$xmlname;
 	$result = strpos($robotcontent, 'Sitemap: ');
 	if ($result) {
-		$result = preg_replace("/Sitemap.*\n/", $robotsitemap, $robotcontent);
+		$result = preg_replace('/Sitemap:.*/', $robotsitemap, $robotcontent);
 		$robotcontent = $result ? $result : $robotcontent;
 	} else {
 		$robotcontent .= $robotsitemap."\n";
@@ -2275,36 +2428,6 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 	$action = 'preview';
 }
 
-$imagefolder = $conf->website->dir_output.'/'.$websitekey.'/medias/image/'.$websitekey.'/';
-
-if ($action == 'convertimgwebp' && $usercanedit) {
-	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
-
-	$regeximgext = getListOfPossibleImageExt();
-
-	$filelist = dol_dir_list($imagefolder, "all", 1, $regeximgext);
-
-	foreach ($filelist as $filename) {
-		$filepath = $filename['fullname'];
-		if (!(substr_compare($filepath, 'webp', -strlen('webp')) === 0)) {
-			if (image_format_supported($filepath) == 1) {
-				$filepathnoext = preg_replace("/\..*/", "", $filepath);
-				$result = dol_imageResizeOrCrop($filepath, 0, 0, 0, 0, 0, $filepathnoext.'.webp');
-				if (!dol_is_file($result)) {
-					$error++;
-					setEventMessages($result, null, 'errors');
-				}
-			}
-		}
-		if ($error) {
-			break;
-		}
-	}
-	if (!$error) {
-		setEventMessages($langs->trans('SucessConvertImgWebp'), null);
-	}
-	$action = 'preview';
-}
 
 /*
  * View
@@ -2318,10 +2441,6 @@ $formother = new FormOther($db);
 // Confirm generation of website sitemaps
 if ($action == 'confirmgeneratesitemaps') {
 	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?website='.$website->ref, $langs->trans('ConfirmSitemapsCreation'), $langs->trans('ConfirmGenerateSitemaps', $object->ref), 'generatesitemaps', '', "yes", 1);
-	$action = 'preview';
-}
-if ($action == 'confirmconvertimgwebp') {
-	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?website='.$website->ref, $langs->trans('ConfirmImgWebpCreation'), $langs->trans('ConfirmGenerateImgWebp', $object->ref), 'convertimgwebp', '', "yes", 1);
 	$action = 'preview';
 }
 $helpurl = 'EN:Module_Website|FR:Module_Website_FR|ES:M&oacute;dulo_Website';
@@ -2542,7 +2661,6 @@ if (!GETPOST('hide_websitemenu')) {
 			// Generate site map
 			print '<a href="'.$_SERVER["PHP_SEFL"].'?action=confirmgeneratesitemaps&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("GenerateSitemaps")).'"><span class="fa fa-sitemap"><span></a>';
 
-			print '<a href="'.$_SERVER["PHP_SEFL"].'?action=confirmconvertimgwebp&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("GenerateImgWebp")).'"><span class="fa fa-cogs"><span></a>';
 			print ' &nbsp; ';
 
 			print '<a href="'.$_SERVER["PHP_SEFL"].'?action=replacesite&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("ReplaceWebsiteContent")).'"><span class="fa fa-search"><span></a>';
@@ -3193,7 +3311,7 @@ if ($action == 'editcss') {
 
 	print $form->textwithpicto($langs->trans('Virtualhost'), $htmltext, 1, 'help', '', 0, 2, 'virtualhosttooltip');
 	print '</td><td>';
-	print '<input type="text" class="flat" value="'.(GETPOSTISSET('virtualhost') ? GETPOST('virtualhost', 'alpha') : $virtualurl).'" name="virtualhost">';
+	print '<input type="text" class="flat minwidth300" value="'.(GETPOSTISSET('virtualhost') ? GETPOST('virtualhost', 'alpha') : $virtualurl).'" name="virtualhost">';
 	print '</td>';
 	print '</tr>';
 
@@ -3882,7 +4000,7 @@ if ($action == 'preview') {
 	print $formconfirm;
 }
 
-if ($action == 'editfile' || $action == 'file_manager') {
+if ($action == 'editfile' || $action == 'file_manager' || $action == 'convertimgwebp' || $action == 'confirmconvertimgwebp') {
 	print '<!-- Edit Media -->'."\n";
 	print '<div class="fiche"><br>';
 	//print '<div class="center">'.$langs->trans("FeatureNotYetAvailable").'</center>';
@@ -4107,7 +4225,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 			print getTitleFieldOfList("Type", 0, $_SERVER['PHP_SELF'], 'type_container', '', $param, '', $sortfield, $sortorder, '')."\n";
 			print getTitleFieldOfList("Page", 0, $_SERVER['PHP_SELF'], 'pageurl', '', $param, '', $sortfield, $sortorder, '')."\n";
 			print getTitleFieldOfList("Categories", 0, $_SERVER['PHP_SELF']);
-			print getTitleFieldOfList("", 0, $_SERVER['PHP_SELF']);
+			print getTitleFieldOfList("Language", 0, $_SERVER['PHP_SELF'], 'lang', '', $param, '', $sortfield, $sortorder, 'center ')."\n";
 			print getTitleFieldOfList("", 0, $_SERVER['PHP_SELF']);
 			print getTitleFieldOfList("DateLastModification", 0, $_SERVER['PHP_SELF'], 'tms', '', $param, '', $sortfield, $sortorder, 'center ')."\n";		// Date last modif
 			print getTitleFieldOfList("", 0, $_SERVER['PHP_SELF']);
@@ -4165,8 +4283,8 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 					$param .= '&searchstring='.urlencode($searchkey);
 
 					// Language
-					print '<td>';
-					print $answerrecord->lang;
+					print '<td class="center">';
+					print picto_from_langcode($answerrecord->lang, $answerrecord->lang);
 					print '</td>';
 
 					// Number of words
