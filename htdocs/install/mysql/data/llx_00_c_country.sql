@@ -6,6 +6,7 @@
 -- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
 -- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
 -- Copyright (C) 2014 	   Alexandre Spangaro   <aspangaro@open-dsi.fr>
+-- Copyright (C) 2021 	   Udo Tamm             <dev@dolibit.de>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -50,7 +51,7 @@ INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (19
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (20,'SE','SWE','Sweden',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (21,'CI','CIV','Côte d''Ivoire',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (22,'SN','SEN','Senegal',1,0);
-INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (23,'AR','ARG','Argentine',1,0);
+INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (23,'AR','ARG','Argentina',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (24,'CM','CMR','Cameroun',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (25,'PT','PRT','Portugal',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (26,'SA','SAU','Saudi Arabia',1,0);
@@ -59,21 +60,21 @@ INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (28
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (29,'SG','SGP','Singapour',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (30,'AF','AFG','Afghanistan',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (31,'AX','ALA','Iles Aland',1,0);
-INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (32,'AL','ALB','Albanie',1,0);
+INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (32,'AL','ALB','Albania',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (33,'AS','ASM','Samoa américaines',1,0);
-INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (34,'AD','AND','Andorre',1,0);
+INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (34,'AD','AND','Andorra',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (35,'AO','AGO','Angola',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (36,'AI','AIA','Anguilla',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (37,'AQ','ATA','Antarctique',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (38,'AG','ATG','Antigua-et-Barbuda',1,0);
-INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (39,'AM','ARM','Arménie',1,0);
-INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (41,'AT','AUT','Autriche',1,0);
+INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (39,'AM','ARM','Armenia',1,0);
+INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (41,'AT','AUT','Austria',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (42,'AZ','AZE','Azerbaïdjan',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (43,'BS','BHS','Bahamas',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (44,'BH','BHR','Bahreïn',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (45,'BD','BGD','Bangladesh',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (46,'BB','BRB','Barbade',1,0);
-INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (47,'BY','BLR','Biélorussie',1,0);
+INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (47,'BY','BLR','Belarus',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (48,'BZ','BLZ','Belize',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (49,'BJ','BEN','Bénin',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (50,'BM','BMU','Bermudes',1,0);

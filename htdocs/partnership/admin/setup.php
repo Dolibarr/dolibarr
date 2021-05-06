@@ -82,36 +82,21 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'setting') {
 	require_once DOL_DOCUMENT_ROOT."/core/modules/modPartnership.class.php";
-	$partnership = new modPartnership($db);
 
-	$value = GETPOST('managed_for', 'alpha');
-
-
-	$modulemenu = ($value == 'member') ? 'member' : 'thirdparty';
+	$modulemenu = (GETPOST('PARTNERSHIP_IS_MANAGED_FOR', 'alpha') == 'member') ? 'member' : 'thirdparty';
 	$res = dolibarr_set_const($db, "PARTNERSHIP_IS_MANAGED_FOR", $modulemenu, 'chaine', 0, '', $conf->entity);
 
-	$partnership->tabs = array();
-	if ($modulemenu == 'member') {
-		$partnership->tabs[] = array('data'=>'member:+partnership:Partnership:partnership:$user->rights->partnership->read:/partnership/partnership.php?socid=__ID__');
-		$fk_mainmenu = "members";
-	} else {
-		$partnership->tabs[] = array('data'=>'thirdparty:+partnership:Partnership:partnership:$user->rights->partnership->read:/partnership/partnership.php?socid=__ID__');
-		$fk_mainmenu = "companies";
-	}
-
-	foreach ($partnership->menu as $key => $menu) {
-		$partnership->menu[$key]['mainmenu'] = $fk_mainmenu;
-
-		if ($menu['leftmenu'] == 'partnership')
-			$partnership->menu[$key]['fk_menu'] = 'fk_mainmenu='.$fk_mainmenu;
-		else $partnership->menu[$key]['fk_menu'] = 'fk_mainmenu='.$fk_mainmenu.',fk_leftmenu=partnership';
-	}
+	$partnership = new modPartnership($db);
 
 	$error += $partnership->delete_tabs();
 	$error += $partnership->insert_tabs();
 
 	$error += $partnership->delete_menus();
 	$error += $partnership->insert_menus();
+
+	if (GETPOST("PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL", 'int'))
+		dolibarr_set_const($db, "PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL", GETPOST("PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL", 'int'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "PARTNERSHIP_BACKLINKS_TO_CHECK", GETPOST("PARTNERSHIP_BACKLINKS_TO_CHECK"), 'chaine', 0, '', $conf->entity);
 }
 
 if ($action) {
@@ -120,6 +105,8 @@ if ($action) {
 	} else {
 		setEventMessages($langs->trans("SetupNotError"), null, 'errors');
 	}
+	header("Location: ".$_SERVER['PHP_SELF']);
+	exit;
 }
 
 /*
@@ -154,19 +141,48 @@ print '<input type="hidden" name="page_y" value="">';
 
 print '<table class="noborder centpercent">';
 
-// Default partnership price base type
-print '<tr class="oddeven">';
-print '<td>'.$langs->trans("PartnershipManagedFor").'</td>';
-print '<td class="right">';
-	print '<select class="flat minwidth100" id="select_managed_for" name="managed_for">';
-		print '<option value="thirdparty" '.(($conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'thirdparty') ? 'selected' : '').'>'.$langs->trans("ThirdParty").'</option>';
-		print '<option value="member" '.(($conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') ? 'selected' : '').'>'.$langs->trans("Members").'</option>';
-	print '</select>';
-print '</td>';
+
+print '<tr class="liste_titre">';
+print '<td class="titlefield">'.$langs->trans("Setting").'</td>';
+print '<td class="left">'.$langs->trans("Value").'</td>';
+print '<td class="left">'.$langs->trans("Examples").'</td>';
 print '</tr>';
 
-print '</table>';
 
+print '<tr class="oddeven"><td>'.$langs->trans("PARTNERSHIP_IS_MANAGED_FOR").'</td>';
+print '<td>';
+print '<select class="flat minwidth100" id="select_PARTNERSHIP_IS_MANAGED_FOR" name="PARTNERSHIP_IS_MANAGED_FOR">';
+print '<option value="thirdparty" '.(($conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'thirdparty') ? 'selected' : '').'>'.$langs->trans("ThirdParty").'</option>';
+print '<option value="member" '.(($conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') ? 'selected' : '').'>'.$langs->trans("Members").'</option>';
+print '</select>';
+print '</td>';
+print '<td><span class="opacitymedium">'.$langs->trans("partnershipforthirdpartyormember").'</span></td>';
+print '</tr>';
+
+
+if ($conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') {
+	print '<tr class="oddeven"><td>'.$langs->trans("PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL").'</td>';
+	print '<td>';
+	$dnbdays 	= '7';
+	$backlinks 	= (!empty($conf->global->PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL)) ? $conf->global->PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL : $dnbdays;
+	print '<input class="maxwidth50" type="text" name="PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL" value="'.$backlinks.'">';
+	print '</td>';
+	print '<td><span class="opacitymedium">'.$dnbdays.'</span></td>';
+	print '</tr>';
+}
+
+
+print '<tr class="oddeven"><td>'.$langs->trans("PARTNERSHIP_BACKLINKS_TO_CHECK").'</td>';
+print '<td>';
+$dbacklinks = 'dolibarr.org|dolibarr.fr|dolibarr.es';
+$backlinks 	= (!empty($conf->global->PARTNERSHIP_BACKLINKS_TO_CHECK)) ? $conf->global->PARTNERSHIP_BACKLINKS_TO_CHECK : $dbacklinks;
+print '<input class="minwidth400" type="text" name="PARTNERSHIP_BACKLINKS_TO_CHECK" value="'.$backlinks.'">';
+print '</td>';
+print '<td><span class="opacitymedium">'.$dbacklinks.'</span></td>';
+print '</tr>';
+
+
+print '</table>';
 print '<div class="center">';
 print '<input type="submit" class="button reposition" value="'.$langs->trans("Modify").'">';
 print '</div>';
