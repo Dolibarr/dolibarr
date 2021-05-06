@@ -121,22 +121,13 @@ if (1==2 && !empty($conf->commande->enabled)) {
 	print '</table>';
 	print '</div>';
 }
-if (!empty($conf->facture->enabled)) {
+if (1==2 && !empty($conf->facture->enabled)) {
 	print load_fiche_titre($langs->trans("Invoices"), '', '');
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table summary="more" class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
-
-	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_GENERATE_INVOICES_WITH_PICTURE").'</td><td>';
-	if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('MAIN_GENERATE_INVOICES_WITH_PICTURE');
-	} else {
-		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("MAIN_GENERATE_INVOICES_WITH_PICTURE", $arrval, $conf->global->MAIN_GENERATE_INVOICES_WITH_PICTURE);
-	}
-	print '</td></tr>';
 	print '</table>';
 	print '</div>';
 }
@@ -180,23 +171,13 @@ if (1==2 && !empty($conf->ficheinter->enabled)) {
 	print '</table>';
 	print '</div>';
 }
-if (!empty($conf->supplier_proposal->enabled)) {
+if (1==2 && !empty($conf->supplier_proposal->enabled)) {
 	print load_fiche_titre($langs->trans("SupplierProposal"), '', '');
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table summary="more" class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
-
-	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_GENERATE_SUPPLIER_PROPOSAL_WITH_PICTURE").'</td><td>';
-	if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('MAIN_GENERATE_SUPPLIER_PROPOSAL_WITH_PICTURE');
-	} else {
-		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("MAIN_GENERATE_SUPPLIER_PROPOSAL_WITH_PICTURE", $arrval, $conf->global->MAIN_GENERATE_SUPPLIER_PROPOSAL_WITH_PICTURE);
-	}
-	print '</td></tr>';
-	print '</table>';
 	print '</div>';
 }
 if (1==2 && !empty($conf->fournisseur->enabled)) {
