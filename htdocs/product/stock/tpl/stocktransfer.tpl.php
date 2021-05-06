@@ -90,7 +90,7 @@ print '<td class="fieldrequired">'.$langs->trans("WarehouseTarget").'</td><td>';
 print img_picto('', 'stock').$formproduct->selectWarehouses(GETPOST('id_entrepot_destination'), 'id_entrepot_destination', 'warehouseopen,warehouseinternal', 1);
 print '</td></tr>';
 print '<tr><td class="fieldrequired">'.$langs->trans("NumberOfUnit").'</td><td colspan="3"><input type="text" name="nbpiece" size="10" value="'.dol_escape_htmltag(GETPOST("nbpiece")).'"></td>';
-print '<td></tr>';
+print '</tr>';
 
 // Serial / Eat-by date
 if (!empty($conf->productbatch->enabled) &&
