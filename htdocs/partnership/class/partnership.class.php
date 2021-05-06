@@ -101,18 +101,20 @@ class Partnership extends CommonObject
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields=array();
+
+	/**
+	 * @var int rowid
+	 * @deprecated
+	 * @see id
+	 */
 	public $rowid;
-	public $ref;
+
 	public $fk_soc;
-	public $note_public;
-	public $note_private;
-	public $date_creation;
+
 	public $tms;
 	public $fk_user_creat;
 	public $fk_user_modif;
-	public $last_main_doc;
-	public $import_key;
-	public $model_pdf;
+
 	public $status;
 	public $fk_member;
 	public $date_partnership_start;
