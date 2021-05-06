@@ -257,7 +257,7 @@ if (empty($reshook))
             $sql = "INSERT INTO ".$tabname[$id]." (";
             // List of fields
             $sql .= $tabfieldinsert[$id];
-            $sql .= ",active)";
+            $sql .= ",active,enabled)";
             $sql .= " VALUES(";
 
             // List of values
@@ -289,7 +289,7 @@ if (empty($reshook))
 
                 $i++;
             }
-            $sql .= ", 1)";
+            $sql .= ", 1, 1)";
 
             dol_syslog("actionadd", LOG_DEBUG);
             $result = $db->query($sql);
