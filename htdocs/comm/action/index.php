@@ -1673,10 +1673,16 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 						print 'background: #FAE364;';
 						print 'border-left: 5px solid #'.dol_color_minus($colortouse, -3).';';
 					} elseif ($event->type_code == 'AC_TEL') { //Appel téléphonique
-						print 'background: #E9593A;';
+						print 'background: #CFADED ;';
+						print 'border-left: 5px solid #'.dol_color_minus($colortouse, -3).';';
+					} elseif ($event->type_code == 'AC_FAX') { //Envoi fax
+						print 'background: #B5FCAE;';
 						print 'border-left: 5px solid #'.dol_color_minus($colortouse, -3).';';
 					} elseif ($event->type_code == 'AC_EMAIL') { //Envoi email
 						print 'background: #DD5AE9;';
+						print 'border-left: 5px solid #'.dol_color_minus($colortouse, -3).';';
+					} elseif ($event->type_code == 'AC_EMAIL_IN') { //Reception d'email
+						print 'background: #64FAEB;';
 						print 'border-left: 5px solid #'.dol_color_minus($colortouse, -3).';';
 					} elseif ($event->type_code == 'AC_INT') { //Intervention sur site
 						print 'background: #32E5D9;';
@@ -1684,8 +1690,10 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 					} elseif ($event->type_code == 'AC_OTH') { //Autre
 						print 'background: #E5E95A;';
 						print 'border-left: 5px solid #'.dol_color_minus($colortouse, -3).';';
-					}
-					else {
+					} elseif ($event->type_code == 'AC_OTH_AUTO') { //Évènements insérés automatiquement
+						print 'background: #FBC8B2;';
+						print 'border-left: 5px solid #'.dol_color_minus($colortouse, -3).';';
+					} else {
 						print 'background: #f0f0f0;';
 						print 'border-left: 5px solid #'.dol_color_minus($colortouse, -3).';';
 						//print 'background: -webkit-gradient(linear, left top, left bottom, from(#'.dol_color_minus($colortouse, -3).'), to(#'.dol_color_minus($colortouse, -1).'));';
@@ -1755,7 +1763,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 						} else {
 							if ($showinfo)
 							{
-								//print $langs->trans("EventOnFullDay")."<br>\n";
+								print $langs->trans("EventOnFullDay")."<br>\n";
 							}
 						}
 

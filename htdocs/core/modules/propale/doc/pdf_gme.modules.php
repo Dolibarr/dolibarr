@@ -123,6 +123,20 @@ class pdf_gme extends ModelePDFPropales
 	 */
 	public $emetteur;
 
+	/**
+	 * @var Image Page de Garde
+	 */
+	public $urlImageGme;
+
+	/**
+	 * @var Image Header
+	 */
+	public $urlImageGmeHeader;
+
+	/**
+	 * @var Image commercial
+	 */
+	public $urlImageCom;
 
 	/**
 	 *	Constructor
@@ -132,6 +146,11 @@ class pdf_gme extends ModelePDFPropales
 	public function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
+
+		//Variable Image
+		$this->urlImageCom = DOL_DATA_ROOT.'/image/az.png';
+		$this->urlImageGmeHeader = DOL_DATA_ROOT.'/image/gme_header.png';
+		$this->urlImageGme = DOL_DATA_ROOT.'/image/gme.jpg';
 
 		// Translations
 		$langs->loadLangs(array("main", "bills"));
@@ -1059,24 +1078,9 @@ class pdf_gme extends ModelePDFPropales
 		}
 
 		//Image en-tête (modifier le chemin de l'image en fonction de la photo souhaitée)
-		$pdf->Image('C:/Users/Stage/Desktop/gme_header2.png',0,0,210,50);
+		$pdf->Image($this->urlImageGmeHeader,0,0,210,50);
 		$pdf->SetFont('','B',7);
 
-/*		$pdf->MultiCell (70,5,$mysoc->name,0,'C',0,0,20,7);
-		$pdf->MultiCell (70,5,$mysoc->address,0,'C',0,0,20,12);
-		$pdf->MultiCell (70,5,$mysoc->zip.' - '.$mysoc->town,0,'C',0,0,20,17);
-		$pdf->MultiCell (70,5,$mysoc->url,0,'C',0,0,20,22);
-		$pdf->MultiCell (70,5,$mysoc->email,0,'C',0,0,20,27);
-		$pdf->MultiCell (85,5,"Date de l'offre : ".dol_print_date($object->date,"day",false,$outputlangs,true),'B','L',0,0,20,40);
-
-		$pdf->MultiCell (70,4,'Attn : '.$object->contact->firstname.' '.$object->contact->lastname,0,'C',0,0,120,7);
-		$pdf->MultiCell (70,4,$object->thirdparty->name,0,'C',0,0,120,11);
-		$pdf->MultiCell (70,4,$object->contact->address,0,'C',0,0,120,15);
-		$pdf->MultiCell (70,4,$object->contact->zip.' - '.$object->contact->town,0,'C',0,0,120,19);
-		$pdf->MultiCell (70,4,'mail : '.$object->contact->email,0,'C',0,0,120,23);
-		$pdf->MultiCell (70,5,'gsm : '.$object->contact->phone_mobile,0,'C',0,0,120,27);
-		$pdf->MultiCell (85,5,"Offre : ".$object->ref,'B','R',0,0,105,40);
-*/
 		//Titre
 		$pdf->MultiCell(40,4,'Nom : ',0,'L',0,1,128,15);
 		$pdf->MultiCell(40,4,'Numéro de client : ',0,'L',0,1,128,$pdf->GetY());
@@ -1118,7 +1122,8 @@ class pdf_gme extends ModelePDFPropales
 	 */
 	private function pageGarde(&$pdf, $object, $outputlangs, $rowid, $extralabels){
 		//Image PDG (modifier le chemin de l'image en fonction de la photo souhaitée)
-		$pdf->Image('C:/Users/Stage/Desktop/gme.jpg',0,0,210,0,'JPG');
+
+		$pdf->Image($this->urlImageGme,0,0,210,0,'JPG');
 
 		//object extrafields
 		$object->fetch($rowid);
@@ -1182,47 +1187,6 @@ class pdf_gme extends ModelePDFPropales
 			$pdf->SetTextColor(0,0,0);
 			$pdf->writeHTMLCell(0,5,40,$pdf->GetY()+10,$contenu[$i],0,2);
 		}
-		/*$pdf->SetFont('Helvetica','B',11);
-		$pdf->SetTextColor(153,204,102);
-		$pdf->Text(30,$pdf->GetY()+10,"1. Descriptif de l'offre");
-		$pdf->SetFont('Helvetica','',10);
-		$pdf->SetTextColor(0,0,0);
-		$pdf->writeHTMLCell(0,5,40,$pdf->GetY()+10,dol_htmlentitiesbr($ddo),0,2);
-
-		$pdf->SetFont('Helvetica','B',11);
-		$pdf->SetTextColor(153,204,102);
-		$pdf->Text(30,$pdf->GetY()+5,"2. Descriptif des services disponibles");
-		$pdf->SetFont('Helvetica','',10);
-		$pdf->SetTextColor(0,0,0);
-		$pdf->writeHTMLCell(0,5,40,$pdf->GetY()+10,dol_htmlentitiesbr($dded),0,2);
-
-		$pdf->SetFont('Helvetica','B',11);
-		$pdf->SetTextColor(153,204,102);
-		$pdf->Text(30,$pdf->GetY()+5,"3. Validité de l'offre");
-		$pdf->SetFont('Helvetica','',10);
-		$pdf->SetTextColor(0,0,0);
-		$pdf->MultiCell (0,5, dol_print_date($object->fin_validite,"day",false,$outputlangs,true),0,'L',0,2,40, $pdf->GetY()+10);
-
-		$pdf->SetFont('Helvetica','B',11);
-		$pdf->SetTextColor(153,204,102);
-		$pdf->Text(30,$pdf->GetY()+5,"4. Conditions de paiement");
-		$pdf->SetFont('Helvetica','',10);
-		$pdf->SetTextColor(0,0,0);
-		$pdf->writeHTMLCell(0,5,40,$pdf->GetY()+10,dol_htmlentitiesbr($cdp),0,2);
-
-		$pdf->SetFont('Helvetica','B',11);
-		$pdf->SetTextColor(153,204,102);
-		$pdf->Text(30,$pdf->GetY()+5,"5. Conditions générales");
-		$pdf->SetFont('Helvetica','',10);
-		$pdf->SetTextColor(0,0,0);
-		$pdf->writeHTMLCell(0,5,40,$pdf->GetY()+10,dol_htmlentitiesbr($cg),0,2);
-
-		$pdf->SetFont('Helvetica','B',11);
-		$pdf->SetTextColor(153,204,102);
-		$pdf->Text(30,$pdf->GetY()+5,"6. Délais de livraison");
-		$pdf->SetFont('Helvetica','',10);
-		$pdf->SetTextColor(0,0,0);
-		$pdf->writeHTMLCell(0,5,40,$pdf->GetY()+10,dol_htmlentitiesbr($ddl),0,2);*/
 	}
 
 	/**
@@ -1345,7 +1309,7 @@ class pdf_gme extends ModelePDFPropales
 		$tmpuser->fetch($object->user_author_id);
 
 		//Image Com (modifier le chemin de l'image en fonction de la photo souhaitée)
-		$pdf->Image('C:/Users/Stage/Desktop/az.png',100,263,22,22);
+		$pdf->Image($this->urlImageCom,100,263,22,22);
 
 		$pdf->SetFont('Helvetica','', 9);
 		$pdf->SetTextColor(0,0,0);
