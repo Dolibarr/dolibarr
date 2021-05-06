@@ -68,7 +68,7 @@ if (GETPOST('sendit', 'alpha') && !empty($conf->global->MAIN_UPLOAD_DOC))
 	$link = GETPOST('link', 'alpha');
 	if ($link)
 	{
-		if (substr($link, 0, 7) != 'http://' && substr($link, 0, 8) != 'https://' && substr($link, 0, 7) != 'file://') {
+		if (substr($link, 0, 7) != 'http://' && substr($link, 0, 8) != 'https://' && substr($link, 0, 7) != 'file://' && substr($link, 0, 7) != 'davs://') {
 			$link = 'http://'.$link;
 		}
 		dol_add_file_process($upload_dir, 0, 1, 'userfile', null, $link, '', 0);
