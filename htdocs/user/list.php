@@ -181,8 +181,15 @@ if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 
 $error = 0;
 
-if (!$user->rights->user->user->lire && !$user->admin) {
-	accessforbidden();
+// Permission to list
+if ($mode == 'employee') {
+	if (empty($user->rights->salaries->read)) {
+		accessforbidden();
+	}
+} else {
+	if (!$user->rights->user->user->lire && !$user->admin) {
+		accessforbidden();
+	}
 }
 
 $childids = $user->getAllChildIds(1);
@@ -411,7 +418,7 @@ if ($search_categ == -2) {
 	$sql .= " AND cu.fk_categorie IS NULL";
 }
 if ($mode == 'employee' && empty($user->rights->salaries->readall)) {
-	$sql .= " AND u.fk_user IN (".$db->sanitize(join(',', $childids)).")";
+	$sql .= " AND u.rowid IN (".$db->sanitize(join(',', $childids)).")";
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
