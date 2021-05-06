@@ -176,8 +176,11 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes') {
 		// We apply dol_string_nohtmltag also to clean file names (this remove duplicate spaces) because
 		// this function is also applied when we upload and when we make try to download file (by the GETPOST(filename, 'alphanohtml') call).
 		$filenameto = dol_string_nohtmltag($filenameto);
-
-		if ($filenamefrom != $filenameto) {
+		if (preg_match('/__.*__/', $filenameto)) {
+			$error++;
+			setEventMessages($langs->trans('ErrorWrongFileName'), null, 'errors');
+		}
+		if (!$error && $filenamefrom != $filenameto) {
 			// Security:
 			// Disallow file with some extensions. We rename them.
 			// Because if we put the documents directory into a directory inside web root (very bad), this allows to execute on demand arbitrary code.
