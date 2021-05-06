@@ -310,14 +310,6 @@ if ($conf->use_javascript_ajax) {
 }
 print '</td></tr>';
 
-print '<tr class="oddeven"><td>'.$langs->trans("HideColumnVATInformationOnPDF").'</td><td>';
-if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN');
-} else {
-	print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN', (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN)) ? $conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN : 0, 1);
-}
-print '</td></tr>';
-
 // Locataxes
 print $text;
 
@@ -336,11 +328,6 @@ print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width=
 
 print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DOCUMENTS_LOGO_HEIGHT").'</td><td>';
 print '<input type="text" class="maxwidth50" name="MAIN_DOCUMENTS_LOGO_HEIGHT" value="'.(!empty($conf->global->MAIN_DOCUMENTS_LOGO_HEIGHT) ? $conf->global->MAIN_DOCUMENTS_LOGO_HEIGHT : 20).'">';
-print '</td></tr>';
-
-// Width of picture product lign
-print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DOCUMENTS_WITH_PICTURE_WIDTH").'</td><td>';
-print '<input type="text" class="maxwidth50" name="MAIN_DOCUMENTS_WITH_PICTURE_WIDTH" value="'.(!empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH) ? $conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH : 20).'">';
 print '</td></tr>';
 
 // Show project
@@ -429,33 +416,6 @@ print '</td></tr>';
 
 print '<tr class="oddeven"><td>'.$langs->trans("ShowDetailsInPDFPageFoot").'</td><td>';
 print $form->selectarray('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS', $arraydetailsforpdffoot, (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS : 0));
-print '</td></tr>';
-
-print '<tr class="oddeven"><td>'.$langs->trans("PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME").'</td><td>';
-if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME');
-} else {
-	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME", $arrval, $conf->global->PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME);
-}
-print '</td></tr>';
-
-print '<tr class="oddeven"><td>'.$langs->trans("DOC_SHOW_FIRST_SALES_REP").'</td><td>';
-if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('DOC_SHOW_FIRST_SALES_REP');
-} else {
-	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("DOC_SHOW_FIRST_SALES_REP", $arrval, $conf->global->DOC_SHOW_FIRST_SALES_REP);
-}
-print '</td></tr>';
-
-print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_PDF_AUTOUPDATE").'</td><td>';
-if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('MAIN_DISABLE_PDF_AUTOUPDATE');
-} else {
-	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("MAIN_DISABLE_PDF_AUTOUPDATE", $arrval, $conf->global->MAIN_DISABLE_PDF_AUTOUPDATE);
-}
 print '</td></tr>';
 
 print '</table>';
