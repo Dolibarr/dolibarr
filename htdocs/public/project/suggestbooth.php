@@ -378,7 +378,7 @@ if (empty($reshook) && $action == 'add') {
 				$errmsg .= $conforbooth->error;
 			} else {
 				// If this is a paying booth, we have to redirect to payment page and create an invoice
-				if (GETPOST("suggestbooth") && !empty(floatval($project->price_booth))) {
+				if (!empty(floatval($project->price_booth))) {
 					$productforinvoicerow = new Product($db);
 					$resultprod = $productforinvoicerow->fetch($conf->global->SERVICE_BOOTH_LOCATION);
 					if ($resultprod < 0) {
@@ -437,7 +437,7 @@ if (empty($reshook) && $action == 'add') {
 						}
 					}
 				} else {
-					// If no price has been set for the booth or this is a conference, we confirm it as suggested and we update
+					// If no price has been set for the booth, we confirm it as suggested and we update
 					$conforbooth->status = CONFERENCEORBOOTH::STATUS_SUGGESTED;
 					$conforbooth->update($user);
 					// Sending mail
