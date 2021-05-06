@@ -82,14 +82,6 @@ $error = 0;
 $backtopage = GETPOST('backtopage', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
-$eventtype = GETPOST("eventtype");
-$email = GETPOST("email");
-$societe = GETPOST("societe");
-$label = GETPOST("label");
-$note = GETPOST("note");
-$datestart = GETPOST("datestart");
-$dateend = GETPOST("dateend");
-
 // Getting id from Post and decoding it
 $encodedid = GETPOST('id');
 $id = dol_decode($encodedid, $dolibarr_main_instance_unique_id);
