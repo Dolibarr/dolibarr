@@ -1607,10 +1607,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 						$tooltip .= $langs->trans("GenericMaskCodes5");
 						print '<td id="mask_option">'.$langs->trans("ManageLotMask").'</td>';
 						if ($object->status_batch == '1' && $conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_LOT_ADDON == 'mod_lot_advanced') {
-							$mask = !empty($object->batch_mask) ? $object->batch_mask : $conf->global->LOT_ADVANCED_MASK;
+							$mask = ! empty($object->batch_mask) ? $object->batch_mask : $conf->global->LOT_ADVANCED_MASK;
 						}
 						if ($object->status_batch == '2' && $conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS && $conf->global->PRODUCTBATCH_SN_ADDON == 'mod_sn_advanced') {
-							$mask = !empty($object->batch_mask) ? $object->batch_mask : $conf->global->SN_ADVANCED_MASK;
+							$mask = ! empty($object->batch_mask) ? $object->batch_mask : $conf->global->SN_ADVANCED_MASK;
 						}
 						$inherited_mask_lot = $conf->global->LOT_ADVANCED_MASK;
 						$inherited_mask_sn = $conf->global->SN_ADVANCED_MASK;
@@ -1802,7 +1802,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Traceability
-			if (empty($conf->global->PRODUCT_DISABLE_TRACEABILITY)) {
+			if ( empty($conf->global->PRODUCT_DISABLE_TRACEABILITY)) {
 				print '<tr><td>'.$langs->trans("LifeTime").'</td><td><input name="lifetime" class="maxwidth100onsmartphone" value="'.$object->lifetime.'"></td></tr>';
 				print '<tr><td>'.$langs->trans("QCFrequency").'</td><td><input name="qc_frequency" class="maxwidth100onsmartphone" value="'.$object->qc_frequency.'"></td></tr>';
 			}
@@ -2285,7 +2285,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Traceability
-			if (empty($conf->global->PRODUCT_DISABLE_TRACEABILITY)) {
+			if ( empty($conf->global->PRODUCT_DISABLE_TRACEABILITY)) {
 				print '<tr><td>'.$langs->trans("LifeTime").'</td><td colspan="2">'.$object->lifetime.' ';
 				!empty($object->lifetime) ? print $langs->trans('Days') : print '';
 				print '</td></tr>';
