@@ -708,7 +708,7 @@ if (!empty($conf->global->MEMBER_NEWFORM_AMOUNT) || !empty($conf->global->MEMBER
 	// $conf->global->MEMBER_NEWFORM_SHOWAMOUNT is an amount
 
 	// Set amount for the subscription
-	$amountbytype = adht->amountByType(1);
+	$amountbytype = $adht->amountByType(1);
 	$amount = !empty($amountbytype[GETPOST('typeid',int)]) ? $amountbytype[GETPOST('typeid',int)] : (isset ($amount) ? $amount : 0);
 
 	if (!empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
