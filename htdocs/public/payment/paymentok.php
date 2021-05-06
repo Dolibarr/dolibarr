@@ -630,6 +630,26 @@ if ($ispaymentok) {
 						}
 
 						$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
+
+						// Create external user
+						if (!empty($conf->global->ADHERENT_CREATE_EXTERNAL_USER_LOGIN)) {
+							$infouserlogin = '';
+							$nuser = new User($db);
+							$tmpuser = dol_clone($object);
+
+							$result = $nuser->create_from_member($tmpuser, $object->login);
+							$newpassword = $nuser->setPassword($user, '');
+
+							if ($result < 0) {
+								$outputlangs->load("errors");
+								$postactionmessages[] = 'Error in create external user : '.$nuser->error;
+							} else {
+								$infouserlogin = $outputlangs->trans("Login").': '.$nuser->login.' '."\n".$outputlangs->trans("Password").': '.$newpassword;
+								$postactionmessages[] = $langs->trans("NewUserCreated", $nuser->login);
+							}
+							$substitutionarray['__MEMBER_USER_LOGIN_INFORMATION__'] = $infouserlogin;
+						}
+
 						complete_substitutions_array($substitutionarray, $outputlangs, $object);
 						$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
 						$texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnSubscription()), $substitutionarray, $outputlangs);
