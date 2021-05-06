@@ -63,6 +63,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
 // Hook to be used by external payment modules (ie Payzen, ...)
 include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 $hookmanager = new HookManager($db);
@@ -102,10 +103,62 @@ if ($resultproject < 0) {
 /*
  * Actions
  */
+$tmpthirdparty = new Societe($db);
 
-$listOfEvents = '<tr><td>oui</tr></td>';
+$listOfConferences = $listOfBooths = '<tr><td>'.$langs->trans('Label').'</td>
+										  <td>'.$langs->trans('Type').'</td>
+										  <td>'.$langs->trans('DateStart').'</td>
+									      <td>'.$langs->trans('DateEnd').'</td>
+									      <td>'.$langs->trans('Thirdparty').'</td>
+									      <td>'.$langs->trans('Note').'</td>';
 
 
+// For conferences
+$sql = "SELECT a.id, a.fk_action, a.datep, a.datep2, a.label, a.fk_soc, a.note, ca.libelle
+		FROM ".MAIN_DB_PREFIX."actioncomm as a
+		INNER JOIN ".MAIN_DB_PREFIX."c_actioncomm as ca ON (a.fk_action=ca.id)
+		WHERE ca.module='conference@eventorganization'
+		AND a.status<2";
+$result = $db->query($sql);
+
+$i = 0;
+while ($i < $db->num_rows($result)) {
+	$obj = $db->fetch_object($result);
+
+	$resultthirdparty = $tmpthirdparty->fetch($obj->fk_soc);
+	if ($resultthirdparty) {
+		$thirdpartyname = $tmpthirdparty->name;
+	} else {
+		$thirdpartyname = '';
+	}
+
+	$listOfConferences .= '<tr><td>'.$obj->label.'</td><td>'.$obj->libelle.'</td><td>'.$obj->datep.'</td><td>'.$obj->datep2.'</td><td>'.$thirdpartyname.'</td><td>'.$obj->note.'</td>';
+	$listOfConferences .= '<td><input type="submit" value="'.$langs->trans("Vote").'" name="'.$obj->id.'" class="button"></td></tr>';
+	$i++;
+}
+
+// For booths
+$sql = "SELECT a.id, a.fk_action, a.datep, a.datep2, a.label, a.fk_soc, a.note, ca.libelle
+		FROM ".MAIN_DB_PREFIX."actioncomm as a
+		INNER JOIN ".MAIN_DB_PREFIX."c_actioncomm as ca ON (a.fk_action=ca.id)
+		WHERE ca.module='booth@eventorganization'
+		AND a.status<2";
+$result = $db->query($sql);
+$i = 0;
+while ($i < $db->num_rows($result)) {
+	$obj = $db->fetch_object($result);
+
+	$resultthirdparty = $tmpthirdparty->fetch($obj->fk_soc);
+	if ($resultthirdparty) {
+		$thirdpartyname = $tmpthirdparty->name;
+	} else {
+		$thirdpartyname = '';
+	}
+
+	$listOfBooths .= '<tr><td>'.$obj->label.'</td><td>'.$obj->libelle.'</td><td>'.$obj->datep.'</td><td>'.$obj->datep2.'</td><td>'.$thirdpartyname.'</td><td>'.$obj->note.'</td>';
+	$listOfBooths .= '<td><input type="submit" value="'.$langs->trans("Vote").'" name="'.$obj->id.'" class="button"></td></tr>';
+	$i++;
+}
 
 /*
  * View
@@ -170,16 +223,26 @@ if ($urllogo) {
 	}
 	print '</div>';
 }
-
-print '<table id="dolpaymenttable" summary="Payment form" class="center">'."\n";
-
+print '<table id="welcome" class="center">'."\n";
 $text  = '<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("EvntOrgRegistrationWelcomeMessage").'</strong></td></tr>'."\n";
-$text .= '<tr><td class="textpublicpayment">'.$langs->trans("EvntOrgVoteHelpMessage").' '.$id.'.<br><br></td></tr>'."\n";
+$text .= '<tr><td class="textpublicpayment">'.$langs->trans("EvntOrgVoteHelpMessage").' : "'.$project->title.'".<br><br></td></tr>'."\n";
 $text .= '<tr><td class="textpublicpayment">'.$project->note_public.'<br><br></td></tr>'."\n";;
-
 print $text;
+print '</table>'."\n";
 
-print $listOfEvents;
+print dol_get_fiche_head('');
+
+print '<table border=1  cellpadding="10" id="conferences" class="center">'."\n";
+print '<th colspan="7">'.$langs->trans("ListOfSuggestedConferences").'</th>';
+print $listOfConferences.'</br>';
+print '</table>'."\n";
+
+
+print '<table border=1  cellpadding="10" id="conferences" class="center">'."\n";
+print '<th colspan="7">'.$langs->trans("ListOfSuggestedBooths").'</th>';
+print $listOfBooths.'</br>';
+print '</table>'."\n";
+print dol_get_fiche_end();
 
 // Output payment summary form
 print '<tr><td align="center">';
@@ -196,7 +259,7 @@ print "\n";
 // Show all action buttons
 print '<br>';
 
-print '<input type="submit" value="'.$langs->trans("ViewAndVote").'" id="viewandvote" name="viewandvote" class="button">';
+//print '<input type="submit" value="'.$langs->trans("ViewAndVote").'" id="viewandvote" name="viewandvote" class="button">';
 
 
 
