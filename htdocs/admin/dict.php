@@ -2167,15 +2167,14 @@ if ($id) {
 			} else {
 				print $langs->trans($tablib[$i]);
 			}
-			print $form->textwithpicto('', $langs->trans("Table").': '.$tabname[$i]);
 			print '</td>';
 			print '<td>';
-			/*if (empty($tabcond[$i]))
-			 {
-			 print info_admin($langs->trans("DictionaryDisabledSinceNoModuleNeedIt"),1);
-			 }*/
+			print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?id='.$i.'">';
+			print img_picto('Edit', 'edit', '');
+			print '</a>';
 			print '</td>';
 			print '<td class="right">';
+			print $form->textwithpicto('', $langs->trans("Table").': '.$tabname[$i]);
 			print '</td>';
 			print '</tr>';
 			$lastlineisempty = false;
