@@ -2138,7 +2138,7 @@ if ($id) {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td colspan="2">'.$langs->trans("Dictionary").'</td>';
-	print '<td>'.$langs->trans("Table").'</td>';
+	print '<td></td>';
 	print '</tr>';
 
 	$showemptyline = '';
@@ -2167,6 +2167,7 @@ if ($id) {
 			} else {
 				print $langs->trans($tablib[$i]);
 			}
+			print $form->textwithpicto('', $langs->trans("Table").': '.$tabname[$i]);
 			print '</td>';
 			print '<td>';
 			/*if (empty($tabcond[$i]))
@@ -2174,7 +2175,9 @@ if ($id) {
 			 print info_admin($langs->trans("DictionaryDisabledSinceNoModuleNeedIt"),1);
 			 }*/
 			print '</td>';
-			print '<td>'.$tabname[$i].'</td></tr>';
+			print '<td class="right">';
+			print '</td>';
+			print '</tr>';
 			$lastlineisempty = false;
 		} else {
 			if (!$lastlineisempty) {
