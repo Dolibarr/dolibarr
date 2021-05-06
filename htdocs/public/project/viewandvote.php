@@ -110,51 +110,44 @@ $listOfConferences = $listOfBooths = '<tr><td>'.$langs->trans('Label').'</td>
 										  <td>'.$langs->trans('DateStart').'</td>
 									      <td>'.$langs->trans('DateEnd').'</td>
 									      <td>'.$langs->trans('Thirdparty').'</td>
-									      <td>'.$langs->trans('Note').'</td>';
+									      <td>'.$langs->trans('Note').'</td></tr>';
 
-
-// For conferences
 $sql = "SELECT a.id, a.fk_action, a.datep, a.datep2, a.label, a.fk_soc, a.note, ca.libelle
 		FROM ".MAIN_DB_PREFIX."actioncomm as a
 		INNER JOIN ".MAIN_DB_PREFIX."c_actioncomm as ca ON (a.fk_action=ca.id)
-		WHERE ca.module='conference@eventorganization'
-		AND a.status<2";
-$result = $db->query($sql);
+		WHERE a.status<2";
 
+$sqlforconf = $sql." AND ca.module='conference@eventorganization'";
+$sqlforbooth = $sql." AND ca.module='booth@eventorganization'";
+
+
+// For conferences
+$result = $db->query($sqlforconf);
 $i = 0;
 while ($i < $db->num_rows($result)) {
 	$obj = $db->fetch_object($result);
-
 	$resultthirdparty = $tmpthirdparty->fetch($obj->fk_soc);
 	if ($resultthirdparty) {
 		$thirdpartyname = $tmpthirdparty->name;
 	} else {
 		$thirdpartyname = '';
 	}
-
 	$listOfConferences .= '<tr><td>'.$obj->label.'</td><td>'.$obj->libelle.'</td><td>'.$obj->datep.'</td><td>'.$obj->datep2.'</td><td>'.$thirdpartyname.'</td><td>'.$obj->note.'</td>';
 	$listOfConferences .= '<td><input type="submit" value="'.$langs->trans("Vote").'" name="'.$obj->id.'" class="button"></td></tr>';
 	$i++;
 }
 
 // For booths
-$sql = "SELECT a.id, a.fk_action, a.datep, a.datep2, a.label, a.fk_soc, a.note, ca.libelle
-		FROM ".MAIN_DB_PREFIX."actioncomm as a
-		INNER JOIN ".MAIN_DB_PREFIX."c_actioncomm as ca ON (a.fk_action=ca.id)
-		WHERE ca.module='booth@eventorganization'
-		AND a.status<2";
-$result = $db->query($sql);
+$result = $db->query($sqlforbooth);
 $i = 0;
 while ($i < $db->num_rows($result)) {
 	$obj = $db->fetch_object($result);
-
 	$resultthirdparty = $tmpthirdparty->fetch($obj->fk_soc);
 	if ($resultthirdparty) {
 		$thirdpartyname = $tmpthirdparty->name;
 	} else {
 		$thirdpartyname = '';
 	}
-
 	$listOfBooths .= '<tr><td>'.$obj->label.'</td><td>'.$obj->libelle.'</td><td>'.$obj->datep.'</td><td>'.$obj->datep2.'</td><td>'.$thirdpartyname.'</td><td>'.$obj->note.'</td>';
 	$listOfBooths .= '<td><input type="submit" value="'.$langs->trans("Vote").'" name="'.$obj->id.'" class="button"></td></tr>';
 	$i++;
