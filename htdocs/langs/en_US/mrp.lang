@@ -13,7 +13,7 @@ BOMsSetup=Setup of module BOM
 ListOfBOMs=List of bills of material - BOM
 ListOfManufacturingOrders=List of Manufacturing Orders
 NewBOM=New bill of materials
-ProductBOMHelp=Product to create with this BOM.<br>Note: Products with the property 'Nature of product' = 'Raw material' are not visible into this list.
+ProductBOMHelp=Product to create (or disassemble) with this BOM.<br>Note: Products with the property 'Nature of product' = 'Raw material' are not visible into this list.
 BOMsNumberingModules=BOM numbering templates
 BOMsModelModule=BOM document templates
 MOsNumberingModules=MO numbering templates
@@ -39,7 +39,7 @@ DateStartPlannedMo=Date start planned
 DateEndPlannedMo=Date end planned
 KeepEmptyForAsap=Empty means 'As Soon As Possible'
 EstimatedDuration=Estimated duration
-EstimatedDurationDesc=Estimated duration to manufacture this product using this BOM
+EstimatedDurationDesc=Estimated duration to manufacture (or disassemble) this product using this BOM
 ConfirmValidateBom=Are you sure you want to validate the BOM with the reference <strong>%s</strong> (you will be able to use it to build new Manufacturing Orders)
 ConfirmCloseBom=Are you sure you want to cancel this BOM (you won't be able to use it to build new Manufacturing Orders anymore) ?
 ConfirmReopenBom=Are you sure you want to re-open this BOM (you will be able to use it to build new Manufacturing Orders)
