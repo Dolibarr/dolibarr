@@ -63,6 +63,7 @@ ConsumeAndProduceAll=Consume and Produce All
 Manufactured=Manufactured
 TheProductXIsAlreadyTheProductToProduce=The product to add is already the product to produce.
 ForAQuantityOf=For a quantity to produce of %s
+ForAQuantityToConsumeOf=For a quantity to disassemble of %s
 ConfirmValidateMo=Are you sure you want to validate this Manufacturing Order?
 ConfirmProductionDesc=By clicking on '%s', you will validate the consumption and/or production for the quantities set. This will also update the stock and record stock movements.
 ProductionForRef=Production of %s
