@@ -126,7 +126,6 @@ $arrayfields = array(
 	'u.email'=>array('label'=>"EMail", 'checked'=>1, 'position'=>35),
 	'u.api_key'=>array('label'=>"ApiKey", 'checked'=>0, 'position'=>40, "enabled"=>($conf->api->enabled && $user->admin)),
 	'u.fk_soc'=>array('label'=>"Company", 'checked'=>($contextpage == 'employeelist' ? 0 : 1), 'position'=>45),
-	'u.fk_warehouse'=>array('label'=>"Company", 'checked'=>($contextpage == 'employeelist' ? 0 : 1), 'position'=>45),
 	'u.salary'=>array('label'=>"Salary", 'checked'=>1, 'position'=>80, 'enabled'=>($conf->salaries->enabled && !empty($user->rights->salaries->readall))),
 	'u.datelastlogin'=>array('label'=>"LastConnexion", 'checked'=>1, 'position'=>100),
 	'u.datepreviouslogin'=>array('label'=>"PreviousConnexion", 'checked'=>0, 'position'=>110),
@@ -416,6 +415,9 @@ if ($search_categ > 0) {
 if ($search_categ == -2) {
 	$sql .= " AND cu.fk_categorie IS NULL";
 }
+if ($search_warehouse > 0) {
+	$sql .= " AND u.fk_warehouse = ".$db->escape($search_warehouse);
+}
 if ($mode == 'employee' && empty($user->rights->salaries->readall)) {
 	$sql .= " AND u.fk_user IN (".$db->sanitize(join(',', $childids)).")";
 }
@@ -523,7 +525,10 @@ if ($mode != '') {
 	$param .= '&amp;mode='.urlencode($mode);
 }
 if ($search_categ > 0) {
-	$param .= "&amp;search_categ=".urlencode($search_categ);
+	$param .= '&amp;search_categ='.urlencode($search_categ);
+}
+if ($search_warehouse > 0) {
+	$param .= '&amp;search_warehouse='.urlencode($search_warehouse);
 }
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -601,8 +606,16 @@ $moreforfilter = '';
 // Filter on categories
 if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
 	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= img_picto($langs->trans("Category"), 'category', 'class="paddingright"');
-	$moreforfilter .= $formother->select_categories(Categorie::TYPE_USER, $search_categ, 'search_categ', 1);
+	$tmptitle = $langs->trans('Category');
+	$moreforfilter .= img_picto($langs->trans("Category"), 'category', 'class="pictofixedwidth"').$formother->select_categories(Categorie::TYPE_USER, $search_categ, 'search_categ', 1, $tmptitle);
+	$moreforfilter .= '</div>';
+}
+if (!empty($conf->stock->enabled) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) {
+	require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+	$formproduct = new FormProduct($db);
+	$moreforfilter .= '<div class="divsearchfield">';
+	$tmptitle = $langs->trans('Warehouse');
+	$moreforfilter .= img_picto($tmptitle, 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($search_warehouse, 'search_warehouse', '', $tmptitle, 0, 0, $tmptitle);
 	$moreforfilter .= '</div>';
 }
 
