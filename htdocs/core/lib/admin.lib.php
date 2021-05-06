@@ -1190,9 +1190,10 @@ function unActivateModule($value, $requiredby = 1)
  * 	@param		array		$tabcond			Tabcond
  * 	@param		array		$tabhelp			Tabhelp
  *  @param		array		$tabfieldcheck		Tabfieldcheck
+ *  @param		array		$tabcomplete   		Tab complete (will replace all other in future). Key is table name.
  * 	@return		int			1
  */
-function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tabsql, &$tabsqlsort, &$tabfield, &$tabfieldvalue, &$tabfieldinsert, &$tabrowid, &$tabcond, &$tabhelp, &$tabfieldcheck)
+function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tabsql, &$tabsqlsort, &$tabfield, &$tabfieldvalue, &$tabfieldinsert, &$tabrowid, &$tabcond, &$tabhelp, &$tabfieldcheck, &$tabcomplete)
 {
 	global $db, $modules, $conf, $langs;
 
@@ -1255,53 +1256,77 @@ function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tab
 							if (!empty($objMod->dictionaries)) {
 								//var_dump($objMod->dictionaries['tabname']);
 								$nbtabname = $nbtablib = $nbtabsql = $nbtabsqlsort = $nbtabfield = $nbtabfieldvalue = $nbtabfieldinsert = $nbtabrowid = $nbtabcond = $nbtabfieldcheck = $nbtabhelp = 0;
-								foreach ($objMod->dictionaries['tabname'] as $val) {
+								$tabnamerelwithkey = array();
+								foreach ($objMod->dictionaries['tabname'] as $key => $val) {
+									$tmptablename = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $val);
 									$nbtabname++;
 									$taborder[] = max($taborder) + 1;
 									$tabname[] = $val;
+									$tabnamerelwithkey[$key] = $val;
+									$tabcomplete[$tmptablename]['picto'] = $objMod->picto;
 								}		// Position
-								foreach ($objMod->dictionaries['tablib'] as $val) {
+								foreach ($objMod->dictionaries['tablib'] as $key => $val) {
+									$tmptablename = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $tabnamerelwithkey[$key]);
 									$nbtablib++;
 									$tablib[] = $val;
+									$tabcomplete[$tmptablename]['lib'] = $val;
 								}
-								foreach ($objMod->dictionaries['tabsql'] as $val) {
+								foreach ($objMod->dictionaries['tabsql'] as $key => $val) {
+									$tmptablename = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $tabnamerelwithkey[$key]);
 									$nbtabsql++;
 									$tabsql[] = $val;
+									$tabcomplete[$tmptablename]['sql'] = $val;
 								}
-								foreach ($objMod->dictionaries['tabsqlsort'] as $val) {
+								foreach ($objMod->dictionaries['tabsqlsort'] as $key => $val) {
+									$tmptablename = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $tabnamerelwithkey[$key]);
 									$nbtabsqlsort++;
 									$tabsqlsort[] = $val;
+									$tabcomplete[$tmptablename]['sqlsort'] = $val;
 								}
-								foreach ($objMod->dictionaries['tabfield'] as $val) {
+								foreach ($objMod->dictionaries['tabfield'] as $key => $val) {
+									$tmptablename = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $tabnamerelwithkey[$key]);
 									$nbtabfield++;
 									$tabfield[] = $val;
+									$tabcomplete[$tmptablename]['field'] = $val;
 								}
-								foreach ($objMod->dictionaries['tabfieldvalue'] as $val) {
+								foreach ($objMod->dictionaries['tabfieldvalue'] as $key => $val) {
+									$tmptablename = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $tabnamerelwithkey[$key]);
 									$nbtabfieldvalue++;
 									$tabfieldvalue[] = $val;
+									$tabcomplete[$tmptablename]['value'] = $val;
 								}
-								foreach ($objMod->dictionaries['tabfieldinsert'] as $val) {
+								foreach ($objMod->dictionaries['tabfieldinsert'] as $key => $val) {
+									$tmptablename = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $tabnamerelwithkey[$key]);
 									$nbtabfieldinsert++;
 									$tabfieldinsert[] = $val;
+									$tabcomplete[$tmptablename]['fieldinsert'] = $val;
 								}
-								foreach ($objMod->dictionaries['tabrowid'] as $val) {
+								foreach ($objMod->dictionaries['tabrowid'] as $key => $val) {
+									$tmptablename = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $tabnamerelwithkey[$key]);
 									$nbtabrowid++;
 									$tabrowid[] = $val;
+									$tabcomplete[$tmptablename]['rowid'] = $val;
 								}
-								foreach ($objMod->dictionaries['tabcond'] as $val) {
+								foreach ($objMod->dictionaries['tabcond'] as $key => $val) {
+									$tmptablename = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $tabnamerelwithkey[$key]);
 									$nbtabcond++;
 									$tabcond[] = $val;
+									$tabcomplete[$tmptablename]['rowid'] = $val;
 								}
 								if (!empty($objMod->dictionaries['tabhelp'])) {
-									foreach ($objMod->dictionaries['tabhelp'] as $val) {
+									foreach ($objMod->dictionaries['tabhelp'] as $key => $val) {
+										$tmptablename = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $tabnamerelwithkey[$key]);
 										$nbtabhelp++;
 										$tabhelp[] = $val;
+										$tabcomplete[$tmptablename]['help'] = $val;
 									}
 								}
 								if (!empty($objMod->dictionaries['tabfieldcheck'])) {
-									foreach ($objMod->dictionaries['tabfieldcheck'] as $val) {
+									foreach ($objMod->dictionaries['tabfieldcheck'] as $key => $val) {
+										$tmptablename = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $tabnamerelwithkey[$key]);
 										$nbtabfieldcheck++;
 										$tabfieldcheck[] = $val;
+										$tabcomplete[$tmptablename]['fieldcheck'] = $val;
 									}
 								}
 

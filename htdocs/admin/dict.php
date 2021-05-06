@@ -517,7 +517,7 @@ $tabcond[39] = (!empty($conf->societe->enabled) && empty($conf->global->SOCIETE_
 $tabcond[40] = (!empty($conf->societe->enabled) && !empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES));
 $tabcond[41] = !empty($conf->intracommreport->enabled);
 $tabcond[42] = !empty($conf->product->enabled);
-$tabcond[43] = !empty($conf->product->enabled && !empty($conf->productbatch->enabled));
+$tabcond[43] = !empty($conf->product->enabled) && !empty($conf->productbatch->enabled) && $conf->global->MAIN_FEATURES_LEVEL >= 2;
 
 // List of help for fields
 $tabhelp = array();
@@ -611,9 +611,11 @@ $tabfieldcheck[41] = array();
 $tabfieldcheck[42] = array();
 $tabfieldcheck[43] = array();
 
-// Complete all arrays with entries found into modules
-complete_dictionary_with_modules($taborder, $tabname, $tablib, $tabsql, $tabsqlsort, $tabfield, $tabfieldvalue, $tabfieldinsert, $tabrowid, $tabcond, $tabhelp, $tabfieldcheck);
+// Table to store complete informations (will replace all other table). Key is table name.
+$tabcomplete = array();
 
+// Complete all arrays with entries found into modules
+complete_dictionary_with_modules($taborder, $tabname, $tablib, $tabsql, $tabsqlsort, $tabfield, $tabfieldvalue, $tabfieldinsert, $tabrowid, $tabcond, $tabhelp, $tabfieldcheck, $tabcomplete);
 
 // Defaut sortorder
 if (empty($sortfield)) {
@@ -2156,7 +2158,13 @@ if ($id) {
 			$value = $tabname[$i];
 			print '<tr class="oddeven"><td width="50%">';
 			if (!empty($tabcond[$i])) {
-				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$i.'">'.$langs->trans($tablib[$i]).'</a>';
+				$tabnamenoprefix = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $tabname[$i]);
+				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$i.'">';
+				if (!empty($tabcomplete[$tabnamenoprefix]['picto'])) {
+					print img_picto('', $tabcomplete[$tabnamenoprefix]['picto'], 'class="pictofixedwidth paddingrightonly"');
+				}
+				print $langs->trans($tablib[$i]);
+				print '</a>';
 			} else {
 				print $langs->trans($tablib[$i]);
 			}
