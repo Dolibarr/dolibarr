@@ -21,7 +21,6 @@ FormatDateHourTextShort=%b %d, %Y, %I:%M %p
 FormatDateHourText=%B %d, %Y, %I:%M %p
 Closed2=مقفول
 CloseAs=اضبط الحالة على
-NumberByMonth=الرقم بالشهر
 RefSupplier=المرجع. مورد
 CommercialProposalsShort=عروض تجارية
 Refused=مرفوض

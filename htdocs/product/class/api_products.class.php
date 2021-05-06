@@ -167,9 +167,10 @@ class Products extends DolibarrApi
 	 * @param  string $sqlfilters 			Other criteria to filter answers separated by a comma. Syntax example "(t.tobuy:=:0) and (t.tosell:=:1)"
 	 * @param  bool   $ids_only   			Return only IDs of product instead of all properties (faster, above all if list is long)
 	 * @param  int    $variant_filter   	Use this param to filter list (0 = all, 1=products without variants, 2=parent of variants, 3=variants only)
+	 * @param  bool   $pagination_data   	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0
 	 * @return array                		Array of product objects
 	 */
-	public function index($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '', $ids_only = false, $variant_filter = 0)
+	public function index($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '', $ids_only = false, $variant_filter = 0, $pagination_data = false)
 	{
 		global $db, $conf;
 
@@ -221,6 +222,9 @@ class Products extends DolibarrApi
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
+		//this query will return total products with the filters given
+		$sqlTotals =  str_replace('SELECT t.rowid, t.ref, t.ref_ext', 'SELECT count(t.rowid) as total', $sql);
+
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
 			if ($page < 0) {
@@ -254,6 +258,24 @@ class Products extends DolibarrApi
 		if (!count($obj_ret)) {
 			throw new RestException(404, 'No product found');
 		}
+
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = [];
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = [
+				'total' => (int) $total,
+				'page' => $page, //count starts from 0
+				'page_count' => ceil((int) $total/$limit),
+				'limit' => $limit
+			];
+		}
+
 		return $obj_ret;
 	}
 

@@ -196,7 +196,6 @@ NoNewRecordSaved=Es gibt keine weiteren Einträge zu journalisieren.
 ListOfProductsWithoutAccountingAccount=Produkte ohne Verknüpfung zu einem Buchhaltungskonto
 ChangeBinding=Verknüpfung ändern
 Accounted=Im Hauptbuch eingetragen
-NotYetAccounted=Nicht im Hauptbuch eingetragen.
 ShowTutorial=Zeige die Anleitung
 NotReconciled=Nicht ausgeglichen
 ApplyMassCategories=Massenänderung Kategorien
