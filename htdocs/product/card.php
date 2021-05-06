@@ -2286,12 +2286,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Traceability
 			if ( empty($conf->global->PRODUCT_DISABLE_TRACEABILITY)) {
-				print '<tr><td>'.$langs->trans("LifeTime").'</td><td colspan="2">'.$object->lifetime.' ';
-				!empty($object->lifetime) ? print $langs->trans('Days') : print '';
-				print '</td></tr>';
-				print '<tr><td>'.$langs->trans("QCFrequency").'</td><td colspan="2">'.$object->qc_frequency.' ';
-				!empty($object->qc_frequency) ? print $langs->trans('Days') : print '';
-				print '</td></tr>';
+				print '<tr><td>'.$langs->trans("LifeTime").'</td><td colspan="2">'.$object->lifetime.'</td></tr>';
+				print '<tr><td>'.$langs->trans("QCFrequency").'</td><td colspan="2">'.$object->qc_frequency.'</td></tr>';
 			}
 
 			// Other attributes
