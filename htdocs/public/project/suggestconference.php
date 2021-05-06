@@ -90,9 +90,7 @@ $note = GETPOST("note");
 $datestart = GETPOST("datestart");
 $dateend = GETPOST("dateend");
 
-// Getting id from Post and decoding it
-$encodedid = GETPOST('id');
-$id = dol_decode($encodedid, $dolibarr_main_instance_unique_id);
+$id = GETPOST('id');
 
 $project = new Project($db);
 $resultproject = $project->fetch($id);
@@ -102,7 +100,6 @@ if ($resultproject < 0) {
 }
 
 // Security check
-$id = dol_decode($encodedid, $dolibarr_main_instance_unique_id);
 $securekeyreceived = GETPOST("securekey");
 $securekeytocompare = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 2);
 
@@ -122,7 +119,7 @@ $extrafields = new ExtraFields($db);
 $user->loadDefaultValues();
 
 $cactioncomm = new CActionComm($db);
-$arrayofeventtype = $cactioncomm->liste_array('', 'id', '', 0, 'module=\'conference@eventorganization\' OR module=\'booth@eventorganization\'');
+$arrayofeventtype = $cactioncomm->liste_array('', 'id', '', 0, 'module=\'conference@eventorganization\'');
 
 /**
  * Show header for new member
@@ -322,13 +319,8 @@ if (empty($reshook) && $action == 'add') {
 		if (!$error) {
 			// Adding supplier tag and tag from setup to thirdparty
 			$category = new Categorie($db);
-			if (GETPOST("suggestconference")) {
-				// Conference case
-				$resultcategory = $category->fetch($conf->global->EVENTORGANIZATION_CATEG_THIRDPARTY_CONF);
-			} else {
-				// Booth case
-				$resultcategory = $category->fetch($conf->global->EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH);
-			}
+
+			$resultcategory = $category->fetch($conf->global->EVENTORGANIZATION_CATEG_THIRDPARTY_CONF);
 
 			if ($resultcategory<=0) {
 				$error++;

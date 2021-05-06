@@ -103,6 +103,23 @@ if ($resultproject < 0) {
  * Actions
  */
 
+if (GETPOST('suggestbooth')) {
+	header("Location: ".dol_buildpath('/public/project/suggestbooth.php', 1).'?id='.$id."&securekey=".$securekeyreceived);
+	exit;
+}
+
+if (GETPOST('suggestconference')) {
+	header("Location: ".dol_buildpath('/public/project/suggestconference.php', 1).'?id='.$id."&securekey=".$securekeyreceived);
+	exit;
+}
+
+if (GETPOST('viewandvote')) {
+	header("Location: ".dol_buildpath('/public/project/viewandvote.php', 1).'?id='.$id."&securekey=".$securekeyreceived);
+	exit;
+}
+
+
+
 
 /*
  * View
@@ -119,24 +136,15 @@ $conf->dol_hide_leftmenu = 1;
 $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
 llxHeader($head, $langs->trans("PaymentForm"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea);
 
-
-// Show sandbox warning
-if ((empty($paymentmethod) || $paymentmethod == 'paypal') && !empty($conf->paypal->enabled) && (!empty($conf->global->PAYPAL_API_SANDBOX) || GETPOST('forcesandbox', 'int'))) {		// We can force sand box with param 'forcesandbox'
-	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Paypal'), '', 'warning');
-}
-if ((empty($paymentmethod) || $paymentmethod == 'stripe') && !empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'int'))) {
-	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
-}
-
-
 print '<span id="dolpaymentspan"></span>'."\n";
 print '<div class="center">'."\n";
 print '<form id="dolpaymentform" class="center" name="paymentform" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
 print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 print '<input type="hidden" name="action" value="dopayment">'."\n";
 print '<input type="hidden" name="tag" value="'.GETPOST("tag", 'alpha').'">'."\n";
-print '<input type="hidden" name="suffix" value="'.dol_escape_htmltag($suffix).'">'."\n";
-print '<input type="hidden" name="securekey" value="'.dol_escape_htmltag($SECUREKEY).'">'."\n";
+//print '<input type="hidden" name="suffix" value="'.dol_escape_htmltag($suffix).'">'."\n";
+print '<input type="hidden" name="id" value="'.dol_escape_htmltag($id).'">'."\n";
+print '<input type="hidden" name="securekey" value="'.dol_escape_htmltag($securekeyreceived).'">'."\n";
 print '<input type="hidden" name="e" value="'.$entity.'" />';
 print '<input type="hidden" name="forcesandbox" value="'.GETPOST('forcesandbox', 'int').'" />';
 print "\n";
@@ -200,15 +208,16 @@ print "\n";
 // Show all action buttons
 print '<br>';
 // Output introduction text
-if ($project->accept_conference_suggestions) {
-	print '<input type="submit" value="'.$langs->trans("SuggestConference").'" id="suggestconference" class="button">';
+if ($project->accept_booth_suggestions) {
+	print '<input type="submit" value="'.$langs->trans("SuggestBooth").'" id="suggestbooth" name="suggestbooth" class="button">';
 	print '<br><br>';
 }
-print '<input type="submit" value="'.$langs->trans("ViewAndVote").'" id="viewandvote" class="button">';
-print '<br><br>';
-if ($project->accept_booth_suggestions) {
-	print '<input type="submit" value="'.$langs->trans("SuggestBooth").'" id="suggestbooth" class="button">';
+if ($project->accept_conference_suggestions) {
+	print '<input type="submit" value="'.$langs->trans("SuggestConference").'" id="suggestconference" name="suggestconference" class="button">';
+	print '<br><br>';
 }
+print '<input type="submit" value="'.$langs->trans("ViewAndVote").'" id="viewandvote" name="viewandvote" class="button">';
+
 
 
 
