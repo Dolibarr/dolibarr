@@ -405,7 +405,7 @@ if ($catid == -2) {
 	$sql .= " AND cu.fk_categorie IS NULL";
 }
 if ($search_categ > 0) {
-	$sql .= " AND cu.fk_categorie = ".$db->escape($search_categ);
+	$sql .= " AND cu.fk_categorie = ".((int) $search_categ);
 }
 if ($search_categ == -2) {
 	$sql .= " AND cu.fk_categorie IS NULL";
