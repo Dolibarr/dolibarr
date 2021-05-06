@@ -1,0 +1,14 @@
+# Dolibarr language file - Source file is en_US - partnership
+ModulePartnershipName =Configuracoes de Parcerias
+PartnershipDescription =Módulo gerenciamento de parcerias
+PartnershipDescriptionLong=Módulo gerenciamento de parcerias
+NewPartnership =Nova parceria
+ListOfPartnerships =Lista de parcerias
+PartnershipSetup =Configuracao de parcerias
+PartnershipAbout =Sobre parcerias
+PartnershipAboutPage =Pagina sobre parcerias
+DatePartnershipStart=Data de início
+DatePartnershipEnd=Data de término
+PartnershipDraft =Rascunho
+PartnershipAccepted =Aceita
+PartnershipCanceled =Cancelada

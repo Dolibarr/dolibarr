@@ -4,9 +4,9 @@
 NoErrorCommitIsDone=Nav kļūda, mēs apstiprinam
 # Errors
 ErrorButCommitIsDone=Kļūdas atrasta, bet mēs apstiprinājām neskatoties uz to
-ErrorBadEMail=E-pasts %s ir nepareizs
-ErrorBadMXDomain=E-pasts %s nepareizs (domēnam nav derīga MX ieraksta)
-ErrorBadUrl=Url %s ir nepareizs
+ErrorBadEMail=Email %s is incorrect
+ErrorBadMXDomain=Email %s seems incorrect (domain has no valid MX record)
+ErrorBadUrl=Url %s is incorrect
 ErrorBadValueForParamNotAString=Jūsu parametra nepareiza vērtība. Tas parasti parādās, ja trūkst tulkojuma.
 ErrorRefAlreadyExists=Atsauce <b> %s </b> jau pastāv.
 ErrorLoginAlreadyExists=Lietotājs %s jau pastāv.
@@ -46,8 +46,8 @@ ErrorWrongDate=Datums nav pareizs
 ErrorFailedToWriteInDir=Neizdevās ierakstīt direktorijā %s
 ErrorFoundBadEmailInFile=Atrasts nepareiza e-pasta sintakse %s līnijām failā (piemērs line %s ar e-pasta = %s)
 ErrorUserCannotBeDelete=Lietotāju nevar izdzēst. Varbūt tas ir saistīts ar Dolibarr vienībām.
-ErrorFieldsRequired=Daži nepieciešamie lauki netika aizpildīti.
-ErrorSubjectIsRequired=E-pasta tēma ir nepieciešama
+ErrorFieldsRequired=Some required fields have been left blank.
+ErrorSubjectIsRequired=The email subject is required
 ErrorFailedToCreateDir=Neizdevās izveidot direktoriju. Pārbaudiet, vai Web servera lietotājam ir tiesības rakstīt uz Dolibarr dokumentus direktorijā. Ja parametrs <b>safe_mode</b> ir iespējots uz šo PHP, pārbaudiet, Dolibarr php faili pieder web servera lietotājam (vai grupa).
 ErrorNoMailDefinedForThisUser=Nav definēts e-pasts šim lietotājam
 ErrorSetupOfEmailsNotComplete=E-pastu iestatīšana nav pabeigta
@@ -226,6 +226,7 @@ ErrorAPageWithThisNameOrAliasAlreadyExists=Lapā / konteinerā <strong> %s </str
 ErrorDuringChartLoad=Kļūda, ielādējot kontu diagrammu. Ja daži konti netika ielādēti, tos joprojām varat ievadīt manuāli.
 ErrorBadSyntaxForParamKeyForContent=Slikta sintakse param keyforcontent. Jābūt vērtībai, kas sākas ar %s vai %s
 ErrorVariableKeyForContentMustBeSet=Kļūda, ir jāiestata konstants ar nosaukumu %s (ar teksta saturu, kas jāparāda) vai %s (ar ārējo URL).
+ErrorURLMustEndWith=URL %s must end %s
 ErrorURLMustStartWithHttp=URL %s jāsāk ar http: // vai https: //
 ErrorHostMustNotStartWithHttp=Host name %s must NOT start with http:// or https://
 ErrorNewRefIsAlreadyUsed=Kļūda, jaunā atsauce jau ir izmantota
@@ -296,3 +297,4 @@ WarningAvailableOnlyForHTTPSServers=Pieejams tikai tad, ja tiek izmantots HTTPS 
 WarningModuleXDisabledSoYouMayMissEventHere=Module %s has not been enabled. So you may miss a lot of event here.
 ErrorActionCommPropertyUserowneridNotDefined=User's owner is required
 ErrorActionCommBadType=Selected event type (id: %n, code: %s) do not exist in Event Type dictionary
+CheckVersionFail=Version check fail

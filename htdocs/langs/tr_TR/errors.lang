@@ -4,9 +4,9 @@
 NoErrorCommitIsDone=Hata yok, taahüt ediyoruz
 # Errors
 ErrorButCommitIsDone=Hatalar bulundu, buna rağmen doğruluyoruz
-ErrorBadEMail=%s e-postası hatalı
-ErrorBadMXDomain=Email %s seems wrong (domain has no valid MX record)
-ErrorBadUrl=URL %s yanlış
+ErrorBadEMail=Email %s is incorrect
+ErrorBadMXDomain=Email %s seems incorrect (domain has no valid MX record)
+ErrorBadUrl=Url %s is incorrect
 ErrorBadValueForParamNotAString=Parametreniz için hatalı değer. Genellikle çeviri eksik olduğunda eklenir.
 ErrorRefAlreadyExists=Reference <b>%s</b> already exists.
 ErrorLoginAlreadyExists=%s kullanıcı adı zaten var.
@@ -46,8 +46,8 @@ ErrorWrongDate=Tarih doğru değil!
 ErrorFailedToWriteInDir=%s dizinine yazılamadı
 ErrorFoundBadEmailInFile=Dosyadaki %s satırları için hatalı e-posta sözdizimi bulundu (örneğin e-posta=%s ile satır %s)
 ErrorUserCannotBeDelete=Kullanıcı silinemiyor. Dolibarr varlıklarıyla ilişkili olabilir.
-ErrorFieldsRequired=Bazı gerekli alanlar doldurulmamış.
-ErrorSubjectIsRequired=E-posta konusu zorunludur
+ErrorFieldsRequired=Some required fields have been left blank.
+ErrorSubjectIsRequired=The email subject is required
 ErrorFailedToCreateDir=Dizin oluşturulamadı. Web sunucusu kullanıcısının Dolibarr belgeleri dizinine yazma izinlerini denetleyin. Eğer bu parametre <b>guvenli_mod</b> bu PHP üzerinde etkinleştirilmişse, Dolibarr php dosyalarının web sunucusu kullanıcısına (ya da grubuna) sahip olduğunu denetleyin.
 ErrorNoMailDefinedForThisUser=Bu kullanıcı için tanımlı posta yok
 ErrorSetupOfEmailsNotComplete=Setup of emails is not complete
@@ -226,6 +226,7 @@ ErrorAPageWithThisNameOrAliasAlreadyExists=The page/container <strong>%s</strong
 ErrorDuringChartLoad=Error when loading chart of accounts. If few accounts were not loaded, you can still enter them manually.
 ErrorBadSyntaxForParamKeyForContent=Bad syntax for param keyforcontent. Must have a value starting with %s or %s
 ErrorVariableKeyForContentMustBeSet=Error, the constant with name %s (with text content to show) or %s (with external url to show) must be set.
+ErrorURLMustEndWith=URL %s must end %s
 ErrorURLMustStartWithHttp=URL %s must start with http:// or https://
 ErrorHostMustNotStartWithHttp=Host name %s must NOT start with http:// or https://
 ErrorNewRefIsAlreadyUsed=Error, the new reference is already used
@@ -296,3 +297,4 @@ WarningAvailableOnlyForHTTPSServers=Available only if using HTTPS secured connec
 WarningModuleXDisabledSoYouMayMissEventHere=Module %s has not been enabled. So you may miss a lot of event here.
 ErrorActionCommPropertyUserowneridNotDefined=User's owner is required
 ErrorActionCommBadType=Selected event type (id: %n, code: %s) do not exist in Event Type dictionary
+CheckVersionFail=Version check fail

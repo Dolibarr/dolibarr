@@ -258,7 +258,7 @@ $sql .= $hookmanager->resPrint;
 
 $sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
 if ($fk_warehouse > 0) {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot = '.$fk_warehouse;
+	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot = '.((int) $fk_warehouse);
 }
 // Add fields from hooks
 $parameters = array();
@@ -266,7 +266,7 @@ $reshook = $hookmanager->executeHooks('printFieldListJoin', $parameters); // Not
 $sql .= $hookmanager->resPrint;
 $sql .= ' WHERE p.entity IN ('.getEntity('product').')';
 if ($productid > 0) {
-	$sql .= " AND p.rowid = ".$productid;
+	$sql .= " AND p.rowid = ".((int) $productid);
 }
 if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 	$sql .= " AND p.fk_product_type = 0";

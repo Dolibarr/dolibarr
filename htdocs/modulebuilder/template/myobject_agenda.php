@@ -132,12 +132,15 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->mymodule->multidir_output[$object->entity]."/".$object->id;
 }
 
-// Security check - Protection if external user
-// if ($user->socid > 0) accessforbidden();
-// if ($user->socid > 0) $socid = $user->socid;
-// $result = restrictedArea($user, 'mymodule', $object->id);
-
 $permissiontoadd = $user->rights->mymodule->myobject->write; // Used by the include of actions_addupdatedelete.inc.php
+
+// Security check (enable the most restrictive one)
+//if ($user->socid > 0) accessforbidden();
+//if ($user->socid > 0) $socid = $user->socid;
+//$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
+//restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
+//if (empty($conf->mymodule->enabled)) accessforbidden();
+//if (!$permissiontoread) accessforbidden();
 
 
 /*
@@ -184,7 +187,7 @@ if ($object->id > 0) {
 	$head = myobjectPrepareHead($object);
 
 
-	print dol_get_fiche_head($head, 'agenda', $langs->trans("MyObject"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'agenda', '', -1, $object->picto);
 
 	// Object card
 	// ------------------------------------------------------------

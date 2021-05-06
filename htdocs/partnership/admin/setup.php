@@ -58,7 +58,7 @@ require_once '../lib/partnership.lib.php';
 //require_once "../class/myclass.class.php";
 
 // Translations
-$langs->loadLangs(array("admin", "partnership@partnership"));
+$langs->loadLangs(array("admin", "partnership"));
 
 // Security check
 if (!$user->admin) {
@@ -70,6 +70,7 @@ $value 	= GETPOST('value', 'alpha');
 
 
 $error = 0;
+
 
 /*
  * Actions
@@ -91,10 +92,10 @@ if ($action == 'setting') {
 
 	$partnership->tabs = array();
 	if ($modulemenu == 'member') {
-		$partnership->tabs[] = array('data'=>'member:+partnership:Partnership:partnership@partnership:$user->rights->partnership->read:/partnership/partnership.php?socid=__ID__');
+		$partnership->tabs[] = array('data'=>'member:+partnership:Partnership:partnership:$user->rights->partnership->read:/partnership/partnership.php?socid=__ID__');
 		$fk_mainmenu = "members";
 	} else {
-		$partnership->tabs[] = array('data'=>'thirdparty:+partnership:Partnership:partnership@partnership:$user->rights->partnership->read:/partnership/partnership.php?socid=__ID__');
+		$partnership->tabs[] = array('data'=>'thirdparty:+partnership:Partnership:partnership:$user->rights->partnership->read:/partnership/partnership.php?socid=__ID__');
 		$fk_mainmenu = "companies";
 	}
 
@@ -126,7 +127,6 @@ if ($action) {
  */
 
 $title = $langs->trans('PartnershipSetup');
-$tab = $langs->trans("PartnershipSetup");
 
 llxHeader('', $title);
 
@@ -134,7 +134,7 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_valu
 print load_fiche_titre($title, $linkback, 'title_setup');
 
 $head = partnershipAdminPrepareHead();
-print dol_get_fiche_head($head, 'settings', $tab, -1, 'partnership');
+print dol_get_fiche_head($head, 'settings', $title, -1, 'partnership');
 
 $form = new Form($db);
 

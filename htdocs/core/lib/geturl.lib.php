@@ -155,7 +155,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		// Deny some reserved host names
 		if (in_array($hosttocheck, array('metadata.google.internal'))) {
 			$info['http_code'] = 400;
-			$info['content'] = 'Error bad hostname (Used by Google metadata). This value for hostname is not allowed.';
+			$info['content'] = 'Error bad hostname '.$hosttocheck.' (Used by Google metadata). This value for hostname is not allowed.';
 			break;
 		}
 
@@ -197,10 +197,11 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 					$info['content'] = 'Error bad hostname IP (IP is a local IP defined into MAIN_SECURITY_SERVER_IP). Must be an external URL.';
 					break;
 				}
-			} else {				// Only local url allowed (dangerous, may allow to get metadata on server or make internal port scanning)
+			}
+			if ($localurl == 1) {	// Only local url allowed (dangerous, may allow to get metadata on server or make internal port scanning)
 				if (filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
 					$info['http_code'] = 400;
-					$info['content'] = 'Error bad hostname. Must be a local URL.';
+					$info['content'] = 'Error bad hostname '.$iptocheck.'. Must be a local URL.';
 					break;
 				}
 				if (!empty($conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP) && !in_array($iptocheck, explode(',', '127.0.0.1,::1,'.$conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP))) {
@@ -209,6 +210,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 					break;
 				}
 			}
+
 			// Common check (local and external)
 			if (in_array($iptocheck, array('100.100.100.200'))) {
 				$info['http_code'] = 400;

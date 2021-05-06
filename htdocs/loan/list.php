@@ -113,7 +113,7 @@ if ($search_amount) {
 	$sql .= natural_search("l.capital", $search_amount, 1);
 }
 if ($search_ref) {
-	$sql .= " AND l.rowid = ".$db->escape($search_ref);
+	$sql .= " AND l.rowid = ".((int) $search_ref);
 }
 if ($search_label) {
 	$sql .= natural_search("l.label", $search_label);

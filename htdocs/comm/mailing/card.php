@@ -308,7 +308,7 @@ if (empty($reshook)) {
 							dol_syslog("comm/mailing/card.php: ok for #".$i.($mail->error ? ' - '.$mail->error : ''), LOG_DEBUG);
 
 							$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
-							$sql .= " SET statut=1, date_envoi='".$db->idate($now)."' WHERE rowid=".$obj->rowid;
+							$sql .= " SET statut=1, date_envoi = '".$db->idate($now)."' WHERE rowid=".((int) $obj->rowid);
 							$resql2 = $db->query($sql);
 							if (!$resql2) {
 								dol_print_error($db);
@@ -378,7 +378,7 @@ if (empty($reshook)) {
 					}
 				}
 
-				$sql = "UPDATE ".MAIN_DB_PREFIX."mailing SET statut=".$statut." WHERE rowid=".$object->id;
+				$sql = "UPDATE ".MAIN_DB_PREFIX."mailing SET statut=".((int) $statut)." WHERE rowid = ".((int) $object->id);
 				dol_syslog("comm/mailing/card.php: update global status", LOG_DEBUG);
 				$resql2 = $db->query($sql);
 				if (!$resql2) {

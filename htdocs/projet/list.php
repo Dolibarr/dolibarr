@@ -424,7 +424,7 @@ if ($search_public != '') {
 	$sql .= " AND p.public = ".$db->escape($search_public);
 }
 // For external user, no check is done on company permission because readability is managed by public status of project and assignement.
-//if ($socid > 0) $sql.= " AND s.rowid = ".$socid;
+//if ($socid > 0) $sql.= " AND s.rowid = ".((int) $socid);
 if ($search_sale > 0) {
 	$sql .= " AND sc.fk_user = ".((int) $search_sale);
 }

@@ -97,7 +97,7 @@ if ($action == 'add') {
 		$db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
-		$sql .= " WHERE fk_user=".$id." AND fk_action=".$actionid;
+		$sql .= " WHERE fk_user=".((int) $id)." AND fk_action=".((int) $actionid);
 		if ($db->query($sql)) {
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (datec,fk_user, fk_action)";
 			$sql .= " VALUES ('".$db->idate($now)."',".$id.",".$actionid.")";
@@ -204,11 +204,11 @@ if ($result > 0) {
 	// Add notification form
 	//  print load_fiche_titre($langs->trans("AddNewNotification"), '', '');
 
-	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">';
+	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.urlencode($id).'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	$param = "&id=".$id;
+	$param = "&id=".urlencode($id);
 
 	// Line with titles
 	/*  print '<table width="100%" class="noborder">';

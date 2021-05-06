@@ -4,9 +4,9 @@
 NoErrorCommitIsDone=No error, we commit
 # Errors
 ErrorButCommitIsDone=Errors found but we validate despite this
-ErrorBadEMail=Email %s is wrong
-ErrorBadMXDomain=Email %s seems wrong (domain has no valid MX record)
-ErrorBadUrl=Url %s is wrong
+ErrorBadEMail=Email %s is incorrect
+ErrorBadMXDomain=Email %s seems incorrect (domain has no valid MX record)
+ErrorBadUrl=Url %s is incorrect
 ErrorBadValueForParamNotAString=Bad value for your parameter. It appends generally when translation is missing.
 ErrorRefAlreadyExists=Reference <b>%s</b> already exists.
 ErrorLoginAlreadyExists=Login %s already exists.
@@ -46,8 +46,8 @@ ErrorWrongDate=Date is not correct!
 ErrorFailedToWriteInDir=Failed to write in directory %s
 ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=%s)
 ErrorUserCannotBeDelete=User cannot be deleted. Maybe it is associated to Dolibarr entities.
-ErrorFieldsRequired=Some required fields were not filled.
-ErrorSubjectIsRequired=The email topic is required
+ErrorFieldsRequired=Some required fields have been left blank.
+ErrorSubjectIsRequired=The email subject is required
 ErrorFailedToCreateDir=Failed to create a directory. Check that Web server user has permissions to write into Dolibarr documents directory. If parameter <b>safe_mode</b> is enabled on this PHP, check that Dolibarr php files owns to web server user (or group).
 ErrorNoMailDefinedForThisUser=No mail defined for this user
 ErrorSetupOfEmailsNotComplete=Setup of emails is not complete
@@ -262,6 +262,7 @@ ErrorDateIsInFuture=Error, the date can't be in the future
 ErrorAnAmountWithoutTaxIsRequired=Error, amount is mandatory
 ErrorAPercentIsRequired=Error, please fill in the percentage correctly
 ErrorYouMustFirstSetupYourChartOfAccount=You must first setup your chart of account
+ErrorFailedToFindEmailTemplate=Failed to find template with code name %s
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.

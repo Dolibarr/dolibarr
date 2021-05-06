@@ -46,7 +46,6 @@ Module40Name=موردين
 Module700Name=تبرعات
 Module1780Name=الأوسمة/التصنيفات
 Permission81=قراءة أوامر الشراء
-ShowBugTrackLink=Show link "<strong>%s</strong>"
 MailToSendInvoice=فواتير العميل
 MailToSendSupplierOrder=أوامر الشراء
 MailToSendSupplierInvoice=فواتير المورد

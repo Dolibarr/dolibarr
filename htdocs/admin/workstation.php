@@ -33,11 +33,6 @@ require_once DOL_DOCUMENT_ROOT . '/workstation/lib/workstation.lib.php';
 // Translations
 $langs->loadLangs(array("admin", "workstation"));
 
-// Access control
-if (!$user->admin) {
-	accessforbidden();
-}
-
 // Parameters
 $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
@@ -52,14 +47,19 @@ $value = GETPOST('value', 'alpha');
 $error = 0;
 $setupnotempty = 0;
 
+$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+
+// Access control
+if (!$user->admin) {
+	accessforbidden();
+}
+
 
 /*
  * Actions
  */
 
-if ((float) DOL_VERSION >= 6) {
-	include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
-}
+include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
 	$maskconstorder = GETPOST('maskconstWorkstation', 'alpha');
@@ -157,19 +157,19 @@ if ($action == 'updateMask') {
 
 $form = new Form($db);
 
-$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-
+$help_url = '';
 $page_name = "WorkstationSetup";
-llxHeader('', $langs->trans($page_name));
+
+llxHeader('', $langs->trans($page_name), $help_url);
 
 // Subheader
 $linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';
 
-print load_fiche_titre($langs->trans($page_name), $linkback, 'object_workstation@workstation');
+print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 
 // Configuration header
 $head = workstationAdminPrepareHead();
-print dol_get_fiche_head($head, 'settings', '', -1, "workstation@workstation");
+print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, "workstation");
 
 // Setup page goes here
 //echo '<span class="opacitymedium">'.$langs->trans("WorkstationSetupPage").'</span><br><br>';

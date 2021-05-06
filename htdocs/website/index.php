@@ -26,6 +26,7 @@ define('NOSCANPOSTFORINJECTION', 1);
 define('NOSTYLECHECK', 1);
 define('USEDOLIBARREDITOR', 1);
 define('FORCE_CKEDITOR', 1); // We need CKEditor, even if module is off.
+if (!defined('DISABLE_JS_GRAHP')) define('DISABLE_JS_GRAPH', 1);
 
 //header('X-XSS-Protection:0');	// Disable XSS filtering protection of some browsers (note: use of Content-Security-Policy is more efficient). Disabled as deprecated.
 
@@ -2260,7 +2261,7 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 
 	$domtree->formatOutput = true;
 
-	$xmlname = 'sitemap.'.$websitekey.'.xml';
+	$xmlname = 'sitemap.xml';
 
 	$sql = "SELECT wp.rowid, wp.type_container , wp.pageurl, wp.lang, wp.fk_page, wp.tms as tms,";
 	$sql .= " w.virtualhost, w.fk_default_home";
@@ -2285,7 +2286,7 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 					$shortlangcode = substr($objp->lang, 0, 2); // en_US or en-US -> en
 				}
 				if (empty($shortlangcode)) {
-					$shortlangcode = substr($object->lang, 0, 2); // en_US or en-US -> en
+					$shortlangcode = substr($object->lang, 0, 2); // Use short lang code of website
 				}
 
 				// Forge $pageurl, adding language prefix if it is an alternative language
@@ -2344,7 +2345,7 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 								$xhtmllink = $domtree->createElement('xhtml:link', '');
 								$xhtmllink->setAttribute("rel", "alternante");
 								$xhtmllink->setAttribute("hreflang", $tmpshortlangcode);
-								$xhtmllink->setAttribute("href", $domainname.($objp->fk_default_home == $tmppage->id ? '/' : (($tmpshortlangcode != substr($objp->lang, 0, 2)) ? '/'.$tmpshortlangcode : '').'/'.$tmppage->pageurl.'.php'));
+								$xhtmllink->setAttribute("href", $domainname.($objp->fk_default_home == $tmppage->id ? '/' : (($tmpshortlangcode != substr($object->lang, 0, 2)) ? '/'.$tmpshortlangcode : '').'/'.$tmppage->pageurl.'.php'));
 								$url->appendChild($xhtmllink);
 
 								$alternatefound++;
@@ -2353,7 +2354,8 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 					}
 
 					// Add "has translation pages"
-					$sql = 'SELECT rowid as id, lang, pageurl from '.MAIN_DB_PREFIX.'website_page where fk_page IN ('.$db->sanitize($objp->rowid.($translationof ? ', '.$translationof : '')).")";
+					$sql = 'SELECT rowid as id, lang, pageurl from '.MAIN_DB_PREFIX.'website_page';
+					$sql .= ' WHERE status = '.WebsitePage::STATUS_VALIDATED.' AND fk_page IN ('.$db->sanitize($objp->rowid.($translationof ? ', '.$translationof : '')).")";
 					$resqlhastrans = $db->query($sql);
 					if ($resqlhastrans) {
 						$num_rows_hastrans = $db->num_rows($resqlhastrans);
@@ -2367,7 +2369,7 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 									$xhtmllink = $domtree->createElement('xhtml:link', '');
 									$xhtmllink->setAttribute("rel", "alternate");
 									$xhtmllink->setAttribute("hreflang", $tmpshortlangcode);
-									$xhtmllink->setAttribute("href", $domainname.($objp->fk_default_home == $objhastrans->id ? '/' : (($tmpshortlangcode != substr($objp->lang, 0, 2) ? '/'.$tmpshortlangcode : '')).'/'.$objhastrans->pageurl.'.php'));
+									$xhtmllink->setAttribute("href", $domainname.($objp->fk_default_home == $objhastrans->id ? '/' : (($tmpshortlangcode != substr($object->lang, 0, 2) ? '/'.$tmpshortlangcode : '')).'/'.$objhastrans->pageurl.'.php'));
 									$url->appendChild($xhtmllink);
 
 									$alternatefound++;
@@ -2396,7 +2398,7 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 				if (!empty($conf->global->MAIN_UMASK)) {
 					@chmod($tempdir.$xmlname, octdec($conf->global->MAIN_UMASK));
 				}
-				setEventMessages($langs->trans("SitemapGenerated"), null, 'mesgs');
+				setEventMessages($langs->trans("SitemapGenerated", $xmlname), null, 'mesgs');
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
@@ -2414,7 +2416,7 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 	$robotsitemap = "Sitemap: ".$domainname."/".$xmlname;
 	$result = strpos($robotcontent, 'Sitemap: ');
 	if ($result) {
-		$result = preg_replace("/Sitemap.*\n/", $robotsitemap, $robotcontent);
+		$result = preg_replace('/Sitemap:.*/', $robotsitemap, $robotcontent);
 		$robotcontent = $result ? $result : $robotcontent;
 	} else {
 		$robotcontent .= $robotsitemap."\n";

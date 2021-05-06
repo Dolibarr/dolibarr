@@ -286,9 +286,10 @@ if ($action == 'create') {
 			if (!empty($conf->use_javascript_ajax)) {
 				print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmount' data-rowid='".$namef."' data-value='".($objp->amount - $sumpaid)."'");
 			} */
-			$remaintopay = $objp->amount - $sumpaid;
-			print '<input type=hidden class="sum_remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
-			print '<input type="text" size="8" name="'.$namef.'" id="'.$namef.'" value="'.$remaintopay.'">';
+			$valuetoshow = GETPOSTISSET($namef) ? GETPOST($namef) : ($objp->amount - $sumpaid);
+
+			print '<input type=hidden class="sum_remain" name="'.$nameRemain.'" value="'.$valuetoshow.'">';
+			print '<input type="text" class="right width75" name="'.$namef.'" id="'.$namef.'" value="'.$valuetoshow.'">';
 		} else {
 			print '-';
 		}

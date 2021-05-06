@@ -442,7 +442,7 @@ if ($id) {
 		} else {
 			$sql .= " WHERE ";
 		}
-		$sql .= " c.rowid = ".$search_country_id;
+		$sql .= " c.rowid = ".((int) $search_country_id);
 	}
 
 	// If sort order is "country", we use country_code instead
