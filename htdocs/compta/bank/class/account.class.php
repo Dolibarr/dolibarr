@@ -1687,7 +1687,7 @@ class Account extends CommonObject
 	 */
 	public static function replaceThirdparty($db, $origin_id, $dest_id)
 	{
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'bank_url SET url_id = '.$dest_id.' WHERE url_id = '.$origin_id.' AND type=\'company\'';
+		$sql = "UPDATE ".MAIN_DB_PREFIX."bank_url SET url_id = ".((int) $dest_id)." WHERE url_id = ".((int) $origin_id)." AND type='company'";
 
 		if (!$db->query($sql))
 		{
