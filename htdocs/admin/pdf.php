@@ -418,6 +418,8 @@ print '<tr class="oddeven"><td>'.$langs->trans("ShowDetailsInPDFPageFoot").'</td
 print $form->selectarray('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS', $arraydetailsforpdffoot, (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS : 0));
 print '</td></tr>';
 
+// Show alias in thirdparty name
+
 print '<tr class="oddeven"><td>'.$langs->trans("PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME").'</td><td>';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME');
