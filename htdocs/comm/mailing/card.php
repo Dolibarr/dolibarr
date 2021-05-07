@@ -222,14 +222,23 @@ if (empty($reshook)) {
 							$onlinepaymentenabled++;
 						}
 						if ($onlinepaymentenabled && !empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
+							require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+							$substitutionarray['__ONLINEPAYMENTLINK_MEMBER__'] = getHtmlOnlinePaymentLink('member', $obj->source_id);
+							$substitutionarray['__ONLINEPAYMENTLINK_DONATION__'] = getHtmlOnlinePaymentLink('donation', $obj->source_id);
+							$substitutionarray['__ONLINEPAYMENTLINK_ORDER__'] = getHtmlOnlinePaymentLink('order', $obj->source_id);
+							$substitutionarray['__ONLINEPAYMENTLINK_INVOICE__'] = getHtmlOnlinePaymentLink('invoice', $obj->source_id);
+							$substitutionarray['__ONLINEPAYMENTLINK_CONTRACTLINE__'] = getHtmlOnlinePaymentLink('contractline', $obj->source_id);
+
 							$substitutionarray['__SECUREKEYPAYMENT__'] = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
 							if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
 								$substitutionarray['__SECUREKEYPAYMENT_MEMBER__'] = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
+								$substitutionarray['__SECUREKEYPAYMENT_DONATION__'] = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
 								$substitutionarray['__SECUREKEYPAYMENT_ORDER__'] = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
 								$substitutionarray['__SECUREKEYPAYMENT_INVOICE__'] = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
 								$substitutionarray['__SECUREKEYPAYMENT_CONTRACTLINE__'] = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
 							} else {
-								$substitutionarray['__SECUREKEYPAYMENT_MEMBER__'] = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$obj->source_id, 2);
+								$substitutionarray['__SECUREKEYPAYMENT_MEMBER__'] = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'member'.$obj->source_id, 2);
+								$substitutionarray['__SECUREKEYPAYMENT_DONATION__'] = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'donation'.$obj->source_id, 2);
 								$substitutionarray['__SECUREKEYPAYMENT_ORDER__'] = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'order'.$obj->source_id, 2);
 								$substitutionarray['__SECUREKEYPAYMENT_INVOICE__'] = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'invoice'.$obj->source_id, 2);
 								$substitutionarray['__SECUREKEYPAYMENT_CONTRACTLINE__'] = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'contractline'.$obj->source_id, 2);

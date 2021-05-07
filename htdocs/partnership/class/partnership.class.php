@@ -119,6 +119,10 @@ class Partnership extends CommonObject
 	public $date_partnership_end;
 	public $count_last_url_check_error;
 	public $last_check_backlink;
+
+	/**
+	 * @var string reason_decline_or_cancel
+	 */
 	public $reason_decline_or_cancel;
 	// END MODULEBUILDER PROPERTIES
 
@@ -848,9 +852,10 @@ class Partnership extends CommonObject
 	/**
 	 *	Set refused status
 	 *
-	 *	@param	User	$user			Object user that modify
-	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 *	@param	User	$user			    Object user that modify
+	 *  @param  string  $reasondeclinenote  Reason decline
+	 *  @param	int		$notrigger		    1=Does not execute triggers, 0=Execute triggers
+	 *	@return	int						    <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function refused($user, $reasondeclinenote = '', $notrigger = 0)
 	{

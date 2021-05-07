@@ -3492,7 +3492,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
 				'accountancy', 'account', 'accountline', 'action', 'add', 'address', 'angle-double-down', 'angle-double-up', 'asset',
 				'bank_account', 'barcode', 'bank', 'bill', 'billa', 'billr', 'billd', 'bookmark', 'bom', 'bug', 'building',
-				'cash-register', 'category', 'chart', 'check', 'clock', 'close_title', 'cog', 'collab', 'company', 'contact', 'country', 'contract', 'cron', 'cubes',
+				'cash-register', 'category', 'chart', 'check', 'clock', 'close_title', 'cog', 'collab', 'company', 'contact', 'country', 'contract', 'cron', 'cubes', 'multicurrency',
 				'delete', 'dolly', 'dollyrevert', 'donation', 'download', 'dynamicprice',
 				'edit', 'ellipsis-h', 'email', 'eraser', 'establishment', 'expensereport', 'external-link-alt', 'external-link-square-alt',
 				'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'autofill', 'folder', 'folder-open', 'folder-plus',
@@ -9385,7 +9385,8 @@ function getDictvalue($tablename, $field, $id, $checkentity = false, $rowidfield
 
 	if (!isset($dictvalues[$tablename])) {
 		$dictvalues[$tablename] = array();
-		$sql = 'SELECT * FROM '.$tablename.' WHERE 1'; // Here select * is allowed as it is generic code and we don't have list of fields
+
+		$sql = 'SELECT * FROM '.$tablename.' WHERE 1 = 1'; // Here select * is allowed as it is generic code and we don't have list of fields
 		if ($checkentity) {
 			$sql .= ' AND entity IN (0,'.getEntity($tablename).')';
 		}
@@ -9674,6 +9675,7 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 	$class = 'butAction';
 	if ($actionType == 'danger' || $actionType == 'delete') {
 		$class = 'butActionDelete';
+		if (strpos($url, 'token=') === false) $url .= '&token='.newToken();
 	}
 
 	$attr = array(
