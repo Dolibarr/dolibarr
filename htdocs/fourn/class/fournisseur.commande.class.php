@@ -765,7 +765,7 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $save_lastsearch_value = -1, $addlinktonotes = 0)
 	{
-		global $langs, $conf, $user;
+		global $langs, $conf, $user, $hookmanager;
 
 		$result = '';
 
@@ -774,7 +774,15 @@ class CommandeFournisseur extends CommonOrder
 		if ($user->rights->fournisseur->commande->lire) {
 			$label = '<u class="paddingrightonly">'.$langs->trans("SupplierOrder").'</u>';
 			if (isset($this->statut)) {
-				$label .= ' '.$this->getLibStatut(5);
+				$statusText = ' '.$this->getLibStatut(5);
+				$parameters = array('obj' => $this);
+				$reshook = $hookmanager->executeHooks('moreHtmlStatus', $parameters, $object); // Note that $action and $object may have been modified by hook
+				if (empty($reshook)) {
+					$statusText .= $hookmanager->resPrint;
+				} else {
+					$statusText = $hookmanager->resPrint;
+				}
+				$label .= $statusText;
 			}
 			if (!empty($this->ref)) {
 				$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
