@@ -518,7 +518,7 @@ print '<div id="divsubscribe">';
 print '<div class="center subscriptionformhelptext justify">';
 
 // Welcome message
-$text  = '<tr><td class="textpublicpayment"><strong>'.$langs->trans("EvntOrgRegistrationWelcomeMessage").'</strong></td></tr></br>';
+$text  = '<tr><td class="textpublicpayment"><strong>'.$langs->trans("EvntOrgRegistrationBoothWelcomeMessage").'</strong></td></tr></br>';
 $text .= '<tr><td class="textpublicpayment">'.$langs->trans("EvntOrgRegistrationBoothHelpMessage").' '.$id.'.<br><br></td></tr>'."\n";
 $text .= '<tr><td class="textpublicpayment">'.$project->note_public.'</td></tr>'."\n";;
 print $text;

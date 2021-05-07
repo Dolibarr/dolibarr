@@ -119,6 +119,8 @@ EventType = Event type
 # Vote page
 #
 EvntOrgRegistrationWelcomeMessage = Welcome on the conference or booth suggestion page.
+EvntOrgRegistrationConfWelcomeMessage = Welcome on the conference suggestion page.
+EvntOrgRegistrationBoothWelcomeMessage = Welcome on the booth suggestion page.
 EvntOrgVoteHelpMessage = Here, you can view and vote for the suggested events for the project
 VoteOk = Your vote has been accepted.
 AlreadyVoted = You have already voted for this event.
