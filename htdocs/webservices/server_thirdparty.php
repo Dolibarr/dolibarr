@@ -210,7 +210,7 @@ $styleuse = 'encoded'; // encoded/literal/literal wrapped
 $server->register(
 	'getThirdParty',
 	// Entry values
-	array('authentication'=>'tns:authentication', 'id'=>'xsd:string', 'ref'=>'xsd:string', 'ref_ext'=>'xsd:string'),
+	array('authentication'=>'tns:authentication', 'id'=>'xsd:string', 'ref'=>'xsd:string', 'ref_ext'=>'xsd:string', 'barcode'=>'xsd:string', 'profid1'=>'xsd:string', 'profid2'=>'xsd:string'),
 	// Exit values
 	array('result'=>'tns:result', 'thirdparty'=>'tns:thirdparty'),
 	$ns,
@@ -286,13 +286,16 @@ $server->register(
  * @param	string		$id		    		internal id
  * @param	string		$ref		    	internal reference
  * @param	string		$ref_ext	   		external reference
+ * @param	string		$barcode	   		barcode
+ * @param	string		$profid1	   		profid1
+ * @param	string		$profid2	   		profid2
  * @return	array							Array result
  */
-function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
+function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '', $barcode = '', $profid1 = '', $profid2 = '')
 {
 	global $db, $conf;
 
-	dol_syslog("Function: getThirdParty login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
+	dol_syslog("Function: getThirdParty login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext." barcode=".$barcode." profid1=".$profid1." profid2=".$profid2);
 
 	if ($authentication['entity']) $conf->entity = $authentication['entity'];
 
@@ -317,7 +320,7 @@ function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 		if ($fuser->rights->societe->lire)
 		{
 			$thirdparty = new Societe($db);
-			$result = $thirdparty->fetch($id, $ref, $ref_ext);
+			$result = $thirdparty->fetch($id, $ref, $ref_ext, $barcode, $profid1, $profid2);
 			if ($result > 0) {
 				$thirdparty_result_fields = array(
 						'id' => $thirdparty->id,
