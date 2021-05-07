@@ -182,6 +182,16 @@ if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 	print $form->selectarray("MEMBER_NEWFORM_FORCETYPE", $listofval, $forcetype, count($listofval) > 1 ? 1 : 0);
 	print "</td></tr>\n";
 
+	// Force nature of member (mor/phy)
+	$morphys["phy"] = $langs->trans("Physical");
+	$morphys["mor"] = $langs->trans("Moral");
+	print '<tr class="oddeven drag" id="trforcenature"><td>';
+	print $langs->trans("ForceMemberNature");
+	print '</td><td class="right">';
+	$forcenature = empty($conf->global->MEMBER_NEWFORM_FORCEMORPHY) ? 0 : $conf->global->MEMBER_NEWFORM_FORCEMORPHY;	
+	print $form->selectarray("MEMBER_NEWFORM_FORCEMORPHY", $morphys, $forcenature, 1);
+	print "</td></tr>\n";
+
 	// Amount
 	print '<tr class="oddeven" id="tramount"><td>';
 	print $langs->trans("DefaultAmount");
