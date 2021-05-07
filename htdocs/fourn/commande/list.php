@@ -1283,6 +1283,7 @@ if ($resql) {
 
 		$objectstatic->id = $obj->rowid;
 		$objectstatic->ref = $obj->ref;
+		$objectstatic->socid = $obj->socid;
 		$objectstatic->ref_supplier = $obj->ref_supplier;
 		$objectstatic->total_ht = $obj->total_ht;
 		$objectstatic->total_tva = $obj->total_tva;
