@@ -992,6 +992,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : ';
 		if ($object->thirdparty->id > 0) {
 			$morehtmlref .= $object->thirdparty->getNomUrl(1, 'project');
+			$morehtmlref .= '<br>'.$langs->trans("Phone").' : '.dol_print_phone($object->thirdparty->phone, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'phone');
 		}
 		$morehtmlref .= '</div>';
 
