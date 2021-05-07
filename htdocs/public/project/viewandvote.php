@@ -70,7 +70,7 @@ $hookmanager = new HookManager($db);
 $hookmanager->initHooks(array('newpayment'));
 
 // For encryption
-global $dolibarr_main_instance_unique_id;
+global $dolibarr_main_instance_unique_id, $dolibarr_main_url_root;
 
 // Load translation files
 $langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "paybox", "paypal", "stripe")); // File with generic data
@@ -86,6 +86,14 @@ $securekeytocompare = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'confe
 if ($securekeytocompare != $securekeyreceived) {
 	print $langs->trans('MissingOrBadSecureKey');
 	exit;
+}
+
+if (GETPOST("votestatus")=="ok") {
+	setEventMessage($langs->trans("VoteOk"), 'mesgs');
+} else if (GETPOST("votestatus")=="ko") {
+	setEventMessage($langs->trans("AlreadyVoted"), 'warnings');
+} else if (GETPOST("votestatus")=="err") {
+	setEventMessage($langs->trans("VoteError"), 'warnings');
 }
 
 // Define $urlwithroot
@@ -120,7 +128,6 @@ $sql = "SELECT a.id, a.fk_action, a.datep, a.datep2, a.label, a.fk_soc, a.note, 
 $sqlforconf = $sql." AND ca.module='conference@eventorganization'";
 $sqlforbooth = $sql." AND ca.module='booth@eventorganization'";
 
-
 // For conferences
 $result = $db->query($sqlforconf);
 $i = 0;
@@ -133,7 +140,7 @@ while ($i < $db->num_rows($result)) {
 		$thirdpartyname = '';
 	}
 	$listOfConferences .= '<tr><td>'.$obj->label.'</td><td>'.$obj->libelle.'</td><td>'.$obj->datep.'</td><td>'.$obj->datep2.'</td><td>'.$thirdpartyname.'</td><td>'.$obj->note.'</td>';
-	$listOfConferences .= '<td><input type="submit" value="'.$langs->trans("Vote").'" name="'.$obj->id.'" class="button"></td></tr>';
+	$listOfConferences .= '<td><button type="submit" name="vote" value="'.$obj->id.'" class="button">'.$langs->trans("Vote").'</button></td></tr>';
 	$i++;
 }
 
@@ -149,9 +156,55 @@ while ($i < $db->num_rows($result)) {
 		$thirdpartyname = '';
 	}
 	$listOfBooths .= '<tr><td>'.$obj->label.'</td><td>'.$obj->libelle.'</td><td>'.$obj->datep.'</td><td>'.$obj->datep2.'</td><td>'.$thirdpartyname.'</td><td>'.$obj->note.'</td>';
-	$listOfBooths .= '<td><input type="submit" value="'.$langs->trans("Vote").'" name="'.$obj->id.'" class="button"></td></tr>';
+	$listOfBooths .= '<td><button type="submit" name="vote" value="'.$obj->id.'" class="button">'.$langs->trans("Vote").'</button></td></tr>';
 	$i++;
 }
+
+// Get vote result
+$idvote = GETPOST("vote");
+$hashedvote = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'vote'.$idvote);
+
+if (strlen($idvote)) {
+	if ($_COOKIE['VOTE_SUGGESTED_EVENTS_'.$hashedvote]==1) {
+		// Has already voted
+		$votestatus = 'ko';
+	} else {
+		// Has not already voted
+		$conforbooth = new ActionComm($db);
+		$resultconforbooth = $conforbooth->fetch($idvote);
+		if ($resultconforbooth<=0) {
+			$error++;
+			$errmsg .= $conforbooth->error;
+		} else {
+			// Cookie expiration date : start of event, or 30 days if not specified
+			$startdate = $conforbooth->datep;
+			if (strlen($startdate)) {
+				$timeleftbeforestartofevent = $startdate;
+			} else {
+				// Cookie duration by default
+				$timeleftbeforestartofevent = time()+86400*30;
+			}
+
+			// Process to vote
+			$res = setcookie('VOTE_SUGGESTED_EVENTS_'.$hashedvote, 1, 0);
+			if ($res) {
+				$conforbooth->num_vote++;
+				$resupdate = $conforbooth->update($user);
+				if ($resupdate) {
+					$votestatus = 'ok';
+				} else {
+					//Error during update
+					$votestatus = 'err';
+					$res = setcookie('VOTE_SUGGESTED_EVENTS_'.$hashedvote, 0, 0);
+				}
+			} else {
+				$votestatus = 'err';
+			}
+		}
+	}
+	header("Refresh:0;url=".dol_buildpath('/public/project/viewandvote.php?votestatus='.$votestatus.'&id='.$id.'&securekey=', 1).$securekeyreceived);
+}
+
 
 /*
  * View
