@@ -1,4 +1,4 @@
-# ProductBATCH language file - en_US - ProductBATCH
+# ProductBATCH language file - Source file is en_US - ProductBATCH
 ManageLotSerial=Utiliser les numéros de lots/série
 ProductStatusOnBatch=Oui (Lot/Série requis)
 ProductStatusOnSerial=Oui (numéro de série unique requis)
@@ -33,3 +33,5 @@ CustomMasks=Ajoute une option pour définir le masque dans la fiche produit
 LotProductTooltip=Ajoute une option dans la fiche produit pour définir un masque de numéro de lot dédié
 SNProductTooltip=Ajoute une option dans la fiche produit pour définir un masque de numéro de série dédié
 QtyToAddAfterBarcodeScan=Quantité à ajouter pour chaque code à barres/lot/série scanné
+LotProductTooltip=Crée un champ dans la fiche produit pour définir un modèle spécifique de numéro de lot
+SNProductTooltip=Crée un champ dans la fiche produit pour définir un modèle spécifique de numéro de série
