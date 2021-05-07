@@ -1299,7 +1299,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</tr>';
 		}
 		// Traceability
-		if ( empty($conf->global->PRODUCT_DISABLE_TRACEABILITY)) {
+		if ($conf->global->PRODUCT_LOT_ENABLE_TRACEABILITY) {
 			print '<tr><td>'.$langs->trans("LifeTime").'</td><td><input name="lifetime" class="maxwidth100onsmartphone" value="'.GETPOST('lifetime').'"></td></tr>';
 			print '<tr><td>'.$langs->trans("QCFrequency").'</td><td><input name="qc_frequency" class="maxwidth100onsmartphone" value="'.GETPOST('qc_frequency').'"></td></tr>';
 		}
@@ -1802,7 +1802,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Traceability
-			if ( empty($conf->global->PRODUCT_DISABLE_TRACEABILITY)) {
+			if ($conf->global->PRODUCT_LOT_ENABLE_TRACEABILITY) {
 				print '<tr><td>'.$langs->trans("LifeTime").'</td><td><input name="lifetime" class="maxwidth100onsmartphone" value="'.$object->lifetime.'"></td></tr>';
 				print '<tr><td>'.$langs->trans("QCFrequency").'</td><td><input name="qc_frequency" class="maxwidth100onsmartphone" value="'.$object->qc_frequency.'"></td></tr>';
 			}
@@ -2285,7 +2285,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Traceability
-			if ( empty($conf->global->PRODUCT_DISABLE_TRACEABILITY)) {
+			if ($conf->global->PRODUCT_LOT_ENABLE_TRACEABILITY) {
 				print '<tr><td>'.$langs->trans("LifeTime").'</td><td colspan="2">'.$object->lifetime.'</td></tr>';
 				print '<tr><td>'.$langs->trans("QCFrequency").'</td><td colspan="2">'.$object->qc_frequency.'</td></tr>';
 			}
