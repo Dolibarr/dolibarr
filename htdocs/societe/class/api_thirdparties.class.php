@@ -445,7 +445,8 @@ class Thirdparties extends DolibarrApi
 				'Product' => '/product/class/product.class.php',
 				'Project' => '/projet/class/project.class.php',
 				'Ticket' => '/ticket/class/ticket.class.php',
-				'User' => '/user/class/user.class.php'
+				'User' => '/user/class/user.class.php',
+				'Account' => '/compta/bank/class/account.class.php'
 			);
 
 			//First, all core objects must update their tables

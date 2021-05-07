@@ -3217,6 +3217,8 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 
 .smallpaddingimp {
 	padding: 4px !important;
+	padding-left: 7px !important;
+	padding-right: 7px !important;
 }
 input.button[name="upload"] {
 	padding: 4px !important;
@@ -4786,7 +4788,6 @@ span.websitebuttonsitepreviewdisabled img, a.websitebuttonsitepreviewdisabled im
 #divbodywebsite section p {
 	margin: unset;
 }
-
 
 
 /* ============================================================================== */
@@ -6988,6 +6989,10 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 
 	input#addedfile {
 		width: 95%;
+	}
+
+	#divbodywebsite {
+		word-break: break-all;
 	}
 }
 

@@ -44,6 +44,10 @@ if (GETPOST('sendit', 'alpha') && !empty($conf->global->MAIN_UPLOAD_DOC)) {
 					setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
 				}
 			}
+			if (preg_match('/__.*__/', $_FILES['userfile']['name'][$key])) {
+				$error++;
+				setEventMessages($langs->trans('ErrorWrongFileName'), null, 'errors');
+			}
 		}
 
 		if (!$error) {
@@ -64,7 +68,7 @@ if (GETPOST('sendit', 'alpha') && !empty($conf->global->MAIN_UPLOAD_DOC)) {
 } elseif (GETPOST('linkit', 'restricthtml') && !empty($conf->global->MAIN_UPLOAD_DOC)) {
 	$link = GETPOST('link', 'alpha');
 	if ($link) {
-		if (substr($link, 0, 7) != 'http://' && substr($link, 0, 8) != 'https://' && substr($link, 0, 7) != 'file://') {
+		if (substr($link, 0, 7) != 'http://' && substr($link, 0, 8) != 'https://' && substr($link, 0, 7) != 'file://' && substr($link, 0, 7) != 'davs://') {
 			$link = 'http://'.$link;
 		}
 		dol_add_file_process($upload_dir, 0, 1, 'userfile', null, $link, '', 0);
@@ -172,8 +176,11 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes') {
 		// We apply dol_string_nohtmltag also to clean file names (this remove duplicate spaces) because
 		// this function is also applied when we upload and when we make try to download file (by the GETPOST(filename, 'alphanohtml') call).
 		$filenameto = dol_string_nohtmltag($filenameto);
-
-		if ($filenamefrom != $filenameto) {
+		if (preg_match('/__.*__/', $filenameto)) {
+			$error++;
+			setEventMessages($langs->trans('ErrorWrongFileName'), null, 'errors');
+		}
+		if (!$error && $filenamefrom != $filenameto) {
 			// Security:
 			// Disallow file with some extensions. We rename them.
 			// Because if we put the documents directory into a directory inside web root (very bad), this allows to execute on demand arbitrary code.

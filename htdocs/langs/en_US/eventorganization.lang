@@ -82,6 +82,8 @@ EventOrganizationICSLink=Link ICS for events
 ConferenceOrBoothInformation=Conference Or Booth informations
 Attendees = Attendees
 EVENTORGANIZATION_SECUREKEY = Secure Key of the public registration link to a conference
+SERVICE_BOOTH_LOCATION = Service used for the invoice row about a booth location
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service used for the invoice row about an attendee subscription to a conference
 #
 # Status
 #
@@ -94,8 +96,27 @@ EvntOrgCancelled = Cancelled
 #
 # Public page
 #
+RegisterPage = Page for conferences or booth
+EvntOrgRegistrationWelcomeMessage = Welcome on the conference or booth suggestion page.
+EvntOrgRegistrationHelpMessage = Here, you can suggest a new conference or a new booth for the project
+SuggestConference = Suggest a new conference
+SuggestBooth = Suggest a booth
+ViewAndVote = View and vote for suggested events
 PublicAttendeeSubscriptionPage = Public link of registration to a conference
 MissingOrBadSecureKey = The security key is invalid or missing
-EvntOrgWelcomeMessage = This form allows you to register as a new participant to the conference 
-EvntOrgStartDuration = This conference starts on 
-EvntOrgEndDuration =  and ends on
+EvntOrgWelcomeMessage = This form allows you to register as a new participant to the conference : '%s'
+EvntOrgDuration = This conference starts on %s and ends on %s.
+ConferenceAttendeeFee = Conference attendee fee for the event : '%s' occurring from %s to %s.
+#
+# SubscriptionOk page
+#
+SubscriptionOk = Your subscription to this conference has been validated
+#
+# Subscription validation mail
+#
+ConfAttendeeSubscriptionConfirmation = Confirmation of your subscription to a conference
+#
+# Payment page
+#
+Attendee = Participant
+PaymentConferenceAttendee = Paiement de participation à une conférence
