@@ -18,15 +18,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
- *
- * For Paypal test: https://developer.paypal.com/
- * For Paybox test: ???
- * For Stripe test: Use credit card 4242424242424242 .More example on https://stripe.com/docs/testing
- *
- * Variants:
- * - When option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION is on, we use the new PaymentIntent API
- * - When option STRIPE_USE_NEW_CHECKOUT is on, we use the new checkout API
- * - If no option set, we use old APIS (charge)
  */
 
 /**
@@ -288,7 +279,6 @@ print '<table border=1  cellpadding="10" id="conferences" class="center">'."\n";
 print '<th colspan="7">'.$langs->trans("ListOfSuggestedBooths").'</th>';
 print $listOfBooths.'</br>';
 print '</table>'."\n";
-print dol_get_fiche_end();
 
 // Output payment summary form
 print '<tr><td align="center">';
@@ -300,24 +290,6 @@ $var = false;
 $object = null;
 
 print "\n";
-
-
-// Show all action buttons
-print '<br>';
-
-//print '<input type="submit" value="'.$langs->trans("ViewAndVote").'" id="viewandvote" name="viewandvote" class="button">';
-
-
-
-
-print '</td></tr>'."\n";
-
-print '</table>'."\n";
-
-print '</form>'."\n";
-print '</div>'."\n";
-print '<br>';
-
 
 htmlPrintOnlinePaymentFooter($mysoc, $langs, 1, $suffix, $object);
 
