@@ -60,7 +60,6 @@ NoPredefinedProductToDispatch=No hay productos predefinidos para este objeto. Po
 DispatchVerb=Envío
 StockLimitShort=Límite para la alerta
 StockLimit=Límite de Inventario para alerta
-StockLimitDesc=(vacío) significa que no hay advertencia.<br>0 se puede utilizar para una advertencia tan pronto como el inventario esté vacío.
 PhysicalStock=Inventario FISICO
 RealStock=Inventario Real
 RealStockDesc=El stock físico / real es el stock actualmente en los almacenes.

@@ -17,5 +17,5 @@ ModuleZapierForDolibarrName = Zapier per a Dolibarr
 ModuleZapierForDolibarrDesc = Mòdul Zapier per a Dolibarr
 ZapierForDolibarrSetup=Configuració de Zapier per a Dolibarr
 ZapierDescription=Interfície amb Zapier
-ZapierAbout=About the module Zapier
+ZapierAbout=Quant al mòdul Zapier
 ZapierSetupPage=There is no need for a setup on Dolibarr side to use Zapier. However, you must generate and publish a package on zapier to be able to use Zapier with Dolibarr. See documentation on <a href="https://wiki.dolibarr.org/index.php/Module_Zapier">this wiki page</a>.

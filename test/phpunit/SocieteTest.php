@@ -379,12 +379,41 @@ class SocieteTest extends PHPUnit\Framework\TestCase
 
 
 	/**
-	 * testSocieteDelete
+	 * testGetOutstandingBills
 	 *
 	 * @param   int     $id     Id of company
 	 * @return  int
 	 *
 	 * @depends testSocieteOther
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testGetOutstandingBills($id)
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+		$localobject=new Societe($this->savdb);
+		$localobject->fetch($id);
+
+		$result=$localobject->getOutstandingBills();
+
+		print __METHOD__." id=".$id." result=".var_export($result, true)."\n";
+		$this->assertTrue(array_key_exists('opened', $result), 'Result of getOutstandingBills failed');
+
+		return $id;
+	}
+
+
+	/**
+	 * testSocieteDelete
+	 *
+	 * @param   int     $id     Id of company
+	 * @return  int
+	 *
+	 * @depends testGetOutstandingBills
 	 * The depends says test is run only if previous is ok
 	 */
 	public function testSocieteDelete($id)

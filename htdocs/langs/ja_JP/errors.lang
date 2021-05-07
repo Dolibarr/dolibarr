@@ -4,9 +4,9 @@
 NoErrorCommitIsDone=エラーなし、コミットする
 # Errors
 ErrorButCommitIsDone=エラーが見つかったが、これにもかかわらず検証する
-ErrorBadEMail=メール%sが間違っている
-ErrorBadMXDomain=メール%sが間違っているようだ(ドメインに有効なMXレコードがない)
-ErrorBadUrl=URLの%sが間違っている
+ErrorBadEMail=Email %s is incorrect
+ErrorBadMXDomain=Email %s seems incorrect (domain has no valid MX record)
+ErrorBadUrl=Url %s is incorrect
 ErrorBadValueForParamNotAString=パラメータ の値が正しくない。通常、翻訳が欠落している場合に追加される。
 ErrorRefAlreadyExists=参照<b>%s</b>はすでに存在する。
 ErrorLoginAlreadyExists=ログイン%sはすでに存在している。
@@ -46,8 +46,8 @@ ErrorWrongDate=日付が正しくない！
 ErrorFailedToWriteInDir=ディレクトリ%sの書き込みに失敗した
 ErrorFoundBadEmailInFile=ファイル内の%s線の発見誤った電子メールのシンタックス(電子メール= %sを使用したサンプルライン%s)
 ErrorUserCannotBeDelete=ユーザーを削除することはできない。多分それはDolibarrエンティティに関連付けられている。
-ErrorFieldsRequired=いくつかの必須フィールドが満たされていなかった。
-ErrorSubjectIsRequired=メールトピックが必要だ
+ErrorFieldsRequired=Some required fields have been left blank.
+ErrorSubjectIsRequired=The email subject is required
 ErrorFailedToCreateDir=ディレクトリの作成に失敗した。そのWebサーバのユーザがDolibarrのドキュメントディレクトリに書き込む権限を持って確認すること。パラメータ の<b>safe_modeが</b>このPHPが有効になっている場合、Dolibarr PHPファイルは、Webサーバーのユーザー(またはグループ)に所有していることを確認すること。
 ErrorNoMailDefinedForThisUser=このユーザーに定義されたメールはない
 ErrorSetupOfEmailsNotComplete=メールの設定が完了していない
@@ -226,6 +226,7 @@ ErrorAPageWithThisNameOrAliasAlreadyExists=ページ/コンテナ<strong>%s </st
 ErrorDuringChartLoad=勘定科目表の読み込み中にエラーが発生した。ロードされていないアカウントが少ない場合でも、手動で入力できる。
 ErrorBadSyntaxForParamKeyForContent=paramkeyforcontentの構文が正しくない。 %sまたは%sで始まる値が必要だ
 ErrorVariableKeyForContentMustBeSet=エラー、名前%s(表示するテキストコンテンツ付き)または%s(表示する外部URL付き)の定数を設定する必要がある。
+ErrorURLMustEndWith=URL%sは%sで終了する必要がある
 ErrorURLMustStartWithHttp=URL %sは http:// または https:// で始まる必要がある
 ErrorHostMustNotStartWithHttp=ホスト名%sは、http:// または https:// で始まらないこと
 ErrorNewRefIsAlreadyUsed=エラー、新規参照はすでに使用されている
@@ -296,3 +297,4 @@ WarningAvailableOnlyForHTTPSServers=HTTPSで保護された接続を使用して
 WarningModuleXDisabledSoYouMayMissEventHere=モジュール%sが有効になっていない。そのため、ここでは多くのイベントを見逃す可能性がある。
 ErrorActionCommPropertyUserowneridNotDefined=ユーザの所有者が必要
 ErrorActionCommBadType=選択したイベント種別 (id: %n, code: %s) がイベント種別辞書に存在しない
+CheckVersionFail=バージョンチェックに失敗する

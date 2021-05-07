@@ -4,9 +4,9 @@
 NoErrorCommitIsDone=Geen fout, wij bevestigen
 # Errors
 ErrorButCommitIsDone=Fouten gevonden maar we valideren toch
-ErrorBadEMail=E-mail %s is verkeerd
-ErrorBadMXDomain=E-mail %s lijkt verkeerd (domein heeft geen geldige MX-record)
-ErrorBadUrl=Ongeldige Url %s
+ErrorBadEMail=Email %s is incorrect
+ErrorBadMXDomain=Email %s seems incorrect (domain has no valid MX record)
+ErrorBadUrl=Url %s is incorrect
 ErrorBadValueForParamNotAString=Slechte parameterwaarde. Wordt over het algemeen gegenereerd als de vertaling ontbreekt.
 ErrorRefAlreadyExists=Referentie <b>%s</b> bestaat al.
 ErrorLoginAlreadyExists=Inlog %s bestaat reeds.
@@ -46,8 +46,8 @@ ErrorWrongDate=Datum is niet correct!
 ErrorFailedToWriteInDir=Schrijven in de map %s mislukt
 ErrorFoundBadEmailInFile=Onjuist e-mail syntax gevonden voor %s regels in het bestand (bijvoorbeeld regel %s met email=%s)
 ErrorUserCannotBeDelete=Gebruiker kan niet worden verwijderd. Misschien is het geassocieerd met Dolibarr-entiteiten.
-ErrorFieldsRequired=Enkele verplichte velden zijn niet ingevuld.
-ErrorSubjectIsRequired=Het e-mail onderwerp is verplicht
+ErrorFieldsRequired=Some required fields have been left blank.
+ErrorSubjectIsRequired=The email subject is required
 ErrorFailedToCreateDir=Creëren van een map mislukt. Controleer of de Webservergebruiker toestemming heeft om te schrijven in Dolibarr documentenmap. Wanneer de parameter <b>safe_mode</b> is ingeschakeld in PHP, controleer dan dat de Dolibarr php bestanden eigendom zijn van de de webserve gebruiker (of groep).
 ErrorNoMailDefinedForThisUser=Geen e-mailadres ingesteld voor deze gebruiker
 ErrorSetupOfEmailsNotComplete=Het instellen van e-mails is niet voltooid
@@ -226,6 +226,7 @@ ErrorAPageWithThisNameOrAliasAlreadyExists=De pagina / container <strong>%s</str
 ErrorDuringChartLoad=Fout bij het laden van een rekeningschema. Als enkele accounts niet werden geladen, kunt u ze nog steeds handmatig invoeren.
 ErrorBadSyntaxForParamKeyForContent=Onjuiste syntaxis voor param keyforcontent. Moet een waarde hebben die begint met %s of %s
 ErrorVariableKeyForContentMustBeSet=Fout, de constante met de naam %s (met tekstinhoud om te tonen) of %s (met externe URL om te tonen) moet worden ingesteld.
+ErrorURLMustEndWith=URL %s must end %s
 ErrorURLMustStartWithHttp=URL %s moet beginnen met http: // of https: //
 ErrorHostMustNotStartWithHttp=Host name %s must NOT start with http:// or https://
 ErrorNewRefIsAlreadyUsed=Fout, de nieuwe referentie is al gebruikt
@@ -296,3 +297,4 @@ WarningAvailableOnlyForHTTPSServers=Alleen beschikbaar als u een beveiligde HTTP
 WarningModuleXDisabledSoYouMayMissEventHere=Module %s has not been enabled. So you may miss a lot of event here.
 ErrorActionCommPropertyUserowneridNotDefined=User's owner is required
 ErrorActionCommBadType=Selected event type (id: %n, code: %s) do not exist in Event Type dictionary
+CheckVersionFail=Version check fail
