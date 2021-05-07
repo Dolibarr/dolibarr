@@ -1295,6 +1295,7 @@ if ($resql) {
 		$objectstatic->statut = $obj->fk_statut;
 		
 
+
 		print '<tr class="oddeven">';
 
 		// Ref
