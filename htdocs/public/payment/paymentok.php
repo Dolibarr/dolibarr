@@ -1176,7 +1176,7 @@ if ($ispaymentok) {
 							$error++;
 							setEventMessages(null, $booth->errors, "errors");
 						} else {
-							$booth->setStatut(CONFERENCEORBOOTH::STATUS_SUGGESTED);
+							$booth->status = CONFERENCEORBOOTH::STATUS_SUGGESTED;
 							$resultboothupdate = $booth->update($user);
 							if ($resultboothupdate<0) {
 								// Finding the thirdparty by getting the invoice
