@@ -484,7 +484,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 	// Traceability info
-	if (!empty($conf->global->PRODUCT_LOT_ENABLE_TRACEABILITY)) {
+	if ($conf->global->PRODUCT_LOT_ENABLE_TRACEABILITY) {
 		print '<tr><td>'.$form->editfieldkey($langs->trans('EndOfLife'), 'eol_date', $object->eol_date, $object, $user->rights->stock->creer).'</td>';
 		print '<td>'.$form->editfieldval($langs->trans('EndOfLife'), 'eol_date', $object->eol_date, $object, $user->rights->stock->creer, 'datepicker').'</td>';
 		print '</tr>';
