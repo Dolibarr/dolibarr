@@ -244,6 +244,9 @@ if (empty($reshook)) {
 								$substitutionarray['__SECUREKEYPAYMENT_CONTRACTLINE__'] = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'contractline'.$obj->source_id, 2);
 							}
 						}
+						if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
+							$substitutionarray['__PUBLICLINK_NEWMEMBERFORM___'] = '<a target="_blank" href="'.DOL_MAIN_URL_ROOT.'/public/members/new.php">'.$langs->trans('BlankSubscriptionForm').'</a>';
+						}
 						/* For backward compatibility, deprecated */
 						if (!empty($conf->paypal->enabled) && !empty($conf->global->PAYPAL_SECURITY_TOKEN)) {
 							$substitutionarray['__SECUREKEYPAYPAL__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
