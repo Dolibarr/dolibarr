@@ -258,7 +258,7 @@ if ($urllogo) {
 print '<table id="welcome" class="center">'."\n";
 $text  = '<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("EvntOrgRegistrationWelcomeMessage").'</strong></td></tr>'."\n";
 $text .= '<tr><td class="textpublicpayment">'.$langs->trans("EvntOrgVoteHelpMessage").' : "'.$project->title.'".<br><br></td></tr>'."\n";
-$text .= '<tr><td class="textpublicpayment">'.$project->note_public.'<br><br></td></tr>'."\n";;
+$text .= '<tr><td class="textpublicpayment">'.$project->note_public.'</td></tr>'."\n";;
 print $text;
 print '</table>'."\n";
 
@@ -269,22 +269,14 @@ print '<th colspan="7">'.$langs->trans("ListOfSuggestedConferences").'</th>';
 print $listOfConferences.'</br>';
 print '</table>'."\n";
 
+print '</br>';
 
 print '<table border=1  cellpadding="10" id="conferences" class="center">'."\n";
 print '<th colspan="7">'.$langs->trans("ListOfSuggestedBooths").'</th>';
 print $listOfBooths.'</br>';
 print '</table>'."\n";
 
-// Output payment summary form
-print '<tr><td align="center">';
-
-$found = false;
-$error = 0;
-$var = false;
-
 $object = null;
-
-print "\n";
 
 htmlPrintOnlinePaymentFooter($mysoc, $langs, 1, $suffix, $object);
 
