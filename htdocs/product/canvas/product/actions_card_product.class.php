@@ -237,7 +237,7 @@ class ActionsCardProduct
 	 *
 	 *  @return	void
 	 */
-	private function getFieldList()
+	private function getFieldListCanvas()
 	{
 		global $conf, $langs;
 
@@ -296,7 +296,7 @@ class ActionsCardProduct
 		// phpcs:enable
 		global $conf, $langs;
 
-		$this->getFieldList();
+		$this->getFieldListCanvas();
 
 		$this->list_datas = array();
 

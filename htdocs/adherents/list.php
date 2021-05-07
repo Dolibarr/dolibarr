@@ -247,6 +247,42 @@ if (empty($reshook)) {
 		}
 	}
 
+	// Create external user
+	if ($massaction == 'createexternaluser' && $user->rights->adherent->creer && $user->rights->user->user->creer) {
+		$tmpmember = new Adherent($db);
+		$error = 0;
+		$nbcreated = 0;
+
+		$db->begin();
+
+		foreach ($toselect as $idtoclose) {
+			$tmpmember->fetch($idtoclose);
+
+			if (!empty($tmpmember->fk_soc)) {
+				$nuser = new User($db);
+				$tmpuser = dol_clone($tmpmember);
+
+				$result = $nuser->create_from_member($tmpuser, $tmpmember->login);
+
+				if ($result < 0 && !count($tmpmember->errors)) {
+					setEventMessages($tmpmember->error, $tmpmember->errors, 'errors');
+				} else {
+					if ($result > 0) {
+						$nbcreated++;
+					}
+				}
+			}
+		}
+
+		if (!$error) {
+			setEventMessages($langs->trans("XExternalUserCreated", $nbcreated), null, 'mesgs');
+
+			$db->commit();
+		} else {
+			$db->rollback();
+		}
+	}
+
 	// Mass actions
 	$objectclass = 'Adherent';
 	$objectlabel = 'Members';
@@ -318,7 +354,7 @@ if ($sall) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
 }
 if ($search_type > 0) {
-	$sql .= " AND t.rowid=".$db->escape($search_type);
+	$sql .= " AND t.rowid=".((int) $search_type);
 }
 if ($search_filter == 'withoutsubscription') {
 	$sql .= " AND (datefin IS NULL OR t.subscription = 0)";
@@ -543,17 +579,20 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 // List of mass actions available
 $arrayofmassactions = array(
-	//'presend'=>$langs->trans("SendByMail"),
-	//'builddoc'=>$langs->trans("PDFMerge"),
+	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').'&ensp;'.$langs->trans("SendByMail"),
+	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 );
 if ($user->rights->adherent->creer) {
-	$arrayofmassactions['close'] = $langs->trans("Resiliate");
+	$arrayofmassactions['close'] = img_picto('', 'close_title', 'class="pictofixedwidth"').$langs->trans("Resiliate");
 }
 if ($user->rights->adherent->supprimer) {
-	$arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
 if ($user->rights->societe->creer) {
-	$arrayofmassactions['preaffecttag'] = '<span class="fa fa-tag paddingrightonly"></span>'.$langs->trans("AffectTag");
+	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
+}
+if ($user->rights->adherent->creer && $user->rights->user->user->creer) {
+	$arrayofmassactions['createexternaluser'] = img_picto('', 'user', 'class="pictofixedwidth"').$langs->trans("CreateExternalUser");
 }
 if (in_array($massaction, array('presend', 'predelete','preaffecttag'))) {
 	$arrayofmassactions = array();
@@ -1063,7 +1102,7 @@ while ($i < min($num, $limit)) {
 			print '</td>';
 		} else {
 			print '<td class="nowrap left">';
-			if ($obj->subscription == 'yes') {
+			if (!empty($obj->subscription)) {
 				print $langs->trans("SubscriptionNotReceived");
 				if ($obj->statut > 0) {
 					print " ".img_warning();

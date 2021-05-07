@@ -131,7 +131,7 @@ InvoiceLinesDone=Líneas de facturas contabilizadas
 ExpenseReportLines=Líneas de informes de gastos a contabilizar
 ExpenseReportLinesDone=Líneas de informes de gastos contabilizadas
 IntoAccount=Contabilizar línea con la cuenta contable
-TotalForAccount=Total para cuenta contable
+TotalForAccount=Cuenta contable total
 
 
 Ventilate=Contabilizar
@@ -202,14 +202,14 @@ Docref=Referencia
 LabelAccount=Descripción
 LabelOperation=Etiqueta operación
 Sens=Dirección
-AccountingDirectionHelp=Para una cuenta contable de un cliente, use Crédito para registrar un pago que recibió <br> Para una cuenta contable de un proveedor, use Débito para registrar un pago que usted realice
+AccountingDirectionHelp=Para una cuenta contable de un cliente, use Crédito para registrar un pago que ha recibido <br> Para una cuenta contable de un proveedor, use Débito para registrar un pago que realizó
 LetteringCode=Cogido de letras
 Lettering=Letras
 Codejournal=Diario
 JournalLabel=Etiqueta del diario
 NumPiece=Apunte
 TransactionNumShort=Núm. transacción
-AccountingCategory=Grupos personalizados
+AccountingCategory=Grupo personalizado
 GroupByAccountAccounting=Agrupar por cuenta del Libro Mayor
 GroupBySubAccountAccounting=Agrupar por cuenta de libro mayor auxiliar
 AccountingAccountGroupsDesc=Puedes definir aquí algunos grupos de cuentas contables. Se usarán para informes de contabilidad personalizados.
@@ -297,7 +297,7 @@ NoNewRecordSaved=No hay más registros para el diario
 ListOfProductsWithoutAccountingAccount=Listado de productos sin cuentas contables
 ChangeBinding=Cambiar la unión
 Accounted=Contabilizada en el Libro Mayor
-NotYetAccounted=Aún no contabilizada en el Libro Mayor
+NotYetAccounted=Aún no contabilizado en el libro mayor
 ShowTutorial=Ver Tutorial
 NotReconciled=No reconciliado
 WarningRecordWithoutSubledgerAreExcluded=Advertencia, todas las operaciones sin una cuenta de libro mayor auxiliar definida se filtran y excluyen de esta vista
@@ -402,7 +402,29 @@ UseMenuToSetBindindManualy=No es posible autodetectar, utilice el menú <a href=
 
 ## Import
 ImportAccountingEntries=Entradas contables
+ImportAccountingEntriesFECFormat=Entradas contables - formato FEC
+FECFormatJournalCode=Diario de código (JournalCode)
+FECFormatJournalLabel=Diario de etiquetas (JournalLib)
+FECFormatEntryNum=Número de pieza (EcritureNum)
+FECFormatEntryDate=Fecha de pieza (EcritureDate)
+FECFormatGeneralAccountNumber=Número de cuenta general (CompteNum)
+FECFormatGeneralAccountLabel=Etiqueta de cuenta general (CompteLib)
+FECFormatSubledgerAccountNumber=Número de cuenta del libro mayor auxiliar (CompAuxNum)
+FECFormatSubledgerAccountLabel=Número de cuenta del libro mayor auxiliar (CompAuxLib)
+FECFormatPieceRef=Pieza ref (PieceRef)
+FECFormatPieceDate=Creación de fecha de pieza (PieceDate)
+FECFormatLabelOperation=Operación de etiquetas (EcritureLib)
+FECFormatDebit=Débito (Debit)
+FECFormatCredit=Crédito (Credit)
+FECFormatReconcilableCode=Código conciliable (EcritureLet)
+FECFormatReconcilableDate=Fecha conciliable (DateLet)
+FECFormatValidateDate=Fecha de pieza validada (ValidDate)
+FECFormatMulticurrencyAmount=Importe multidivisa (Montantdevise)
+FECFormatMulticurrencyCode=Código multidivisa (Idevise)
+
 DateExport=Fecha de exportación
 WarningReportNotReliable=Advertencia, este informe no se basa en el Libro mayor, por lo que no contiene modificaciones manualmente modificadas en el Libro mayor.. Si su diario está actualizado, la vista contable es más precisa.
 ExpenseReportJournal=Informe de gastos diario
 InventoryJournal=Inventario
+
+NAccounts=%s cuentas

@@ -131,7 +131,7 @@ InvoiceLinesDone=已绑定的发票行
 ExpenseReportLines=要绑定的费用行报告
 ExpenseReportLinesDone=已绑定的费用报告行
 IntoAccount=用会计科目绑定行
-TotalForAccount=Total for accounting account
+TotalForAccount=Total accounting account
 
 
 Ventilate=绑定
@@ -202,14 +202,14 @@ Docref=参考
 LabelAccount=标签帐户
 LabelOperation=标签操作
 Sens=Direction
-AccountingDirectionHelp=For an accounting account of a customer, use Credit to record a payment you received<br>For an accounting account of a supplier, use Debit to record a payment you make
+AccountingDirectionHelp=For an accounting account of a customer, use Credit to record a payment you have received<br>For an accounting account of a supplier, use Debit to record a payment you made
 LetteringCode=刻字代码
 Lettering=Lettering
 Codejournal=日记帐
 JournalLabel=Journal label
 NumPiece=件数
 TransactionNumShort=Num. transaction
-AccountingCategory=会计分类
+AccountingCategory=Custom group
 GroupByAccountAccounting=Group by general ledger account
 GroupBySubAccountAccounting=Group by subledger account
 AccountingAccountGroupsDesc=您可以在此处定义一些会计科目组。它们将用于会计分类报告。
@@ -297,7 +297,7 @@ NoNewRecordSaved=没有更多的记录记录
 ListOfProductsWithoutAccountingAccount=未绑定到任何会计科目的产品列表
 ChangeBinding=更改绑定
 Accounted=占总账
-NotYetAccounted=尚未计入分类帐
+NotYetAccounted=Not yet accounted in the ledger
 ShowTutorial=Show Tutorial
 NotReconciled=未调解
 WarningRecordWithoutSubledgerAreExcluded=Warning, all operations without subledger account defined are filtered and excluded from this view
@@ -402,7 +402,29 @@ UseMenuToSetBindindManualy=Lines not yet bound, use menu <a href="%s">%s</a> to 
 
 ## Import
 ImportAccountingEntries=会计分录
+ImportAccountingEntriesFECFormat=Accounting entries - FEC format
+FECFormatJournalCode=Code journal (JournalCode)
+FECFormatJournalLabel=Label journal (JournalLib)
+FECFormatEntryNum=Piece number (EcritureNum)
+FECFormatEntryDate=Piece date (EcritureDate)
+FECFormatGeneralAccountNumber=General account number (CompteNum)
+FECFormatGeneralAccountLabel=General account label (CompteLib)
+FECFormatSubledgerAccountNumber=Subledger account number (CompAuxNum)
+FECFormatSubledgerAccountLabel=Subledger account number (CompAuxLib)
+FECFormatPieceRef=Piece ref (PieceRef)
+FECFormatPieceDate=Piece date creation (PieceDate)
+FECFormatLabelOperation=Label operation (EcritureLib)
+FECFormatDebit=Debit (Debit)
+FECFormatCredit=Credit (Credit)
+FECFormatReconcilableCode=Reconcilable code (EcritureLet)
+FECFormatReconcilableDate=Reconcilable date (DateLet)
+FECFormatValidateDate=Piece date validated (ValidDate)
+FECFormatMulticurrencyAmount=Multicurrency amount (Montantdevise)
+FECFormatMulticurrencyCode=Multicurrency code (Idevise)
+
 DateExport=Date export
 WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contains transaction modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
 ExpenseReportJournal=费用报告日常报表
 InventoryJournal=库存日常报表
+
+NAccounts=%s accounts

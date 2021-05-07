@@ -26,7 +26,6 @@ ConfirmDeleteSending=¿Estás seguro que quieres eliminar este envío?
 ConfirmValidateSending=¿Estás seguro que quiere validar este envío con referencia <b>%s</b>?
 ConfirmCancelSending=¿Estás seguro que quieres cancelar este envío?
 WarningNoQtyLeftToSend=Advertencia, no hay productos esperando para ser enviados.
-StatsOnShipmentsOnlyValidated=Estadísticas realizadas sólo sobre viajes validados. La fecha utilizada es la de validación del viaje (la fecha de entrega prevista no siempre se conoce).
 RefDeliveryReceipt=Ref. comprobante de entrega
 StatusReceipt=Estado del comprobante de entrega
 DateReceived=Fecha de entrega

@@ -25,4 +25,3 @@ BankType2=Kassa
 IncludeClosedAccount=Geschlossene konten miteinbeziehen
 StatusAccountClosed=geschlossen
 ShowCheckReceipt=Zeige überprüfen Einzahlungsbeleg
-Graph=Grafik

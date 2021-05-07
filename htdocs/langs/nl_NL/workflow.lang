@@ -16,10 +16,10 @@ descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classificeer gekoppelde bronverkoop
 # Autoclassify purchase order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classificeer het gekoppelde bronvoorstel als gefactureerd wanneer de leveranciersfactuur is gevalideerd (en als het factuurbedrag gelijk is aan het totale bedrag van het gekoppelde voorstel)
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classificeer gekoppelde inkooporder als gefactureerd wanneer leveranciersfactuur is gevalideerd (en als het factuurbedrag gelijk is aan het totale bedrag van de gekoppelde order)
-descWORKFLOW_BILL_ON_RECEPTION=Classificeer ontvangsten als "gefactureerd" wanneer een gekoppelde leveranciersorder wordt gevalideerd
+descWORKFLOW_BILL_ON_RECEPTION=Classificeer ontvangsten als "gefactureerd" wanneer een gekoppelde inkooporder wordt gevalideerd
 # Autoclose intervention
 descWORKFLOW_TICKET_CLOSE_INTERVENTION=Sluit alle interventies die aan het ticket zijn gekoppeld wanneer een ticket is gesloten
 AutomaticCreation=Automatisch aanmaken
 AutomaticClassification=Automatisch classificeren
 # Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classificeer gekoppelde bronzending als gesloten wanneer de klant factuur wordt gevalideerd

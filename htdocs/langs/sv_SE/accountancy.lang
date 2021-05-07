@@ -131,7 +131,7 @@ InvoiceLinesDone=Bundet linjer med fakturor
 ExpenseReportLines=Kostnadsberäkningar rapporterar att förbinda
 ExpenseReportLinesDone=Förbundna utgiftsrapporter
 IntoAccount=Bind rad med bokföringskonto
-TotalForAccount=Total for accounting account
+TotalForAccount=Total accounting account
 
 
 Ventilate=Binda
@@ -202,14 +202,14 @@ Docref=Referens
 LabelAccount=Etikett konto
 LabelOperation=Etikettoperation
 Sens=Direction
-AccountingDirectionHelp=For an accounting account of a customer, use Credit to record a payment you received<br>For an accounting account of a supplier, use Debit to record a payment you make
+AccountingDirectionHelp=For an accounting account of a customer, use Credit to record a payment you have received<br>For an accounting account of a supplier, use Debit to record a payment you made
 LetteringCode=Brevkod
 Lettering=Lettering
 Codejournal=Loggbok
 JournalLabel=Loggboksetikett
 NumPiece=Stycke nummer
 TransactionNumShort=Num. transaktion
-AccountingCategory=Personliga grupper
+AccountingCategory=Custom group
 GroupByAccountAccounting=Group by general ledger account
 GroupBySubAccountAccounting=Group by subledger account
 AccountingAccountGroupsDesc=Här kan du definiera vissa grupper av bokföringskonto. De kommer att användas för personliga redovisningsrapporter.
@@ -297,7 +297,7 @@ NoNewRecordSaved=Inga flera linjer att bokföra
 ListOfProductsWithoutAccountingAccount=Förteckning över produkter som inte är kopplade till något kontokonto
 ChangeBinding=Ändra bindningen
 Accounted=Redovisas i huvudbok
-NotYetAccounted=Ännu inte redovisad i huvudbok
+NotYetAccounted=Not yet accounted in the ledger
 ShowTutorial=Show Tutorial
 NotReconciled=Inte avstämd
 WarningRecordWithoutSubledgerAreExcluded=Warning, all operations without subledger account defined are filtered and excluded from this view
@@ -402,7 +402,29 @@ UseMenuToSetBindindManualy=Linjer som ännu inte är bundna, använd menyn <a hr
 
 ## Import
 ImportAccountingEntries=Redovisningsposter
+ImportAccountingEntriesFECFormat=Accounting entries - FEC format
+FECFormatJournalCode=Code journal (JournalCode)
+FECFormatJournalLabel=Label journal (JournalLib)
+FECFormatEntryNum=Piece number (EcritureNum)
+FECFormatEntryDate=Piece date (EcritureDate)
+FECFormatGeneralAccountNumber=General account number (CompteNum)
+FECFormatGeneralAccountLabel=General account label (CompteLib)
+FECFormatSubledgerAccountNumber=Subledger account number (CompAuxNum)
+FECFormatSubledgerAccountLabel=Subledger account number (CompAuxLib)
+FECFormatPieceRef=Piece ref (PieceRef)
+FECFormatPieceDate=Piece date creation (PieceDate)
+FECFormatLabelOperation=Label operation (EcritureLib)
+FECFormatDebit=Debit (Debit)
+FECFormatCredit=Credit (Credit)
+FECFormatReconcilableCode=Reconcilable code (EcritureLet)
+FECFormatReconcilableDate=Reconcilable date (DateLet)
+FECFormatValidateDate=Piece date validated (ValidDate)
+FECFormatMulticurrencyAmount=Multicurrency amount (Montantdevise)
+FECFormatMulticurrencyCode=Multicurrency code (Idevise)
+
 DateExport=Date export
 WarningReportNotReliable=Varning, den här rapporten är inte baserad på huvudboken-modulen, så den innehåller inte transaktioner modifierad manuellt i huvudboken. Om din bokföring är uppdaterad är bokföringsvisningen mer exakt.
 ExpenseReportJournal=Kostnadsrapportsloggbok
 InventoryJournal=Inventarieloggbok
+
+NAccounts=%s accounts

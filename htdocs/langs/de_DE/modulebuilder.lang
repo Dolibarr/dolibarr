@@ -85,7 +85,7 @@ ListOfPermissionsDefined=Liste der definierten Berechtigungen
 SeeExamples=Beispiele hier
 EnabledDesc=Condition to have this field active (Examples: 1 or $conf->global->MYMODULE_MYOPTION)
 VisibleDesc=Ist das Feld sichtbar? (Beispiele: 0 = Nie sichtbar, 1 = Auf Liste sichtbar und Formulare erstellen / aktualisieren / anzeigen, 2 = Nur auf Liste sichtbar, 3 = Nur auf Formular erstellen / aktualisieren / anzeigen (nicht Liste), 4 = Auf Liste sichtbar und nur sichtbar bei Formular aktualisieren / anzeigen (nicht erstellen), 5 = Nur im Formular für die Listenendansicht sichtbar (nicht erstellen, nicht aktualisieren). <br> <br> Wenn ein negativer Wert verwendet wird, wird das Feld standardmäßig nicht in der Liste angezeigt, kann jedoch zur Anzeige ausgewählt werden.) <br> <br> Es kann sich um einen Ausdruck handeln, z. B.:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
-DisplayOnPdfDesc=Zeigt dieses Feld in kompatiblen PDF-Dokumenten an. Sie können die Position mit dem Feld "Position" verwalten. <br/> Derzeit bekannt compatibles PDF-Modelle sind: eratosthenes (Bestellung), espadon (Lieferung), sponge (Rechnungen), cyan (propal / Offerten), cornas (Lieferanten-Auftrag) <br/> <br/> <strong> Für Dokument: </strong> <br/> 0 = nicht angezeigt <br/> 1 = Anzeige <br/> 2 = Anzeige nur leer wenn nicht <br/> <br/> <strong> Für Belegzeilen: </strong> <br/> 0 = nicht angezeigt <br/> 1 = in einer Spalte <br/> 3 = Anzeige in Zeile Beschreibung Spalte nach der Beschreibung <br/> 4 = Anzeige in Spalte Beschreibung nach der angezeigten Beschreibung, nur wenn nicht leer
+DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br>Currently, known compatibles PDF models are : eratosthene (order), espadon (ship), sponge (invoices), cyan (propal/quotation), cornas (supplier order)<br><br><strong>For document :</strong><br>0 = not displayed <br>1 = display<br>2 = display only if not empty<br><br><strong>For document lines :</strong><br>0 = not displayed <br>1 = displayed in a column<br>3 = display in line description column after the description<br>4 = display in description column after the description only if not empty
 DisplayOnPdf=Anzeige auf PDF
 IsAMeasureDesc=Kann der Wert des Feldes kumuliert werden, um eine Summe in die Liste aufzunehmen? (Beispiele: 1 oder 0)
 SearchAllDesc=Wird das Feld verwendet, um eine Suche über das Schnellsuchwerkzeug durchzuführen? (Beispiele: 1 oder 0)
@@ -133,7 +133,9 @@ IncludeDocGeneration=Ich möchte einige Dokumente aus dem Objekt generieren
 IncludeDocGenerationHelp=Wenn Sie dies aktivieren, wird Code generiert, um dem Datensatz ein Feld "Dokument generieren" hinzuzufügen.
 ShowOnCombobox=Wert in der Combobox anzeigen
 KeyForTooltip=Schlüssel für Tooltip
-CSSClass=CSS-Klasse
+CSSClass=CSS for edit/create form
+CSSViewClass=CSS for read form
+CSSListClass=CSS for list
 NotEditable=Nicht bearbeitbar
 ForeignKey=Unbekannter Schlüssel
 TypeOfFieldsHelp=Feldtypen:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] ('1' heißt, wir ergänzen eine + Schaltfläche nach der Kombobox, um den Eintrag zu erstellen, 'filter' kann sein 'status=1 AND fk_user = __USER_ID AND entity IN (__SHARED_ENTITIES__)' zum Beispiel)

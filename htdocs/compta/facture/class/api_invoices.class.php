@@ -224,7 +224,7 @@ class Invoices extends DolibarrApi
 			if (!DolibarrApi::_checkFilters($sqlfilters)) {
 				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
@@ -407,7 +407,12 @@ class Invoices extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
+
 		$request_data = (object) $request_data;
+
+		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
+		$request_data->label = checkVal($request_data->label);
+
 		$updateRes = $this->invoice->updateline(
 			$lineid,
 			$request_data->desc,
@@ -419,7 +424,7 @@ class Invoices extends DolibarrApi
 			$request_data->tva_tx,
 			$request_data->localtax1_tx,
 			$request_data->localtax2_tx,
-			'HT',
+			$request_data->price_base_type ? $request_data->price_base_type : 'HT',
 			$request_data->info_bits,
 			$request_data->product_type,
 			$request_data->fk_parent_line,
@@ -694,6 +699,9 @@ class Invoices extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
+		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
+		$request_data->label = checkVal($request_data->label);
+
 		// Reset fk_parent_line for no child products and special product
 		if (($request_data->product_type != 9 && empty($request_data->fk_parent_line)) || $request_data->product_type == 9) {
 			$request_data->fk_parent_line = 0;
@@ -717,8 +725,8 @@ class Invoices extends DolibarrApi
 			$request_data->fk_code_ventilation,
 			$request_data->info_bits,
 			$request_data->fk_remise_except,
-			'HT',
-			0,
+			$request_data->price_base_type ? $request_data->price_base_type : 'HT',
+			$request_data->subprice,
 			$request_data->product_type,
 			$request_data->rang,
 			$request_data->special_code,

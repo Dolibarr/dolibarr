@@ -70,9 +70,11 @@ Deleted=Esborrat
 # Dict
 Type=Tipus
 Severity=Gravetat
+TicketGroupIsPublic=El grup és públic
+TicketGroupIsPublicDesc=If a ticket group is public, it will be visible in the form when creating a ticket from the public interface
 
 # Email templates
-MailToSendTicketMessage=Per enviar un missatge de correu electrònic a partir del tiquet
+MailToSendTicketMessage=Per a enviar correus electrònics des del missatge de tiquet
 
 #
 # Admin page
@@ -91,8 +93,8 @@ TicketEmailNotificationToHelp=Enviar notificacions per correu electrònic a aque
 TicketNewEmailBodyLabel=Missatge de text enviat després de crear un bitllet
 TicketNewEmailBodyHelp=El text especificat aquí s'inserirà en el correu electrònic confirmant la creació d'un nou tiquet des de la interfície pública. La informació sobre la consulta del tiquet s'afegeix automàticament.
 TicketParamPublicInterface=Configuració de la interfície pública
-TicketsEmailMustExist=Es requereix una adreça de correu electrònic correcta per crear un tiquet
-TicketsEmailMustExistHelp=A la interfície pública, l'adreça de correu electrònic ja s'hauria d'emplenar a la base de dades per crear un nou tiquet.
+TicketsEmailMustExist=Cal crear una adreça de correu electrònic existent per a crear un tiquet
+TicketsEmailMustExistHelp=A la interfície pública, l'adreça de correu electrònic ja s'hauria d'emplenar a la base de dades per a crear un nou tiquet.
 PublicInterface=Interfície pública
 TicketUrlPublicInterfaceLabelAdmin=URL alternativa per a la interfície pública
 TicketUrlPublicInterfaceHelpAdmin=És possible definir un àlies al servidor web i, per tant, posar a disposició la interfície pública amb una altra URL (el servidor ha d'actuar com a proxy en aquest nou URL)
@@ -114,8 +116,8 @@ TicketsShowModuleLogo=Mostra el logotip del mòdul a la interfície pública
 TicketsShowModuleLogoHelp=Activeu aquesta opció per a ocultar el mòdul de logotip a les pàgines de la interfície pública
 TicketsShowCompanyLogo=Mostra el logotip de l'empresa en la interfície pública
 TicketsShowCompanyLogoHelp=Activeu aquesta opció per a ocultar el logotip de l'empresa principal a les pàgines de la interfície pública
-TicketsEmailAlsoSendToMainAddress=També envieu notificacions a l'adreça electrònica principal
-TicketsEmailAlsoSendToMainAddressHelp=Activar aquesta opció per enviar un correu electrònic a l'adreça "Correu electrònic de notificació procedent de" (consulteu la configuració a continuació)
+TicketsEmailAlsoSendToMainAddress=Also send a notification to the main email address
+TicketsEmailAlsoSendToMainAddressHelp=Enable this option to also send an email to the address defined into setup "%s" (see tab "%s")
 TicketsLimitViewAssignedOnly=Restringir la visualització als tiquets assignats a l'usuari actual (no és efectiu per als usuaris externs, sempre estarà limitat al tercer de qui depengui)
 TicketsLimitViewAssignedOnlyHelp=Només es veuran les entrades assignades a l'usuari actual. No s'aplica a un usuari amb drets de gestió de tiquets.
 TicketsActivatePublicInterface=Activar la interfície pública
@@ -126,10 +128,10 @@ TicketNumberingModules=Mòdul de numeració de tiquets
 TicketsModelModule=Plantilles de document per a tiquets
 TicketNotifyTiersAtCreation=Notifica la creació de tercers
 TicketsDisableCustomerEmail=Desactiveu sempre els correus electrònics quan es crea un tiquet des de la interfície pública
-TicketsPublicNotificationNewMessage=Envia correus electrònics quan s'afegeixi un missatge nou
+TicketsPublicNotificationNewMessage=Send email(s) when a new message/comment is added to a ticket
 TicketsPublicNotificationNewMessageHelp=Envia correus electrònics quan s'afegeixi un missatge nou des de la interfície pública (a l'usuari assignat o al correu electrònic de notificacions a (actualitzar) i/o al correu electrònic de notificacions)
 TicketPublicNotificationNewMessageDefaultEmail=Notificar correu electrònic cap a (actualitzar)
-TicketPublicNotificationNewMessageDefaultEmailHelp=Envia notificacions de missatges nous per correu electrònic a aquesta adreça si el tiquet no té assignat cap usuari o l’usuari no en té cap.
+TicketPublicNotificationNewMessageDefaultEmailHelp=Send an email to this address for each new message notifications if the ticket doesn't have a user assigned to it or if the user doesn't have any known email.
 #
 # Index & list page
 #
@@ -263,7 +265,7 @@ TicketNewEmailBodyInfosTrackUrl=Podeu veure el progrés del tiquet fent clic a l
 TicketNewEmailBodyInfosTrackUrlCustomer=Podeu veure el progrés del tiquet a la interfície específica fent clic al següent enllaç
 TicketEmailPleaseDoNotReplyToThisEmail=No respongueu directament a aquest correu electrònic. Utilitzeu l'enllaç per respondre des de la mateixa interfície.
 TicketPublicInfoCreateTicket=Aquest formulari us permet registrar un tiquet de suport al nostre sistema de gestió.
-TicketPublicPleaseBeAccuratelyDescribe=Descrigui amb precisió el problema. Proporcioneu la màxima informació possible per permetre que identifiquem correctament la vostra sol·licitud.
+TicketPublicPleaseBeAccuratelyDescribe=Descriviu amb precisió el problema. Proporcioneu la màxima informació possible per a permetre’ns identificar correctament la vostra sol·licitud.
 TicketPublicMsgViewLogIn=Introduïu l'identificador de traça dels tiquets (ID)
 TicketTrackId=ID de seguiment públic
 OneOfTicketTrackId=Un dels vostres ID de seguiment
@@ -302,3 +304,13 @@ BoxLastModifiedTicket=Últims tiquets modificats
 BoxLastModifiedTicketDescription=Últimes entrades modificades %s
 BoxLastModifiedTicketContent=
 BoxLastModifiedTicketNoRecordedTickets=No hi ha tiquets modificats recentment
+BoxTicketType=Number of open tickets by type
+BoxTicketSeverity=Number of open tickets by severity
+BoxNoTicketSeverity=No tickets opened
+BoxTicketLastXDays=Number of new tickets by days the last %s days
+BoxTicketLastXDayswidget = Number of new tickets by days the last X days
+BoxNoTicketLastXDays=No new tickets the last %s days
+BoxNumberOfTicketByDay=Number of new tickets by day
+BoxNewTicketVSClose=Number of today's new tickets versus today's closed tickets
+TicketCreatedToday=Ticket created today
+TicketClosedToday=Ticket closed today

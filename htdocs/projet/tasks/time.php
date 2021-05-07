@@ -1371,7 +1371,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 				if ((empty($id) && empty($ref)) || !empty($projectidforalltimes)) {   // Not a dedicated task
 					print '<td class="nowrap">';
 					if ($action == 'editline' && $_GET['lineid'] == $task_time->rowid) {
-						$formproject->selectTasks(-1, GETPOST('taskid', 'int') ?GETPOST('taskid', 'int') : $task_time->fk_task, 'taskid', 0, 0, 1, 1, 0, 0, 'maxwidth300', $projectstatic->id, '');
+						$formproject->selectTasks(-1, GETPOST('taskid', 'int') ? GETPOST('taskid', 'int') : $task_time->fk_task, 'taskid', 0, 0, 1, 1, 0, 0, 'maxwidth300', $projectstatic->id, '');
 					} else {
 						$tasktmp->id = $task_time->fk_task;
 						$tasktmp->ref = $task_time->ref;
@@ -1390,8 +1390,8 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 			// Task label
 			if (!empty($arrayfields['t.task_label']['checked'])) {
 				if ((empty($id) && empty($ref)) || !empty($projectidforalltimes)) {	// Not a dedicated task
-					print '<td class="nowrap">';
-					print $task_time->label;
+					print '<td class="nowrap tdoverflowmax300" title="'.dol_escape_htmltag($task_time->label).'">';
+					print dol_escape_htmltag($task_time->label);
 					print '</td>';
 					if (!$i) {
 						$totalarray['nbfield']++;
@@ -1600,8 +1600,8 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 				// Task label
 				if (!empty($arrayfields['t.task_label']['checked'])) {
 					if ((empty($id) && empty($ref)) || !empty($projectidforalltimes)) {	// Not a dedicated task
-						print '<td>';
-						print $task_time->label;
+						print '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($task_time->label).'">';
+						print dol_escape_htmltag($task_time->label);
 						print '</td>';
 					}
 				}
@@ -1636,7 +1636,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 
 				// Note
 				if (!empty($arrayfields['t.note']['checked'])) {
-					print '<td class="left">';
+					print '<td class="tdoverflowmax300">';
 					if ($action == 'splitline' && $_GET['lineid'] == $task_time->rowid) {
 						print '<textarea name="timespent_note_line" width="95%" rows="'.ROWS_2.'">'.$task_time->note.'</textarea>';
 					} else {

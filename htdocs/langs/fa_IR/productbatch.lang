@@ -1,8 +1,10 @@
 # ProductBATCH language file - en_US - ProductBATCH
 ManageLotSerial=استفاده از شمارۀ سری‌ساخت/سریال
-ProductStatusOnBatch=بله (نیاز به شمارۀ سری‌ساخت/سریال)
+ProductStatusOnBatch=Yes (lot required)
+ProductStatusOnSerial=Yes (unique serial number required)
 ProductStatusNotOnBatch=خیر ( بدون نیاز به شمارۀ سری‌ساخت/سریال)
-ProductStatusOnBatchShort=بله
+ProductStatusOnBatchShort=Lot
+ProductStatusOnSerialShort=Serial
 ProductStatusNotOnBatchShort=خیر
 Batch=سری‌ساخت/سریال
 atleast1batchfield=تاریخ‌مصرف یا تاریخ‌فروش یا شمارۀ سری‌ساخت/سریال
@@ -22,3 +24,12 @@ ProductLotSetup=برپاسازی قابلیت سری‌ساخت/شماره‌س�
 ShowCurrentStockOfLot=نمایش موجودی فعلی برای زوج محصول/سری‌ساخت
 ShowLogOfMovementIfLot=نمایش گزارش‌کار جابجائی‌های مربوط به زوج محصول/سری‌ساخت
 StockDetailPerBatch=جزئیات موجودی هر سری‌ساخت
+SerialNumberAlreadyInUse=Serial number %s is already used for product %s
+TooManyQtyForSerialNumber=You can only have one product %s for serial number %s
+BatchLotNumberingModules=Options for automatic generation of batch products managed by lots
+BatchSerialNumberingModules=Options for automatic generation of batch products managed by serial numbers
+ManageLotMask=Custom mask
+CustomMasks=Adds an option to define mask in the product card
+LotProductTooltip=Adds an option in the product card to define a dedicated batch number mask
+SNProductTooltip=Adds an option in the product card to define a dedicated serial number mask
+QtyToAddAfterBarcodeScan=Qty to add for each barcode/lot/serial scanned

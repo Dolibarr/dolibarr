@@ -70,6 +70,8 @@ Deleted=Verwijderd
 # Dict
 Type=Type
 Severity=Prioriteit
+TicketGroupIsPublic=Group is public
+TicketGroupIsPublicDesc=If a ticket group is public, it will be visible in the form when creating a ticket from the public interface
 
 # Email templates
 MailToSendTicketMessage=Om e-mail van ticket bericht te verzenden
@@ -114,8 +116,8 @@ TicketsShowModuleLogo=Toon het logo van de module in de openbare interface
 TicketsShowModuleLogoHelp=Schakel deze optie in om het logo op de pagina's van de openbare interface te verbergen
 TicketsShowCompanyLogo=Toon het logo van het bedrijf in de openbare interface
 TicketsShowCompanyLogoHelp=Schakel deze optie in om het logo van het bedrijf op de pagina's van de openbare interface te verbergen
-TicketsEmailAlsoSendToMainAddress=Stuur ook een melding naar het hoofd e-mailadres
-TicketsEmailAlsoSendToMainAddressHelp=Schakel deze optie in om een e-mail te verzenden naar het adres "E-mailmelding van" (zie onderstaande instellingen)
+TicketsEmailAlsoSendToMainAddress=Also send a notification to the main email address
+TicketsEmailAlsoSendToMainAddressHelp=Enable this option to also send an email to the address defined into setup "%s" (see tab "%s")
 TicketsLimitViewAssignedOnly=Beperk de weergave tot tickets die zijn toegewezen aan de huidige gebruiker (niet effectief voor externe gebruikers, altijd beperkt tot de derde partij waarvan ze afhankelijk zijn)
 TicketsLimitViewAssignedOnlyHelp=Alleen tickets die zijn toegewezen aan de huidige gebruiker zijn zichtbaar. Is niet van toepassing op een gebruiker met toegangsrechten voor tickets.
 TicketsActivatePublicInterface=Publieke interface activeren
@@ -126,10 +128,10 @@ TicketNumberingModules=Nummering module voor tickets
 TicketsModelModule=Documentsjablonen voor tickets
 TicketNotifyTiersAtCreation=Breng relatie op de hoogte bij het aanmaken
 TicketsDisableCustomerEmail=Schakel e-mails altijd uit wanneer een ticket wordt gemaakt vanuit de openbare interface
-TicketsPublicNotificationNewMessage=Stuur e-mail (s) wanneer een nieuw bericht is toegevoegd
+TicketsPublicNotificationNewMessage=Send email(s) when a new message/comment is added to a ticket
 TicketsPublicNotificationNewMessageHelp=Stuur e-mail (s) wanneer een nieuw bericht is toegevoegd vanuit de openbare interface (naar de toegewezen gebruiker of de e-mail met meldingen naar (update) en / of de e-mail met meldingen naar)
 TicketPublicNotificationNewMessageDefaultEmail=E-mailmeldingen voor (update)
-TicketPublicNotificationNewMessageDefaultEmailHelp=Stuur e-mailmeldingen voor nieuwe berichten naar dit adres als aan het ticket geen gebruiker is toegewezen of de gebruiker geen e-mail heeft.
+TicketPublicNotificationNewMessageDefaultEmailHelp=Send an email to this address for each new message notifications if the ticket doesn't have a user assigned to it or if the user doesn't have any known email.
 #
 # Index & list page
 #
@@ -302,3 +304,13 @@ BoxLastModifiedTicket=Laatst gewijzigde tickets
 BoxLastModifiedTicketDescription=Laatste %s gewijzigde tickets
 BoxLastModifiedTicketContent=
 BoxLastModifiedTicketNoRecordedTickets=Geen recent gewijzigde tickets
+BoxTicketType=Number of open tickets by type
+BoxTicketSeverity=Number of open tickets by severity
+BoxNoTicketSeverity=No tickets opened
+BoxTicketLastXDays=Number of new tickets by days the last %s days
+BoxTicketLastXDayswidget = Number of new tickets by days the last X days
+BoxNoTicketLastXDays=No new tickets the last %s days
+BoxNumberOfTicketByDay=Number of new tickets by day
+BoxNewTicketVSClose=Number of today's new tickets versus today's closed tickets
+TicketCreatedToday=Ticket created today
+TicketClosedToday=Ticket closed today

@@ -131,7 +131,7 @@ InvoiceLinesDone=Bundne fakturalinjer
 ExpenseReportLines=Utgiftsrapport-linjer som skal bindes
 ExpenseReportLinesDone=Bundne utgiftsrapport-linjer
 IntoAccount=Bind linje med regnskapskonto
-TotalForAccount=Totalt for regnskapskonto
+TotalForAccount=Antall regnskapskonti
 
 
 Ventilate=Bind
@@ -202,14 +202,14 @@ Docref=Referanse
 LabelAccount=Kontoetikett
 LabelOperation=Etikettoperasjon
 Sens=Retning
-AccountingDirectionHelp=For en regnskapskonto til en kunde, bruk Kreditt for å registrere en betaling du mottok <br> For en regnskapskonto for en leverandør, bruk Debet for å registrere en betaling du foretar
+AccountingDirectionHelp=For an accounting account of a customer, use Credit to record a payment you have received<br>For an accounting account of a supplier, use Debit to record a payment you made
 LetteringCode=Korrespondansekode
 Lettering=Korrespondanse
 Codejournal=Journal
 JournalLabel=Journaletikett
 NumPiece=Del nummer
 TransactionNumShort=Transaksjonsnummer
-AccountingCategory=Personlige grupper
+AccountingCategory=Custom group
 GroupByAccountAccounting=Gruppere etter hovedbokskonto
 GroupBySubAccountAccounting=Gruppere etter sub-hovedbokskonto
 AccountingAccountGroupsDesc=Her kan du definere noen grupper regnskapskonti. De vil bli brukt til personlige regnskapsrapporter.
@@ -297,7 +297,7 @@ NoNewRecordSaved=Ingen flere poster å journalisere
 ListOfProductsWithoutAccountingAccount=Liste over varer som ikke bundet til en regnskapskonto
 ChangeBinding=Endre bindingen
 Accounted=Regnskapsført i hovedbok
-NotYetAccounted=Ikke regnskapsført i hovedboken enda
+NotYetAccounted=Not yet accounted in the ledger
 ShowTutorial=Vis veiledning
 NotReconciled=Ikke sammenslått
 WarningRecordWithoutSubledgerAreExcluded=Advarsel, alle operasjoner uten definert sub-hovedbokskonto er filtrert og ekskludert fra denne visningen
@@ -402,7 +402,29 @@ UseMenuToSetBindindManualy=Linjer som ennå ikke er bundet, bruk menyen <a href=
 
 ## Import
 ImportAccountingEntries=Regnskapsposter
+ImportAccountingEntriesFECFormat=Regnskapsoppføringer - FEC-format
+FECFormatJournalCode=Kodejournal (JournalCode)
+FECFormatJournalLabel=Etikettjournal (JournalLib)
+FECFormatEntryNum=Piece number (EcritureNum)
+FECFormatEntryDate=Piece date (EcritureDate)
+FECFormatGeneralAccountNumber=Generelt kontonummer (CompteNum)
+FECFormatGeneralAccountLabel=General account label (CompteLib)
+FECFormatSubledgerAccountNumber=Subledger account number (CompAuxNum)
+FECFormatSubledgerAccountLabel=Subledger account number (CompAuxLib)
+FECFormatPieceRef=Piece ref (PieceRef)
+FECFormatPieceDate=Piece date creation (PieceDate)
+FECFormatLabelOperation=Label operation (EcritureLib)
+FECFormatDebit=Debet (debet)
+FECFormatCredit=Kreditt (kreditt)
+FECFormatReconcilableCode=Reconcilable code (EcritureLet)
+FECFormatReconcilableDate=Reconcilable date (DateLet)
+FECFormatValidateDate=Piece date validated (ValidDate)
+FECFormatMulticurrencyAmount=Multicurrency amount (Montantdevise)
+FECFormatMulticurrencyCode=Multicurrency code (Idevise)
+
 DateExport=Dato eksport
 WarningReportNotReliable=Advarsel, denne rapporten er ikke basert på hovedboken, så den inneholder ikke transaksjoner endret manuelt i hovedboken. Hvis journaliseringen din er oppdatert, er bokføringsvisningen mer nøyaktig.
 ExpenseReportJournal=Utgiftsrapport-journal
 InventoryJournal=Inventar-journal
+
+NAccounts=%s accounts

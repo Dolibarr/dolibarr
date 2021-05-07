@@ -85,7 +85,7 @@ ListOfPermissionsDefined=Lijst met gedefinieerde machtigingen
 SeeExamples=Zie hier voorbeelden
 EnabledDesc=Voorwaarde om dit veld actief te hebben (voorbeelden: 1 of $ conf-&gt; global-&gt; MYMODULE_MYOPTION)
 VisibleDesc=Is het veld zichtbaar? (Voorbeelden: 0 = nooit zichtbaar, 1 = zichtbaar op lijst en formulieren maken / bijwerken / bekijken, 2 = alleen zichtbaar op lijst, 3 = alleen zichtbaar op formulier maken / bijwerken / bekijken (geen lijst), 4 = zichtbaar op lijst en update / view form only (not create), 5 = Alleen zichtbaar op lijst eindweergave formulier (niet create, not update). <br> <br> Het gebruik van een negatieve waarde betekent dat het veld niet standaard wordt weergegeven op de lijst, maar kan worden geselecteerd voor weergave). <br> <br> Het kan een uitdrukking zijn, bijvoorbeeld: <br> preg_match ('/ public /', $ _SERVER ['PHP_SELF'])? 0: 1 <br> ($ user-> rechten-> vakantie-> vakantie-> vakantie-> vakantie->)
-DisplayOnPdfDesc=Toon dit veld op compatibele PDF-documenten, u kunt de positie beheren met het veld "Positie". <br/> Momenteel bekend compatible PDF modellen zijn: Eratosthenes (order), espadon (schip), spons (facturen), cyaan (Propal / offerte), Cornas (leverancier volgorde) <br/> <br/> <strong> Voor document: </strong> <br/> 0 = niet weergegeven <br/> 1 = weergave <br/> 2 = alleen weergegeven als niet leeg <br/> <br/> <strong> Voor documentregels: </strong> <br/> 0 = niet weergegeven <br/> 1 = weergegeven in een kolom <br/> 3 = weergave in regel kolomomschrijving na de beschrijving <br/> 4 = weergave in de beschrijving positie daarachter beschrijving alleen indien niet leeg
+DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br>Currently, known compatibles PDF models are : eratosthene (order), espadon (ship), sponge (invoices), cyan (propal/quotation), cornas (supplier order)<br><br><strong>For document :</strong><br>0 = not displayed <br>1 = display<br>2 = display only if not empty<br><br><strong>For document lines :</strong><br>0 = not displayed <br>1 = displayed in a column<br>3 = display in line description column after the description<br>4 = display in description column after the description only if not empty
 DisplayOnPdf=Weergeven in PDF
 IsAMeasureDesc=Kan de waarde van het veld worden gecumuleerd om een totaal in de lijst te krijgen? (Voorbeelden: 1 of 0)
 SearchAllDesc=Wordt het veld gebruikt om een zoekopdracht uit het snelzoekprogramma te doen? (Voorbeelden: 1 of 0)
@@ -133,7 +133,9 @@ IncludeDocGeneration=Ik wil enkele documenten genereren van het object
 IncludeDocGenerationHelp=Als u dit aanvinkt, wordt er een code gegenereerd om een vak "Document genereren" aan de record toe te voegen.
 ShowOnCombobox=Waarde weergeven in combobox
 KeyForTooltip=Sleutel voor knopinfo
-CSSClass=CSS-klasse
+CSSClass=CSS for edit/create form
+CSSViewClass=CSS for read form
+CSSListClass=CSS for list
 NotEditable=Niet bewerkbaar
 ForeignKey=Vreemde sleutel
 TypeOfFieldsHelp=Type velden: <br> varchar (99), dubbel (24,8), real, tekst, html, datetime, timestamp, integer, integer: ClassName: relativepath / to / classfile.class.php [: 1 [: filter]] ('1' betekent we voegen een + -knop toe na de combo om het record te maken, 'filter' kan 'status = 1 EN fk_user = __USER_ID EN entiteit IN (bijvoorbeeld __SHARED_ENTITIES__)' zijn)

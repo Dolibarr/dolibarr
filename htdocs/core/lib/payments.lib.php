@@ -3,6 +3,7 @@
  * Copyright (C) 2013	    Marcos García	        <marcosgdf@gmail.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Abbes Bahfir            <bafbes@gmail.com>
+ * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -155,7 +156,7 @@ function getValidOnlinePaymentMethods($paymentmethod = '')
 }
 
 /**
- * Return string with full Url
+ * Return string with full online payment Url
  *
  * @param   string	$type		Type of URL ('free', 'order', 'invoice', 'contractline', 'membersubscription' ...)
  * @param	string	$ref		Ref of object
@@ -173,10 +174,26 @@ function showOnlinePaymentUrl($type, $ref)
 	$out = img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePayment", $servicename).'</span><br>';
 	$url = getOnlinePaymentUrl(0, $type, $ref);
 	$out .= '<div class="urllink"><input type="text" id="onlinepaymenturl" class="quatrevingtpercent" value="'.$url.'">';
-	$out .= '<a href="'.$url.'" target="_blank">'.img_picto('', 'globe').'</a></div>';
+	$out .= '<a href="'.$url.'" target="_blank">'.img_picto('', 'globe', 'class="paddingleft"').'</a></div>';
 	$out .= ajax_autoselect("onlinepaymenturl", 0);
 	return $out;
 }
+
+/**
+ * Return string with HTML link for online payment
+ *
+ * @param	string	$type		Type of URL ('free', 'order', 'invoice', 'contractline', 'membersubscription' ...)
+ * @param	string	$ref		Ref of object
+ * @param	string	$label		Text or HTML tag to display, if empty it display the URL
+ * @return	string			Url string
+ */
+function getHtmlOnlinePaymentLink($type, $ref, $label = '')
+{
+	$url = getOnlinePaymentUrl(0, $type, $ref);
+	$label = $label ? $label : $url;
+	return'<a href="'.$url.'" target="_blank">'.$label.'</a>';
+}
+
 
 /**
  * Return string with full Url

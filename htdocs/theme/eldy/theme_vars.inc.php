@@ -115,6 +115,7 @@ $badgeStatus7 = '#25a580';
 $badgeStatus8 = '#993013';
 $badgeStatus9 = '#e7f0f0';
 $badgeStatus10 = '#993013';
+$badgeStatus11 = '#15a540';
 
 // status color ajustement for color blind
 $colorblind_deuteranopes_badgeStatus4 = $colorblind_deuteranopes_badgeStatus7 = $colorblind_deuteranopes_badgeSuccess; //! text color black

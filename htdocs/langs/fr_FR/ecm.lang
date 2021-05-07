@@ -41,3 +41,7 @@ FileNotYetIndexedInDatabase=Fichier non indexé dans la base de données. Télé
 ExtraFieldsEcmFiles=Attributs supplémentaires des fichiers de la GED
 ExtraFieldsEcmDirectories=Attributs supplémentaires des dossiers de la GED
 ECMSetup=Configuration du module de gestion de documents (GED)
+GenerateImgWebp=Dupliquer toutes les images avec une autre version au format .webp
+ConfirmGenerateImgWebp=If you confirm, you will generate an image in .webp format for all images currently into this folder (subfolders are not included)...
+ConfirmImgWebpCreation=Confirmer la duplication de toutes les images
+SucessConvertImgWebp=Images dupliquées avec succès

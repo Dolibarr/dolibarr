@@ -158,7 +158,7 @@ class MyModuleApi extends DolibarrApi
 			if (!DolibarrApi::_checkFilters($sqlfilters)) {
 				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
@@ -208,12 +208,17 @@ class MyModuleApi extends DolibarrApi
 		if (!DolibarrApiAccess::$user->rights->mymodule->write) {
 			throw new RestException(401);
 		}
+
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
-			$this->myobject->$field = $value;
+			$this->myobject->$field = $this->_checkValForAPI($field, $value, $this->myobject);
 		}
+
+		// Clean data
+		// $this->myobject->abc = checkVal($this->myobject->abc, 'alphanohtml');
+
 		if ($this->myobject->create(DolibarrApiAccess::$user)<0) {
 			throw new RestException(500, "Error creating MyObject", array_merge(array($this->myobject->error), $this->myobject->errors));
 		}
@@ -250,8 +255,11 @@ class MyModuleApi extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
-			$this->myobject->$field = $value;
+			$this->myobject->$field = $this->_checkValForAPI($field, $value, $this->myobject);
 		}
+
+		// Clean data
+		// $this->myobject->abc = checkVal($this->myobject->abc, 'alphanohtml');
 
 		if ($this->myobject->update(DolibarrApiAccess::$user, false) > 0) {
 			return $this->get($id);

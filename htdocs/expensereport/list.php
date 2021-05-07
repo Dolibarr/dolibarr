@@ -80,10 +80,10 @@ $diroutputmassaction = $conf->expensereport->dir_output.'/temp/massgeneration/'.
 
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'aZ09comma');
-$sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$limit 		= GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$sortfield	= GETPOST('sortfield', 'aZ09comma');
+$sortorder	= GETPOST('sortorder', 'aZ09comma');
+$page 		= GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -98,19 +98,22 @@ if (!$sortfield) {
 }
 
 
-$sall         = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
-$search_ref   = GETPOST('search_ref', 'alpha');
-$search_user  = GETPOST('search_user', 'int');
-$search_amount_ht = GETPOST('search_amount_ht', 'alpha');
-$search_amount_vat = GETPOST('search_amount_vat', 'alpha');
-$search_amount_ttc = GETPOST('search_amount_ttc', 'alpha');
-$search_status = (GETPOST('search_status', 'intcomma') != '' ?GETPOST('search_status', 'intcomma') : GETPOST('statut', 'intcomma'));
-$month_start  = GETPOST("month_start", "int");
-$year_start   = GETPOST("year_start", "int");
-$day_start    = GETPOST("day_start", "int");
-$day_end      = GETPOST("day_end", "int");
-$month_end    = GETPOST("month_end", "int");
-$year_end     = GETPOST("year_end", "int");
+$sall			= trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+
+$search_ref			= GETPOST('search_ref', 'alpha');
+$search_user		= GETPOST('search_user', 'int');
+$search_amount_ht	= GETPOST('search_amount_ht', 'alpha');
+$search_amount_vat	= GETPOST('search_amount_vat', 'alpha');
+$search_amount_ttc	= GETPOST('search_amount_ttc', 'alpha');
+$search_status		= (GETPOST('search_status', 'intcomma') != '' ?GETPOST('search_status', 'intcomma') : GETPOST('statut', 'intcomma'));
+
+$year_start   = GETPOST('year_start', 'int');
+$month_start  = GETPOST('month_start', 'int');
+$day_start    = GETPOST('day_start', 'int');
+$year_end     = GETPOST('year_end', 'int');
+$month_end    = GETPOST('month_end', 'int');
+$day_end      = GETPOST('day_end', 'int');
+
 $optioncss    = GETPOST('optioncss', 'alpha');
 
 if ($search_status == '') {
@@ -359,12 +362,12 @@ if ($resql) {
 
 	// List of mass actions available
 	$arrayofmassactions = array(
-		'generate_doc'=>$langs->trans("ReGeneratePDF"),
-		'builddoc'=>$langs->trans("PDFMerge"),
-		'presend'=>$langs->trans("SendByMail"),
+		'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
+		'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
+		'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 	);
 	if ($user->rights->expensereport->supprimer) {
-		$arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	}
 	if (in_array($massaction, array('presend', 'predelete'))) {
 		$arrayofmassactions = array();

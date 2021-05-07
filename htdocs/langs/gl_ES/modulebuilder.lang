@@ -58,7 +58,7 @@ DatabaseIndex=Índice da base de datos
 FileAlreadyExists=O ficheiro %s xa existe
 TriggersFile=Ficheiro para o código de trigger
 HooksFile=Ficheiro para o código de hooks
-ArrayOfKeyValues=​​= Matriz de chave-valor
+ArrayOfKeyValues=​​Matriz de chave-valor
 ArrayOfKeyValuesDesc=Matriz de chaves e valores se o campo é unha lista combinada con valores fixos
 WidgetFile=Ficheiro widget
 CSSFile=Ficheiro CSS
@@ -85,7 +85,7 @@ ListOfPermissionsDefined=Listaxe de permisos definidos
 SeeExamples=Ver exemplos aquí
 EnabledDesc=Condición para ter activo este campo (Exemplos: 1 ou $ conf-> global-> MYMODULE_MYOPTION)
 VisibleDesc=¿É visible o campo? (Exemplos: 0= Nunca visible, 1= Visible na lista e crear/actualizar/ver formularios, 2= Visible só na lista, 3= Visible só na forma de crear/actualizar/ver (non lista), 4= Visible na lista e actualizar/ver formulario só (non crear), 5= Visible só no formulario de visualización final da lista (non crear, non actualizar). <br> <br> Usar un valor negativo significa que o campo non se amosa por defecto na lista, pero pódese seleccionar para ver). <br> <br> Pode ser unha expresión, por exemplo: <br> preg_match ('/ public /', $ _SERVER ['PHP_SELF'])?0:1 <br> ($ usuario-> dereitos->vacacións->definir_ vacacións?1:0)
-DisplayOnPdfDesc=Amosar este campo en documentos PDF compatibles, pode xestionar a posición co campo "Posición". <br/> Actualmente, os modelos de PDF compatibles coñecidos son: eratosthene (pedimento), espadon (envío), sponge (facturas), cian ( orzamento), cornas (pedimento de provedor) <br/> <br/> <strong> Para documento: </strong> <br/> 0= non amosado <br/> 1= visualización <br/> 2= visualización só se non está baleiro <br/> <br/> <strong> Para liñas de documento: </strong> <br/> 0= non amosado <br/> 1= amosado nunha columna <br/> 3= amosado en liña columna de descrición despois da descrición <br/> 4= amosar na columna de descrición despois da descrición só se non está baleira
+DisplayOnPdfDesc=Amosar este campo en documentos PDF compatibles, pode xestionar a posición co campo "Posición". <br>Actualmente, os modelos PDF compatibles coñecidos son: eratosteno (pedimento), espadón (envío), sponge (facturas), cian (orzamentos), cornas (pedimento a provedor)<br><br><strong> Paara o documento:</strong><br> 0= non amosado<br> 1=amosar <br>2= amosar só se non está baleiro<br><br><strong> Para as liñas do documento</strong><br>0= non amosado<br>1=amosar nunha columna<br>3=amosar na liña da columna de descrición despois da descrición<br>4= amosar na columna de descrición só despois da descrición se non está baleira
 DisplayOnPdf=Amosar en PDF
 IsAMeasureDesc=¿Pódese acumular o valor do campo para obter un total na lista? (Exemplos: 1 ou 0)
 SearchAllDesc=¿O campo utilízase para facer unha procura desde a ferramenta de busca rápida? (Exemplos: 1 ou 0)
@@ -133,7 +133,9 @@ IncludeDocGeneration=Quero xerar algúns documentos a partir do obxecto
 IncludeDocGenerationHelp=Se marca isto, xerarase algún código para engadir unha caixa "Xerar documento" no rexistro.
 ShowOnCombobox=Mostrar o valor en combobox
 KeyForTooltip=Chave para a información sobre ferramentas
-CSSClass=Clase CSS
+CSSClass=CSS para editar/crear formulario
+CSSViewClass=CSS para formulario de lectura
+CSSListClass=CSS para a listaxe
 NotEditable=Non editable
 ForeignKey=Chave estranxeira
 TypeOfFieldsHelp=Tipo de campos: <br> varchar (99), double (24,8), real, text, html, datetime, timestamp, integer, integer: ClassName:relativepath/to/classfile.class.php[:1[:filter]] ("1" significa que engadimos un botón + despois do combo para crear o rexistro, "filter" pode ser "status=1 AND fk_user=__USER_ID AND entity IN (__SHARED_ENTITIES__)" por exemplo)

@@ -79,7 +79,7 @@ class LignePrelevement
 		$sql .= ", pl.statut, pl.fk_soc";
 		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 		$sql .= ", ".MAIN_DB_PREFIX."prelevement_bons as p";
-		$sql .= " WHERE pl.rowid=".$rowid;
+		$sql .= " WHERE pl.rowid=".((int) $rowid);
 		$sql .= " AND p.rowid = pl.fk_prelevement_bons";
 		$sql .= " AND p.entity = ".$conf->entity;
 

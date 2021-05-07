@@ -104,8 +104,6 @@ if ($action == 'add') {
 	}
 	if ($result > 0) {
 		setEventMessages($langs->trans("XTargetsAdded", $result), null, 'mesgs');
-		//header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
-		//exit;
 		$action = '';
 	}
 	if ($result == 0) {
@@ -167,7 +165,7 @@ if (GETPOST('exportcsv', 'int')) {
 
 if ($action == 'delete') {
 	// Ici, rowid indique le destinataire et id le mailing
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE rowid=".$rowid;
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE rowid = ".((int) $rowid);
 	$resql = $db->query($sql);
 	if ($resql) {
 		if (!empty($id)) {
@@ -678,8 +676,9 @@ if ($object->fetch($id) >= 0) {
 
 				// Search Icon
 				print '<td class="right">';
+				print '<!-- ID mailing_cibles = '.$obj->rowid.' -->';
 				if ($obj->statut == 0) {	// Not sent yet
-					if ($user->rights->mailing->creer && $allowaddtarget) {
+					if (!empty($user->rights->mailing->creer) && $allowaddtarget) {
 						print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&rowid='.$obj->rowid.$param.'">'.img_delete($langs->trans("RemoveRecipient")).'</a>';
 					}
 				}
