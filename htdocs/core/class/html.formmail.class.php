@@ -1634,7 +1634,7 @@ class FormMail extends Form
 				*/
 			}
 			if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
-				$substitutionarray['__PUBLICLINK_NEWMEMBERFORM___'] = 'BlankSubscriptionForm';
+				$substitutionarray['__PUBLICLINK_NEWMEMBERFORM__'] = 'BlankSubscriptionForm';
 			}
 		}
 
