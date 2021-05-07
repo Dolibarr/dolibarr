@@ -477,7 +477,7 @@ if ($rowid > 0) {
 		$sql .= " AND d.entity IN (".getEntity('adherent').")";
 		$sql .= " AND t.rowid = ".$object->id;
 		if ($sall) {
-			$sql .= natural_search(array("f.firstname", "d.lastname", "d.societe", "d.email", "d.login", "d.address", "d.town", "d.note_public", "d.note_private"), $sall);
+			$sql .= natural_search(array("d.firstname", "d.lastname", "d.societe", "d.email", "d.login", "d.address", "d.town", "d.note_public", "d.note_private"), $sall);
 		}
 		if ($status != '') {
 			$sql .= natural_search('d.statut', $status, 2);
@@ -660,7 +660,7 @@ if ($rowid > 0) {
 					print '</td>';
 				} else {
 					print '<td class="nowrap left">';
-					if ($objp->subscription == 'yes') {
+					if (!empty($objp->subscription)) {
 						print $langs->trans("SubscriptionNotReceived");
 						if ($objp->status > 0) print " ".img_warning();
 					} else {

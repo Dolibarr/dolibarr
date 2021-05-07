@@ -3425,7 +3425,7 @@ class User extends CommonObject
 				$sql .= " WHERE t.entity IN (".getEntity('user').")";
 			}
 		} else {
-			$sql .= " WHERE 1";
+			$sql .= " WHERE 1 = 1";
 		}
 
 		// Manage filter
