@@ -64,16 +64,14 @@ NEW: Can filter files in GED on status Shared/Not shared
 NEW: Can filter on extrafields date on lists
 NEW: Can filter on rowid in list of blocked logs.
 NEW: Can hide columns "time consumed" on timesheet per week.
-NEW: Can set a label as placeholder for combo lists.
 NEW: Can set an employee on each social contribution
 NEW: Can set a percentage when creating an invoice from another object
-NEW: Can set a target image in dolcropresize function.
 NEW: Can set if a ticket group is visible on public interface or not.
 NEW: Can set order of execution of hooks
 NEW: Can show the holidays on the agenda view.
 NEW: Can show the project ref or label into PDF documents
 NEW: Can toggle FCKeditor on public/private notes
-NEW: Can use captcha on public page to create ticket
+NEW: Can use captcha on public page to create a ticket
 NEW: Check update for externals modules using button on module page
 NEW: choose lines while creating intervention card from origin
 NEW: Column shippement method, payment mode, payment term in propal and order list
@@ -82,11 +80,10 @@ NEW: Conf for default actiomm status when created from card (and DefaultValues C
 NEW: customer price customer ref: push back to v14
 NEW: customer ref for product customer prices
 NEW: date and user signature on proposal (Issue 16062)
-NEW: TAKEPOS delayed payment in TakePOS
-NEW: Dev default date filter module builder
 NEW: Dictionary for availability - Add column position
+NEW: TAKEPOS delayed payment in TakePOS
 NEW: TAKEPOS display date range if exist in TakePOS
-NEW: TAKEPOS display resiliate status in TakePOS for member                ->  NEW: TakePOS display resiliate status for members
+NEW: TAKEPOS display resiliate status in TakePOS for member
 NEW: TAKEPOS Edit sales lines rights in TakePOS
 NEW: Extrafields of documents lines are inside the lines, not any more on separate TR
 NEW: Can set a user related to a social contribution
@@ -157,6 +154,8 @@ NEW: Add triggers in the function add_object_linked(), updateObjectLinked() and 
 NEW: Add triggers OBJECT_LINK_INSERT, OBJECT_LINK_UPDATE et OBJECT_LINK_DELETE in the function add_object_linked(), updateObjectLinked() and deleteObjectLinked()
 NEW: API Add option $includeifobjectisused to get a product
 NEW: API Get the list of product ids only
+NEW: Can set a target image in dolcropresize function.
+NEW: Can set a label as placeholder for combo lists.
 
 
 WARNING:
