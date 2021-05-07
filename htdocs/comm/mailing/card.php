@@ -265,10 +265,16 @@ if (empty($reshook)) {
 						}
 						//$substitutionisok=true;
 
-						$moreinheader = '';
 						complete_substitutions_array($substitutionarray, $langs);
 						$newsubject = make_substitutions($subject, $substitutionarray);
-						$newmessage = make_substitutions($message, $substitutionarray, null, 0, $moreinheader);
+						$newmessage = make_substitutions($message, $substitutionarray, null, 0);
+
+						$moreinheader = '';
+						if (preg_match('/__UNSUBSCRIBE__/', $message)) {
+							$moreinheader = make_substitutions('__UNSUBSCRIBE__', $substitutionarray);
+							$moreinheader = explode('"', $moreinheader);
+							$moreinheader = "List-Unsubscribe: <".$moreinheader[1].">\n";
+						}
 
 						$arr_file = array();
 						$arr_mime = array();

@@ -7212,7 +7212,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
  * 	@return string  		    						Output string after substitutions
  *  @see	complete_substitutions_array(), getCommonSubstitutionArray()
  */
-function make_substitutions($text, $substitutionarray, $outputlangs = null, $converttextinhtmlifnecessary = 0, &$moreinheader = null)
+function make_substitutions($text, $substitutionarray, $outputlangs = null, $converttextinhtmlifnecessary = 0)
 {
 	global $conf, $langs;
 
@@ -7316,10 +7316,6 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 				$value = dol_nl2br("$value");
 			}
 			$text = str_replace("$key", "$value", $text); // We must keep the " to work when value is 123.5 for example
-		}
-		if ($key == '__UNSUBSCRIBE__' && (isset($moreinheader))) {
-			$tmptext = explode('"', $text);
-			$moreinheader = "List-Unsubscribe: <".$tmptext[1].">\n";
 		}
 	}
 
