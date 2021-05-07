@@ -1293,7 +1293,7 @@ if ($resql) {
 		$objectstatic->note_public = $obj->note_public;
 		$objectstatic->note_private = $obj->note_private;
 		$objectstatic->statut = $obj->fk_statut;
-		
+
 
 		print '<tr class="oddeven">';
 
