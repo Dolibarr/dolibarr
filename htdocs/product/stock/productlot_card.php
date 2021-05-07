@@ -194,7 +194,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'setcommissionning_date' && $user->rights->stock->creer && ! GETPOST('cancel', 'alpha')) {
+	/* if ($action == 'setcommissionning_date' && $user->rights->stock->creer && ! GETPOST('cancel', 'alpha')) {
 		$newvalue = dol_mktime(12, 0, 0, GETPOST('commissionning_datemonth', 'int'), GETPOST('commissionning_dateday', 'int'), GETPOST('commissionning_dateyear', 'int'));
 		$result = $object->setValueFrom('commissionning_date', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
 		if ($result < 0) {
@@ -203,7 +203,7 @@ if (empty($reshook)) {
 		} else {
 			$action = 'view';
 		}
-	}
+	} */
 
 	if ($action == 'setqc_frequency' && $user->rights->stock->creer && ! GETPOST('cancel', 'alpha')) {
 		$result = $object->setValueFrom('qc_frequency', GETPOST('qc_frequency'), '', null, 'int', '', $user, 'PRODUCT_MODIFY');
