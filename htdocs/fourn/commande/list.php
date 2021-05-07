@@ -1537,7 +1537,15 @@ if ($resql) {
 		}
 		// Status
 		if (!empty($arrayfields['cf.fk_statut']['checked'])) {
-			print '<td class="right nowrap">'.$objectstatic->LibStatut($obj->fk_statut, 5, $obj->billed).'</td>';
+			$parameters = array('obj' => $obj);
+			$morehtmlstatus = $objectstatic->LibStatut($obj->fk_statut, 5, $obj->billed);
+			$reshook = $hookmanager->executeHooks('moreHtmlStatus', $parameters, $object); // Note that $action and $object may have been modified by hook
+			if (empty($reshook)) {
+				$morehtmlstatus .= $hookmanager->resPrint;
+			} else {
+				$morehtmlstatus = $hookmanager->resPrint;
+			}
+			print '<td class="right nowrap">' . $morehtmlstatus . '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
