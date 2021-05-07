@@ -1282,6 +1282,7 @@ if ($resql) {
 		$nbprod = 0;
 
 		$objectstatic->id = $obj->rowid;
+		$objectstatic->socid = $obj->socid;
 		$objectstatic->ref = $obj->ref;
 		$objectstatic->ref_supplier = $obj->ref_supplier;
 		$objectstatic->total_ht = $obj->total_ht;
@@ -1292,6 +1293,7 @@ if ($resql) {
 		$objectstatic->note_public = $obj->note_public;
 		$objectstatic->note_private = $obj->note_private;
 		$objectstatic->statut = $obj->fk_statut;
+		
 
 		print '<tr class="oddeven">';
 
@@ -1536,7 +1538,16 @@ if ($resql) {
 		}
 		// Status
 		if (!empty($arrayfields['cf.fk_statut']['checked'])) {
-			print '<td class="right nowrap">'.$objectstatic->LibStatut($obj->fk_statut, 5, $obj->billed).'</td>';
+			$parameters = array('obj' => $obj);
+			$morehtmlstatus = $objectstatic->LibStatut($obj->fk_statut, 5, $obj->billed);
+			$reshook = $hookmanager->executeHooks('moreHtmlStatus', $parameters, $object); // Note that $action and $object may have been modified by hook
+			if (empty($reshook)) {
+				$morehtmlstatus .= $hookmanager->resPrint;
+			} else {
+				$morehtmlstatus = $hookmanager->resPrint;
+			}
+			print '<td class="right nowrap">' . $morehtmlstatus . '</td>';
+
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
