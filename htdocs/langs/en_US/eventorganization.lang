@@ -98,6 +98,7 @@ EvntOrgCancelled = Cancelled
 #
 SuggestForm = Suggestion page
 RegisterPage = Page for conferences or booth
+EvntOrgRegistrationHelpMessage = Here, you can vote for an event, or suggest a new conference or booth for the project
 EvntOrgRegistrationConfHelpMessage = Here, you can suggest a new conference for the project
 EvntOrgRegistrationBoothHelpMessage = Here, you can suggest a new booth for the project
 ListOfSuggestedConferences = List of suggested conferences

@@ -496,9 +496,8 @@ if (empty($reshook) && $action == 'add') {
 	}
 	if (!$error) {
 		$db->commit();
-		$encodedid = dol_encode($id, $dolibarr_main_instance_unique_id);
 		$securekeyurl = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 2);
-		$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?id='.$encodedid.'&securekey='.$securekeyurl;
+		$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?id='.$id.'&securekey='.$securekeyurl;
 		Header("Location: ".$redirection);
 		exit;
 	} else {
