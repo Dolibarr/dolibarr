@@ -1891,7 +1891,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}*/
 
 				// Modify
-				if (!$user->rights->adherent->creer) {
+				if ($user->rights->adherent->creer) {
 					print '<a class="butAction" href="card.php?rowid='.$id.'&action=edit">'.$langs->trans("Modify").'</a>'."\n";
 				} else {
 					print '<span class="butActionRefused classfortooltip" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Modify").'</span>'."\n";
