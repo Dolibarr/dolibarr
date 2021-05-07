@@ -101,24 +101,30 @@ class Partnership extends CommonObject
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields=array();
+
+	/**
+	 * @var int rowid
+	 * @deprecated
+	 * @see id
+	 */
 	public $rowid;
-	public $ref;
+
 	public $fk_soc;
-	public $note_public;
-	public $note_private;
-	public $date_creation;
+
 	public $tms;
 	public $fk_user_creat;
 	public $fk_user_modif;
-	public $last_main_doc;
-	public $import_key;
-	public $model_pdf;
+
 	public $status;
 	public $fk_member;
 	public $date_partnership_start;
 	public $date_partnership_end;
 	public $count_last_url_check_error;
 	public $last_check_backlink;
+
+	/**
+	 * @var string reason_decline_or_cancel
+	 */
 	public $reason_decline_or_cancel;
 	// END MODULEBUILDER PROPERTIES
 
@@ -848,9 +854,10 @@ class Partnership extends CommonObject
 	/**
 	 *	Set refused status
 	 *
-	 *	@param	User	$user			Object user that modify
-	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 *	@param	User	$user			    Object user that modify
+	 *  @param  string  $reasondeclinenote  Reason decline
+	 *  @param	int		$notrigger		    1=Does not execute triggers, 0=Execute triggers
+	 *	@return	int						    <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function refused($user, $reasondeclinenote = '', $notrigger = 0)
 	{
