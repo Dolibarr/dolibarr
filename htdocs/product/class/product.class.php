@@ -2208,7 +2208,7 @@ class Product extends CommonObject
 			$sql .= " p.stock,";
 		}
 		if ($separatedEntityPMP) {
-			$sql .= " pa.pmp, p.datec, p.tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.batch_mask, p.fk_unit,";
+			$sql .= " ppe.pmp, p.datec, p.tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.batch_mask, p.fk_unit,";
 		} else {
 			$sql .= " p.pmp, p.datec, p.tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.batch_mask, p.fk_unit,";
 		}
