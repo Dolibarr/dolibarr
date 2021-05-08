@@ -15,12 +15,12 @@ NEW: A lot of fix into english text after a small proofreading campaign (still n
 NEW: All main menu entries are using the picto of the module
 NEW: Accountancy - Add closure menu
 NEW: Accountancy - Add FEC import
-NEW: Accountancy - Add formconfirm with options on export
+NEW: Accountancy - Add a confirmation form with options on export
 NEW: Accountancy - Add select date from/to in already bind customer and supplier list
 NEW: Accountancy - Format FEC - Add new field DateLimitReglmt
 NEW: Accountancy - In ledger & journals, show link on bank transaction
 NEW: Accountancy - Possibility to filter on journals in balance
-NEW: Accountancy - Add a page to list subledger accounts on product/company
+NEW: Accountancy - Add a page to list subledger accounts
 NEW: add the Channel column into the list of orders
 NEW: Add a check to avoid an invoice date in the future
 NEW: Add some color and picto for the direction of movement
