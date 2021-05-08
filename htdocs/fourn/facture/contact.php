@@ -2,7 +2,8 @@
 /* Copyright (C) 2005		Patrick Rouillon	<patrick@rouillon.net>
  * Copyright (C) 2005-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
+ * Copyright (C) 2017       Ferran Marcet       <fmarcet@2byte.es>
+ * Copyright (C) 2021       Charlene Benke      <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -174,12 +175,13 @@ if ($id > 0 || !empty($ref)) {
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
 		print '<div class="fichecenter">';
+		print '<div class="fichehalfleft">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border centpercent tableforfield">';
 
+		print '<table class="border centpercent tableforfield">';
 		// Type
-		print '<tr><td class="titlefield">'.$langs->trans('Type').'</td><td colspan="4">';
+		print '<tr><td class="titlefield">'.$langs->trans('Type').'</td><td>';
 		print $object->getLibType();
 		if ($object->type == FactureFournisseur::TYPE_REPLACEMENT) {
 			$facreplaced = new FactureFournisseur($db);
@@ -197,11 +199,8 @@ if ($id > 0 || !empty($ref)) {
 			print ' ('.$langs->transnoentities("InvoiceHasAvoir");
 			$i = 0;
 			foreach ($facidavoir as $fid) {
-				if ($i == 0) {
-					print ' ';
-				} else {
-					print ',';
-				}
+				if ($i == 0) print ' ';
+				else print ',';
 				$facavoir = new FactureFournisseur($db);
 				$facavoir->fetch($fid);
 				print $facavoir->getNomUrl(1);
@@ -215,30 +214,40 @@ if ($id > 0 || !empty($ref)) {
 		}
 		print '</td></tr>';
 
+
 		// Label
-		print '<tr><td>'.$form->editfieldkey("Label", 'label', $object->label, $object, 0).'</td><td>';
-		print $form->editfieldval("Label", 'label', $object->label, $object, 0);
+		print '<tr><td>'.$langs->trans('Label').'</td>';
+		print '<td colspan="3">'.$object->label.'</td>';
+
+		// Date invoice
+		print '<tr><td>';
+		print $langs->trans('Date');
+		print '</td><td colspan="3">';
+		print dol_print_date($object->date, 'daytext');
 		print '</td></tr>';
+		print '</table>';
 
-		// Amount
-		print '<tr><td>'.$langs->trans('AmountHT').'</td><td>'.price($object->total_ht, 1, $langs, 0, -1, -1, $conf->currency).'</td></tr>';
-		print '<tr><td>'.$langs->trans('AmountVAT').'</td><td>'.price($object->total_tva, 1, $langs, 0, -1, -1, $conf->currency).'</td></tr>';
+		print '</div>';
+		print '<div class="fichehalfright"><div class="ficheaddleft">';
 
-		// Amount Local Taxes
-		//TODO: Place into a function to control showing by country or study better option
-		if ($societe->localtax1_assuj == "1") { //Localtax1
-			print '<tr><td>'.$langs->transcountry("AmountLT1", $societe->country_code).'</td>';
-			print '<td>'.price($object->total_localtax1, 1, $langs, 0, -1, -1, $conf->currency).'</td>';
-			print '</tr>';
-		}
-		if ($societe->localtax2_assuj == "1") { //Localtax2
-			print '<tr><td>'.$langs->transcountry("AmountLT2", $societe->country_code).'</td>';
-			print '<td>'.price($object->total_localtax2, 1, $langs, 0, -1, -1, $conf->currency).'</td>';
-			print '</tr>';
-		}
-		print '<tr><td>'.$langs->trans('AmountTTC').'</td><td>'.price($object->total_ttc, 1, $langs, 0, -1, -1, $conf->currency).'</td></tr>';
+		print '<div class="underbanner clearboth"></div>';
+		print '<table class="border centpercent tableforfield">';
 
-		print "</table>";
+		print '<tr><td width="20%" class="titlefield">'.$langs->trans('AmountHT').'</td><td width=150px align="right">';
+		print price($object->total_ht, 1, $langs, 0, -1, -1, $conf->currency);
+		print '</td><td colspan="2" align="left">&nbsp;</td></tr>';
+		print '<tr><td class="titlefield">'.$langs->trans('AmountVAT').'</td><td align="right">';
+		print price($object->total_tva, 1, $langs, 0, -1, -1, $conf->currency);
+		print '</td><td colspan="2" align="left">&nbsp;</td></tr>';
+		print '<tr><td class="titlefield">'.$langs->trans('AmountTTC').'</td><td  align="right">';
+		print price($object->total_ttc, 1, $langs, 0, -1, -1, $conf->currency);
+		print '</td><td colspan="2" align="left">&nbsp;</td></tr>';
+
+		print '</table>';
+		print '</div>';
+
+		print '</div></div>';
+		print '<div style="clear:both"></div>';
 
 		print dol_get_fiche_end();
 
