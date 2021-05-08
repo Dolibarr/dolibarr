@@ -118,13 +118,14 @@ NEW: #16378 More E-Mail Contact substitution Values for better salutation
 NEW: option to keep the "Automatically create a total payment" checkbox empty on the tax creation page
 NEW: #17113 Can upload a favicon in website module
 NEW: #17292 default subscription amount by adherent type
+NEW: start new experimental module Event Organization Management
+NEW: start new experimental module Partnership Management
+NEW: start new experimental module Knowledge Management
+NEW: start new experimental module Workstations management
+
 
 For developers:
 ---------------
-NEW: start new module Event Organization Management
-NEW: start new module Partnership Management
-NEW: start new module Knowledge Management
-NEW: start new module Workstations management
 NEW: Can edit an object property in module builder
 NEW: hook printFieldListTitle for cabyprodserv.php
 NEW: Hook to allow external modules to add their own shortlist of recent objects
