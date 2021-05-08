@@ -529,10 +529,9 @@ class EcmFiles extends CommonObject
 		$sqlwhere = array();
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
-				if($key == 't.src_object_id'){
+				if ($key == 't.src_object_id') {
 					$sqlwhere [] = $key.' = '.$this->db->escape($value);
-				}
-				else{
+				} else {
 					$sqlwhere [] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
 				}
 			}
