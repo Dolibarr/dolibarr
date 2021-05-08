@@ -28,9 +28,9 @@ NEW: Add the column "alias" of company in the list of proposal, order, invoice
 NEW: Add the column "Office phone" and  "User mobile" in user list
 NEW: Add the column "Price level"in thirdparty list
 NEW: Add some company information in the dropdown login menu
-NEW: Add constant MAIN_BUGTRACK_URL to set url to redirect to on link "declare a bug"
+NEW: Add constant MAIN_BUGTRACK_URL to set a custom url to redirect to when clicking on link "declare a bug"
 NEW: Add contact tag and bulk email status on the thirparty+contact create form
-NEW: Add db fields note_public note_private for ECM module
+NEW: Add db fields note_public and note_private for ECM module
 NEW: Manage deposit on supplier invoice (& somes ajustments)
 NEW: Add edit/delete action icons on categories list pages
 NEW: Add hidden option to auto load input line extrafield into new lines
@@ -38,28 +38,24 @@ NEW: Add import profile to import BOM
 NEW: Add last date of modification for website pages in the list of pages
 NEW: Add link picto to the stock movement on the detail of production
 NEW: Add mass action "Set tag" for product/service, user, thirdparty, warehouse, project, bank account, members
-NEW: Add Mass action order validate and set to billed
-NEW: add massActions to set a commercial proposal to status "Refused"
-NEW: Add option CONTRACT_ALLOW_EXTERNAL_DOWNLOAD and SUPPLIER_PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD
-NEW: Add option MAIN_SECURITY_ANTI_SSRF_SERVER_IP
+NEW: Add bulk action Validate and Set to billed on order list.
+NEW: add bulk action to set a commercial proposal to status "Refused"
+NEW: Add option CONTRACT_ALLOW_EXTERNAL_DOWNLOAD and SUPPLIER_PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD to make generated doc automatically shared.
+NEW: Add option MAIN_SECURITY_ANTI_SSRF_SERVER_IP to define list of IPs that are local IPs
 NEW: Add option SOCIETE_DISABLE_WORKFORCE to hide staff field
-NEW: Add pagination at Get Products response
-NEW: Add new permission "Export website"
+NEW: Add a new permission "Export website"
 NEW: Add possibility to exports userGroups fields on user exports
 NEW: Add price min and price min including tax into product export
 NEW: Can search on lots or serials into the quick search bar
 NEW: Add support for Friday as a non working day
-NEW: Add a total in agent margin & uniformize code
-NEW: add total margin in invoice list
-NEW: Can set a Warehouse on Thirparty
+NEW: Add a total in page of margin by user
+NEW: Add the total of margin in invoice list
+NEW: Can set a Warehouse on a Thirparty
 NEW: auto notification with module Notification can use templated emails
-NEW: Bank Entries : add verif fk_user addPaymentToBank Social Contribution
 NEW: Bank Entries : display user linked to a salary or a taxes
-NEW: better date_valid on invoice
-NEW: Can ask the warehouse in proposal
+NEW: Can set a warehouse in a proposal
 NEW: Can clone a cron job.
-NEW: Can create a lot from list
-NEW: Can edit object in module builder
+NEW: Can create a lot from the list view (Look and feel standardization).
 NEW: Can filter files in GED on status Shared/Not shared
 NEW: Can filter on extrafields date on lists
 NEW: Can filter on rowid in list of blocked logs.
@@ -68,64 +64,58 @@ NEW: Can set an employee on each social contribution
 NEW: Can set a percentage when creating an invoice from another object
 NEW: Can set if a ticket group is visible on public interface or not.
 NEW: Can set order of execution of hooks
-NEW: Can show the holidays on the agenda view.
-NEW: Can show the project ref or label into PDF documents
+NEW: Can show the leave dates/holidays on the agenda view.
+NEW: Can show the project ref into PDF documents
 NEW: Can toggle FCKeditor on public/private notes
 NEW: Can use captcha on public page to create a ticket
-NEW: Check update for externals modules using button on module page
-NEW: choose lines while creating intervention card from origin
-NEW: Column shippement method, payment mode, payment term in propal and order list
-NEW: Conf for default actiomm status when created from card
-NEW: Conf for default actiomm status when created from card (and DefaultValues CRUD class)
-NEW: customer price customer ref: push back to v14
+NEW: Check update availability for externals modules using a button on module page
+NEW: Choose lines to use while creating intervention card from origin
+NEW: Column shippement method, payment mode, payment term in proposal and order list
+NEW: Conf for default actiomm status
 NEW: customer ref for product customer prices
 NEW: date and user signature on proposal (Issue 16062)
-NEW: Dictionary for availability - Add column position
+NEW: Dictionary for availability - Add a column position
 NEW: TAKEPOS delayed payment in TakePOS
 NEW: TAKEPOS display date range if exist in TakePOS
 NEW: TAKEPOS display resiliate status in TakePOS for member
 NEW: TAKEPOS Edit sales lines rights in TakePOS
-NEW: Extrafields of documents lines are inside the lines, not any more on separate TR
+NEW: TAKEPOS Option for Takepos to show the total price without tax
+NEW: TAKEPOS More permission in TakePOS (Can edit added line, can modify once order sent to kitchen)
 NEW: Can set a user related to a social contribution
 NEW: ICS Direct debit can be set with a different value for each bank account
 NEW: LDAP: usergroup search can be filtered
 NEW: Make public bookmarks editable by admin users only
-NEW: If no logo defined, can use the squarred logo on login page
+NEW: If main logo not defined, can use the squarred logo on login page
 NEW: The manifest file can use the squared image if available
-NEW: Add buld actions for Bank Transfer
+NEW: Add bulk actions for Bank Transfer
 NEW: Enhance the multicurrency rate editor
-NEW: migration script
-NEW: More permission in TakePOS (Can edit added line, can modify once order sent to kitchen)
 NEW: Multiselect ledger account code filter on book keeping list
 NEW: Normalyse Type company field with ajax combobox
-NEW: TAKEPOS: option for Takepos to show the total price without tax
 NEW: option to automatically close an open project when all its tasks are done (=progress 100%)
 NEW: option to select membership type on the online payment page for membership subscription or renewal
 NEW: preload product description on selection for customer propal/order/invoice
 NEW: Add a ref in product customer price
 NEW: Save old page with .old extension on disk when editing a website page
 NEW: Search usergroups & resources
-NEW: Set status of all variant when setting status of parent
-NEW: Setup Page for module create with module builder enhancement #FoundationFunding
+NEW: Set status of all variants when changing status of parent
+NEW: Setup Page for module creation with module builder enhancement #FoundationFunding
 NEW: Show picto of module into the list of dictionaries
-NEW: Show the total of payment on the payment confirm page
+NEW: Show the total of payment on the payment confirmation page
 NEW: Stock movement list - Add more complete date field
 NEW: Support color for types of event
-NEW: The setup for Mandatory field can now be done on combo list too.
+NEW: The global setup for Mandatory fields can now be done on combo list too.
 NEW: translate in "en_US" to complete PR 16980
-NEW: unit selection on object edit line
 NEW: Update the list of taxes available by default for France
 NEW: Add captcha on public page to create a ticket
 NEW: Salary payment request and Salary payment are 2 different steps in workflow on Salary payment recording
 NEW: VAT payment request and VAT payment are now 2 different steps in workflow on VAT payment recording
 NEW: VAT report - Optimisation & collapse by rate
-NEW: When we add contacts/users to Project, ask to also affect them on project tasks
+NEW: When we add contacts/users to a project, ask to also affect them on tasks.
 NEW: When a doc file is shared, link is visible from the main page of doc.
-NEW: Workflow to set a shipment as closed.
+NEW: Add option in Workflow module to set a shipment as closed.
 NEW: Option to automatically create a login/user when a new subscription of a member is done online
 NEW: #16378 More E-Mail Contact substitution Values for better salutation
-NEW: #13739 #17390 Product API route added to get product stock and product with or without variants
-NEW: option to leave the "Automatically create a total payment" checkbox empty on the tax creation page
+NEW: option to keep the "Automatically create a total payment" checkbox empty on the tax creation page
 NEW: #17113 Can upload a favicon in website module
 NEW: #17292 default subscription amount by adherent type
 
@@ -135,6 +125,7 @@ NEW: start new module Event Organization Management
 NEW: start new module Partnership Management
 NEW: start new module Knowledge Management
 NEW: start new module Workstations management
+NEW: Can edit an object property in module builder
 NEW: hook printFieldListTitle for cabyprodserv.php
 NEW: Hook to allow external modules to add their own shortlist of recent objects
 NEW: SQL-altering hooks in the turnover by product report
@@ -156,6 +147,11 @@ NEW: API Add option $includeifobjectisused to get a product
 NEW: API Get the list of product ids only
 NEW: Can set a target image in dolcropresize function.
 NEW: Can set a label as placeholder for combo lists.
+NEW: Add pagination on Get Products response API
+NEW: Add the DefaultValues CRUD class
+NEW: Extrafields of documents lines are inside the lines, not any more on separate TR
+NEW: unit selection on object edit line
+NEW: #13739 #17390 Product API route added to get product stock and product with or without variants
 
 
 WARNING:
