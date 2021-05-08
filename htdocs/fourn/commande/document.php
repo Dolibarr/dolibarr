@@ -70,6 +70,7 @@ if (!$sortfield) {
 	$sortfield = "name";
 }
 
+$hookmanager->initHooks(array('ordersuppliercarddocument'));
 
 $object = new CommandeFournisseur($db);
 if ($object->fetch($id, $ref) < 0) {
