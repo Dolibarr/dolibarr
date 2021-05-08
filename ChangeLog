@@ -8,7 +8,7 @@ English Dolibarr ChangeLog
 For users:
 ----------
 NEW: Feature to make inventories
-NEW: Several security issues after a second private bug bounty campaign. 
+NEW: Several security issues after a second private bug hunting campaign. 
 NEW: Add a security center page with all information and advices related to the security of your instance 
 NEW: Add a performance center page with all information and advices related to the performance of your instance 
 NEW: A lot of fix into english text after a small proofreading campaign (still not perfect, but really better)
