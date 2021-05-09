@@ -460,14 +460,14 @@ ALTER TABLE llx_facture_fourn ADD COLUMN fk_user_closing integer DEFAULT NULL af
 
 ALTER TABLE llx_entrepot ADD COLUMN fk_project INTEGER DEFAULT NULL AFTER entity; -- project associated to warehouse if any
 
--- Add external payement suport for donation
+-- Add external payment support for donation
 ALTER TABLE llx_payment_donation ADD COLUMN ext_payment_site  varchar(128) AFTER note;
 ALTER TABLE llx_payment_donation ADD COLUMN ext_payment_id  varchar(128) AFTER note;
 
 -- Rebuild sequence for postgres only after query INSERT INTO llx_salary(rowid, ...
 -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
-UPDATE llx_const SET value = 'github' WHERE __DECRYPT('name')__ = 'MAIN_BUGTRACK_ENABLELINK' AND __DECRYPT('value')__ = 1;
+UPDATE llx_const SET type = __ENCRYPT('chaine')__, value = __ENCRYPT('github')__ WHERE __DECRYPT('name')__ = 'MAIN_BUGTRACK_ENABLELINK' AND __DECRYPT('value')__ = 1;
 
 ALTER TABLE llx_facture_fourn_det ADD COLUMN fk_remise_except integer DEFAULT NULL after remise_percent;
 ALTER TABLE llx_facture_fourn_det ADD UNIQUE INDEX uk_fk_remise_except (fk_remise_except, fk_facture_fourn);
