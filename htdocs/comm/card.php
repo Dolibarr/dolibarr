@@ -298,9 +298,9 @@ $userstatic = new User($db);
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 
-$title = $langs->trans("CustomerCard");
+$title = $langs->trans("ThirdParty")." - ".$langs->trans('Customer');
 if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
-	$title = $object->name;
+	$title = $object->name." - ".$langs->trans('Customer');
 }
 
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas|DE:Modul_Geschäftspartner';
