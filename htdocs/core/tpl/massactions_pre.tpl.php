@@ -127,6 +127,10 @@ if ($massaction == 'presend') {
 			$fuser = new User($db);
 			$fuser->fetch($thirdpartyid);
 			$liste['thirdparty'] = $fuser->getFullName($langs)." &lt;".$fuser->email."&gt;";
+		} elseif ($objecttmp->element == 'partnership' && $conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') {
+			$fadherent = new Adherent($db);
+			$fadherent->fetch($objecttmp->fk_member);
+			$liste['member'] = $fadherent->getFullName($langs)." &lt;".$fadherent->email."&gt;";
 		} else {
 			$soc = new Societe($db);
 			$soc->fetch($thirdpartyid);

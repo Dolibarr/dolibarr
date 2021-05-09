@@ -59,10 +59,10 @@ insert into llx_c_actioncomm (id, code, type, libelle, module, active, position)
 
 UPDATE llx_c_country SET eec = 1 WHERE code IN ('AT','BE','BG','CY','CZ','DE','DK','EE','ES','FI','FR','GR','HR','NL','HU','IE','IM','IT','LT','LU','LV','MC','MT','PL','PT','RO','SE','SK','SI');
 
+ALTER TABLE llx_export_model MODIFY COLUMN type varchar(64);
+
 
 -- For v14
-
-ALTER TABLE llx_export_model MODIFY COLUMN type varchar(64);
 
 create table llx_accounting_groups_account
 (
@@ -157,6 +157,18 @@ CREATE TABLE llx_workstation_workstation_usergroup(
 	fk_workstation integer
 ) ENGINE=innodb;
 
+CREATE TABLE llx_c_producbatch_qcstatus(
+  rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+  entity   integer NOT NULL DEFAULT 1,
+  code     varchar(16)        NOT NULL,
+  label    varchar(50)        NOT NULL,
+  active   integer  DEFAULT 1 NOT NULL
+) ENGINE=innodb;
+
+ALTER TABLE llx_c_productbatch_qcstatus ADD UNIQUE INDEX uk_c_productbatch_qcstatus(code, entity);
+
+INSERT INTO llx_c_productbatch_qcstatus (code, label, active) VALUES ('OK', 'InWorkingOrder', 1);
+INSERT INTO llx_c_productbatch_qcstatus (code, label, active) VALUES ('KO', 'OutOfOrder', 1);
 
 ALTER TABLE llx_product_customer_price ADD COLUMN ref_customer varchar(30);
 ALTER TABLE llx_product_customer_price_log ADD COLUMN ref_customer varchar(30);
@@ -187,6 +199,7 @@ ALTER TABLE llx_mrp_production ADD COLUMN origin_type varchar(10) AFTER origin_i
 
 ALTER TABLE llx_fichinter ADD COLUMN last_main_doc varchar(255) AFTER model_pdf;
 ALTER TABLE llx_projet ADD COLUMN last_main_doc varchar(255) AFTER model_pdf;
+ALTER TABLE llx_expensereport ADD COLUMN last_main_doc varchar(255) DEFAULT NULL AFTER model_pdf;
 
 create table llx_payment_vat
 (
@@ -220,7 +233,7 @@ ALTER TABLE llx_tva ALTER COLUMN paye SET DEFAULT 0;
 INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, tms, label, position, active, topic, content, content_lines, enabled, joinfiles) values (0, '', 'eventorganization_send', '', 0, null, null, '2021-02-14 14:42:41', 'EventOrganizationEmailAskConf', 10, 1, '[__[MAIN_INFO_SOCIETE_NOM]__] __(EventOrganizationEmailAskConf)__', '__(Hello)__ __THIRDPARTY_NAME__,<br /><br />__(ThisIsContentOfYourOrganizationEventConfRequestWasReceived)__<br /><br />__ONLINE_PAYMENT_TEXT_AND_URL__<br /><br /><br />__(Sincerely)__<br />__USER_SIGNATURE__', null, '1', null);
 INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, tms, label, position, active, topic, content, content_lines, enabled, joinfiles) values (0, '', 'eventorganization_send', '', 0, null, null, '2021-02-14 14:42:41', 'EventOrganizationEmailAskBooth', 20, 1, '[__[MAIN_INFO_SOCIETE_NOM]__] __(EventOrganizationEmailAskBooth)__', '__(Hello)__ __THIRDPARTY_NAME__,<br /><br />__(ThisIsContentOfYourOrganizationEventBoothRequestWasReceived)__<br /><br />__ONLINE_PAYMENT_TEXT_AND_URL__<br /><br /><br />__(Sincerely)__<br />__USER_SIGNATURE__', null, '1', null);
 INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, tms, label, position, active, topic, content, content_lines, enabled, joinfiles) values (0, '', 'eventorganization_send', '', 0, null, null, '2021-02-14 14:42:41', 'EventOrganizationEmailSubsBooth', 30, 1, '[__[MAIN_INFO_SOCIETE_NOM]__] __(EventOrganizationEmailSubsBooth)__', '__(Hello)__ __THIRDPARTY_NAME__,<br /><br />__(ThisIsContentOfYourOrganizationEventBoothSubscriptionWasReceived)__<br /><br />__ONLINE_PAYMENT_TEXT_AND_URL__<br /><br /><br />__(Sincerely)__<br />__USER_SIGNATURE__', null, '1', null);
-INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, tms, label, position, active, topic, content, content_lines, enabled, joinfiles) values (0, '', 'eventorganization_send', '', 0, null, null, '2021-02-14 14:42:41', 'EventOrganizationEmailSubsEvent', 40, 1, '[__[MAIN_INFO_SOCIETE_NOM]__] __(EventOrganizationEmailSubsEvent)__', '__(Hello)__ __THIRDPARTY_NAME__,<br /><br />__(ThisIsContentOfYourOrganizationEventEventSubscriptionWasReceived)__<br /><br />__ONLINE_PAYMENT_TEXT_AND_URL__<br /><br /><br />__(Sincerely)__<br />__USER_SIGNATURE__', null, '1', null);
+INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, tms, label, position, active, topic, content, content_lines, enabled, joinfiles) values (0, '', 'eventorganization_send', '', 0, null, null, '2021-02-14 14:42:41', 'EventOrganizationEmailSubsEvent', 40, 1, '[__[MAIN_INFO_SOCIETE_NOM]__] __(EventOrganizationEmailSubsEvent)__', '__(Hello)__ __THIRDPARTY_NAME__,<br /><br />__(ThisIsContentOfYourOrganizationEventEventSubscriptionWasReceived)__<br /><br />__(Sincerely)__<br /><br />__MYCOMPANY_NAME__<br />__USER_SIGNATURE__', null, '1', null);
 INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, tms, label, position, active, topic, content, content_lines, enabled, joinfiles) values (0, '', 'eventorganization_send', '', 0, null, null, '2021-02-14 14:42:41', 'EventOrganizationMassEmailAttendees', 50, 1, '[__[MAIN_INFO_SOCIETE_NOM]__] __(EventOrganizationMassEmailAttendees)__', '__(Hello)__ __THIRDPARTY_NAME__,<br /><br />__(ThisIsContentOfYourOrganizationEventBulkMailToAttendees)__<br /><br />__(Sincerely)__<br />__USER_SIGNATURE__', null, '1', null);
 INSERT INTO llx_c_email_templates (entity, module, type_template, lang, private, fk_user, datec, tms, label, position, active, topic, content, content_lines, enabled, joinfiles) values (0, '', 'eventorganization_send', '', 0, null, null, '2021-02-14 14:42:41', 'EventOrganizationMassEmailSpeakers', 60, 1, '[__[MAIN_INFO_SOCIETE_NOM]__] __(EventOrganizationMassEmailSpeakers)__', '__(Hello)__ __THIRDPARTY_NAME__,<br /><br />__(ThisIsContentOfYourOrganizationEventBulkMailToSpeakers)__<br /><br />__(Sincerely)__<br />__USER_SIGNATURE__', null, '1', null);
 
@@ -413,8 +426,9 @@ CREATE TABLE llx_partnership(
 	note_private text, 
 	note_public text, 
 	last_main_doc varchar(255), 
-	count_last_url_check_error integer DEFAULT '0', 
-	import_key varchar(14), 
+	count_last_url_check_error integer DEFAULT '0',
+	last_check_backlink datetime NULL,
+	import_key varchar(14),
 	model_pdf varchar(255)
 ) ENGINE=innodb;
 
@@ -435,7 +449,11 @@ create table llx_partnership_extrafields
 
 ALTER TABLE llx_partnership_extrafields ADD INDEX idx_partnership_fk_object(fk_object);
 
-INSERT INTO llx_c_email_templates (entity,module,type_template,label,lang,position,topic,joinfiles,content) VALUES (0, 'partnership', 'member', '(AlertStatusPartnershipExpiration)', NULL, 100, '[__[MAIN_INFO_SOCIETE_NOM]__] - __(YourMembershipWillSoonExpireTopic)__', 0, '<body>\n <p>Dear __MEMBER_FULLNAME__,<br><br>\n__(YourMembershipWillSoonExpireContent)__</p>\n<br />\n\n            __(Sincerely)__ <br />\n            __[PARTNERSHIP_SOCIETE_NOM]__ <br />\n </body>\n');
+INSERT INTO llx_c_email_templates (entity,module,type_template,label,lang,position,topic,joinfiles,content) VALUES (0, 'partnership', 'partnership_send', '(SendingEmailOnPartnershipWillSoonBeCanceled)', '', 100, '[__[MAIN_INFO_SOCIETE_NOM]__] - __(YourPartnershipWillSoonBeCanceledTopic)__', 0, '<body>\n <p>Hello,<br><br>\n__(YourPartnershipWillSoonBeCanceledContent)__</p>\n<br />\n\n<br />\n\n            __(Sincerely)__ <br />\n            __[MAIN_INFO_SOCIETE_NOM]__ <br />\n </body>\n');
+INSERT INTO llx_c_email_templates (entity,module,type_template,label,lang,position,topic,joinfiles,content) VALUES (0, 'partnership', 'partnership_send', '(SendingEmailOnPartnershipCanceled)', '', 100, '[__[MAIN_INFO_SOCIETE_NOM]__] - __(YourPartnershipCanceledTopic)__', 0, '<body>\n <p>Hello,<br><br>\n__(YourPartnershipCanceledContent)__</p>\n<br />\n\n<br />\n\n            __(Sincerely)__ <br />\n            __[MAIN_INFO_SOCIETE_NOM]__ <br />\n </body>\n');
+INSERT INTO llx_c_email_templates (entity,module,type_template,label,lang,position,topic,joinfiles,content) VALUES (0, 'partnership', 'partnership_send', '(SendingEmailOnPartnershipRefused)', '', 100, '[__[MAIN_INFO_SOCIETE_NOM]__] - __(YourPartnershipRefusedTopic)__', 0, '<body>\n <p>Hello,<br><br>\n__(YourPartnershipRefusedContent)__</p>\n<br />\n\n<br />\n\n            __(Sincerely)__ <br />\n            __[MAIN_INFO_SOCIETE_NOM]__ <br />\n </body>\n');
+INSERT INTO llx_c_email_templates (entity,module,type_template,label,lang,position,topic,joinfiles,content) VALUES (0, 'partnership', 'partnership_send', '(SendingEmailOnPartnershipAccepted)', '', 100, '[__[MAIN_INFO_SOCIETE_NOM]__] - __(YourPartnershipAcceptedTopic)__', 0, '<body>\n <p>Hello,<br><br>\n__(YourPartnershipAcceptedContent)__</p>\n<br />\n\n<br />\n\n            __(Sincerely)__ <br />\n            __[MAIN_INFO_SOCIETE_NOM]__ <br />\n </body>\n');
+ALTER TABLE llx_adherent ADD COLUMN url varchar(255) NULL AFTER email;
 ALTER TABLE llx_facture_fourn ADD COLUMN date_closing datetime DEFAULT NULL after date_valid;
 
 ALTER TABLE llx_facture_fourn ADD COLUMN fk_user_closing integer DEFAULT NULL after fk_user_valid;
@@ -504,4 +522,9 @@ ALTER TABLE llx_facture_fourn_det ADD COLUMN fk_c_type_transaction integer NULL 
 
 -- add default amount by member type
 ALTER TABLE llx_adherent_type ADD COLUMN amount DOUBLE(24,8) NULL DEFAULT NULL AFTER subscription;
+
+-- add action trigger
+INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('COMPANY_MODIFY','Third party update','Executed when you update third party','societe',1);
+INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('CONTACT_MODIFY','Contact address update','Executed when a contact is updated','contact',51);
+
 

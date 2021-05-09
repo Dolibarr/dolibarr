@@ -1044,6 +1044,7 @@ DictionaryOpportunityStatus=Statut d'opportunités pour les affaires/projets
 DictionaryExpenseTaxCat=Note de frais - catégories de déplacement
 DictionaryExpenseTaxRange=Note de frais - Tri par catégorie de déplacement
 DictionaryTransportMode=Déclaration d'échanges intracommunautaires - Mode de transport
+DictionaryBatchStatus=État de qualité du lot/série (produits)
 TypeOfUnit=Type d'unité
 SetupSaved=Configuration sauvegardée
 SetupNotSaved=Configuration non enregistrée

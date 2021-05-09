@@ -3492,7 +3492,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
 				'accountancy', 'account', 'accountline', 'action', 'add', 'address', 'angle-double-down', 'angle-double-up', 'asset',
 				'bank_account', 'barcode', 'bank', 'bill', 'billa', 'billr', 'billd', 'bookmark', 'bom', 'bug', 'building',
-				'cash-register', 'category', 'chart', 'check', 'clock', 'close_title', 'cog', 'collab', 'company', 'contact', 'country', 'contract', 'cron', 'cubes',
+				'cash-register', 'category', 'chart', 'check', 'clock', 'close_title', 'cog', 'collab', 'company', 'contact', 'country', 'contract', 'cron', 'cubes', 'multicurrency',
 				'delete', 'dolly', 'dollyrevert', 'donation', 'download', 'dynamicprice',
 				'edit', 'ellipsis-h', 'email', 'eraser', 'establishment', 'expensereport', 'external-link-alt', 'external-link-square-alt',
 				'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'autofill', 'folder', 'folder-open', 'folder-plus',
@@ -6809,6 +6809,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__MEMBER_CIVILITY__'] = '__MEMBER_CIVILITY__';
 				$substitutionarray['__MEMBER_FIRSTNAME__'] = '__MEMBER_FIRSTNAME__';
 				$substitutionarray['__MEMBER_LASTNAME__'] = '__MEMBER_LASTNAME__';
+				$substitutionarray['__MEMBER_USER_LOGIN_INFORMATION__'] = 'Login and pass of the external user account';
 				/*$substitutionarray['__MEMBER_NOTE_PUBLIC__'] = '__MEMBER_NOTE_PUBLIC__';
 				$substitutionarray['__MEMBER_NOTE_PRIVATE__'] = '__MEMBER_NOTE_PRIVATE__';*/
 			}
@@ -6884,6 +6885,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				}
 				$substitutionarray['__MEMBER_FIRSTNAME__'] = (isset($object->firstname) ? $object->firstname : '');
 				$substitutionarray['__MEMBER_LASTNAME__'] = (isset($object->lastname) ? $object->lastname : '');
+				$substitutionarray['__MEMBER_USER_LOGIN_INFORMATION__'] = '';
 				if (method_exists($object, 'getFullName')) {
 					$substitutionarray['__MEMBER_FULLNAME__'] = $object->getFullName($outputlangs);
 				}
@@ -8383,12 +8385,12 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 
 	// No need to make a return $head. Var is modified as a reference
 	if (!empty($hookmanager)) {
-		$parameters = array('object' => $object, 'mode' => $mode, 'head' => $head);
+		$parameters = array('object' => $object, 'mode' => $mode, 'head' => &$head);
 		$reshook = $hookmanager->executeHooks('completeTabsHead', $parameters);
 		if ($reshook > 0) {
 			$head = $hookmanager->resArray;
-			$h = count($head);
 		}
+		$h = count($head);
 	}
 }
 
@@ -9384,7 +9386,8 @@ function getDictvalue($tablename, $field, $id, $checkentity = false, $rowidfield
 
 	if (!isset($dictvalues[$tablename])) {
 		$dictvalues[$tablename] = array();
-		$sql = 'SELECT * FROM '.$tablename.' WHERE 1'; // Here select * is allowed as it is generic code and we don't have list of fields
+
+		$sql = 'SELECT * FROM '.$tablename.' WHERE 1 = 1'; // Here select * is allowed as it is generic code and we don't have list of fields
 		if ($checkentity) {
 			$sql .= ' AND entity IN (0,'.getEntity($tablename).')';
 		}
@@ -9673,6 +9676,7 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 	$class = 'butAction';
 	if ($actionType == 'danger' || $actionType == 'delete') {
 		$class = 'butActionDelete';
+		if (strpos($url, 'token=') === false) $url .= '&token='.newToken();
 	}
 
 	$attr = array(

@@ -198,10 +198,24 @@ class modTakePos extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 50151;
-		$this->rights[$r][1] = 'Use Point Of Sale';
+		$this->rights[$r][1] = 'Use Point Of Sale (record a sale, add products, record payment)';
 		$this->rights[$r][2] = 'a';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'run';
+
+		$r++;
+		$this->rights[$r][0] = 50152;
+		$this->rights[$r][1] = 'Can modify added sales lines (prices, discount)';
+		$this->rights[$r][2] = 'a';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'editlines';
+
+		$r++;
+		$this->rights[$r][0] = 50153;
+		$this->rights[$r][1] = 'Edit ordered sales lines (useful only when option "Order printers" has been enabled). Allow to edit sales lines even after the order has been printed';
+		$this->rights[$r][2] = 'a';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'editorderedlines';
 
 
 		// Main menu entries
