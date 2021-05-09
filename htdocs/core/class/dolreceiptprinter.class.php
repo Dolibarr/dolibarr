@@ -832,9 +832,9 @@ class dolReceiptPrinter extends Printer
 							$sql = "SELECT floor, label FROM ".MAIN_DB_PREFIX."takepos_floor_tables where rowid=".((int) str_replace(")", "", str_replace("(PROV-POS".$_SESSION["takeposterminal"]."-", "", $object->ref)));
 							$resql = $db->query($sql);
 							$obj = $db->fetch_object($resql);
-							if ($obj) {
-								$this->printer->text($obj->label);
-							}
+						if ($obj) {
+							$this->printer->text($obj->label);
+						}
 						break;
 					default:
 						$this->printer->text($vals[$tplline]['tag']);
