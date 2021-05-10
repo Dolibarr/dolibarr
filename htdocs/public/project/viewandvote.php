@@ -180,18 +180,17 @@ if (strlen($idvote)) {
 				// Cookie duration by default
 				$timeleftbeforestartofevent = time()+86400*30;
 			}
-
+			
 			// Process to vote
-			$res = setcookie('VOTE_SUGGESTED_EVENTS_'.$hashedvote, 1, 0);
 			if ($res) {
 				$conforbooth->num_vote++;
 				$resupdate = $conforbooth->update($user);
 				if ($resupdate) {
 					$votestatus = 'ok';
+					$res = setcookie('VOTE_SUGGESTED_EVENTS_'.$hashedvote, 1, 0);
 				} else {
 					//Error during update
 					$votestatus = 'err';
-					$res = setcookie('VOTE_SUGGESTED_EVENTS_'.$hashedvote, 0, 0);
 				}
 			} else {
 				$votestatus = 'err';
