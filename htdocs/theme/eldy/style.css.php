@@ -109,7 +109,7 @@ if (!isset($conf->global->THEME_ELDY_TEXTTITLENOTAB)) $conf->global->THEME_ELDY_
 if (!isset($conf->global->THEME_ELDY_TEXTLINK)) $conf->global->THEME_ELDY_TEXTLINK = $colortextlink;
 
 // Case of option editable only if option THEME_ELDY_ENABLE_PERSONALIZED is on
-if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
+if (!empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
 {
 	$conf->global->THEME_ELDY_BACKTABCARD1 = '255,255,255'; // card
 	$conf->global->THEME_ELDY_BACKTABACTIVE = '234,234,234';
