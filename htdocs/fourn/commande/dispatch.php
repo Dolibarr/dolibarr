@@ -1235,7 +1235,7 @@ if ($id > 0 || !empty($ref)) {
 					}
 				} else {
 					$warehouse_static->id = $objp->warehouse_id;
-					$warehouse_static->libelle = $objp->entrepot;
+					$warehouse_static->label = $objp->entrepot;
 					print $warehouse_static->getNomUrl(1);
 				}
 				print '</td>';
