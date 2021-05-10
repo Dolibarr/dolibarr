@@ -76,13 +76,6 @@ if ($securekeytocompare != $securekeyreceived) {
 
 $listofvotes = explode(',', $_SESSION["savevotes"]);
 
-if (GETPOST("votestatus")=="ok") {
-	setEventMessage($langs->trans("VoteOk"), 'mesgs');
-} else if (GETPOST("votestatus")=="ko") {
-	setEventMessage($langs->trans("AlreadyVoted"), 'warnings');
-} else if (GETPOST("votestatus")=="err") {
-	setEventMessage($langs->trans("VoteError"), 'warnings');
-}
 
 // Define $urlwithroot
 //$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
@@ -186,7 +179,15 @@ if (strlen($idvote)) {
 			}
 		}
 	}
-	header("Refresh:0;url=".dol_buildpath('/public/project/viewandvote.php?votestatus='.$votestatus.'&id='.$id.'&securekey=', 1).$securekeyreceived);
+	if ($votestatus=="ok") {
+		setEventMessage($langs->trans("VoteOk"), 'mesgs');
+	} else if ($votestatus=="ko") {
+		setEventMessage($langs->trans("AlreadyVoted"), 'warnings');
+	} else if ($votestatus=="err") {
+		setEventMessage($langs->trans("VoteError"), 'warnings');
+	}
+	header("Refresh:0;url=".dol_buildpath('/public/project/viewandvote.php?id='.$id.'&securekey=', 1).$securekeyreceived);
+	exit;
 }
 
 
