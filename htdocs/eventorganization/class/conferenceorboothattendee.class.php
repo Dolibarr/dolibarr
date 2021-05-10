@@ -1082,7 +1082,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
 	{
 		$tables = array(
-			'conferenceorboothattendee'
+			'eventorganization_conferenceorboothattendee'
 		);
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
