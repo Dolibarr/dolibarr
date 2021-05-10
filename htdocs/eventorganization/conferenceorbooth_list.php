@@ -427,7 +427,17 @@ if ($projectid > 0) {
 	print "</td></tr>";
 
 	print '<tr><td valign="middle">'.$langs->trans("EventOrganizationICSLink").'</td><td>';
-	print '';
+	// Define $urlwithroot
+	$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT;
+	$getentity = ($conf->entity > 1 ? "&entity=".$conf->entity : "");
+
+	// Show message
+	$message = '<input type="text" id="onlinepaymenturl" class="quatrevingtpercent" value="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical'.$getentity.
+		'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...')."&project=".$projectid.'">';
+	$message .= '</div>';
+	$message .= '<br>';
+	print $message;
 	print "</td></tr>";
 
 
