@@ -481,13 +481,13 @@ if ($object->id > 0) {
 		}
 	}
 
-	
+
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('addMoreBoxStatsSupplier', $parameters, $object, $action);
 	if (empty($reshook)) {
 		$boxstat .= $hookmanager->resPrint;
 	}
-	
+
 	$boxstat .= '</td></tr>';
 	$boxstat .= '</table>';
 	$boxstat .= '</div>';
