@@ -175,17 +175,13 @@ if (strlen($idvote)) {
 			$errmsg .= $conforbooth->error;
 		} else {
 			// Process to vote
-			if ($res) {
-				$conforbooth->num_vote++;
-				$resupdate = $conforbooth->update($user);
-				if ($resupdate) {
-					$votestatus = 'ok';
-					$_SESSION["savevotes"] = $hashedvote.','.(empty($_SESSION["savevotes"]) ? '' : $_SESSION["savevotes"]); // Save voter
-				} else {
-					//Error during update
-					$votestatus = 'err';
-				}
+			$conforbooth->num_vote++;
+			$resupdate = $conforbooth->update($user);
+			if ($resupdate) {
+				$votestatus = 'ok';
+				$_SESSION["savevotes"] = $hashedvote.','.(empty($_SESSION["savevotes"]) ? '' : $_SESSION["savevotes"]); // Save voter
 			} else {
+				//Error during update
 				$votestatus = 'err';
 			}
 		}
