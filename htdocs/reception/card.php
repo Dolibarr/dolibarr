@@ -328,8 +328,6 @@ if (empty($reshook)) {
 				$sellby = "dluo".$i;
 				$batch = "batch".$i;
 
-				$timeFormat = '%d/%m/%Y';
-
 				if (GETPOST($qty, 'int') > 0 || (GETPOST($qty, 'int') == 0 && $conf->global->RECEPTION_GETS_ALL_ORDER_PRODUCTS)) {
 					$ent = "entl".$i;
 
@@ -353,7 +351,6 @@ if (empty($reshook)) {
 					$sellby = GETPOST($sellby, 'alpha');
 					$eatbydate = str_replace('/', '-', $eatby);
 					$sellbydate = str_replace('/', '-', $sellby);
-
 
 					$ret = $object->addline($entrepot_id, GETPOST($idl, 'int'), GETPOST($qty, 'int'), $array_options[$i], GETPOST($comment, 'alpha'), strtotime($eatbydate), strtotime($sellbydate), GETPOST($batch, 'alpha'));
 					if ($ret < 0) {
@@ -958,6 +955,7 @@ if ($action == 'create') {
 			if ($numAsked) {
 				print '<tr class="liste_titre">';
 				print '<td>'.$langs->trans("Description").'</td>';
+				print '<td>'.$langs->trans("Comment").'</td>';
 				print '<td class="center">'.$langs->trans("QtyOrdered").'</td>';
 				print '<td class="center">'.$langs->trans("QtyReceived").'</td>';
 				print '<td class="center">'.$langs->trans("QtyToReceive");
@@ -1056,18 +1054,22 @@ if ($action == 'create') {
 					print "</td>\n";
 				}
 
+				// Comment
+				//$defaultcomment = 'Line create from order line id '.$line->id;
+				$defaultcomment = '';
+				print '<td>';
+				print '<input type="text" class="maxwidth100" name="comment'.$indiceAsked.'" value="'.$defaultcomment.'">';
+				print '</td>';
+
 				// Qty
 				print '<td class="center">'.$line->qty;
-				print '<input type="hidden" name="fk_commandefournisseurdet'.$indiceAsked.'" value=\''.$line->id.'\' />';
-				print '<textarea style="display:none;"  name="comment'.$indiceAsked.'" >'.$line->desc.'</textarea>';
+				print '<input type="hidden" name="fk_commandefournisseurdet'.$indiceAsked.'" value="'.$line->id.'">';
 				print '<input name="qtyasked'.$indiceAsked.'" id="qtyasked'.$indiceAsked.'" type="hidden" value="'.$line->qty.'">';
 				print '</td>';
 				$qtyProdCom = $line->qty;
 
 				// Qty already received
 				print '<td class="center">';
-
-
 				$quantityDelivered = $object->receptions[$line->id];
 				print $quantityDelivered;
 				print '<input name="qtydelivered'.$indiceAsked.'" id="qtydelivered'.$indiceAsked.'" type="hidden" value="'.$quantityDelivered.'">';
@@ -1137,8 +1139,8 @@ if ($action == 'create') {
 							print '<td colspan="3"></td>';
 						}
 					}
-					print "</tr>\n";
 				}
+				print "</tr>\n";
 
 				//Display lines extrafields
 				if (is_array($extralabelslines) && count($extralabelslines) > 0) {
@@ -1584,7 +1586,7 @@ if ($action == 'create') {
 		// Product/Service
 		print '<td>'.$langs->trans("Products").'</td>';
 		// Comment
-		print '<td>'.$langs->trans("Description").'</td>';
+		print '<td>'.$langs->trans("Comment").'</td>';
 		// Qty
 		print '<td class="center">'.$langs->trans("QtyOrdered").'</td>';
 		if ($origin && $origin_id > 0) {
@@ -1747,9 +1749,9 @@ if ($action == 'create') {
 			}
 
 			if ($action == 'editline' && $lines[$i]->id == $line_id) {
-				print '<td><textarea name="comment'.$line_id.'" id="comment'.$line_id.'" /> '.$lines[$i]->comment.'</textarea></td>';
+				print '<td><input name="comment'.$line_id.'" id="comment'.$line_id.'" value="'.dol_escape_htmltag($lines[$i]->comment).'"></td>';
 			} else {
-				print '<td style="white-space: pre-wrap;max-width: 200px;" >'.$lines[$i]->comment.'</td>';
+				print '<td style="white-space: pre-wrap; max-width: 200px;">'.dol_escape_htmltag($lines[$i]->comment).'</td>';
 			}
 
 
@@ -1778,7 +1780,7 @@ if ($action == 'create') {
 							$htmltext = $langs->trans("DateValidation").' : '.(empty($receptionline_var['date_valid']) ? $langs->trans("Draft") : dol_print_date($receptionline_var['date_valid'], 'dayhour'));
 							if (!empty($conf->stock->enabled) && $receptionline_var['warehouse'] > 0) {
 								$warehousestatic->fetch($receptionline_var['warehouse']);
-								$htmltext .= '<br>'.$langs->trans("From").' : '.$warehousestatic->getNomUrl(1);
+								$htmltext .= '<br>'.$langs->trans("From").' : '.$warehousestatic->getNomUrl(1, '', 0, 1);
 							}
 							print ' '.$form->textwithpicto('', $htmltext, 1);
 						}
