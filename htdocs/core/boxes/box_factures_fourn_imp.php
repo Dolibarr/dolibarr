@@ -134,6 +134,10 @@ class box_factures_fourn_imp extends ModeleBoxes
 					$facturestatic->statut = $objp->status;
 					$facturestatic->status = $objp->status;
 
+					$alreadypaid = $facturestatic->getSommePaiement();
+
+					$facturestatic->alreadypaid = $alreadypaid ? $alreadypaid : 0;
+
 					$thirdpartystatic->id = $objp->socid;
 					$thirdpartystatic->name = $objp->name;
 					$thirdpartystatic->name_alias = $objp->name_alias;
@@ -174,9 +178,6 @@ class box_factures_fourn_imp extends ModeleBoxes
 						'text' => dol_print_date($datelimite, 'day'),
 					);
 
-					$fac = new FactureFournisseur($this->db);
-					$fac->fetch($objp->facid);
-					$alreadypaid = $fac->getSommePaiement();
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right" width="18"',
 						'text' => $facturestatic->LibStatut($objp->paye, $objp->status, 3, $alreadypaid, $objp->type),

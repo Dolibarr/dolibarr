@@ -100,6 +100,7 @@ if ($conf->use_javascript_ajax) {
 }
 print '</td></tr>';
 
+/*
 print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING").'</td><td>';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING');
@@ -108,6 +109,7 @@ if ($conf->use_javascript_ajax) {
 	print $form->selectarray("MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING", $arrval, $conf->global->MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING);
 }
 print '</td></tr>';
+*/
 
 print '</table>';
 print '</div>';
