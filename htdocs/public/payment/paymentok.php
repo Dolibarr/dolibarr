@@ -1006,7 +1006,7 @@ if ($ispaymentok) {
 						if ($resultattendee < 0) {
 							setEventMessages(null, $attendeetovalidate->errors, "errors");
 						} else {
-							$attendeetovalidate->setStatut(1);
+							$attendeetovalidate->validate($user);
 
 							// Sending mail
 							$thirdparty = new Societe($db);
