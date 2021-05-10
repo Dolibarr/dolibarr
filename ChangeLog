@@ -3,6 +3,63 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
+***** ChangeLog for 13.0.3 compared to 13.0.2 *****
+
+FIX: 13.0 warning - missing quotes around 'label'
+FIX: #16143 Old PG requires "()" on DROP FUNCTION
+FIX: #16843
+FIX: #17060
+FIX: #17192 - With tz < 0, event is show in bad day on calendar views
+FIX: #17363
+FIX: #17476 releve.php: Fix SQL statement
+FIX: Accountancy - Import in general ledger
+FIX: Accountancy - Quadra export - wrong data on credit
+FIX: Accountancy - Warning on the pages of the preparatory statements of accounting entries
+FIX: Add function price2num for rounding values in productAlertStock box
+FIX: Add parameter to function price2num()
+FIX: Cannot delete a batch material from item receipts
+FIX: cast int
+FIX: Change parameters MF to MS for price2num() function
+FIX: create event from contact card preselect contact correctly
+FIX: create sociales : keep values error form
+FIX: dol_print_date for %a and %b with some timezone
+FIX: email is not case sensitive
+FIX: error for duplicate thirdparty found correctly returned by ws
+FIX: Espadon PDF shippment model with long public note now wroking
+FIX: esupplier order: error 500 when using packaging with product where it is not defined
+FIX: Filter on debit/credit
+FIX: Filter on supplier payment list
+FIX: fix checkbox displayed according to module project setup parameters - work in progress
+FIX: inconsistency in margin recording with option "Force to sale price"
+FIX: invoice PDF generation after payment
+FIX: mask selector fournisseur if module not activate
+FIX: merge thirparty also work for bank URL entry
+FIX: Missing extrafields into export of agenda record
+FIX: missing parameter in select for POP
+FIX: missing return edit if update error
+FIX: missing token on dolGetButtonAction for action delete
+FIX: payment creation: re-generate invoice PDF with correct display options
+FIX: payment validation: invoices PDF were no re-generated, make it with correct display options
+FIX: Periodicity by default on fiscal year, according to the now date, we have plus 1 year added
+FIX: pgsql: prevent 'WHERE 1'
+FIX: PHP version requirement in composer.json
+FIX: project visibility field with two option
+FIX: saving template email
+FIX: search accented words in product description (consumption page)
+FIX: Search on date in accountancy
+FIX: selection of project for reception must use
+FIX: shhhhhh ! There is nothing here...
+FIX: Show input field checkbox selection
+FIX: Show Ref.Supplier in LinkToObjectBlock
+FIX: SQL Error show_contacts : socialnetworks
+FIX: Start hour on ACCOUNTING_DATE_START_BINDING
+FIX: supplier order: error 500 when using packaging with product where it is not defined
+FIX: test must be === and not ==
+FIX: test on link type
+FIX: type link extrafield case for advanced target emailing
+FIX: Write right on document
+
+
 ***** ChangeLog for 13.0.2 compared to 13.0.1 *****
 
 FIX: 11.0 - $this->socid injected in query without checking for empty value
