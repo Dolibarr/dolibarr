@@ -1464,8 +1464,9 @@ if (!empty($conf->projet->enabled)) {
 	$formproject = new FormProjets($db);
 }
 
+$title = $langs->trans('SupplierOrder')." - ".$langs->trans('Card');
 $help_url = 'EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
-llxHeader('', $langs->trans("Order"), $help_url);
+llxHeader('', $title, $help_url);
 
 $now = dol_now();
 
