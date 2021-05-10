@@ -62,8 +62,10 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 	global $db, $hookmanager;
 	global $object;
 
-	dol_syslog("files.lib.php::dol_dir_list path=".$path." types=".$types." recursive=".$recursive." filter=".$filter." excludefilter=".json_encode($excludefilter));
-	//print 'xxx'."files.lib.php::dol_dir_list path=".$path." types=".$types." recursive=".$recursive." filter=".$filter." excludefilter=".json_encode($excludefilter);
+	if ($recursive <= 1) {	// Avoid too verbose log
+		dol_syslog("files.lib.php::dol_dir_list path=".$path." types=".$types." recursive=".$recursive." filter=".$filter." excludefilter=".json_encode($excludefilter));
+		//print 'xxx'."files.lib.php::dol_dir_list path=".$path." types=".$types." recursive=".$recursive." filter=".$filter." excludefilter=".json_encode($excludefilter);
+	}
 
 	$loaddate = ($mode == 1 || $mode == 2) ?true:false;
 	$loadsize = ($mode == 1 || $mode == 3) ?true:false;
@@ -133,7 +135,7 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 				if ($qualified) {
 					$isdir = is_dir(dol_osencode($path."/".$file));
 					// Check whether this is a file or directory and whether we're interested in that type
-					if ($isdir && (($types == "directories") || ($types == "all") || $recursive)) {
+					if ($isdir && (($types == "directories") || ($types == "all") || $recursive > 0)) {
 						// Add entry into file_list array
 						if (($types == "directories") || ($types == "all")) {
 							if ($loaddate || $sortcriteria == 'date') {
@@ -165,10 +167,10 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 						}
 
 						// if we're in a directory and we want recursive behavior, call this function again
-						if ($recursive) {
+						if ($recursive > 0) {
 							if (empty($donotfollowsymlinks) || !is_link($path."/".$file)) {
 								//var_dump('eee '. $path."/".$file. ' '.is_dir($path."/".$file).' '.is_link($path."/".$file));
-								$file_list = array_merge($file_list, dol_dir_list($path."/".$file, $types, $recursive, $filter, $excludefilter, $sortcriteria, $sortorder, $mode, $nohook, ($relativename != '' ? $relativename.'/' : '').$file, $donotfollowsymlinks));
+								$file_list = array_merge($file_list, dol_dir_list($path."/".$file, $types, $recursive + 1, $filter, $excludefilter, $sortcriteria, $sortorder, $mode, $nohook, ($relativename != '' ? $relativename.'/' : '').$file, $donotfollowsymlinks));
 							}
 						}
 					} elseif (!$isdir && (($types == "files") || ($types == "all"))) {

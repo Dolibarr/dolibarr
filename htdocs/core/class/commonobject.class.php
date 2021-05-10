@@ -3820,6 +3820,11 @@ abstract class CommonObject
 						$classpath = 'projet/class';
 						$classfile = 'project';
 						$classname = 'Project';
+					} elseif ($objecttype == 'conferenceorboothattendee') {
+						$classpath = 'eventorganization/class';
+						$classfile = 'conferenceorboothattendee';
+						$classname = 'ConferenceOrBoothAttendee';
+						$module = 'eventorganization';
 					}
 
 					// Here $module, $classfile and $classname are set
@@ -6419,14 +6424,16 @@ abstract class CommonObject
 		} elseif (preg_match('/varchar/', $val['type'])) {
 			$param['options'] = array();
 			$type = 'varchar';
-		} elseif (is_array($this->fields[$key]['arrayofkeyval'])) {
-			$param['options'] = $this->fields[$key]['arrayofkeyval'];
-			$type = 'select';
 		} else {
 			$param['options'] = array();
 			$type = $this->fields[$key]['type'];
 		}
 
+		// Special case that force options and type ($type can be integer, varchar, ...)
+		if (is_array($this->fields[$key]['arrayofkeyval'])) {
+			$param['options'] = $this->fields[$key]['arrayofkeyval'];
+			$type = 'select';
+		}
 
 		$label = $this->fields[$key]['label'];
 		//$elementtype=$this->fields[$key]['elementtype'];	// Seems not used

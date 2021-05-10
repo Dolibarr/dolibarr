@@ -81,13 +81,16 @@ $monthofday = GETPOST('addtimemonth');
 $dayofday = GETPOST('addtimeday');
 $yearofday = GETPOST('addtimeyear');
 
-$daytoparse = $now;
-if ($yearofday && $monthofday && $dayofday) {
-	$daytoparse = dol_mktime(0, 0, 0, $monthofday, $dayofday, $yearofday); // xxxofday is value of day after submit action 'addtime'
-} elseif ($year && $month && $day) {
-	$daytoparse = dol_mktime(0, 0, 0, $month, $day, $year); // this are value submited after submit of action 'submitdateselect'
-}
+/*var_dump(GETPOST('remonth'));
+var_dump(GETPOST('button_search_x'));
+var_dump(GETPOST('button_addtime'));*/
 
+$daytoparse = $now;
+if ($year && $month && $day) {
+	$daytoparse = dol_mktime(0, 0, 0, $month, $day, $year); // this are value submited after submit of action 'submitdateselect'
+} elseif ($yearofday && $monthofday && $dayofday) {
+	$daytoparse = dol_mktime(0, 0, 0, $monthofday, $dayofday, $yearofday); // xxxofday is value of day after submit action 'addtime'
+}
 
 if (empty($search_usertoprocessid) || $search_usertoprocessid == $user->id) {
 	$usertoprocess = $user;
@@ -416,10 +419,10 @@ $search_options_pattern = 'search_task_options_';
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 // Show navigation bar
-$nav = '<a class="inline-block valignmiddle" href="?year='.$prev_year."&amp;month=".$prev_month."&amp;day=".$prev_day.$param.'">'.img_previous($langs->trans("Previous"))."</a>\n";
+$nav = '<a class="inline-block valignmiddle" href="?year='.$prev_year."&month=".$prev_month."&day=".$prev_day.$param.'">'.img_previous($langs->trans("Previous"))."</a>\n";
 $nav .= dol_print_date(dol_mktime(0, 0, 0, $month, $day, $year), "%A").' ';
 $nav .= " <span id=\"month_name\">".dol_print_date(dol_mktime(0, 0, 0, $month, $day, $year), "day")." </span>\n";
-$nav .= '<a class="inline-block valignmiddle" href="?year='.$next_year."&amp;month=".$next_month."&amp;day=".$next_day.$param.'">'.img_next($langs->trans("Next"))."</a>\n";
+$nav .= '<a class="inline-block valignmiddle" href="?year='.$next_year."&month=".$next_month."&day=".$next_day.$param.'">'.img_next($langs->trans("Next"))."</a>\n";
 $nav .= ' '.$form->selectDate(-1, '', 0, 0, 2, "addtime", 1, 1).' ';
 $nav .= ' <button type="submit" name="button_search_x" value="x" class="bordertransp"><span class="fa fa-search"></span></button>';
 
@@ -773,7 +776,7 @@ print '</div>';
 print '<input type="hidden" id="numberOfLines" name="numberOfLines" value="'.count($tasksarray).'"/>'."\n";
 
 print '<div class="center">';
-print '<input type="submit" class="button button-save"'.($disabledtask ? ' disabled' : '').' value="'.$langs->trans("Save").'">';
+print '<input type="submit" name="button_addtime" class="button button-save"'.($disabledtask ? ' disabled' : '').' value="'.$langs->trans("Save").'">';
 print '</div>';
 
 print '</form>';

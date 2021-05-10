@@ -2000,6 +2000,9 @@ div.nopadding {
 	margin : 0px auto;
 }
 
+td.nobordernopadding.widthpictotitle.col-picto {
+	opacity: 0.9;
+}
 .pictotitle {
 	margin-<?php echo $right; ?>: 8px;
 	margin-bottom: 4px;
@@ -6582,6 +6585,14 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 {
 	font-family: "Font Awesome 5 Free" !important;
 }
+
+
+/* ============================================================================== */
+/* CSS style used for jCrop                                                       */
+/* ============================================================================== */
+
+.jcrop-holder { background: unset !important; }
+
 
 /* ============================================================================== */
 /* CSS style used for jFlot                                                       */

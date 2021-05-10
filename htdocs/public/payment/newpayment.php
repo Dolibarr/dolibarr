@@ -59,12 +59,18 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 // Hook to be used by external payment modules (ie Payzen, ...)
 include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 $hookmanager = new HookManager($db);
 $hookmanager->initHooks(array('newpayment'));
+
+// For encryption
+global $dolibarr_main_instance_unique_id;
 
 // Load translation files
 $langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "paybox", "paypal", "stripe")); // File with generic data
@@ -106,6 +112,38 @@ if (!$action) {
 	}
 }
 
+if ($source == 'conferencesubscription') {
+	// Finding the Attendee
+	$invoiceid = GETPOST('ref');
+	$invoice = new Facture($db);
+	$resultinvoice = $invoice->fetch($invoiceid);
+	if ($resultinvoice <= 0) {
+		setEventMessages(null, $invoice->errors, "errors");
+	} else {
+		$invoice->fetchObjectLinked();
+		$linkedAttendees = $invoice->linkedObjectsIds['conferenceorboothattendee'];
+
+		if (is_array($linkedAttendees)) {
+			$linkedAttendees = array_values($linkedAttendees);
+
+			$attendee = new ConferenceOrBoothAttendee($db);
+			$resultattendee = $attendee->fetch($linkedAttendees[0]);
+			if ($resultattendee <= 0) {
+				setEventMessages(null, $attendee->errors, "errors");
+			} else {
+				$amount = price2num($invoice->total_ttc);
+				// Finding the associated thirdparty
+				$thirdparty = new Societe($db);
+				$resultthirdparty = $thirdparty->fetch($invoice->socid);
+				if ($resultthirdparty <= 0) {
+					setEventMessages(null, $thirdparty->errors, "errors");
+				}
+				$object = $thirdparty;
+			}
+		}
+	}
+}
+
 
 $paymentmethod = GETPOST('paymentmethod', 'alphanohtml') ?GETPOST('paymentmethod', 'alphanohtml') : ''; // Empty in most cases. Defined when a payment mode is forced
 $validpaymentmethod = array();
@@ -132,6 +170,7 @@ $ref = $REF = GETPOST('ref', 'alpha');
 $TAG = GETPOST("tag", 'alpha');
 $FULLTAG = GETPOST("fulltag", 'alpha'); // fulltag is tag with more informations
 $SECUREKEY = GETPOST("securekey"); // Secure key
+
 if ($paymentmethod && !preg_match('/'.preg_quote('PM='.$paymentmethod, '/').'/', $FULLTAG)) {
 	$FULLTAG .= ($FULLTAG ? '.' : '').'PM='.$paymentmethod;
 }
@@ -1444,20 +1483,18 @@ if ($source == 'member' || $source == 'membersubscription') {
 		print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("LastMemberType");
 		print '</td><td class="CTableRow'.($var ? '1' : '2').'">'.dol_escape_htmltag($member->type);
 		print "</td></tr>\n";
-	}
 
-	if (!empty($conf->global->MEMBER_SUBSCRIPTION_AMOUNT_BY_TYPE)) {
+		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
+		$adht = new AdherentType($db);
 		// Amount by member type
-		$amountbytype = array();		// TODO Read the amount of subscription into table of types
+		$amountbytype = $adht->amountByType(1);
 		// Set the member type
 		$member->typeid = (int) (GETPOSTISSET("typeid") ? GETPOST("typeid", 'int') : $member->typeid);
 		// If we change the type of membership, we set also label of new type
 		$member->type = dol_getIdFromCode($db, $member->typeid, 'adherent_type', 'rowid', 'libelle');
 		// Set amount for the subscription
-		$amount = (!empty($member->last_subscription_amount)) ? $member->last_subscription_amount : $amountbytype[$member->typeid];
+		$amount = (!empty($amountbytype[$member->typeid])) ? $amountbytype[$member->typeid]  : $member->last_subscription_amount;
 		// list member type
-		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
-		$adht = new AdherentType($db);
 		if ( !$action) {
 			$form = new Form($db); // so we can call method selectarray
 			print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("NewSubscription");
@@ -1725,6 +1762,94 @@ if ($source == 'donation') {
 	print '<input type="hidden" name="desc" value="'.dol_escape_htmltag($labeldesc).'">'."\n";
 }
 
+if ($source == 'conferencesubscription') {
+	$found = true;
+	$langs->load("members");
+
+	if (GETPOST('fulltag', 'alpha')) {
+		$fulltag = GETPOST('fulltag', 'alpha');
+	} else {
+		$fulltag = 'ATT='.$attendee->id.'.DAT='.dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+		if (!empty($TAG)) {
+			$tag = $TAG; $fulltag .= '.TAG='.$TAG;
+		}
+	}
+	$fulltag = dol_string_unaccent($fulltag);
+
+	// Creditor
+	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("Creditor");
+	print '</td><td class="CTableRow'.($var ? '1' : '2').'"><b>'.$creditor.'</b>';
+	print '<input type="hidden" name="creditor" value="'.$creditor.'">';
+	print '</td></tr>'."\n";
+
+	// Debitor
+	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("Attendee");
+	print '</td><td class="CTableRow'.($var ? '1' : '2').'"><b>';
+	print $thirdparty->name;
+	print '</b>';
+	print '</td></tr>'."\n";
+
+	// Object
+	$text = '<b>'.$langs->trans("PaymentConferenceAttendee").'</b>';
+	if (GETPOST('desc', 'alpha')) {
+		$text = '<b>'.$langs->trans(GETPOST('desc', 'alpha')).'</b>';
+	}
+	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("Designation");
+	print '</td><td class="CTableRow'.($var ? '1' : '2').'">'.$text;
+	print '<input type="hidden" name="source" value="'.dol_escape_htmltag($source).'">';
+	print '<input type="hidden" name="ref" value="'.dol_escape_htmltag($invoice->id).'">';
+	print '</td></tr>'."\n";
+
+	// Amount
+	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("Amount");
+	print '</td><td class="CTableRow'.($var ? '1' : '2').'">';
+	$valtoshow = $amount;
+	print '<b>'.price($valtoshow).'</b>';
+	print '<input type="hidden" name="amount" value="'.$valtoshow.'">';
+	print '<input type="hidden" name="newamount" value="'.$valtoshow.'">';
+
+	// Currency
+	print ' <b>'.$langs->trans("Currency".$currency).'</b>';
+	print '<input type="hidden" name="currency" value="'.$currency.'">';
+	print '</td></tr>'."\n";
+
+	// Tag
+	print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("PaymentCode");
+	print '</td><td class="CTableRow'.($var ? '1' : '2').'"><b style="word-break: break-all;">'.$fulltag.'</b>';
+	print '<input type="hidden" name="tag" value="'.$tag.'">';
+	print '<input type="hidden" name="fulltag" value="'.$fulltag.'">';
+	print '</td></tr>'."\n";
+
+	// Shipping address
+	$shipToName = $thirdparty->getFullName($langs);
+	$shipToStreet = $thirdparty->address;
+	$shipToCity = $thirdparty->town;
+	$shipToState = $thirdparty->state_code;
+	$shipToCountryCode = $thirdparty->country_code;
+	$shipToZip = $thirdparty->zip;
+	$shipToStreet2 = '';
+	$phoneNum = $thirdparty->phone;
+	if ($shipToName && $shipToStreet && $shipToCity && $shipToCountryCode && $shipToZip) {
+		print '<!-- Shipping address information -->';
+		print '<input type="hidden" name="shipToName" value="'.$shipToName.'">'."\n";
+		print '<input type="hidden" name="shipToStreet" value="'.$shipToStreet.'">'."\n";
+		print '<input type="hidden" name="shipToCity" value="'.$shipToCity.'">'."\n";
+		print '<input type="hidden" name="shipToState" value="'.$shipToState.'">'."\n";
+		print '<input type="hidden" name="shipToCountryCode" value="'.$shipToCountryCode.'">'."\n";
+		print '<input type="hidden" name="shipToZip" value="'.$shipToZip.'">'."\n";
+		print '<input type="hidden" name="shipToStreet2" value="'.$shipToStreet2.'">'."\n";
+		print '<input type="hidden" name="phoneNum" value="'.$phoneNum.'">'."\n";
+	} else {
+		print '<!-- Shipping address not complete, so we don t use it -->'."\n";
+	}
+	print '<input type="hidden" name="thirdparty_id" value="'.$thirdparty->id.'">'."\n";
+	print '<input type="hidden" name="email" value="'.$thirdparty->email.'">'."\n";
+	$labeldesc = $langs->trans("PaymentSubscription");
+	if (GETPOST('desc', 'alpha')) {
+		$labeldesc = GETPOST('desc', 'alpha');
+	}
+	print '<input type="hidden" name="desc" value="'.dol_escape_htmltag($labeldesc).'">'."\n";
+}
 
 if (!$found && !$mesg) {
 	$mesg = $langs->trans("ErrorBadParameters");
@@ -1755,7 +1880,7 @@ if ($action != 'dopayment') {
 			print '<br><br><span class="amountpaymentcomplete size15x">'.$langs->trans("DonationPaid").'</span>';
 		} else {
 			// Membership can be paid and we still allow to make renewal
-			if ($source == 'membersubscription' && $object->datefin > dol_now()) {
+			if (($source == 'member' || $source == 'membersubscription') && $object->datefin > dol_now()) {
 				$langs->load("members");
 				print '<br><span class="amountpaymentcomplete size15x">'.$langs->trans("MembershipPaid", dol_print_date($object->datefin, 'day')).'</span><br>';
 				print '<div class="opacitymedium margintoponly">'.$langs->trans("PaymentWillBeRecordedForNextPeriod").'</div>';

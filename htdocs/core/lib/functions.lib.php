@@ -1386,7 +1386,9 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 			return;
 		}
 
-		$message = preg_replace('/password=\'[^\']*\'/', 'password=\'hidden\'', $message); // protection to avoid to have value of password in log
+		if (empty($conf->global->MAIN_SHOW_PASSWORD_INTO_LOG)) {
+			$message = preg_replace('/password=\'[^\']*\'/', 'password=\'hidden\'', $message); // protection to avoid to have value of password in log
+		}
 
 		// If adding log inside HTML page is required
 		if ((!empty($_REQUEST['logtohtml']) && !empty($conf->global->MAIN_ENABLE_LOG_TO_HTML))
@@ -2197,8 +2199,8 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 			if ($tzoutput == 'tzserver') {
 				$to_gmt = false;
 				$offsettzstring = @date_default_timezone_get(); // Example 'Europe/Berlin' or 'Indian/Reunion'
-				$offsettz = 0;
-				$offsetdst = 0;
+				$offsettz = 0;	// Timezone offset with server timezone, so 0
+				$offsetdst = 0;	// Dst offset with server timezone, so 0
 			} elseif ($tzoutput == 'tzuser' || $tzoutput == 'tzuserrel') {
 				$to_gmt = true;
 				$offsettzstring = (empty($_SESSION['dol_tz_string']) ? 'UTC' : $_SESSION['dol_tz_string']); // Example 'Europe/Berlin' or 'Indian/Reunion'
@@ -2308,7 +2310,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 		if ($time < 100000000000) {	// Protection against bad date values
 			$timetouse = $time + $offsettz + $offsetdst; // TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
 
-			$ret = adodb_strftime($format, $timetouse, $to_gmt);
+			$ret = adodb_strftime($format, $timetouse, $to_gmt);	// If to_gmt = false then adodb_strftime use TZ of server
 		} else {
 			$ret = 'Bad value '.$time.' for date';
 		}
@@ -2318,7 +2320,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 		$timetouse = $time + $offsettz + $offsetdst; // TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
 
 		// Here ret is string in PHP setup language (strftime was used). Now we convert to $outputlangs.
-		$month = adodb_strftime('%m', $timetouse, true);
+		$month = adodb_strftime('%m', $timetouse, $to_gmt);		// If to_gmt = false then adodb_strftime use TZ of server
 		$month = sprintf("%02d", $month); // $month may be return with format '06' on some installation and '6' on other, so we force it to '06'.
 		if ($encodetooutput) {
 			$monthtext = $outputlangs->transnoentities('Month'.$month);
@@ -2334,9 +2336,10 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 		//return $ret;
 	}
 	if (preg_match('/__a__/i', $format)) {
+		//print "time=$time offsettz=$offsettz offsetdst=$offsetdst offsettzstring=$offsettzstring";
 		$timetouse = $time + $offsettz + $offsetdst; // TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
 
-		$w = adodb_strftime('%w', $timetouse, true); // TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
+		$w = adodb_strftime('%w', $timetouse, $to_gmt);		// If to_gmt = false then adodb_strftime use TZ of server
 		$dayweek = $outputlangs->transnoentitiesnoconv('Day'.$w);
 		$ret = str_replace('__A__', $dayweek, $ret);
 		$ret = str_replace('__a__', dol_substr($dayweek, 0, 3), $ret);
@@ -2368,42 +2371,23 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
  */
 function dol_getdate($timestamp, $fast = false, $forcetimezone = '')
 {
-	global $conf;
-
-	if (empty($conf->global->MAIN_USE_OLD_FUNCTIONS_FOR_GETDATE)) {
-		//$datetimeobj = new DateTime('@'.$timestamp);
-		$datetimeobj = new DateTime();
-		$datetimeobj->setTimestamp($timestamp); // Use local PHP server timezone
-		if ($forcetimezone) {
-			$datetimeobj->setTimezone(new DateTimeZone($forcetimezone == 'gmt' ? 'UTC' : $forcetimezone)); //  (add timezone relative to the date entered)
-		}
-		$arrayinfo = array(
-			'year'=>((int) date_format($datetimeobj, 'Y')),
-			'mon'=>((int) date_format($datetimeobj, 'm')),
-			'mday'=>((int) date_format($datetimeobj, 'd')),
-			'wday'=>((int) date_format($datetimeobj, 'w')),
-			'yday'=>((int) date_format($datetimeobj, 'z')),
-			'hours'=>((int) date_format($datetimeobj, 'H')),
-			'minutes'=>((int) date_format($datetimeobj, 'i')),
-			'seconds'=>((int) date_format($datetimeobj, 's')),
-			'0'=>$timestamp
-		);
-	} else {
-		// PHP getdate is restricted to the years 1901-2038 on Unix and 1970-2038 on Windows
-		$usealternatemethod = false;
-		if ($timestamp <= 0) {
-			$usealternatemethod = true; // <= 1970
-		}
-		if ($timestamp >= 2145913200) {
-			$usealternatemethod = true; // >= 2038
-		}
-
-		if ($usealternatemethod) {
-			$arrayinfo = adodb_getdate($timestamp, $fast);
-		} else {
-			$arrayinfo = getdate($timestamp);
-		}
+	//$datetimeobj = new DateTime('@'.$timestamp);
+	$datetimeobj = new DateTime();
+	$datetimeobj->setTimestamp($timestamp); // Use local PHP server timezone
+	if ($forcetimezone) {
+		$datetimeobj->setTimezone(new DateTimeZone($forcetimezone == 'gmt' ? 'UTC' : $forcetimezone)); //  (add timezone relative to the date entered)
 	}
+	$arrayinfo = array(
+		'year'=>((int) date_format($datetimeobj, 'Y')),
+		'mon'=>((int) date_format($datetimeobj, 'm')),
+		'mday'=>((int) date_format($datetimeobj, 'd')),
+		'wday'=>((int) date_format($datetimeobj, 'w')),
+		'yday'=>((int) date_format($datetimeobj, 'z')),
+		'hours'=>((int) date_format($datetimeobj, 'H')),
+		'minutes'=>((int) date_format($datetimeobj, 'i')),
+		'seconds'=>((int) date_format($datetimeobj, 's')),
+		'0'=>$timestamp
+	);
 
 	return $arrayinfo;
 }
@@ -3505,39 +3489,27 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		}
 	} else {
 		$pictowithouttext = preg_replace('/(\.png|\.gif|\.svg)$/', '', $picto);
+		$pictowithouttext = str_replace('object_', '', $pictowithouttext);
 		if (empty($srconly) && in_array($pictowithouttext, array(
 				'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
 				'accountancy', 'account', 'accountline', 'action', 'add', 'address', 'angle-double-down', 'angle-double-up', 'asset',
-				'bank_account', 'barcode', 'bank', 'bill', 'billa', 'billr', 'billd', 'bookmark', 'bom', 'building',
-				'cash-register', 'category', 'chart', 'check', 'clock', 'close_title', 'cog', 'collab', 'company', 'contact', 'country', 'contract', 'cron', 'cubes',
-				'delete', 'dolly', 'dollyrevert', 'donation', 'download', 'edit', 'ellipsis-h', 'email', 'eraser', 'establishment', 'external-link-alt', 'external-link-square-alt',
+				'bank_account', 'barcode', 'bank', 'bill', 'billa', 'billr', 'billd', 'bookmark', 'bom', 'bug', 'building',
+				'cash-register', 'category', 'chart', 'check', 'clock', 'close_title', 'cog', 'collab', 'company', 'contact', 'country', 'contract', 'cron', 'cubes', 'multicurrency',
+				'delete', 'dolly', 'dollyrevert', 'donation', 'download', 'dynamicprice',
+				'edit', 'ellipsis-h', 'email', 'eraser', 'establishment', 'expensereport', 'external-link-alt', 'external-link-square-alt',
 				'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'autofill', 'folder', 'folder-open', 'folder-plus',
-				'globe', 'globe-americas', 'graph', 'grip', 'grip_title', 'group',
+				'generate', 'globe', 'globe-americas', 'graph', 'grip', 'grip_title', 'group',
 				'help', 'holiday',
-				'images', 'info', 'intervention', 'inventory', 'intracommreport',
+				'images', 'incoterm', 'info', 'intervention', 'inventory', 'intracommreport', 'knowledgemanagement',
 				'label', 'language', 'link', 'list', 'listlight', 'loan', 'lot', 'long-arrow-alt-right',
 				'margin', 'map-marker-alt', 'member', 'meeting', 'money-bill-alt', 'movement', 'mrp', 'note', 'next',
-				'object_accounting', 'object_account', 'object_accountline', 'object_action', 'object_asset', 'object_bank_account', 'object_barcode', 'object_bill', 'object_billr', 'object_billa', 'object_billd', 'object_bom',
-				'object_category', 'object_conferenceorbooth', 'object_conversation', 'object_bookmark', 'object_bug', 'object_building', 'object_clock', 'object_collab', 'object_dolly', 'object_dollyrevert',
-				'object_folder', 'object_folder-open','object_generic',
-				'object_list-alt', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
-				'object_cash-register', 'object_company', 'object_contact', 'object_contract', 'object_cron', 'object_donation', 'object_dynamicprice', 'object_establishment',
-				'object_globe', 'object_holiday', 'object_hrm', 'object_invoice', 'object_intervention', 'object_inventory', 'object_intracommreport', 'object_label',
-				'object_margin', 'object_members', 'object_money-bill-alt', 'object_multicurrency', 'object_order', 'object_payment',
-				'object_lot', 'object_mrp', 'object_other',
-				'object_payment', 'object_pdf', 'object_product', 'object_propal',
-				'object_paragraph', 'object_poll', 'object_printer', 'object_project', 'object_projectpub', 'object_propal', 'object_resource', 'object_rss', 'object_projecttask',
-				'object_reception', 'object_recruitmentjobposition', 'object_recruitmentcandidature',
-				'object_salary', 'object_shipment', 'object_share-alt', 'object_supplier_invoice', 'object_supplier_invoicea', 'object_supplier_invoiced', 'object_supplier_order', 'object_supplier_proposal', 'object_service', 'object_stock',
-				'object_technic', 'object_ticket', 'object_trip', 'object_user', 'object_group', 'object_member',
-				'object_phoning', 'object_phoning_mobile', 'object_phoning_fax', 'object_email', 'object_website', 'object_movement', 'object_workstation',
 				'off', 'on', 'order',
-				'paiment', 'play', 'pdf', 'phone', 'playdisabled', 'previous', 'poll', 'pos', 'printer', 'product', 'propal', 'stock', 'resize', 'service', 'stats', 'trip',
+				'paiment', 'paragraph', 'play', 'pdf', 'phone', 'playdisabled', 'previous', 'poll', 'pos', 'printer', 'product', 'propal', 'stock', 'resize', 'service', 'stats', 'trip',
 				'setup', 'share-alt', 'sign-out', 'split', 'stripe', 'stripe-s', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'vcard', 'wrench',
 				'github', 'jabber', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
 				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top', 'commercial', 'companies',
 				'generic', 'home', 'hrm', 'members', 'products', 'invoicing',
-				'payment', 'pencil-ruler', 'preview', 'project', 'projectpub', 'projecttask', 'refresh', 'salary', 'shipment', 'supplier_invoice', 'technic', 'ticket',
+				'partnership', 'payment', 'pencil-ruler', 'preview', 'project', 'projectpub', 'projecttask', 'refresh', 'salary', 'shipment', 'supplier_invoice', 'technic', 'ticket',
 				'error', 'warning',
 				'recruitmentcandidature', 'recruitmentjobposition', 'resource',
 				'shapes', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
@@ -3545,8 +3517,6 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'uncheck', 'user-cog', 'website', 'workstation',
 				'conferenceorbooth', 'eventorganization'
 			))) {
-			$pictowithouttext = str_replace('object_', '', $pictowithouttext);
-
 			$fakey = $pictowithouttext;
 			$facolor = '';
 			$fasize = '';
@@ -3566,13 +3536,14 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'donation'=>'file-alt', 'dynamicprice'=>'hand-holding-usd',
 				'setup'=>'cog', 'companies'=>'building', 'products'=>'cube', 'commercial'=>'suitcase', 'invoicing'=>'coins',
 				'accounting'=>'search-dollar', 'category'=>'tag', 'dollyrevert'=>'dolly',
-				'hrm'=>'user-tie', 'margin'=>'calculator', 'members'=>'user-friends', 'ticket'=>'ticket-alt', 'globe'=>'external-link-alt', 'lot'=>'barcode',
+				'generate'=>'plus-square', 'hrm'=>'user-tie', 'incoterm'=>'truck-loading',
+				'margin'=>'calculator', 'members'=>'user-friends', 'ticket'=>'ticket-alt', 'globe'=>'external-link-alt', 'lot'=>'barcode',
 				'email'=>'at', 'establishment'=>'building',
 				'edit'=>'pencil-alt', 'graph'=>'chart-line', 'grip_title'=>'arrows-alt', 'grip'=>'arrows-alt', 'help'=>'question-circle',
 				'generic'=>'file', 'holiday'=>'umbrella-beach',
-				'info'=>'info-circle', 'inventory'=>'boxes', 'intracommreport'=>'globe-europe', 'label'=>'layer-group', 'loan'=>'money-bill-alt',
+				'info'=>'info-circle', 'inventory'=>'boxes', 'intracommreport'=>'globe-europe', 'knowledgemanagement'=>'ticket-alt', 'label'=>'layer-group', 'loan'=>'money-bill-alt',
 				'member'=>'user-alt', 'meeting'=>'chalkboard-teacher', 'mrp'=>'cubes', 'next'=>'arrow-alt-circle-right',
-				'trip'=>'wallet', 'group'=>'users', 'movement'=>'people-carry',
+				'trip'=>'wallet', 'expensereport'=>'wallet', 'group'=>'users', 'movement'=>'people-carry',
 				'sign-out'=>'sign-out-alt',
 				'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on', 'check'=>'check', 'bookmark'=>'star', 'bookmark'=>'star',
 				'bank'=>'university', 'close_title'=>'times', 'delete'=>'trash', 'edit'=>'pencil-alt', 'filter'=>'filter',
@@ -3581,7 +3552,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'error'=>'exclamation-triangle', 'warning'=>'exclamation-triangle',
 				'other'=>'square',
 				'playdisabled'=>'play', 'pdf'=>'file-pdf',  'poll'=>'check-double', 'pos'=>'cash-register', 'preview'=>'binoculars', 'project'=>'project-diagram', 'projectpub'=>'project-diagram', 'projecttask'=>'tasks', 'propal'=>'file-signature',
-				'payment'=>'money-check-alt', 'phoning'=>'phone', 'phoning_mobile'=>'mobile-alt', 'phoning_fax'=>'fax', 'previous'=>'arrow-alt-circle-left', 'printer'=>'print', 'product'=>'cube', 'service'=>'concierge-bell',
+				'partnership'=>'handshake', 'payment'=>'money-check-alt', 'phoning'=>'phone', 'phoning_mobile'=>'mobile-alt', 'phoning_fax'=>'fax', 'previous'=>'arrow-alt-circle-left', 'printer'=>'print', 'product'=>'cube', 'service'=>'concierge-bell',
 				'reception'=>'dolly', 'recruitmentjobposition'=>'id-card-alt', 'recruitmentcandidature'=>'id-badge',
 				'resize'=>'crop', 'supplier_order'=>'dol-order_supplier', 'supplier_proposal'=>'file-signature',
 				'refresh'=>'redo', 'resource'=>'laptop-house',
@@ -3624,10 +3595,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			if (in_array($pictowithouttext, array('dollyrevert', 'member', 'members', 'contract', 'group', 'resource', 'shipment'))) {
 				$morecss = 'em092';
 			}
-			if (in_array($pictowithouttext, array('conferenceorbooth', 'collab', 'eventorganization', 'holiday', 'project', 'workstation'))) {
+			if (in_array($pictowithouttext, array('conferenceorbooth', 'collab', 'eventorganization', 'holiday', 'info', 'project', 'workstation'))) {
 				$morecss = 'em088';
 			}
-			if (in_array($pictowithouttext, array('intervention', 'info', 'payment', 'loan', 'stock', 'technic'))) {
+			if (in_array($pictowithouttext, array('intervention', 'payment', 'loan', 'partnership', 'stock', 'technic'))) {
 				$morecss = 'em080';
 			}
 
@@ -3648,21 +3619,23 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'bill'=>'infobox-commande', 'billa'=>'infobox-commande', 'billr'=>'infobox-commande', 'billd'=>'infobox-commande',
 				'conferenceorbooth'=>'infobox-project',
 				'cash-register'=>'infobox-bank_account', 'contract'=>'infobox-contrat', 'check'=>'font-status4', 'collab'=>'infobox-action', 'conversation'=>'infobox-contrat',
-				'donation'=>'infobox-commande', 'dollyrevert'=>'flip', 'ecm'=>'infobox-action',
+				'donation'=>'infobox-commande', 'dolly'=>'infobox-commande',  'dollyrevert'=>'flip infobox-order_supplier',
+				'ecm'=>'infobox-action', 'eventorganization'=>'infobox-project',
 				'hrm'=>'infobox-adherent', 'group'=>'infobox-adherent', 'intervention'=>'infobox-contrat',
+				'incoterm'=>'infobox-supplier_proposal',
 				'multicurrency'=>'infobox-bank_account',
 				'members'=>'infobox-adherent', 'member'=>'infobox-adherent', 'money-bill-alt'=>'infobox-bank_account',
 				'order'=>'infobox-commande',
 				'user'=>'infobox-adherent', 'users'=>'infobox-adherent',
 				'error'=>'pictoerror', 'warning'=>'pictowarning', 'switch_on'=>'font-status4',
-				'holiday'=>'infobox-holiday', 'info'=>'opacityhigh', 'invoice'=>'infobox-commande', 'loan'=>'infobox-bank_account',
-				'eventorganization'=>'infobox-project',
+				'holiday'=>'infobox-holiday', 'info'=>'opacityhigh', 'invoice'=>'infobox-commande',
+				'knowledgemanagement'=>'infobox-contrat rotate90', 'loan'=>'infobox-bank_account',
 				'payment'=>'infobox-bank_account', 'poll'=>'infobox-adherent', 'pos'=>'infobox-bank_account', 'project'=>'infobox-project', 'projecttask'=>'infobox-project', 'propal'=>'infobox-propal',
 				'reception'=>'flip', 'recruitmentjobposition'=>'infobox-adherent', 'recruitmentcandidature'=>'infobox-adherent',
 				'resource'=>'infobox-action',
-				'salary'=>'infobox-bank_account', 'supplier_invoice'=>'infobox-order_supplier', 'supplier_invoicea'=>'infobox-order_supplier', 'supplier_invoiced'=>'infobox-order_supplier',
+				'salary'=>'infobox-bank_account', 'shipment'=>'infobox-commande', 'supplier_invoice'=>'infobox-order_supplier', 'supplier_invoicea'=>'infobox-order_supplier', 'supplier_invoiced'=>'infobox-order_supplier',
 				'supplier_order'=>'infobox-order_supplier', 'supplier_proposal'=>'infobox-supplier_proposal',
-				'ticket'=>'infobox-contrat', 'title_accountancy'=>'infobox-bank_account', 'title_hrm'=>'infobox-holiday', 'trip'=>'infobox-expensereport', 'title_agenda'=>'infobox-action',
+				'ticket'=>'infobox-contrat', 'title_accountancy'=>'infobox-bank_account', 'title_hrm'=>'infobox-holiday', 'expensereport'=>'infobox-expensereport', 'trip'=>'infobox-expensereport', 'title_agenda'=>'infobox-action',
 				//'title_setup'=>'infobox-action', 'tools'=>'infobox-action',
 				'list-alt'=>'imgforviewmode', 'calendar'=>'imgforviewmode', 'calendarweek'=>'imgforviewmode', 'calendarmonth'=>'imgforviewmode', 'calendarday'=>'imgforviewmode', 'calendarperuser'=>'imgforviewmode'
 			);
@@ -3676,11 +3649,13 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'cog'=>'#999', 'companies'=>'#6c6aa8', 'company'=>'#6c6aa8', 'contact'=>'#6c6aa8', 'cron'=>'#555',
 				'dynamicprice'=>'#a69944',
 				'edit'=>'#444', 'note'=>'#999', 'error'=>'', 'help'=>'#bbb', 'listlight'=>'#999', 'language'=>'#555',
-				'dolly'=>'#a69944', 'dollyrevert'=>'#a69944', 'lot'=>'#a69944',
+				//'dolly'=>'#a69944', 'dollyrevert'=>'#a69944',
+				'lot'=>'#a69944',
 				'map-marker-alt'=>'#aaa', 'mrp'=>'#a69944', 'product'=>'#a69944', 'service'=>'#a69944', 'inventory'=>'#a69944', 'stock'=>'#a69944', 'movement'=>'#a69944',
 				'other'=>'#ddd',
-				'playdisabled'=>'#ccc', 'printer'=>'#444', 'projectpub'=>'#986c6a', 'reception'=>'#a69944', 'resize'=>'#444', 'rss'=>'#cba',
-				'shipment'=>'#a69944', 'stats'=>'#444', 'switch_off'=>'#999', 'technic'=>'#999', 'timespent'=>'#555',
+				'partnership'=>'#6c6aa8', 'playdisabled'=>'#ccc', 'printer'=>'#444', 'projectpub'=>'#986c6a', 'reception'=>'#a69944', 'resize'=>'#444', 'rss'=>'#cba',
+				//'shipment'=>'#a69944',
+				'stats'=>'#444', 'switch_off'=>'#999', 'technic'=>'#999', 'timespent'=>'#555',
 				'uncheck'=>'#800', 'uparrow'=>'#555', 'user-cog'=>'#999', 'country'=>'#aaa', 'globe-americas'=>'#aaa',
 				'website'=>'#304', 'workstation'=>'#a69944'
 			);
@@ -4523,7 +4498,7 @@ function dol_print_error($db = '', $error = '', $errors = null)
 		}
 		$langs->loadLangs(array("main", "errors")); // Reload main because language may have been set only on previous line so we have to reload files we need.
 		// This should not happen, except if there is a bug somewhere. Enabled and check log in such case.
-		print 'This website or feature is currently temporarly not available or failed after a technical error.<br><br>This may be due to a maintenance operation. Current status of operation are on next line...<br><br>'."\n";
+		print 'This website or feature is currently temporarly not available or failed after a technical error.<br><br>This may be due to a maintenance operation. Current status of operation ('.dol_print_date(dol_now(), 'dayhourrfc').') are on next line...<br><br>'."\n";
 		print $langs->trans("DolibarrHasDetectedError").'. ';
 		print $langs->trans("YouCanSetOptionDolibarrMainProdToZero");
 		define("MAIN_CORE_ERROR", 1);
@@ -6672,6 +6647,8 @@ function dol_textishtml($msg, $option = 0)
 			return true;
 		} elseif (preg_match('/<\/textarea/i', $msg)) {
 			return true;
+		} elseif (preg_match('/<(b|em|i|u)>/i', $msg)) {
+			return true;
 		} elseif (preg_match('/<br/i', $msg)) {
 			return true;
 		}
@@ -6689,9 +6666,7 @@ function dol_textishtml($msg, $option = 0)
 			return true;
 		} elseif (preg_match('/<(br|div|font|li|p|span|strong|table)>/i', $msg)) {
 			return true;
-		} elseif (preg_match('/<(br|div|font|li|p|span|strong|table)\s+[^<>\/]*>/i', $msg)) {
-			return true;
-		} elseif (preg_match('/<(br|div|font|li|p|span|strong|table)\s+[^<>\/]*\/>/i', $msg)) {
+		} elseif (preg_match('/<(br|div|font|li|p|span|strong|table)\s+[^<>\/]*\/?>/i', $msg)) {
 			return true;
 		} elseif (preg_match('/<img\s+[^<>]*src[^<>]*>/i', $msg)) {
 			return true; // must accept <img src="http://example.com/aaa.png" />
@@ -6836,6 +6811,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__MEMBER_CIVILITY__'] = '__MEMBER_CIVILITY__';
 				$substitutionarray['__MEMBER_FIRSTNAME__'] = '__MEMBER_FIRSTNAME__';
 				$substitutionarray['__MEMBER_LASTNAME__'] = '__MEMBER_LASTNAME__';
+				$substitutionarray['__MEMBER_USER_LOGIN_INFORMATION__'] = 'Login and pass of the external user account';
 				/*$substitutionarray['__MEMBER_NOTE_PUBLIC__'] = '__MEMBER_NOTE_PUBLIC__';
 				$substitutionarray['__MEMBER_NOTE_PRIVATE__'] = '__MEMBER_NOTE_PRIVATE__';*/
 			}
@@ -6911,6 +6887,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				}
 				$substitutionarray['__MEMBER_FIRSTNAME__'] = (isset($object->firstname) ? $object->firstname : '');
 				$substitutionarray['__MEMBER_LASTNAME__'] = (isset($object->lastname) ? $object->lastname : '');
+				$substitutionarray['__MEMBER_USER_LOGIN_INFORMATION__'] = '';
 				if (method_exists($object, 'getFullName')) {
 					$substitutionarray['__MEMBER_FULLNAME__'] = $object->getFullName($outputlangs);
 				}
@@ -7228,13 +7205,15 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
  *  complete_substitutions_array($substitutionarray, $langs, $thirdparty);
  *  $mesg = make_substitutions($mesg, $substitutionarray, $langs);
  *
- *  @param	string		$text	      			Source string in which we must do substitution
- *  @param  array		$substitutionarray		Array with key->val to substitute. Example: array('__MYKEY__' => 'MyVal', ...)
- *  @param	Translate	$outputlangs			Output language
- * 	@return string  		    				Output string after substitutions
+ *  @param	string		$text	      					Source string in which we must do substitution
+ *  @param  array		$substitutionarray				Array with key->val to substitute. Example: array('__MYKEY__' => 'MyVal', ...)
+ *  @param	Translate	$outputlangs					Output language
+ *  @param	int			$converttextinhtmlifnecessary	0=Convert only value into HTML if text is already in HTML
+ *  													1=Will also convert initial $text into HTML if we try to insert one value that is HTML
+ * 	@return string  		    						Output string after substitutions
  *  @see	complete_substitutions_array(), getCommonSubstitutionArray()
  */
-function make_substitutions($text, $substitutionarray, $outputlangs = null)
+function make_substitutions($text, $substitutionarray, $outputlangs = null, $converttextinhtmlifnecessary = 0)
 {
 	global $conf, $langs;
 
@@ -7246,22 +7225,41 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null)
 		$outputlangs = $langs;
 	}
 
+	// Is initial text HTML or simple text ?
+	$msgishtml = 0;
+	if (dol_textishtml($text, 1)) {
+		$msgishtml = 1;
+	}
+
 	// Make substitution for language keys: __(AnyTranslationKey)__ or __(AnyTranslationKey|langfile)__
 	if (is_object($outputlangs)) {
 		$reg = array();
 		while (preg_match('/__\(([^\)]+)\)__/', $text, $reg)) {
-			$msgishtml = 0;
-			if (dol_textishtml($text, 1)) {
-				$msgishtml = 1;
-			}
-
 			// If key is __(TranslationKey|langfile)__, then force load of langfile.lang
 			$tmp = explode('|', $reg[1]);
 			if (!empty($tmp[1])) {
 				$outputlangs->load($tmp[1]);
 			}
 
-			$text = preg_replace('/__\('.preg_quote($reg[1], '/').'\)__/', $msgishtml ?dol_htmlentitiesbr($outputlangs->transnoentitiesnoconv($reg[1])) : $outputlangs->transnoentitiesnoconv($reg[1]), $text);
+			$value = $outputlangs->transnoentitiesnoconv($reg[1]);
+
+			if (empty($converttextinhtmlifnecessary)) {
+				// convert $newval into HTML is necessary
+				$text = preg_replace('/__\('.preg_quote($reg[1], '/').'\)__/', $msgishtml ? dol_htmlentitiesbr($value) : $value, $text);
+			} else {
+				if (! $msgishtml) {
+					$valueishtml = dol_textishtml($value, 1);
+
+					if ($valueishtml) {
+						$text = dol_htmlentitiesbr($text);
+						$msgishtml = 1;
+					}
+				} else {
+					$value = dol_nl2br("$value");
+				}
+
+				$text = preg_replace('/__\('.preg_quote($reg[1], '/').'\)__/', $value, $text);
+			}
 		}
 	}
 
@@ -7269,18 +7267,30 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null)
 	// Must be after the substitution of translation, so if the text of translation contains a string __[xxx]__, it is also converted.
 	$reg = array();
 	while (preg_match('/__\[([^\]]+)\]__/', $text, $reg)) {
-		$msgishtml = 0;
-		if (dol_textishtml($text, 1)) {
-			$msgishtml = 1;
-		}
-
 		$keyfound = $reg[1];
 		if (isASecretKey($keyfound)) {
-			$newval = '*****forbidden*****';
+			$value = '*****forbidden*****';
 		} else {
-			$newval = empty($conf->global->$keyfound) ? '' : $conf->global->$keyfound;
+			$value = empty($conf->global->$keyfound) ? '' : $conf->global->$keyfound;
 		}
-		$text = preg_replace('/__\['.preg_quote($keyfound, '/').'\]__/', $msgishtml ?dol_htmlentitiesbr($newval) : $newval, $text);
+
+		if (empty($converttextinhtmlifnecessary)) {
+			// convert $newval into HTML is necessary
+			$text = preg_replace('/__\['.preg_quote($keyfound, '/').'\]__/', $msgishtml ? dol_htmlentitiesbr($value) : $value, $text);
+		} else {
+			if (! $msgishtml) {
+				$valueishtml = dol_textishtml($value, 1);
+
+				if ($valueishtml) {
+					$text = dol_htmlentitiesbr($text);
+					$msgishtml = 1;
+				}
+			} else {
+				$value = dol_nl2br("$value");
+			}
+
+			$text = preg_replace('/__\['.preg_quote($keyfound, '/').'\]__/', $value, $text);
+		}
 	}
 
 	// Make substitition for array $substitutionarray
@@ -7293,7 +7303,22 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null)
 			$value = ''; // Protection
 		}
 
-		$text = str_replace("$key", "$value", $text); // We must keep the " to work when value is 123.5 for example
+		if (empty($converttextinhtmlifnecessary)) {
+			$text = str_replace("$key", "$value", $text); // We must keep the " to work when value is 123.5 for example
+		} else {
+			if (! $msgishtml) {
+				$valueishtml = dol_textishtml($value, 1);
+
+				if ($valueishtml) {
+					$text = dol_htmlentitiesbr($text);
+					$msgishtml = 1;
+				}
+			} else {
+				$value = dol_nl2br("$value");
+			}
+
+			$text = str_replace("$key", "$value", $text); // We must keep the " to work when value is 123.5 for example
+		}
 	}
 
 	return $text;
@@ -7317,18 +7342,7 @@ function complete_substitutions_array(&$substitutionarray, $outputlangs, $object
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-	// Add a substitution key for each extrafields, using key __EXTRA_XXX__
-	// TODO Remove this. Already available into the getCommonSubstitutionArray used to build the substitution array.
-	/*if (is_object($object) && is_array($object->array_options))
-	{
-		foreach($object->array_options as $key => $val)
-		{
-			$keyshort=preg_replace('/^(options|extra)_/','',$key);
-			$substitutionarray['__EXTRAFIELD_'.$keyshort.'__']=$val;
-			// For backward compatibiliy
-			$substitutionarray['%EXTRA_'.$keyshort.'%']=$val;
-		}
-	}*/
+	// Note: substitution key for each extrafields, using key __EXTRA_XXX__ is already available into the getCommonSubstitutionArray used to build the substitution array.
 
 	// Check if there is external substitution to do, requested by plugins
 	$dirsubstitutions = array_merge(array(), (array) $conf->modules_parts['substitutions']);
@@ -8373,12 +8387,12 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 
 	// No need to make a return $head. Var is modified as a reference
 	if (!empty($hookmanager)) {
-		$parameters = array('object' => $object, 'mode' => $mode, 'head' => $head);
+		$parameters = array('object' => $object, 'mode' => $mode, 'head' => &$head);
 		$reshook = $hookmanager->executeHooks('completeTabsHead', $parameters);
 		if ($reshook > 0) {
 			$head = $hookmanager->resArray;
-			$h = count($head);
 		}
+		$h = count($head);
 	}
 }
 
@@ -9374,7 +9388,8 @@ function getDictvalue($tablename, $field, $id, $checkentity = false, $rowidfield
 
 	if (!isset($dictvalues[$tablename])) {
 		$dictvalues[$tablename] = array();
-		$sql = 'SELECT * FROM '.$tablename.' WHERE 1'; // Here select * is allowed as it is generic code and we don't have list of fields
+
+		$sql = 'SELECT * FROM '.$tablename.' WHERE 1 = 1'; // Here select * is allowed as it is generic code and we don't have list of fields
 		if ($checkentity) {
 			$sql .= ' AND entity IN (0,'.getEntity($tablename).')';
 		}
@@ -9663,6 +9678,7 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 	$class = 'butAction';
 	if ($actionType == 'danger' || $actionType == 'delete') {
 		$class = 'butActionDelete';
+		if (strpos($url, 'token=') === false) $url .= '&token='.newToken();
 	}
 
 	$attr = array(
@@ -9716,7 +9732,7 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 
 	$tag = !empty($attr['href']) ? 'a' : 'span';
 
-	return '<div class="inline-block divButAction"><'.$tag.' '.$compiledAttributes.'>'.$html.'</'.$tag.'></div>';
+	return '<'.$tag.' '.$compiledAttributes.'>'.$html.'</'.$tag.'>';
 }
 
 /**

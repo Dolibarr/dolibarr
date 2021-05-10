@@ -75,7 +75,6 @@ HierarchicView=Vista Jerárquica
 UseTypeFieldToChange=Use el campo Tipo para cambiar
 OpenIDURL=URL OpenID
 LoginUsingOpenID=Use OpenID para iniciar sesión
-ExpectedWorkedHours=Horas trabajadas esperadas por semana
 ColorUser=Color del usuario
 DisabledInMonoUserMode=Desactivado en modo de mantenimiento
 UserAccountancyCode=Código de contabilidad del usuario

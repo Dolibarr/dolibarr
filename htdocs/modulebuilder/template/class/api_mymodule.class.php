@@ -158,7 +158,7 @@ class MyModuleApi extends DolibarrApi
 			if (!DolibarrApi::_checkFilters($sqlfilters)) {
 				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
@@ -213,7 +213,7 @@ class MyModuleApi extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
-			$this->myobject->$field = $this->checkValForAPI($field, $value, $this->myobject);
+			$this->myobject->$field = $this->_checkValForAPI($field, $value, $this->myobject);
 		}
 
 		// Clean data
@@ -255,7 +255,7 @@ class MyModuleApi extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
-			$this->myobject->$field = $this->checkValForAPI($field, $value, $this->myobject);
+			$this->myobject->$field = $this->_checkValForAPI($field, $value, $this->myobject);
 		}
 
 		// Clean data

@@ -160,26 +160,54 @@ if ($action == 'update' && $user->rights->stock->mouvement->creer) {
 	}
 }
 
-if ($action =='updateinventorylines' && $permissiontoadd) {
+if (($action == 'record' || $action =='updateinventorylines') && $permissiontoadd) {
 	$sql = 'SELECT id.rowid, id.datec as date_creation, id.tms as date_modification, id.fk_inventory, id.fk_warehouse,';
 	$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'inventorydet as id';
 	$sql .= ' WHERE id.fk_inventory = '.$object->id;
+
+	$db->begin();
 
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
 		$i = 0;
 		$totalarray = array();
+		$inventoryline = new InventoryLine($db);
+
 		while ($i < $num) {
 			$line = $db->fetch_object($resql);
 			$lineid = $line->rowid;
-			$inventoryline = new InventoryLine($db);
-			$inventoryline->fetch($lineid);
-			$inventoryline->qty_view = GETPOST("id_".$inventoryline->id);
-			$inventoryline->update($user);
+
+			if (GETPOST("id_".$lineid, 'alpha') != '') {		// If a value was set ('0' or something else)
+				$qtytoupdate = price2num(GETPOST("id_".$lineid, 'alpha'), 'MS');
+
+				$result = $inventoryline->fetch($lineid);
+				if ($result > 0) {
+					$inventoryline->qty_view = $qtytoupdate;
+					$resultupdate = $inventoryline->update($user);
+				}
+			} else {
+				// Delete record
+				$result = $inventoryline->fetch($lineid);
+				if ($result > 0) {
+					$inventoryline->qty_view = null;
+					$resultupdate = $inventoryline->update($user);
+				}
+			}
+
+			if ($result < 0 || $resultupdate < 0) {
+				$error++;
+			}
+
 			$i++;
 		}
+	}
+
+	if (!$error) {
+		$db->commit();
+	} else {
+		$db->rollback();
 	}
 }
 
@@ -242,6 +270,7 @@ if (empty($reshook)) {
 			$tmp->fk_product = $fk_product;
 			$tmp->batch = $batch;
 			$tmp->datec = $now;
+			$tmp->qty_view = (GETPOST('qtytoadd') != '' ? price2num(GETPOST('qtytoadd', 'MS')) : null);
 
 			$result = $tmp->create($user);
 			if ($result < 0) {
@@ -268,6 +297,23 @@ $formproduct = new FormProduct($db);
 $help_url = '';
 
 llxHeader('', $langs->trans('Inventory'), $help_url);
+
+
+// Disable button Generate movement if data were not saved
+print '<script type="text/javascript" language="javascript">
+jQuery(document).ready(function() {
+	jQuery(".realqty").keyup(function() {
+		console.log("Disable button idbuttonmakemovementandclose until we save");
+		jQuery("#idbuttonmakemovementandclose").attr(\'disabled\',\'disabled\');
+		jQuery("#idbuttonmakemovementandclose").attr(\'class\',\'butActionRefused\');
+	});
+	jQuery(".realqty").change(function() {
+		console.log("Disable button idbuttonmakemovementandclose until we save");
+		jQuery("#idbuttonmakemovementandclose").attr(\'disabled\',\'disabled\');
+		jQuery("#idbuttonmakemovementandclose").attr(\'class\',\'butActionRefused\');
+	});
+});
+</script>';
 
 
 // Part to show record
@@ -411,7 +457,7 @@ if ($object->id > 0) {
 		if (empty($reshook)) {
 			if ($object->status == Inventory::STATUS_DRAFT) {
 				if ($permissiontoadd) {
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_validate&confirm=yes">'.$langs->trans("Validate").' ('.$langs->trans("Start").')</a>'."\n";
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_validate&confirm=yes&token='.newToken().'">'.$langs->trans("Validate").' ('.$langs->trans("Start").')</a>'."\n";
 				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Validate').' ('.$langs->trans("Start").')</a>'."\n";
 				}
@@ -419,16 +465,14 @@ if ($object->id > 0) {
 
 			// Save
 			if ($object->status == $object::STATUS_VALIDATED) {
-				if ($object->status == Inventory::STATUS_VALIDATED) {
-					if ($permissiontoadd) {
-						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=record">'.$langs->trans("MakeMovementsAndClose").'</a>'."\n";
-					} else {
-						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('MakeMovementsAndClose').'</a>'."\n";
-					}
+				if ($permissiontoadd) {
+					print '<a class="butAction" id="idbuttonmakemovementandclose" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=record&token='.newToken().'">'.$langs->trans("MakeMovementsAndClose").'</a>'."\n";
+				} else {
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('MakeMovementsAndClose').'</a>'."\n";
 				}
 
 				if ($permissiontoadd) {
-					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=confirm_cancel">'.$langs->trans("Cancel").'</a>'."\n";
+					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_cancel&token='.newToken().'">'.$langs->trans("Cancel").'</a>'."\n";
 				}
 			}
 		}
@@ -458,14 +502,17 @@ if ($object->id > 0) {
 
 			print '<script>';
 			print '$( document ).ready(function() {';
-			print ' $("#fillwithexpected").on("click",function fillWithExpected(){
-					  $(".expectedqty").each(function(){
-						var object = $(this)[0];
-						var objecttofill = $("#"+object.id+"_input")[0];
-						objecttofill.value = object.innerText;
+			print '	$("#fillwithexpected").on("click",function fillWithExpected(){
+						$(".expectedqty").each(function(){
+							var object = $(this)[0];
+							var objecttofill = $("#"+object.id+"_input")[0];
+							objecttofill.value = object.innerText;
 						})
 						console.log("Values filled");
-			         });';
+						console.log("Disable button idbuttonmakemovementandclose until we save");
+						jQuery("#idbuttonmakemovementandclose").attr(\'disabled\',\'disabled\');
+						jQuery("#idbuttonmakemovementandclose").attr(\'class\',\'butActionRefused\');
+			        });';
 			print '});';
 			print '</script>';
 		}
@@ -553,11 +600,11 @@ if ($object->id > 0) {
 		}
 		print '<td class="right"></td>';
 		print '<td class="center">';
-		print '<input type="submit" class="button paddingright" name="addline" value="'.$langs->trans("Add").'">';
-		//print '<input type="submit" class="button paddingrightonly button-cancel" name="canceladdline" value="'.$langs->trans("Cancel").'">';
+		print '<input type="text" name="qtytoadd" class="maxwidth75" value="">';
 		print '</td>';
 		// Actions
 		print '<td class="center">';
+		print '<input type="submit" class="button paddingright" name="addline" value="'.$langs->trans("Add").'">';
 		print '</td>';
 		print '</tr>';
 	}
@@ -617,13 +664,16 @@ if ($object->id > 0) {
 				print '</td>';
 			}
 
+			// Expected quantity
 			print '<td class="right expectedqty" id="id_'.$obj->rowid.'">';
 			print $obj->qty_stock;
 			print '</td>';
+
+			// Real quantity
 			print '<td class="center">';
 			if ($object->status == $object::STATUS_VALIDATED) {
 				$qty_view = GETPOST("id_".$obj->rowid) ? GETPOST("id_".$obj->rowid) : $obj->qty_view;
-				print '<input type="text" class="maxwidth75 right" name="id_'.$obj->rowid.'" id="id_'.$obj->rowid.'_input" value="'.$qty_view.'">';
+				print '<input type="text" class="maxwidth75 right realqty" name="id_'.$obj->rowid.'" id="id_'.$obj->rowid.'_input" value="'.$qty_view.'">';
 				print '</td>';
 				print '<td class="right">';
 				print '<a class="reposition" href="'.DOL_URL_ROOT.'/product/inventory/inventory.php?id='.$object->id.'&lineid='.$obj->rowid.'&action=deleteline&token='.newToken().'">'.img_delete().'</a>';
@@ -644,7 +694,9 @@ if ($object->id > 0) {
 
 	print '</div>';
 
-	print '<center><input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'"></center>';
+	if ($object->status == $object::STATUS_VALIDATED) {
+		print '<center><input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'"></center>';
+	}
 
 	print '</div>';
 

@@ -61,10 +61,14 @@ $arrayofparameters = array(
 	'EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER'=>array('type'=>'emailtemplate:eventorganization_send', 'enabled'=>1),
 	'EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES'=>array('type'=>'emailtemplate:eventorganization_send', 'enabled'=>1),
 	'EVENTORGANIZATION_SECUREKEY'=>array('type'=>'securekey', 'enabled'=>1),
+	'SERVICE_BOOTH_LOCATION'=>array('type'=>'product', 'enabled'=>1),
+	'SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION'=>array('type'=>'product', 'enabled'=>1),
 );
 
 $error = 0;
 $setupnotempty = 0;
+
+$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 
 /*
@@ -180,15 +184,14 @@ if ($action == 'updateMask') {
 
 $form = new Form($db);
 
-//$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-
 $page_name = "EventOrganizationSetup";
+
 llxHeader('', $langs->trans($page_name));
 
 // Subheader
 $linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';
 
-print load_fiche_titre($langs->trans($page_name), $linkback, 'eventorganization');
+print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 
 // Configuration header
 $head = eventorganizationAdminPrepareHead();
@@ -276,8 +279,13 @@ if ($action == 'edit') {
                     });';
 					print '</script>';
 				}
+			} elseif ($val['type'] == 'product') {
+				if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+					$selected = (empty($conf->global->$constname) ? '' : $conf->global->$constname);
+					$form->select_produits($selected, $constname, '', 0);
+				}
 			} else {
-				print '<input name="'.$constname.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.$conf->global->{$constname}.'">';
+				print '<input name="' . $constname . '"  class="flat ' . (empty($val['css']) ? 'minwidth200' : $val['css']) . '" value="' . $conf->global->{$constname} . '">';
 			}
 			print '</td></tr>';
 		}
@@ -345,6 +353,14 @@ if ($action == 'edit') {
 						print $langs->trans("Customer");
 					} elseif ($conf->global->{$constname}==0) {
 						print $langs->trans("NorProspectNorCustomer");
+					}
+				} elseif ($val['type'] == 'product') {
+					$product = new Product($db);
+					$resprod = $product->fetch($conf->global->{$constname});
+					if ($resprod > 0) {
+						print $product->ref;
+					} elseif ($resprod < 0) {
+						setEventMessages(null, $object->errors, "errors");
 					}
 				} else {
 					print  $conf->global->{$constname};

@@ -650,6 +650,9 @@ textarea.centpercent {
 .flip {
 	transform: scaleX(-1) translate(2px, 0);
 }
+.rotate90 {
+	transform: rotate(90deg) translate(0, 2px);
+}
 .center {
 	text-align: center;
 	margin: 0px auto;
@@ -3214,6 +3217,12 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 
 .smallpaddingimp {
 	padding: 4px !important;
+	padding-left: 7px !important;
+	padding-right: 7px !important;
+}
+input.button[name="upload"] {
+	padding: 4px !important;
+	font-size: 0.9em;
 }
 input.button.smallpaddingimp {
 	font-size: 0.8em;
@@ -4413,8 +4422,13 @@ div.backgreypublicpayment { background-color: #f0f0f0; padding: 20px; border-bot
 	color: #222;
 	opacity: 0.3;
 }
-#dolpaymenttable { min-width: 290px; font-size: 16px; }	/* Width must have min to make stripe input area visible. Lower than 320 makes input area crazy for credit card that need zip code */
-#tablepublicpayment { border: 1px solid #CCCCCC !important; width: 100%; padding: 20px; }
+#dolpaymenttable { min-width: 320px; font-size: 16px; }	/* Width must have min to make stripe input area visible. Lower than 320 makes input area crazy for credit card that need zip code */
+#tablepublicpayment {
+	border: 1px solid #CCCCCC !important;
+	width: 100%;
+	padding: 20px;
+	margin-bottom: 25px;
+}
 #tablepublicpayment .CTableRow1  { background-color: #F0F0F0 !important; }
 #tablepublicpayment tr.liste_total { border-bottom: 1px solid #CCCCCC !important; }
 #tablepublicpayment tr.liste_total td { border-top: none; }
@@ -4774,7 +4788,6 @@ span.websitebuttonsitepreviewdisabled img, a.websitebuttonsitepreviewdisabled im
 #divbodywebsite section p {
 	margin: unset;
 }
-
 
 
 /* ============================================================================== */
@@ -6729,6 +6742,13 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 }
 
 /* ============================================================================== */
+/* CSS style used for jCrop                                                       */
+/* ============================================================================== */
+
+.jcrop-holder { background: unset !important; }
+
+
+/* ============================================================================== */
 /* CSS style used for jFlot                                                       */
 /* ============================================================================== */
 
@@ -6969,6 +6989,10 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 
 	input#addedfile {
 		width: 95%;
+	}
+
+	#divbodywebsite {
+		word-break: break-all;
 	}
 }
 
