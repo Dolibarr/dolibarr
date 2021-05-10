@@ -271,11 +271,11 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("BANK_DISABLE_DIRECT_INPUT").'</td>';
 if (!empty($conf->global->BANK_DISABLE_DIRECT_INPUT)) {
-	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&disabledirectinput&value=0">';
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&setdisabledirectinput&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 	print '</a></td>';
 } else {
-	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&disabledirectinput&value=1">';
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&setdisabledirectinput&value=1">';
 	print img_picto($langs->trans("Disabled"), 'switch_off');
 	print '</a></td>';
 }
@@ -284,11 +284,11 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ACCOUNTANCY_COMBO_FOR_AUX").'</td>';
 if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
-	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&enablesubsidiarylist&value=0">';
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&setenablesubsidiarylist&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 	print '</a></td>';
 } else {
-	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&enablesubsidiarylist&value=1">';
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&setenablesubsidiarylist&value=1">';
 	print img_picto($langs->trans("Disabled"), 'switch_off');
 	print '</a></td>';
 }
@@ -297,11 +297,11 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ACCOUNTING_MANAGE_ZERO").'</td>';
 if (!empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
-	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&managezero&value=0">';
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&setmanagezero&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 	print '</a></td>';
 } else {
-	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&managezero&value=1">';
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&setmanagezero&value=1">';
 	print img_picto($langs->trans("Disabled"), 'switch_off');
 	print '</a></td>';
 }
@@ -337,11 +337,11 @@ print "</tr>\n";
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ACCOUNTING_LIST_SORT_VENTILATION_TODO").'</td>';
 if (!empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_TODO)) {
-	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&listsorttodo&value=0">';
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&setlistsorttodo&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 	print '</a></td>';
 } else {
-	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&listsorttodo&value=1">';
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&setlistsorttodo&value=1">';
 	print img_picto($langs->trans("Disabled"), 'switch_off');
 	print '</a></td>';
 }
@@ -350,11 +350,11 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ACCOUNTING_LIST_SORT_VENTILATION_DONE").'</td>';
 if (!empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_DONE)) {
-	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&listsortdone&value=0">';
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&setlistsortdone&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 	print '</a></td>';
 } else {
-	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&listsortdone&value=1">';
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&setlistsortdone&value=1">';
 	print img_picto($langs->trans("Disabled"), 'switch_off');
 	print '</a></td>';
 }
