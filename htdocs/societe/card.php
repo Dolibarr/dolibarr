@@ -270,7 +270,8 @@ if (empty($reshook)) {
 						'Product' => '/product/class/product.class.php',
 						'Project' => '/projet/class/project.class.php',
 						'Ticket' => '/ticket/class/ticket.class.php',
-						'User' => '/user/class/user.class.php'
+						'User' => '/user/class/user.class.php',
+						'ConfOrBoothAttendee' => '/eventorganization/class/conferenceorboothattendee.class.php'
 					);
 
 					//First, all core objects must update their tables
