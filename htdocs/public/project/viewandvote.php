@@ -119,12 +119,17 @@ $result = $db->query($sqlforconf);
 $i = 0;
 while ($i < $db->num_rows($result)) {
 	$obj = $db->fetch_object($result);
-	$resultthirdparty = $tmpthirdparty->fetch($obj->fk_soc);
-	if ($resultthirdparty) {
-		$thirdpartyname = $tmpthirdparty->name;
+	if (!empty($obj->fk_soc)) {
+		$resultthirdparty = $tmpthirdparty->fetch($obj->fk_soc);
+		if ($resultthirdparty) {
+			$thirdpartyname = $tmpthirdparty->name;
+		} else {
+			$thirdpartyname = '';
+		}
 	} else {
 		$thirdpartyname = '';
 	}
+
 	$listOfConferences .= '<tr><td>'.$obj->label.'</td><td>'.$obj->libelle.'</td><td>'.$obj->datep.'</td><td>'.$obj->datep2.'</td><td>'.$thirdpartyname.'</td><td>'.$obj->note.'</td>';
 	$listOfConferences .= '<td><button type="submit" name="vote" value="'.$obj->id.'" class="button">'.$langs->trans("Vote").'</button></td></tr>';
 	$i++;
@@ -135,12 +140,17 @@ $result = $db->query($sqlforbooth);
 $i = 0;
 while ($i < $db->num_rows($result)) {
 	$obj = $db->fetch_object($result);
-	$resultthirdparty = $tmpthirdparty->fetch($obj->fk_soc);
-	if ($resultthirdparty) {
-		$thirdpartyname = $tmpthirdparty->name;
+	if (!empty($obj->fk_soc)) {
+		$resultthirdparty = $tmpthirdparty->fetch($obj->fk_soc);
+		if ($resultthirdparty) {
+			$thirdpartyname = $tmpthirdparty->name;
+		} else {
+			$thirdpartyname = '';
+		}
 	} else {
 		$thirdpartyname = '';
 	}
+
 	$listOfBooths .= '<tr><td>'.$obj->label.'</td><td>'.$obj->libelle.'</td><td>'.$obj->datep.'</td><td>'.$obj->datep2.'</td><td>'.$thirdpartyname.'</td><td>'.$obj->note.'</td>';
 	$listOfBooths .= '<td><button type="submit" name="vote" value="'.$obj->id.'" class="button">'.$langs->trans("Vote").'</button></td></tr>';
 	$i++;
