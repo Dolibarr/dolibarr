@@ -117,6 +117,26 @@ $permissiondellink = $user->rights->reception->creer; // Used by the include of 
 
 $date_delivery = dol_mktime(GETPOST('date_deliveryhour', 'int'), GETPOST('date_deliverymin', 'int'), 0, GETPOST('date_deliverymonth', 'int'), GETPOST('date_deliveryday', 'int'), GETPOST('date_deliveryyear', 'int'));
 
+$object = new Reception($db);
+if ($id > 0 || !empty($ref)) {
+	$object->fetch($id, $ref);
+	$object->fetch_thirdparty();
+
+	if (!empty($object->origin)) {
+		$origin = $object->origin;
+
+		$object->fetch_origin();
+		$typeobject = $object->origin;
+	}
+
+	// Linked documents
+	if ($origin == 'order_supplier' && $object->$typeobject->id && (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled))) {
+		$origin_id = $object->$typeobject->id;
+		$objectsrc = new CommandeFournisseur($db);
+		$objectsrc->fetch($object->$typeobject->id);
+	}
+}
+
 // Security check
 $socid = '';
 if ($user->socid) {
@@ -124,13 +144,10 @@ if ($user->socid) {
 }
 
 if ($origin == 'reception') {
-	$result = restrictedArea($user, $origin, $id);
+	$result = restrictedArea($user, 'reception', $id);
 } else {
-	$result = restrictedArea($user, 'reception');
-	if ($origin == 'supplierorder') {
-		if (empty($user->rights->fournisseur->commande->lire) && empty($user->rights->fournisseur->commande->read)) {
-			accessforbidden();
-		}
+	if ($origin == 'supplierorder' || $origin == 'order_supplier') {
+		$result = restrictedArea($user, 'fournisseur', $origin_id, 'commande_fournisseur', 'commande');
 	} elseif (empty($user->rights->{$origin}->lire) && empty($user->rights->{$origin}->read)) {
 		accessforbidden();
 	}
@@ -150,14 +167,12 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	if ($cancel) {
 		$action = '';
-		$object->fetch($id); // show reception also after canceling modification
 	}
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be include, not include_once
 
 	// Reopen
 	if ($action == 'reopen' && $user->rights->reception->creer) {
-		$object->fetch($id);
 		$result = $object->reOpen();
 	}
 
@@ -192,7 +207,6 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'setref_supplier') {
-		$result = $object->fetch($id);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -528,14 +542,12 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 		}
 	} elseif ($action == 'classifybilled') {
-		$object->fetch($id);
 		$result = $object->setBilled();
 		if ($result >= 0) {
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit();
 		}
 	} elseif ($action == 'classifyclosed') {
-		$object->fetch($id);
 		$result = $object->setClosed();
 		if ($result >= 0) {
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
@@ -543,7 +555,6 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'deleteline' && !empty($line_id)) {
 		// delete a line
-		$object->fetch($id);
 		$lines = $object->lines;
 		$line = new CommandeFournisseurDispatch($db);
 
@@ -1331,7 +1342,7 @@ if ($action == 'create') {
 		print '<div class="fichehalfleft">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border centpercent">';
+		print '<table class="border centpercent tableforfield">';
 
 		// Linked documents
 		if ($typeobject == 'commande' && $object->$typeobject->id && !empty($conf->commande->enabled)) {
@@ -1495,11 +1506,11 @@ if ($action == 'create') {
 		print '<div class="ficheaddleft">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border centpercent">';
+		print '<table class="border centpercent tableforfield">';
 
 		// Reception method
 		print '<tr><td height="10">';
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print '<table class="nobordernopadding centpercent"><tr><td>';
 		print $langs->trans('ReceptionMethod');
 		print '</td>';
 

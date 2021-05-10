@@ -35,9 +35,7 @@ if (!empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
-$langs->load("orders");
-$langs->load("receptions");
-$langs->load("companies");
+$langs->loadLangs(array("orders", "receptions", "companies"));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -62,7 +60,6 @@ if ($id > 0 || !empty($ref)) {
 	}
 }
 
-
 // Security check
 if ($user->socid > 0) {
 	$socid = $user->socid;
@@ -70,11 +67,8 @@ if ($user->socid > 0) {
 if ($origin == 'reception') {
 	$result = restrictedArea($user, $origin, $object->id);
 } else {
-	$result = restrictedArea($user, 'reception');
-	if ($origin == 'supplierorder') {
-		if (empty($user->rights->fournisseur->commande->lire) && empty($user->rights->fournisseur->commande->read)) {
-			accessforbidden();
-		}
+	if ($origin == 'supplierorder' || $origin == 'order_supplier') {
+		$result = restrictedArea($user, 'fournisseur', $origin_id, 'commande_fournisseur', 'commande');
 	} elseif (empty($user->rights->{$origin}->lire) && empty($user->rights->{$origin}->read)) {
 		accessforbidden();
 	}
