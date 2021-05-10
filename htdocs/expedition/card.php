@@ -1516,7 +1516,7 @@ if ($action == 'create') {
 		$res = $object->fetch_optionals();
 
 		$head = shipping_prepare_head($object);
-		print dol_get_fiche_head($head, 'shipping', $langs->trans("Shipment"), -1, 'sending');
+		print dol_get_fiche_head($head, 'shipping', $langs->trans("Shipment"), -1, $object->picto);
 
 		$formconfirm = '';
 
