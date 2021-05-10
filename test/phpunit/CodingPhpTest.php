@@ -191,7 +191,8 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
             		'multicurrency.class.php',
             		'productbatch.class.php',
             		'reception.class.php',
-            		'societe.class.php'
+            		'societe.class.php',
+            		'account.class.php'
             	))) {
 	            	// Must must not found $db->
 	            	$ok=true;

@@ -1689,8 +1689,7 @@ class Account extends CommonObject
 	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."bank_url SET url_id = ".((int) $dest_id)." WHERE url_id = ".((int) $origin_id)." AND type='company'";
 
-		if (!$db->query($sql))
-		{
+		if (! $db->query($sql)) {
 			//if ($ignoreerrors) return true; // TODO Not enough. If there is A-B on kept thirdarty and B-C on old one, we must get A-B-C after merge. Not A-B.
 			//$this->errors = $db->lasterror();
 			return false;
