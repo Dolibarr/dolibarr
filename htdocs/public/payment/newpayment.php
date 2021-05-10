@@ -1954,7 +1954,6 @@ if ($source == 'boothlocation') {
 	print '<input type="hidden" name="desc" value="'.dol_escape_htmltag($labeldesc).'">'."\n";
 }
 
-
 if (!$found && !$mesg) {
 	$mesg = $langs->trans("ErrorBadParameters");
 }
