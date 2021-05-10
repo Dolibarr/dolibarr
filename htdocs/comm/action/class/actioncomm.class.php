@@ -1902,7 +1902,7 @@ class ActionComm extends CommonObject
 					}
 				}
 				if ($key == 'author') {
-					$sql .= " AND c.type = '".$this->db->escape($value)."'";
+					$sql .= " AND u.lastname = '".$this->db->escape($value)."'";
 				}
 			}
 
