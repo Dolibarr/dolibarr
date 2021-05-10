@@ -74,6 +74,8 @@ if ($securekeytocompare != $securekeyreceived) {
 	exit;
 }
 
+$listofvotes = explode(',', $_SESSION["savevotes"]);
+
 if (GETPOST("votestatus")=="ok") {
 	setEventMessage($langs->trans("VoteOk"), 'mesgs');
 } else if (GETPOST("votestatus")=="ko") {
@@ -161,7 +163,7 @@ $idvote = GETPOST("vote");
 $hashedvote = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'vote'.$idvote);
 
 if (strlen($idvote)) {
-	if ($_COOKIE['VOTE_SUGGESTED_EVENTS_'.$hashedvote]==1) {
+	if (in_array($hashedvote, $listofvotes)) {
 		// Has already voted
 		$votestatus = 'ko';
 	} else {
@@ -172,22 +174,13 @@ if (strlen($idvote)) {
 			$error++;
 			$errmsg .= $conforbooth->error;
 		} else {
-			// Cookie expiration date : start of event, or 30 days if not specified
-			$startdate = $conforbooth->datep;
-			if (strlen($startdate)) {
-				$timeleftbeforestartofevent = $startdate;
-			} else {
-				// Cookie duration by default
-				$timeleftbeforestartofevent = time()+86400*30;
-			}
-			
 			// Process to vote
 			if ($res) {
 				$conforbooth->num_vote++;
 				$resupdate = $conforbooth->update($user);
 				if ($resupdate) {
 					$votestatus = 'ok';
-					$res = setcookie('VOTE_SUGGESTED_EVENTS_'.$hashedvote, 1, 0);
+					$_SESSION["savevotes"] = $hashedvote.','.(empty($_SESSION["savevotes"]) ? '' : $_SESSION["savevotes"]); // Save voter
 				} else {
 					//Error during update
 					$votestatus = 'err';
