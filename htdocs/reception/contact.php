@@ -113,13 +113,6 @@ if ($action == 'addcontact' && $user->rights->reception->creer) {
 		dol_print_error($db);
 	}
 }
-/*
-elseif ($action == 'setaddress' && $user->rights->reception->creer)
-{
-	$object->fetch($id);
-	$result=$object->setDeliveryAddress($_POST['fk_address']);
-	if ($result < 0) dol_print_error($db,$object->error);
-}*/
 
 
 /*
@@ -135,11 +128,7 @@ $contactstatic = new Contact($db);
 $userstatic = new User($db);
 
 
-/* *************************************************************************** */
-/*                                                                             */
-/* Mode vue et edition                                                         */
-/*                                                                             */
-/* *************************************************************************** */
+// View mode
 
 if ($id > 0 || !empty($ref)) {
 	$langs->trans("OrderCard");
@@ -193,7 +182,6 @@ if ($id > 0 || !empty($ref)) {
 	}
 	$morehtmlref .= '</div>';
 
-	$object->picto = 'sending';
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
 

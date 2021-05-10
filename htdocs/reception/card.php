@@ -1334,7 +1334,6 @@ if ($action == 'create') {
 		}
 		$morehtmlref .= '</div>';
 
-		$object->picto = 'sending';
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
 
