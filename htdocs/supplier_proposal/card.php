@@ -1035,7 +1035,7 @@ if (empty($reshook)) {
 /*
  * View
  */
-$title = $langs->trans('CommRequests')." - ".$langs->trans('Card');
+$title = $langs->trans('CommRequest')." - ".$langs->trans('Card');
 $help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
 llxHeader('', $title, $help_url);
 

@@ -98,11 +98,9 @@ if ($action == 'addcontact' && $permissiontoedit) {
 /*
  * View
  */
-$title = $langs->trans('CommRequests')." - ".$langs->trans('ContactsAddresses');
+$title = $langs->trans('CommRequest')." - ".$langs->trans('ContactsAddresses');
 $help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
 llxHeader('', $title, $help_url);
-$help_url = '';
-llxHeader('', $langs->trans("SupplierProposals"), $help_url);
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
