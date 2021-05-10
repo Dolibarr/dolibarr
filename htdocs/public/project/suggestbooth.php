@@ -439,7 +439,7 @@ if (empty($reshook) && $action == 'add') {
 						}
 					} else {
 						// If no price has been set for the booth, we confirm it as suggested and we update
-						$conforbooth->status = CONFERENCEORBOOTH::STATUS_SUGGESTED;
+						$conforbooth->status = ConferenceOrBooth::STATUS_SUGGESTED;
 						$conforbooth->update($user);
 						// Sending mail
 						require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';

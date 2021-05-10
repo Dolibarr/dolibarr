@@ -1901,6 +1901,9 @@ class ActionComm extends CommonObject
 						$sql .= " AND ar.fk_element = 0";
 					}
 				}
+				if ($key == 'author') {
+					$sql .= " AND c.type = '".$this->db->escape($value)."'";
+				}
 			}
 
 			$sql .= " AND a.datep IS NOT NULL"; // To exclude corrupted events and avoid errors in lightning/sunbird import

@@ -373,7 +373,7 @@ if (empty($reshook) && $action == 'add') {
 					$error++;
 					$errmsg .= $conforbooth->error;
 				} else {
-					$conforbooth->status = CONFERENCEORBOOTH::STATUS_SUGGESTED;
+					$conforbooth->status = ConferenceOrBooth::STATUS_SUGGESTED;
 					$conforbooth->update($user);
 
 					// Sending mail

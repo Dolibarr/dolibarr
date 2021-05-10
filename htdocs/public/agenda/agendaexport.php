@@ -135,6 +135,9 @@ if (GETPOST("notolderthan", 'int')) {
 } else {
 	$filters['notolderthan'] = $conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY;
 }
+if (GETPOST("author", 'apha')) {
+	$filters['author'] = GETPOST("author", 'apha');
+}
 
 // Check config
 if (empty($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY)) {
