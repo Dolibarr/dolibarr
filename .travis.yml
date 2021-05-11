@@ -43,7 +43,7 @@ jobs:
   include:
     - if: type = push
       php: '5.5'
-      env: DB=postgresql
+      env: DB=mysql
     - if: type = pull_request OR type = push
       php: '7.4'
       env: DB=mysql
