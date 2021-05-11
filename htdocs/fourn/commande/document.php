@@ -94,9 +94,11 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 $form = new	Form($db);
 
+$title = $langs->trans('SupplierOrder')." - ".$langs->trans('Documents');
+$help_url = 'EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
+llxHeader('', $title, $help_url);
+
 if ($object->id > 0) {
-	$help_url = 'EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
-	llxHeader('', $langs->trans("Order"), $help_url);
 
 	$object->fetch_thirdparty();
 

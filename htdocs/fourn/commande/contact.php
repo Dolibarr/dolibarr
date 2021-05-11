@@ -98,8 +98,9 @@ if ($action == 'addcontact' && ($user->rights->fournisseur->commande->creer || $
 /*
  * View
  */
+$title = $langs->trans('SupplierOrder')." - ".$langs->trans('ContactsAddresses');
 $help_url = 'EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
-llxHeader('', $langs->trans("Order"), $help_url);
+llxHeader('', $title, $help_url);
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
