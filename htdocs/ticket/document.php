@@ -37,6 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 $langs->loadLangs(array("companies", "other", "ticket", "mails"));
 
 $id       = GETPOST('id', 'int');
+$socid = GETPOST('socid', 'int');
 $ref      = GETPOST('ref', 'alpha');
 $track_id = GETPOST('track_id', 'alpha');
 $action   = GETPOST('action', 'alpha');
@@ -104,7 +105,7 @@ if ($object->id) {
 		print dol_get_fiche_end();
 	}
 
-	if (!$user->socid && $conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) {
+	if (!$user->socid && !empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY)) {
 		$object->next_prev_filter = "te.fk_user_assign = '".$user->id."'";
 	} elseif ($user->socid > 0) {
 		$object->next_prev_filter = "te.fk_soc = '".$user->socid."'";
