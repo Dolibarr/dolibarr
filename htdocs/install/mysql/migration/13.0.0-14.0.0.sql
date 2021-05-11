@@ -467,7 +467,7 @@ ALTER TABLE llx_payment_donation ADD COLUMN ext_payment_id  varchar(128) AFTER n
 -- Rebuild sequence for postgres only after query INSERT INTO llx_salary(rowid, ...
 -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
-UPDATE llx_const SET type = __ENCRYPT('chaine')__, value = __ENCRYPT('github')__ WHERE __DECRYPT('name')__ = 'MAIN_BUGTRACK_ENABLELINK' AND __DECRYPT('value')__ = 1;
+UPDATE llx_const SET type = 'chaine', value = __ENCRYPT('github')__ WHERE __DECRYPT('name')__ = 'MAIN_BUGTRACK_ENABLELINK' AND __DECRYPT('value')__ = 1;
 
 ALTER TABLE llx_facture_fourn_det ADD COLUMN fk_remise_except integer DEFAULT NULL after remise_percent;
 ALTER TABLE llx_facture_fourn_det ADD UNIQUE INDEX uk_fk_remise_except (fk_remise_except, fk_facture_fourn);
