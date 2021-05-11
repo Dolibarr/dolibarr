@@ -1633,6 +1633,9 @@ class FormMail extends Form
 				$vars['__SECUREKEYPAYMENT_CONTRACTLINE__']='';
 				*/
 			}
+			if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
+				$substitutionarray['__PUBLICLINK_NEWMEMBERFORM__'] = 'BlankSubscriptionForm';
+			}
 		}
 
 		foreach ($tmparray as $key => $val) {

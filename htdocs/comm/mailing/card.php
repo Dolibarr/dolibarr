@@ -2,6 +2,7 @@
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2005-2019	Laurent Destailleur		<eldy@uers.sourceforge.net>
  * Copyright (C) 2005-2016	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2021		Waël Almoman            <info@almoman.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -243,6 +244,9 @@ if (empty($reshook)) {
 								$substitutionarray['__SECUREKEYPAYMENT_INVOICE__'] = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'invoice'.$obj->source_id, 2);
 								$substitutionarray['__SECUREKEYPAYMENT_CONTRACTLINE__'] = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'contractline'.$obj->source_id, 2);
 							}
+						}
+						if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
+							$substitutionarray['__PUBLICLINK_NEWMEMBERFORM__'] = '<a target="_blank" href="'.DOL_MAIN_URL_ROOT.'/public/members/new.php'.((!empty($conf->multicompany->enabled)) ? '?entity='.$conf->entity : '').'">'.$langs->trans('BlankSubscriptionForm'). '</a>';
 						}
 						/* For backward compatibility, deprecated */
 						if (!empty($conf->paypal->enabled) && !empty($conf->global->PAYPAL_SECURITY_TOKEN)) {
