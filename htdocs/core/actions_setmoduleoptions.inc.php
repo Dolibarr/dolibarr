@@ -31,7 +31,6 @@ if ($action == 'update' && is_array($arrayofparameters)) {
 	$db->begin();
 
 	foreach ($arrayofparameters as $key => $val) {
-var_dump($key);
 		// Modify constant only if key was posted (avoid resetting key to the null value)
 		if (GETPOSTISSET($key)) {
 			if (preg_match('/category:/', $val['type'])) {
