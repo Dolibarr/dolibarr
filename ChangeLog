@@ -7,13 +7,14 @@ English Dolibarr ChangeLog
 
 For users:
 ----------
-NEW: Feature to make inventories
+NEW: Module Recruitement to follow application to job positions is now stable.
+NEW: Feature to make Stock Inventories
 NEW: Several security issues after a second private bug hunting campaign. 
 NEW: Add a security center page with all information and advices related to the security of your instance 
 NEW: Add a performance center page with all information and advices related to the performance of your instance 
 NEW: A lot of fix into english text after a small proofreading campaign (still not perfect, but really better)
 NEW: All main menu entries are using the picto of the module
-NEW: Accountancy - Add closure menu
+NEW: Add an example of scheduled job to send email reminder for unpayed invoices 
 NEW: Accountancy - Add FEC import
 NEW: Accountancy - Add a confirmation form with options on export
 NEW: Accountancy - Add select date from/to in already bind customer and supplier list
