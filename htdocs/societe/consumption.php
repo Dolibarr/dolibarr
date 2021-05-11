@@ -227,7 +227,7 @@ if ($type_element == 'propal')
 	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".$socid;
 	$where .= " AND d.fk_propal = c.rowid";
 	$where .= " AND c.entity = ".$conf->entity;
-	$datePrint = 'c.datep';
+	$dateprint = 'c.datep';
 	$doc_number = 'c.ref';
 	$thirdTypeSelect = 'customer';
 }
