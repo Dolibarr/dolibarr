@@ -61,8 +61,9 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, 
 /*
  * View
  */
+$title = $langs->trans('SupplierOrder')." - ".$langs->trans('Notes');
 $help_url = 'EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
-llxHeader('', $langs->trans("Order"), $help_url);
+llxHeader('', $title, $help_url);
 
 $form = new Form($db);
 
