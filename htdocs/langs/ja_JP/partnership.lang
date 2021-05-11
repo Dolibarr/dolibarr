@@ -1,0 +1,56 @@
+# Copyright (C) 2021		NextGestion			<contact@nextgestion.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+ModulePartnershipName = パートナーシップ管理
+PartnershipDescription = モジュールパートナーシップ管理
+PartnershipDescriptionLong= モジュールパートナーシップ管理
+
+#
+# Menu
+#
+NewPartnership = 新規パートナーシップ
+ListOfPartnerships = パートナーシップのリスト
+
+#
+# Admin page
+#
+PartnershipSetup = パートナーシップの設定
+PartnershipAbout = パートナーシップについて
+PartnershipAboutPage = ページについてのパートナーシップ
+
+
+#
+# Object
+#
+DatePartnershipStart=開始日
+DatePartnershipEnd=終了日
+
+#
+# Template Mail
+#
+
+
+#
+# Status
+#
+PartnershipDraft = 下書き
+PartnershipAccepted = 承認済
+PartnershipRefused = 拒否
+PartnershipCanceled = キャンセル
+
+PartnershipManagedFor=Partners are

@@ -225,7 +225,6 @@ DatabasePassword=Databasewachwoord
 Skin=Uiterlijksthema
 DefaultSkin=Standaard uiterlijksthema
 CompanyCurrency=Belangrijkste valuta
-ShowBugTrackLink=Show link "<strong>%s</strong>"
 InfoWebServer=Over webserver
 InfoDatabase=Over de database
 AccountantFileNumber=Code voor boekhouder
