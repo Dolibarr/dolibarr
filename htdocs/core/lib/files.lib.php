@@ -1766,7 +1766,7 @@ function dol_remove_file_process($filenb, $donotupdatesession = 0, $donotdeletef
  */
 function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uploaded', $setsharekey = 0, $object = null)
 {
-	global $db, $user;
+	global $db, $user, $conf;
 
 	$result = 0;
 
@@ -1792,6 +1792,9 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 			$ecmfile->src_object_type = $object->table_element;
 		}
 
+		if (!empty($conf->global->MAIN_CREATE_SHARE_ON_FILE_UPLOAD) && $conf->global->MAIN_CREATE_SHARE_ON_FILE_UPLOAD=='1') {
+			$setsharekey = 1;
+		}
 		if ($setsharekey) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 			$ecmfile->share = getRandomPassword(true);
