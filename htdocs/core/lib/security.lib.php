@@ -467,6 +467,10 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 				if (!$user->rights->fournisseur->commande->supprimer) {
 					$deleteok = 0;
 				}
+			} elseif ($feature == 'payment_supplier') {
+				if (!$user->rights->fournisseur->facture->creer) {
+					$deleteok = 0;
+				}
 			} elseif ($feature == 'banque') {
 				if (!$user->rights->banque->modifier) {
 					$deleteok = 0;
