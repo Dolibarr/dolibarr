@@ -335,6 +335,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		if ($type == 1) $sql .= " WHERE code_fournisseur = '".$db->escape($code)."'";
 		else $sql .= " WHERE code_client = '".$db->escape($code)."'";
 		if ($soc->id > 0) $sql .= " AND rowid <> ".$soc->id;
+		$sql .= " AND entity IN (".getEntity('societe').")";
 
 		$resql = $db->query($sql);
 		if ($resql)
