@@ -99,7 +99,6 @@ $help_url = 'EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedido
 llxHeader('', $title, $help_url);
 
 if ($object->id > 0) {
-
 	$object->fetch_thirdparty();
 
 	$author = new User($db);
