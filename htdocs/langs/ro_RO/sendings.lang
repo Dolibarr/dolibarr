@@ -1,0 +1,72 @@
+# Dolibarr language file - Source file is en_US - sendings
+RefSending=Ref. Livrare
+Sending=Livrare
+Sendings=Livrari
+AllSendings=All Shipments
+Shipment=Livrare
+Shipments=Livrari
+ShowSending=Arata Livrări
+Receivings=Delivery Receipts
+SendingsArea=Livrari
+ListOfSendings=Lista Livrari
+SendingMethod=Metodă Livrare
+LastSendings=Latest %s shipments
+StatisticsOfSendings=Statistici Livrari
+NbOfSendings=Număr Livrari
+NumberOfShipmentsByMonth=Număr livrări pe lună
+SendingCard=Fisa Livrare
+NewSending=Livrare nouă
+CreateShipment=Crează Livrare
+QtyShipped=Cant.  livrată
+QtyShippedShort=Qty ship.
+QtyPreparedOrShipped=Qty prepared or shipped
+QtyToShip=Cant.  de livrat
+QtyReceived=Cant.  primită
+QtyInOtherShipments=Qty in other shipments
+KeepToShip=Remain to ship
+KeepToShipShort=Remain
+OtherSendingsForSameOrder=Alte livrări pentru această comandă
+SendingsAndReceivingForSameOrder=Shipments and receipts for this order
+SendingsToValidate=Livrări de validat
+StatusSendingCanceled=Anulată
+StatusSendingDraft=Schiţă
+StatusSendingValidated=Validată (produse  de livrat sau deja livrate)
+StatusSendingProcessed=Procesată
+StatusSendingDraftShort=Schiţă
+StatusSendingValidatedShort=Validată
+StatusSendingProcessedShort=Procesată
+SendingSheet=Aviz expediere
+ConfirmDeleteSending=Are you sure you want to delete this shipment?
+ConfirmValidateSending=Are you sure you want to validate this shipment with reference <b>%s</b>?
+ConfirmCancelSending=Are you sure you want to cancel this shipment?
+DocumentModelMerou=Model Merou A5
+WarningNoQtyLeftToSend=Atenţie,  nu sunt produse care aşteaptă să fie expediate.
+StatsOnShipmentsOnlyValidated=Statisticil ectuate privind numai livrările validate. Data folosită este data validării livrării (data de livrare planificată nu este întotdeauna cunoscută).
+DateDeliveryPlanned=Data planificată a livrarii
+RefDeliveryReceipt=Ref delivery receipt
+StatusReceipt=Status delivery receipt
+DateReceived=Data de livrare reală
+SendShippingByEMail=Trimite dispoziţia de livrare prin e-mail
+SendShippingRef=Transmitere livrare %s
+ActionsOnShipping=Evenimente pe livrare
+LinkToTrackYourPackage=Link pentru a urmări pachetul dvs
+ShipmentCreationIsDoneFromOrder=Pentru moment, crearea unei noi livrări se face din fişa comenzii.
+ShipmentLine=Linie de livrare
+ProductQtyInCustomersOrdersRunning=Product quantity into open customer orders
+ProductQtyInSuppliersOrdersRunning=Product quantity into open purchase orders
+ProductQtyInShipmentAlreadySent=Product quantity from open customer order already sent
+ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from open supplier order already received
+NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
+WeightVolShort=Weight/Vol.
+ValidateOrderFirstBeforeShipment=You must first validate the order before being able to make shipments.
+
+# Sending methods
+# ModelDocument
+DocumentModelTyphon=Model complet pentru dispoziţie de livrare  (logo. ..)
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constanta EXPEDITION_ADDON_NUMBER nu este definită
+SumOfProductVolumes=Volumul total al produselor
+SumOfProductWeights=Greutatea totală a produselor
+
+# warehouse details
+DetailWarehouseNumber= Detalii Depozit
+DetailWarehouseFormat= W:%s (Cant : %d)

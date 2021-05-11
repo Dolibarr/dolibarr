@@ -1,0 +1,24 @@
+# ProductBATCH language file - en_US - ProductBATCH
+ManageLotSerial=Usar numeración por lotes/series
+ProductStatusOnBatch=Sí (se necesita lote/serie)
+ProductStatusNotOnBatch=No (no se usa lote/serie)
+ProductStatusOnBatchShort=Sí
+ProductStatusNotOnBatchShort=No
+Batch=Lote/Serie
+atleast1batchfield=Fecha de caducidad o Fecha de venta o Lote/Numero de Serie
+batch_number=Número Lote/Serie
+BatchNumberShort=Lote/Serie
+EatByDate=Fecha de caducidad
+SellByDate=Fecha límite de venta
+DetailBatchNumber=Detalles del lote/serie
+printBatch=Lote/Serie %s
+printEatby=Caducidad: %s
+printSellby=Límite venta: %s
+printQty=Cant.: %d
+AddDispatchBatchLine=Añada una línea para despacho por caducidad
+WhenProductBatchModuleOnOptionAreForced=When module Lot/Serial is on, automatic stock decrease  is forced to 'Decrease real stocks on shipping validation' and automatic increase mode is forced to 'Increase real stocks on manual dispatching into warehouses' and can't be edited. Other options can be defined as you want.
+ProductDoesNotUseBatchSerial=Este producto no usa lotes/series
+ProductLotSetup=Configuración del módulo lotes/series
+ShowCurrentStockOfLot=Mostrar el stock actual de este producto/lote
+ShowLogOfMovementIfLot=Ver los movimientos de stock de este producto/lote
+StockDetailPerBatch=Detalle de stock por lote

@@ -1,0 +1,44 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=Kar Oranı
+Margins=Kar Oranları
+TotalMargin=Toplam Kar Oranı
+MarginOnProducts=Kar Oranı / Ürünler
+MarginOnServices=Kar Oranı / Hizmetler
+MarginRate=Kar Oranı değeri
+MarkRate=Yayınlanmış fiyat
+DisplayMarginRates=Kar oran değerlerini göster
+DisplayMarkRates=Yayınlanmış fiyatları göster
+InputPrice=Giriş fiyatı
+margin=Kar oranı yönetimi
+margesSetup=Kar oranı yönetimi ayarı
+MarginDetails=Kar oranı ayrıntıları
+ProductMargins=Ürün kar oranları
+CustomerMargins=Müşteri kar oranları
+SalesRepresentativeMargins=Satış temsilcisi kar oranları
+UserMargins=Kullanıcı kar oranları
+ProductService=Ürün veya Hizmet
+AllProducts=Bütün ürünler ve hizmetler
+ChooseProduct/Service=Ürün veya hizmet seç
+ForceBuyingPriceIfNull=Eğer tanımlanmamışsa alış/maliyet fiyatını satış fiyatına zorla
+ForceBuyingPriceIfNullDetails=Eğer alış/maliyet fiyatı tanımlanmamışsa ve bu seçenek "AÇIK" ise satırda oran sıfır olacaktır (alış/maliyet fiyatı = satış fiyatı) aksi durumda ("KAPALI") ve oran önerilen varsayılana eşit olacaktır.
+MARGIN_METHODE_FOR_DISCOUNT=Genel indirimler için kar oranı yöntemi
+UseDiscountAsProduct=Ürün olarak
+UseDiscountAsService=Hizmet olarak
+UseDiscountOnTotal=Ara toplamla
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Genel bir indirimin, kar oranı hesaplaması için bir ürün, hizmet ya da yalnızca ara toplam olarak mı değerlendirildiğini tanımlayın.
+MARGIN_TYPE=Kar oranı hesaplaması için varsayılan olarak önerilen Satınalma/Maliyet fiyatı
+MargeType1=Margin on Best vendor price
+MargeType2=Ağırlıklı Ortalama Fiyatta Kar Oranı (AOF)
+MargeType3=Maliyet Fiyatı karı
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best supplier price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best supplier price if WAP not yet defined
+CostPrice=Maliyet fiyatı
+UnitCharges=Birim masrafları
+Charges=Masraflar
+AgentContactType=Ticari temsilci ilgili tipi
+AgentContactTypeDetails=Satış temsilcisine göre kar oranı raporu için kullanılacak kişi türünü (faturala bağlantılı) tanımla
+rateMustBeNumeric=Kar oran sayısal bir değer olmalı
+markRateShouldBeLesserThan100=Yayınlanmış kar oranı 100 den daha düşük olmalı
+ShowMarginInfos=Kar oranı bilgisi göster
+CheckMargins=Kar oranı ayrıntıları
+MarginPerSaleRepresentativeWarning=The report of margin per user use the link between third parties and sale representatives to calculate the margin of each sale representative. Because some thirdparties may not have any ddiated sale representative and some thirdparties may be linked to several, some amounts may not be included into this report (if there is no sale representative) and some may appear on different lines (for each sale representative).

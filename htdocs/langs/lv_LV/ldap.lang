@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - ldap
+YouMustChangePassNextLogon=Lietotāja parole <b>%s</b> domēnā <b>%s</b> ir jāmaina.
+UserMustChangePassNextLogon=Lietotājam ir jāmaina domēna %s  parole
+LDAPInformationsForThisContact=Informācija LDAP datubāzē šim kontaktam
+LDAPInformationsForThisUser=Informācija LDAP datubāzē šim lietotājam
+LDAPInformationsForThisGroup=Informācija LDAP datubāzē šai grupai
+LDAPInformationsForThisMember=Informācija LDAP datubāzē šim loceklim
+LDAPInformationsForThisMemberType=Information in LDAP database for this member type
+LDAPAttributes=LDAP atribūti
+LDAPCard=LDAP karte
+LDAPRecordNotFound=Ierakstīt nav atrasts LDAP datubāzē
+LDAPUsers=Lietotāji LDAP datu bāzē
+LDAPFieldStatus=Statuss
+LDAPFieldFirstSubscriptionDate=Pirmais abonēšanas datums
+LDAPFieldFirstSubscriptionAmount=Pirmais parakstīšanās summu
+LDAPFieldLastSubscriptionDate=Jaunākais piereģistrēšanās datums
+LDAPFieldLastSubscriptionAmount=Latest subscription amount
+LDAPFieldSkype=Skype id
+LDAPFieldSkypeExample=Piemērs : skypeNosaukums
+UserSynchronized=Lietotājs sinhronizēts
+GroupSynchronized=Grupa sinhronizēta
+MemberSynchronized=Biedrs sinhronizēts
+MemberTypeSynchronized=Dalībnieka veids ir sinhronizēts
+ContactSynchronized=Kontakti sinhronizēti
+ForceSynchronize=Forsēt sinhronizāciju Dolibarr -> LDAP
+ErrorFailedToReadLDAP=Neizdevās nolasīt LDAP datu bāzi. Pārbaudiet LDAP modulis uzstādīšanas un datu bāzes pieejamību.
+PasswordOfUserInLDAP=Lietotāja LDAP parole

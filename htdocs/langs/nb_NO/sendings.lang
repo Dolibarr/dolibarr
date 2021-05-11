@@ -1,0 +1,72 @@
+# Dolibarr language file - Source file is en_US - sendings
+RefSending=Ref. levering
+Sending=Levering
+Sendings=Leveringer
+AllSendings=Alle forsendelser
+Shipment=Levering
+Shipments=Leveringer
+ShowSending=Vis forsendelser
+Receivings=Leveringskvitteringer
+SendingsArea=Leveringsområde
+ListOfSendings=Oversikt over leveringer
+SendingMethod=Leveringsmåte
+LastSendings=Siste %s forsendelser
+StatisticsOfSendings=Statistikk
+NbOfSendings=Antall leveringer
+NumberOfShipmentsByMonth=Antall forsendelser pr. måned
+SendingCard=Pakkseddel
+NewSending=Ny levering
+CreateShipment=Opprett levering
+QtyShipped=Ant. levert
+QtyShippedShort=Antall sendt
+QtyPreparedOrShipped=Antall klargjort eller sendt
+QtyToShip=Ant. å levere
+QtyReceived=Ant. mottatt
+QtyInOtherShipments=Antall i andre forsendelser
+KeepToShip=Gjenstår å sende
+KeepToShipShort=Gjenstående
+OtherSendingsForSameOrder=Andre leveringer på denne ordren
+SendingsAndReceivingForSameOrder=Forsendelser og kvitteringer for denne ordren
+SendingsToValidate=Leveringer til validering
+StatusSendingCanceled=Kansellert
+StatusSendingDraft=Kladd
+StatusSendingValidated=Validert (klar til levering eller allerede levert)
+StatusSendingProcessed=Behandlet
+StatusSendingDraftShort=Kladd
+StatusSendingValidatedShort=Validert
+StatusSendingProcessedShort=Behandlet
+SendingSheet=Pakkseddel
+ConfirmDeleteSending=Er du sikker på at du vil slette denne forsendelsen?
+ConfirmValidateSending=Er du sikker på at du vil validere denne forsendelsen med referanse <b>%s</b>?
+ConfirmCancelSending=Er du sikker på at du vil kansellere denne forsendelsen?
+DocumentModelMerou=Merou A5 modell
+WarningNoQtyLeftToSend=Advarsel, ingen varer venter på å sendes.
+StatsOnShipmentsOnlyValidated=Statistikk utført bare på validerte forsendelser. Dato for validering av forsendelsen brukes (planlagt leveringsdato er ikke alltid kjent).
+DateDeliveryPlanned=Planlagt leveringsdato
+RefDeliveryReceipt=Ref. leveringskvittering
+StatusReceipt=Status leveringskvittering
+DateReceived=Dato levering mottatt
+SendShippingByEMail=Send forsendelse via e-post
+SendShippingRef=Innsending av forsendelse %s
+ActionsOnShipping=Hendelser for forsendelse
+LinkToTrackYourPackage=Lenke for å spore pakken
+ShipmentCreationIsDoneFromOrder=For øyeblikket er opprettelsen av en ny forsendelse gjort fra ordrekortet.
+ShipmentLine=Forsendelseslinje
+ProductQtyInCustomersOrdersRunning=Varekvantum i åpne kundeordrer
+ProductQtyInSuppliersOrdersRunning=Varekvantum i åpne innkjøpsordrer
+ProductQtyInShipmentAlreadySent=Varekvantitet fra åpen kundeordre som allerede er sendt
+ProductQtyInSuppliersShipmentAlreadyRecevied=Varekvantitet fra åpen leverandørordre som allerede er mottatt
+NoProductToShipFoundIntoStock=Ingen varer for utsendelse funnet på lager <b>%s</b>. Korriger varebeholdning eller gå tilbake for å velge et annet lager.
+WeightVolShort=Vekt/volum
+ValidateOrderFirstBeforeShipment=Du må validere ordren før du kan utføre forsendelser
+
+# Sending methods
+# ModelDocument
+DocumentModelTyphon=Mer fullstendig dokumentmodell for leveringskvitteringer (logo. ..)
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=Konstant EXPEDITION_ADDON_NUMBER ikke definert
+SumOfProductVolumes=Sum varevolum
+SumOfProductWeights=Sum varevekt
+
+# warehouse details
+DetailWarehouseNumber= Lagerdetaljer
+DetailWarehouseFormat= W:%s (Ant : %d)

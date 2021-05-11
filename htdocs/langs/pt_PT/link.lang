@@ -1,0 +1,10 @@
+# Dolibarr language file - Source file is en_US - languages
+LinkANewFile=Associar um novo ficheiro/documento
+LinkedFiles=Ficheiros e documentos associados
+NoLinkFound=Nenhumas ligações registadas
+LinkComplete=Os ficheiros foram ligados com sucesso
+ErrorFileNotLinked=Os ficheiros não puderam ser ligados
+LinkRemoved=A hiperligação %s foi removida
+ErrorFailedToDeleteLink= falhou a remoção da ligação '<b>%s</b>'
+ErrorFailedToUpdateLink= Falha na atualização de ligação '<b>%s</b>'
+URLToLink=URL para hiperligação

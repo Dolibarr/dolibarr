@@ -1,0 +1,5 @@
+# Dolibarr language file - Source file is en_US - externalsite
+ExternalSiteSetup=Külső weboldalra mutató link beállítása
+ExternalSiteURL=Külső oldal URL
+ExternalSiteModuleNotComplete=Az ExternalSite modul nincs megfelelően beállítva.
+ExampleMyMenuEntry=A menüpontom

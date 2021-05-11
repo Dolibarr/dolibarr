@@ -1,0 +1,31 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Préstec
+Loans=Préstecs
+NewLoan=Nou préstec
+ShowLoan=Mostrar préstec
+PaymentLoan=Pagament del préstec
+LoanPayment=Pagament del préstec
+ShowLoanPayment=Veure pagament del préstec
+LoanCapital=Capital
+Insurance=Assegurança
+Interest=Interessos
+Nbterms=Nombre de termes
+Term=Termini
+LoanAccountancyCapitalCode=Compte comptable del capital
+LoanAccountancyInsuranceCode=Compte comptable de l'assegurança
+LoanAccountancyInterestCode=Compte comptable per al interès
+ConfirmDeleteLoan=Confirma la eliminació del préstec
+LoanDeleted=Préstec eliminat correctament
+ConfirmPayLoan=Confirma la classificació del préstec com a pagat
+LoanPaid=Préstec pagat
+ListLoanAssociatedProject=Llistat de prèstecs associats al projecte
+AddLoan=Crea un préstec
+FinancialCommitment=Compromís financer
+InterestAmount=Interessos
+CapitalRemain=Capital remain
+# Admin
+ConfigLoan=Configuració del mòdul de préstecs
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Compte comptable del capital per defecte
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Compte comptable per al interès per defecte
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Compte comptable de l'assegurança per defecte
+CreateCalcSchedule=Edita el compromís financer

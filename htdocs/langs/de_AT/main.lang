@@ -1,0 +1,91 @@
+# Dolibarr language file - Source file is en_US - main
+DIRECTION=ltr
+FONTFORPDF=helvetica
+FONTSIZEFORPDF=10
+SeparatorDecimal=,
+SeparatorThousand=None
+FormatDateShort=%d/%m/%Y
+FormatDateShortInput=%d/%m/%Y
+FormatDateShortJava=dd/MM/yyyy
+FormatDateShortJavaInput=dd/MM/yyyy
+FormatDateShortJQuery=dd/mm/yy
+FormatDateShortJQueryInput=dd/mm/yy
+FormatHourShortJQuery=HH:MI
+FormatHourShort=%H:%M
+FormatHourShortDuration=%H:%M
+FormatDateTextShort=%d %b %Y
+FormatDateText=%d %B %Y
+FormatDateHourShort=%d/%m/%Y %H:%M
+FormatDateHourSecShort=%d/%m/%Y %H:%M:%S
+FormatDateHourTextShort=%d %b %Y %H:%M
+FormatDateHourText=%d %B %Y %H:%M
+NoError=Kein Fehler
+ErrorLogoFileNotFound=Logo-Datei '%s' kann nicht gefunden werden
+ErrorFailedToSendMail=Fehler beim Senden des Mails (Absender=%s, Empfänger=%s)
+ErrorDuplicateField=Dieser Wert muß einzigartig sein
+LevelOfFeature=Funktions-Level
+PreviousConnexion=Vorherige Verbindung
+NotePublic=Notiz (öffentlich)
+Closed=geschlossen
+Closed2=geschlossen
+ToClone=Klonen
+ConfirmClone=Klonen/Duplizieren - Optionen:
+Of=Von
+Search=Suche
+SearchOf=Suche
+Upload=Upload
+PasswordRetype=Geben Sie das Passwort erneut ein
+DateStart=Start-Datum
+DateEnd=End-Datum
+DateDue=Zahlungsziel
+DateRequest=Verlange Datum
+DurationDays=Tag
+days=Tag
+UnitPrice=Bruttopreis (Stk.)
+UnitPriceHT=Nettopreis (Stk.)
+UnitPriceTTC=Bruttopreis (Stk.)
+PriceU=Stückpreis
+PriceUHT=Stückpreis (net)
+AmountAverage=Durchnschnittsbetrag
+TotalTTCShort=Summe (inkl. MwSt.)
+TotalTTC=Summe (inkl. MwSt.)
+TotalVAT=Steuer gesamt
+VAT=MwSt.
+Ref=Bezeichnung
+RefPayment=Zahlungs Nr.
+Qty=Mng.
+Drafts=Entwurf
+Late=Versätet
+January=Jänner
+Month01=Jänner
+ReportName=Berichtname
+AmountInCurrency=Beträge in 1%s
+RefCustomer=Kunden Nr.
+SendByMail=Per E-Mail senden
+MailSentBy=E-Mail-Absender
+TextUsedInTheMessageBody=E-Mail-Text
+NoEMail=Keine E-Mails
+Offered=Angeboten
+Receive=Erhalte
+Documents=Verknüpfte Dateien
+ThisLimitIsDefinedInSetup=Gesetzte System-Limits (Menü Home-Einstellungen-Sicherheit): %s Kb, PHP Limit: %s Kb
+UnHidePassword=Passwort-Zeichen anzeigen
+CloneMainAttributes=Duplikat mit den Haupteigenschaften
+AttributeCode=Attribut-Code
+LinkTo=Verknüpfen mit...
+LinkToProposal==> Angebot
+LinkToOrder==> Bestellung
+LinkToInvoice==> Rechnung
+LinkToSupplierOrder==> Lieferantenbestellung
+LinkToSupplierProposal==> Lieferantenangebot
+LinkToSupplierInvoice==> Lieferantenrechnung
+LinkToContract==> Vertrag
+CreateDraft=Erstelle Entwurf
+NoPhotoYet=Es wurde noch kein Bild hochgeladen
+PublicUrl=Öffentliche Internetadresse
+ShowIntervention=Zeige Intervention
+ViewList=Liste anzeigen
+RelatedObjects=Ähnliche Dokumente
+Calendar=Kalender
+SearchIntoInterventions=Eingriffe
+AssignedTo=zugewisen an

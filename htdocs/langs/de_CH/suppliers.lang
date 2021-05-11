@@ -1,0 +1,5 @@
+# Dolibarr language file - Source file is en_US - suppliers
+TotalBuyingPriceMinShort=Summe der Einkaufspreise der Unterprodukte
+DoNotOrderThisProductToThisSupplier=Nicht bestellen
+NotTheGoodQualitySupplier=Falsche Menge
+ReputationForThisProduct=Bewertung

@@ -1,0 +1,21 @@
+# Dolibarr language file - Source file is en_US - compta
+VATToPay=TSS ventes
+VATReceived=TSS collectée
+VATToCollect=TSS achats
+VATSummary=Balance de TSS
+VATPaid=TSS payée
+VATCollected=TSS récupérée
+PaymentVat=Règlement TSS
+VATPayment=Règlement TSS
+VATPayments=Règlements TSS
+ShowVatPayment=Affiche paiement TSS
+RulesResultInOut=- Il inclut les règlements effectivement réalisés pour les factures, les charges et la TSS.<br>- Il se base sur la date de règlement de ces factures, charges et TSS.
+VATReportByCustomersInInputOutputMode=Rapport par client des TSS collectées et payées (TSS sur encaissement)
+VATReportByQuartersInInputOutputMode=Rapport par taux des TSS collectées et payées (TSS sur encaissement)
+SeeVATReportInInputOutputMode=Voir le rapport <b>%sTSS encaissement%s</b> pour mode de calcul standard
+SeeVATReportInDueDebtMode=Voir le rapport <b>%sTSS sur débit%s</b> pour mode de calcul avec option sur les débits
+RulesVATInServices=- Pour les services, le rapport inclut les TSS des règlements effectivement reçus ou émis en se basant sur la date du règlement.
+RulesVATInProducts=- Pour les biens matériels, il inclut les TSS des factures en se basant sur la date de facture.
+RulesVATDueServices=- Pour les services, le rapport inclut les TSS des factures dues, payées ou non en se basant sur la date de facture.
+RulesVATDueProducts=- Pour les biens matériels, il inclut les TSS des factures en se basant sur la date de facture.
+CalculationRuleDesc=Pour calculer le total de TSS, il existe 2 modes:<br>Le mode 1 consiste à arrondir la TSS de chaque ligne et à sommer cet arrondi.<br>Le mode 2 consiste à sommer la tva de chaque ligne puis à l'arrondir.<br>Les résultats peuvent différer de quelques centimes. Le mode par défaut est le mode <b>%s</b>.

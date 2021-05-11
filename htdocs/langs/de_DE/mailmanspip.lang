@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - mailmanspip
+MailmanSpipSetup=Konfiguration Mailman und SPIP Modul
+MailmanTitle=Mailman Mailingliste System
+TestSubscribe=Zum Testen von Mailman Abonnement Anmeldung Listen
+TestUnSubscribe=Zum Testen von Mailman Abonnement Abmeldung Listen
+MailmanCreationSuccess=Einschreibetest wurde erfolgreich durchgeführt
+MailmanDeletionSuccess=Abmeldetest wurde erfolgreich durchgeführt
+SynchroMailManEnabled=Ein Mailman-Update wird durchgeführt werden
+SynchroSpipEnabled=Ein Spip-Update wird durchgeführt werden
+DescADHERENT_MAILMAN_ADMINPW=Administratorpasswort
+DescADHERENT_MAILMAN_URL=URL für Mailman Anmeldungen
+DescADHERENT_MAILMAN_UNSUB_URL=URL für Mailman Abmeldungen
+DescADHERENT_MAILMAN_LISTS=Liste(n) für die automatische Beschriftung der neuen Mitglieder (durch Komma getrennt)
+SPIPTitle=SPIP Content Management System
+DescADHERENT_SPIP_SERVEUR=SPIP-Server
+DescADHERENT_SPIP_DB=SPIP-Datenbankname
+DescADHERENT_SPIP_USER=SPIP-Datenbankkennung
+DescADHERENT_SPIP_PASS=SPIP-Datenbankpasswort
+AddIntoSpip=Einfügen in SPIP
+AddIntoSpipConfirmation=Sind Sie sicher, dass Sie diesen Teilnehmer in SPIP hinzufügen möchten?
+AddIntoSpipError=Fehler beim anfügen des Benutzers in SPIP
+DeleteIntoSpip=Von SPIP entfernen
+DeleteIntoSpipConfirmation=Sind Sie sicher, dass Sie dieses Mitglied von SPIP entfernen wollen?
+DeleteIntoSpipError=Fehler zu unterdrücken  des Benutzers von SPIP
+SPIPConnectionFailed=Fehler beim Verbinden mit SPIP
+SuccessToAddToMailmanList=%s erfolgreich zur Mailingliste %s oder der SPIP Datenbank hinzugefügt
+SuccessToRemoveToMailmanList=%s erfolgreich aus der Mailingliste %s oder der SPIP Datenbank ausgetragen

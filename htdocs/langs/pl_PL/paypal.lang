@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=PayPal konfiguracji modułu
+PaypalDesc=Ten moduł oferuję stronę pozwalającą na płatności w systemie <a href="http://www.paypal.com" target="_blank">PayPal</a> przez klientów. Moduł może być wykorzystany do bezpłatnych płatności lub do płatności za określone obiekty Dolibarr (faktury, zamówienie itp.)
+PaypalOrCBDoPayment=Płać z PayPal (karta kredytowa lub PayPal)
+PaypalDoPayment=Zapłać z PayPal
+PAYPAL_API_SANDBOX=Tryb testu / sandbox
+PAYPAL_API_USER=API użytkownika
+PAYPAL_API_PASSWORD=API hasło
+PAYPAL_API_SIGNATURE=Podpis API
+PAYPAL_SSLVERSION=Wersja Curl SSL
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Oferta płatności "integralnej" (Karta kredytowa+Paypal) lub tylko "Paypal"
+PaypalModeIntegral=Integralny
+PaypalModeOnlyPaypal=Tylko PayPal
+ONLINE_PAYMENT_CSS_URL=Opcjonalny link do arkusza stylów CSS dla strony płatności online
+ThisIsTransactionId=Jest to id transakcji: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Dodaj link do płatności PayPal podczas wysyłania dokumentów za pośrednictwem email
+YouAreCurrentlyInSandboxMode=Aktualnie korzystasz z trybu "sandbox" %s
+NewOnlinePaymentReceived=Otrzymano nową płatność online
+NewOnlinePaymentFailed=New online payment tried but failed
+ONLINE_PAYMENT_SENDEMAIL=Napisz e-mail, aby poinformować po płatności (sukces lub nie)
+ReturnURLAfterPayment=Zwróć adres URL po dokonaniu płatności
+ValidationOfOnlinePaymentFailed=Niepowodzenie potwierdzenia płatności online
+PaymentSystemConfirmPaymentPageWasCalledButFailed=Payment confirmation page was called by payment system returned an error
+SetExpressCheckoutAPICallFailed=Wywołanie API poprzez SetExpressCheckout nie powiodło się
+DoExpressCheckoutPaymentAPICallFailed=Wywołanie API poprzez DoExpressCheckoutPayment nie powiodło się.
+DetailedErrorMessage=Szczegółowa informacja o błędzie
+ShortErrorMessage=Krotka informacja o błędzie
+ErrorCode=Kod błędu
+ErrorSeverityCode=Kod ważności błędu
+OnlinePaymentSystem=System płatności online
+PaypalLiveEnabled=Paypal live enabled (otherwise test/sandbox mode)
+PaypalImportPayment=Importuj płatności PayPal
+PostActionAfterPayment=Post actions after payments
+ARollbackWasPerformedOnPostActions=A rollback was performed on all Post actions. You must complete post actions manually if they are necessary.

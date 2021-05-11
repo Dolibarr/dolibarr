@@ -1,0 +1,21 @@
+# Dolibarr language file - Source file is en_US - products
+ProductId=ID de producto / servicio
+CantBeLessThanMinPrice=El precio de venta no puede ser inferior al mínimo permitido para este producto (%s sin impuestos). Este mensaje también puede aparecer si escribe un descuento demasiado importante.
+ContractStatusClosed=Cerrada
+ErrorProductBadRefOrLabel=Valor incorrecto para referencia o etiqueta.
+ProductsAndServicesArea=Área de productos y servicios
+ProductsArea=Área de producto
+SetDefaultBarcodeType=Establecer el tipo de código de barras
+AssociatedProductsAbility=Activar la función para administrar productos virtuales
+AssociatedProducts=Producto virtual
+KeywordFilter=Filtro de palabras clave
+NoMatchFound=No se encontraron coincidencias
+DeleteProduct=Eliminar un producto / servicio
+ExportDataset_produit_1=Productos
+ImportDataset_produit_1=productos
+GlobalVariableUpdaterType0=Datos JSON
+GlobalVariableUpdaterHelp0=Analiza los datos JSON de la URL especificada, VALUE especifica la ubicación del valor relevante,
+GlobalVariableUpdaterHelpFormat0=Formato de la solicitud {"URL": "http://example.com/urlofjson", "VALUE": "array1, array2, targetvalue"}
+GlobalVariableUpdaterType1=Datos de WebService
+GlobalVariableUpdaterHelp1=Analiza los datos de WebService desde la URL especificada, NS especifica el espacio de nombres, VALUE especifica la ubicación del valor relevante, DATA debe contener los datos a enviar y METHOD es el método WS que llama
+GlobalVariableUpdaterHelpFormat1=El formato de la solicitud es {"URL": "http://example.com/urlofws", "VALUE": "array, targetvalue", "NS": "http://example.com/urlofns", "METHOD" : "MyWSMethod", "DATA": {"tus": "datos", "a": "enviar"}}

@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - ldap
+YouMustChangePassNextLogon=ドメイン<b>%s</b>のユーザー<b>%s</b>のパスワードを変更する必要があります。
+UserMustChangePassNextLogon=ユーザーは、ドメイン%sにパスワードを変更する必要があります。
+LDAPInformationsForThisContact=この連絡先のLDAPデータベース内の情報
+LDAPInformationsForThisUser=このユーザーのLDAPデータベース内の情報
+LDAPInformationsForThisGroup=このグループのLDAPデータベース内の情報
+LDAPInformationsForThisMember=このメンバーのLDAPデータベース内の情報
+LDAPInformationsForThisMemberType=Information in LDAP database for this member type
+LDAPAttributes=LDAP属性
+LDAPCard=LDAPカード
+LDAPRecordNotFound=レコードは、LDAPデータベースに見つかりませんでした
+LDAPUsers=LDAPデータベース内のユーザー
+LDAPFieldStatus=ステータス
+LDAPFieldFirstSubscriptionDate=最初のサブスクリプションの日付
+LDAPFieldFirstSubscriptionAmount=最初のサブスクリプションの金額
+LDAPFieldLastSubscriptionDate=最後のサブスクリプションの日付
+LDAPFieldLastSubscriptionAmount=最後のサブスクリプションの金額
+LDAPFieldSkype=Skype ID
+LDAPFieldSkypeExample=例：Skype名
+UserSynchronized=ユーザーを同期しました
+GroupSynchronized=グループを同期しました
+MemberSynchronized=メンバーを同期しました
+MemberTypeSynchronized=Member type synchronized
+ContactSynchronized=連絡先を同期しました
+ForceSynchronize=強制的に同期 Dolibarr -> LDAP
+ErrorFailedToReadLDAP=LDAPデータベースの読み込みに失敗しました。 LDAPモジュールの設定とデータベースのアクセシビリティをチェックします。
+PasswordOfUserInLDAP=Password of user in LDAP

@@ -1,0 +1,20 @@
+# Dolibarr language file - Source file is en_US - marque pages
+AddThisPageToBookmarks=Προσθέστε αυτή τη σελίδα στους σελιδοδείκτες
+Bookmark=Σελιδοδείκτης
+Bookmarks=Σελιδοδείκτες
+ListOfBookmarks=Λίστα σελιδοδεικτών
+EditBookmarks=List/edit bookmarks
+NewBookmark=Νέος σελιδοδείκτης
+ShowBookmark=Εμφάνιση σελιδοδείκτη
+OpenANewWindow=Άνοιγμα σε νέο παράθυρο
+ReplaceWindow=Αντικατάσταση τρέχοντος παραθύρου
+BookmarkTargetNewWindowShort=Νέο παράθυρο
+BookmarkTargetReplaceWindowShort=Τρέχων παράθυρο
+BookmarkTitle=Τίτλος σελιδοδείκτη
+UrlOrLink=URL
+BehaviourOnClick=Μετάβαση σε
+CreateBookmark=Δημιουργία σελιδοδείκτη
+SetHereATitleForLink=Ορισμός τίτλου για τον σελιδοδείκτη
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Χρησιμοποιήστε μια εξωτερική διεύθυνση URL ή μια σχετική διεύθυνση URL του Dolibarr
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Επιλέξτε εάν η συνδεδεμένη σελίδα πρέπει να ανοίγει σε νέο παράθυρο ή όχι
+BookmarksManagement=Διαχείριση σελιδοδεικτών

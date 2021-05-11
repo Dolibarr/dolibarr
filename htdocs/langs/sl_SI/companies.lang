@@ -1,0 +1,434 @@
+# Dolibarr language file - Source file is en_US - companies
+ErrorCompanyNameAlreadyExists=Ime podjetja %s že obstaja. Izberite drugačno ime.
+ErrorSetACountryFirst=Najprej izberite državo
+SelectThirdParty=Izberite partnerja
+ConfirmDeleteCompany=Are you sure you want to delete this company and all inherited information?
+DeleteContact=Izbrišite kontakt
+ConfirmDeleteContact=Are you sure you want to delete this contact and all inherited information?
+MenuNewThirdParty=Nov partner
+MenuNewCustomer=Nov kupec
+MenuNewProspect=Nova možna stranka
+MenuNewSupplier=New vendor
+MenuNewPrivateIndividual=Nov posameznik
+NewCompany=New company (prospect, customer, vendor)
+NewThirdParty=New third party (prospect, customer, vendor)
+CreateDolibarrThirdPartySupplier=Create a third party (vendor)
+CreateThirdPartyOnly=Ustvari partnerja
+CreateThirdPartyAndContact=Create a third party + a child contact
+ProspectionArea=Področje možnih strank
+IdThirdParty=ID partnerja
+IdCompany=ID podjetja
+IdContact=ID kontakta
+Contacts=Kontakti
+ThirdPartyContacts=Kontakti pri partnerju
+ThirdPartyContact=Kontakt pri partnerju
+Company=Podjetje
+CompanyName=Ime podjetja
+AliasNames=Drugo ime (komercialno, blagovna znamka, ...)
+AliasNameShort=Drugo ime
+Companies=Podjetja
+CountryIsInEEC=Država je članica Evropske Unije
+ThirdPartyName=Ime partnerja
+ThirdPartyEmail=Third party email
+ThirdParty=Partnerji
+ThirdParties=Partnerji
+ThirdPartyProspects=Možne stranke
+ThirdPartyProspectsStats=Možne stranke
+ThirdPartyCustomers=Kupci
+ThirdPartyCustomersStats=Kupci
+ThirdPartyCustomersWithIdProf12=Kupci z %s ali %s
+ThirdPartySuppliers=Vendors
+ThirdPartyType=Vrsta partnerja
+Individual=Posameznik
+ToCreateContactWithSameName=Will create automatically a contact/address with same information than third party under the third party. In most cases, even if your third party is a physical people, creating a third party alone is enough.
+ParentCompany=Lastniško podjetje
+Subsidiaries=Podružnice
+ReportByMonth=Report by month
+ReportByCustomers=Report by customer
+ReportByQuarter=Poročilo po četrtletjih
+CivilityCode=Vljudnostni naziv
+RegisteredOffice=Registrirana poslovalnica
+Lastname=Priimek
+Firstname=Ime
+PostOrFunction=Job position
+UserTitle=Naziv
+NatureOfThirdParty=Nature of Third party
+Address=Naslov
+State=Dežela/Provinca
+StateShort=Država
+Region=Regija
+Region-State=Region - State
+Country=Država
+CountryCode=Koda države
+CountryId=ID države
+Phone=Telefon
+PhoneShort=Telefon
+Skype=Skype
+Call=Kliči
+Chat=Klepetaj
+PhonePro=Službeni telefon
+PhonePerso=Osebni telefon
+PhoneMobile=Mobilni telefon
+No_Email=Refuse mass e-mailings
+Fax=Faks
+Zip=Poštna številka
+Town=Mesto
+Web=Spletna stran
+Poste= Položaj
+DefaultLang=Privzet jezik
+VATIsUsed=Sales tax is used
+VATIsUsedWhenSelling=This define if this third party includes a sale tax or not when it makes an invoice to its own customers
+VATIsNotUsed=Sales tax is not used
+CopyAddressFromSoc=Fill address with third party address
+ThirdpartyNotCustomerNotSupplierSoNoRef=Third party neither customer nor vendor, no available refering objects
+ThirdpartyIsNeitherCustomerNorClientSoCannotHaveDiscounts=Third party neither customer nor supplier, discounts are not available
+PaymentBankAccount=Payment bank account
+OverAllProposals=Ponudbe
+OverAllOrders=Naročila
+OverAllInvoices=Računi
+OverAllSupplierProposals=Price requests
+##### Local Taxes #####
+LocalTax1IsUsed=Uporabi drugi davek
+LocalTax1IsUsedES= RE je uporabljen
+LocalTax1IsNotUsedES= RE ni uporabljen
+LocalTax2IsUsed=Uporabi tretji davek
+LocalTax2IsUsedES= IRPF je uporabljen
+LocalTax2IsNotUsedES= IRPF ni uporabljen
+LocalTax1ES=RE
+LocalTax2ES=IRPF
+TypeLocaltax1ES=RE tip
+TypeLocaltax2ES=IRPF tip
+WrongCustomerCode=Napačna koda kupca
+WrongSupplierCode=Vendor code invalid
+CustomerCodeModel=Model kode kupca
+SupplierCodeModel=Vendor code model
+Gencod=Črtna koda
+##### Professional ID #####
+ProfId1Short=Mat. št.
+ProfId2Short=Reg. sodišče
+ProfId3Short=Št. reg. vpisa
+ProfId4Short=Osn. kapital
+ProfId5Short==
+ProfId6Short=Prof. id 6
+ProfId1=Matična številka
+ProfId2=Sodišče vpisa družbe
+ProfId3=Številka registrskega vpisa
+ProfId4=Višina osnovnega kapitala
+ProfId5==
+ProfId6=Professional ID 6
+ProfId1AR=Prof Id 1 (CUIT/CUIL)
+ProfId2AR=Prof Id 2 (Revenu brutes)
+ProfId3AR=-
+ProfId4AR=-
+ProfId5AR==
+ProfId6AR=-
+ProfId1AT=Prof Id 1 (USt.-IdNr)
+ProfId2AT=Prof Id 2 (USt.-Nr)
+ProfId3AT=Prof Id 3 (Handelsregister-Nr.)
+ProfId4AT=-
+ProfId5AT=-
+ProfId6AT=-
+ProfId1AU=Prof Id 1 (ABN)
+ProfId2AU=-
+ProfId3AU=-
+ProfId4AU=-
+ProfId5AU==
+ProfId6AU=-
+ProfId1BE=Prof Id 1 (Professional number)
+ProfId2BE=-
+ProfId3BE=-
+ProfId4BE=-
+ProfId5BE==
+ProfId6BE=-
+ProfId1BR=-
+ProfId2BR=IE()
+ProfId3BR=IM()
+ProfId4BR=CPF
+#ProfId5BR=CNAE
+#ProfId6BR=INSS
+ProfId1CH=-
+ProfId2CH=-
+ProfId3CH=Prof Id 1 (Federal number)
+ProfId4CH=Prof Id 2 (Commercial Record number)
+ProfId5CH==
+ProfId6CH=-
+ProfId1CL==
+ProfId2CL==
+ProfId3CL==
+ProfId4CL==
+ProfId5CL==
+ProfId6CL=-
+ProfId1CO==
+ProfId2CO==
+ProfId3CO==
+ProfId4CO==
+ProfId5CO==
+ProfId6CO=-
+ProfId1DE=Prof Id 1 (USt.-IdNr)
+ProfId2DE=Prof Id 2 (USt.-Nr)
+ProfId3DE=Prof Id 3 (Handelsregister-Nr.)
+ProfId4DE=-
+ProfId5DE==
+ProfId6DE=-
+ProfId1ES=(CNAE)
+ProfId2ES=(Social security number)
+ProfId3ES=(IAE)
+ProfId4ES=(Collegiate number)
+ProfId5ES==
+ProfId6ES=-
+ProfId1FR=Prof Id 1 (SIREN)
+ProfId2FR=Prof Id 2 (SIRET)
+ProfId3FR=Prof Id 3 (NAF, old APE)
+ProfId4FR=Prof Id 4 (RCS/RM)
+ProfId5FR==
+ProfId6FR=-
+ProfId1GB=Prof Id 1 (Registration Number)
+ProfId2GB=-
+ProfId3GB=Prof Id 3 (SIC)
+ProfId4GB=-
+ProfId5GB==
+ProfId6GB=-
+ProfId1HN==
+ProfId2HN==
+ProfId3HN==
+ProfId4HN==
+ProfId5HN==
+ProfId6HN=-
+ProfId1IN=Prof Id 1 (TIN)
+ProfId2IN=Prof Id 2
+ProfId3IN=Prof Id 3
+ProfId4IN=Prof Id 4
+ProfId5IN==
+ProfId6IN=-
+ProfId1LU=Id. prof. 1 (R.C.S. Luxemburg)
+ProfId2LU=Id. prof. 2 (Dovoljenje za poslovanje)
+ProfId3LU=-
+ProfId4LU=-
+ProfId5LU=-
+ProfId6LU=-
+ProfId1MA==
+ProfId2MA==
+ProfId3MA==
+ProfId4MA==
+ProfId5MA=Id. prof. 5 (I.C.E.)
+ProfId6MA=-
+ProfId1MX==
+ProfId2MX==
+ProfId3MX==
+ProfId4MX==
+ProfId5MX==
+ProfId6MX=-
+ProfId1NL=KVK nummer
+ProfId2NL=-
+ProfId3NL=-
+ProfId4NL=-
+ProfId5NL==
+ProfId6NL=-
+ProfId1PT=Prof Id 1 (NIPC)
+ProfId2PT=Prof Id 2 (Social security number)
+ProfId3PT=Prof Id 3 (Commercial Record number)
+ProfId4PT=Prof Id 4 (Conservatory)
+ProfId5PT==
+ProfId6PT=-
+ProfId1SN==
+ProfId2SN==
+ProfId3SN==
+ProfId4SN==
+ProfId5SN==
+ProfId6SN=-
+ProfId1TN=Prof Id 1 (RC)
+ProfId2TN=Prof Id 2 (Fiscal matricule)
+ProfId3TN=Prof Id 3 (Douane code)
+ProfId4TN=Prof Id 4 (BAN)
+ProfId5TN==
+ProfId6TN=-
+ProfId1US=Prof Id (FEIN)
+ProfId2US=-
+ProfId3US=-
+ProfId4US=-
+ProfId5US=-
+ProfId6US=-
+ProfId1RU=Prof ID 1 (OGRN)
+ProfId2RU=Prof Id 2 (INN)
+ProfId3RU=Prof Id 3 (KPP)
+ProfId4RU=Prof Id 4 (OKPO)
+ProfId5RU=-
+ProfId6RU=-
+ProfId1DZ==
+ProfId2DZ=Art.
+ProfId3DZ=NIF
+ProfId4DZ=NIS
+VATIntra=Sales tax ID
+VATIntraShort=Tax ID
+VATIntraSyntaxIsValid=Ime zavezanca veljavno
+VATReturn=VAT return
+ProspectCustomer=Možna stranka / kupec
+Prospect=Možna stranka
+CustomerCard=Kartica kupca
+Customer=Kupec
+CustomerRelativeDiscount=Relativni popust za kupca
+SupplierRelativeDiscount=Relative vendor discount
+CustomerRelativeDiscountShort=Relativni popust
+CustomerAbsoluteDiscountShort=Absolutni popust
+CompanyHasRelativeDiscount=Temu kupcu pripada popust v višini <b>%s%%</b>
+CompanyHasNoRelativeDiscount=Ta kupec nima odobrenega relativnega popusta
+HasRelativeDiscountFromSupplier=You have a default discount of <b>%s%%</b> from this supplier
+HasNoRelativeDiscountFromSupplier=You have no default relative discount from this supplier
+CompanyHasAbsoluteDiscount=This customer has discount available (credits notes or down payments) for <b>%s</b> %s
+CompanyHasDownPaymentOrCommercialDiscount=This customer has discount available (commercial, down payments) for <b>%s</b> %s
+CompanyHasCreditNote=Ta kupec ima dobropis ali depozit v višini <b>%s %s</b>
+HasNoAbsoluteDiscountFromSupplier=You have no discount credit available from this supplier
+HasAbsoluteDiscountFromSupplier=You have discounts available (credits notes or down payments) for <b>%s</b> %s from this supplier
+HasDownPaymentOrCommercialDiscountFromSupplier=You have discounts available (commercial, down payments) for <b>%s</b> %s from this supplier
+HasCreditNoteFromSupplier=You have credit notes for <b>%s</b> %s from this supplier
+CompanyHasNoAbsoluteDiscount=Ta kupec nima diskontnega kredita
+CustomerAbsoluteDiscountAllUsers=Absolute customer discounts (granted by all users)
+CustomerAbsoluteDiscountMy=Absolute customer discounts (granted by yourself)
+SupplierAbsoluteDiscountAllUsers=Absolute vendor discounts (entered by all users)
+SupplierAbsoluteDiscountMy=Absolute vendor discounts (entered by yourself)
+DiscountNone=Brez popusta
+Supplier=Dobavitelj
+AddContact=Ustvari kntakt
+AddContactAddress=Ustvari naslov
+EditContact=Uredi osebo / naslov
+EditContactAddress=Uredi kontakt/naslov
+Contact=Kontakt
+ContactId=Contact id
+ContactsAddresses=Kontakti/naslovi
+FromContactName=Name:
+NoContactDefinedForThirdParty=Pri tem partnerju ni definiranega kontakta
+NoContactDefined=Pri tem partnerju ni definiranega kontakta
+DefaultContact=Privzeti kontakt
+AddThirdParty=Ustvari partnerja
+DeleteACompany=Izbriši podjetje
+PersonalInformations=Osebni podatki
+AccountancyCode=Računovodstvo račun
+CustomerCode=Koda kupca
+SupplierCode=Vendor code
+CustomerCodeShort=Koda kupca
+SupplierCodeShort=Vendor code
+CustomerCodeDesc=Edinstvena koda kupca
+SupplierCodeDesc=Vendor code, unique for all vendors
+RequiredIfCustomer=Obvezno, če je partner kupec ali možna stranka
+RequiredIfSupplier=Required if third party is a vendor
+ValidityControledByModule=Kontrola veljavnosti z modulom
+ThisIsModuleRules=To so pravila za ta modul
+ProspectToContact=Možna stranka v kontakt
+CompanyDeleted=Podjetje "%s" izbrisano iz baze.
+ListOfContacts=Seznam kontaktov
+ListOfContactsAddresses=Seznam kontaktov/naslovov
+ListOfThirdParties=Seznam partnerjev
+ShowCompany=Show third party
+ShowContact=Pokaži kontakt
+ContactsAllShort=Vsi (brez filtra)
+ContactType=Vrsta kontakta
+ContactForOrders=Kontakt za naročilo
+ContactForOrdersOrShipments=Kontakt za naročilo ali pošiljanje
+ContactForProposals=Kontakt za ponudbo
+ContactForContracts=Kontakt za pogodbo
+ContactForInvoices=Kontakt za račun
+NoContactForAnyOrder=Ta kontakt ni pravi za naročila
+NoContactForAnyOrderOrShipments=Ta kontakt ni pravi za naročilo ali pošiljanje
+NoContactForAnyProposal=Ta kontakt ni pravi za komercialne ponudbe
+NoContactForAnyContract=Ta kontakt ni pravi za pogodbe
+NoContactForAnyInvoice=Ta kontakt ni pravi za račune
+NewContact=Nov kontakt
+NewContactAddress=Nov kontakt/naslov
+MyContacts=Moji kontakti
+Capital=Kapital
+CapitalOf=Kapital %s
+EditCompany=Uredi podjetje
+ThisUserIsNot=This user is not a prospect, customer nor vendor
+VATIntraCheck=Kontrola
+VATIntraCheckDesc=Povezava <b>%s</b> omogoča poizvedbo v evropskem sistemu za kontrolo DDV številk. Za delovanje te storitve mora imeti strežnik zunanji internetni dostop.
+VATIntraCheckURL=http://ec.europa.eu/taxation_customs/vies/vieshome.do
+VATIntraCheckableOnEUSite=Kontrola davčne številke na strani Evropske komisije
+VATIntraManualCheck=Preverite lahko tudi ročno na Evropski internetni strani <a href="%s" target="_blank">%s</a>
+ErrorVATCheckMS_UNAVAILABLE=Kontrola ni možna. Država članica ne zagotavlja storitve poizvedbe (%s).
+NorProspectNorCustomer=Niti možna stranka, niti kupec
+JuridicalStatus=Legal form
+Staff=Osebje
+ProspectLevelShort=Potencial
+ProspectLevel=Potencial možne stranke
+ContactPrivate=Zasebni
+ContactPublic=V skupni rabi
+ContactVisibility=Vidljivost
+ContactOthers=Ostalo
+OthersNotLinkedToThirdParty=Ostali, brez povezave s partnerjem
+ProspectStatus=Status možne stranke
+PL_NONE=Ni potenciala
+PL_UNKNOWN=Neznan
+PL_LOW=Majhen potencial
+PL_MEDIUM=Srednji potencial
+PL_HIGH=Visok potencial
+TE_UNKNOWN=-
+TE_STARTUP=Novo podjetje
+TE_GROUP=Veliko podjetje
+TE_MEDIUM=Srednje podjetje
+TE_ADMIN=Državno podjetje
+TE_SMALL=Majhno podjetje
+TE_RETAIL=Maloprodaja
+TE_WHOLE=Veleprodaja
+TE_PRIVATE=Samostojni podjetnik
+TE_OTHER=Ostalo
+StatusProspect-1=Ne kontaktirati
+StatusProspect0=Še ni bil kontaktiran
+StatusProspect1=To be contacted
+StatusProspect2=Kontaktiranje v teku
+StatusProspect3=Kontakt izveden
+ChangeDoNotContact=Spremeni status v 'Ne kontaktirati'
+ChangeNeverContacted=Spremeni status v 'Še ni bil kontaktiran'
+ChangeToContact=Change status to 'To be contacted'
+ChangeContactInProcess=Spremeni status v 'Kontaktiranje v teku'
+ChangeContactDone=Spremeni status v 'Kontakt izveden'
+ProspectsByStatus=Možne stranke po statusu
+NoParentCompany=Brez
+ExportCardToFormat=Izvoz podatkov v formatu
+ContactNotLinkedToCompany=Kontakt ni povezan z nobenim partnerjem
+DolibarrLogin=Uporabniško ime za Dolibarr
+NoDolibarrAccess=Nima dostopa v Dolibarr
+ExportDataset_company_1=Third parties (Companies / foundations / physical people) and properties
+ExportDataset_company_2=Kontakti in lastništvo
+ImportDataset_company_1=Third parties (Companies / foundations / physical people) and properties
+ImportDataset_company_2=Contacts/Addresses (of third parties or not) and attributes
+ImportDataset_company_3=Bank accounts of third parties
+ImportDataset_company_4=Third parties/Sales representatives (Assign sales representatives users to companies)
+PriceLevel=Cenovni nivo
+DeliveryAddress=Naslov za dostavo
+AddAddress=Dodaj naslov
+SupplierCategory=Vendor category
+JuridicalStatus200=Independent
+DeleteFile=Izbriši datoteko
+ConfirmDeleteFile=Ali zares želite izbrisati to datoteko?
+AllocateCommercial=Assigned to sales representative
+Organization=Organizacija
+FiscalYearInformation=Informacije o fiskalnem letu
+FiscalMonthStart=Začetni mesec fiskalnega leta
+YouMustAssignUserMailFirst=You must create email for this user first to be able to add emails notifications for him.
+YouMustCreateContactFirst=To be able to add email notifications, you must first define contacts with valid emails for the third party
+ListSuppliersShort=List of vendors
+ListProspectsShort=Seznam možnih strank
+ListCustomersShort=Seznam kupcev
+ThirdPartiesArea=Področje partnerjev in kontaktov
+LastModifiedThirdParties=Latest %s modified third parties
+UniqueThirdParties=Skupno število partnerjev
+InActivity=Odprt
+ActivityCeased=Neaktiven
+ThirdPartyIsClosed=Third party is closed
+ProductsIntoElements=Seznam proizvodov/storitev v %s
+CurrentOutstandingBill=Trenutni neplačan račun
+OutstandingBill=Max. za neplačan račun
+OutstandingBillReached=Max. for outstanding bill reached
+OrderMinAmount=Minimum amount for order
+MonkeyNumRefModelDesc=Return numero with format %syymm-nnnn for customer code and %syymm-nnnn for vendor code where yy is year, mm is month and nnnn is a sequence with no break and no return to 0.
+LeopardNumRefModelDesc=Koda kupca / dobavitelja po želji. Lahko jo kadarkoli spremenite.
+ManagingDirectors=Ime direktorja(ev) (CEO, direktor, predsednik...)
+MergeOriginThirdparty=Podvojen partner (partner, ki ga želite zbrisati)
+MergeThirdparties=Združi partnerje
+ConfirmMergeThirdparties=Are you sure you want to merge this third party into the current one? All linked objects (invoices, orders, ...) will be moved to current third party, then the thirdparty will be deleted.
+ThirdpartiesMergeSuccess=Third parties have been merged
+SaleRepresentativeLogin=Login of sales representative
+SaleRepresentativeFirstname=First name of sales representative
+SaleRepresentativeLastname=Last name of sales representative
+ErrorThirdpartiesMerge=There was an error when deleting the third parties. Please check the log. Changes have been reverted.
+NewCustomerSupplierCodeProposed=New customer or vendor code suggested on duplicate code

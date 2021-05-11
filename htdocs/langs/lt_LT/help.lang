@@ -1,0 +1,26 @@
+# Dolibarr language file - Source file is en_US - help
+CommunitySupport=Forumo/Wiki palaikymas
+EMailSupport=E-pašto palaikymas
+RemoteControlSupport=Tiesioginis realaus laiko/nuotolinis palaikymas
+OtherSupport=Kita pagalba
+ToSeeListOfAvailableRessources=Susisiekti/pamatyti turimus išteklius:
+HelpCenter=Pagalbos centras
+DolibarrHelpCenter=Dolibarr pagalbos ir palaikymo centras
+ToGoBackToDolibarr=Priešingu atveju, spauskite <a href="%s"> čia norėdami naudoti Dolibarr</a>
+TypeOfSupport=Palaikymo šaltinis
+TypeSupportCommunauty=Bendruomenė (nemokamai)
+TypeSupportCommercial=Komercinis
+TypeOfHelp=Tipas
+NeedHelpCenter=Need help or support?
+Efficiency=Efektyvumas
+TypeHelpOnly=Tik pagalba
+TypeHelpDev=Pagalba + vystymas
+TypeHelpDevForm=Pagalba+Vystymas+Formavimas
+ToGetHelpGoOnSparkAngels1=Kai kurios įmonės gali užtikrinti greitą (kartais nedelsiamą) ir efektyvesnį tiesioginį palaikymą, perimant Jūsų kompiuterio kontrolę. Tokius padėjėjus galima rasti <b>%s</b> web svetainėje:
+ToGetHelpGoOnSparkAngels3=Taip pat galite eiti į visų galimų Dolibarr trenerių sąrašą, paspausdami šį mygtuką
+ToGetHelpGoOnSparkAngels2=Kartais nėra galimų įmonių tuo metu pagal Jūsų paiešką, todėl pakeiskite paieškos filtrą į "visų prieinamumą". Galėsite siųsti daugiau užklausų.
+BackToHelpCenter=Priešingu atveju, spauskite čia norėdami grįžti <a href="%s"> atgal į Pagrindinio puslapio Pagalbos centrą</a> .
+LinkToGoldMember=Galite paskambinti vienam iš trenerių, iš anksto atrinktų Dolibarr Jūsų kalbai (%s), spustelėdami jo Widget (būklė ir maksimali kaina yra automatiškai atnaujinami):
+PossibleLanguages=Palaikomos kalbos
+SubscribeToFoundation=Padėkite Dolibarr projektui, tapkite nariu
+SeeOfficalSupport=Oficialiam Dolibarr palaikymui Jūsų kalba: <br><b><a href="%s" target="_blank">%s</a></b>

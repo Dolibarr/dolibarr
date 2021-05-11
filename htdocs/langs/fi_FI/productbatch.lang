@@ -1,0 +1,24 @@
+# ProductBATCH language file - en_US - ProductBATCH
+ManageLotSerial=Käytä erää / sarjanumeroa
+ProductStatusOnBatch=Kyllä (erä / sarja käytössä)
+ProductStatusNotOnBatch=Ei (erä / sarja ei ole käytössä)
+ProductStatusOnBatchShort=Kyllä
+ProductStatusNotOnBatchShort=Ei
+Batch=Erä/Sarjanumero
+atleast1batchfield=Eat-by date or Sell-by date or Lot/Serial number
+batch_number=Erä / sarjanumero
+BatchNumberShort=Erä / Sarja
+EatByDate=Viimeinen käyttöpäivä
+SellByDate=Viimeinen myyntipäivä
+DetailBatchNumber=Erä / sarjan tiedot
+printBatch=Erä / sarja: %s
+printEatby=Käytettävä ennen: %s
+printSellby=Myyjä: %s
+printQty=Määrä: %d
+AddDispatchBatchLine=Add a line for Shelf Life dispatching
+WhenProductBatchModuleOnOptionAreForced=When module Lot/Serial is on, automatic stock decrease  is forced to 'Decrease real stocks on shipping validation' and automatic increase mode is forced to 'Increase real stocks on manual dispatching into warehouses' and can't be edited. Other options can be defined as you want.
+ProductDoesNotUseBatchSerial=Tämä tuote ei käytä erää / sarjanumeroa
+ProductLotSetup=Moduulin erän / sarjan asetukset
+ShowCurrentStockOfLot=Näytä nykyinen varasto pari tuotetta / erää kohti
+ShowLogOfMovementIfLot=Näytä siirto lokit pari tuotetta / erää kohti
+StockDetailPerBatch=Varastotiedot erää kohden

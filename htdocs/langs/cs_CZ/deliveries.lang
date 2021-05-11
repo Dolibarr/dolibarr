@@ -1,0 +1,30 @@
+# Dolibarr language file - Source file is en_US - deliveries
+Delivery=Dodávka
+DeliveryRef=Ref Delivery
+DeliveryCard=Receipt card
+DeliveryOrder=Dodací objednávka
+DeliveryDate=Termín dodání
+CreateDeliveryOrder=Generate delivery receipt
+DeliveryStateSaved=Delivery state saved
+SetDeliveryDate=Nastavit datem odeslání
+ValidateDeliveryReceipt=Potvrzení o doručení
+ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt?
+DeleteDeliveryReceipt=Odstranit potvrzení o doručení
+DeleteDeliveryReceiptConfirm=Are you sure you want to delete delivery receipt <b>%s</b>?
+DeliveryMethod=Způsob doručení
+TrackingNumber=Sledovací číslo
+DeliveryNotValidated=Dodávka není ověřena
+StatusDeliveryCanceled=Zrušený
+StatusDeliveryDraft=Návrh
+StatusDeliveryValidated=Přijaté
+# merou PDF model
+NameAndSignature=Jméno a podpis:
+ToAndDate=To___________________________________ na ____ / _____ / __________
+GoodStatusDeclaration=Výšeuvedené zboží obdrženo v dobrém stavu,
+Deliverer=Doručovatel:
+Sender=Odesílatel
+Recipient=Příjemce
+ErrorStockIsNotEnough=Dostatečné množství není skladem
+Shippable=Doručitelné
+NonShippable=Nedoručitelné
+ShowReceiving=Show delivery receipt

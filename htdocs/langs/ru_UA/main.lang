@@ -1,0 +1,22 @@
+# Dolibarr language file - Source file is en_US - main
+DIRECTION=ltr
+FONTFORPDF=freemono
+FONTSIZEFORPDF=8
+SeparatorDecimal=,
+SeparatorThousand=None
+FormatDateShort=%d.%m.%Y
+FormatDateShortInput=%d.%m.%Y
+FormatDateShortJava=dd.MM.yyyy
+FormatDateShortJavaInput=dd.MM.yyyy
+FormatDateShortJQuery=dd.mm.yy
+FormatDateShortJQueryInput=dd.mm.yy
+FormatHourShortJQuery=HH:MI
+FormatHourShort=%H:%M
+FormatHourShortDuration=%H:%M
+FormatDateTextShort=%d %b %Y
+FormatDateText=%d %B %Y
+FormatDateHourShort=%d.%m.%Y %H:%M
+FormatDateHourSecShort=%m/%d/%Y %I:%M:%S %p
+FormatDateHourTextShort=%d %b %Y %H:%M
+FormatDateHourText=%d %B %Y %H:%M
+MenuECM=Документация

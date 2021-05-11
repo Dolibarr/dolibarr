@@ -1,0 +1,4 @@
+# Dolibarr language file - Source file is en_US - errors
+ErrorBadBarCodeSyntax=Bad syntax for barcode. Perhaps you selected the wrong barcode type or you defined a barcode mask for numbering that does not match the value scanned.
+ErrorBarCodeRequired=Barcode required
+ErrorBarCodeAlreadyUsed=Barcode already used

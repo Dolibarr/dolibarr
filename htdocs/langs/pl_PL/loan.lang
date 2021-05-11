@@ -1,0 +1,31 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Kredyt
+Loans=Kredyty
+NewLoan=Nowy kredyt
+ShowLoan=Pokaż kredyt
+PaymentLoan=Spłata kredytu
+LoanPayment=Spłata kredytu
+ShowLoanPayment=Pokaż spłatę kredytu
+LoanCapital=Kapitał
+Insurance=Ubezpieczenie
+Interest=Odsetki
+Nbterms=Liczba składników
+Term=Term
+LoanAccountancyCapitalCode=Kapitał rachunku księgowego
+LoanAccountancyInsuranceCode=Ubezpieczenie konta księgowego
+LoanAccountancyInterestCode=Odsetki rachunku księgowego
+ConfirmDeleteLoan=Potwierdź usunięcie tego kredytu
+LoanDeleted=Pożyczka została usunięta
+ConfirmPayLoan=Potwierdź sklasyfikować wypłacane pożyczka
+LoanPaid=Pożyczka Płatny
+ListLoanAssociatedProject=Lista pożyczek związanych z projektem
+AddLoan=Utwórz pożyczkę
+FinancialCommitment=Financial commitment
+InterestAmount=Odsetki
+CapitalRemain=Capital remain
+# Admin
+ConfigLoan=Konfiguracja modułu kredytu
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Domyśly kapitał konta rachunkowego
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Domyślnie odsetki od rachunku księgowego
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Domyślnie ubezpieczenie rachunku księgowego
+CreateCalcSchedule=Edit financial commitment

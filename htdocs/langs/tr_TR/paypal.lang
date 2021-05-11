@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=PayPal modülü kurulumu
+PaypalDesc=Bu modül  <a href="http://www.paypal.com" target="_blank">PayPal</a> üzerinden müşteriler tarafından ödeme yapılmasını sağlar. Bu bir ücretsiz ödeme veya belirli bir Dolibarr nesnesine (fatura, siparş,…) bir ödeme yapmak için kullanılabilir
+PaypalOrCBDoPayment=PayPal ile öde (Kredi Kartı veya Paypal)
+PaypalDoPayment=Paypal ile ödeme
+PAYPAL_API_SANDBOX=Test/sandbox modu
+PAYPAL_API_USER=API kullanıcı adı
+PAYPAL_API_PASSWORD=API parolası
+PAYPAL_API_SIGNATURE=API imzası
+PAYPAL_SSLVERSION=Curl SSL Sürümü
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY="Dahili" (kredi kartı+paypal) ya da sadece "Paypal" ödemesi sunar
+PaypalModeIntegral=Tümlev
+PaypalModeOnlyPaypal=Yalnızca PayPal
+ONLINE_PAYMENT_CSS_URL=Online ödeme sayfasındaki CSS stil sayfasının isteğe bağlı URL'si
+ThisIsTransactionId=Bu işlem kimliğidir: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Posta yoluyla bir belge gönderdiğinizde, Paypal ödeme url'sini ekleyin
+YouAreCurrentlyInSandboxMode=Şu anda %s "sandbox" modundasınız
+NewOnlinePaymentReceived=Yeni online ödeme alındı
+NewOnlinePaymentFailed=Yeni online ödeme denendi ancak başarısız oldu
+ONLINE_PAYMENT_SENDEMAIL=Bir ödemeden sonra uyarı Epostası (başarılı ya da değil)
+ReturnURLAfterPayment=Ödemen sonra URL ye dön
+ValidationOfOnlinePaymentFailed=Online ödemenin doğrulaması başarısız oldu
+PaymentSystemConfirmPaymentPageWasCalledButFailed=Ödeme sistemi tarafından çağrılan ödeme onay sayfası bir hata verdi
+SetExpressCheckoutAPICallFailed=SetExpressCheckout API çağrısı hata verdi.
+DoExpressCheckoutPaymentAPICallFailed=DoExpressCheckoutPayment API çağrısı hata verdi.
+DetailedErrorMessage=Ayrıntılı Hata Mesajı
+ShortErrorMessage=Kısa Hata Mesajı
+ErrorCode=Hata Kodu
+ErrorSeverityCode=Hata Önem Kodu
+OnlinePaymentSystem=Online ödeme sistemi
+PaypalLiveEnabled=Paypal canlı etkin (aksi takdirde test/sanal alan modu)
+PaypalImportPayment=Import Paypal payments
+PostActionAfterPayment=Post actions after payments
+ARollbackWasPerformedOnPostActions=A rollback was performed on all Post actions. You must complete post actions manually if they are necessary.

@@ -1,0 +1,44 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=Gewinnspanne
+Margins=Gewinnspannen
+TotalMargin=Gesamt-Spanne
+MarginOnProducts=Gewinnspanne / Produkte
+MarginOnServices=Gewinnspanne / Leistungen
+MarginRate=Gewinnspannen-Rate
+MarkRate=Gewinnspannen-Rate
+DisplayMarginRates=Zeige Gewinnspannen-Raten an
+DisplayMarkRates=Zeige Gewinnspannen-Raten an
+InputPrice=Einstandspreis
+margin=Gewinnspannen-Verwaltung
+margesSetup=Gewinnspannen Einstellungen
+MarginDetails=Details zu Gewinnspannen
+ProductMargins=Produkt-Gewinnspannen
+CustomerMargins=Kunden-Gewinnspannen
+SalesRepresentativeMargins=Vertreter-Gewinnspannen
+UserMargins=Spannen nach Benutzer
+ProductService=Produkt oder Service
+AllProducts=Alle Produkte und Leistungen
+ChooseProduct/Service=Produkt oder Service wählen
+ForceBuyingPriceIfNull=Benutze EK-Preis/Herstellkosten als Verkaufspreis, wenn nicht definiert
+ForceBuyingPriceIfNullDetails=Falls die Option aktiviert ist, wird die Spanne der Zeile mit Null angezeigt (EK-Preis/Herstellkosten = Verkaufspreis). Ist die Option deaktiviert, wird die Spanne gleich der Voreinstellung sein.
+MARGIN_METHODE_FOR_DISCOUNT=Margin-Methode für globale Rabatte
+UseDiscountAsProduct=Als Produkt
+UseDiscountAsService=Als Service
+UseDiscountOnTotal=Auf Zwischensumme
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Definiert, ob ein globaler Rabatt als Produkt, Service oder nur als Zwischensumme für die Gewinnberechnung benutzt wird.
+MARGIN_TYPE=Kaufpreis / Kosten standardmäßig vorgeschlagen für Standardmargenkalkulation empfohlen\n
+MargeType1=Margin on Best vendor price
+MargeType2=gewichtete Durchschnittspreis (WAP)
+MargeType3=Marge auf Herstellkosten
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best supplier price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best supplier price if WAP not yet defined
+CostPrice=Selbstkostenpreis
+UnitCharges=Einheit Kosten
+Charges=Kosten
+AgentContactType=Kontaktart Handelsvertreter
+AgentContactTypeDetails=Definieren Sie, welche Kontaktart (auf Rechnungen verknüpft)  für die Meldung von Gewinnspannen pro Handelsvertreter verwendet wird
+rateMustBeNumeric=Die Rate muss ein numerischer Wert sein
+markRateShouldBeLesserThan100=Die markierte Rate sollte kleiner sein als 100
+ShowMarginInfos=Zeige Rand-Informationen
+CheckMargins=Detail zu Gewinnspanne
+MarginPerSaleRepresentativeWarning=The report of margin per user use the link between third parties and sale representatives to calculate the margin of each sale representative. Because some thirdparties may not have any ddiated sale representative and some thirdparties may be linked to several, some amounts may not be included into this report (if there is no sale representative) and some may appear on different lines (for each sale representative).

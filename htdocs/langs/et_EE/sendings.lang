@@ -1,0 +1,72 @@
+# Dolibarr language file - Source file is en_US - sendings
+RefSending=Saadetise viide
+Sending=Saadetis
+Sendings=Saadetised
+AllSendings=All Shipments
+Shipment=Saadetis
+Shipments=Saadetised
+ShowSending=Show Shipments
+Receivings=Delivery Receipts
+SendingsArea=Saadetiste ala
+ListOfSendings=Saadetiste nimekiri
+SendingMethod=Saatmisviis
+LastSendings=Latest %s shipments
+StatisticsOfSendings=Saadetiste statistika
+NbOfSendings=Saadetiste arv
+NumberOfShipmentsByMonth=Saadetiste arv kuude järgi
+SendingCard=Shipment card
+NewSending=Uus saadetis
+CreateShipment=Koosta saadetis
+QtyShipped=Saadetud kogus
+QtyShippedShort=Qty ship.
+QtyPreparedOrShipped=Qty prepared or shipped
+QtyToShip=Kogus saata
+QtyReceived=Saabunud kogus
+QtyInOtherShipments=Qty in other shipments
+KeepToShip=Remain to ship
+KeepToShipShort=Remain
+OtherSendingsForSameOrder=Tellimusega seotud teised saadetised
+SendingsAndReceivingForSameOrder=Shipments and receipts for this order
+SendingsToValidate=Kinnitamast vajavad saadetised
+StatusSendingCanceled=Tühistatud
+StatusSendingDraft=Mustand
+StatusSendingValidated=Kinnitatud (väljastamisele minevad või juba väljastatud kaubad)
+StatusSendingProcessed=Töödeldud
+StatusSendingDraftShort=Mustand
+StatusSendingValidatedShort=Kinnitatud
+StatusSendingProcessedShort=Töödeldud
+SendingSheet=Shipment sheet
+ConfirmDeleteSending=Are you sure you want to delete this shipment?
+ConfirmValidateSending=Are you sure you want to validate this shipment with reference <b>%s</b>?
+ConfirmCancelSending=Are you sure you want to cancel this shipment?
+DocumentModelMerou=Merou A5 mudel
+WarningNoQtyLeftToSend=Hoiatus: pole ühtki lähetamise ootel kaupa.
+StatsOnShipmentsOnlyValidated=Statistika põhineb vaid kinnitatud saadetistel. Kasutatavaks kuupäevaks on saadetise kinnitamise kuupäev (plaanitav kohaletoimetamise aeg ei ole alati teada).
+DateDeliveryPlanned=Planned date of delivery
+RefDeliveryReceipt=Ref delivery receipt
+StatusReceipt=Status delivery receipt
+DateReceived=Saadetise kättesaamise kuupäev
+SendShippingByEMail=Saada saadetis e-postiga
+SendShippingRef=Submission of shipment %s
+ActionsOnShipping=Saatmisel toimuvad tegevused
+LinkToTrackYourPackage=Paki jälgimise link
+ShipmentCreationIsDoneFromOrder=Praegu luuakse saadetised tellimuse kaardilt.
+ShipmentLine=Saadetise rida
+ProductQtyInCustomersOrdersRunning=Product quantity into open customer orders
+ProductQtyInSuppliersOrdersRunning=Product quantity into open purchase orders
+ProductQtyInShipmentAlreadySent=Product quantity from open customer order already sent
+ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from open supplier order already received
+NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
+WeightVolShort=Weight/Vol.
+ValidateOrderFirstBeforeShipment=You must first validate the order before being able to make shipments.
+
+# Sending methods
+# ModelDocument
+DocumentModelTyphon=Täiuslikum saatelehtede dokumendi mudel (logo jne)
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=Konstant EXPEDITION_ADDON_NUMBER on määratlemata
+SumOfProductVolumes=Toodete ruumala summa
+SumOfProductWeights=Toodete kaalude summa
+
+# warehouse details
+DetailWarehouseNumber= Warehouse details
+DetailWarehouseFormat= W:%s (Qty : %d)

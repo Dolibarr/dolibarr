@@ -1,0 +1,23 @@
+<?php
+// File to force Dolibarr wizard installer choices.
+//
+// This file must be present into htdocs/install directory
+// during install process to be used.
+//
+//
+$force_install_noedit=1;
+$force_install_message='KeepDefaultValuesDeb';
+$force_install_main_data_root='WEB___DIR/dolibarr_documents';
+$force_install_type='mysqli';
+$force_install_dbserver='DB_main_HOST';
+$force_install_port='DB_main_PORT';
+$force_install_database='DB_main_NAME';
+$force_install_createdatabase='0';
+$force_install_databaselogin='DB_main_LOGIN';
+$force_install_databasepass='DB_main_PASSWORD';
+$force_install_createuser='0';
+$force_install_databaserootlogin='';
+$force_install_databaserootpass='';
+$force_install_dolibarrlogin='admin';
+$force_install_nophpinfo='1';
+$force_install_lockinstall='444';

@@ -1,0 +1,31 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Δάνειο
+Loans=Δάνεια
+NewLoan=Νέο δάνειο
+ShowLoan=Εμφάνιση Δανείου
+PaymentLoan=Πληρωμή δανείων
+LoanPayment=Πληρωμή δανείων
+ShowLoanPayment=Εμφάνιση Πληρωμής Δανείου
+LoanCapital=Κεφάλαιο Κίνησης
+Insurance=Ασφάλεια Αυτοκινήτου
+Interest=Χρεωστικοί Τόκοι
+Nbterms=Αριθμός των όρων
+Term=Term
+LoanAccountancyCapitalCode=Accounting account capital
+LoanAccountancyInsuranceCode=Accounting account insurance
+LoanAccountancyInterestCode=Accounting account interest
+ConfirmDeleteLoan=Επιβεβαίωση διαγραφής δανείου
+LoanDeleted=Το Δάνειο διαγράφηκε με επιτυχία
+ConfirmPayLoan=Confirm classify paid this loan
+LoanPaid=Πληρωμή δανείου
+ListLoanAssociatedProject=List of loan associated with the project
+AddLoan=Create loan
+FinancialCommitment=Financial commitment
+InterestAmount=Χρεωστικοί Τόκοι
+CapitalRemain=Capital remain
+# Admin
+ConfigLoan=Configuration of the module loan
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Accounting account capital by default
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Accounting account interest by default
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Accounting account insurance by default
+CreateCalcSchedule=Edit financial commitment

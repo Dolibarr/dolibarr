@@ -1,0 +1,44 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=Biên lợi nhuận
+Margins=Biên lợi nhuận
+TotalMargin=Tổng biên
+MarginOnProducts=Tỷ suất biên lợi nhuận / Sản phẩm
+MarginOnServices=Tỷ suất biên lợi nhuận / Dịch vụ
+MarginRate=Tỷ lệ Biên lợi nhuận
+MarkRate=Đánh dấu tỷ lệ
+DisplayMarginRates=Tỷ lệ biên lợi nhuận hiển thị
+DisplayMarkRates=Giá đánh dấu hiển thị
+InputPrice=Giá đầu vào
+margin=Quản lý biên lợi nhuận
+margesSetup=Biên lợi nhuận thiết lập quản lý
+MarginDetails=Chi tiết Biên lợi nhuận
+ProductMargins=Biên lợi nhuận sản phẩm
+CustomerMargins=Biên lợi nhuận của khách hàng
+SalesRepresentativeMargins=Biên lợi nhuận đại diện bán hàng
+UserMargins=User margins
+ProductService=Sản phẩm hoặc dịch vụ
+AllProducts=Tất cả các sản phẩm và dịch vụ
+ChooseProduct/Service=Chọn sản phẩm hoặc dịch vụ
+ForceBuyingPriceIfNull=Force buying/cost price to selling price if not defined
+ForceBuyingPriceIfNullDetails=If buying/cost price not defined, and this option "ON", margin will be zero on line (buying/cost price = selling price), otherwise ("OFF"), marge will be equal to suggested default.
+MARGIN_METHODE_FOR_DISCOUNT=Phương pháp biên giảm giá toàn cầu
+UseDiscountAsProduct=Là một sản phẩm
+UseDiscountAsService=Là một dịch vụ
+UseDiscountOnTotal=Trên tổng số phụ
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Xác định nếu giảm giá toàn cầu được coi là một sản phẩm, một dịch vụ, hoặc chỉ trên tổng số phụ để tính tỷ suất biên lợi nhuận.
+MARGIN_TYPE=Buying/Cost price suggested by default for margin calculation
+MargeType1=Margin on Best vendor price
+MargeType2=Margin on Weighted Average Price (WAP)
+MargeType3=Margin on Cost Price
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best supplier price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best supplier price if WAP not yet defined
+CostPrice=Giá thành
+UnitCharges=Chi phí đơn vị
+Charges=Phí
+AgentContactType=Loại liên hệ đại lý thương mại
+AgentContactTypeDetails=Xác định những gì liên lạc loại (liên kết trên hóa đơn) sẽ được sử dụng cho các báo cáo biên lợi nhuận cho mỗi đại diện bán hàng
+rateMustBeNumeric=Tỷ giá phải là một giá trị số
+markRateShouldBeLesserThan100=Đánh dấu suất phải thấp hơn 100
+ShowMarginInfos=Show margin infos
+CheckMargins=Margins detail
+MarginPerSaleRepresentativeWarning=The report of margin per user use the link between third parties and sale representatives to calculate the margin of each sale representative. Because some thirdparties may not have any ddiated sale representative and some thirdparties may be linked to several, some amounts may not be included into this report (if there is no sale representative) and some may appear on different lines (for each sale representative).

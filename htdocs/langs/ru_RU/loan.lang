@@ -1,0 +1,31 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Ссуда
+Loans=Ссуды
+NewLoan=Новая ссуда
+ShowLoan=Показать ссуду
+PaymentLoan=Оплата ссуды
+LoanPayment=Оплата ссуды
+ShowLoanPayment=Просмотр оплаты ссуды
+LoanCapital=Капитал
+Insurance=Страховка
+Interest=Доля капитала
+Nbterms=Количество условий
+Term=Term
+LoanAccountancyCapitalCode=Accounting account capital
+LoanAccountancyInsuranceCode=Accounting account insurance
+LoanAccountancyInterestCode=Accounting account interest
+ConfirmDeleteLoan=Подтвердите удаление этой ссуды
+LoanDeleted=Ссуда успешно удалена
+ConfirmPayLoan=Подтвердите, что эта ссуда оплачена
+LoanPaid=Ссуда оплачена
+ListLoanAssociatedProject=List of loan associated with the project
+AddLoan=Create loan
+FinancialCommitment=Financial commitment
+InterestAmount=Доля капитала
+CapitalRemain=Capital remain
+# Admin
+ConfigLoan=Настройка модуля Ссуды
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Accounting account capital by default
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Accounting account interest by default
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Accounting account insurance by default
+CreateCalcSchedule=Edit financial commitment

@@ -1,0 +1,44 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=هامش
+Margins=هوامش
+TotalMargin=إجمالي الهامش
+MarginOnProducts=الهامش / المنتجات
+MarginOnServices=الهامش / الخدمات
+MarginRate=معدل الهامش
+MarkRate=معدل العلامة
+DisplayMarginRates=معدلات هامش العرض
+DisplayMarkRates=معدلات علامة العرض
+InputPrice=سعر الإدخال
+margin=إدارة هوامش الربح
+margesSetup=إعداد إدارة هوامش الربح
+MarginDetails=تفاصيل الهامش
+ProductMargins=هوامش المنتج
+CustomerMargins=هوامش العملاء
+SalesRepresentativeMargins=هوامش ممثل المبيعات
+UserMargins=هوامش المستخدم
+ProductService=المنتج أو الخدمة
+AllProducts=جميع المنتجات والخدمات
+ChooseProduct/Service=اختيار المنتج أو الخدمة
+ForceBuyingPriceIfNull=فرض سعر  شراء / تكلفة إلى سعر البيع إذا لم يتم تحديدها
+ForceBuyingPriceIfNullDetails=إذا لم يتم تحديد سعر الشراء / التكلفة، وهذا الخيار "تشغيل"، فإن الهامش سيكون صفرا على الخط (سعر الشراء / التكلفة = سعر البيع)، غير ذلك ("إيقاف")، فإن الهامش يساوي الافتراضي المقترح.
+MARGIN_METHODE_FOR_DISCOUNT=طريقة الهامش للخصومات العالمية
+UseDiscountAsProduct=كمنتج
+UseDiscountAsService=كخدمة
+UseDiscountOnTotal=على المجموع الفرعي
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=يحدد ما إذا كان يتم التعامل مع الخصم العالمي كمنتج أو خدمة أو فقط على المجموع الفرعي لحساب الهامش.
+MARGIN_TYPE=سعر الشراء / التكلفة المقترحة افتراضيا لحساب الهامش
+MargeType1=Margin on Best vendor price
+MargeType2=الهامش على متوسط ​​السعر المرجح (واب)
+MargeType3=هامش على سعر التكلفة
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best supplier price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best supplier price if WAP not yet defined
+CostPrice=سعر الكلفة
+UnitCharges=رسوم الوحدة
+Charges=الرسوم
+AgentContactType=نوع اتصال الوكيل التجاري 
+AgentContactTypeDetails=حدد نوع الاتصال (المرتبط بالفواتير) الذي سيتم استخدامه لتقرير الهامش لكل ممثل بيع
+rateMustBeNumeric=يجب أن يكون السعر قيمة رقمية
+markRateShouldBeLesserThan100=يجب أن يكون معدل العلامة أقل من 100
+ShowMarginInfos=إظهار معلومات الهامش
+CheckMargins=تفاصيل الهوامش
+MarginPerSaleRepresentativeWarning=The report of margin per user use the link between third parties and sale representatives to calculate the margin of each sale representative. Because some thirdparties may not have any ddiated sale representative and some thirdparties may be linked to several, some amounts may not be included into this report (if there is no sale representative) and some may appear on different lines (for each sale representative).

@@ -1,0 +1,36 @@
+# Dolibarr language file - Source file is en_US - resource
+MenuResourceIndex=Resursi
+MenuResourceAdd=Jauni resursi
+DeleteResource=Dzēst resursu
+ConfirmDeleteResourceElement=Apstiprināt resursu dzēšanu šim elementam
+NoResourceInDatabase=Nav datubāzē resursu
+NoResourceLinked=Nav saistītu resursu
+
+ResourcePageIndex=Resursu saraksts
+ResourceSingular=Resursi
+ResourceCard=Resursu karte
+AddResource=Izveidot resursu
+ResourceFormLabel_ref=Resursu nosaukums
+ResourceType=Resursa veids
+ResourceFormLabel_description=Resursa apraksts
+
+ResourcesLinkedToElement=Resurss saistīts ar elementu
+
+ShowResource=Rārīt resursus
+
+ResourceElementPage=Elementa resursi
+ResourceCreatedWithSuccess=Resurss veiksmīgi izveidots
+RessourceLineSuccessfullyDeleted=Resursu līnija veiksmīgi dzēsta
+RessourceLineSuccessfullyUpdated=Resursa līnija veiksmīgi atjaunota
+ResourceLinkedWithSuccess=Resurs sasaistīts veiksmīgi
+
+ConfirmDeleteResource=Apstiprināt šī resursa dzēšanu
+RessourceSuccessfullyDeleted=Resurss veiksmīgi dzēsts
+DictionaryResourceType=Resursa veids
+
+SelectResource=Izvēlēties resursu
+
+IdResource=Id resource
+AssetNumber=Sērijas numurs
+ResourceTypeCode=Resource type code
+ImportDataset_resource_1=Resursi

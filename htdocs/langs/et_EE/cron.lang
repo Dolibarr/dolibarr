@@ -1,0 +1,83 @@
+# Dolibarr language file - Source file is en_US - cron
+# About page
+# Right
+Permission23101 = Read Scheduled job
+Permission23102 = Create/update Scheduled job
+Permission23103 = Delete Scheduled job
+Permission23104 = Execute Scheduled job
+# Admin
+CronSetup= Plaanitavata programmide haldamise seadistamine
+URLToLaunchCronJobs=URL to check and launch qualified cron jobs
+OrToLaunchASpecificJob=Või mõne kindla programmi kontrollimiseks ja käivitamiseks
+KeyForCronAccess=Croni käivitatavate programmide URLile ligipääsu turvavõti
+FileToLaunchCronJobs=Command line to check and launch qualified cron jobs
+CronExplainHowToRunUnix=On Unix environment you should use the following crontab entry to run the command line each 5 minutes
+CronExplainHowToRunWin=On Microsoft(tm) Windows environement you can use Scheduled task tools to run the command line each 5 minutes
+CronMethodDoesNotExists=Class %s does not contains any method %s
+CronJobDefDesc=Cron job profiles are defined into the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
+CronJobProfiles=List of predefined cron job profiles
+# Menu
+EnabledAndDisabled=Enabled and disabled
+# Page list
+CronLastOutput=Latest run output
+CronLastResult=Latest result code
+CronCommand=Käsk
+CronList=Plaanitud käivitused
+CronDelete=Delete scheduled jobs
+CronConfirmDelete=Are you sure you want to delete these scheduled jobs?
+CronExecute=Launch scheduled job
+CronConfirmExecute=Are you sure you want to execute these scheduled jobs now?
+CronInfo=Scheduled job module allows to schedule jobs to execute them automatically. Jobs can also be started manually.
+CronTask=Tegevus
+CronNone=Mitte ükski
+CronDtStart=Not before
+CronDtEnd=Not after
+CronDtNextLaunch=Järgmine käivitus
+CronDtLastLaunch=Start date of latest execution
+CronDtLastResult=End date of latest execution
+CronFrequency=Sagedus
+CronClass=Class
+CronMethod=Meetod
+CronModule=Moodul
+CronNoJobs=Pole ühtki registreeritud programm
+CronPriority=Prioriteet
+CronLabel=Nimi
+CronNbRun=Käivituste arv
+CronMaxRun=Max number launch
+CronEach=Iga
+JobFinished=Tegevus käivitatud ja lõpetatud
+#Page card
+CronAdd= Lisa programme
+CronEvery=Execute job each
+CronObject=Instants/objekt, mis luuakse
+CronArgs=Parameetrid
+CronSaveSucess=Save successfully
+CronNote=Kommentaar
+CronFieldMandatory=Välja %s täitmine on nõutud
+CronErrEndDateStartDt=Lõppkuupäev ei saa olla alguskuupäevast varasem
+StatusAtInstall=Status at module installation
+CronStatusActiveBtn=Lülita sisse
+CronStatusInactiveBtn=Lülita välja
+CronTaskInactive=See tegevus on välja lülitatud
+CronId=ID
+CronClassFile=Filename with class
+CronModuleHelp=Name of Dolibarr module directory (also work with external Dolibarr module). <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/<u>product</u>/class/product.class.php, the value for module is<br><i>product</i>
+CronClassFileHelp=The relative path and file name to load (path is relative to web server root directory). <BR> For exemple to call the fetch method of Dolibarr Product object htdocs/product/class/<u>product.class.php</u>, the value for class file name is<br><i>product/class/product.class.php</i>
+CronObjectHelp=The object name to load. <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for class file name is<br><i>Product</i>
+CronMethodHelp=The object method to launch. <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for method is<br><i>fetch</i>
+CronArgsHelp=The method arguments. <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for paramters can be<br><i>0, ProductRef</i>
+CronCommandHelp=Käivitatav süsteemi käsk.
+CronCreateJob=Create new Scheduled Job
+CronFrom=Kellelt
+# Info
+# Common
+CronType=Job type
+CronType_method=Call method of a PHP Class
+CronType_command=Käsurea käsk
+CronCannotLoadClass=Cannot load class file %s (to use class %s)
+CronCannotLoadObject=Class file %s was loaded, but object %s was not found into it
+UseMenuModuleToolsToAddCronJobs=Go into menu "Home - Admin tools - Scheduled jobs" to see and edit scheduled jobs.
+JobDisabled=Job disabled
+MakeLocalDatabaseDumpShort=Local database backup
+MakeLocalDatabaseDump=Create a local database dump. Parameters are: compression ('gz' or 'bz' or 'none'), backup type ('mysql' or 'pgsql'), 1, 'auto' or filename to build, number of backup files to keep
+WarningCronDelayed=Attention, for performance purpose, whatever is next date of execution of enabled jobs, your jobs may be delayed to a maximum of %s hours, before being run.

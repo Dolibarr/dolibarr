@@ -1,0 +1,31 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Kredit
+Loans=Kredite
+NewLoan=Neuer Kredit
+ShowLoan=Zeige Kredit
+PaymentLoan=Kreditauszahlung
+LoanPayment=Kreditauszahlung
+ShowLoanPayment=Zeige Kreditauszahlung
+LoanCapital=Kapital
+Insurance=Versicherung
+Interest=Zins
+Nbterms=Anzahl der Bedingungen
+Term=Term
+LoanAccountancyCapitalCode=Buchhaltungskonto Kapital
+LoanAccountancyInsuranceCode=Buchhaltungskonto Versicherung
+LoanAccountancyInterestCode=Buchhaltungskonto Zinsen
+ConfirmDeleteLoan=Bestätigen Sie das Löschen dieses Kredites
+LoanDeleted=Kredit erfolgreich gelöscht
+ConfirmPayLoan=Bestätigen Sie das Löschen dieses Kredites
+LoanPaid=Kredit bezahlt
+ListLoanAssociatedProject=Liste der Darlehen in dem Projekt
+AddLoan=Darlehen erstellen
+FinancialCommitment=Financial commitment
+InterestAmount=Zins
+CapitalRemain=Capital remain
+# Admin
+ConfigLoan=Konfiguration des Modul Kredite
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Standard-Buchhaltungskonto Kapital
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Standard-Buchhaltungskonto Zinsen
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Standard-Buchhaltungskonto Versicherung
+CreateCalcSchedule=Edit financial commitment

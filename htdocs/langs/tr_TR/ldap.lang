@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - ldap
+YouMustChangePassNextLogon=<b>%s</b> Etki alanındaki <b>%s</b> kullanıcısının parolası değiştirilmelidir.
+UserMustChangePassNextLogon=Kullanıcı, %s etki alanındaki  parolasını değiştirmelidir
+LDAPInformationsForThisContact=Bu kişi için LDAP veritabanındaki bilgi
+LDAPInformationsForThisUser=Bu kullanıcı için LDAP veritabanındaki bilgi
+LDAPInformationsForThisGroup=Bu grup için LDAP veritabanındaki bilgi
+LDAPInformationsForThisMember=Bu üye için LDAP veritabanındaki bilgi
+LDAPInformationsForThisMemberType=Information in LDAP database for this member type
+LDAPAttributes=LDAP öznitelikleri
+LDAPCard=LDAP kartı
+LDAPRecordNotFound=Kayıt LDAP veritabanında bulunamadı
+LDAPUsers=LDAP veritabanındaki kullanıcılar
+LDAPFieldStatus=Durum
+LDAPFieldFirstSubscriptionDate=İlk abonelik tarihi
+LDAPFieldFirstSubscriptionAmount=İlk abonelik tutarı
+LDAPFieldLastSubscriptionDate=Son abonelik tarihi
+LDAPFieldLastSubscriptionAmount=Son abonelik miktarı
+LDAPFieldSkype=Skype kimliği
+LDAPFieldSkypeExample=Örnek: skypeAdı
+UserSynchronized=Kullanıcı senkronize edildi
+GroupSynchronized=Grup senkronize edildi
+MemberSynchronized=Üye senkronize edildi
+MemberTypeSynchronized=Member type synchronized
+ContactSynchronized=Kişi senkronize edildi
+ForceSynchronize=Dolibarr -> LDAP senkronizyona zorla
+ErrorFailedToReadLDAP=LDAP veritabanı okunamadı. LDAP modülü kurulumunu ve veritabanı erişilebilirliğini denetleyin.
+PasswordOfUserInLDAP=Password of user in LDAP

@@ -1,0 +1,10 @@
+# Dolibarr language file - Source file is en_US - languages
+LinkANewFile=Susieti naują filą / dokumentą
+LinkedFiles=Linked files and documents
+NoLinkFound=No registered links
+LinkComplete=The file has been linked successfully
+ErrorFileNotLinked=The file could not be linked
+LinkRemoved=The link %s has been removed
+ErrorFailedToDeleteLink= Failed to remove link '<b>%s</b>'
+ErrorFailedToUpdateLink= Nesėkmingas sąsajos '<b>%s</b>' atnaujinimas
+URLToLink=URL to link

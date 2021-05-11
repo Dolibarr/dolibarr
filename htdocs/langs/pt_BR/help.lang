@@ -1,0 +1,23 @@
+# Dolibarr language file - Source file is en_US - help
+CommunitySupport=Fórum/Wiki suporte
+EMailSupport=E-mails de suporte
+RemoteControlSupport=Suporte em tempo real / remoto
+OtherSupport=Outros suportes
+ToSeeListOfAvailableRessources=Entrar em contato com/consulte os recursos disponíveis:
+HelpCenter=Central de ajuda
+DolibarrHelpCenter=Centro de suporte e ajuda Dolibarr
+ToGoBackToDolibarr=Caso contrário, clique aqui para usar Dolibarr
+TypeOfSupport=Fonte de suporte
+NeedHelpCenter=PRecisa de ajuda ou suporte?
+Efficiency=eficiência
+TypeHelpOnly=Somente ajuda
+TypeHelpDev=Ajuda+Desenvolvimento
+TypeHelpDevForm=Ajuda+Desenvolvimento+Formação
+ToGetHelpGoOnSparkAngels1=Algumas empresas podem prover um suporte online rápido (às vezes imediato) e mais eficiente ao assumirem o controle de seu computador. Tais ajudantes podem ser encontrados na página <b>%s</b>:
+ToGetHelpGoOnSparkAngels3=Você também pode acessar a lista de todos os treinadores disponíveis para o Dolibarr, para isto clique no botão
+ToGetHelpGoOnSparkAngels2=Às vezes, não há nenhuma empresa disponível no momento de fazer sua pesquisa, por isso acho que para mudar o filtro para procurar "tudo disponibilidade". Você será capaz de enviar mais pedidos.
+BackToHelpCenter=Caso contrário, clique aqui para ir para trás para ajudar a home page .
+LinkToGoldMember=Você pode ligar para um dos técnicos pré-selecionada por Dolibarr para o seu idioma, clicando em seu Widget (status e preço máximo são atualizados automaticamente):
+PossibleLanguages=Os idiomas suportados
+SubscribeToFoundation=Ajuda projeto Dolibarr, assine a fundação
+SeeOfficalSupport=Para obter suporte oficial do Dolibarr no seu idioma:  <br><b><a href="%s" target="_blank">%s</a></b>

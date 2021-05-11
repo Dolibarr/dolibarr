@@ -1,0 +1,44 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=Marża
+Margins=Marże
+TotalMargin=Marża Total
+MarginOnProducts=Marża / Produkty
+MarginOnServices=Marża / Usługi
+MarginRate=Stopa marży
+MarkRate=Stawka Mark
+DisplayMarginRates=Stawki marży wyświetlacz
+DisplayMarkRates=Stawki znaków wyświetlanych
+InputPrice=Cena wejściowa
+margin=Zarządzanie zyskiem z marż
+margesSetup=Ustawienie zarządzania zyskiem z marż
+MarginDetails=Szczegóły marży
+ProductMargins=Marża produktu
+CustomerMargins=Marża klienta
+SalesRepresentativeMargins=Sprzedaż marże reprezentatywne
+UserMargins=Marginesy użytkownika
+ProductService=Produkt lub usługa
+AllProducts=Wszystkie produkty i usługi
+ChooseProduct/Service=Wybierz produkt lub usługę
+ForceBuyingPriceIfNull=Wymuszaj cenę zakupu/cenę fabryczną jako cenę sprzedaży jeżeli ta nie jest zdefiniowana
+ForceBuyingPriceIfNullDetails=Jeżeli cena zakupu/koszt nie jest zdefiniowana, a ta opcja jest "ON", marża będzie równa 0 (cena zakupu/koszt = cena sprzedaży), w przeciwnym razie ("OFF"), marża będzie równa sugerowanej domyślnie.
+MARGIN_METHODE_FOR_DISCOUNT=Sposób na marżę dla globalnych rabatów
+UseDiscountAsProduct=Jako produkt
+UseDiscountAsService=Jako usługa
+UseDiscountOnTotal=Na podsumy
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Określa, czy globalne rabatu jest traktowana jako produktu, usługi lub tylko na sumy częściowej obliczania marży.
+MARGIN_TYPE=Cena zakupu/cena fabryczna jest sugerowana jako domyślna do obliczenia marży
+MargeType1=Margin on Best vendor price
+MargeType2=Marża na średniej cenie ważonej
+MargeType3=Marża na cenie fabrycznej
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best supplier price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best supplier price if WAP not yet defined
+CostPrice=Cena fabryczna
+UnitCharges=Koszty jednostkowe
+Charges=Opłaty
+AgentContactType=Przedstawiciel handlowy typ kontaktu
+AgentContactTypeDetails=Zdefiniować, jaki rodzaj (związane na fakturach) kontaktowe będą wykorzystywane do raportu marży na reprezentatywną sprzedaż
+rateMustBeNumeric=Stawka musi być wartością liczbową
+markRateShouldBeLesserThan100=Stopa znak powinien być niższy niż 100
+ShowMarginInfos=Pokaż informacje o marżę
+CheckMargins=Szczegóły marż
+MarginPerSaleRepresentativeWarning=The report of margin per user use the link between third parties and sale representatives to calculate the margin of each sale representative. Because some thirdparties may not have any ddiated sale representative and some thirdparties may be linked to several, some amounts may not be included into this report (if there is no sale representative) and some may appear on different lines (for each sale representative).

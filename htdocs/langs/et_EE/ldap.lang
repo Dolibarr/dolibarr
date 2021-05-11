@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - ldap
+YouMustChangePassNextLogon=Kasutaja <b>%s</b> salasõna domeenis <b>%s</b> peab muutma.
+UserMustChangePassNextLogon=Kasutaja peab muutma oma salasõna domeenis %s
+LDAPInformationsForThisContact=LDAPi andmebaasis selle kontakti kohta leiduv info
+LDAPInformationsForThisUser=LDAPi andmebaasis selle kasutaja kohta leiduv info
+LDAPInformationsForThisGroup=LDAPi andmebaasis selle grupi kohta leiduv info
+LDAPInformationsForThisMember=LDAPi andmebaasis selle liikme kohta leiduv info
+LDAPInformationsForThisMemberType=Information in LDAP database for this member type
+LDAPAttributes=LDAPi atribuudid
+LDAPCard=LDAPi kaart
+LDAPRecordNotFound=Ei leidnud kirjet LDAPi andmebaasist
+LDAPUsers=LDAPi andmebaasis olevad kasutajad
+LDAPFieldStatus=Staatus
+LDAPFieldFirstSubscriptionDate=Esimese tellimuse kuupäev
+LDAPFieldFirstSubscriptionAmount=Esimese tellimuse kogus
+LDAPFieldLastSubscriptionDate=Latest subscription date
+LDAPFieldLastSubscriptionAmount=Latest subscription amount
+LDAPFieldSkype=Skype id
+LDAPFieldSkypeExample=Example : skypeName
+UserSynchronized=Kasutaja sünkroniseeritud
+GroupSynchronized=Grupp sünkroniseeritud
+MemberSynchronized=Liige sünkroniseeritud
+MemberTypeSynchronized=Member type synchronized
+ContactSynchronized=Kontakt sünkroniseeritud
+ForceSynchronize=Sunni Dolibarr -> LDAP sünkroniseerimine
+ErrorFailedToReadLDAP=LDAPi andmebaasi lugemine ebaõnnestus. Kontrolli LDAPi mooduli seadistust ja ligipääsu andmebaasile.
+PasswordOfUserInLDAP=Password of user in LDAP

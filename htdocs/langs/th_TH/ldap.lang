@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - ldap
+YouMustChangePassNextLogon=<b>รหัสผ่านสำหรับผู้ใช้% s% s</b> ในโดเมนต้องมีการเปลี่ยนแปลง
+UserMustChangePassNextLogon=ผู้ใช้ต้องเปลี่ยนรหัสผ่านในโดเมน% s
+LDAPInformationsForThisContact=ข้อมูลในฐานข้อมูล LDAP สำหรับการติดต่อนี้
+LDAPInformationsForThisUser=ข้อมูลในฐานข้อมูล LDAP สำหรับผู้ใช้นี้
+LDAPInformationsForThisGroup=ข้อมูลในฐานข้อมูล LDAP สำหรับกลุ่มนี้
+LDAPInformationsForThisMember=ข้อมูลในฐานข้อมูล LDAP ของสมาชิกนี้
+LDAPInformationsForThisMemberType=Information in LDAP database for this member type
+LDAPAttributes=คุณลักษณะ LDAP
+LDAPCard=บัตร LDAP
+LDAPRecordNotFound=บันทึกไม่พบในฐานข้อมูล LDAP
+LDAPUsers=ผู้ใช้ในฐานข้อมูล LDAP
+LDAPFieldStatus=สถานะ
+LDAPFieldFirstSubscriptionDate=วันที่สมัครสมาชิกครั้งแรก
+LDAPFieldFirstSubscriptionAmount=จำนวนการสมัครสมาชิกครั้งแรก
+LDAPFieldLastSubscriptionDate=Latest subscription date
+LDAPFieldLastSubscriptionAmount=Latest subscription amount
+LDAPFieldSkype=Skype id
+LDAPFieldSkypeExample=Example : skypeName
+UserSynchronized=ผู้ใช้ตรงกัน
+GroupSynchronized=กลุ่มตรงกัน
+MemberSynchronized=สมาชิกตรงกัน
+MemberTypeSynchronized=Member type synchronized
+ContactSynchronized=ติดต่อตรง
+ForceSynchronize=กองทัพตรงกัน Dolibarr -> LDAP
+ErrorFailedToReadLDAP=ไม่สามารถอ่านฐานข้อมูล LDAP ตรวจสอบการติดตั้งโมดูล LDAP และการเข้าถึงฐานข้อมูล
+PasswordOfUserInLDAP=Password of user in LDAP

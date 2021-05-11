@@ -1,0 +1,20 @@
+# Dolibarr language file - Source file is en_US - marque pages
+AddThisPageToBookmarks=Aggiungi la seguente pagina ai segnalibri
+Bookmark=Segnalibro
+Bookmarks=Segnalibri
+ListOfBookmarks=Elenco segnalibri
+EditBookmarks=Visualizza lista/crea segnalibri
+NewBookmark=Nuovo segnalibro
+ShowBookmark=Visualizza segnalibro
+OpenANewWindow=Apri una nuova finestra
+ReplaceWindow=Sostituisci finestra attuale
+BookmarkTargetNewWindowShort=Nuova finestra
+BookmarkTargetReplaceWindowShort=Finestra corrente
+BookmarkTitle=Titolo segnalibro
+UrlOrLink=URL
+BehaviourOnClick=Funzione per l'URL del segnalibro
+CreateBookmark=Crea segnalibro
+SetHereATitleForLink=Dai un titolo al segnalibro
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Usa un indirizzo http esterno o uno relativo a Dolibarr
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Scegli se la pagina collegata deve essera aperta in una nuova finestra oppure no
+BookmarksManagement=Gestione segnalibri

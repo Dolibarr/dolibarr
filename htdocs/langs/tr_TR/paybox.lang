@@ -1,0 +1,38 @@
+# Dolibarr language file - Source file is en_US - paybox
+PayBoxSetup=PayBox modülü kurulumu
+PayBoxDesc=Bu modül <a href="http://www.paybox.com" target="_blank">Paybox</a> üzerinden müşteriler tarafından ödeme yapılmasını sağlar. Bu bir ücretsiz ödeme veya belirli bir Dolibarr nesnesine (fatura, siparş,…) bir ödeme yapmak için kullanılabilir
+FollowingUrlAreAvailableToMakePayments=Aşağıdaki URL'ler bir müşteriye Dolibarr nesnelerine bir ödeme yapmak için bir sayfa sunmak için kullanılabilir
+PaymentForm=Ödeme Formu
+WelcomeOnPaymentPage=Çevrimiçi ödeme hizmetimize hoşgeldiniz
+ThisScreenAllowsYouToPay=Bu ekran %s için çevrimiçi bir ödeme yapmanızı sağlar
+ThisIsInformationOnPayment=Bu yapılacak ödeme hakkında bilgidir
+ToComplete=Tamamlanacak
+YourEMail=Ödeme alındısı onayı için e-posta adresi
+Creditor=Alacaklı
+PaymentCode=Ödeme kodu
+PayBoxDoPayment=Kredi veya Bankamatik Kartıyla öde (Paybox)
+ToPay=Ödeme yap
+YouWillBeRedirectedOnPayBox=Kredi kartı bilgilerinizi girmek için güvenli Paybox sayfasına yönlendirileceksiniz
+Continue=Sonraki
+ToOfferALinkForOnlinePayment=%s Ödemesi için URL
+ToOfferALinkForOnlinePaymentOnOrder=Bir müşteri siparişi için çevrimiçi %s ödemesi kullanıcı arayüzü sunan URL
+ToOfferALinkForOnlinePaymentOnInvoice=Bir müşteri faturası için çevrimiçi %s ödemesi kullanıcı arayüzü sunan URL
+ToOfferALinkForOnlinePaymentOnContractLine=Bir sözleşme satırı için çevrimiçi %s ödemesi kullanıcı arayüzü sunan URL
+ToOfferALinkForOnlinePaymentOnFreeAmount=Bir serbest ödeme için çevrimiçi %s ödemesi kullanıcı arayüzü sunan URL
+ToOfferALinkForOnlinePaymentOnMemberSubscription=Bir müşteri üye aboneliği çevrimiçi %s ödemesi kullanıcı arayüzü sunan URL
+YouCanAddTagOnUrl=Ayrıca; o URL'lerden herhangi birine <b>&tag=<i>value</i></b> url parametresini ekleyerek kendi ödeme açıklamanızın etiketini girebilirsiniz.
+SetupPayBoxToHavePaymentCreatedAutomatically=Paybox tarafından doğrulandığında ödemenin otomatik olarak oluşturulması için PayBox'ı <b>%s</b> url'si ile ayarlayın.
+YourPaymentHasBeenRecorded=Bu sayfa ödeme kaydedilmiş olduğunu onaylar. Teşekkür ederim.
+YourPaymentHasNotBeenRecorded=Ödemeniz kaydedimelmiştir  ve işlem iptal edilmiştir. Teşekkür ederiz.
+AccountParameter=Hesap parametreleri
+UsageParameter=Kullanım parametreleri
+InformationToFindParameters=%s Hesap bilgilerinizi bulmanız için yardım
+PAYBOX_CGI_URL_V2=Ödeme için Paybox CGI modülü URL'si
+VendorName=Satıcının Adı
+CSSUrlForPaymentForm=Ödeme formu için CSS stil sayfası url'si
+NewPayboxPaymentReceived=Yeni Paybox ödemesi alındı
+NewPayboxPaymentFailed=Yeni Paybox ödemesi denendi ama başarısız oldu
+PAYBOX_PAYONLINE_SENDEMAIL=Ödeme sonrası uyarı Epostası (başarılı ya da başarısız)
+PAYBOX_PBX_SITE=PBX SITE için değer
+PAYBOX_PBX_RANG=PBX Rang için değer
+PAYBOX_PBX_IDENTIFIANT=PBX ID için değer

@@ -1,0 +1,3 @@
+# Dolibarr language file - Source file is en_US - withdrawals
+ThirdPartyBankCode=BLZ Geschäftspartner
+WithdrawalRefusedConfirm=Möchten Sie wirklich eine Abbuchungsablehnung zu diesem Geschäftspartner erstellen?

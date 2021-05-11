@@ -1,0 +1,30 @@
+# Dolibarr language file - Source file is en_US - deliveries
+Delivery=Доставка
+DeliveryRef=Ref Delivery
+DeliveryCard=Receipt card
+DeliveryOrder=Доставка за
+DeliveryDate=Дата на доставка
+CreateDeliveryOrder=Generate delivery receipt
+DeliveryStateSaved=Състояние на доставката е записано
+SetDeliveryDate=Дата на изпращане
+ValidateDeliveryReceipt=Одобряване на разписка
+ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt?
+DeleteDeliveryReceipt=Изтриване на разписка
+DeleteDeliveryReceiptConfirm=Are you sure you want to delete delivery receipt <b>%s</b>?
+DeliveryMethod=Начин
+TrackingNumber=Проследяващ номер
+DeliveryNotValidated=Доставката не валидирани
+StatusDeliveryCanceled=Отменен
+StatusDeliveryDraft=Чернова
+StatusDeliveryValidated=Получено
+# merou PDF model
+NameAndSignature=Име и подпис:
+ToAndDate=To___________________________________ на ____ / _____ / __________
+GoodStatusDeclaration=Стоките са получили по-горе в добро състояние,
+Deliverer=Избавител:
+Sender=Подател
+Recipient=Получател
+ErrorStockIsNotEnough=Няма достатъчна наличност
+Shippable=Годно за изпращане
+NonShippable=Негодно за изпращане
+ShowReceiving=Show delivery receipt

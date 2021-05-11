@@ -1,0 +1,5 @@
+# Dolibarr language file - Source file is en_US - products
+BarCodePrintsheet=Print barcode
+PageToGenerateBarCodeSheets=With this tool, you can print sheets of barcode labels. Choose format of your label page, type of barcode and value of barcode, then click on button <b>%s</b>.
+PrintsheetForOneBarCode=Print several labels for one barcode
+DefinitionOfBarCodeForProductNotComplete=Definition of type or value of barcode not complete for product %s.

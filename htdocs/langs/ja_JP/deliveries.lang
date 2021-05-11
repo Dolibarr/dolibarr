@@ -1,0 +1,30 @@
+# Dolibarr language file - Source file is en_US - deliveries
+Delivery=配達
+DeliveryRef=Ref Delivery
+DeliveryCard=Receipt card
+DeliveryOrder=配送指示書
+DeliveryDate=配達日
+CreateDeliveryOrder=Generate delivery receipt
+DeliveryStateSaved=Delivery state saved
+SetDeliveryDate=出荷の日付を設定する
+ValidateDeliveryReceipt=配信の領収書を検証する
+ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt?
+DeleteDeliveryReceipt=配信済みメッセージを削除する
+DeleteDeliveryReceiptConfirm=Are you sure you want to delete delivery receipt <b>%s</b>?
+DeliveryMethod=配送方法
+TrackingNumber=追跡番号
+DeliveryNotValidated=配信検証されません
+StatusDeliveryCanceled=キャンセル
+StatusDeliveryDraft=ドラフト
+StatusDeliveryValidated=受信された
+# merou PDF model
+NameAndSignature=名前と署名：
+ToAndDate=To___________________________________ ____ / _____ / __________で
+GoodStatusDeclaration=、良好な状態で上記の品物を受け取っている
+Deliverer=配達：
+Sender=差出人
+Recipient=受信者
+ErrorStockIsNotEnough=There's not enough stock
+Shippable=Shippable
+NonShippable=Not Shippable
+ShowReceiving=Show delivery receipt

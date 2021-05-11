@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - mailmanspip
+MailmanSpipSetup=บุรุษไปรษณีย์และหลักสูตรนานาชาติติดตั้งโมดูล
+MailmanTitle=ระบบรายชื่อผู้รับจดหมายบุรุษไปรษณีย์
+TestSubscribe=เพื่อทดสอบการสมัครสมาชิกไปยังรายการบุรุษไปรษณีย์
+TestUnSubscribe=เพื่อทดสอบการยกเลิกการเป็นสมาชิกจากรายการบุรุษไปรษณีย์
+MailmanCreationSuccess=Subscription test was executed successfully
+MailmanDeletionSuccess=Unsubscription test was executed successfully
+SynchroMailManEnabled=การปรับปรุงบุรุษไปรษณีย์จะดำเนินการ
+SynchroSpipEnabled=การปรับปรุงหลักสูตรนานาชาติจะดำเนินการ
+DescADHERENT_MAILMAN_ADMINPW=รหัสผ่านผู้ดูแลบุรุษไปรษณีย์
+DescADHERENT_MAILMAN_URL=URL สำหรับการสมัครสมาชิกบุรุษไปรษณีย์
+DescADHERENT_MAILMAN_UNSUB_URL=URL สำหรับ unsubscriptions บุรุษไปรษณีย์
+DescADHERENT_MAILMAN_LISTS=รายการ (s) สำหรับจารึกอัตโนมัติของสมาชิกใหม่ (คั่นด้วยเครื่องหมายจุลภาค)
+SPIPTitle=หลักสูตรนานาชาติระบบการจัดการเนื้อหา
+DescADHERENT_SPIP_SERVEUR=เซิร์ฟเวอร์หลักสูตรนานาชาติ
+DescADHERENT_SPIP_DB=ชื่อฐานข้อมูลหลักสูตรนานาชาติ
+DescADHERENT_SPIP_USER=หลักสูตรนานาชาติเข้าสู่ระบบฐานข้อมูล
+DescADHERENT_SPIP_PASS=รหัสผ่านฐานข้อมูลหลักสูตรนานาชาติ
+AddIntoSpip=เพิ่มเข้าไปในหลักสูตรนานาชาติ
+AddIntoSpipConfirmation=คุณแน่ใจว่าคุณต้องการที่จะเพิ่มสมาชิกนี้ลงในหลักสูตรนานาชาติ?
+AddIntoSpipError=ไม่สามารถเพิ่มผู้ใช้ในหลักสูตรนานาชาติ
+DeleteIntoSpip=ลบออกจากหลักสูตรนานาชาติ
+DeleteIntoSpipConfirmation=คุณแน่ใจว่าคุณต้องการที่จะลบสมาชิกจากหลักสูตรนานาชาตินี้หรือไม่?
+DeleteIntoSpipError=ล้มเหลวในการปราบปรามผู้ใช้จากหลักสูตรนานาชาติ
+SPIPConnectionFailed=ไม่สามารถเชื่อมต่อหลักสูตรนานาชาติ
+SuccessToAddToMailmanList=%s successfully added to mailman list %s or SPIP database
+SuccessToRemoveToMailmanList=%s successfully removed from mailman list %s or SPIP database

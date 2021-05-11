@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - mailmanspip
+MailmanSpipSetup=Oppsett av Mailman- og SPIP-modulen
+MailmanTitle=Mailman system for e-postlister
+TestSubscribe=For å teste abonnement til Mailman-lister
+TestUnSubscribe=For å teste fjerning av abonnement fra Mailman-lister
+MailmanCreationSuccess=Test av abonnementet var vellykket
+MailmanDeletionSuccess=Test av abonnementsavlutning var vellykket
+SynchroMailManEnabled=En Mailman-oppdatering vil bli utført
+SynchroSpipEnabled=En SPIP-oppdatering vil bli utført
+DescADHERENT_MAILMAN_ADMINPW=Mailman administrator-passord
+DescADHERENT_MAILMAN_URL=URL for Mailman abonnementer
+DescADHERENT_MAILMAN_UNSUB_URL=URL for fjerning av Mailman abonnementer
+DescADHERENT_MAILMAN_LISTS=Liste(r) for automatisk innmelding av nye medlemmer (separert med komma)
+SPIPTitle=Administrasjon av SPIP-innhold
+DescADHERENT_SPIP_SERVEUR=SPIP server
+DescADHERENT_SPIP_DB=SPIP databasenavn
+DescADHERENT_SPIP_USER=SPIP database innlogging
+DescADHERENT_SPIP_PASS=SPIP database passord
+AddIntoSpip=Legg til i SPIP
+AddIntoSpipConfirmation=Er du sikker på at du vil legge dette medlemmet til i SPIP?
+AddIntoSpipError=Klarte ikke å legge til bruker i SPIP
+DeleteIntoSpip=Fjern fra SPIP
+DeleteIntoSpipConfirmation=Er du sikker på at du vil fjerne dette medlemmet fra SPIP?
+DeleteIntoSpipError=Klarte ikke å fjerne brukeren fra SPIP
+SPIPConnectionFailed=Klarte ikke å koble til SPIP
+SuccessToAddToMailmanList=%s ble lagt til mailman-liste %s eller SPIP-database
+SuccessToRemoveToMailmanList=%s ble fjernet fra mailman-liste %s eller SPIP-database

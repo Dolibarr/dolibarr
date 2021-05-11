@@ -1,0 +1,38 @@
+# Dolibarr language file - Source file is en_US - paybox
+PayBoxSetup=Podešavanje PayBox modula
+PayBoxDesc=This module offer pages to allow payment on <a href="http://www.paybox.com" target="_blank">Paybox</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
+FollowingUrlAreAvailableToMakePayments=Following URLs are available to offer a page to a customer to make a payment on Dolibarr objects
+PaymentForm=Obrazac plaćanja
+WelcomeOnPaymentPage=Dobro došli na naš servis online plaćanja
+ThisScreenAllowsYouToPay=Ova stranica vam dozvoljava da vršite online plaćanje prema %s
+ThisIsInformationOnPayment=This is information on payment to do
+ToComplete=Za završiti
+YourEMail=E-pošta za prijem potvrde uplate
+Creditor=Kreditor
+PaymentCode=Kod plaćanja
+PayBoxDoPayment=Pay with Credit or Debit Card (Paybox)
+ToPay=Izvrši plaćanje
+YouWillBeRedirectedOnPayBox=Biti ćete preusmjereni na sigurnu stranicu PayBox servisa gdje možete unijeti podatke o svojoj kreditnoj kartici
+Continue=Sljedeće
+ToOfferALinkForOnlinePayment=URL za %s plaćanje
+ToOfferALinkForOnlinePaymentOnOrder=URL to offer a %s online payment user interface for a customer order
+ToOfferALinkForOnlinePaymentOnInvoice=URL to offer a %s online payment user interface for a customer invoice
+ToOfferALinkForOnlinePaymentOnContractLine=URL to offer a %s online payment user interface for a contract line
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL to offer a %s online payment user interface for a free amount
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL to offer a %s online payment user interface for a member subscription
+YouCanAddTagOnUrl=You can also add url parameter <b>&tag=<i>value</i></b> to any of those URL (required only for free payment) to add your own payment comment tag.
+SetupPayBoxToHavePaymentCreatedAutomatically=Setup your PayBox with url <b>%s</b> to have payment created automatically when validated by paybox.
+YourPaymentHasBeenRecorded=Ova stranica potvrđuje da je vaše plaćanje pohranjeno. Hvala Vam.
+YourPaymentHasNotBeenRecorded=Vaša uplata nije pohranjena i transakcija je otkazana. Hvala Vam.
+AccountParameter=Parametri računa
+UsageParameter=Parametri korištenja
+InformationToFindParameters=Pomoć za pronalaženje podataka o računu %s
+PAYBOX_CGI_URL_V2=URL PayBox CGI modula za plaćanje
+VendorName=Naziv pružatelja
+CSSUrlForPaymentForm=CSS style sheet url for payment form
+NewPayboxPaymentReceived=Primljena nova PayBox uplata
+NewPayboxPaymentFailed=PayBox uplata probana ali s greškom
+PAYBOX_PAYONLINE_SENDEMAIL=EMail to warn after a payment (success or failed)
+PAYBOX_PBX_SITE=Value for PBX SITE
+PAYBOX_PBX_RANG=Value for PBX Rang
+PAYBOX_PBX_IDENTIFIANT=Value for PBX ID

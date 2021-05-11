@@ -1,0 +1,36 @@
+# Dolibarr language file - Source file is en_US - resource
+MenuResourceIndex=Πόροι
+MenuResourceAdd=Νέος πόρος
+DeleteResource=Διαγραφή πόρων
+ConfirmDeleteResourceElement=Επιβεβαιώστε τη διαγραφή των πόρων για αυτό το στοιχείο
+NoResourceInDatabase=Δεν υπάρχουν πόροι στη βάση δεδομένων.
+NoResourceLinked=Ο πόρος δεν συνδέεται
+
+ResourcePageIndex=Λίστα Πόρων
+ResourceSingular=Πόρος
+ResourceCard=Κάρτα Πόρων
+AddResource=Δημιουργήστε έναν πόρο
+ResourceFormLabel_ref=Όνομα Πόρου
+ResourceType=Τύπος Πόρου
+ResourceFormLabel_description=Η περιγραφή πόρου
+
+ResourcesLinkedToElement=Πόροι που σχετίζονται με το στοιχείο
+
+ShowResource=Εμφάνιση πόρων
+
+ResourceElementPage=Στοιχείο πόρων
+ResourceCreatedWithSuccess=Ο Πόρος δημιουργήθηκε με επιτυχία
+RessourceLineSuccessfullyDeleted=Γραμμή πόρου διαγράφηκε με επιτυχία
+RessourceLineSuccessfullyUpdated=Γραμμή πόρου ενημερώθηκε με επιτυχία
+ResourceLinkedWithSuccess=Ο πόρος συνδέεται με επιτυχία
+
+ConfirmDeleteResource=Επιβεβαιώστε την διαγραφή αυτού του πόρου
+RessourceSuccessfullyDeleted=Ο Πόρος διαγράφηκε με επιτυχία
+DictionaryResourceType=Το είδος των πόρων
+
+SelectResource=Επιλέξτε πόρο
+
+IdResource=Id resource
+AssetNumber=Σειριακός αριθμός
+ResourceTypeCode=Resource type code
+ImportDataset_resource_1=Πόροι

@@ -1,0 +1,26 @@
+# Dolibarr language file - Source file is en_US - help
+CommunitySupport=ฟอรั่มการสนับสนุน / วิกิพีเดีย
+EMailSupport=สนับสนุนอีเมล์
+RemoteControlSupport=ออนไลน์เรียลไทม์ / สนับสนุนระยะไกล
+OtherSupport=การสนับสนุนอื่น ๆ
+ToSeeListOfAvailableRessources=หากต้องการติดต่อ / ดูทรัพยากรที่มีอยู่:
+HelpCenter=ศูนย์ช่วยเหลือ
+DolibarrHelpCenter=ช่วยเหลือ Dolibarr และศูนย์การสนับสนุน
+ToGoBackToDolibarr=หรือคลิก <a href="%s">ที่นี่เพื่อใช้ Dolibarr</a>
+TypeOfSupport=แหล่งที่มาของการสนับสนุน
+TypeSupportCommunauty=ชุมชน (ฟรี)
+TypeSupportCommercial=เชิงพาณิชย์
+TypeOfHelp=ชนิด
+NeedHelpCenter=Need help or support?
+Efficiency=ประสิทธิภาพ
+TypeHelpOnly=ช่วยเหลือเท่านั้น
+TypeHelpDev=ความช่วยเหลือ + พัฒนา
+TypeHelpDevForm=ความช่วยเหลือ + + การพัฒนาสร้าง
+ToGetHelpGoOnSparkAngels1=บาง บริษัท สามารถให้บริการได้อย่างรวดเร็ว (บางครั้งทันที) และมีประสิทธิภาพมากขึ้นการสนับสนุนทางออนไลน์โดยการควบคุมของเครื่องคอมพิวเตอร์ของคุณ <b>ช่วยเหลือดังกล่าวสามารถพบได้บน% s</b> เว็บไซต์:
+ToGetHelpGoOnSparkAngels3=นอกจากนี้คุณยังสามารถไปที่รายชื่อของโค้ชที่มีอยู่ทั้งหมดสำหรับ Dolibarr สำหรับนี้คลิกที่ปุ่ม
+ToGetHelpGoOnSparkAngels2=บางครั้งไม่มี บริษัท ที่มีอยู่ในช่วงเวลาที่คุณให้การค้นหาของคุณจึงคิดที่จะเปลี่ยนแปลงตัวกรองที่จะมองหา "ทั้งหมดพร้อมใช้งาน" คุณจะสามารถที่จะส่งคำขอเพิ่มเติม
+BackToHelpCenter=หรือคลิกที่นี่เพื่อไป <a href="%s">กลับไปช่วยหน้าบ้านศูนย์</a>
+LinkToGoldMember=คุณสามารถเรียกหนึ่งในโค้ชไว้ล่วงหน้าโดย Dolibarr สำหรับภาษาของคุณ (% s) โดยคลิกที่เครื่องมือของเขา (สถานะและราคาสูงสุดที่มีการปรับปรุงโดยอัตโนมัติ):
+PossibleLanguages=ภาษาที่รองรับ
+SubscribeToFoundation=ช่วยเหลือโครงการ Dolibarr สมัครให้กับมูลนิธิ
+SeeOfficalSupport=สำหรับการสนับสนุนอย่างเป็นทางการ Dolibarr ในภาษาของคุณ: <br> <a href="%s" target="_blank"><b>% s</b></a>

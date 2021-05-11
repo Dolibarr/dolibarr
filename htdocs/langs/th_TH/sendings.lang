@@ -1,0 +1,72 @@
+# Dolibarr language file - Source file is en_US - sendings
+RefSending=อ้าง การส่งสินค้า
+Sending=การส่งสินค้า
+Sendings=การจัดส่ง
+AllSendings=ทั้งหมดจัดส่ง
+Shipment=การส่งสินค้า
+Shipments=การจัดส่ง
+ShowSending=Show Shipments
+Receivings=Delivery Receipts
+SendingsArea=พื้นที่การจัดส่ง
+ListOfSendings=รายชื่อของการจัดส่ง
+SendingMethod=วิธีการจัดส่งสินค้า
+LastSendings=Latest %s shipments
+StatisticsOfSendings=สถิติสำหรับการจัดส่ง
+NbOfSendings=จำนวนการจัดส่ง
+NumberOfShipmentsByMonth=จำนวนการจัดส่งโดย
+SendingCard=การจัดส่งบัตร
+NewSending=การจัดส่งใหม่
+CreateShipment=สร้างการจัดส่ง
+QtyShipped=จำนวนการจัดส่ง
+QtyShippedShort=Qty ship.
+QtyPreparedOrShipped=Qty prepared or shipped
+QtyToShip=จำนวนที่จะจัดส่ง
+QtyReceived=จำนวนที่ได้รับ
+QtyInOtherShipments=Qty in other shipments
+KeepToShip=ยังคงอยู่ในการจัดส่ง
+KeepToShipShort=Remain
+OtherSendingsForSameOrder=การจัดส่งอื่น ๆ สำหรับการสั่งซื้อนี้
+SendingsAndReceivingForSameOrder=Shipments and receipts for this order
+SendingsToValidate=ในการตรวจสอบการจัดส่ง
+StatusSendingCanceled=ยกเลิก
+StatusSendingDraft=ร่าง
+StatusSendingValidated=การตรวจสอบ (สินค้าจะจัดส่งหรือจัดส่งแล้ว)
+StatusSendingProcessed=การประมวลผล
+StatusSendingDraftShort=ร่าง
+StatusSendingValidatedShort=ผ่านการตรวจสอบ
+StatusSendingProcessedShort=การประมวลผล
+SendingSheet=แผ่นจัดส่ง
+ConfirmDeleteSending=Are you sure you want to delete this shipment?
+ConfirmValidateSending=Are you sure you want to validate this shipment with reference <b>%s</b>?
+ConfirmCancelSending=Are you sure you want to cancel this shipment?
+DocumentModelMerou=Merou A5 รูปแบบ
+WarningNoQtyLeftToSend=คำเตือนผลิตภัณฑ์ไม่มีการรอคอยที่จะส่ง
+StatsOnShipmentsOnlyValidated=สถิติดำเนินการในการตรวจสอบการจัดส่งเท่านั้น วันที่นำมาใช้คือวันของการตรวจสอบการจัดส่งของ (วันที่ส่งมอบวางแผนไม่เป็นที่รู้จักเสมอ)
+DateDeliveryPlanned=วันที่มีการวางแผนในการส่งสินค้า
+RefDeliveryReceipt=Ref delivery receipt
+StatusReceipt=Status delivery receipt
+DateReceived=วันที่ได้รับการส่งมอบ
+SendShippingByEMail=ส่งจัดส่งทางอีเมล
+SendShippingRef=การส่งของการขนส่ง% s
+ActionsOnShipping=เหตุการณ์ที่เกิดขึ้นในการจัดส่ง
+LinkToTrackYourPackage=เชื่อมโยงไปยังติดตามแพคเกจของคุณ
+ShipmentCreationIsDoneFromOrder=สำหรับช่วงเวลาที่การสร้างการจัดส่งใหม่จะทำจากการ์ดสั่งซื้อ
+ShipmentLine=สายการจัดส่ง
+ProductQtyInCustomersOrdersRunning=Product quantity into open customer orders
+ProductQtyInSuppliersOrdersRunning=Product quantity into open purchase orders
+ProductQtyInShipmentAlreadySent=Product quantity from open customer order already sent
+ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from open supplier order already received
+NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
+WeightVolShort=Weight/Vol.
+ValidateOrderFirstBeforeShipment=You must first validate the order before being able to make shipments.
+
+# Sending methods
+# ModelDocument
+DocumentModelTyphon=รูปแบบเอกสารที่สมบูรณ์มากขึ้นสำหรับการจัดส่งใบเสร็จรับเงิน (โลโก้ ... )
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER คงที่ไม่ได้กำหนดไว้
+SumOfProductVolumes=ผลรวมของปริมาณสินค้า
+SumOfProductWeights=ผลรวมของน้ำหนักสินค้า
+
+# warehouse details
+DetailWarehouseNumber= รายละเอียดคลังสินค้า
+DetailWarehouseFormat= W:% s (จำนวน:% d)

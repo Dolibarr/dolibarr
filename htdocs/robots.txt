@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /public/agenda/agendaexport.php
+Allow: /public/demo/
+Allow: /index.php
+#Allow: /$
+Disallow: /

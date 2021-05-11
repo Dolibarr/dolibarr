@@ -1,0 +1,30 @@
+# Dolibarr language file - Source file is en_US - deliveries
+Delivery=Livraison
+DeliveryRef=Référence de livraison
+DeliveryCard=Fiche réception
+DeliveryOrder=Bon de réception
+DeliveryDate=Date de livraison
+CreateDeliveryOrder=Générer bon de réception
+DeliveryStateSaved=Le statut de livraison est enregistré
+SetDeliveryDate=Définir la date d'expédition
+ValidateDeliveryReceipt=Valider le bon de livraison
+ValidateDeliveryReceiptConfirm=Êtes-vous sûr de vouloir valider ce bon de livraison ?
+DeleteDeliveryReceipt=Supprimer le bon de livraison
+DeleteDeliveryReceiptConfirm=Êtes-vous sûr de vouloir supprimer ce bon de livraison <b>%s</b> ?
+DeliveryMethod=Méthode de livraison
+TrackingNumber=Numéro de suivi
+DeliveryNotValidated=Bon de réception non validé
+StatusDeliveryCanceled=Annulé
+StatusDeliveryDraft=Brouillon
+StatusDeliveryValidated=Reçu
+# merou PDF model
+NameAndSignature=Nom et Signature :
+ToAndDate=A___________________________________ le ____/_____/__________
+GoodStatusDeclaration=Déclare avoir reçu les marchandises ci-dessus en bon état,
+Deliverer=Livreur(s) :
+Sender=Expéditeur
+Recipient=Destinataire
+ErrorStockIsNotEnough=Le stock est insuffisant
+Shippable=Expédiable
+NonShippable=Non expédiable
+ShowReceiving=Afficher le bon de réception

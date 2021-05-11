@@ -1,0 +1,22 @@
+# Dolibarr language file - Source file is en_US - categories
+RubriquesTransactions=Tags / Catégories de transactions
+MembersCategoriesArea=Espace tags/catégories de membres
+AccountsCategoriesArea=Étiquettes / catégories de comptes
+ProjectsCategoriesArea=Zone de tags / catégories de projets
+ImpossibleAddCat=Impossible d'ajouter le tag / catégorie %s
+ProductIsInCategories=Produit/service appartient aux tags/catégories suivant(e)s
+CompanyIsInCustomersCategories=Ce tiers appartient aux tags/catégories de clients/prospects suivant(e)s
+CompanyIsInSuppliersCategories=Ce tiers appartient aux tags/catégories de fournisseurs suivant(e)s
+MemberIsInCategories=Ce membre appartient aux tags/catégories suivant(e)s
+ContactIsInCategories=Ce contact appartient aux tags/catégories suivant(e)s
+CompanyHasNoCategory=Ce tiers n'est pas dans les tags / catégories
+ProjectHasNoCategory=Ce projet n'est pas dans les tags / catégories
+ClassifyInCategory=Classer dans le(a) tag/catégorie
+ConfirmDeleteCategory=Êtes-vous sûr de vouloir supprimer cette étiquette / catégorie?
+MembersCategoryShort=Tags/catégories de membres
+ProspectsCategoriesShort=Prospects tags/catégories
+AccountsCategoriesShort=Étiquettes / catégories de comptes
+ProjectsCategoriesShort=Projets Tags / catégories
+ThisCategoryHasNoAccount=Cette catégorie ne contient aucun compte.
+ThisCategoryHasNoProject=Cette catégorie ne contient aucun projet.
+CatProJectLinks=Liens entre projets et tags / catégories

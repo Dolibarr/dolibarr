@@ -1,0 +1,36 @@
+# Dolibarr language file - Source file is en_US - resource
+MenuResourceIndex=Recursos
+MenuResourceAdd=Nou recurs
+DeleteResource=Elimina recurs
+ConfirmDeleteResourceElement=Estàs segur de voler eliminar el recurs d'aquest element?
+NoResourceInDatabase=Sense recursos a la base de dades.
+NoResourceLinked=Sense recursos enllaçats
+
+ResourcePageIndex=Llistat de recursos
+ResourceSingular=Recurs
+ResourceCard=Fitxa de recurs
+AddResource=Crear un recurs
+ResourceFormLabel_ref=Nom de recurs
+ResourceType=Tipus de recurs
+ResourceFormLabel_description=Descripció de recurs
+
+ResourcesLinkedToElement=Recurs enllaçat a element
+
+ShowResource=Mostra recursos
+
+ResourceElementPage=Elements de recursos
+ResourceCreatedWithSuccess=Recurs creat correctament
+RessourceLineSuccessfullyDeleted=Línia de recurs eliminada correctament
+RessourceLineSuccessfullyUpdated=Línia de recurs actualitzada correctament
+ResourceLinkedWithSuccess=Recurs enllaçat correntament
+
+ConfirmDeleteResource=Estàs segur de voler eliminar aquest element?
+RessourceSuccessfullyDeleted=Recurs eliminat correctament
+DictionaryResourceType=Tipus de recurs
+
+SelectResource=Seleccionar recurs
+
+IdResource=Id de recurs
+AssetNumber=Número de serie
+ResourceTypeCode=Codi de tipus de recurs
+ImportDataset_resource_1=Recursos

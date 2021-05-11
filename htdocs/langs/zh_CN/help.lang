@@ -1,0 +1,26 @@
+# Dolibarr language file - Source file is en_US - help
+CommunitySupport=论坛/维基支持
+EMailSupport=电子邮件支持
+RemoteControlSupport=网上实时/远程支持
+OtherSupport=其他支持
+ToSeeListOfAvailableRessources=查看/联络可用的资源：
+HelpCenter=帮助中心
+DolibarrHelpCenter=Dolibarr帮助和支持中心
+ToGoBackToDolibarr=或者，请点击<a href="%s">返回</a>简体中文翻译可到Dolibarr爱好者交流Q群技术交流：206239089
+TypeOfSupport=源支持
+TypeSupportCommunauty=社区（免费）
+TypeSupportCommercial=商业
+TypeOfHelp=类型
+NeedHelpCenter=Need help or support?
+Efficiency=效率
+TypeHelpOnly=只有帮助
+TypeHelpDev=帮助+开发
+TypeHelpDevForm=帮助+开发+形成
+ToGetHelpGoOnSparkAngels1=有些公司可以提供快速（有时直接的），并采取更有效的在线控制您的计算机支持。这些佣工可以是<b>%s</b>网站上找到：
+ToGetHelpGoOnSparkAngels3=您还可以到所有可用的Dolibarr教练列表，点击这个按钮
+ToGetHelpGoOnSparkAngels2=有时，是目前公司没有可供您进行搜索，所以想改变过滤器，以寻找“所有的可用性”。您将能够发送更多的请求。
+BackToHelpCenter=或者，请点击<a href="%s">返回帮助中心</a> 。简体中文翻译可到Dolibarr爱好者交流Q群技术交流：206239089
+LinkToGoldMember=你可以调用由Dolibarr预选您的语言（%s的按一下他的小工具（状态和最高价格自动更新））的教练之一：
+PossibleLanguages=支持的语言
+SubscribeToFoundation=帮助Dolibarr项目，认购的机构
+SeeOfficalSupport=使用您的语言的 Dolibarr 官方支持: <br><b><a href="%s" target="_blank">%s</a></b>

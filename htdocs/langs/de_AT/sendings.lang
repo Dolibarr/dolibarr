@@ -1,0 +1,5 @@
+# Dolibarr language file - Source file is en_US - sendings
+Sendings=Sendungen
+Shipments=Sendungen
+StatusSendingValidatedShort=Bestätigt
+DateReceived=Datum des Warenerhalts

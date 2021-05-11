@@ -1,0 +1,60 @@
+{
+    "name": "dolibarr/dolibarr",
+    "type": "project",
+    "description": "Dolibarr ERP & CRM is a modern and easy to use web software to manage your business",
+    "keywords": [
+	    "erp",
+   		"crm",
+    	"invoice",
+    	"sme",
+    	"proposal",
+    	"order",
+    	"stock",
+    	"agenda"
+    ],
+    "homepage": "https://www.dolibarr.org",
+    "license": "GPL-3.0-or-later",
+    "support": {
+        "issues": "https://github.com/Dolibarr/dolibarr/issues",
+        "forum": "https://www.dolibarr.org/forum",
+        "wiki": "https://wiki.dolibarr.org",
+        "source": "https://github.com/Dolibarr/dolibarr"
+    },
+    "config": {
+        "vendor-dir": "htdocs/includes"
+    },
+    "require": {
+        "php": ">=5.3.0",
+        "ext-curl": "*",
+        "ccampbell/chromephp": "4.1.0",
+        "ckeditor/ckeditor": "4.5.9",
+        "mike42/escpos-php": "1.2.1",
+        "mobiledetect/mobiledetectlib": "2.8.17",
+        "phpoffice/phpexcel": "1.8.1",
+        "restler/framework": "3.0.0-RC6",
+        "tecnickcom/tcpdf": "6.2.12"
+    },
+    "require-dev": {
+        "jakub-onderka/php-parallel-lint": "^0",
+        "jakub-onderka/php-console-highlighter": "^0",
+        "phpunit/phpunit": "^4",
+        "squizlabs/php_codesniffer": "^2",
+        "phpunit/phpunit-selenium": "^2"
+    },
+    "suggest": {
+        "ext-mysqlnd": "To use with MySQL or MariaDB",
+        "ext-mysqli": "To use with MySQL or MariaDB",
+        "ext-pgsql": "To use with PostgreSQL",
+        "ext-mssql": "To use with MSSQL (experimental)",
+        "ext-pdo_sqlite": "To use with SQLite (experimental)",
+        "ext-gd": "Image manipulation (Required but maybe built-in PHP)",
+        "ext-imagick": "Image manipulation (TCPDF)",
+        "ext-mcrypt": "(Required but maybe built-in PHP)",
+        "ext-openssl": "Secure connections (Emails, SOAP…)",
+        "ext-mbstring": "Handle non UTF-8 databases",
+        "ext-soap": "Native SOAP",
+        "ext-zip": "ODT and Excel support",
+        "ext-xml": "Excel support",
+        "firephp/firephp-core": "Logging to Firebug console support"
+    }
+}

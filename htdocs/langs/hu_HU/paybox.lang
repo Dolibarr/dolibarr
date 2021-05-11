@@ -1,0 +1,38 @@
+# Dolibarr language file - Source file is en_US - paybox
+PayBoxSetup=PayBox modul beállítás
+PayBoxDesc=Ez a nodul lehetővé teszi az oldalak számára a <a href="http://www.paybox.com" target="_blank">Paybox</a>-on keresztüli fizetést az ügyfelek számára. Ingyenes fizetési megoldás.
+FollowingUrlAreAvailableToMakePayments=Következő URL-ek elérhetők a vevő részére egy oldal felajánlásához a Dollibar objektumok kifizetéséhez
+PaymentForm=Fizetési ürlap
+WelcomeOnPaymentPage=Üdvözöljük az online fizetési oldalunkon
+ThisScreenAllowsYouToPay=Ez az oldal lehetővé teszi az online fizetést %s számára.
+ThisIsInformationOnPayment=Ez az információ a fizetendő tételről
+ToComplete=Befejezni
+YourEMail=Email a fizetés teljesítéséről
+Creditor=Hitelező
+PaymentCode=Fizetési kód
+PayBoxDoPayment=Pay with Credit or Debit Card (Paybox)
+ToPay=Esedékes  kiegyenlítés
+YouWillBeRedirectedOnPayBox=Át lesz irányítva egy biztonságos Paybox oldalra ahol megadhatja a bak/hitelkártya információit
+Continue=Következő
+ToOfferALinkForOnlinePayment=URL %s fizetés
+ToOfferALinkForOnlinePaymentOnOrder=URL egy %s online fizetési felhasználói csatolót ajánl egy vevői megrendeléshez
+ToOfferALinkForOnlinePaymentOnInvoice=URL egy %s online fizetési felhasználói csatolót ajánl egy vevői számlához
+ToOfferALinkForOnlinePaymentOnContractLine=URL egy %s online fizetési felhasználói csatolót ajánl egy vevői tétel sorhoz
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL egy %s online fizetési felhasználói csatolót ajánl egy ingyenes összeghez
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL egy %s online fizetési felhasználói csatolót ajánl egy tag feliratkozáshoz
+YouCanAddTagOnUrl=Hozzáadhat URL paramétereket <b>&tag=<i>érték</i></b> bármely ilyen URL (csak az ingyenes fizetéshez szükséges) a saját fizetési megjegyzés címke hozzáadásához.
+SetupPayBoxToHavePaymentCreatedAutomatically=PayBox beállítása ezzel az url-el <b>%s</b> a fizetések automata létrehozásához a paybox érvényesítése után.
+YourPaymentHasBeenRecorded=Ez az oldal megerősíti, hogy a fizetési lett felvéve. Köszönöm.
+YourPaymentHasNotBeenRecorded=Ön fizetést nem került rögzítésre és az ügylet törlésre került. Köszönöm.
+AccountParameter=Számla paraméterek
+UsageParameter=Használat paraméterek
+InformationToFindParameters=Segíts, hogy megtaláld a %s fiókadatokat
+PAYBOX_CGI_URL_V2=Url Paybox CGI modul fizetés
+VendorName=Neve eladó
+CSSUrlForPaymentForm=CSS stíluslapot url fizetési forma
+NewPayboxPaymentReceived=Új Paybox fizetés érkezett
+NewPayboxPaymentFailed=Új Paybox fizetést próbált, de nem sikerült
+PAYBOX_PAYONLINE_SENDEMAIL=EMail figyelmeztetés a fizetés után (sikerül vagy nem sikerül)
+PAYBOX_PBX_SITE=Érték erre: PBX SITE
+PAYBOX_PBX_RANG=Érték erre: PBX Rang
+PAYBOX_PBX_IDENTIFIANT=Érték erre: PBX ID

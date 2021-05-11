@@ -1,0 +1,72 @@
+# Dolibarr language file - Source file is en_US - sendings
+RefSending=REF。出荷
+Sending=出荷
+Sendings=出荷
+AllSendings=All Shipments
+Shipment=出荷
+Shipments=出荷
+ShowSending=Show Shipments
+Receivings=Delivery Receipts
+SendingsArea=出荷エリア
+ListOfSendings=出荷のリスト
+SendingMethod=配送方法
+LastSendings=Latest %s shipments
+StatisticsOfSendings=出荷の統計
+NbOfSendings=出荷数
+NumberOfShipmentsByMonth=Number of shipments by month
+SendingCard=Shipment card
+NewSending=新しい出荷
+CreateShipment=出荷を作成します。
+QtyShipped=個数出荷
+QtyShippedShort=Qty ship.
+QtyPreparedOrShipped=Qty prepared or shipped
+QtyToShip=出荷する数量
+QtyReceived=個数は、受信した
+QtyInOtherShipments=Qty in other shipments
+KeepToShip=Remain to ship
+KeepToShipShort=Remain
+OtherSendingsForSameOrder=このため、他の出荷
+SendingsAndReceivingForSameOrder=Shipments and receipts for this order
+SendingsToValidate=検証するために出荷
+StatusSendingCanceled=キャンセル
+StatusSendingDraft=ドラフト
+StatusSendingValidated=検証（製品が出荷する、またはすでに出荷されます）
+StatusSendingProcessed=処理
+StatusSendingDraftShort=ドラフト
+StatusSendingValidatedShort=検証
+StatusSendingProcessedShort=処理
+SendingSheet=Shipment sheet
+ConfirmDeleteSending=Are you sure you want to delete this shipment?
+ConfirmValidateSending=Are you sure you want to validate this shipment with reference <b>%s</b>?
+ConfirmCancelSending=Are you sure you want to cancel this shipment?
+DocumentModelMerou=メロウA5モデル
+WarningNoQtyLeftToSend=警告は、出荷されるのを待っていない製品。
+StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated. Date used is date of validation of shipment (planed delivery date is not always known).
+DateDeliveryPlanned=Planned date of delivery
+RefDeliveryReceipt=Ref delivery receipt
+StatusReceipt=Status delivery receipt
+DateReceived=日付の配信は、受信した
+SendShippingByEMail=電子メールで貨物を送る
+SendShippingRef=Submission of shipment %s
+ActionsOnShipping=出荷のイベント
+LinkToTrackYourPackage=あなたのパッケージを追跡するためのリンク
+ShipmentCreationIsDoneFromOrder=現時点では、新たな出荷の作成は、注文カードから行われます。
+ShipmentLine=Shipment line
+ProductQtyInCustomersOrdersRunning=Product quantity into open customer orders
+ProductQtyInSuppliersOrdersRunning=Product quantity into open purchase orders
+ProductQtyInShipmentAlreadySent=Product quantity from open customer order already sent
+ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from open supplier order already received
+NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
+WeightVolShort=Weight/Vol.
+ValidateOrderFirstBeforeShipment=You must first validate the order before being able to make shipments.
+
+# Sending methods
+# ModelDocument
+DocumentModelTyphon=配信確認のために、より完全なドキュメントモデル（logo. ..）
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=定数EXPEDITION_ADDON_NUMBERが定義されていません
+SumOfProductVolumes=Sum of product volumes
+SumOfProductWeights=Sum of product weights
+
+# warehouse details
+DetailWarehouseNumber= Warehouse details
+DetailWarehouseFormat= W:%s (Qty : %d)

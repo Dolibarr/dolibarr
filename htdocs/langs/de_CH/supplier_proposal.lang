@@ -1,0 +1,23 @@
+# Dolibarr language file - Source file is en_US - supplier_proposal
+SupplierProposalNew=Neue Preisanfrage
+CommRequest=Generelle Preisanfrage
+CommRequests=Generelle Preisanfragen
+SearchRequest=Anfragen finden
+DraftRequests=Entwürfe Preisanfragen
+RequestsOpened=Offene Preisanfragen
+NewAskPrice=Neue Preisanfrage
+ShowSupplierProposal=Preisanfrage zeigen
+SupplierProposalRefFournNotice=Bevor die Preisanfrage mit "Angenommen" abgeschlossen wird, sollten Referenzen zum Lieferant eingeholt werden.
+ValidateAsk=Anfrage bestätigen
+SupplierProposalStatusDraft=Entwürfe (benötigen Bestätigung)
+SupplierProposalStatusSigned=Akzeptiert
+SupplierProposalStatusSignedShort=Akzeptiert
+CopyAskFrom=Neue Preisanfrage erstellen (Kopie einer bestehenden Anfrage)
+CreateEmptyAsk=Leere Anfrage erstellen
+SendAskByMail=Preisanfrage mit E-Mail versenden
+SendAskRef=Preisanfrage %s versenden
+SupplierProposalCard=Anfragekarte
+DocModelAuroreDescription=Eine vollständige Preisanfrage-Vorlage (Logo...)
+DefaultModelSupplierProposalCreate=Standardvorlage erstellen
+DefaultModelSupplierProposalToBill=Standardvorlage beim Abschluss einer Preisanfrage (angenommen)
+DefaultModelSupplierProposalClosed=Standardvorlage beim Abschluss einer Preisanfrage (zurückgewiesen)

@@ -1,0 +1,72 @@
+# Dolibarr language file - Source file is en_US - sendings
+RefSending=Ref. поставки
+Sending=Поставки
+Sendings=Поставки
+AllSendings=Все поставки
+Shipment=Поставка
+Shipments=Поставки
+ShowSending=Show Shipments
+Receivings=Delivery Receipts
+SendingsArea=Раздел поставок
+ListOfSendings=Список поставок
+SendingMethod=Метод отправки
+LastSendings=Latest %s shipments
+StatisticsOfSendings=Статистика поставок
+NbOfSendings=Число поставок
+NumberOfShipmentsByMonth=Количество поставок по месяцам
+SendingCard=Карточка поставки
+NewSending=Новая поставка
+CreateShipment=Создать поставку
+QtyShipped=Количество отгруженных
+QtyShippedShort=Qty ship.
+QtyPreparedOrShipped=Qty prepared or shipped
+QtyToShip=Количество для отправки
+QtyReceived=Количество получено
+QtyInOtherShipments=Qty in other shipments
+KeepToShip=Осталось отправить
+KeepToShipShort=Remain
+OtherSendingsForSameOrder=Другие поставки для этого заказа
+SendingsAndReceivingForSameOrder=Shipments and receipts for this order
+SendingsToValidate=Поставки для проверки
+StatusSendingCanceled=Отменена
+StatusSendingDraft=Черновик
+StatusSendingValidated=Утверждена (товары для отправки или уже отправлены)
+StatusSendingProcessed=Обработано
+StatusSendingDraftShort=Черновик
+StatusSendingValidatedShort=Утверждена
+StatusSendingProcessedShort=Обработано
+SendingSheet=Лист поставки
+ConfirmDeleteSending=Are you sure you want to delete this shipment?
+ConfirmValidateSending=Are you sure you want to validate this shipment with reference <b>%s</b>?
+ConfirmCancelSending=Are you sure you want to cancel this shipment?
+DocumentModelMerou=Модель A5
+WarningNoQtyLeftToSend=Внимание, нет товаров ожидающих отправки.
+StatsOnShipmentsOnlyValidated=Статистика собирается только на утверждённые поставки. Используемая дата - дата утверждения поставки (планируемая дата доставки не всегда известна)
+DateDeliveryPlanned=Планируемая дата доставки
+RefDeliveryReceipt=Ref delivery receipt
+StatusReceipt=Status delivery receipt
+DateReceived=Дата доставки получена
+SendShippingByEMail=Отправить поставкой по EMail
+SendShippingRef=Представление поставки %s
+ActionsOnShipping=События поставки
+LinkToTrackYourPackage=Ссылка на номер для отслеживания посылки
+ShipmentCreationIsDoneFromOrder=На данный момент, создание новой поставки закончено из карточки заказа.
+ShipmentLine=Линия поставки
+ProductQtyInCustomersOrdersRunning=Product quantity into open customer orders
+ProductQtyInSuppliersOrdersRunning=Product quantity into open purchase orders
+ProductQtyInShipmentAlreadySent=Product quantity from open customer order already sent
+ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from open supplier order already received
+NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
+WeightVolShort=Weight/Vol.
+ValidateOrderFirstBeforeShipment=You must first validate the order before being able to make shipments.
+
+# Sending methods
+# ModelDocument
+DocumentModelTyphon=Более полная модель документа для доставки квитанций (logo. ..)
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=Постоянное EXPEDITION_ADDON_NUMBER не определена
+SumOfProductVolumes=Сумма сторон товара
+SumOfProductWeights=Вес товара в сумме
+
+# warehouse details
+DetailWarehouseNumber= Детали склада
+DetailWarehouseFormat= В:%s (Кол-во : %d)

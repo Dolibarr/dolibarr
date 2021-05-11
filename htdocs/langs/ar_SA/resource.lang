@@ -1,0 +1,36 @@
+# Dolibarr language file - Source file is en_US - resource
+MenuResourceIndex=مصادر
+MenuResourceAdd=مورد جديد
+DeleteResource=حذف الموارد
+ConfirmDeleteResourceElement=تأكيد حذف المورد لهذا العنصر
+NoResourceInDatabase=أي مورد في قاعدة البيانات.
+NoResourceLinked=ربط أي مورد
+
+ResourcePageIndex=قائمة الموارد
+ResourceSingular=مورد
+ResourceCard=بطاقة الموارد
+AddResource=إنشاء مورد
+ResourceFormLabel_ref=اسم المورد
+ResourceType=نوع المورد
+ResourceFormLabel_description=وصف المصادر
+
+ResourcesLinkedToElement=موارد مرتبطة عنصر
+
+ShowResource=مشاهدة الموارد
+
+ResourceElementPage=الموارد العنصر
+ResourceCreatedWithSuccess=الموارد التي تم إنشاؤها بنجاح
+RessourceLineSuccessfullyDeleted=خط الموارد حذف بنجاح
+RessourceLineSuccessfullyUpdated=تحديث خط الموارد بنجاح
+ResourceLinkedWithSuccess=ربط الموارد بنجاح
+
+ConfirmDeleteResource=تأكيد لحذف هذا المورد
+RessourceSuccessfullyDeleted=الموارد حذف بنجاح
+DictionaryResourceType=نوع الموارد
+
+SelectResource=حدد الموارد
+
+IdResource=Id resource
+AssetNumber=Serial number
+ResourceTypeCode=Resource type code
+ImportDataset_resource_1=مصادر

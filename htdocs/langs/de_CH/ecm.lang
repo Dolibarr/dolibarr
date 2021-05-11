@@ -1,0 +1,15 @@
+# Dolibarr language file - Source file is en_US - ecm
+ECMNbOfDocs=Anzahl der Dokumente im Verzeichnis
+ECMSectionManual=Manuelle Ordner
+ECMSectionAuto=Automatische Ordner
+ECMSectionsManual=Manuelle Hierarchie
+ECMSectionsAuto=Automatische Hierarchie
+ECMNbOfFilesInDir=Anzahl der Dateien in Ordner
+ECMNbOfSubDir=Anzahl der Unterordner
+ECMAreaDesc2=* In den automatischen Verzeichnissen werden die vom System erzeugeten Dokumente abgelegt. <br> * Die manuellen Verzeichnisse können Sie selbst verwalten und zusätzliche nicht direkt zuordenbare Dokument hinterlegen.
+ECMSectionWasRemoved=Der Ordner <b>%s</b> wurde gelöscht.
+ECMSearchByKeywords=Suche nach Stichwörter
+ECMSectionOfDocuments=Dokumentenordner
+ECMDocsBySocialContributions=Verlinke Dokumente zu Sozialabgaben oder Steuerinformationen
+ECMDocsByThirdParties=Mit Geschäftspartnern verknüpfte Dokumente
+ECMDocsByInterventions=Mit Eingriffen verknüpfte Dokumente

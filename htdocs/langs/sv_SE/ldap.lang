@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - ldap
+YouMustChangePassNextLogon=Lösenord för användare <b>%s</b> på domänen <b>%s</b> måste ändras.
+UserMustChangePassNextLogon=Användaren måste byta lösenord på domänen %s
+LDAPInformationsForThisContact=Information i LDAP-databas för denna kontakt
+LDAPInformationsForThisUser=Information i LDAP-databas för denna användare
+LDAPInformationsForThisGroup=Information i LDAP-databas för denna grupp
+LDAPInformationsForThisMember=Information i LDAP-databas för denna medlem
+LDAPInformationsForThisMemberType=Information in LDAP database for this member type
+LDAPAttributes=LDAP-attribut
+LDAPCard=LDAP-kort
+LDAPRecordNotFound=Spela som inte finns i LDAP-databas
+LDAPUsers=Användare i LDAP-databas
+LDAPFieldStatus=Status
+LDAPFieldFirstSubscriptionDate=Första teckningsdag
+LDAPFieldFirstSubscriptionAmount=Fist teckningsbelopp
+LDAPFieldLastSubscriptionDate=Latest subscription date
+LDAPFieldLastSubscriptionAmount=Latest subscription amount
+LDAPFieldSkype=Skype id
+LDAPFieldSkypeExample=Example : skypeName
+UserSynchronized=Användare synkroniseras
+GroupSynchronized=Grupp synkroniseras
+MemberSynchronized=Medlem synkroniseras
+MemberTypeSynchronized=Member type synchronized
+ContactSynchronized=Kontakta synkroniseras
+ForceSynchronize=Tvinga synkronisering Dolibarr -> LDAP
+ErrorFailedToReadLDAP=Misslyckades med att läsa LDAP-databas. Kontrollera LDAP-modul setup och databas tillgänglighet.
+PasswordOfUserInLDAP=Password of user in LDAP

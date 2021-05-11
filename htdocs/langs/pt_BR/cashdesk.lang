@@ -1,0 +1,17 @@
+# Dolibarr language file - Source file is en_US - cashdesk
+CashdeskShowServices=Serviços de venda
+CashDeskStock=Estoque
+CashDeskOn=ligar
+NewSell=Nova venda
+AddThisArticle=Adicionar esse artigo
+RestartSelling=Voltar na venda
+SellFinished=Venda completada
+PrintTicket=Imprimir tíquete
+TotalTicket=Total do tíquite
+NoVAT=Nenhum ICMS para essa venda
+Change=Excesso recebido
+ShowCompany=Mostar empresa
+DeleteArticle=Clique para remover esse artigo
+FilterRefOrLabelOrBC=Procurar (Ref/Rótulo)
+UserNeedPermissionToEditStockToUsePos=Você tentou retirar do estoque com a emissão da fatura, mas o usuário precisa ter permissão para editar estoque.
+DolibarrReceiptPrinter=Impressão de Recibo Dolibarr

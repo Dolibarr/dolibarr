@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=Configurar módulo do PayPal
+PaypalDesc=Este módulo oferece uma página para permitir o pagamento de clientes no <a href="http://www.paypal.com" target="_blank">PayPal</a>. Isto pode ser utilizado para um pagamento livre ou para um pagamento em particular de um objeto Dolibarr (fatura, ordem, ...)
+PaypalOrCBDoPayment=Pagar com Paypal (Cartão de Crédito ou Paypal)
+PaypalDoPayment=Pague com Paypal
+PAYPAL_API_SANDBOX=Modo de teste / sandbox
+PAYPAL_API_USER=Nome de utilizador API
+PAYPAL_API_PASSWORD=Senha API
+PAYPAL_API_SIGNATURE=Assinatura API
+PAYPAL_SSLVERSION=Versão do Curl SSL
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Oferta de pagamento "integral" (Cartão de Crédito + Paypal) ou apenas "Paypal"
+PaypalModeIntegral=Integral
+PaypalModeOnlyPaypal=Apenas Paypal
+ONLINE_PAYMENT_CSS_URL=URL opcional da folha de estilo CSS na página de pagamento online
+ThisIsTransactionId=Esta é id. da transação: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Adicionar o url de pagamento Paypal quando enviar um documento por correio eletrónico
+YouAreCurrentlyInSandboxMode=Você está atualmente no modo %s "sandbox"
+NewOnlinePaymentReceived=Novo pagamento online recebido
+NewOnlinePaymentFailed=Novo pagamento em linha tentado, mas falhado
+ONLINE_PAYMENT_SENDEMAIL=Correio eletrónico para avisar depois de um pagamento (bem sucedido ou não)
+ReturnURLAfterPayment=URL de retorno depois do pagamento
+ValidationOfOnlinePaymentFailed=Falha na validação do pagamento online
+PaymentSystemConfirmPaymentPageWasCalledButFailed=A página de confirmação de pagamento foi chamada pelo sistema de pagamento mas retornou um erro
+SetExpressCheckoutAPICallFailed=Chamada à API SetExpressCheckout falhou.
+DoExpressCheckoutPaymentAPICallFailed=Chamada à API DoExpressCheckoutPayment falhou.
+DetailedErrorMessage=Mensagem de Erro Detalhada
+ShortErrorMessage=Mensagem de Erro Abreviada
+ErrorCode=Código de Erro
+ErrorSeverityCode=Código de Severidade do Erro
+OnlinePaymentSystem=Sistema de pagamento online
+PaypalLiveEnabled=Paypal ativado (caso contrário, este encontra-se em modo teste)
+PaypalImportPayment=Importar pagamentos do Paypal
+PostActionAfterPayment=Ações posteriores depois dos pagamentos
+ARollbackWasPerformedOnPostActions=A rollback was performed on all Post actions. You must complete post actions manually if they are necessary.

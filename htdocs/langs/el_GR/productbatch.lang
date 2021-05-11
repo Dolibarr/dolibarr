@@ -1,0 +1,24 @@
+# ProductBATCH language file - en_US - ProductBATCH
+ManageLotSerial=Χρησιμοποίηση Αρ. παρτίδας/σειριακού
+ProductStatusOnBatch=Ναι (Απαιτείται Αρ. παρτίδας/σειριακός)
+ProductStatusNotOnBatch=Όχι (Δεν χρησιμοποιείται Αρ. παρτίδας/σειριακός)
+ProductStatusOnBatchShort=Ναι
+ProductStatusNotOnBatchShort=Όχι
+Batch=Αρ. παρτίδας/Σειριακός
+atleast1batchfield=Ημερομηνία λήξης Αρ. Παρτίδας/σειριακού
+batch_number=Αρ. Παρτίδας/σειριακός αριθμός
+BatchNumberShort=Αρ. παρτίδας/Σειριακός
+EatByDate=Φάτε ημερομηνία λήξης
+SellByDate=Ημερομηνία πώλησης
+DetailBatchNumber=Χαρακτηριστικά Αρ. παρτίδας/σειριακός 
+printBatch=Αρ. Παρτίδας/σειριακός: %s
+printEatby=Eat-by: %s
+printSellby=Πώληση ανά: %s
+printQty=Ποσότητα: %d
+AddDispatchBatchLine=Προσθέστε μια γραμμή για Χρόνο Διάρκειας αποστολής
+WhenProductBatchModuleOnOptionAreForced=When module Lot/Serial is on, automatic stock decrease  is forced to 'Decrease real stocks on shipping validation' and automatic increase mode is forced to 'Increase real stocks on manual dispatching into warehouses' and can't be edited. Other options can be defined as you want.
+ProductDoesNotUseBatchSerial=Αυτό το προιόν δεν χρησιμοποιεί Αρ. Παρτίδας/σειριακό
+ProductLotSetup=Setup of module lot/serial
+ShowCurrentStockOfLot=Show current stock for couple product/lot
+ShowLogOfMovementIfLot=Show log of movements for couple product/lot
+StockDetailPerBatch=Stock detail per lot

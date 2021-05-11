@@ -1,0 +1,8 @@
+# Dolibarr language file - Source file is en_US - margins
+MarginOnProducts=Marge / Producten
+ForceBuyingPriceIfNull=Gebruik de koop/kost prijs als verkoopsprijs indien niet gedefinieerd
+ForceBuyingPriceIfNullDetails=Indien koop/kost prijs niet gedefinieerd is, en deze optie is "ON", dan zal de marge nul zijn op deze lijn (koop/kost prijs = verkoopsprijs), anderzijds ("OFF"), marge zal gelijk zijn aan het gesuggereerde voorstel.
+UseDiscountAsProduct=Als een product
+MargeType3=Marge op kostprijs
+AgentContactType=Contacttype van commercieel medewerker
+CheckMargins=Marges detail

@@ -1,0 +1,10 @@
+# Dolibarr language file - Source file is en_US - languages
+LinkANewFile=新しいファイル/ドキュメントをリンクする
+LinkedFiles=ファイルとドキュメントをリンクしました
+NoLinkFound=リンクは登録されていません
+LinkComplete=ファイルを正常にリンクしました
+ErrorFileNotLinked=ファイルをリンクできませんでした
+LinkRemoved=リンク %s が削除されました
+ErrorFailedToDeleteLink= リンク '<b>%s</b>' を削除できませんでした
+ErrorFailedToUpdateLink= リンク '<b>%s</b>' を更新できませんでした
+URLToLink=リンクの URL

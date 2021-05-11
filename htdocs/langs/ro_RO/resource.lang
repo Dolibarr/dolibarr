@@ -1,0 +1,36 @@
+# Dolibarr language file - Source file is en_US - resource
+MenuResourceIndex=Resurse
+MenuResourceAdd=Resursă nouă
+DeleteResource=Şterge resursa
+ConfirmDeleteResourceElement=Confirmaţi ştergerea resursei pentru acest element
+NoResourceInDatabase=Nicio resursă în baza de date.
+NoResourceLinked=Nicio resursă legată
+
+ResourcePageIndex=Lista resurse
+ResourceSingular=Resursă
+ResourceCard=Fişă resursă
+AddResource=Crează resursă
+ResourceFormLabel_ref=Nume resursă
+ResourceType=Tip resursă
+ResourceFormLabel_description=Descriere resursă
+
+ResourcesLinkedToElement=Resurse legate de elementul
+
+ShowResource=Arata Resursă
+
+ResourceElementPage=Element resurse
+ResourceCreatedWithSuccess=Resursă creată
+RessourceLineSuccessfullyDeleted=Linie resursă ștearsă
+RessourceLineSuccessfullyUpdated=Linie  resursă actualizată
+ResourceLinkedWithSuccess=Resursă legată cu succes
+
+ConfirmDeleteResource=Confirmaţi ştergerea acestei resurse
+RessourceSuccessfullyDeleted=Resursă ştearsă
+DictionaryResourceType=Tipuri resurse
+
+SelectResource=Selectează resursa
+
+IdResource=Id resource
+AssetNumber=Serial number
+ResourceTypeCode=Resource type code
+ImportDataset_resource_1=Resurse

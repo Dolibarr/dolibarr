@@ -1,0 +1,17 @@
+# Dolibarr language file - Source file is en_US - compta
+VATToPay=ISV ventas
+VATReceived=ISV repercutido
+VATToCollect=ISV compras
+VATSummary=Balance de ISV
+VATPaid=ISV Pagado
+VATCollected=ISV recuperado
+PaymentVat=Pago ISV
+VATPayment=Pago ISV
+VATPayments=Pagos ISV
+ShowVatPayment=Ver pagos ISV
+RulesResultDue=- Los importes mostrados son importes totales<br>- Incluye las facturas, cargas e ISV debidos, que estén pagadas o no.<br>- Se basa en la fecha de validación para las facturas y el ISV y en la fecha de vencimiento para las cargas.<br>
+RulesResultInOut=- Los importes mostrados son importes totales<br>- Incluye los pagos realizados para las facturas, cargas e ISV.<br>- Se basa en la fecha de pago de las mismas.<br>
+VATReportByCustomersInInputOutputMode=Informe por cliente del ISV repercutido y pagado (ISV pagado)
+VATReportByQuartersInInputOutputMode=Informe por tasa del ISV repercutido y pagado (ISV pagado)
+SeeVATReportInInputOutputMode=Ver el informe <b>%sISV pagado%s</b> para un modo de cálculo estandard
+SeeVATReportInDueDebtMode=Ver el informe <b>%sISV debido%s</b> para un modo de cálculo con la opción sobre lo debido

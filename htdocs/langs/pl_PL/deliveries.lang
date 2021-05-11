@@ -1,0 +1,30 @@
+# Dolibarr language file - Source file is en_US - deliveries
+Delivery=Dostawa
+DeliveryRef=Numer referencyjny dostawy
+DeliveryCard=Karta przyjęcia
+DeliveryOrder=Zamówienie dostawy
+DeliveryDate=Data dostawy
+CreateDeliveryOrder=Generuj przyjęcie dostawy
+DeliveryStateSaved=Stan dostawy zapisany
+SetDeliveryDate=Ustaw datę wysyłki
+ValidateDeliveryReceipt=Potwierdzenie otrzymania dostawy
+ValidateDeliveryReceiptConfirm=Czy jesteś pewny, że chcesz zatwierdzić to przyjęcie dostawy?
+DeleteDeliveryReceipt=Usuń potwierdzenia dostarczenia
+DeleteDeliveryReceiptConfirm=Czy jesteś pewien, że chcesz usunąć przyjęcie dostawy <b>%s</b>?
+DeliveryMethod=Metoda dostawy
+TrackingNumber=Numer przesyłki
+DeliveryNotValidated=Dostawa nie zatwierdzona
+StatusDeliveryCanceled=Anulowano
+StatusDeliveryDraft=Projekt
+StatusDeliveryValidated=Przyjęto
+# merou PDF model
+NameAndSignature=Nazwisko i podpis:
+ToAndDate=To___________________________________ na ____ / _____ / __________
+GoodStatusDeclaration=Otrzymano towary w dobrym stanie,
+Deliverer=Dostawca:
+Sender=Nadawca
+Recipient=Odbiorca
+ErrorStockIsNotEnough=Brak wystarczającego zapasu w magazynie
+Shippable=Możliwa wysyłka
+NonShippable=Nie do wysyłki
+ShowReceiving=Pokaż przyjęte dostawy

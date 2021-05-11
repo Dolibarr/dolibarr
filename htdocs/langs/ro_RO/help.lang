@@ -1,0 +1,26 @@
+# Dolibarr language file - Source file is en_US - help
+CommunitySupport=Forum/Wiki suport
+EMailSupport=E-mail-uri suport
+RemoteControlSupport=Suport în timp real / remote
+OtherSupport=Alte tipuri de suport
+ToSeeListOfAvailableRessources=Pentru a contacta / vezi resurse disponibile:
+HelpCenter=Centrul de Ajutor
+DolibarrHelpCenter=Dolibarr Centrul de Ajutor şi Asistenţă
+ToGoBackToDolibarr=Altfel, faceţi clic <a href="%s">aici pentru a utiliza Dolibarr</a>
+TypeOfSupport=Sursa suport
+TypeSupportCommunauty=Comunitate (gratuit)
+TypeSupportCommercial=Comercial
+TypeOfHelp=Tip
+NeedHelpCenter=Aveți nevoie de ajutor sau sprijin?
+Efficiency=Eficienţa
+TypeHelpOnly=Numai Ajutor
+TypeHelpDev=Ajutor + Dezvoltare
+TypeHelpDevForm=Ajutor  + Dezvoltare + Formare
+ToGetHelpGoOnSparkAngels1=Unele companii pot oferi rapid (chiar imediat uneori) şi  mai eficient asistenţă online, prin preluarea controlului de pe computer. Aceste ajutoare pot fi găsite pe site-ul : <b> %s</b>
+ToGetHelpGoOnSparkAngels3=Puteți merge, de asemenea, la lista tuturor antrenorilor disponibili pentru Dolibarr, pentru aceasta click pe butonul
+ToGetHelpGoOnSparkAngels2=Uneori, nu există nicio companie disponibilă în momentul în care faceţi dvs. căutarea, astfel schimbţi filtrul pentru a căuta  pe "toți disponibili". Veți putea trimite mai multe cereri.
+BackToHelpCenter=Altfel, clic aici pentru a merge <a href="%s">înapoi la pentru pagina de start a Centrul de Ajutor</a>.
+LinkToGoldMember=Puteți apela unul dintre antrenori preselectati de Dolibarr pentru limba (%s) făcând clic pe balonul Widget (statusul și prețul maxim sunt actualizate automat):
+PossibleLanguages=Limbi suportate
+SubscribeToFoundation=Ajută proiectul Dolibarr, subscrie la fundație
+SeeOfficalSupport=Pentru suport oficial Dolibarr în limba dvs:  <br><b><a href="%s" target="_blank">%s</a></b>

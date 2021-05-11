@@ -1,0 +1,22 @@
+# Dolibarr language file - Source file is en_US - admin
+AntiVirusCommandExample=Example for ClamWin: c:\\Progra~1\\ClamWin\\bin\\clamscan.exe<br>Example for ClamAv: /usr/bin/clamscan
+AntiVirusParamExample=Example for ClamWin: --database="C:\\Program Files (x86)\\ClamWin\\lib"
+ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
+OldVATRates=Tasa de ITBIS antigua
+NewVATRates=Tasa de ITBIS nueva
+Permission91=Consultar impuestos e ITBIS
+Permission92=Crear/modificar impuestos e ITBIS
+Permission93=Eliminar impuestos e ITBIS
+DictionaryVAT=Tasa de ITBIS (Impuesto sobre ventas en EEUU)
+VATManagement=Gestión ITBIS
+VATIsNotUsedDesc=El tipo de ITBIS propuesto por defecto es 0. Este es el caso de asociaciones, particulares o algunas pequeñas sociedades.
+LocalTax1IsUsedDesc=Uso de un 2º tipo de impuesto (Distinto del ITBIS)
+LocalTax1IsNotUsedDesc=No usar un 2º tipo de impuesto (Distinto del ITBIS)
+LocalTax2IsNotUsedDesc=No usar un 2º tipo de impuesto (Distinto del ITBIS)
+UnitPriceOfProduct=Precio unitario sin ITBIS de un producto
+ShowVATIntaInAddress=Ocultar el identificador ITBIS en las direcciones de los documentos
+ViewProductDescInThirdpartyLanguageAbility=Visualization of products descriptions in the third party language
+OptionVatMode=Opción de carga de ITBIS
+OptionVatDefaultDesc=La carga del ITBIS es: <br>-en el envío de los bienes (en la práctica se usa la fecha de la factura)<br>-sobre el pago por los servicios
+OptionVatDebitOptionDesc=La carga del ITBIS es: <br>-en el envío de los bienes (en la práctica se usa la fecha de la factura)<br>-sobre la facturación de los servicios
+SummaryOfVatExigibilityUsedByDefault=Tiempo de exigibilidad de ITBIS por defecto según la opción eligida

@@ -1,0 +1,72 @@
+# Dolibarr language file - Source file is en_US - sendings
+RefSending=Реф. пратка
+Sending=Пратка
+Sendings=Превозите
+AllSendings=Всички Пратки
+Shipment=Пратка
+Shipments=Превозите
+ShowSending=Показване на Пратки
+Receivings=Delivery Receipts
+SendingsArea=Превозите област
+ListOfSendings=Списък на пратки
+SendingMethod=Начин на доставка
+LastSendings=Latest %s shipments
+StatisticsOfSendings=Статистика за превози
+NbOfSendings=Брой на пратките
+NumberOfShipmentsByMonth=Брой на пратки по месец
+SendingCard=Карта на пратка
+NewSending=Нова пратка
+CreateShipment=Създаване на пратка
+QtyShipped=Количество изпратени
+QtyShippedShort=Qty ship.
+QtyPreparedOrShipped=Qty prepared or shipped
+QtyToShip=Количество за кораба
+QtyReceived=Количество получи
+QtyInOtherShipments=Qty in other shipments
+KeepToShip=Остава за изпращане
+KeepToShipShort=Remain
+OtherSendingsForSameOrder=Други пратки за изпълнение на поръчката
+SendingsAndReceivingForSameOrder=Shipments and receipts for this order
+SendingsToValidate=Превозите за валидация
+StatusSendingCanceled=Отменен
+StatusSendingDraft=Проект
+StatusSendingValidated=Утвърден (продукти, да превозва или вече са изпратени)
+StatusSendingProcessed=Обработен
+StatusSendingDraftShort=Проект
+StatusSendingValidatedShort=Утвърден
+StatusSendingProcessedShort=Обработен
+SendingSheet=Лист на изпращане
+ConfirmDeleteSending=Are you sure you want to delete this shipment?
+ConfirmValidateSending=Are you sure you want to validate this shipment with reference <b>%s</b>?
+ConfirmCancelSending=Are you sure you want to cancel this shipment?
+DocumentModelMerou=Merou A5 модел
+WarningNoQtyLeftToSend=Внимание, няма продукти, които чакат да бъдат изпратени.
+StatsOnShipmentsOnlyValidated=Статистики водени само на валидирани пратки. Използваната дата е датата на валидация на пратката (планираната дата на доставка не се знае винаги)
+DateDeliveryPlanned=Планирана дата за доставка
+RefDeliveryReceipt=Ref delivery receipt
+StatusReceipt=Status delivery receipt
+DateReceived=Дата на доставка
+SendShippingByEMail=Изпращане на пратка по имейл
+SendShippingRef=Предаване на пратка %s
+ActionsOnShipping=Събития на пратка
+LinkToTrackYourPackage=Линк за проследяване на вашия пакет
+ShipmentCreationIsDoneFromOrder=За момента се извършва от картата с цел създаване на нова пратка.
+ShipmentLine=Линия на пратка
+ProductQtyInCustomersOrdersRunning=Product quantity into open customer orders
+ProductQtyInSuppliersOrdersRunning=Product quantity into open purchase orders
+ProductQtyInShipmentAlreadySent=Product quantity from open customer order already sent
+ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from open supplier order already received
+NoProductToShipFoundIntoStock=Няма намерен продукт за изпращане в склад <b>%s</b>. Поправете стоковата и се върнете обратно, за да изберете друг склад.
+WeightVolShort=Weight/Vol.
+ValidateOrderFirstBeforeShipment=You must first validate the order before being able to make shipments.
+
+# Sending methods
+# ModelDocument
+DocumentModelTyphon=Повече целия документ модел за доставка постъпления (logo. ..)
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=Постоянно EXPEDITION_ADDON_NUMBER не е определен
+SumOfProductVolumes=Сума на обемите на продукт
+SumOfProductWeights=Сума на теглото на продукт
+
+# warehouse details
+DetailWarehouseNumber= Склад детайли
+DetailWarehouseFormat= Тегло:%s (Количество : %d)

@@ -1,0 +1,18 @@
+# Dolibarr language file - Source file is en_US - salaries
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Regnskabskonto bruges til tredjepart
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Den dedikerede regnskabskonto, der er defineret på brugerkort, vil kun blive brugt til mellemregnings bogholderi. Denne vil blive brugt til hoved bogholderi og som standardværdi for bogholderi regnskab, hvis dedikeret brugerkonto på bruger ikke er defineret.
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Regnskabskonto som standard for lønudbetalinger
+Salary=Løn
+Salaries=Løn
+NewSalaryPayment=Ny lønbetaling
+SalaryPayment=Løn betaling
+SalariesPayments=Lønudbetalinger
+ShowSalaryPayment=Vis lønbetaling
+THM=Gennemsnitlig timepris
+TJM=Gennemsnitlig dagspris
+CurrentSalary=Nuværende løn
+THMDescription=Denne værdi kan bruges til at beregne kostpris for forbrugt tid på et projekt indtastet af brugere, hvis modulprojekt anvendes
+TJMDescription=Denne værdi er i øjeblikket kun som information og bruges ikke til nogen beregning
+LastSalaries=Seneste %s lønbetalinger
+AllSalaries=Alle lønudbetalinger
+SalariesStatistics=Statistiques salaires

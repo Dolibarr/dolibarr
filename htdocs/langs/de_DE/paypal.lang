@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=PayPal Moduleinstellungen
+PaypalDesc=Dieses Modul ermöglicht es Zahlungen von Kunden per <a href="http://www.paypal.com" target="_blank">PayPal</a> zu tätigen.
+PaypalOrCBDoPayment=Mit Paypal (Kreditkarte oder Paypal) bezahlen
+PaypalDoPayment=Zahlen mit Paypal
+PAYPAL_API_SANDBOX=Testmoduds/Sandbox
+PAYPAL_API_USER=Paypal Benutzername
+PAYPAL_API_PASSWORD=Paypal Passwort
+PAYPAL_API_SIGNATURE=Paypal Signatur
+PAYPAL_SSLVERSION=Curl SSL Version
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Bieten Sie Zahlungen "integral" (Kreditkarte + Paypal) an, oder nur per "Paypal"?
+PaypalModeIntegral=Integral
+PaypalModeOnlyPaypal=Nur PayPal
+ONLINE_PAYMENT_CSS_URL=Optionale Adresse der CSS-Datei für die Onlinebezahlseite
+ThisIsTransactionId=Die Transaktions ID lautet: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Fügen Sie die Webadresse für Paypal Zahlungen hinzu, wenn Sie ein Dokument per E-Mail versenden.
+YouAreCurrentlyInSandboxMode=Sie befinden sich derzeit im %s "Sandbox" -Modus
+NewOnlinePaymentReceived=Neue Onlinezahlung erhalten
+NewOnlinePaymentFailed=Neue Onlinezahlung versucht, aber fehlgeschlagen
+ONLINE_PAYMENT_SENDEMAIL=Status-E-Mail nach einer Zahlung (erfolgreich oder nicht)
+ReturnURLAfterPayment=Rückkehr-URL nach Zahlung
+ValidationOfOnlinePaymentFailed=Validierung der Onlinezahlung fehlgeschlagen
+PaymentSystemConfirmPaymentPageWasCalledButFailed=Die aufgerufene Zahlungsbestätigungsseite hat einen Fehler zurückgemeldet
+SetExpressCheckoutAPICallFailed=Aufruf des API SetExpressCheckout fehlgeschlagen
+DoExpressCheckoutPaymentAPICallFailed=Aufruf des API DoExpressCheckoutPayment fehlgeschlagen
+DetailedErrorMessage=Detaillierte Fehlermeldung
+ShortErrorMessage=verkürzte Fehlermeldung
+ErrorCode=Fehlercode
+ErrorSeverityCode=Fehlercode Schwierigkeitsgrad
+OnlinePaymentSystem=Online Zahlungssystem
+PaypalLiveEnabled=Paypal live aktiviert (Nicht im Test/Sandbox Modus)
+PaypalImportPayment=Paypal-Zahlungen importieren
+PostActionAfterPayment=Aktionen nach Zahlungseingang
+ARollbackWasPerformedOnPostActions=Bei allen Post-Aktionen wurde ein Rollback durchgeführt. Sie müssen die Post-Aktionen manuell durchführen, wenn sie notwendig sind.

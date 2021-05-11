@@ -1,0 +1,31 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Lening
+Loans=Leningen
+NewLoan=Nieuwe lening
+ShowLoan=Toon lening
+PaymentLoan=Aflossing
+LoanPayment=Aflossing
+ShowLoanPayment=Toon aflossingen
+LoanCapital=Kapitaal
+Insurance=Verzekering
+Interest=Rente
+Nbterms=Aantal termijnen
+Term=Term
+LoanAccountancyCapitalCode=Tegenrekening Lening
+LoanAccountancyInsuranceCode=Tegenrekening verzekering
+LoanAccountancyInterestCode=Tegenrekening rente
+ConfirmDeleteLoan=Bevestigen verwijderen lening
+LoanDeleted=Lening verwijderd
+ConfirmPayLoan=Bevestig dat deze lening is betaald
+LoanPaid=Afgeloste lening
+ListLoanAssociatedProject=Leningen die aan het project zijn gekoppeld
+AddLoan=Aanmaken lening
+FinancialCommitment=Financiële verplichting
+InterestAmount=Rente
+CapitalRemain=Capital remain
+# Admin
+ConfigLoan=Configuratie van de module lening
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Standaard grootboekrekening kapitaal
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Standaard grootboekrekening rente
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Standaard grootboekrekening verzekeringen
+CreateCalcSchedule=Bewerk financiële betrokkenheid

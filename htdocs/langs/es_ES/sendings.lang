@@ -1,0 +1,72 @@
+# Dolibarr language file - Source file is en_US - sendings
+RefSending=Ref. envío
+Sending=Envío
+Sendings=Envíos
+AllSendings=Todos los envíos
+Shipment=Envío
+Shipments=Envíos
+ShowSending=Mostrar envíos
+Receivings=Recepciones
+SendingsArea=Área envíos
+ListOfSendings=Listado de envíos
+SendingMethod=Método de envío
+LastSendings=Últimos %s envíos
+StatisticsOfSendings=Estadísticas de envíos
+NbOfSendings=Número de envíos
+NumberOfShipmentsByMonth=Número de envíos por mes
+SendingCard=Ficha envío
+NewSending=Nuevo envío
+CreateShipment=Crear envío
+QtyShipped=Cant. enviada
+QtyShippedShort=Cant. env.
+QtyPreparedOrShipped=Cant. preparada o enviada
+QtyToShip=Cant. a enviar
+QtyReceived=Cant. recibida
+QtyInOtherShipments=Cant. en otros envíos
+KeepToShip=Resto a enviar
+KeepToShipShort=Pendiente
+OtherSendingsForSameOrder=Otros envíos de este pedido
+SendingsAndReceivingForSameOrder=Envíos y recepciones de este pedido
+SendingsToValidate=Envíos a validar
+StatusSendingCanceled=Anulado
+StatusSendingDraft=Borrador
+StatusSendingValidated=Validado (productos a enviar o enviados)
+StatusSendingProcessed=Procesado
+StatusSendingDraftShort=Borrador
+StatusSendingValidatedShort=Validado
+StatusSendingProcessedShort=Procesado
+SendingSheet=Nota de entrega
+ConfirmDeleteSending=¿Está seguro de querer eliminar esta expedición?
+ConfirmValidateSending=¿Está seguro de querer validar esta expedición con la referencia <b>%s</b>?
+ConfirmCancelSending=¿Está seguro de querer anular esta expedición?
+DocumentModelMerou=Modelo Merou A5
+WarningNoQtyLeftToSend=Alerta, ningún producto en espera de envío.
+StatsOnShipmentsOnlyValidated=Estadísticas realizadas únicamente sobre las expediciones validadas
+DateDeliveryPlanned=Fecha prevista de entrega
+RefDeliveryReceipt=Ref. nota de entrega
+StatusReceipt=Estado nota de entrega
+DateReceived=Fecha real de recepción
+SendShippingByEMail=Envío de expedición por e-mail
+SendShippingRef=Envío de la expedición %s
+ActionsOnShipping=Eventos sobre la expedición
+LinkToTrackYourPackage=Enlace para el seguimento de su paquete
+ShipmentCreationIsDoneFromOrder=De momento, la creación de una nueva expedición se realiza desde la ficha de pedido.
+ShipmentLine=Línea de expedición
+ProductQtyInCustomersOrdersRunning=Cantidad de producto en pedidos de clientes abiertos
+ProductQtyInSuppliersOrdersRunning=Cantidad de producto en pedidos a proveedores abiertos
+ProductQtyInShipmentAlreadySent=Ya ha sido enviada la cantidad del producto del pedido de cliente abierto
+ProductQtyInSuppliersShipmentAlreadyRecevied=Cantidad en pedidos a proveedores ya recibidos
+NoProductToShipFoundIntoStock=Sin stock disponible en el almacén <b>%s</b>. Corrija el stock o vuelva atrás para seleccionar otro almacén.
+WeightVolShort=Peso/Vol.
+ValidateOrderFirstBeforeShipment=Antes de poder realizar envíos debe validar el pedido.
+
+# Sending methods
+# ModelDocument
+DocumentModelTyphon=Modelo completo de nota de entrega / recepción (logo...)
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constante EXPEDITION_ADDON_NUMBER no definida
+SumOfProductVolumes=Suma del volumen de los productos
+SumOfProductWeights=Suma del peso de los productos
+
+# warehouse details
+DetailWarehouseNumber= Detalles del almacén
+DetailWarehouseFormat= Alm.:%s (Cant. : %d)

@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=贝宝模块的设置
+PaypalDesc=This module offer pages to allow payment on <a href="http://www.paypal.com" target="_blank">PayPal</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
+PaypalOrCBDoPayment=Pay with Paypal (Credit Card or Paypal)
+PaypalDoPayment=用PayPal
+PAYPAL_API_SANDBOX=测试/沙箱模式
+PAYPAL_API_USER=API的用户名
+PAYPAL_API_PASSWORD=API密码
+PAYPAL_API_SIGNATURE=API签名
+PAYPAL_SSLVERSION=Curl SSL 版本
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=优惠“不可分割的”支付（信用卡+贝宝）或“贝宝”只
+PaypalModeIntegral=积分
+PaypalModeOnlyPaypal=支付宝
+ONLINE_PAYMENT_CSS_URL=Optionnal URL of CSS style sheet on online payment page
+ThisIsTransactionId=这是交易编号<b>：%s</b>
+PAYPAL_ADD_PAYMENT_URL=当你邮寄一份文件，添加URL Paypal付款
+YouAreCurrentlyInSandboxMode=You are currently in the %s "sandbox" mode
+NewOnlinePaymentReceived=New online payment received
+NewOnlinePaymentFailed=New online payment tried but failed
+ONLINE_PAYMENT_SENDEMAIL=电子邮件提醒后付款（成功与否）
+ReturnURLAfterPayment=付款后返回网页地址
+ValidationOfOnlinePaymentFailed=Validation of online payment failed
+PaymentSystemConfirmPaymentPageWasCalledButFailed=Payment confirmation page was called by payment system returned an error
+SetExpressCheckoutAPICallFailed=SetExpressCheckout API call failed.
+DoExpressCheckoutPaymentAPICallFailed=DoExpressCheckoutPayment API call failed.
+DetailedErrorMessage=Detailed Error Message
+ShortErrorMessage=简短错误信息
+ErrorCode=错误代码
+ErrorSeverityCode=Error Severity Code
+OnlinePaymentSystem=Online payment system
+PaypalLiveEnabled=Paypal live enabled (otherwise test/sandbox mode)
+PaypalImportPayment=Import Paypal payments
+PostActionAfterPayment=Post actions after payments
+ARollbackWasPerformedOnPostActions=A rollback was performed on all Post actions. You must complete post actions manually if they are necessary.

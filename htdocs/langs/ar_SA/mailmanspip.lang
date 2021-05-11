@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - mailmanspip
+MailmanSpipSetup=ساعي البريد و تركيب نموذج SPIP
+MailmanTitle=القائمة البريدية ميلمان النظام
+TestSubscribe=لاختبار الاشتراك في قوائم ميلمان
+TestUnSubscribe=لاختبار إلغاء الاشتراك من قوائم ساعي البريد
+MailmanCreationSuccess=Subscription test was executed successfully
+MailmanDeletionSuccess=Unsubscription test was executed successfully
+SynchroMailManEnabled=سيتم تنفيذ عملية تحديث ميلمان
+SynchroSpipEnabled=سيتم تنفيذ عملية تحديث SPIP
+DescADHERENT_MAILMAN_ADMINPW=ساعي البريد مرور مسؤول
+DescADHERENT_MAILMAN_URL=URL للاشتراكات ساعي البريد
+DescADHERENT_MAILMAN_UNSUB_URL=URL للunsubscriptions ساعي البريد
+DescADHERENT_MAILMAN_LISTS=قائمة ل نقش التلقائي للأعضاء الجدد (مفصولة بفواصل)
+SPIPTitle=SPIP نظام إدارة المحتوى
+DescADHERENT_SPIP_SERVEUR=SPIP خادم
+DescADHERENT_SPIP_DB=SPIP اسم قاعدة البيانات
+DescADHERENT_SPIP_USER=قاعدة بيانات SPIP تسجيل الدخول
+DescADHERENT_SPIP_PASS=SPIP كلمة مرور قاعدة البيانات
+AddIntoSpip=إضافة إلى SPIP
+AddIntoSpipConfirmation=هل أنت متأكد أنك تريد إضافة هذا العضو إلى SPIP؟
+AddIntoSpipError=فشل في إضافة المستخدم في SPIP
+DeleteIntoSpip=إزالة من SPIP
+DeleteIntoSpipConfirmation=هل أنت متأكد أنك تريد إزالة هذا العضو من SPIP؟
+DeleteIntoSpipError=فشل في قمع المستخدم من SPIP
+SPIPConnectionFailed=فشل الاتصال SPIP
+SuccessToAddToMailmanList=%s successfully added to mailman list %s or SPIP database
+SuccessToRemoveToMailmanList=%s successfully removed from mailman list %s or SPIP database

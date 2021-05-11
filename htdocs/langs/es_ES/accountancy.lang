@@ -1,0 +1,306 @@
+# Dolibarr language file - en_US - Accounting Expert
+Accounting=Contabilidad
+ACCOUNTING_EXPORT_SEPARATORCSV=Separador de columnas en el archivo de exportación
+ACCOUNTING_EXPORT_DATE=Formato de fecha en el archivo de exportación
+ACCOUNTING_EXPORT_PIECE=Exportar el número de asiento
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Exportar con la cuenta global
+ACCOUNTING_EXPORT_LABEL=Exportar etiqueta
+ACCOUNTING_EXPORT_AMOUNT=Exportar importe
+ACCOUNTING_EXPORT_DEVISE=Exportar divisa
+Selectformat=Seleccione el formato del archivo
+ACCOUNTING_EXPORT_FORMAT=Seleccione el formato del archivo
+ACCOUNTING_EXPORT_ENDLINE=Seleccione el tipo de retorno de carro
+ACCOUNTING_EXPORT_PREFIX_SPEC=Especifique el prefijo del nombre de archivo
+ThisService=Este servicio
+ThisProduct=Este producto
+DefaultForService=Predeterminado para el servicio
+DefaultForProduct=Predeterminado para el producto
+CantSuggest=No se puede sugerir
+AccountancySetupDoneFromAccountancyMenu=La mayor parte de la configuración de la contabilidad se realiza desde el menú %s
+ConfigAccountingExpert=Configuración del módulo contable
+Journalization=Procesar diarios
+Journaux=Diarios
+JournalFinancial=Diarios financieros
+BackToChartofaccounts=Volver al plan contable
+Chartofaccounts=Plan contable
+CurrentDedicatedAccountingAccount=Cuenta contable dedicada
+AssignDedicatedAccountingAccount=Nueva cuenta a asignar
+InvoiceLabel=Etiqueta factura
+OverviewOfAmountOfLinesNotBound=Ver la cantidad de líneas no vinculadas a una cuenta contable
+OverviewOfAmountOfLinesBound=Ver la cantidad de líneas vinculadas a una cuenta contable
+OtherInfo=Otra información
+DeleteCptCategory=Eliminar la cuenta contable del grupo
+ConfirmDeleteCptCategory=¿Está seguro de querer eliminar esta cuenta contable del grupo de cuentas contables?
+JournalizationInLedgerStatus=Estado de diario
+AlreadyInGeneralLedger=Registrado en el Libro Mayor
+NotYetInGeneralLedger=No se ha registrado en el Libro Mayor
+GroupIsEmptyCheckSetup=El grupo está vacío, compruebe la configuración de grupos contables
+DetailByAccount=Ver detalles por cuenta
+AccountWithNonZeroValues=Cuentas con valores no cero
+ListOfAccounts=Lista de cuentas
+
+MainAccountForCustomersNotDefined=Cuenta contable para clientes no definida en la configuración
+MainAccountForSuppliersNotDefined=Cuenta contable para proveedores no definida en la configuración
+MainAccountForUsersNotDefined=Cuenta contable para usuarios no definida en la configuración
+MainAccountForVatPaymentNotDefined=Cuenta contable para IVA no definida en la configuración
+
+AccountancyArea=Área contabilidad
+AccountancyAreaDescIntro=El uso del módulo de contabilidad se realiza en varios pasos:
+AccountancyAreaDescActionOnce=Las siguientes acciones se ejecutan normalmente una sola vez, o una vez al año...
+AccountancyAreaDescActionOnceBis=Los pasos siguientes deben hacerse para ahorrar tiempo en el futuro, sugiriendo la cuenta contable predeterminada correcta para realizar los diarios (escritura de los registros en los diarios y el Libro Mayor)
+AccountancyAreaDescActionFreq=Las siguientes acciones se ejecutan normalmente cada mes, semana o día en empresas muy grandes...
+
+AccountancyAreaDescJournalSetup=PASO %s: Cree o compruebe el contenido de sus diarios desde el menu %s
+AccountancyAreaDescChartModel=PASO %s: Crear un modelo de plan general contable desde el menú %s
+AccountancyAreaDescChart=PASO %s: Crear o comprobar el contenido de su plan general contable desde el menú %s
+
+AccountancyAreaDescVat=PASO %s: Defina las cuentas contables para cada tasa de IVA. Para ello puede usar el menú %s.
+AccountancyAreaDescDefault=STEP %s: Define default accounting accounts. For this, use the menu entry %s.
+AccountancyAreaDescExpenseReport=PASO %s: Defina las cuentas contables para los informes de gastos. Para ello puede utilizar el menú %s.
+AccountancyAreaDescSal=PASO %s: Defina las cuentas contables para los pagos de salarios. Para ello puede utilizar el menú %s.
+AccountancyAreaDescContrib=PASO %s: Defina las cuentas contables de los gastos especiales (impuestos varios). Para ello puede utilizar el menú %s.
+AccountancyAreaDescDonation=PASO %s: Defina las cuentas contables para las donaciones. Para ello puede utilizar el menú %s.
+AccountancyAreaDescMisc=PASO %s: Defina las cuentas contables para registros varios. Para ello puede utilizar el menú %s.
+AccountancyAreaDescLoan=PASO %s: Defina las cuentas contables para los préstamos. Para ello puede utilizar el menú %s.\n
+AccountancyAreaDescBank=PASO %s: Defina las cuentas contables para cada banco y cuentas financieras. Puede empezar desde la página %s.
+AccountancyAreaDescProd=PASO %s: Defina las cuentas contables en sus productos. Para ello puede utilizar el menú %s.
+
+AccountancyAreaDescBind=PASO %s: Compruebe que los enlaces entre las líneas %s existentes y las cuentas contables es correcta, para que la aplicación pueda registrar las transacciones en el Libro Mayor en un solo clic. Complete los enlaces que falten. Para ello, utilice la entrada de menú %s.
+AccountancyAreaDescWriteRecords=PASO %s: Escribir las transacciones en el Libro Mayor. Para ello, entre en el menú <strong>%s</strong>, y haga clic en el botón <strong>%s</strong>.
+AccountancyAreaDescAnalyze=PASO %s: Añadir o editar transacciones existentes, generar informes y exportaciones.
+
+AccountancyAreaDescClosePeriod=PASO %s: Cerrar periodo, por lo que no podrá hacer modificaciones en un futuro.
+
+TheJournalCodeIsNotDefinedOnSomeBankAccount=No se ha completado un paso obligatorio en la configuración (cuenta contable no definida en todas las cuentas bancarias)
+Selectchartofaccounts=Seleccione un plan contable activo
+ChangeAndLoad=Cambiar y cargar
+Addanaccount=Añadir una cuenta contable
+AccountAccounting=Cuenta contable
+AccountAccountingShort=Cuenta
+SubledgerAccount=Subcuenta contable
+ShowAccountingAccount=Mostrar diario de cuentas
+ShowAccountingJournal=Mostrar diario contable
+AccountAccountingSuggest=Cuenta contable sugerida
+MenuDefaultAccounts=Cuentas contables por defecto
+MenuBankAccounts=Cuentas Bancarias
+MenuVatAccounts=Cuentas de IVA
+MenuTaxAccounts=Cuentas de impuestos
+MenuExpenseReportAccounts=Cuentas de informes de pagos
+MenuLoanAccounts=Cuentas de préstamos
+MenuProductsAccounts=Cuentas contables de productos
+ProductsBinding=Cuentas de productos
+Ventilation=Contabilizar
+CustomersVentilation=Contabilizar facturas a clientes
+SuppliersVentilation=Contabilizar facturas de proveedores
+ExpenseReportsVentilation=Contabilizar informes de gastos
+CreateMvts=Crear nuevo movimiento
+UpdateMvts=Modificar transacción
+ValidTransaction=Transacción validada
+WriteBookKeeping=Registrar movimientos en el Libro Mayor
+Bookkeeping=Libro Mayor
+AccountBalance=Saldo de la cuenta
+ObjectsRef=Referencia de objeto origen
+CAHTF=Total compras a proveedor antes de impuestos
+TotalExpenseReport=Total informe de gastos
+InvoiceLines=Líneas de facturas a contabilizar
+InvoiceLinesDone=Líneas de facturas contabilizadas
+ExpenseReportLines=Líneas de informes de gastos a contabilizar
+ExpenseReportLinesDone=Líneas de informes de gastos contabilizadas
+IntoAccount=Contabilizar línea con la cuenta contable
+
+
+Ventilate=Contabilizar
+LineId=Id línea
+Processing=Tratamiento
+EndProcessing=Proceso terminado.
+SelectedLines=Líneas seleccionadas
+Lineofinvoice=Línea de la factura
+LineOfExpenseReport=Línea de informe de gastos
+NoAccountSelected=No se ha seleccionado cuenta contable
+VentilatedinAccount=Contabilizada con éxito en la cuenta contable
+NotVentilatedinAccount=Cuenta sin contabilización en la contabilidad
+XLineSuccessfullyBinded=%s productos/servicios relacionada correctamente a una cuenta contable
+XLineFailedToBeBinded=%s productos/servicios sin cuenta contable
+
+ACCOUNTING_LIMIT_LIST_VENTILATION=Número de elementos a contabilizar que se muestran por página (máximo recomendado: 50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=Ordenar las páginas de contabilización "A contabilizar" por los elementos más recientes
+ACCOUNTING_LIST_SORT_VENTILATION_DONE=Ordenar las páginas de contabilización "Contabilizadas" por los elementos más recientes
+
+ACCOUNTING_LENGTH_DESCRIPTION=Longitud para la visualización de la descripción de productos y servicios en los listados (Ideal = 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Longitud para la visualización de la descripción de la cuenta de productos y servicios en los listados (Ideal = 50)
+ACCOUNTING_LENGTH_GACCOUNT=Longitud de las cuentas generales (si ajusta el valor a 6 aquí, la cuenta '706' aparecerá como '706000' en la pantalla)
+ACCOUNTING_LENGTH_AACCOUNT=Longitud de las subcuentas ( si ajusta el valor a 6 aquí, la cuenta '401' aparecerá como '401000' en la pantalla)
+ACCOUNTING_MANAGE_ZERO=Gestiona el cero al final de una cuenta contable. Necesario en algunos países (como Suiza). Si se mantiene desactivada (por defecto), puede configurar los 2 parámetros siguientes para pedir que la aplicación agregue el cero virtual
+BANK_DISABLE_DIRECT_INPUT=Desactivar transacciones directas en cuenta bancaria
+ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Habilitar exportación de borradores al diario
+
+ACCOUNTING_SELL_JOURNAL=Diario de ventas
+ACCOUNTING_PURCHASE_JOURNAL=Diario de compras
+ACCOUNTING_MISCELLANEOUS_JOURNAL=Diario de operaciones diversas
+ACCOUNTING_EXPENSEREPORT_JOURNAL=Informe de gastos diario
+ACCOUNTING_SOCIAL_JOURNAL=Diario social
+ACCOUNTING_HAS_NEW_JOURNAL=Tiene un nuevo diario
+
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Cuenta de caja
+ACCOUNTING_ACCOUNT_SUSPENSE=Cuenta operaciones pendientes de asignar
+DONATION_ACCOUNTINGACCOUNT=Cuenta contable para registrar donaciones
+
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Cuenta contable predeterminada para los productos comprados (si no se define en el producto)
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Cuenta contable predeterminada para los productos vendidos (si no se define en el producto)
+ACCOUNTING_SERVICE_BUY_ACCOUNT=Cuenta contable predeterminada para los servicios comprados (si no se define en el servicio)
+ACCOUNTING_SERVICE_SOLD_ACCOUNT=Cuenta contable predeterminada para los servicios vendidos (si no se define en el servico)
+
+Doctype=Tipo de documento
+Docdate=Fecha
+Docref=Referencia
+LabelAccount=Descripción
+LabelOperation=Etiqueta operación
+Sens=Sentido
+Codejournal=Diario
+NumPiece=Apunte
+TransactionNumShort=Núm. transacción
+AccountingCategory=Grupos personalizados
+GroupByAccountAccounting=Agrupar por cuenta contable
+AccountingAccountGroupsDesc=Puedes definir aquí algunos grupos de cuentas contables. Se usarán para informes de contabilidad personalizados.
+ByAccounts=Por cuentas
+ByPredefinedAccountGroups=Por grupos predefinidos
+ByPersonalizedAccountGroups=Por grupos personalizados
+ByYear=Por año
+NotMatch=No establecido
+DeleteMvt=Eliminar líneas del Libro Mayor
+DelYear=Año a eliminar
+DelJournal=Diario a eliminar
+ConfirmDeleteMvt=Esto eliminará todas las lineas del Libro Mayor del año y/o de un diario específico. Se requiere al menos un criterio.
+ConfirmDeleteMvtPartial=Esto eliminará la transacción del libro mayor (se eliminarán todas las líneas relacionadas con la misma transacción)
+FinanceJournal=Diario financiero
+ExpenseReportsJournal=Diario informe de gastos
+DescFinanceJournal=El diario financiero incluye todos los tipos de pagos por cuenta bancaria
+DescJournalOnlyBindedVisible=Esta es una vista del registro vinculado a una cuenta contable y que se puede registrar en el Libro Mayor.
+VATAccountNotDefined=Cuenta contable para IVA no definida
+ThirdpartyAccountNotDefined=Cuenta contable de tercero no definida
+ProductAccountNotDefined=Cuenta contable de producto no definida
+FeeAccountNotDefined=Cuenta de gastos no definida
+BankAccountNotDefined=Cuenta contable bancaria no definida
+CustomerInvoicePayment=Cobro de factura a cliente
+ThirdPartyAccount=Cuenta de tercero
+NewAccountingMvt=Nuevo movimiento
+NumMvts=Número de movimiento
+ListeMvts=Listado de movimientos
+ErrorDebitCredit=Debe y Haber no pueden contener un valor al mismo tiempo
+AddCompteFromBK=Añadir cuentas contables al grupo
+ReportThirdParty=Listado de cuentas de terceros
+DescThirdPartyReport=Consulte aquí el listado de clientes y proveedores y sus códigos contables
+ListAccounts=Listado de cuentas contables
+UnknownAccountForThirdparty=Cuenta contable de tercero desconocida, usaremos %s
+UnknownAccountForThirdpartyBlocking=Cuenta contable de tercero desconocida. Error de bloqueo
+UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Cuenta del terceros desconocida y cuenta de espera no definida. Error de bloqueo
+PaymentsNotLinkedToProduct=Pagos no vinculados a un producto/servicio
+
+Pcgtype=Grupo de cuenta
+Pcgsubtype=Subgrupo de cuenta
+PcgtypeDesc=Grupo y subgrupo de cuenta se utilizan como criterios predefinidos de "filtro" y "agrupación" para algunos informes de contabilidad. Por ejemplo, "INGRESOS" o "GASTOS" se usan como grupos para cuentas contables de productos para construir el informe de gastos/ingresos.
+
+TotalVente=Total facturación antes de impuestos
+TotalMarge=Total margen ventas
+
+DescVentilCustomer=Consulte aquí la lista de líneas de facturas a clientes enlazadas (o no) a una cuenta contable de producto
+DescVentilMore=En la mayoría de los casos, si utiliza productos o servicios predefinidos y establece la cuenta contable en la ficha del producto/servicio, la aplicación será capaz de hacer toda la contabilización entre las líneas de la factura y la cuenta contable de su plan general contable, con un clic en el botón <strong>"%s"</strong>, Si no se ha establecido la cuenta contable en la ficha del producto/servicio o si todavía tiene algunas líneas no contabilizadas a alguna cuenta, tendrá que hacer una contabilización manual desde el menú "<strong>%s</strong>".
+DescVentilDoneCustomer=Consulte aquí las líneas de facturas a clientes y las cuentas contables de sus productos
+DescVentilTodoCustomer=Contabilizar líneas de factura aún no contabilizadas con una cuenta contable de producto
+ChangeAccount=Cambie la cuenta del producto/servicio para las líneas seleccionadas a la cuenta:
+Vide=-
+DescVentilSupplier=Consulte aquí la lista de líneas de facturas de proveedores enlazadas (o no) a una cuenta contable de producto
+DescVentilDoneSupplier=Consulte aquí la lista de facturas de proveedores y sus cuentas contables
+DescVentilTodoExpenseReport=Contabilizar líneas de informes de gastos aún no contabilizadas con una cuenta contable de gastos
+DescVentilExpenseReport=Consulte aquí la lista de líneas de informes de gastos (o no) a una cuenta contable de gastos
+DescVentilExpenseReportMore=Si configura la cuentas contables de los tipos de informes de gastos, la aplicación será capaz de hacer el enlace entre sus líneas de informes de gastos y las cuentas contables, simplemente con un clic en el botón <strong>"%s"</strong> , Si no se ha establecido la cuenta contable en el diccionario o si todavía tiene algunas líneas no contabilizadas a alguna cuenta, tendrá que hacer una contabilización manual desde el menú "<strong>%s</strong>".
+DescVentilDoneExpenseReport=Consulte aquí las líneas de informes de gastos y sus cuentas contables
+
+ValidateHistory=Vincular automáticamente
+AutomaticBindingDone=Vinculación automática finalizada
+
+ErrorAccountancyCodeIsAlreadyUse=Error, no puede eliminar esta cuenta ya que está siendo usada
+MvtNotCorrectlyBalanced=Asiento contabilizado incorrectamente. Debe=%s. Haber=%s
+FicheVentilation=Ficha contable
+GeneralLedgerIsWritten=Transacciones escritas en el Libro Mayor
+GeneralLedgerSomeRecordWasNotRecorded=Algunas de las operaciones no pueden contabilizarse. Si no hay otro mensaje de error, es probable que ya estén contabilizadas.
+NoNewRecordSaved=No hay más registros para el diario
+ListOfProductsWithoutAccountingAccount=Listado de productos sin cuentas contables
+ChangeBinding=Cambiar la unión
+Accounted=Contabilizada en el Libro Mayor
+NotYetAccounted=Aún no contabilizada en el Libro Mayor
+
+## Admin
+ApplyMassCategories=Aplicar categorías en masa
+AddAccountFromBookKeepingWithNoCategories=Cuenta disponible sin grupo personalizado
+CategoryDeleted=La categoría para la cuenta contable ha sido eliminada
+AccountingJournals=Diarios contables
+AccountingJournal=Diario contable
+NewAccountingJournal=Nuevo diario contable
+ShowAccoutingJournal=Mostrar diario contable
+Nature=Naturaleza
+AccountingJournalType1=Operaciones varias
+AccountingJournalType2=Ventas
+AccountingJournalType3=Compras
+AccountingJournalType4=Banco
+AccountingJournalType5=Informes de gastos
+AccountingJournalType8=Inventario
+AccountingJournalType9=Haber
+ErrorAccountingJournalIsAlreadyUse=Este diario ya esta siendo usado
+AccountingAccountForSalesTaxAreDefinedInto=Nota: La cuenta contable del IVA a las ventas se define en el menú <b> %s</b> - <b> %s</b>
+
+## Export
+ExportDraftJournal=Exportar libro borrador
+Modelcsv=Modelo de exportación
+Selectmodelcsv=Seleccione un modelo de exportación
+Modelcsv_normal=Exportación clásica
+Modelcsv_CEGID=Exportar hacia CEGID Expert Comptabilité
+Modelcsv_COALA=Exportar hacia Sage Coala
+Modelcsv_bob50=Exportar hacia Sage BOB 50
+Modelcsv_ciel=Exportar hacia Sage Ciel Compta o Compta Evolution
+Modelcsv_quadratus=Exportar hacia Quadratus QuadraCompta
+Modelcsv_ebp=Exportar a EBP
+Modelcsv_cogilog=Eportar a Cogilog
+Modelcsv_agiris=Exportar a Agiris
+Modelcsv_configurable=Exportación configurable
+ChartofaccountsId=Id plan contable
+
+## Tools - Init accounting account on product / service
+InitAccountancy=Iniciar contabilidad
+InitAccountancyDesc=Puede usar esta página para inicializar el código contable en productos y servicios que no tienen código contable definido para ventas y compras
+DefaultBindingDesc=Esta página puede usarse para establecer una cuenta predeterminada que se utilizará para enlazar registros de salarios, donaciones, impuestos e IVA cuando no tengan establecida una cuenta contable.
+Options=Opciones
+OptionModeProductSell=Modo ventas
+OptionModeProductBuy=Modo compras
+OptionModeProductSellDesc=Mostrar todos los productos con cuenta contable de ventas
+OptionModeProductBuyDesc=Mostrar todos los productos con cuenta contable de compras
+CleanFixHistory=Eliminar código contable de las líneas que no existen en el plan contable
+CleanHistory=Resetear todos los vínculos del año seleccionado
+PredefinedGroups=Grupos personalizados
+WithoutValidAccount=Sin cuenta dedicada válida
+WithValidAccount=Con cuenta dedicada válida
+ValueNotIntoChartOfAccount=Este valor de cuenta contable no existe en el plan general contable
+
+## Dictionary
+Range=Rango de cuenta contable
+Calculated=Calculado
+Formula=Fórmula
+
+## Error
+SomeMandatoryStepsOfSetupWereNotDone=Algunos pasos necesarios de la configuración no están realizados, por favor complételos.
+ErrorNoAccountingCategoryForThisCountry=No hay grupos contables disponibles para %s (Vea Inicio - Configuración - Diccionarios)
+ErrorInvoiceContainsLinesNotYetBounded=Intenta hacer un diario de algunas líneas de la factura <strong>%s</strong>, pero algunas otras líneas aún no están vinculadas a cuentas contables. Se rechaza la contabilización de todas las líneas de factura de esta factura.
+ErrorInvoiceContainsLinesNotYetBoundedShort=Algunas líneas de la factura no están vinculadas a cuentas contables.
+ExportNotSupported=El formato de exportación configurado no es soportado en esta página
+BookeppingLineAlreayExists=Lineas ya existentes en la contabilidad
+NoJournalDefined=Sin diario definido
+Binded=Líneas contabilizadas
+ToBind=Líneas a contabilizar
+UseMenuToSetBindindManualy=No es posible autodetectar, utilice el menú <a href="%s"> %s </a> para realizar el apunte manualmente
+
+## Import
+ImportAccountingEntries=Entradas contables
+
+WarningReportNotReliable=Advertencia, este informe no se basa en el Libro mayor, por lo que no contiene modificaciones manualmente modificadas en el Libro mayor.. Si su diario está actualizado, la vista contable es más precisa.
+ExpenseReportJournal=Informe de gastos diario
+InventoryJournal=Inventario

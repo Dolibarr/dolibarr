@@ -1,0 +1,5 @@
+# Dolibarr language file - Source file is en_US - externalsite
+ExternalSiteSetup=Setup länk till extern webbplats
+ExternalSiteURL=Extern webbplats URL
+ExternalSiteModuleNotComplete=Modul ExternalSite var inte korrekt konfigurerad.
+ExampleMyMenuEntry=Min meny posten

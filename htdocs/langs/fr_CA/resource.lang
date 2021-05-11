@@ -1,0 +1,18 @@
+# Dolibarr language file - Source file is en_US - resource
+DeleteResource=Supprimer ressource
+ConfirmDeleteResourceElement=Confirmer la suppression de la ressource pour cet élément
+NoResourceInDatabase=Aucune ressource dans la base.
+ResourcePageIndex=Liste de ressources
+ResourceSingular=Ressource
+ResourceCard=Carte de ressources
+ResourcesLinkedToElement=Des ressources liées à l'élément
+ShowResource=Affichez la ressource
+ResourceElementPage=Élément ressources
+ResourceCreatedWithSuccess=Ressources créées avec succès
+RessourceLineSuccessfullyDeleted=Ligne de ressources supprimée
+RessourceLineSuccessfullyUpdated=Ligne de ressources mis à jour avec succès
+ResourceLinkedWithSuccess=Ressources liées à la réussite
+ConfirmDeleteResource=Confirmer pour supprimer cette ressource
+DictionaryResourceType=Types de ressources
+SelectResource=Sélectionnez la ressource
+IdResource=Ressource Id

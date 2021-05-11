@@ -1,0 +1,11 @@
+debian/dolibarr.desktop usr/share/applications/
+debian/dolibarr.xpm usr/share/pixmaps/
+debian/apache/.htaccess var/lib/dolibarr/documents/
+debian/apache/dolibarr.conf etc/apache2/conf-available/
+debian/lighttpd/50-dolibarr.conf etc/lighttpd/conf-available/
+debian/install.forced.php.install etc/dolibarr/
+htdocs usr/share/dolibarr/
+scripts usr/share/dolibarr/
+doc/install usr/share/doc/dolibarr/
+doc/user usr/share/doc/dolibarr/
+doc/index.html usr/share/doc/dolibarr/

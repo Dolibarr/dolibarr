@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - ldap
+YouMustChangePassNextLogon=Parola pentru <b>utilizatorul %s pe %s</b> de domeniu trebuie să fie schimbat.
+UserMustChangePassNextLogon=Utilizatorul trebuie să schimbaţi parola de pe domeniul %s
+LDAPInformationsForThisContact=Informaţii în LDAP pentru această bază de date de contact
+LDAPInformationsForThisUser=Informaţiile din baza de date LDAP pentru acest utilizator
+LDAPInformationsForThisGroup=Informaţiile din baza de date LDAP pentru acest grup
+LDAPInformationsForThisMember=Informaţiile din baza de date LDAP pentru acest stat
+LDAPInformationsForThisMemberType=Information in LDAP database for this member type
+LDAPAttributes=LDAP atribute
+LDAPCard=Fişă LDAP 
+LDAPRecordNotFound=Înregistrarea nu a fost găsit în baza de date LDAP
+LDAPUsers=Utilizatorii din baza de date LDAP
+LDAPFieldStatus=Statut
+LDAPFieldFirstSubscriptionDate=Prima data de abonament
+LDAPFieldFirstSubscriptionAmount=Pumn de abonament suma
+LDAPFieldLastSubscriptionDate=Latest subscription date
+LDAPFieldLastSubscriptionAmount=Latest subscription amount
+LDAPFieldSkype=Skype id
+LDAPFieldSkypeExample=Example : skypeName
+UserSynchronized=Utilizator sincronizate
+GroupSynchronized=Grupul sincronizate
+MemberSynchronized=Statele sincronizate
+MemberTypeSynchronized=Member type synchronized
+ContactSynchronized=Contact sincronizate
+ForceSynchronize=Forţei de sincronizare Dolibarr -> LDAP
+ErrorFailedToReadLDAP=Nu şi-a citit de baze de date LDAP. LDAP verifica modul de instalare şi de baze de date de accesibilitate.
+PasswordOfUserInLDAP=Password of user in LDAP

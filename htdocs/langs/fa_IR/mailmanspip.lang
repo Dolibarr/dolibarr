@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - mailmanspip
+MailmanSpipSetup=پستچی و SPIP ماژول راه اندازی
+MailmanTitle=پستچی لیست پستی سیستم
+TestSubscribe=برای آزمایش اشتراک به لیست پستچی
+TestUnSubscribe=برای آزمایش لغو اشتراک از لیست پستچی
+MailmanCreationSuccess=Subscription test was executed successfully
+MailmanDeletionSuccess=Unsubscription test was executed successfully
+SynchroMailManEnabled=به روز رسانی پستچی انجام خواهد شد
+SynchroSpipEnabled=به روز رسانی SPIP انجام خواهد شد
+DescADHERENT_MAILMAN_ADMINPW=رمز عبور مدیر پستچی
+DescADHERENT_MAILMAN_URL=URL برای اشتراک پستچی
+DescADHERENT_MAILMAN_UNSUB_URL=URL برای unsubscriptions پستچی
+DescADHERENT_MAILMAN_LISTS=لیست (ها) برای کتیبه خودکار از اعضای جدید (با کاما جدا شوند)
+SPIPTitle=سیستم مدیریت محتوای SPIP
+DescADHERENT_SPIP_SERVEUR=SPIP سرور
+DescADHERENT_SPIP_DB=SPIP نام پایگاه داده
+DescADHERENT_SPIP_USER=SPIP پایگاه داده ورود
+DescADHERENT_SPIP_PASS=رمز عبور پایگاه داده SPIP
+AddIntoSpip=اضافه کردن به SPIP
+AddIntoSpipConfirmation=آیا مطمئن هستید که می خواهید برای اضافه کردن این عضو را SPIP؟
+AddIntoSpipError=برای اضافه کردن کاربر در SPIP ناموفق
+DeleteIntoSpip=حذف از SPIP
+DeleteIntoSpipConfirmation=آیا مطمئن هستید که می خواهید به حذف این عضو از SPIP؟
+DeleteIntoSpipError=به سرکوب کاربر از SPIP ناموفق
+SPIPConnectionFailed=برای اتصال به SPIP ناموفق
+SuccessToAddToMailmanList=%s successfully added to mailman list %s or SPIP database
+SuccessToRemoveToMailmanList=%s successfully removed from mailman list %s or SPIP database

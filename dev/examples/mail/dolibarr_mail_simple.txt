@@ -1,0 +1,7 @@
+From: dolibarr-robot@domain.com <dolibarr-robot@domain.com>
+Return-Path: dolibarr-robot@domain.com <dolibarr-robot@domain.com>
+X-Mailer: Dolibarr version 2.7.0-beta (using php mail)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Testé

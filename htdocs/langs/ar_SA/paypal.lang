@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=بايبال حدة الإعداد
+PaypalDesc=صفحات تقدم هذه الوحدة للسماح للدفع على <a href="http://www.paypal.com" target="_blank">بال</a> من قبل العملاء. ويمكن استخدام هذا لدفع مجانا أو مقابل دفع Dolibarr على كائن معين (الفاتورة ، والنظام ،...)
+PaypalOrCBDoPayment=Pay with Paypal (Credit Card or Paypal)
+PaypalDoPayment=مع دفع بايبال
+PAYPAL_API_SANDBOX=وضع الاختبار / رمل
+PAYPAL_API_USER=API المستخدم
+PAYPAL_API_PASSWORD=API كلمة السر
+PAYPAL_API_SIGNATURE=API توقيع
+PAYPAL_SSLVERSION=Curl SSL Version
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=تقدم الدفع &quot;لا يتجزأ&quot; (بطاقة الائتمان + باي بال) أو &quot;باي بال&quot; فقط
+PaypalModeIntegral=التكامل
+PaypalModeOnlyPaypal=باي بال فقط
+ONLINE_PAYMENT_CSS_URL=Optionnal URL of CSS style sheet on online payment page
+ThisIsTransactionId=هذا هو معرف من الصفقة: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=إضافة رابط الدفع باي بال عند إرسال مستند عبر البريد
+YouAreCurrentlyInSandboxMode=You are currently in the %s "sandbox" mode
+NewOnlinePaymentReceived=New online payment received
+NewOnlinePaymentFailed=New online payment tried but failed
+ONLINE_PAYMENT_SENDEMAIL=البريد الإلكتروني لتحذير بعد دفع (النجاح أو لا)
+ReturnURLAfterPayment=العودة URL بعد دفع
+ValidationOfOnlinePaymentFailed=Validation of online payment failed
+PaymentSystemConfirmPaymentPageWasCalledButFailed=Payment confirmation page was called by payment system returned an error
+SetExpressCheckoutAPICallFailed=فشل استدعاء API SetExpressCheckout.
+DoExpressCheckoutPaymentAPICallFailed=فشل استدعاء API DoExpressCheckoutPayment.
+DetailedErrorMessage=رسالة خطأ مفصلة
+ShortErrorMessage=رسالة خطأ قصيرة
+ErrorCode=رمز الخطأ
+ErrorSeverityCode=خطأ خطورة مدونة
+OnlinePaymentSystem=Online payment system
+PaypalLiveEnabled=Paypal live enabled (otherwise test/sandbox mode)
+PaypalImportPayment=Import Paypal payments
+PostActionAfterPayment=Post actions after payments
+ARollbackWasPerformedOnPostActions=A rollback was performed on all Post actions. You must complete post actions manually if they are necessary.

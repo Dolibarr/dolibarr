@@ -1,0 +1,72 @@
+# Dolibarr language file - Source file is en_US - sendings
+RefSending=Ref. de expedição
+Sending=Expedição
+Sendings=Envios
+AllSendings=Todos os Despachos
+Shipment=Envio
+Shipments=Envios
+ShowSending=Mostrar Despachos
+Receivings=Receção de encomendas
+SendingsArea=Área de Envios
+ListOfSendings=Lista de Envios
+SendingMethod=Método de Envio
+LastSendings=Últimas %s expedições
+StatisticsOfSendings=Estatísticas de Envios
+NbOfSendings=Número de Envios
+NumberOfShipmentsByMonth=Número de envios por mês
+SendingCard=Ficha da expedição
+NewSending=Novo Envio
+CreateShipment=Criar Envio
+QtyShipped=Quant. Enviada
+QtyShippedShort=Quant. exp.
+QtyPreparedOrShipped=Quantidade preparada ou expedida
+QtyToShip=Quant. a Enviar
+QtyReceived=Quant. Recebida
+QtyInOtherShipments=Quantidade noutras expedições
+KeepToShip=Quantidade remanescente a expedir
+KeepToShipShort=Restante
+OtherSendingsForSameOrder=Outros Envios deste Pedido
+SendingsAndReceivingForSameOrder=Envios e receções para esta encomenda
+SendingsToValidate=Expedições por validar
+StatusSendingCanceled=Cancelado
+StatusSendingDraft=Rascunho
+StatusSendingValidated=Validado (produtos a enviar ou enviados)
+StatusSendingProcessed=Processado
+StatusSendingDraftShort=Rascunho
+StatusSendingValidatedShort=Validado
+StatusSendingProcessedShort=Processado
+SendingSheet=Folha de expedição
+ConfirmDeleteSending=Tem certeza de que deseja eliminar esta expedição?
+ConfirmValidateSending=Tem a certeza de que deseja validar esta expedição com a referência <b> %s </b>?
+ConfirmCancelSending=Tem a certeza que deseja cancelar esta expedição?
+DocumentModelMerou=Mérou modelo A5
+WarningNoQtyLeftToSend=Atenção, não existe qualquer produto à espera de ser enviado.
+StatsOnShipmentsOnlyValidated=Estatísticas efetuadas sobre expedições validadas. A data usada é a data de validação da expedição (a data de entrega prevista nem sempre é conhecida).
+DateDeliveryPlanned=Data prevista de entrega
+RefDeliveryReceipt=Ref. do recibo de entrega
+StatusReceipt=Estado do recibo de entrega
+DateReceived=Data da entrega recebida
+SendShippingByEMail=Efectuar envio por e-mail
+SendShippingRef=Submissão da expedição %s
+ActionsOnShipping=Eventos em embarque
+LinkToTrackYourPackage=Link para acompanhar o seu pacote
+ShipmentCreationIsDoneFromOrder=Para já, a criação de uma nova expedição é efectuada a partir da ficha de encomenda.
+ShipmentLine=Linha da expedição
+ProductQtyInCustomersOrdersRunning=Product quantity into open customer orders
+ProductQtyInSuppliersOrdersRunning=Product quantity into open purchase orders
+ProductQtyInShipmentAlreadySent=Quantidade do produto de encomenda do cliente aberta, já expedida
+ProductQtyInSuppliersShipmentAlreadyRecevied=Quantidade de produtos de encomenda a fornecedor aberta, já recebida
+NoProductToShipFoundIntoStock=Nenhum produto por expedir encontrado no armazém <b> %s </b>. Corrija o stock ou volte atrás para escolher outro armazém.
+WeightVolShort=Peso/Volume
+ValidateOrderFirstBeforeShipment=Deve validar a encomenda antes de poder efetuar expedições.
+
+# Sending methods
+# ModelDocument
+DocumentModelTyphon=Modelo de documento mais completo para a entrega recibos (logo. ..)
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER constante não definida
+SumOfProductVolumes=Soma dos volumes dos produtos
+SumOfProductWeights=Soma dos pesos dos produtos
+
+# warehouse details
+DetailWarehouseNumber= Detalhes do armazém
+DetailWarehouseFormat= P: %s (Qtd: %d)

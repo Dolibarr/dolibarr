@@ -1,0 +1,31 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Úvěr
+Loans=Úvěry
+NewLoan=Nový úvěr
+ShowLoan=Zobrazit úvěr
+PaymentLoan=Platba úvěru
+LoanPayment=Platba úvěru
+ShowLoanPayment=Zobrazit paltbu úvěru
+LoanCapital=Kapitál
+Insurance=Pojištění
+Interest=Zájem
+Nbterms=Počet termínů
+Term=Term
+LoanAccountancyCapitalCode=Accounting account capital
+LoanAccountancyInsuranceCode=Accounting account insurance
+LoanAccountancyInterestCode=Accounting account interest
+ConfirmDeleteLoan=Potvrdit smazání tohoto úvěru
+LoanDeleted=Úvěr úspěšně smazán
+ConfirmPayLoan=Potvrďte klasifikaci zaplatit tento úvěr
+LoanPaid=Placený úvěr
+ListLoanAssociatedProject=List of loan associated with the project
+AddLoan=vytvoření úvěru
+FinancialCommitment=Financial commitment
+InterestAmount=Zájem
+CapitalRemain=Capital remain
+# Admin
+ConfigLoan=Konfigurace modulu úvěru
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Accounting account capital by default
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Accounting account interest by default
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Accounting account insurance by default
+CreateCalcSchedule=Edit financial commitment

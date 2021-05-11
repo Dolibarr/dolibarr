@@ -1,0 +1,21 @@
+# Dolibarr language file - Source file is en_US - stocks
+StocksArea=Warehouse area
+MassStockTransferShort=Bulk stock transfer
+QtyDispatchedShort=Quantity dispatched
+QtyToDispatchShort=Quantity to be dispatched
+OrderStatusNotReadyToDispatch=Order Status does not allow dispatching of products in stock warehouses.
+NoPredefinedProductToDispatch=No predefined products for this object. So no dispatching of stock is required.
+IdWarehouse=Warehouse ID
+LieuWareHouse=Locality of warehouse
+EstimatedStockValueSellShort=Value of stock at selling price
+VirtualDiffersFromPhysical=According to stock movement options, physical stock (physical + current orders) and virtual stock may differ
+RuleForStockReplenishment=Rule for stock replenishment
+SelectProductWithNotNullQty=Select at least one product with a quantity not null and a supplier
+ReplenishmentOrdersDesc=This is a list of all open supplier orders including predefined products. Only open orders with predefined products which may affect stocks, are visible here.
+StockMustBeEnoughForInvoice=Stock levels must be sufficient to add product/service to invoice. (Check it is done on current real stock when adding a line into the invoice whatever the rule is for automatic stock change)
+StockMustBeEnoughForShipment=Stock levels must be sufficient to add product/service for shipment. (Check it is done on current real stock when adding a line into Shipment whatever the rule is for automatic stock change)
+IsInPackage=Packaged
+NoPendingReceptionOnSupplierOrder=No pending receiving due to open supplier order
+ThisSerialAlreadyExistWithDifferentDate=This lot/serial number (<strong>%s</strong>) already exists but with different useby or sellby dates (found <strong>%s</strong> but you entered <strong>%s</strong>).
+OptionMULTIPRICESIsOn=Option "several prices per segment" is on. It means a product has several selling price so total of stock by sales value can't be calculated
+AddNewProductStockWarehouse=Set new limit for alert and desired optimal stock level

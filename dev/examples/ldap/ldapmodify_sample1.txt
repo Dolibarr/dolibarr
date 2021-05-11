@@ -1,0 +1,15 @@
+# ldapmodify_sample1.txt
+# ldapmodify is into package ldap-utils on debian.
+#
+# Use this sample to modify a dc "my-domain"
+#
+# ldapmodify -c -v -D cn=Manager,dc=my-domain,dc=com -W -f ldapmodify_sample1.txt
+
+dn: dc=my-domain,dc=com
+changetype: modify
+replace: o
+objectclass: dcObject
+objectClass: organization
+objectClass: top
+dc: my-domain
+o: Mon organisation

@@ -1,0 +1,131 @@
+#!/usr/bin/make -f
+
+# Uncomment this to turn on verbose mode.
+export DH_VERBOSE=1
+export DH_OPTIONS=-v
+
+#export DH_COMPAT=7    # This is the debhelper compatability version to use, now defined into compat file
+
+
+%:
+	dh $@
+
+# Replace standard debian package actions with a new one
+########################################################
+
+override_dh_auto_clean:
+# Do nothing. Added to disable launchpad to use bugged dh_auto_clean search for ant
+
+override_dh_auto_build:
+# Do nothing. Added to disable launchpad to use bugged dh_auto_build search for ant
+
+#override_dh_compress:
+#	dh_compress --no-act -X.png
+
+# We disable this for png file because it modify content of original file so make
+# the dolibarr signature not valid.
+override_dh_strip_nondeterminism:
+	dh_strip_nondeterminism -X.png
+
+override_dh_install:
+	dh_install
+	# Delete files
+	rm -f  .buildpath
+	rm -fr .cache
+	rm -fr .git
+	rm -f  .gitmodules
+	rm -f  .gitignore
+	rm -fr .project
+	rm -fr .settings
+	rm -f  build.xml
+	rm -f  quickbuild.xml
+	rm -f  pom.xml
+
+	rm -f  htdocs/install/mssql/README
+	rm -f  htdocs/install/mysql/README
+	rm -f  htdocs/install/pgsql/README
+
+	rm -fr dev/codesniffer
+	rm -fr dev/codetemplates
+	rm -fr dev/dbmodel
+	rm -fr dev/initdata
+	rm -fr dev/iso-normes
+	rm -fr dev/ldap
+	rm -fr dev/licence
+	rm -fr dev/mail
+	rm -fr dev/phpcheckstyle
+	rm -fr dev/phpunit
+	rm -fr dev/security
+	rm -fr dev/spec
+	rm -fr dev/test
+	rm -fr dev/uml
+	rm -fr dev/xdebug
+	rm -f  dev/dolibarr_changes.txt
+	rm -f  dev/README
+	
+	rm -f  doc/images/dolibarr_screenshot2.png
+	rm -f  doc/images/dolibarr_screenshot3.png
+	rm -f  doc/images/dolibarr_screenshot4.png
+	rm -f  doc/images/dolibarr_screenshot5.png
+	rm -f  doc/images/dolibarr_screenshot6.png
+	rm -f  doc/images/dolibarr_screenshot7.png
+	rm -f  doc/images/dolibarr_screenshot8.png
+	rm -f  doc/images/dolibarr_screenshot9.png
+	rm -f  doc/images/dolibarr_screenshot10.png
+	rm -f  doc/images/dolibarr_screenshot11.png
+	rm -f  doc/images/dolibarr_screenshot12.png
+
+	rm -fr test
+
+	rm -fr build/aps
+	rm -fr build/dmg
+	rm -fr build/doap
+	rm -fr build/exe
+	rm -fr build/launchpad
+	rm -fr build/live
+	rm -fr build/patch
+	rm -fr build/perl
+	rm -fr build/rpm
+	rm -fr build/zip
+	
+	# clean from all PHP embedded libraries (we use package dependencies instead)
+#	rm -fr htdocs/includes/adodbtime
+#	rm -fr htdocs/includes/geoip
+#	rm -fr htdocs/includes/nusoap
+#	rm -fr htdocs/includes/odtphp/zip/pclzip
+	# clean from all JS-CSS embedded libraries (we use package dependencies instead)
+#	rm -fr htdocs/includes/ckeditor
+#	rm -fr htdocs/includes/jquery/js
+#	rm -fr htdocs/includes/jquery/css
+#	rm -fr htdocs/includes/jquery/plugins/flot
+	# clean from all embedded fonts (we use package dependencies instead)
+#	rm -fr htdocs/includes/fonts
+
+	# clean from useless files
+	rm -fr htdocs/includes/jquery/plugins/multiselect
+	rm -fr htdocs/includes/phpexcel/PHPExcel/Shared/PDF
+	rm -fr htdocs/includes/phpexcel/PHPExcel/Shared/PCLZip
+	rm -fr htdocs/includes/tcpdf/fonts/dejavu-fonts-ttf-2.33
+	rm -fr htdocs/includes/tcpdf/fonts/freefont-20100919
+	rm -fr htdocs/includes/tcpdf/fonts/utils
+	# clean from files to avoid warning of missing dependencies
+	rm -fr htdocs/includes/jquery/plugins/jqueryFileTree/connectors/jqueryFileTree.py
+
+	# Licence files are already included into copyright file.
+	rm -f  htdocs/includes/jquery/plugins/flot/LICENSE.txt
+	rm -f  htdocs/includes/phpexcel/license.txt
+	rm -f  htdocs/includes/tcpdf/LICENSE.TXT
+
+	# Drop unwanted executable permissions
+	find debian/dolibarr/usr/share/dolibarr/htdocs -type f -print0 | \
+	     xargs -0 chmod 644
+	# Add missing executable permissions
+	find debian/dolibarr/usr/share/dolibarr/scripts -type f -name '*.php' -print0 | \
+	     xargs -0 chmod 755
+
+override_dh_fixperms:
+	dh_fixperms
+	# Give rights to the webserver on the upload directory
+	chown www-data:www-data debian/dolibarr/var/lib/dolibarr/documents
+	chmod 2775 debian/dolibarr/var/lib/dolibarr/documents
+	

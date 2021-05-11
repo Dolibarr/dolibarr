@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - mailmanspip
+MailmanSpipSetup=Podešavanje Mailman i SPIP modula
+MailmanTitle=Mailman mailing list system
+TestSubscribe=Testiranje pretplate na Mailman liste
+TestUnSubscribe=Testiranje odjave sa Mailman liste
+MailmanCreationSuccess=Test prijave je uspješno izvršen
+MailmanDeletionSuccess=Test odjave je uspješno izvršen
+SynchroMailManEnabled=Mailman će biti ažuriran
+SynchroSpipEnabled=SPIP će biti ažuriran
+DescADHERENT_MAILMAN_ADMINPW=Mailman lozinka administratora
+DescADHERENT_MAILMAN_URL=URL za Mailman prijave
+DescADHERENT_MAILMAN_UNSUB_URL=URL za Mailman odjave
+DescADHERENT_MAILMAN_LISTS=Lista(e) za automatsku prijavu novih članova (odvojeno zarezom)
+SPIPTitle=SPIP Upravitelj sadržajem
+DescADHERENT_SPIP_SERVEUR=SPIP server
+DescADHERENT_SPIP_DB=SPIP naziv baze
+DescADHERENT_SPIP_USER=SPIP korisničko ime baze
+DescADHERENT_SPIP_PASS=SPIP lozinka baze
+AddIntoSpip=Dodaj u SPIP
+AddIntoSpipConfirmation=Jeste li sigurni da želite dodati člana u SPIP?
+AddIntoSpipError=Neuspješno dodavanje korisnika u SPIP
+DeleteIntoSpip=Obriše iz SPIP-a
+DeleteIntoSpipConfirmation=Jeste li sigurni da želite obrisati člana iz SPIP-a
+DeleteIntoSpipError=Neuspješno brisanje korisnika iz SPIP-a
+SPIPConnectionFailed=Neuspješno spajanje na SPIP
+SuccessToAddToMailmanList=%s uspješno dodan na Mailman listu %s ili SPIP bazu
+SuccessToRemoveToMailmanList=%s uspješno obrisan iz Mailman liste %s ili SPIP baze

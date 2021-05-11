@@ -1,0 +1,72 @@
+# Dolibarr language file - Source file is en_US - sendings
+RefSending=Referentie verzending
+Sending=Verzending
+Sendings=Verzendingen
+AllSendings=Alle zendingen
+Shipment=Verzending
+Shipments=Verzendingen
+ShowSending=Toon zendingen
+Receivings=Delivery Receipts
+SendingsArea=Zendingenoverzicht
+ListOfSendings=Verzendlijst
+SendingMethod=Verzendwijze
+LastSendings=Laatste %s zendingen
+StatisticsOfSendings=Verzendingsstatistieken
+NbOfSendings=Aantal zendingen
+NumberOfShipmentsByMonth=Aantal verzendingen per maand
+SendingCard=Verzendings kaart
+NewSending=Nieuwe verzending
+CreateShipment=Creëer verzending
+QtyShipped=Aantal verzonden
+QtyShippedShort=Stk verz.
+QtyPreparedOrShipped=Qty prepared or shipped
+QtyToShip=Aantal te verzenden
+QtyReceived=Aantal ontvangen
+QtyInOtherShipments=Qty in other shipments
+KeepToShip=Resterend te verzenden
+KeepToShipShort=Remain
+OtherSendingsForSameOrder=Andere verzendingen voor deze opdracht
+SendingsAndReceivingForSameOrder=Shipments and receipts for this order
+SendingsToValidate=Te valideren verzendingen
+StatusSendingCanceled=Geannuleerd
+StatusSendingDraft=Concept
+StatusSendingValidated=Gevalideerd (producten te verzenden of reeds verzonden)
+StatusSendingProcessed=Verwerkt
+StatusSendingDraftShort=Concept
+StatusSendingValidatedShort=Gevalideerd
+StatusSendingProcessedShort=Verwerkt
+SendingSheet=Verzendings blad
+ConfirmDeleteSending=Weet u zeker dat u deze zending wilt verwijderen?
+ConfirmValidateSending=Weet u zeker dat u deze zending wilt valideren met als referentie <b>%s</b>?
+ConfirmCancelSending=Weet u zeker dat u deze verzending wilt annuleren?
+DocumentModelMerou=Merou A5 model
+WarningNoQtyLeftToSend=Waarschuwing, geen producten die op verzending wachten.
+StatsOnShipmentsOnlyValidated=Statistiek op verzendingen die bevestigd zijn.  Datum is de datum van bevestiging van de verzending (geplande leverdatum is niet altijd bekend).
+DateDeliveryPlanned=Verwachte leverdatum
+RefDeliveryReceipt=Ref delivery receipt
+StatusReceipt=Status delivery receipt
+DateReceived=Datum leveringsonvangst
+SendShippingByEMail=Stuur verzending per e-mail
+SendShippingRef=Indiening van de zending %s
+ActionsOnShipping=Acions op verzendkosten
+LinkToTrackYourPackage=Link naar uw pakket
+ShipmentCreationIsDoneFromOrder=Op dit moment, is oprichting van een nieuwe zending gedaan van de volgorde kaart.
+ShipmentLine=Verzendingslijn
+ProductQtyInCustomersOrdersRunning=Product quantity into open customer orders
+ProductQtyInSuppliersOrdersRunning=Product quantity into open purchase orders
+ProductQtyInShipmentAlreadySent=Product quantity from open customer order already sent
+ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from open supplier order already received
+NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
+WeightVolShort=Weight/Vol.
+ValidateOrderFirstBeforeShipment=You must first validate the order before being able to make shipments.
+
+# Sending methods
+# ModelDocument
+DocumentModelTyphon=Completer leveringsbewijs documentmodel (logo, etc)
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constant EXPEDITION_ADDON_NUMBER niet gedefinieerd
+SumOfProductVolumes=Som van alle productvolumes
+SumOfProductWeights=Som van product-gewichten
+
+# warehouse details
+DetailWarehouseNumber= Magazijn informatie
+DetailWarehouseFormat= W:%s (Aantal : %d)

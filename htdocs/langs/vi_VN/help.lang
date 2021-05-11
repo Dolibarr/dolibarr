@@ -1,0 +1,26 @@
+# Dolibarr language file - Source file is en_US - help
+CommunitySupport=Diễn đàn / hỗ trợ Wiki
+EMailSupport=Email hỗ trợ
+RemoteControlSupport=Trực tuyến thời gian thực / hỗ trợ từ xa
+OtherSupport=Hỗ trợ khác
+ToSeeListOfAvailableRessources=Để liên hệ / xem các nguồn lực có sẵn:
+HelpCenter=Trung tâm trợ giúp
+DolibarrHelpCenter=Dolibarr trợ giúp và trung tâm hỗ trợ
+ToGoBackToDolibarr=Nếu không, bấm <a href="%s">vào đây để sử dụng Dolibarr</a>
+TypeOfSupport=Nguồn hỗ trợ
+TypeSupportCommunauty=Cộng đồng (miễn phí)
+TypeSupportCommercial=Thương mại
+TypeOfHelp=Loại
+NeedHelpCenter=Need help or support?
+Efficiency=Hiệu quả
+TypeHelpOnly=Chỉ giúp
+TypeHelpDev=Trợ giúp + Phát triển
+TypeHelpDevForm=Trợ giúp phát triển + + hình thành
+ToGetHelpGoOnSparkAngels1=Một số công ty có thể cung cấp một hỗ trợ trực tuyến nhanh chóng (đôi khi ngay lập tức) và hiệu quả hơn bằng cách kiểm soát máy tính của bạn. Giúp đỡ này có thể được tìm thấy trên trang <b>web% s:</b>
+ToGetHelpGoOnSparkAngels3=Bạn cũng có thể vào danh sách của tất cả các huấn luyện viên cho Dolibarr, cho điều này bấm vào nút
+ToGetHelpGoOnSparkAngels2=Đôi khi, không có công ty có sẵn tại thời điểm bạn thực hiện tìm kiếm của bạn, vì vậy suy nghĩ để thay đổi bộ lọc để tìm kiếm "tất cả sẵn sàng". Bạn sẽ có thể gửi nhiều yêu cầu.
+BackToHelpCenter=Nếu không, bấm vào đây để đi <a href="%s">lại để giúp trang chủ trung tâm</a> .
+LinkToGoldMember=Bạn có thể gọi một trong những huấn luyện viên chọn trước bởi Dolibarr cho ngôn ngữ (% s) bằng cách nhấp vào Widget của mình (tình trạng và giá tối đa sẽ được tự động cập nhật):
+PossibleLanguages=Ngôn ngữ được hỗ trợ
+SubscribeToFoundation=Giúp dự án Dolibarr, đăng ký với cơ sở
+SeeOfficalSupport=Để được hỗ trợ Dolibarr chính thức ngôn ngữ của bạn: <br> <a href="%s" target="_blank"><b>% S</b></a>

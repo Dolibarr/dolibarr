@@ -1,0 +1,7 @@
+# Dolibarr language file - Source file is en_US - compta
+VATCollected=IGV recuperado
+PaymentVat=Pago IGV
+ShowVatPayment=Ver pagos IGV
+VATReportByCustomersInInputOutputMode=Informe por cliente del IGV repercutido y pagado (IGV pagado)
+SeeVATReportInInputOutputMode=Ver el informe <b>%sIGV pagado%s</b> para un modo de cálculo estandard
+SeeVATReportInDueDebtMode=Ver el informe <b>%sIGV debido%s</b> para un modo de cálculo con la opción sobre lo debido

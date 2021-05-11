@@ -1,0 +1,72 @@
+# Dolibarr language file - Source file is en_US - sendings
+RefSending=کد عکس. حمل
+Sending=حمل
+Sendings=حمل و نقل
+AllSendings=All Shipments
+Shipment=حمل
+Shipments=حمل و نقل
+ShowSending=Show Shipments
+Receivings=Delivery Receipts
+SendingsArea=منطقه حمل و نقل
+ListOfSendings=فهرست محموله
+SendingMethod=روش حمل و نقل
+LastSendings=Latest %s shipments
+StatisticsOfSendings=آمار برای محموله
+NbOfSendings=تعداد محموله
+NumberOfShipmentsByMonth=تعداد محموله های ماه
+SendingCard=Shipment card
+NewSending=حمل و نقل جدید
+CreateShipment=ایجاد حمل و نقل
+QtyShipped=تعداد حمل
+QtyShippedShort=Qty ship.
+QtyPreparedOrShipped=Qty prepared or shipped
+QtyToShip=تعداد به کشتی
+QtyReceived=تعداد دریافت
+QtyInOtherShipments=Qty in other shipments
+KeepToShip=Remain to ship
+KeepToShipShort=Remain
+OtherSendingsForSameOrder=دیگر محموله برای این منظور
+SendingsAndReceivingForSameOrder=Shipments and receipts for this order
+SendingsToValidate=حمل و نقل به اعتبار
+StatusSendingCanceled=لغو شد
+StatusSendingDraft=پیش نویس
+StatusSendingValidated=اعتبار (محصولات به کشتی و یا در حال حمل می شود)
+StatusSendingProcessed=پردازش
+StatusSendingDraftShort=پیش نویس
+StatusSendingValidatedShort=اعتبار
+StatusSendingProcessedShort=پردازش
+SendingSheet=Shipment sheet
+ConfirmDeleteSending=Are you sure you want to delete this shipment?
+ConfirmValidateSending=Are you sure you want to validate this shipment with reference <b>%s</b>?
+ConfirmCancelSending=Are you sure you want to cancel this shipment?
+DocumentModelMerou=مدل Merou A5
+WarningNoQtyLeftToSend=اخطار، محصولات در حال انتظار برای حمل شود.
+StatsOnShipmentsOnlyValidated=آمار انجام شده بر روی محموله تنها به اعتبار. تاریخ استفاده از تاریخ اعتبار از حمل و نقل (تاریخ تحویل برنامه ریزی همیشه شناخته نشده است) است.
+DateDeliveryPlanned=Planned date of delivery
+RefDeliveryReceipt=Ref delivery receipt
+StatusReceipt=Status delivery receipt
+DateReceived=تاریخ تحویل
+SendShippingByEMail=ارسال محموله از طریق ایمیل
+SendShippingRef=Submission of shipment %s
+ActionsOnShipping=رویدادهای در حمل و نقل
+LinkToTrackYourPackage=لینک به پیگیری بسته بندی خود را
+ShipmentCreationIsDoneFromOrder=برای لحظه ای، ایجاد یک محموله های جدید از کارت منظور انجام می شود.
+ShipmentLine=خط حمل و نقل
+ProductQtyInCustomersOrdersRunning=Product quantity into open customer orders
+ProductQtyInSuppliersOrdersRunning=Product quantity into open purchase orders
+ProductQtyInShipmentAlreadySent=Product quantity from open customer order already sent
+ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from open supplier order already received
+NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
+WeightVolShort=Weight/Vol.
+ValidateOrderFirstBeforeShipment=You must first validate the order before being able to make shipments.
+
+# Sending methods
+# ModelDocument
+DocumentModelTyphon=مدل سند کامل بیشتر برای رسید تحویل (logo. ..)
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER ثابت تعریف نشده
+SumOfProductVolumes=مجموع حجم محصول
+SumOfProductWeights=مجموع وزن محصول
+
+# warehouse details
+DetailWarehouseNumber= Warehouse details
+DetailWarehouseFormat= W:%s (Qty : %d)

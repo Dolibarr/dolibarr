@@ -1,0 +1,25 @@
+1.99
+Internal releases.
+---
+2.00
+Initial Public Release.
+RPM built.
+---
+2.01
+Fixed positioning of:
+'B', 'W' - Too far to right. (Right Bearing reduction)
+'.', 'f', 'j' - Too far left. (Left Bearing increase)
+2.02
+Renaming of Fonts to drop the 'Arkpandora' References as they are not need for font filenames.
+---
+2.03
+Rebuild all the Panose categories to reflect font styles.
+'T' - Reduced kerning.
+'o' - Increased left bearing and reduce right kerning.
+'r' - Increased left bearing.
+'S' - Reduced right bearing (Bold).
+'F' - Increased right bearing (Bold).
+---
+2.04
+Standardised baseline for all fonts
+---

@@ -1,0 +1,451 @@
+/* Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+body {
+	background: #fff;
+	color: #333;
+	margin: 0;
+	padding: 0;
+}
+
+p {
+	margin: 0;
+}
+
+.conteneur {
+	background: #fff;
+	text-align: left;
+	/*max-width: 770px;*/
+	/*margin: 10px auto;
+	border: 2px solid #000;*/
+}
+
+.conteneur_img_gauche {
+	/* background: url("../img/bg_conteneur_gauche.png") top left repeat-y; */
+}
+
+.conteneur_img_droite {
+	/* background: url("../img/bg_conteneur_droite.png") top right repeat-y; */
+}
+
+.contenu {
+	width: 100%;
+	text-align: center;
+	padding-top: 20px;
+}
+
+.logo {
+    text-align: center;
+}
+.logopos {
+	padding-top: 20px;
+	max-height: 40px;	
+}
+
+/* ------------------- Header ------------------- */
+.entete {
+	height: 15px;
+	margin: 0;
+	/* background: url('../img/bg_entete.png') no-repeat left top; */
+}
+
+.entete span {
+	display: none;
+}
+
+/* ------------------- Menu ------------------- */
+.menu_principal {
+    margin: 0;
+    font-size: 14px;
+	height: 84px;
+	background: #CCCCCC;
+	background-image: linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(40,40,40,.3) 100%);
+	background-image: -o-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(40,40,40,.3) 100%);
+	background-image: -moz-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(40,40,40,.3) 100%);
+	background-image: -webkit-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(40,40,40,.3) 100%);
+	background-image: -ms-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(40,40,40,.3) 100%);
+	background-image: -webkit-gradient( linear, left top, left bottom, color-stop(0, rgba(255,255,255,.3)), color-stop(1, rgba(40,40,40,.3)) );
+}
+
+.menu_bloc {
+	margin-left: 12px;
+}
+
+.menu {
+	margin: 0;
+    list-style-type: none;
+    padding: 8px 0 0;
+}
+
+.menu li {
+	float: left;
+	padding-right: 10px;
+}
+
+.menu_choix0 {
+	font-size: 10px;
+	text-align: right;
+	font-style: italic;
+	font-weight: normal;
+	display: block;
+	color: #333;
+	text-decoration: none;
+	padding-right: 5px;
+}
+
+/* Force values for small screen 570 */
+@media only screen and (max-width: 570px)
+{
+	.menu_choix0 {
+		max-width: 180px;
+	}
+}
+
+.menu_choix0 a {
+	font-weight: normal;
+	text-decoration: none;
+}
+li.menu_choix0 {
+		float: right;
+}
+
+/* ------------------- Remind of products ------------------- */
+.liste_articles {
+	min-width: 215px;
+	float: right;
+	margin-top: 8px;
+	margin-right: 20px;
+	border: 1px dotted #5ca64d;
+	padding-bottom: 10px;
+	vertical-align: middle;
+}
+
+p.titre {
+    margin: 0 0 20px;
+    text-align: center;
+	font-weight: bold;
+	font-size: 1.4em;
+	color: #5ca64d;
+	border-bottom: 1px dotted;
+}
+
+.cadre_article {
+    width: 180px;
+	text-align: center;
+    margin: 0 auto 10px;
+    padding-bottom: 10px;
+	border-bottom: 1px solid #eee;
+}
+
+.cadre_article p {
+	color: #5ca64d;
+}
+
+.cadre_article p a {
+	color: #333;
+	font-size: 1.1em;
+	text-decoration: none;
+	padding-right: 25px;
+	background: url('../img/basket_delete.png') top right no-repeat;
+}
+
+.cadre_article p a:hover {
+	color: #6d3f6d;
+}
+
+.cadre_aucun_article {
+	text-align: center;
+	font-style: italic;
+}
+
+.cadre_prix_total {
+	text-align: center;
+	font-weight: bold;
+	font-size: 1.4em;
+	color: #6d3f6d;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	margin-left: 20px;
+	margin-right: 20px;
+	border: 1px dotted #6d3f6d;
+}
+
+/* ------------------- Contenu ------------------- */
+.principal_login {
+	margin: 10px;
+	padding: 0;
+	max-width: 800px;
+	text-align: left;
+}
+
+.formulaire_login {
+	text-align: center;
+}
+
+.formulaire_login table {
+    padding-left: 60px;
+    margin: 0 auto 20px;
+    background: url('../img/login.png') bottom left no-repeat;
+}
+
+.formulaire_login table tr {
+	height: 30px;
+}
+
+.texte_login {
+	padding-left: 2px;
+	padding-right: 2px;
+	background: #fff;
+	border: 1px solid #6d3f6d;
+}
+
+.principal {
+	float: left;
+	margin: 0 15px;
+	padding: 0;
+	max-width: 900px;
+}
+
+.blocksellfinished {
+	min-width: 215px;
+	margin-top: 8px;
+}
+.titre1 {
+	font-weight: bold;
+	color: #ff9900;
+	margin: 0;
+	font-size: 1.4em;
+}
+
+.label1 {
+	color: #333;
+	font-size: 1.1em;
+}
+
+.cadre_facturation {
+	border: 2px solid #ddd;
+	margin-bottom: 15px;
+}
+
+.principal p {
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+.lien1 {
+	color: #333;
+	font-size: 1.1em;
+	text-decoration: underline;
+}
+
+.lien1:hover {
+	color: #6d3f6d;
+}
+
+/* Formulaires */
+.formulaire1 {
+	padding: 0;
+}
+
+
+/* --------------------- Combo lists ------------------- */
+.select_design {
+	overflow: auto;
+}
+
+.select_design select {
+	border: 1px solid #6d3f6d;
+    font: 12px verdana,arial,helvetica;
+	background: #fff;
+}
+
+.select_tva select {
+	width: 60px;
+	border: 1px solid #6d3f6d;
+	background: #fff;
+}
+
+.top_liste {
+	font-style: italic;
+	text-align: center;
+	color: #aaa;
+}
+
+/* --------------- Champs texte ---------------- */
+.texte_ref,.texte1,.texte1_off,.texte2,.texte2_off,.textarea_note {
+	padding-left: 2px;
+	padding-right: 2px;
+}
+
+.texte_ref,.texte1,.texte2,.textarea_note {
+	background: #fff;
+	border: 1px solid #6d3f6d;
+}
+
+.texte1_off,.texte2_off {
+	color: #000;
+	border: 1px solid #eee;
+	background: #eee;
+}
+
+.texte_ref {
+	min-width: 150px;
+}
+
+.texte1,.texte1_off {
+	width: 60px;
+}
+
+.texte2,.texte2_off {
+	width: 140px;
+}
+
+/* ------------------- */
+.textarea_note {
+	width: 100%;
+	height: 50px;
+	padding: 2px 2px;
+}
+
+/* -------------- Boutons --------------------- */
+.bouton_ajout_article {
+	margin-top: 10px;
+	width: 60%;
+	height: 40px;
+}
+
+.bouton_mode_reglement, .bouton_mode_reglement_disabled {
+	width: 150px;
+	height: 40px;
+}
+
+.bouton_validation { /* 			width: 80px; */
+	margin-left: 10px;
+	margin-top: 20px;
+	margin-bottom: 10px;
+}
+
+.formulaire2 {
+	padding: 0;
+	width: 100%;
+}
+
+.table_resume {
+	width: 100%;
+}
+
+.table_resume tr {
+	background: #eee;
+}
+
+.table_resume td {
+	padding-left: 8px;
+}
+
+.resume_label,.note_label {
+	min-width: 200px;
+	font-weight: bold;
+	font-size: 1.1em;
+}
+
+.note_label {
+	padding-top: 20px;
+}
+
+/* ------------------- Pied de page ------------------- */
+.pied {
+	clear: both;
+	height: 15px;
+	/* background: url('../img/bg_pied.png') no-repeat bottom left; */
+}
+
+/* ------------------- Param�tres communs (messages d'erreur, informations, etc...) ------------------- */
+.msg_err1 {
+	color: #c00;
+}
+
+/* Messages d'erreur */
+.cadre_err1 {
+	margin-right: 10px;
+	margin-bottom: 10px;
+	padding: 10px 10px;
+	border: 1px solid #c00;
+	background: #feffac;
+	color: #c00;
+}
+
+/* Titre */
+.err_titre {
+	font-weight: bold;
+    margin: 0 0 10px;
+    padding: 0;
+}
+
+/* Description */
+.err_desc {
+	margin: 0;
+	padding: 0;
+}
+
+/* Messages d'information */
+.cadre_msg1 {
+	margin-right: 10px;
+	margin-bottom: 10px;
+	padding: 10px 10px;
+	border: 1px solid #070;
+	background: #e8f8da;
+	color: #070;
+}
+
+/* Titre */
+.msg_titre {
+	font-weight: bold;
+    margin: 0 0 10px;
+    padding: 0;
+}
+
+/* Description */
+.msg_desc {
+	margin: 0;
+	padding: 0;
+}
+
+/* Affichage de la liste des resultats */
+.dhtml_bloc {
+	margin: 0;
+	padding: 3px;
+	font-size: 13px;
+	font-family: arial, sans-serif;
+	border: 1px solid #000;
+	z-index: 1;
+	width: 455px;
+	max-height: 500px;
+	overflow: auto;
+	position: absolute;
+	background-color: white;
+}
+
+.dhtml_defaut {
+	list-style-type: none;
+	display: block;
+	height: 16px;
+	overflow: hidden;
+}
+
+.dhtml_selection {
+	background-color: #3366cc;
+	color: white ! important;
+}

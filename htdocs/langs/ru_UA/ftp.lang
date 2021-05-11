@@ -1,0 +1,8 @@
+# Dolibarr language file - Source file is en_US - ftp
+FTPClientSetup=FTP-клиент модуль установки
+NewFTPClient=Новое соединение FTP-установки
+FTPArea=FTP Площадь
+FTPAreaDesc=Этот экран покажет вам содержание зрения сервера FTP
+SetupOfFTPClientModuleNotComplete=Установка модуля клиент FTP, кажется, не полная
+FTPFeatureNotSupportedByYourPHP=Ваш PHP не поддерживает FTP-функции
+FailedToConnectToFTPServer=Не удалось подключиться к FTP-сервер (сервер %s, порт %s)

@@ -1,0 +1,20 @@
+# Dolibarr language file - Source file is en_US - marque pages
+AddThisPageToBookmarks=Add current page to bookmarks
+Bookmark=ブックマーク
+Bookmarks=ブックマーク
+ListOfBookmarks=ブックマークのリスト
+EditBookmarks=List/edit bookmarks
+NewBookmark=新しいブックマーク
+ShowBookmark=ブックマークを表示
+OpenANewWindow=新しいウィンドウを開きます
+ReplaceWindow=現在のウィンドウを置き換える
+BookmarkTargetNewWindowShort=新しいウィンドウ
+BookmarkTargetReplaceWindowShort=現在のウィンドウ
+BookmarkTitle=ブックマークのタイトル
+UrlOrLink=URL
+BehaviourOnClick=Behaviour when a bookmark URL is selected
+CreateBookmark=ブックマークを作成します。
+SetHereATitleForLink=ブックマークのタイトルを設定する
+UseAnExternalHttpLinkOrRelativeDolibarrLink=外部のhttp URLまたは相対DolibarrのURLを使用して、
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=リンクで開いたページを、新しいウィンドウまたは現在のものに表示するかどうかを選択します
+BookmarksManagement=ブックマークの管理

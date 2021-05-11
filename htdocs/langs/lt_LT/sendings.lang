@@ -1,0 +1,72 @@
+# Dolibarr language file - Source file is en_US - sendings
+RefSending=Pakrovimo nuoroda
+Sending=Pakrovimas
+Sendings=Pakrovimai
+AllSendings=All Shipments
+Shipment=Siunta
+Shipments=Pakrovimai
+ShowSending=Show Shipments
+Receivings=Delivery Receipts
+SendingsArea=Gabenimų sritis
+ListOfSendings=Gabenimų sąrašas
+SendingMethod=Gabenimo metodas
+LastSendings=Latest %s shipments
+StatisticsOfSendings=Vežimų statistika
+NbOfSendings=Vežimų skaičius
+NumberOfShipmentsByMonth=Siuntų skaičius pagal mėnesius
+SendingCard=Shipment card
+NewSending=Naujas vežimas
+CreateShipment=Sukurti vežimą
+QtyShipped=Išsiųstas kiekis
+QtyShippedShort=Qty ship.
+QtyPreparedOrShipped=Qty prepared or shipped
+QtyToShip=Kiekis išsiuntimui
+QtyReceived=Gautas kiekis
+QtyInOtherShipments=Qty in other shipments
+KeepToShip=Remain to ship
+KeepToShipShort=Remain
+OtherSendingsForSameOrder=Kiti vežimai, skirti šiam užsakymui
+SendingsAndReceivingForSameOrder=Shipments and receipts for this order
+SendingsToValidate=Vežimai patvirtinimui
+StatusSendingCanceled=Atšauktas
+StatusSendingDraft=Projektas
+StatusSendingValidated=Patvirtinta (produktai siuntimui arba jau išsiųsti)
+StatusSendingProcessed=Apdorotas
+StatusSendingDraftShort=Projektas
+StatusSendingValidatedShort=Patvirtintas
+StatusSendingProcessedShort=Apdorota
+SendingSheet=Shipment sheet
+ConfirmDeleteSending=Are you sure you want to delete this shipment?
+ConfirmValidateSending=Are you sure you want to validate this shipment with reference <b>%s</b>?
+ConfirmCancelSending=Are you sure you want to cancel this shipment?
+DocumentModelMerou=Merou A5 modelis
+WarningNoQtyLeftToSend=Įspėjimas, nėra produktų, laukiančių išsiuntimo
+StatsOnShipmentsOnlyValidated=Tik patvirtintas siuntas parodanti statistika. Naudojama data yra siuntos patvirtinimo data (suplanuota pristatymo data yra ne visada žinoma).
+DateDeliveryPlanned=Planned date of delivery
+RefDeliveryReceipt=Ref delivery receipt
+StatusReceipt=Status delivery receipt
+DateReceived=Pristatymo gavimo data
+SendShippingByEMail=Siųsti siuntą e-paštu
+SendShippingRef=Submission of shipment %s
+ActionsOnShipping=Siuntų įvykiai
+LinkToTrackYourPackage=Nuoroda sekti Jūsų siuntos kelią
+ShipmentCreationIsDoneFromOrder=Šiuo metu, naujos siuntos sukūrimas atliktas iš užsakymo kortelės.
+ShipmentLine=Siuntimo eilutė
+ProductQtyInCustomersOrdersRunning=Product quantity into open customer orders
+ProductQtyInSuppliersOrdersRunning=Product quantity into open purchase orders
+ProductQtyInShipmentAlreadySent=Product quantity from open customer order already sent
+ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from open supplier order already received
+NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
+WeightVolShort=Weight/Vol.
+ValidateOrderFirstBeforeShipment=You must first validate the order before being able to make shipments.
+
+# Sending methods
+# ModelDocument
+DocumentModelTyphon=Labiau išsamus dokumento modelis pristatymo kvitui (logo. ..)
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=Konstanta EXPEDITION_ADDON_NUMBER nėra apibrėžta
+SumOfProductVolumes=Produkcijos apimties suma
+SumOfProductWeights=Produktų svorių suma
+
+# warehouse details
+DetailWarehouseNumber= Warehouse details
+DetailWarehouseFormat= W:%s (Qty : %d)

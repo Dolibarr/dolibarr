@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - mailmanspip
+MailmanSpipSetup=Pošťák a SPIP modul nastavení
+MailmanTitle=Pošťák mailing list systém
+TestSubscribe=Chcete-li vyzkoušet předplatné pošťák seznamy
+TestUnSubscribe=Chcete-li otestovat odhlásit ze seznamu listonoš
+MailmanCreationSuccess=Subscription test was executed successfully
+MailmanDeletionSuccess=Unsubscription test was executed successfully
+SynchroMailManEnabled=Pošťák aktualizace bude provedena
+SynchroSpipEnabled=Aktualizace SPIPu bude provedena
+DescADHERENT_MAILMAN_ADMINPW=Pošťák heslo správce
+DescADHERENT_MAILMAN_URL=URL pro pošťáka předplatné
+DescADHERENT_MAILMAN_UNSUB_URL=URL pro pošťáka unsubscriptions
+DescADHERENT_MAILMAN_LISTS=Seznam (y) pro automatické nápis nových členů (oddělené čárkou)
+SPIPTitle=SPIP Content Management System
+DescADHERENT_SPIP_SERVEUR=SPIP Server
+DescADHERENT_SPIP_DB=SPIP název databáze
+DescADHERENT_SPIP_USER=SPIP databáze login
+DescADHERENT_SPIP_PASS=SPIP heslo databáze
+AddIntoSpip=Přidat do SPIP
+AddIntoSpipConfirmation=Jste si jisti, že chcete přidat tuto člena do SPIP?
+AddIntoSpipError=Nepodařilo se přidat uživatele do SPIP
+DeleteIntoSpip=Smazat z SPIP
+DeleteIntoSpipConfirmation=Jste si jisti, že chcete odstranit tohoto člena z SPIP?
+DeleteIntoSpipError=Nepodařilo se potlačit uživateli SPIP
+SPIPConnectionFailed=Nepodařilo se připojit k SPIPu
+SuccessToAddToMailmanList=%s successfully added to mailman list %s or SPIP database
+SuccessToRemoveToMailmanList=%s successfully removed from mailman list %s or SPIP database

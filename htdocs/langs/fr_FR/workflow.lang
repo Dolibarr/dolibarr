@@ -1,0 +1,20 @@
+# Dolibarr language file - Source file is en_US - workflow
+WorkflowSetup=Configuration du module workflow
+WorkflowDesc=Ce module est conçu pour modifier le comportement des actions automatiques dans l'application. Par défaut, le workflow est ouvert (vous pouvez faire les choses dans l'ordre que vous voulez). Vous pouvez toutefois activer des actions automatiques qui vous intéressent.
+ThereIsNoWorkflowToModify=Il n'y a pas de modifications de workflow disponibles avec les modules activés.
+# Autocreate
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Créer automatiquement une commande client à la signature d'un proposition commerciale (la commande sera du même montant que la proposition commerciale)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Créer automatiquement une facture client à la signature d'une proposition commerciale (la facture sera du même montant que la proposition commerciale source)
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Créer une facture client automatiquement à la validation d'un contrat
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Créer automatiquement une facture client à la cloture d'un commande (la facture sera du même montant que la commande)
+# Autoclassify customer proposal or order
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classer la/les proposition(s) commerciale(s) source(s) facturée(s) au classement facturé de la commande (et si le montant de la commande est le même que le total des propositions liées)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classer la/les proposition(s) commerciale(s) source facturée(s) à la validation d'une facture client (et si le montant de la facture est le même que la somme des propositions liées)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classer la/les commande(s) client(s) source(s) facturée(s) à la validation de la facture client (et si le montant de la facture est le même que le montant total des commandes liées)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classer la/les commande(s) client(s) source(s) à Facturée quand une facture client est passée à Payé (et si le montant de la facture est identique à la somme des commandes sources)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classer la commande source à expédiée à la validation d'une expédition (et si les quantités expédiées dans le bon d'expédition sont les même que dans la commande mise à jour)
+# Autoclassify supplier order
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classer la ou les proposition(s) commerciale(s) fournisseur sources facturées quand une facture fournisseur est validée (et si le montant de la facture est le même que le total des propositions sources liées)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classer la ou les commande(s) fournisseur(s) de source(s) à facturée(s) lorsque la facture fournisseur est validée (et si le montant de la facture est le même que le montant total des commandes liées)
+AutomaticCreation=Création automatique
+AutomaticClassification=Classification automatique

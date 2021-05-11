@@ -1,0 +1,72 @@
+# Dolibarr language file - Source file is en_US - sendings
+RefSending=Nr ref. transportu
+Sending=Transport
+Sendings=Transporty
+AllSendings=Wszystkie wysyłki
+Shipment=Transport
+Shipments=Transporty
+ShowSending=Pokaż przesyłki
+Receivings=Delivery Receipts
+SendingsArea=Obszar wysyłek
+ListOfSendings=Lista wysyłek
+SendingMethod=Sposób wysyłki
+LastSendings=Ostatnie %s wysyłek
+StatisticsOfSendings=Statystyka wysyłek
+NbOfSendings=Liczba wysyłek
+NumberOfShipmentsByMonth=Liczba wysyłek na miesiąc
+SendingCard=Karta przesyłki
+NewSending=Nowy transport
+CreateShipment=Utwórz transport
+QtyShipped=Wysłana ilość
+QtyShippedShort=Qty ship.
+QtyPreparedOrShipped=Qty prepared or shipped
+QtyToShip=Ilość do wysłania
+QtyReceived=Ilość otrzymanych
+QtyInOtherShipments=Qty in other shipments
+KeepToShip=Pozostają do wysyłki
+KeepToShipShort=Remain
+OtherSendingsForSameOrder=Inne wysyłki do tego zamówienia
+SendingsAndReceivingForSameOrder=Shipments and receipts for this order
+SendingsToValidate=Transporty do zatwierdzenia
+StatusSendingCanceled=Anulowany
+StatusSendingDraft=Szkic
+StatusSendingValidated=Zatwierdzone (produkty do wysyłki lub już wysłane)
+StatusSendingProcessed=Przetwarzany
+StatusSendingDraftShort=Szkic
+StatusSendingValidatedShort=Zatwierdzony
+StatusSendingProcessedShort=Przetwarzany
+SendingSheet=Arkusz wysyłki
+ConfirmDeleteSending=Czy na pewno usunąć tą wysyłkę?
+ConfirmValidateSending=Czy potwierdzić tą wysyłkę z numerem referencyjnym <b>%s</b>?
+ConfirmCancelSending=Czy anulować tą wysyłkę?
+DocumentModelMerou=Model Merou A5
+WarningNoQtyLeftToSend=Ostrzeżenie nie produktów oczekujących na wysłanie.
+StatsOnShipmentsOnlyValidated=Statystyki prowadzone w sprawie przesyłania tylko potwierdzone. Data używany jest data uprawomocnienia przesyłki (planowanym terminem dostawy nie zawsze jest znana).
+DateDeliveryPlanned=Planowana data dostawy
+RefDeliveryReceipt=Ref delivery receipt
+StatusReceipt=Status delivery receipt
+DateReceived=Data otrzymania dostawy
+SendShippingByEMail=Wyślij przesyłki przez e-mail
+SendShippingRef=Złożenie przesyłki% s
+ActionsOnShipping=Zdarzenia na wysyłce
+LinkToTrackYourPackage=Link do strony śledzenia twojej paczki
+ShipmentCreationIsDoneFromOrder=Na ta chwilę, tworzenie nowej wysyłki jest możliwe z karty zamówienia.
+ShipmentLine=Linia Przesyłka
+ProductQtyInCustomersOrdersRunning=Product quantity into open customer orders
+ProductQtyInSuppliersOrdersRunning=Product quantity into open purchase orders
+ProductQtyInShipmentAlreadySent=Product quantity from open customer order already sent
+ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from open supplier order already received
+NoProductToShipFoundIntoStock=Nie znaleziono produktu do wysyłki w magazynie <b>%s</b>. Popraw zapasy lub cofnij się i wybierz inny magazyn
+WeightVolShort=Waga/Volumen
+ValidateOrderFirstBeforeShipment=W pierwszej kolejności musisz zatwierdzić zamówienie, aby mieć możliwość utworzenia wysyłki.
+
+# Sending methods
+# ModelDocument
+DocumentModelTyphon=Więcej kompletny dokument model dostawy wpływy (logo. ..)
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=Stała EXPEDITION_ADDON_NUMBER nie zdefiniowano
+SumOfProductVolumes=Suma wolumenów
+SumOfProductWeights=Suma wag produktów
+
+# warehouse details
+DetailWarehouseNumber= Szczegóły magazynu
+DetailWarehouseFormat= W:% s (Ilość:% d)

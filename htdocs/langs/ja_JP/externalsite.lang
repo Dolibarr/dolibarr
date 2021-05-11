@@ -1,0 +1,5 @@
+# Dolibarr language file - Source file is en_US - externalsite
+ExternalSiteSetup=外部ウェブサイトへのリンクを設定
+ExternalSiteURL=外部サイトのURL
+ExternalSiteModuleNotComplete=モジュールExternalSite（外部サイト）が正しく構成されていませんでした。
+ExampleMyMenuEntry=私のメニューエントリ

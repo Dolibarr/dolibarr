@@ -1,0 +1,30 @@
+# Dolibarr language file - Source file is en_US - oauth
+ConfigOAuth=تكوين أوث
+OAuthServices=OAuth services
+ManualTokenGeneration=Manual token generation
+TokenManager=Token manager
+IsTokenGenerated=Is token generated ?
+NoAccessToken=لا رمز وصول حفظها في قاعدة البيانات المحلية
+HasAccessToken=تم إنشاء رمز مميز وحفظها في قاعدة البيانات المحلية
+NewTokenStored=Token received and saved
+ToCheckDeleteTokenOnProvider=Click here to check/delete authorization saved by %s OAuth provider
+TokenDeleted=حذف رمز
+RequestAccess=انقر هنا لطلب / تجديد الوصول والحصول على رمز جديد لإنقاذ
+DeleteAccess=انقر هنا لحذف رمز
+UseTheFollowingUrlAsRedirectURI=استخدام URL التالية باعتبارها إعادة توجيه URI عند إنشاء الاعتماد الخاص على مزود أوث الخاص بك:
+ListOfSupportedOauthProviders=Enter here credential provided by your OAuth2 provider. Only supported OAuth2 providers are visible here. This setup may be used by other modules that need OAuth2 authentication.
+OAuthSetupForLogin=Page to generate an OAuth token
+SeePreviousTab=See previous tab
+OAuthIDSecret=OAuth ID and Secret
+TOKEN_REFRESH=رمزي تحميل الحاضر
+TOKEN_EXPIRED=Token expired
+TOKEN_EXPIRE_AT=رمز تنتهي في
+TOKEN_DELETE=حذف رمز المحفوظة
+OAUTH_GOOGLE_NAME=Oauth Google service
+OAUTH_GOOGLE_ID=Oauth Google Id
+OAUTH_GOOGLE_SECRET=Oauth Google Secret
+OAUTH_GOOGLE_DESC=Go on <a class="notasortlink" href="https://console.developers.google.com/" target="_blank">this page</a> then "Credentials" to create Oauth credentials
+OAUTH_GITHUB_NAME=Oauth GitHub service
+OAUTH_GITHUB_ID=Oauth GitHub Id
+OAUTH_GITHUB_SECRET=Oauth GitHub Secret
+OAUTH_GITHUB_DESC=Go on <a class="notasortlink" href="https://github.com/settings/developers" target="_blank">this page</a> then "Register a new application" to create Oauth credentials

@@ -1,0 +1,16 @@
+# Dolibarr language file - Source file is en_US - admin
+AntiVirusCommandExample=Example for ClamWin: c:\\Progra~1\\ClamWin\\bin\\clamscan.exe<br>Example for ClamAv: /usr/bin/clamscan
+AntiVirusParamExample=Example for ClamWin: --database="C:\\Program Files (x86)\\ClamWin\\lib"
+ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
+OldVATRates=Old GST rate
+NewVATRates=New GST rate
+DictionaryVAT=GST Rates or Sales Tax Rates
+VATManagement=GST Management
+VATIsNotUsedDesc=By default the proposed GST rate is 0 which can be used for cases like associations, individuals and small companies.
+LocalTax1IsUsedDesc=Use a second type of tax (other than GST)
+LocalTax1IsNotUsedDesc=Do not use other type of tax (other than GST)
+LocalTax2IsUsedDesc=Use a third type of tax (other than GST)
+LocalTax2IsNotUsedDesc=Do not use other type of tax (other than GST)
+ViewProductDescInThirdpartyLanguageAbility=Visualization of products descriptions in the third party language
+OptionVatMode=GST due
+LinkColor=Colour of links

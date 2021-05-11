@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=Άμεση εγκατάσταση μονάδας
+PaypalDesc=Αυτή η ενότητα σας επιτρέπει πληρωμές <a href="http://www.paypal.com" target="_blank">PayPal</a> από τους πελάτες. Αυτό μπορεί να χρησιμοποιηθεί για μια ελεύθερη πληρωμής ή πληρωμή σε ένα συγκεκριμένο αντικείμενο Dolibarr (τιμολόγιο, ώστε, ...)
+PaypalOrCBDoPayment=Pay with Paypal (Credit Card or Paypal)
+PaypalDoPayment=Πληρώστε με Paypal
+PAYPAL_API_SANDBOX=Λειτουργία δοκιμής / sandbox
+PAYPAL_API_USER=API όνομα χρήστη
+PAYPAL_API_PASSWORD=API κωδικό πρόσβασης
+PAYPAL_API_SIGNATURE=API υπογραφή
+PAYPAL_SSLVERSION=Curl SSL Version
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Προσφορά πληρωμής  "ενσωματωμένο"  (Πιστωτική κάρτα + Paypal) ή "Paypal" μόνο
+PaypalModeIntegral=Ενσωματωμένο
+PaypalModeOnlyPaypal=PayPal μόνο
+ONLINE_PAYMENT_CSS_URL=Optionnal URL of CSS style sheet on online payment page
+ThisIsTransactionId=Αυτό είναι id της συναλλαγής: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Προσθέστε το url του Paypal πληρωμής όταν στέλνετε ένα έγγραφο με το ταχυδρομείο
+YouAreCurrentlyInSandboxMode=You are currently in the %s "sandbox" mode
+NewOnlinePaymentReceived=New online payment received
+NewOnlinePaymentFailed=New online payment tried but failed
+ONLINE_PAYMENT_SENDEMAIL=Στείλτε e-mail προειδοποιήσεις μετά από πληρωμή (επιτυχία ή όχι)
+ReturnURLAfterPayment=Επιστροφή στο URL μετά από την πληρωμή
+ValidationOfOnlinePaymentFailed=Validation of online payment failed
+PaymentSystemConfirmPaymentPageWasCalledButFailed=Payment confirmation page was called by payment system returned an error
+SetExpressCheckoutAPICallFailed=SetExpressCheckout API call failed.
+DoExpressCheckoutPaymentAPICallFailed=DoExpressCheckoutPayment API call failed.
+DetailedErrorMessage=Λεπτομερές μήνυμα λάθους
+ShortErrorMessage=Short Error Message
+ErrorCode=Λάθος κωδικός
+ErrorSeverityCode=Error Severity Code
+OnlinePaymentSystem=Online payment system
+PaypalLiveEnabled=Paypal live enabled (otherwise test/sandbox mode)
+PaypalImportPayment=Import Paypal payments
+PostActionAfterPayment=Post actions after payments
+ARollbackWasPerformedOnPostActions=A rollback was performed on all Post actions. You must complete post actions manually if they are necessary.

@@ -1,0 +1,36 @@
+# Dolibarr language file - Source file is en_US - resource
+MenuResourceIndex=Sredstva
+MenuResourceAdd=Novo sredstvo
+DeleteResource=Obriši sredstvo
+ConfirmDeleteResourceElement=Potvrdite brisanje sredstva za ovaj element
+NoResourceInDatabase=Nema sredstava u bazi
+NoResourceLinked=Nema povezanih sredstava
+
+ResourcePageIndex=Popis sredstava
+ResourceSingular=Sredstvo
+ResourceCard=Kartica sredstva
+AddResource=Kreiraj sredstvo
+ResourceFormLabel_ref=Naziv sredstva
+ResourceType=Tip sredstva
+ResourceFormLabel_description=Opis sredstva
+
+ResourcesLinkedToElement=Sredstva povezana s elementom
+
+ShowResource=Prikaži sredstvo
+
+ResourceElementPage=Sredstva elementa
+ResourceCreatedWithSuccess=Sredstvo uspješno kreirano
+RessourceLineSuccessfullyDeleted=Stavka sredstva uspješno obrisana
+RessourceLineSuccessfullyUpdated=Stavka sredstva uspješno promjenjena
+ResourceLinkedWithSuccess=Sredstvo uspješno povezano
+
+ConfirmDeleteResource=Potvrdite brisanje sredstva
+RessourceSuccessfullyDeleted=Sredstvo uspješno obrisano
+DictionaryResourceType=Tipovi sredstava
+
+SelectResource=Odaberite sredstvo
+
+IdResource=Id resource
+AssetNumber=Serial number
+ResourceTypeCode=Resource type code
+ImportDataset_resource_1=Resursi

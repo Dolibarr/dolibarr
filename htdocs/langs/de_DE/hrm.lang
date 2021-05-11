@@ -1,0 +1,17 @@
+# Dolibarr language file - en_US - hrm
+# Admin
+HRM_EMAIL_EXTERNAL_SERVICE=E-Mail, um HRM externen Service verhindern
+Establishments=Einrichtungen
+Establishment=Einrichtung
+NewEstablishment=Neue Einrichtung
+DeleteEstablishment=Einrichtung löschen
+ConfirmDeleteEstablishment=Are-you sure to delete this establishment?
+OpenEtablishment=Einrichtung öffnen
+CloseEtablishment=Einrichtung schliessen
+# Dictionary
+DictionaryDepartment=PV - Abteilungsliste
+DictionaryFunction=PV - Stellenbezeichnungen Liste
+# Module
+Employees=Mitarbeiter
+Employee=Mitarbeiter
+NewEmployee=Neuer Mitarbeiter

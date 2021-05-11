@@ -1,0 +1,10 @@
+# Dolibarr language file - Source file is en_US - languages
+LinkANewFile=Poveži novo datoteko/dokument
+LinkedFiles=Povezane datoteke in dokumenti
+NoLinkFound=Ni registriranih povezav
+LinkComplete=Datoteka je bila uspešno povezana
+ErrorFileNotLinked=Datoteke ni možno povezati
+LinkRemoved=Povezava %s je bila odstranjena
+ErrorFailedToDeleteLink= Napaka pri odstranitvi povezave '<b>%s</b>'.
+ErrorFailedToUpdateLink= Napaka pri posodobitvi povezave '<b>%s</b>'.
+URLToLink=URL to link

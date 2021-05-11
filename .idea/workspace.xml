@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="334fb6da-3f47-4b96-bc0e-78c16ee6ed5e" name="Default Changelist" comment="" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings" doNotAsk="true" synchronizationState="SYNCHRONIZE">
+    <pharConfigPath>$PROJECT_DIR$/composer.json</pharConfigPath>
+    <execution>
+      <executable />
+    </execution>
+  </component>
+  <component name="DatabaseView">
+    <option name="SHOW_INTERMEDIATE" value="true" />
+    <option name="GROUP_DATA_SOURCES" value="true" />
+    <option name="GROUP_SCHEMA" value="true" />
+    <option name="GROUP_CONTENTS" value="false" />
+    <option name="SORT_POSITIONED" value="false" />
+    <option name="SHOW_EMPTY_GROUPS" value="false" />
+    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
+    <option name="HIDDEN_KINDS">
+      <set />
+    </option>
+    <expand />
+    <select />
+  </component>
+  <component name="DefaultGradleProjectSettings">
+    <option name="isMigrated" value="true" />
+  </component>
+  <component name="FavoritesManager">
+    <favorites_list name="dolibarr" />
+  </component>
+  <component name="PhpDebugGeneral" listening_started="true" />
+  <component name="PhpWorkspaceProjectConfiguration">
+    <include_path>
+      <path value="$PROJECT_DIR$/htdocs/includes/swiftmailer/lib" />
+      <path value="$PROJECT_DIR$/htdocs/includes/sabre/sabre" />
+      <path value="$PROJECT_DIR$/htdocs/includes/mike42/escpos-php" />
+      <path value="$PROJECT_DIR$/htdocs/includes/mobiledetect/mobiledetectlib" />
+      <path value="$PROJECT_DIR$/htdocs/includes/ace/snippets" />
+      <path value="$PROJECT_DIR$/htdocs/includes/ccampbell/chromephp" />
+      <path value="$PROJECT_DIR$/htdocs/includes/ckeditor/ckeditor" />
+      <path value="$PROJECT_DIR$/htdocs/includes/nusoap/lib" />
+      <path value="$PROJECT_DIR$/htdocs/includes/OAuth/Common" />
+      <path value="$PROJECT_DIR$/htdocs/includes/tecnickcom/tcpdf" />
+      <path value="$PROJECT_DIR$/htdocs/includes/OAuth/OAuth1" />
+      <path value="$PROJECT_DIR$/htdocs/includes/jquery/css" />
+      <path value="$PROJECT_DIR$/htdocs/includes/OAuth/OAuth2" />
+      <path value="$PROJECT_DIR$/htdocs/includes/jquery/js" />
+      <path value="$PROJECT_DIR$/htdocs/includes/stripe/data" />
+      <path value="$PROJECT_DIR$/htdocs/includes/jquery/plugins" />
+      <path value="$PROJECT_DIR$/htdocs/includes/stripe/lib" />
+      <path value="$PROJECT_DIR$/htdocs/includes/odtphp/zip" />
+      <path value="$PROJECT_DIR$/htdocs/includes/restler/framework" />
+      <path value="$PROJECT_DIR$/htdocs/includes/stripe/tests" />
+      <path value="$PROJECT_DIR$/htdocs/includes/phpoffice/phpexcel" />
+      <path value="$PROJECT_DIR$/htdocs/includes/swiftmailer/egulias" />
+      <path value="$PROJECT_DIR$/htdocs/includes/sabre/composer" />
+      <path value="$PROJECT_DIR$/htdocs/includes/swiftmailer/lexer" />
+      <path value="$PROJECT_DIR$/htdocs/includes/sabre/psr" />
+    </include_path>
+  </component>
+  <component name="ProjectId" id="1Pdd3bxFWASIVU3gpp5JbDPV5fY" />
+  <component name="PropertiesComponent">
+    <property name="DatabaseDriversLRU" value="mysql" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="com.jetbrains.php.phpunit.codeGeneration.PhpNewTestDialog.defaultLibrary" value="PHPUnit" />
+    <property name="editor.config.ad.shown" value="true" />
+    <property name="jdk.selected.JAVA_MODULE" value="11" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+  </component>
+  <component name="RunAnythingCache">
+    <option name="myCommands">
+      <command value="print ' run';" />
+      <command value="print 'runit';" />
+      <command value="echo 'no result';" />
+    </option>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager">
+    <configuration name="leavelist.js.php" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/dolibarr/htdocs/custom/leavelist/js/leavelist.js.php" useBuiltInWebServerPort="true">
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JavaScript Debug.leavelist.js.php" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="334fb6da-3f47-4b96-bc0e-78c16ee6ed5e" name="Default Changelist" comment="" />
+      <created>1563781502182</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1564945985111</updated>
+      <workItem from="1563781509945" duration="256000" />
+      <workItem from="1563781798448" duration="1463000" />
+      <workItem from="1563798654986" duration="3534000" />
+      <workItem from="1563882258038" duration="2790000" />
+      <workItem from="1563960656531" duration="12355000" />
+      <workItem from="1564079312719" duration="608000" />
+      <workItem from="1564126035282" duration="1913000" />
+      <workItem from="1564133726193" duration="13051000" />
+      <workItem from="1564152680845" duration="636000" />
+      <workItem from="1564353936379" duration="1055000" />
+      <workItem from="1564355763380" duration="411000" />
+      <workItem from="1564385290744" duration="8302000" />
+      <workItem from="1564945963737" duration="10000" />
+      <workItem from="1564945985142" duration="2239000" />
+      <workItem from="1564990499790" duration="19686000" />
+      <workItem from="1565076815536" duration="19957000" />
+      <workItem from="1565165209489" duration="18094000" />
+      <workItem from="1565249870150" duration="18624000" />
+      <workItem from="1565335595179" duration="19943000" />
+      <workItem from="1565768495837" duration="2220000" />
+      <workItem from="1565776803014" duration="9498000" />
+      <workItem from="1565854531670" duration="10769000" />
+      <workItem from="1565942317946" duration="12202000" />
+      <workItem from="1566200576270" duration="815000" />
+      <workItem from="1566207720145" duration="680000" />
+      <workItem from="1566208473408" duration="10774000" />
+      <workItem from="1566286965611" duration="12412000" />
+      <workItem from="1566373995283" duration="12844000" />
+      <workItem from="1566461506678" duration="14390000" />
+      <workItem from="1566546140278" duration="14437000" />
+      <workItem from="1566653775111" duration="827000" />
+      <workItem from="1566690854088" duration="340000" />
+      <workItem from="1566691249984" duration="617000" />
+      <workItem from="1566742344014" duration="1281000" />
+      <workItem from="1566808101928" duration="947000" />
+      <workItem from="1566809237807" duration="33000" />
+      <workItem from="1566809294579" duration="19755000" />
+      <workItem from="1566892794561" duration="9865000" />
+      <workItem from="1566904799996" duration="13095000" />
+      <workItem from="1566946004632" duration="3271000" />
+      <workItem from="1566979904826" duration="20824000" />
+      <workItem from="1567066071229" duration="8741000" />
+      <workItem from="1567103078732" duration="281000" />
+      <workItem from="1567120130314" duration="2410000" />
+      <workItem from="1567693159681" duration="372000" />
+      <workItem from="1567776720960" duration="650000" />
+      <workItem from="1567812135623" duration="645000" />
+      <workItem from="1569511798542" duration="606000" />
+      <workItem from="1569534446079" duration="233000" />
+      <workItem from="1578874061668" duration="148000" />
+      <workItem from="1579014285932" duration="65000" />
+      <workItem from="1580227191778" duration="264000" />
+      <workItem from="1581364850584" duration="182000" />
+      <workItem from="1581769131747" duration="32818000" />
+      <workItem from="1582829449332" duration="1713000" />
+      <workItem from="1583138497244" duration="35000" />
+      <workItem from="1583952822797" duration="451000" />
+      <workItem from="1584037440971" duration="881000" />
+    </task>
+    <option name="localTasksCounter" value="2" />
+    <servers />
+  </component>
+  <component name="TodoView" selected-index="2">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="antWorkspaceConfiguration">
+    <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
+    <option name="FILTER_TARGETS" value="false" />
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ProjectJDKs.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
+  </component>
+</project>

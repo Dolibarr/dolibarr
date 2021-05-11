@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - ldap
+YouMustChangePassNextLogon=La contrasenya de <b>%s </b> en el domini <b>%s </b> ha de ser modificada.
+UserMustChangePassNextLogon=L'usuari ha de canviar de contrasenya en la propera connexió
+LDAPInformationsForThisContact=Informació de la base de dades LDAP d'aquest contacte
+LDAPInformationsForThisUser=Informació de la base de dades LDAP d'aquest usuari
+LDAPInformationsForThisGroup=Informació de la base de dades LDAP d'aquest grup
+LDAPInformationsForThisMember=Informació en la base de dades LDAP per aquest soci
+LDAPInformationsForThisMemberType=Informació en la base de dades LDAP per a aquest tipus de membre
+LDAPAttributes=Atributs LDAP
+LDAPCard=Fitxa LDAP
+LDAPRecordNotFound=Registre no trobat a la base de dades LDAP
+LDAPUsers=Usuaris a la base de dades LDAP
+LDAPFieldStatus=Estat
+LDAPFieldFirstSubscriptionDate=Data primera adhesió
+LDAPFieldFirstSubscriptionAmount=Import primera adhesió
+LDAPFieldLastSubscriptionDate=Data de l'última afiliació
+LDAPFieldLastSubscriptionAmount=Últim import de subscripció
+LDAPFieldSkype=Id Skype
+LDAPFieldSkypeExample=Exemple : NomSkype
+UserSynchronized=Usuari sincronitzat
+GroupSynchronized=Grup sincronizado
+MemberSynchronized=Soci sincronitzat
+MemberTypeSynchronized=Tipus de membre sincronitzat
+ContactSynchronized=Contacte sincronitzat
+ForceSynchronize=Forçar sincronització Dolibarr -> LDAP
+ErrorFailedToReadLDAP=Error de la lectura de l'anuari LDAP. Comprovar la configuració del mòdul LDAP i l'accessibilitat de l'anuari.
+PasswordOfUserInLDAP=Contrasenya de l'usuari en LDAP

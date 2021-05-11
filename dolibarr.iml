@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="WEB_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/OAuth/Common" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/OAuth/OAuth1" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/OAuth/OAuth2" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/ace/snippets" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/ccampbell/chromephp" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/ckeditor/ckeditor" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/jquery/css" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/jquery/js" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/jquery/plugins" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/mike42/escpos-php" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/mobiledetect/mobiledetectlib" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/nusoap/lib" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/odtphp/zip" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/phpoffice/phpexcel" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/restler/framework" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/sabre/composer" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/sabre/psr" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/sabre/sabre" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/stripe/data" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/stripe/lib" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/stripe/tests" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/swiftmailer/egulias" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/swiftmailer/lexer" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/swiftmailer/lib" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/tecnickcom/tcpdf" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>

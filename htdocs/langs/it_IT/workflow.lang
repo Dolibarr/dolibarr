@@ -1,0 +1,20 @@
+# Dolibarr language file - Source file is en_US - workflow
+WorkflowSetup=Impostazioni flusso di lavoro
+WorkflowDesc=Questo modulo è progettato per modificare il comportamento di azioni automatiche nell'applicazione. Per impostazione predefinita, il flusso di lavoro è aperto (si possono fare cose nell'ordine che volete). È possibile attivare le azioni automatiche che vi interessano.
+ThereIsNoWorkflowToModify=Non ci sono modifiche del flusso di lavoro disponibili con i moduli attivati.
+# Autocreate
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Crea automaticamente un ordine cliente dopo che una proposta commerciale viene segnata come firmata (il nuovo ordine avrà lo stesso ammontare della proposta commerciale)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Crea automaticamente una fattura cliente dopo aver firmato una proposta commerciale (la nuova fattura avrà lo stesso importo della proposta)
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Creare automaticamente una fattura attiva alla convalida del contratto
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Crea automaticamente una fattura cliente dopo che un ordine cliente è stato chiuso (la nuova fattura avrà lo stesso importo dell'ordine)
+# Autoclassify customer proposal or order
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classifica come "da fatturare" la/e proposta/e commerciale/i quando l'ordine cliente collegato è impostato come da fatturare (e se l'ammontare dell'ordine è lo stesso ammontare della proposta commerciale firmata e collegata)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classifica "da fatturare" le proposte collegate quando la fattura cliente è validata (e se l'importo della fattura è uguale all'importo totale delle proposte collegate)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classifica "da fatturare" gli ordini cliente collegati quando la fattura cliente è validata (e se l'importo della fattura è uguale all'importo totale di ordini collegati)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classifica "da fatturare" gli ordini cliente collegati quando la fattura cliente è impostata su pagamento (e se l'importo della fattura è uguale all'importo totale di ordini collegati)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classifica "da spedire" l'ordine cliente collegato quando una spedizione viene convalidata (e se la quantità spedita da tutte le spedizioni è la stessa dell'ordine da aggiornare)
+# Autoclassify supplier order
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal(s) to billed when vendor invoice is validated (and if amount of the invoice is same than total amount of linked proposals)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source purchase order(s) to billed when vendor invoice is validated (and if amount of the invoice is same than total amount of linked orders)
+AutomaticCreation=Creazione automatica
+AutomaticClassification=Classificazione automatica

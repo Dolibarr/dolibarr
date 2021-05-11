@@ -1,0 +1,38 @@
+# Dolibarr language file - Source file is en_US - paybox
+PayBoxSetup=Nastavitev modula za online plačila Paybox
+PayBoxDesc=Ta modul omogoča kupcem plačevanje na <a href="http://www.paybox.com" target="_blank">Paybox</a>. Lahko se uporabi za prosto plačevanje ali za plačilo posameznih Dolibarr postavk (račun, naročilo, ...)
+FollowingUrlAreAvailableToMakePayments=Naslednji URL naslovi so na voljo kupcem za izvedbo plačil Dolibarr postavk
+PaymentForm=Obrazec za plačilo
+WelcomeOnPaymentPage=Dobrodošli v naši storitvi online plačil
+ThisScreenAllowsYouToPay=Ta zaslon omogoča online plačilo za %s.
+ThisIsInformationOnPayment=To je informacija o potrebnem plačilu
+ToComplete=Za dokončanje
+YourEMail=E-pošta za potrditev plačila
+Creditor=Upnik
+PaymentCode=Koda plačila
+PayBoxDoPayment=Pay with Credit or Debit Card (Paybox)
+ToPay=Izvrši plačilo
+YouWillBeRedirectedOnPayBox=Preusmerjeni boste na varno Paybox stran za vnos podatkov o vaši kreditni kartici
+Continue=Naslednji
+ToOfferALinkForOnlinePayment=URL za %s plačila
+ToOfferALinkForOnlinePaymentOnOrder=URL naslov s ponudbo %s vmesnika za online plačila naročil
+ToOfferALinkForOnlinePaymentOnInvoice=URL naslov s ponudbo %s vmesnika za online plačila računov
+ToOfferALinkForOnlinePaymentOnContractLine=URL naslov s ponudbo %s vmesnika za online plačila po pogodbi
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL naslov s ponudbo %s vmesnika za online plačila poljubnih zneskov
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL naslov s ponudbo %s vmesnika za online plačila članarin
+YouCanAddTagOnUrl=Vsakemu od teh URL naslovov lahko tudi dodate url parameter <b>&tag=<i>vrednost</i></b> (zahtevano samo pri poljubnih plačilih) s komentarjem vašega plačila.
+SetupPayBoxToHavePaymentCreatedAutomatically=Nastavite vaš PayBox z url <b>%s</b> za avtomatsko kreiranje plačil po potrditvi.
+YourPaymentHasBeenRecorded=Ta stran potrjuje, da je bilo vaše plačilo sprejeto. Hvala.
+YourPaymentHasNotBeenRecorded=Vaše plačilo ni bilo sprejeto in prenos je bil preklican. Hvala.
+AccountParameter=Parametri računa
+UsageParameter=Parametri uporabe
+InformationToFindParameters=Pomoč pri iskanju informacij računa %s
+PAYBOX_CGI_URL_V2=Url Paybox CGI modula za plačila
+VendorName=Ime prodajalca
+CSSUrlForPaymentForm=url CSS vzorca obrazca plačila
+NewPayboxPaymentReceived=Novo Paybox plačilo prejeto
+NewPayboxPaymentFailed=Zavrnjen poskus novega Paybox plačila
+PAYBOX_PAYONLINE_SENDEMAIL=E-poštno opozorilo po plačilu (uspešno ali zavrnjeno)
+PAYBOX_PBX_SITE=Vrednost za PBX SITE
+PAYBOX_PBX_RANG=Vrednost za PBX Rang
+PAYBOX_PBX_IDENTIFIANT=Vrednost za PBX ID

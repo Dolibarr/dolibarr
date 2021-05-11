@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=Configuration module PayPal
+PaypalDesc=Ce module permet d'offrir une page de paiement via le prestataire <a href="http://www.paypal.com" target="_blank">Paypal</a> pour réaliser un paiement quelconque ou un paiement par rapport à un objet Dolibarr (facture, commande…)
+PaypalOrCBDoPayment=Payer avec Paypal (Carte de crédit ou Paypal)
+PaypalDoPayment=Payer par PayPal
+PAYPAL_API_SANDBOX=Mode test/bac à sable (sandbox)
+PAYPAL_API_USER=Nom utilisateur API
+PAYPAL_API_PASSWORD=Mot de passe utilisateur API
+PAYPAL_API_SIGNATURE=Signature API
+PAYPAL_SSLVERSION=Curl Version SSL
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Proposer le paiement intégral (Carte+Paypal) ou Paypal seul
+PaypalModeIntegral=Intégral
+PaypalModeOnlyPaypal=PayPal seul
+ONLINE_PAYMENT_CSS_URL=URL optionnelle de la feuille de style CSS sur la page de paiement en ligne
+ThisIsTransactionId=Voici l'identifiant de la transaction: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Ajouter l'URL de paiement Paypal lors de l'envoi d'un document par email
+YouAreCurrentlyInSandboxMode=Vous travaillez actuellement dans le mode "bac à sable" de %s
+NewOnlinePaymentReceived=Nouveau paiement en ligne reçu
+NewOnlinePaymentFailed=Nouvelle tentative de paiement en ligne échouée
+ONLINE_PAYMENT_SENDEMAIL=Email à prévenir en cas de paiement (succès ou non)
+ReturnURLAfterPayment=URL de retour de paiement
+ValidationOfOnlinePaymentFailed=Validation d'un paiement en ligne échouée
+PaymentSystemConfirmPaymentPageWasCalledButFailed=La page de confirmation des paiements ayant été apellée par le système de paiement a retourné un erreur
+SetExpressCheckoutAPICallFailed=L'appel à l'API SetExpressCheckout a échoué.
+DoExpressCheckoutPaymentAPICallFailed=L'appel à l'API DoExpressCheckoutPayment a échoué.
+DetailedErrorMessage=Message d'erreur détaillé
+ShortErrorMessage=Message d'erreur court
+ErrorCode=Code erreur
+ErrorSeverityCode=Code d'erreur sévérité
+OnlinePaymentSystem=Système de paiement en ligne
+PaypalLiveEnabled=Paypal live activé (sinon mode test/bac à sable)
+PaypalImportPayment=Importer paiements Paypal
+PostActionAfterPayment=Actions complémentaires après paiement
+ARollbackWasPerformedOnPostActions=Une annulation a été effectuée sur toutes les actions Post paiement. Vous devez compléter les actions complémentaires manuellement si elles sont nécessaires.

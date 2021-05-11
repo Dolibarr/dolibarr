@@ -1,0 +1,20 @@
+# Dolibarr language file - Source file is en_US - marque pages
+AddThisPageToBookmarks=Dodaj ovu stranicu u bookmark
+Bookmark=Bookmark
+Bookmarks=Bookmarks
+ListOfBookmarks=Lista bookmark-a
+EditBookmarks=Prikaži/uredi favorite
+NewBookmark=Novi bookmark
+ShowBookmark=Prikaži bookmark
+OpenANewWindow=Otvori u novom prozoru
+ReplaceWindow=Zamijeni trenutni prozor
+BookmarkTargetNewWindowShort=Novi prozor
+BookmarkTargetReplaceWindowShort=Trenutni prozor
+BookmarkTitle=Naziv bookmark-a
+UrlOrLink=Link
+BehaviourOnClick=Ponašanje kada se klikne na link
+CreateBookmark=Kreiraj bookmark
+SetHereATitleForLink=Postavi naslov za bookmark
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Koristi ekterni http link ili relativni Dolibarr link
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if linked page must open in new window or not
+BookmarksManagement=Upravljanje bookmark-ima

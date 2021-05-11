@@ -1,0 +1,72 @@
+# Dolibarr language file - Source file is en_US - sendings
+RefSending=Ref. shipment
+Sending=Shipment
+Sendings=משלוחים
+AllSendings=All Shipments
+Shipment=Shipment
+Shipments=משלוחים
+ShowSending=Show Shipments
+Receivings=Delivery Receipts
+SendingsArea=Shipments area
+ListOfSendings=List of shipments
+SendingMethod=Shipping method
+LastSendings=Latest %s shipments
+StatisticsOfSendings=Statistics for shipments
+NbOfSendings=Number of shipments
+NumberOfShipmentsByMonth=Number of shipments by month
+SendingCard=Shipment card
+NewSending=New shipment
+CreateShipment=Create shipment
+QtyShipped=Qty shipped
+QtyShippedShort=Qty ship.
+QtyPreparedOrShipped=Qty prepared or shipped
+QtyToShip=Qty to ship
+QtyReceived=Qty received
+QtyInOtherShipments=Qty in other shipments
+KeepToShip=Remain to ship
+KeepToShipShort=Remain
+OtherSendingsForSameOrder=Other shipments for this order
+SendingsAndReceivingForSameOrder=Shipments and receipts for this order
+SendingsToValidate=Shipments to validate
+StatusSendingCanceled=Canceled
+StatusSendingDraft=Draft
+StatusSendingValidated=Validated (products to ship or already shipped)
+StatusSendingProcessed=Processed
+StatusSendingDraftShort=Draft
+StatusSendingValidatedShort=Validated
+StatusSendingProcessedShort=Processed
+SendingSheet=Shipment sheet
+ConfirmDeleteSending=Are you sure you want to delete this shipment?
+ConfirmValidateSending=Are you sure you want to validate this shipment with reference <b>%s</b>?
+ConfirmCancelSending=Are you sure you want to cancel this shipment?
+DocumentModelMerou=Merou A5 model
+WarningNoQtyLeftToSend=Warning, no products waiting to be shipped.
+StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated. Date used is date of validation of shipment (planed delivery date is not always known).
+DateDeliveryPlanned=Planned date of delivery
+RefDeliveryReceipt=Ref delivery receipt
+StatusReceipt=Status delivery receipt
+DateReceived=Date delivery received
+SendShippingByEMail=Send shipment by EMail
+SendShippingRef=Submission of shipment %s
+ActionsOnShipping=Events on shipment
+LinkToTrackYourPackage=Link to track your package
+ShipmentCreationIsDoneFromOrder=For the moment, creation of a new shipment is done from the order card.
+ShipmentLine=Shipment line
+ProductQtyInCustomersOrdersRunning=Product quantity into open customer orders
+ProductQtyInSuppliersOrdersRunning=Product quantity into open purchase orders
+ProductQtyInShipmentAlreadySent=Product quantity from open customer order already sent
+ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from open supplier order already received
+NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
+WeightVolShort=Weight/Vol.
+ValidateOrderFirstBeforeShipment=You must first validate the order before being able to make shipments.
+
+# Sending methods
+# ModelDocument
+DocumentModelTyphon=More complete document model for delivery receipts (logo...)
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constant EXPEDITION_ADDON_NUMBER not defined
+SumOfProductVolumes=Sum of product volumes
+SumOfProductWeights=Sum of product weights
+
+# warehouse details
+DetailWarehouseNumber= Warehouse details
+DetailWarehouseFormat= W:%s (Qty : %d)

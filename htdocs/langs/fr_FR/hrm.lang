@@ -1,0 +1,17 @@
+# Dolibarr language file - en_US - hrm
+# Admin
+HRM_EMAIL_EXTERNAL_SERVICE=Adresse email du service GRH externe à prévenir
+Establishments=Etablissements
+Establishment=Etablissement
+NewEstablishment=Nouvel établissement
+DeleteEstablishment=Supprimer l'établissement
+ConfirmDeleteEstablishment=Êtes-vous sûr de vouloir supprimer cet établissement ?
+OpenEtablishment=Etablissement ouvert
+CloseEtablishment=Etablissement fermé
+# Dictionary
+DictionaryDepartment=GRH - Liste des départements
+DictionaryFunction=GRH - Liste des fonctions
+# Module
+Employees=Salariés
+Employee=Salarié
+NewEmployee=Nouveau salarié

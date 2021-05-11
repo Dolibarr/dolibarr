@@ -1,0 +1,20 @@
+# Dolibarr language file - Source file is en_US - workflow
+WorkflowSetup=工作流模块设置
+WorkflowDesc=本模块旨在将自动操作的行为修改为应用程序。默认情况下, 工作流处于打开状态 (您可以按所需顺序执行某些动作)。您还可以激活您感兴趣的自动操作。
+ThereIsNoWorkflowToModify=没有工作流程，您可以修改你已激活的模块。
+# Autocreate
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=在商业方案签订后自动创建客户订单 (新订单的金额将与方案相同)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=在商业方案签订后自动创建客户账单 (新账单的金额与提案金额相)
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=在合同确认后自动创建客户发票
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=在客户订单关闭后自动创建客户账单 (新账单的金额将大于订单)
+# Autoclassify customer proposal or order
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=将 "客户订单" 设置为 "记帐" 时对关联的源方案进行分类 (如果订单金额与已签名的关联方案总金额相同)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=当客户账单被确认时 ( 如果账单金额与已签订的关联方案总额相同 ) ，将关联源方案分类为账单。
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=当客户账单被确认时，将关联源客户订单分类为账单(如果账单金额与关联订单总额相同)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=当客户账单设定为支付时，将关联源客户订单分类为账单（如果账单金额与关联订单总额相同）
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=将关联源客户订单分类为发货时进行验证 (如果所有装运的货物数量与更新的订单相同)
+# Autoclassify supplier order
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal(s) to billed when vendor invoice is validated (and if amount of the invoice is same than total amount of linked proposals)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source purchase order(s) to billed when vendor invoice is validated (and if amount of the invoice is same than total amount of linked orders)
+AutomaticCreation=自动创建
+AutomaticClassification=自动分类

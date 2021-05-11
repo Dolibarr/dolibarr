@@ -1,0 +1,30 @@
+# Dolibarr language file - Source file is en_US - deliveries
+Delivery=Livrare
+DeliveryRef=Ref Livrare
+DeliveryCard=Chitanta card
+DeliveryOrder=Ordin de livrare 
+DeliveryDate=Data de livrare
+CreateDeliveryOrder=Generați chitanța de livrare
+DeliveryStateSaved=Stare livrare salvata
+SetDeliveryDate=Setaţi data de expediere
+ValidateDeliveryReceipt=Validare recepţie  livrare
+ValidateDeliveryReceiptConfirm=Sigur doriți să validați această chitanță de livrare?
+DeleteDeliveryReceipt=Ştergeţi recepţie livrare
+DeleteDeliveryReceiptConfirm=Sigur doriți să ștergeți chitanța de livrare <b> %s </b>?
+DeliveryMethod=Metoda de livrare
+TrackingNumber=Număr de urmărire
+DeliveryNotValidated=Livrare  nevalidată
+StatusDeliveryCanceled=Anulata
+StatusDeliveryDraft=Draft
+StatusDeliveryValidated=Primit
+# merou PDF model
+NameAndSignature=Nume şi Semnătura:
+ToAndDate=To___________________________________ pe ____ / _____ / __________
+GoodStatusDeclaration=Au primit bunurile în bună stare de mai sus,
+Deliverer=Eliberator:
+Sender=Expeditor
+Recipient=Recipient
+ErrorStockIsNotEnough=Nu există stoc suficient
+Shippable=Livrabil
+NonShippable=Nelivrabil
+ShowReceiving= Afișare notă de recepție

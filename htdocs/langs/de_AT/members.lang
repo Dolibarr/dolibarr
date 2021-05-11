@@ -1,0 +1,22 @@
+# Dolibarr language file - Source file is en_US - members
+SetLinkToUser=Mit Benutzer verknüpfen
+SetLinkToThirdParty=Mit Partner verknüpfen
+MenuMembersNotUpToDate=Veraltete Mitglieder
+DateSubscription=Abonnierungsdatum
+DateEndSubscription=Abonnementauslaufdatum
+EndSubscription=Abonnementende
+SubscriptionId=Abonnement ID
+MemberId=Mitglieds ID
+MemberTypeId=Mitgliedsart ID
+MemberStatusDraftShort=Entwurf
+MemberStatusActiveLateShort=abgelaufen
+SubscriptionEndDate=Abonnementauslaufdatum
+SubscriptionLate=Versätet
+NewMemberType=Neues Mitgliedsrt
+WelcomeEMail=Willkommens-E-Mail
+DeleteType=Löschen
+Physical=Physisch
+Moral=Rechtlich
+MorPhy=Physisch/Rechtlich
+Filehtpasswd=htpasswd-Datei
+HTPasswordExport=htpassword-Dateierstellung

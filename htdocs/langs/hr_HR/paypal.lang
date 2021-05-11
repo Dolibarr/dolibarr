@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=PayPal postavljanje modula
+PaypalDesc=This module offer pages to allow payment on <a href="http://www.paypal.com" target="_blank">PayPal</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
+PaypalOrCBDoPayment=Pay with Paypal (Credit Card or Paypal)
+PaypalDoPayment=Plaćanje putem PayPal-a
+PAYPAL_API_SANDBOX=Test mod/sandbox
+PAYPAL_API_USER=API korisničko ima
+PAYPAL_API_PASSWORD=API lozinka
+PAYPAL_API_SIGNATURE=API potpis
+PAYPAL_SSLVERSION=Curl SSL Verzija
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Ponuda plaćanja "integralna" (kreditna kartica+PayPal) ili samo PayPal
+PaypalModeIntegral=Integralno
+PaypalModeOnlyPaypal=Samo PayPal
+ONLINE_PAYMENT_CSS_URL=Optionnal URL of CSS style sheet on online payment page
+ThisIsTransactionId=Ovo je ID tranksakcije: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Add the url of Paypal payment when you send a document by mail
+YouAreCurrentlyInSandboxMode=You are currently in the %s "sandbox" mode
+NewOnlinePaymentReceived=New online payment received
+NewOnlinePaymentFailed=New online payment tried but failed
+ONLINE_PAYMENT_SENDEMAIL=EMail to warn after a payment (success or not)
+ReturnURLAfterPayment=Povratni URL nakon uplate
+ValidationOfOnlinePaymentFailed=Validation of online payment failed
+PaymentSystemConfirmPaymentPageWasCalledButFailed=Payment confirmation page was called by payment system returned an error
+SetExpressCheckoutAPICallFailed=SetExpressCheckout API call failed.
+DoExpressCheckoutPaymentAPICallFailed=DoExpressCheckoutPayment API call failed.
+DetailedErrorMessage=Detaljna poruka greške
+ShortErrorMessage=Kratka poruka greške
+ErrorCode=Kod greške
+ErrorSeverityCode=Error Severity Code
+OnlinePaymentSystem=Online payment system
+PaypalLiveEnabled=Paypal live enabled (otherwise test/sandbox mode)
+PaypalImportPayment=Import Paypal payments
+PostActionAfterPayment=Post actions after payments
+ARollbackWasPerformedOnPostActions=A rollback was performed on all Post actions. You must complete post actions manually if they are necessary.

@@ -1,0 +1,16 @@
+# Dolibarr language file - Source file is en_US - bills
+BillStatusPaid=Pagado
+BillStatusStarted=Empezado
+BillShortStatusPaid=Pagado
+BillShortStatusConverted=Pagado
+BillShortStatusValidated=Validado
+BillShortStatusStarted=Empezado
+BillShortStatusClosedUnpaid=Cerrado
+BillFrom=De
+ReasonDiscount=Razón
+PaymentTypeCB=Tarjeta de crédito
+PaymentTypeShortCB=Tarjeta de crédito
+PaymentTypeCHQ=Verificar
+PaymentTypeShortCHQ=Verificar
+BankDetails=Cuentas bancarias
+situationInvoiceShortcode_S=D

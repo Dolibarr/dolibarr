@@ -1,0 +1,83 @@
+# Dolibarr language file - Source file is en_US - cron
+# About page
+# Right
+Permission23101 = Čtení naplánovaných úloh
+Permission23102 = Vytvoření/aktualizace naplánované úlohy
+Permission23103 = Smazat naplánovanou úlohu
+Permission23104 = Provést naplánovanou úlohu
+# Admin
+CronSetup= Nastavení naplánovaných úloh
+URLToLaunchCronJobs=URL ke kontrole a spuštění úlohy v případě potřeby
+OrToLaunchASpecificJob=Nebo zkontrolovat a zahájit konkrétní práci
+KeyForCronAccess=Bezpečnostní klíč URL spuštění úlohy
+FileToLaunchCronJobs=Command line to check and launch qualified cron jobs
+CronExplainHowToRunUnix=Na Unixových systémech by jste měli použít následující položku crontab ke spuštění příkazového řádku každých 5 minut
+CronExplainHowToRunWin=Na Microsoft Windows systémech můžete použít naplánováné nástroje úloh ke spuštění příkazového řádku každých 5 minut
+CronMethodDoesNotExists=Třída %s neobsahuje žádné metody %s
+CronJobDefDesc=Cron job profiles are defined into the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
+CronJobProfiles=List of predefined cron job profiles
+# Menu
+EnabledAndDisabled=Zapínat a vypínat
+# Page list
+CronLastOutput=Výstup poslední úlohy
+CronLastResult=Výstup posledního kódu
+CronCommand=Příkaz
+CronList=Naplánované úlohy
+CronDelete=Smazat naplánované úlohy
+CronConfirmDelete=Jste si jisti, že chcete odstranit tyto naplánované úlohy?
+CronExecute=Spuštění naplánovaných úloh
+CronConfirmExecute=Jste si jisti, že chcete provést tyto naplánované úlohy nyní?
+CronInfo=Scheduled job module allows to schedule jobs to execute them automatically. Jobs can also be started manually.
+CronTask=Práce
+CronNone=Nikdo
+CronDtStart=Ne předtím
+CronDtEnd=nikoli po
+CronDtNextLaunch=Další provedení
+CronDtLastLaunch=Počáteční datum posledního provedení
+CronDtLastResult=datum ukončení posledního výkonu
+CronFrequency=Frekvence
+CronClass=Třída
+CronMethod=Metoda
+CronModule=Modul
+CronNoJobs=Žádné registrované úkoly
+CronPriority=Priorita
+CronLabel=Štítek
+CronNbRun=Nb. zahájit
+CronMaxRun=Max number launch
+CronEach=Každý
+JobFinished=Práce zahájena a dokončena
+#Page card
+CronAdd= Přidat práci
+CronEvery=Vykonat práci každý
+CronObject=Vytvoření Instance/objektu
+CronArgs=Parametry
+CronSaveSucess=Úspěšně uloženo
+CronNote=Komentář
+CronFieldMandatory=Pole %s je povinné
+CronErrEndDateStartDt=Datum ukončení nemůže být před datem zahájení
+StatusAtInstall=Status at module installation
+CronStatusActiveBtn=Umožnit
+CronStatusInactiveBtn=Zakázat
+CronTaskInactive=Tato úloha je zakázána
+CronId=Id
+CronClassFile=Filename with class
+CronModuleHelp=Name of Dolibarr module directory (also work with external Dolibarr module). <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/<u>product</u>/class/product.class.php, the value for module is<br><i>product</i>
+CronClassFileHelp=The relative path and file name to load (path is relative to web server root directory). <BR> For exemple to call the fetch method of Dolibarr Product object htdocs/product/class/<u>product.class.php</u>, the value for class file name is<br><i>product/class/product.class.php</i>
+CronObjectHelp=The object name to load. <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for class file name is<br><i>Product</i>
+CronMethodHelp=The object method to launch. <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for method is<br><i>fetch</i>
+CronArgsHelp=The method arguments. <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for paramters can be<br><i>0, ProductRef</i>
+CronCommandHelp=Spustit příkazový řádek.
+CronCreateJob=Vytvořit novou naplánovanou úlohu
+CronFrom=Z
+# Info
+# Common
+CronType=Typ úlohy
+CronType_method=Call method of a PHP Class
+CronType_command=Shell příkaz
+CronCannotLoadClass=Cannot load class file %s (to use class %s)
+CronCannotLoadObject=Class file %s was loaded, but object %s was not found into it
+UseMenuModuleToolsToAddCronJobs=Jděte do menu "Home- Moduly nářadí- Seznam úloh" kde vidíte a upravujete naplánované úlohy.
+JobDisabled=Úloha vypnuta
+MakeLocalDatabaseDumpShort=Záloha lokální databáze
+MakeLocalDatabaseDump=Create a local database dump. Parameters are: compression ('gz' or 'bz' or 'none'), backup type ('mysql' or 'pgsql'), 1, 'auto' or filename to build, number of backup files to keep
+WarningCronDelayed=Attention, for performance purpose, whatever is next date of execution of enabled jobs, your jobs may be delayed to a maximum of %s hours, before being run.

@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=Configuración del módulo PayPal
+PaypalDesc=Este módulo ofrece una página  de pago a través del proveedor <a href="http://www.paypal.com" target="_blank">Paypal</a> para realizar cualquier pago o un pago en relación con un objeto Dolibarr (facturas, pedidos ...)
+PaypalOrCBDoPayment=Pagar con Paypal (tarjeta de crédito o Paypal)
+PaypalDoPayment=Continuar el pago mediante Paypal
+PAYPAL_API_SANDBOX=Modo de pruebas (sandbox)
+PAYPAL_API_USER=Nombre usuario API
+PAYPAL_API_PASSWORD=Contraseña usuario API
+PAYPAL_API_SIGNATURE=Firma API
+PAYPAL_SSLVERSION=Versión Curl SSL
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Proponer pago integral (Tarjeta+Paypal) o sólo Paypal
+PaypalModeIntegral=Integral
+PaypalModeOnlyPaypal=Sólo PayPal
+ONLINE_PAYMENT_CSS_URL=URL opcional de la hoja de estilo CSS en la página de pago en línea
+ThisIsTransactionId=Identificador de la transacción: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Añadir la url del pago Paypal al enviar un documento por e-mail
+YouAreCurrentlyInSandboxMode=Actualmente se encuentra en el modo %s "sandbox"
+NewOnlinePaymentReceived=Nuevo pago en línea recibido
+NewOnlinePaymentFailed=Nuevo pago en línea intentado pero ha fallado
+ONLINE_PAYMENT_SENDEMAIL=E-Mail a avisar en caso de pago (con éxito o no)
+ReturnURLAfterPayment=URL de retorno después del pago
+ValidationOfOnlinePaymentFailed=Ha fallado la validación del pago en línea
+PaymentSystemConfirmPaymentPageWasCalledButFailed=La página de confirmación de pago fue llamada por el sistema de pago devolvió un error
+SetExpressCheckoutAPICallFailed=Llamada a la API SetExpressCheckout falló.
+DoExpressCheckoutPaymentAPICallFailed=Llamada a la API DoExpressCheckoutPayment falló.
+DetailedErrorMessage=Mensaje de error detallado
+ShortErrorMessage=Mensaje de error Corto
+ErrorCode=Código de error
+ErrorSeverityCode=Gravedad del Código de error 
+OnlinePaymentSystem=Sistema de pago online
+PaypalLiveEnabled=Paypal en vivo habilitado (de lo contrario, modo prueba/sandbox)
+PaypalImportPayment=Importe pagos Paypal
+PostActionAfterPayment=Acciones después de los pagos
+ARollbackWasPerformedOnPostActions=Se realizó una reversión en todas las acciones. Debe completar las acciones manualmente si son necesarias.

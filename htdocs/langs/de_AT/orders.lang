@@ -1,0 +1,17 @@
+# Dolibarr language file - Source file is en_US - orders
+OrderLine=Bestellposition
+OrderToProcess=Zu bearbeitende Bestellung
+CustomerOrder=Ablehnung durch Kontoinhaber
+OrdersInProcess=Bestellunen in Bearbeitung
+StatusOrderValidatedShort=Bestätigt
+StatusOrderValidated=Bestätigt
+StatusOrderOnProcess=In Arbeit
+RefOrder=Bestellung Nr.
+AuthorRequest=Authorenrechte beantragen
+PaymentOrderRef=Zahlung zu Bestellung %s
+CloneOrder=Duplizieren
+TypeContact_commande_internal_SALESREPFOLL=Kundenauftrags-Nachverfolgung durch Vertreter
+TypeContact_commande_external_BILLING=Debitorenrechnung Kontakt
+TypeContact_commande_external_SHIPPING=Customer Versand Kontakt
+TypeContact_commande_external_CUSTOMER=Bestellungs-Nachverfolgung durch Kundenkontakt
+PDFEinsteinDescription=Eine vollständige Bestellvorlage (Logo, ...)

@@ -1,0 +1,30 @@
+# Dolibarr language file - Source file is en_US - deliveries
+Delivery=تحویل
+DeliveryRef=Ref Delivery
+DeliveryCard=Receipt card
+DeliveryOrder=منظور تحویل
+DeliveryDate=تاریخ تحویل
+CreateDeliveryOrder=Generate delivery receipt
+DeliveryStateSaved=Delivery state saved
+SetDeliveryDate=تنظیم تاریخ حمل و نقل
+ValidateDeliveryReceipt=اعتبارسنجی رسید تحویل
+ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt?
+DeleteDeliveryReceipt=حذف رسید تحویل
+DeleteDeliveryReceiptConfirm=Are you sure you want to delete delivery receipt <b>%s</b>?
+DeliveryMethod=روش تحویل
+TrackingNumber=تعداد پیگیری
+DeliveryNotValidated=تحویل اعتبار نیست
+StatusDeliveryCanceled=لغو شد
+StatusDeliveryDraft=پیش نویس
+StatusDeliveryValidated=رسیده
+# merou PDF model
+NameAndSignature=نام و امضا:
+ToAndDate=To___________________________________ در ____ / ____ / __________
+GoodStatusDeclaration=محصولات فوق در شرایط خوبی دریافت کرده اند،
+Deliverer=منجی:
+Sender=فرستنده
+Recipient=دریافت کننده
+ErrorStockIsNotEnough=این سهام به اندازه کافی وجود ندارد
+Shippable=حمل و نقلی
+NonShippable=حمل و نقلی نیست
+ShowReceiving=Show delivery receipt

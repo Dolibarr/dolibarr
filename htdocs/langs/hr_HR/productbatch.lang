@@ -1,0 +1,24 @@
+# ProductBATCH language file - en_US - ProductBATCH
+ManageLotSerial=Koristi lot/serijski broj
+ProductStatusOnBatch=DA (lot/serijski broj potreban)
+ProductStatusNotOnBatch=NE (lot/serijski broj ne koristi)
+ProductStatusOnBatchShort=DA
+ProductStatusNotOnBatchShort=NE
+Batch=Lot/serijski broj
+atleast1batchfield=Upotrebljivo datum ili datum isteka ili lot/serijski broj
+batch_number=Lot/serijski broj
+BatchNumberShort=Lot/serijski broj
+EatByDate=Upotrebljivo datum:
+SellByDate=Datum isteka
+DetailBatchNumber=Detalji lot/serijski
+printBatch=Lot/Serijski: %s
+printEatby=Upotrebljivo: %s
+printSellby=Istek: %s
+printQty=Količina: %d
+AddDispatchBatchLine=Dodaj stavku za otpremu na police
+WhenProductBatchModuleOnOptionAreForced=When module Lot/Serial is on, automatic stock decrease  is forced to 'Decrease real stocks on shipping validation' and automatic increase mode is forced to 'Increase real stocks on manual dispatching into warehouses' and can't be edited. Other options can be defined as you want.
+ProductDoesNotUseBatchSerial=Ovaj proizvod ne koristi lot/serijski broj
+ProductLotSetup=Setup of module lot/serial
+ShowCurrentStockOfLot=Show current stock for couple product/lot
+ShowLogOfMovementIfLot=Show log of movements for couple product/lot
+StockDetailPerBatch=Stock detail per lot

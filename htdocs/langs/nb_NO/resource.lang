@@ -1,0 +1,36 @@
+# Dolibarr language file - Source file is en_US - resource
+MenuResourceIndex=Ressurser
+MenuResourceAdd=Ny ressurs
+DeleteResource=Slett ressurs
+ConfirmDeleteResourceElement=Bekreft sletting av ressursen for dette elementet
+NoResourceInDatabase=Ingen ressurs i databasen
+NoResourceLinked=Ingen koblet ressurs
+
+ResourcePageIndex=Ressursliste
+ResourceSingular=Ressurs
+ResourceCard=Ressurskort
+AddResource=Opprett ressurs
+ResourceFormLabel_ref=Ressursnavn
+ResourceType=Ressurstype
+ResourceFormLabel_description=Beskrivelse av ressurs
+
+ResourcesLinkedToElement=Ressurs koblet til element
+
+ShowResource=Vis ressurs
+
+ResourceElementPage=Elementressurser
+ResourceCreatedWithSuccess=Ressursopprettelse vellykket
+RessourceLineSuccessfullyDeleted=Vellykket sletting av ressurslinje
+RessourceLineSuccessfullyUpdated=Vellykket oppdatering av ressurslinje
+ResourceLinkedWithSuccess=Vellykket ressurskobling
+
+ConfirmDeleteResource=Bekreft sletting av ressurs
+RessourceSuccessfullyDeleted=Vellykket sletting av ressurs
+DictionaryResourceType=Ressurstype
+
+SelectResource=Velg ressurs
+
+IdResource=ID ressurs
+AssetNumber=Serienummer
+ResourceTypeCode=Ressurskode
+ImportDataset_resource_1=Ressurser

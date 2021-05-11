@@ -1,0 +1,72 @@
+# Dolibarr language file - Source file is en_US - sendings
+RefSending=Tilv. sendingunni
+Sending=Sendingunni
+Sendings=Sendingar
+AllSendings=All Shipments
+Shipment=Sendingunni
+Shipments=Sendingar
+ShowSending=Show Shipments
+Receivings=Delivery Receipts
+SendingsArea=Sendingar area
+ListOfSendings=Listi yfir sendings
+SendingMethod=Shipping aðferð
+LastSendings=Latest %s shipments
+StatisticsOfSendings=Tölfræði fyrir sendingar
+NbOfSendings=Fjöldi sendinga
+NumberOfShipmentsByMonth=Number of shipments by month
+SendingCard=Shipment card
+NewSending=New sendingunni
+CreateShipment=Búa til sendinga
+QtyShipped=Magn flutt
+QtyShippedShort=Qty ship.
+QtyPreparedOrShipped=Qty prepared or shipped
+QtyToShip=Magn til skip
+QtyReceived=Magn móttekin
+QtyInOtherShipments=Qty in other shipments
+KeepToShip=Remain to ship
+KeepToShipShort=Remain
+OtherSendingsForSameOrder=Aðrar sendingar fyrir þessari röð
+SendingsAndReceivingForSameOrder=Shipments and receipts for this order
+SendingsToValidate=Sendi til að sannreyna
+StatusSendingCanceled=Hætt við
+StatusSendingDraft=Víxill
+StatusSendingValidated=Staðfestar (vörur til skip eða þegar flutt)
+StatusSendingProcessed=Afgreitt
+StatusSendingDraftShort=Víxill
+StatusSendingValidatedShort=Staðfestar
+StatusSendingProcessedShort=Afgreitt
+SendingSheet=Shipment sheet
+ConfirmDeleteSending=Are you sure you want to delete this shipment?
+ConfirmValidateSending=Are you sure you want to validate this shipment with reference <b>%s</b>?
+ConfirmCancelSending=Are you sure you want to cancel this shipment?
+DocumentModelMerou=Merou A5 líkan
+WarningNoQtyLeftToSend=Aðvörun, að engar vörur sem bíður sendar.
+StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated. Date used is date of validation of shipment (planed delivery date is not always known).
+DateDeliveryPlanned=Planned date of delivery
+RefDeliveryReceipt=Ref delivery receipt
+StatusReceipt=Status delivery receipt
+DateReceived=Date sending berast
+SendShippingByEMail=Senda sendingu með tölvupósti
+SendShippingRef=Submission of shipment %s
+ActionsOnShipping=Viðburðir á sendingunni
+LinkToTrackYourPackage=Tengill til að fylgjast með pakka
+ShipmentCreationIsDoneFromOrder=Í augnablikinu er sköpun af a nýr sendingunni gert úr þeirri röð kortinu.
+ShipmentLine=Shipment line
+ProductQtyInCustomersOrdersRunning=Product quantity into open customer orders
+ProductQtyInSuppliersOrdersRunning=Product quantity into open purchase orders
+ProductQtyInShipmentAlreadySent=Product quantity from open customer order already sent
+ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from open supplier order already received
+NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
+WeightVolShort=Weight/Vol.
+ValidateOrderFirstBeforeShipment=You must first validate the order before being able to make shipments.
+
+# Sending methods
+# ModelDocument
+DocumentModelTyphon=Meira heill skjal líkan fyrir kvittunum sending (logo. ..)
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constant EXPEDITION_ADDON_NUMBER skilgreind ekki
+SumOfProductVolumes=Sum of product volumes
+SumOfProductWeights=Sum of product weights
+
+# warehouse details
+DetailWarehouseNumber= Warehouse details
+DetailWarehouseFormat= W:%s (Qty : %d)

@@ -1,0 +1,15 @@
+# Dolibarr language file - Source file is en_US - projects
+ProjectsPublicDesc=Diese Ansicht zeigt alle für Sie sichtbaren Projekte.
+ProjectsPublicTaskDesc=Diese Ansicht zeigt alle für Sie sichtbaren Aufgaben.
+ProjectsDesc=Diese Ansicht zeigt alle Projekte (Ihre Benutzerberechtigung erlaubt Ihnen eine volle Einsicht aller Projekte).
+TasksPublicDesc=Diese Ansicht zeigt alle für Sie sichtbaren Aufgaben.
+TasksDesc=Diese Ansicht zeigt alle Aufgaben (Ihre Benutzerberechtigung erlaubt Ihnen eine volle Einsicht aller Aufgaben).
+NoProject=Kein Projekt definiert
+RefTask=Aufgaben Nr.
+MyActivities=Meine Tätigkeiten
+ListFichinterAssociatedProject=Liste der mit diesem Projekt verknüpften Eingriffe
+CloseAProject=Schließe Projekt
+ReOpenAProject=Öffne Projekt
+DoNotShowMyTasksOnly=Zeige auch die Aufgaben Anderer
+TypeContact_project_task_internal_TASKEXECUTIVE=Task Exekutive
+TypeContact_project_task_external_TASKEXECUTIVE=Task Exekutive

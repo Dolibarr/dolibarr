@@ -1,0 +1,30 @@
+# Dolibarr language file - Source file is en_US - deliveries
+Delivery=Lieferung
+DeliveryRef=Fer. Lieferung
+DeliveryCard=Empfangsbeleg
+DeliveryOrder=Lieferschein
+DeliveryDate=Liefertermin
+CreateDeliveryOrder=Zustellbeleg erzeugen
+DeliveryStateSaved=Lieferstatus gespeichert.
+SetDeliveryDate=Liefertermin setzen
+ValidateDeliveryReceipt=Lieferschein freigeben
+ValidateDeliveryReceiptConfirm=Sind Sie sicher, dass Sie diesen Lieferschein bestätigen wollen?
+DeleteDeliveryReceipt=Lieferschein löschen
+DeleteDeliveryReceiptConfirm=Möchten Sie den Lieferschein <b>%s</b> wirklich löschen?
+DeliveryMethod=Versandart
+TrackingNumber=Tracking Nummer
+DeliveryNotValidated=Lieferung nicht validiert
+StatusDeliveryCanceled=Storniert
+StatusDeliveryDraft=Entwurf
+StatusDeliveryValidated=erhalten
+# merou PDF model
+NameAndSignature=Name und Unterschrift:
+ToAndDate=An___________________________________ am ____/_____/__________
+GoodStatusDeclaration=Wir haben die oben genannten Waren in einwandfreiem Zustand erhalten,
+Deliverer=Lieferant:
+Sender=Absender
+Recipient=Empfänger
+ErrorStockIsNotEnough=Nicht genügend Bestand
+Shippable=Versandfertig
+NonShippable=Nicht versandfertig
+ShowReceiving=Zustellbestätigung anzeigen

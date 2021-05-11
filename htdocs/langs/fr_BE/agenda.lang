@@ -1,0 +1,22 @@
+# Dolibarr language file - Source file is en_US - agenda
+AffectedTo=Assigné à
+ListOfActions=Liste d'événements
+MenuToDoActions=Tous les événements incomplets
+MenuDoneActions=Tous les événements terminés
+MenuToDoMyActions=Mes événements incomplets
+MenuDoneMyActions=Mes événements terminés
+ListOfEvents=Liste d'événements (calendrier interne)
+ActionsAskedBy=Événements rapportés par
+ActionsToDoBy=Événements assignés à
+ActionsDoneBy=Événements faits par
+ViewCal=Vue mensuelle
+ViewDay=Vue quotidienne
+ViewWeek=Vue hebdomadaire
+AutoActions=Remplissage automatique
+PropalValidatedInDolibarr=Propale %s validée
+InvoiceBackToDraftInDolibarr=Facture %s retour à l'état de brouillon
+ProposalSentByEMail=Propale %s envoyée par e-mail
+OrderSentByEMail=Commande client %s envoyée par e-mail
+ShippingSentByEMail=Livraison %s envoyée par e-mail
+ExportCal=Exporter calendrier
+ExtSiteUrlAgenda=URL pour accéder au fichier .ical

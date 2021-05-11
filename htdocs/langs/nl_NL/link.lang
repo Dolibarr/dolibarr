@@ -1,0 +1,10 @@
+# Dolibarr language file - Source file is en_US - languages
+LinkANewFile=Koppel een nieuw bestand/document
+LinkedFiles=Gekoppelde bestanden en documenten
+NoLinkFound=Geen geregistreerde koppelingen
+LinkComplete=Het bestand is succesvol gekoppeld
+ErrorFileNotLinked=Het bestand kon niet gekoppeld worden
+LinkRemoved=De koppeling %s is verwijderd
+ErrorFailedToDeleteLink= Kon de verbinding '<b>%s</b>' niet verwijderen
+ErrorFailedToUpdateLink= Kon verbinding '<b>%s</b>' niet bijwerken
+URLToLink=URL naar link

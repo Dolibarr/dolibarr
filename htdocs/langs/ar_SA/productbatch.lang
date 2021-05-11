@@ -1,0 +1,24 @@
+# ProductBATCH language file - en_US - ProductBATCH
+ManageLotSerial=استخدام الكثير / الرقم التسلسلي
+ProductStatusOnBatch=نعم (الكثير / مسلسل مطلوب)
+ProductStatusNotOnBatch=رقم (الكثير / المسلسل لم تستخدم)
+ProductStatusOnBatchShort=نعم فعلا
+ProductStatusNotOnBatchShort=لا
+Batch=الكثير / المسلسل
+atleast1batchfield=أكل حسب التاريخ أو بيع حسب التاريخ أو لوط / الرقم التسلسلي
+batch_number=الكثير / الرقم التسلسلي
+BatchNumberShort=الكثير / المسلسل
+EatByDate=أكل حسب التاريخ
+SellByDate=بيع من قبل التاريخ
+DetailBatchNumber=الكثير / تفاصيل المسلسل
+printBatch=الكثير / التسلسلي:٪ الصورة
+printEatby=تناول الطعام عن طريق:٪ الصورة
+printSellby=بيع عن طريق:٪ الصورة
+printQty=الكمية:٪ د
+AddDispatchBatchLine=إضافة سطر لالصلاحية إيفاد
+WhenProductBatchModuleOnOptionAreForced=When module Lot/Serial is on, automatic stock decrease  is forced to 'Decrease real stocks on shipping validation' and automatic increase mode is forced to 'Increase real stocks on manual dispatching into warehouses' and can't be edited. Other options can be defined as you want.
+ProductDoesNotUseBatchSerial=هذا المنتج لا يستخدم الكثير / الرقم التسلسلي
+ProductLotSetup=Setup of module lot/serial
+ShowCurrentStockOfLot=Show current stock for couple product/lot
+ShowLogOfMovementIfLot=Show log of movements for couple product/lot
+StockDetailPerBatch=Stock detail per lot

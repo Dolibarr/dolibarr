@@ -1,0 +1,36 @@
+# Dolibarr language file - Source file is en_US - resource
+MenuResourceIndex=Resources
+MenuResourceAdd=Nieuwe resource
+DeleteResource=Verwijder resource
+ConfirmDeleteResourceElement=Bevestig het verwijderen van de resource voor dit element
+NoResourceInDatabase=Geen resource in de database
+NoResourceLinked=Geen gelinkte resource
+
+ResourcePageIndex=Resource lijst
+ResourceSingular=Resource
+ResourceCard=Resource kaart
+AddResource=Creeer een resource
+ResourceFormLabel_ref=Resource naam
+ResourceType=Resource type
+ResourceFormLabel_description=Resource beschrijving
+
+ResourcesLinkedToElement=Resources gekoppeld aan element
+
+ShowResource=Laat resource zien
+
+ResourceElementPage=Element resources
+ResourceCreatedWithSuccess=Resource met succes gecreeerd 
+RessourceLineSuccessfullyDeleted=Resource lijn succesvol verwijderd
+RessourceLineSuccessfullyUpdated=Resource lijn succesvol bijgewerkt
+ResourceLinkedWithSuccess=Resource met succes gekoppeld
+
+ConfirmDeleteResource=Bevestig verwijderen van deze resource
+RessourceSuccessfullyDeleted=Resource met succes verwijderd
+DictionaryResourceType=Type resources
+
+SelectResource=Kies resource
+
+IdResource=Id resource
+AssetNumber=Serienummer
+ResourceTypeCode=Code type resource
+ImportDataset_resource_1=Resources

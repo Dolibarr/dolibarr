@@ -1,0 +1,10 @@
+# Dolibarr language file - Source file is en_US - languages
+LinkANewFile=Создать ссылку на файл или документ
+LinkedFiles=Ссылки на файлы и документы
+NoLinkFound=Нет зарегистрированных ссылок
+LinkComplete=Создана ссылка на файл
+ErrorFileNotLinked=Не возможно создать ссылку на файл
+LinkRemoved=Ссылка на файл %s удалена
+ErrorFailedToDeleteLink= При удалении ссылки на файл '<b>%s</b>' возникла ошибка
+ErrorFailedToUpdateLink= При обновлении ссылки на файл '<b>%s</b>' возникла ошибка
+URLToLink=URL to link

@@ -1,0 +1,20 @@
+# Dolibarr language file - Source file is en_US - marque pages
+AddThisPageToBookmarks=Add current page to bookmarks
+Bookmark=عنوان
+Bookmarks=عنوان ها
+ListOfBookmarks=فهرست عناوین
+EditBookmarks=List/edit bookmarks
+NewBookmark=عنوان جدید
+ShowBookmark=نمایش عنوان
+OpenANewWindow=باز کردن یک پنجره جدید
+ReplaceWindow=جایگزینی پنجره
+BookmarkTargetNewWindowShort=پنجره جدید
+BookmarkTargetReplaceWindowShort=پنجره کنونی
+BookmarkTitle=تیتر عنوان
+UrlOrLink=یو ار ال
+BehaviourOnClick=Behaviour when a bookmark URL is selected
+CreateBookmark=ایجاد عنوان
+SetHereATitleForLink=تنظیم یک عنوان برای نظر نشانه
+UseAnExternalHttpLinkOrRelativeDolibarrLink=استفاده از URL های http خارجی و یا یک URL Dolibarr نسبی
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if linked page must open in new window or not
+BookmarksManagement=مدیریت بوک مارک ها

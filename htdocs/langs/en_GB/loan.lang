@@ -1,0 +1,15 @@
+# Dolibarr language file - Source file is en_US - loan
+PaymentLoan=Loan repayment\n
+LoanPayment=Loan repayment\n
+ShowLoanPayment=Show Loan Repayment\n
+LoanAccountancyCapitalCode=Financial account - Capital
+LoanAccountancyInsuranceCode=Financial account - Insurance
+LoanAccountancyInterestCode=Financial account - Interest
+ConfirmPayLoan=Confirm Loan Classification - Paid
+LoanPaid=Loan Repaid
+ListLoanAssociatedProject=List of loans associated with this project
+AddLoan=Create new loan
+CapitalRemain=Capital Balance
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Financial account - Capital by default
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Financial account - Interest by default
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Financial account - Insurance by default

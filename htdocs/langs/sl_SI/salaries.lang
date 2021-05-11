@@ -1,0 +1,18 @@
+# Dolibarr language file - Source file is en_US - salaries
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Accounting account used for user third parties
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated accounting account defined on user card will be used for Subledger accouting only. This one will be used for General Ledger and as default value of Subledger accounting if dedicated user accouting account on user is not defined.
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Accounting account by default for wage payments
+Salary=Plača
+Salaries=Plače
+NewSalaryPayment=Novo izplačilo plače
+SalaryPayment=Izplačilo plače
+SalariesPayments=Izplačila plač
+ShowSalaryPayment=Prikaži izplačilo plač
+THM=Average hourly rate
+TJM=Average daily rate
+CurrentSalary=Trenutna plača
+THMDescription=Ta kalkulacija se lahko uporabi za izračun stroškov porabljenega časa na projektu, ki ga vnese uporabnik, če je uporabljen projektni modul
+TJMDescription=Ta vrednost je trenutno samo informativna in se ne uporablja v nobeni kalkulaciji
+LastSalaries=Latest %s salary payments
+AllSalaries=All salary payments
+SalariesStatistics=Statistiques salaires

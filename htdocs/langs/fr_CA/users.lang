@@ -1,0 +1,12 @@
+# Dolibarr language file - Source file is en_US - users
+SubjectNewPassword=Votre nouveau mot de passe pour %s
+ConfirmDisableUser=Êtes-vous sûr de vouloir désactiver l'utilisateur <b>%s</b>?
+ConfirmDeleteUser=Êtes-vous sûr de vouloir supprimer l'utilisateur <b>%s</b>?
+ConfirmDeleteGroup=Êtes-vous sûr de vouloir supprimer le groupe <b>%s</b>?
+ConfirmEnableUser=Êtes-vous sûr de vouloir activer l'utilisateur <b>%s</b>?
+ConfirmReinitPassword=Êtes-vous sûr de vouloir générer un nouveau mot de passe pour l'utilisateur <b>%s</b>?
+ConfirmSendNewPassword=Êtes-vous sûr de vouloir générer et envoyer un nouveau mot de passe pour l'utilisateur <b> %s</b>?
+LastUsersCreated=Derniers %s utilisateurs créés
+ConfirmCreateContact=Êtes-vous sûr de vouloir créer un compte Dolibarr pour ce contact?
+ConfirmCreateLogin=Êtes-vous sûr de vouloir créer un compte Dolibarr pour ce membre?
+ConfirmCreateThirdParty=Êtes-vous sûr de vouloir créer un tiers pour ce membre?

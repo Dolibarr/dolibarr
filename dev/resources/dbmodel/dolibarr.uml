@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uml:Model xmi:version="2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1" xmlns:uml="http://www.eclipse.org/uml2/2.1.0/UML" xmi:id="_qb8akM37EdqwVrslYOdUDA">
+  <packagedElement xmi:type="uml:Package" xmi:id="_w8IxIM37EdqwVrslYOdUDA" name="dolibarr">
+    <packagedElement xmi:type="uml:Package" xmi:id="_T5aZ4FK9Ed60vaZbVikprw" name="OrdersModule"/>
+    <packagedElement xmi:type="uml:Package" xmi:id="_ZhuGMlK9Ed60vaZbVikprw" name="InvoiceModule"/>
+    <packagedElement xmi:type="uml:Package" xmi:id="_cf3SUlK9Ed60vaZbVikprw" name="UserModule"/>
+    <packagedElement xmi:type="uml:Package" xmi:id="_maM0glK9Ed60vaZbVikprw" name="FoundationModule"/>
+    <packagedElement xmi:type="uml:Package" xmi:id="_oqTO4lK9Ed60vaZbVikprw" name="ContractsModule"/>
+    <packagedElement xmi:type="uml:Package" xmi:id="_rEq_klK9Ed60vaZbVikprw" name="ProposalsModule"/>
+    <packagedElement xmi:type="uml:Package" xmi:id="_vxYmUlK9Ed60vaZbVikprw" name="EMailingManagement"/>
+  </packagedElement>
+</uml:Model>

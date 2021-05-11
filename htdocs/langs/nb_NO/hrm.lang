@@ -1,0 +1,17 @@
+# Dolibarr language file - en_US - hrm
+# Admin
+HRM_EMAIL_EXTERNAL_SERVICE=Epost for å forhindre eksterne HRM-tjenester
+Establishments=Firmaer
+Establishment=Firma
+NewEstablishment=Nytt firma
+DeleteEstablishment=Slett firma
+ConfirmDeleteEstablishment=Er du sikker på at du vil slette denne etableringen?
+OpenEtablishment=Åpne firma
+CloseEtablishment=Lukk firma
+# Dictionary
+DictionaryDepartment=HRM - Departementliste
+DictionaryFunction=HRM - Funksjonsliste
+# Module
+Employees=Ansatte
+Employee=Ansatt
+NewEmployee=Ny ansatt

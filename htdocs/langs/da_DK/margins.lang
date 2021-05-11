@@ -1,0 +1,44 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=Margin
+Margins=Margener
+TotalMargin=Total margen
+MarginOnProducts=Margen / Produkter
+MarginOnServices=Margin / Services
+MarginRate=Margen sats
+MarkRate=Mark rate
+DisplayMarginRates=Vis margen satser
+DisplayMarkRates=Vis markeringsrenter
+InputPrice=Indgangspris
+margin=Forvaltning af overskudsgrader
+margesSetup=Profitmargener management setup
+MarginDetails=Margen detaljer
+ProductMargins=Produktmargener
+CustomerMargins=Kundemargener
+SalesRepresentativeMargins=Salgsrepræsentantmargener
+UserMargins=Brugermargener
+ProductService=Produkt eller Service
+AllProducts=Alle produkter og tjenester
+ChooseProduct/Service=Vælg produkt eller service
+ForceBuyingPriceIfNull=Force køb / kostpris til salgspris, hvis ikke defineret
+ForceBuyingPriceIfNullDetails=Hvis købs- / omkostningspris ikke er defineret, og denne valgmulighed "ON", vil margen være nul på linie (køb / kostpris = salgspris), ellers ("OFF"), marginen vil svare til den foreslåede standard.
+MARGIN_METHODE_FOR_DISCOUNT=Margin metode til globale rabatter
+UseDiscountAsProduct=Som et produkt
+UseDiscountAsService=Som en tjeneste
+UseDiscountOnTotal=På subtotal
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Definerer, om en global rabat behandles som et produkt, en tjeneste eller kun på subtotal til margenberegning.
+MARGIN_TYPE=Køb / Omkostningspris foreslået som standard for margenberegning
+MargeType1=Margin på bedste sælgerpris
+MargeType2=Margin på vejet gennemsnitspris (WAP)
+MargeType3=Margin på omkostningspris
+MarginTypeDesc=* Margin på bedst købspris = Salgspris - Bedste leverandørpris defineret på produktkortet. <br>* Margin på vægtet gennemsnitspris (WAP) = Salgspris - Produktvægtet gennemsnitspris (WAP) eller bedste leverandørpris, hvis WAP endnu ikke er defineret <br> * Margen på omkostningspris = Salgspris - Omkostningspris defineret på produktkort eller WAP, hvis omkostningspris ikke er defineret eller bedste leverandørpris, hvis WAP endnu ikke er defineret
+CostPrice=Omkostning
+UnitCharges=Enhedsafgifter
+Charges=Afgifter
+AgentContactType=Kommerciel agentkontaktype
+AgentContactTypeDetails=Definer, hvilken kontakttype (knyttet til fakturaer) vil blive brugt til marginalrapport pr. Salgsrepræsentant
+rateMustBeNumeric=Satsen skal være en numerisk værdi
+markRateShouldBeLesserThan100=Markrate bør være lavere end 100
+ShowMarginInfos=Vis marginoplysninger
+CheckMargins=Margen detaljer
+MarginPerSaleRepresentativeWarning=Rapporten om margen pr. Bruger bruger linket mellem tredjeparter og salgsrepræsentanter til at beregne margenen for hver salgsrepræsentant. Da nogle tredjeparter muligvis ikke har nogen ddiated salgsrepræsentant og nogle tredjeparter kan være knyttet til flere, kan nogle beløb måske ikke medtages i denne rapport (hvis der ikke er salgsrepræsentant), og nogle kan vises på forskellige linjer (for hver salgsrepræsentant).

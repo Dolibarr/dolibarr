@@ -1,0 +1,20 @@
+# Dolibarr language file - Source file is en_US - marque pages
+AddThisPageToBookmarks=Adăugați pagina curentă în marcaje
+Bookmark=Bookmark
+Bookmarks=Bookmark-uri
+ListOfBookmarks=Lista de semne de carte
+EditBookmarks=Afișați / editați marcajele
+NewBookmark=Bookmark nou
+ShowBookmark=Arată bookmark
+OpenANewWindow=Deschide o fereastră nouă
+ReplaceWindow=Înlocuiţi fereastra curentă
+BookmarkTargetNewWindowShort=Fereastră nouă
+BookmarkTargetReplaceWindowShort=Fereastră curentă
+BookmarkTitle=Titlu bookmark
+UrlOrLink=URL
+BehaviourOnClick=Comportament atunci când este selectată o adresă URL de marcaj
+CreateBookmark=Creaţi bookmark
+SetHereATitleForLink=Setaţi un titlu pentru bookmark
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Folosiţi un URL http extern sau URL relativ
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Alegeţi dacă pagină din link se deschide sau nu într-o nouă fereastră
+BookmarksManagement=Management bookmark-uri

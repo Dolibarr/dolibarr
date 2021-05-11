@@ -1,0 +1,6 @@
+# Dolibarr language file - Source file is en_US - link
+LinkANewFile=Relier un nouveau fichier / document
+NoLinkFound=Pas de liens enregistrés
+LinkComplete=Le fichier a été lié avec succès
+ErrorFailedToDeleteLink=Impossible d'enlever le lien '<b>%s</b>'
+ErrorFailedToUpdateLink=Impossible de mettre à jour le lien '<b>%s</b>'

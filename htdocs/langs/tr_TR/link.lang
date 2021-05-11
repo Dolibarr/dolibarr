@@ -1,0 +1,10 @@
+# Dolibarr language file - Source file is en_US - languages
+LinkANewFile=Yeni bir dosya/belge bağlantıla
+LinkedFiles=Bağlantılı dosyalar ve belgeler
+NoLinkFound=Kayıtlı bağlantı yok
+LinkComplete=Dosya bağlantısı başarılı
+ErrorFileNotLinked=Dosya bağlantılanamadı
+LinkRemoved=Bağlantı %s kaldırıldı
+ErrorFailedToDeleteLink= Bu bağlantı kaldırılamadı '<b>%s</b>'
+ErrorFailedToUpdateLink= Bu bağlantı güncellemesi yapılamadı '<b>%s</b>'
+URLToLink=Bağlantılanalıcak URL

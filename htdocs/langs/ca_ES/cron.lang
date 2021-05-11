@@ -1,0 +1,87 @@
+# Dolibarr language file - Source file is en_US - cron
+# About page
+# Right
+Permission23101 = Consulta les tasques programades
+Permission23102 = Crea/modifica la tasca programada
+Permission23103 = Elimina la tasca programada
+Permission23104 = Executa les tasques programades
+# Admin
+CronSetup= Pàgina de configuració del mòdul - Gestió de tasques planificades
+URLToLaunchCronJobs=URL per comprovar i posar en marxa les tasques automàtiques qualificades
+OrToLaunchASpecificJob=O per llançar una tasca específica
+KeyForCronAccess=Codi de seguretat per a la URL de llançament de tasques automàtiques
+FileToLaunchCronJobs=Línia de comando per verificar i executar tasques cron qualificades
+CronExplainHowToRunUnix=A entorns Unix s'ha d'utilitzar la següent entrada crontab per executar la comanda cada 5 minuts
+CronExplainHowToRunWin=En entorns Microsoft (tm) Windows, pot utilitzar l'eina 'tareas programadas' per executar la comanda cada 5 minuts
+CronMethodDoesNotExists=La classe %s no conté cap mètode %s
+CronJobDefDesc=Els perfils de tasques programades es defineixen a la fitxa del mòdul descriptor. Quan s'activa el mòdul, es carreguen i estan disponibles per poder administrar les tasques des del menú d'eines d'administració %s.
+CronJobProfiles=Llista de perfils predefinits de tasques programades
+# Menu
+EnabledAndDisabled=Habilitat i deshabilitat
+# Page list
+CronLastOutput=Última sortida d'execució
+CronLastResult=Últim codi retornat
+CronCommand=Comando
+CronList=Tasques programades
+CronDelete=Elimina les tasques programades
+CronConfirmDelete=Vols eliminar aquests treballs programats?
+CronExecute=Llança la tasca programada
+CronConfirmExecute=Esteu segur que voleu executar aquestes tasques programades ara?
+CronInfo=Scheduled job module allows to schedule jobs to execute them automatically. Jobs can also be started manually.
+CronTask=Tasca
+CronNone=Ningún
+CronDtStart=No abans
+CronDtEnd=No després
+CronDtNextLaunch=Propera execució
+CronDtLastLaunch=Data d'inici de l'última execució
+CronDtLastResult=Data del final de l'última execució
+CronFrequency=Freqüència
+CronClass=Classe
+CronMethod=Mètode
+CronModule=Mòdul
+CronNoJobs=Sense treballs actualment
+CronPriority=Prioritat
+CronLabel=Etiqueta
+CronNbRun=Nº execucions
+<<<<<<< HEAD
+CronMaxRun=Max number launch
+=======
+CronMaxRun=Número màxim d'execucions
+>>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
+CronEach=Tota (s)
+JobFinished=Tasques llançades i finalitzades
+#Page card
+CronAdd= Afegir una tasca
+CronEvery=Executa cada tasca
+CronObject=Instància/Objecte a crear
+CronArgs=Argument
+CronSaveSucess=S'ha desat correctament
+CronNote=Nota
+CronFieldMandatory=El camp %s és obligatori
+CronErrEndDateStartDt=La data de fi no pot ser anterior a la d'inici
+StatusAtInstall=Estat a la instal·lació del mòdul
+CronStatusActiveBtn=Activar
+CronStatusInactiveBtn=Desactivar
+CronTaskInactive=Aquesta tasca es troba desactivada
+CronId=Id
+CronClassFile=Filename with class
+CronModuleHelp=Nom del directori del mòdul de Dolibarr (també funciona amb mòduls externs). <BR> Per exemple, per cridar al mètode "fetch" de l'objecte Producte de Dolibarr /htdocs/<u>product</u>/class/product.class.php, el valor pel mòdul és <i>product</i>
+CronClassFileHelp=La ruta relativa i el nom del fitxer a carregar (la ruta és relativa al directori arrel del servidor web). <BR> Per exemple, per cridar al mètode "fetch" de l'objecte Producte de Dolibarr /htdocs/product/class/<u>product.class.php</u>, el valor del nom del fitxer de classe és <i>product/class/product.class.php</i>
+CronObjectHelp=El nom de l'objecte a carregar. <BR> Per exemple, per cridar al mètode "fetch" de l'objecte Producte de Dolibarr /htdocs/product/class/product.class.php, el valor pel nom del fitxer de classe és <i>Product</i>
+CronMethodHelp=El mètode d'objecte a cridar. <BR> Per exemple, per cridar al mètode "fetch" de l'objecte Producte de Dolibarr /htdocs/product/class/product.class.php, el valor pel mètode és <i>fetch</i>
+CronArgsHelp=Els arguments del mètode. <BR> Per exemple, cridar al mètode "fetch" de l'objecte Producte de Dolibarr /htdocs/product/class/product.class.php, el valor dels paràmetres pot ser <br> <i>0, ProductRef</i>
+CronCommandHelp=El comando del sistema a executar
+CronCreateJob=Crear nova tasca programada
+CronFrom=De
+# Info
+# Common
+CronType=Tipus de tasca
+CronType_method=Mètode per cridar una classe PHP
+CronType_command=Comando Shell
+CronCannotLoadClass=Impossible carregar el fitxer de la classe %s (per utilitzar la classe %s)
+CronCannotLoadObject=El "class file" %s s'ha carregat, però l'objecte %s no s'ha trobat dins d'ell
+UseMenuModuleToolsToAddCronJobs=Ves a menú "Inici - Utilitats de sistema - Tasques programades" per veure i editar les tasques programades.
+JobDisabled=Tasca desactivada
+MakeLocalDatabaseDumpShort=Còpia de seguretat de la base de dades local
+MakeLocalDatabaseDump=Create a local database dump. Parameters are: compression ('gz' or 'bz' or 'none'), backup type ('mysql' or 'pgsql'), 1, 'auto' or filename to build, number of backup files to keep
+WarningCronDelayed=Attention, for performance purpose, whatever is next date of execution of enabled jobs, your jobs may be delayed to a maximum of %s hours, before being run.

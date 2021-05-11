@@ -1,0 +1,26 @@
+# Dolibarr language file - Source file is en_US - help
+CommunitySupport=Forum/Wiki podrška
+EMailSupport=Podrška e-poštom
+RemoteControlSupport=Online real time / remote podrška
+OtherSupport=Ostala podrška
+ToSeeListOfAvailableRessources=Da biste kontaktirali/vidjeli raspoložive resurse:
+HelpCenter=Help centar
+DolibarrHelpCenter=Dolibarr centar pomoći i podrške
+ToGoBackToDolibarr=U suprotnom, kliknite <a href="%s">ovdje za korištenje Dolibarr-a</a>
+TypeOfSupport=Izvor podrške
+TypeSupportCommunauty=Zajednica (besplatno)
+TypeSupportCommercial=Komercijalno
+TypeOfHelp=Tip
+NeedHelpCenter=Need help or support?
+Efficiency=Efikasnost
+TypeHelpOnly=Samo pomoć
+TypeHelpDev=Pomoć + Razvoj
+TypeHelpDevForm=Pomoć + Razvoj + Osnivanje
+ToGetHelpGoOnSparkAngels1=Neke tvrtke mogu pružiti brzu (ponekad neposrednu) i efikasniju online podršku uzimajući kontrolu nad vašim računalom. Takvi pomoćnici mogu se pronaći na <b>%s</b> web stranicama:
+ToGetHelpGoOnSparkAngels3=Također možete pogledati popis svih dostupnih trenera za Dolibarr, za to kliknite na gumb 
+ToGetHelpGoOnSparkAngels2=Ponekad, nema dostupne tvrtke u trenutku vašeg pretraživanja, probajte promjeniti filter za pretraživanje na "sva dostupnost". Biti ćete u mogućnosti poslati više zahtjeva.
+BackToHelpCenter=U suprotnim, kliknite ovdje za povratak na <a href="%s">naslovnu stranicu centra pomoći</a>.
+LinkToGoldMember=Možete nazvati jednog od trenera predodabrane od Dolibarr-a za vaš jezik (%s) kliknuvši na dodatak(status i maksimalna cijena je automatski ažurirana):
+PossibleLanguages=Podržani jezici
+SubscribeToFoundation=Pomognite Dolibarr projektu, prijavite se u zakladu
+SeeOfficalSupport=Za oficijalnu Dolibarr podršku na vašem jeziku: <br><b><a href="%s" target="_blank">%s</a></b>

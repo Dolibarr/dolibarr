@@ -1,0 +1,72 @@
+# Dolibarr language file - Source file is en_US - sendings
+RefSending=Versand-Nr.
+Sending=Auslieferung
+Sendings=Auslieferungen
+AllSendings=Alle Lieferungen
+Shipment=Versand
+Shipments=Lieferungen
+ShowSending=Zeige Lieferungen
+Receivings=Zustellbestätigungen
+SendingsArea=Versandübersicht
+ListOfSendings=Versandliste
+SendingMethod=Versandart
+LastSendings=%s neueste Lieferungen
+StatisticsOfSendings=Versandstatistik
+NbOfSendings=Anzahl  Auslieferungen
+NumberOfShipmentsByMonth=Anzahl Auslieferungen pro Monat
+SendingCard=Lieferung - Karte
+NewSending=Neue Auslieferung
+CreateShipment=Auslieferung erstellen
+QtyShipped=Liefermenge
+QtyShippedShort=Gelieferte Menge
+QtyPreparedOrShipped=Menge vorbereitet oder versendet
+QtyToShip=Versandmenge
+QtyReceived=Erhaltene Menge
+QtyInOtherShipments=Menge in anderen Lieferungen
+KeepToShip=Noch zu versenden
+KeepToShipShort=übrigbleiben
+OtherSendingsForSameOrder=Weitere Lieferungen zu dieser Bestellung
+SendingsAndReceivingForSameOrder=Warenerhalt und Versand dieser Bestellung
+SendingsToValidate=Freizugebende Auslieferungen
+StatusSendingCanceled=Storniert
+StatusSendingDraft=Entwurf
+StatusSendingValidated=Freigegeben (Artikel versandfertig oder bereits versandt)
+StatusSendingProcessed=Verarbeitete
+StatusSendingDraftShort=Entwurf
+StatusSendingValidatedShort=Freigegeben
+StatusSendingProcessedShort=Fertig
+SendingSheet=Auslieferungen
+ConfirmDeleteSending=Möchten Sie diesen Versand wirklich löschen?
+ConfirmValidateSending=Möchten Sie diesen Versand mit der referenz <b>%s</b> wirklich freigeben?
+ConfirmCancelSending=Möchten Sie diesen Versand wirklich abbrechen?
+DocumentModelMerou=Merou A5-Modell
+WarningNoQtyLeftToSend=Achtung, keine Produkte für den Versand
+StatsOnShipmentsOnlyValidated=Versandstatistik (nur freigegebene). Das Datum ist das der Freigabe (geplantes Lieferdatum ist nicht immer bekannt).
+DateDeliveryPlanned=Geplanter Liefertermin
+RefDeliveryReceipt=Lieferschein-Nr.
+StatusReceipt=Der Status des Lieferschein
+DateReceived=Datum der Zustellung
+SendShippingByEMail=Versand per E-Mail
+SendShippingRef=Versendung der Auslieferung %s
+ActionsOnShipping=Hinweis zur Lieferung
+LinkToTrackYourPackage=Link zur Paket- bzw. Sendungsverfolgung
+ShipmentCreationIsDoneFromOrder=Lieferscheine müssen aus einer Bestellung generiert werden
+ShipmentLine=Zeilen Lieferschein
+ProductQtyInCustomersOrdersRunning=Product quantity into open customer orders
+ProductQtyInSuppliersOrdersRunning=Product quantity into open purchase orders
+ProductQtyInShipmentAlreadySent=Bereits gelieferte Produktmenge aus offenem Kundenauftrag
+ProductQtyInSuppliersShipmentAlreadyRecevied=Bereits erhaltene Produktmenge aus Lieferantenbestellung
+NoProductToShipFoundIntoStock=Kein Artikel zum Versenden gefunden im Lager <b>%s</b>. Korrigieren Sie den Lagerbestand oder wählen Sie ein anderes Lager.
+WeightVolShort=Gew./Vol.
+ValidateOrderFirstBeforeShipment=Sie müssen den Auftrag erst bestätigen bevor Sie eine Lieferung machen können.
+
+# Sending methods
+# ModelDocument
+DocumentModelTyphon=Vollständig Dokumentvorlage für die Lieferscheine (Logo, ...)
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=Konstante EXPEDITION_ADDON_NUMBER nicht definiert
+SumOfProductVolumes=Summe der Produktvolumen
+SumOfProductWeights=Summe der Produktgewichte
+
+# warehouse details
+DetailWarehouseNumber= Warenlagerdetails
+DetailWarehouseFormat= W:%s (Menge : %d)

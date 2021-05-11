@@ -1,0 +1,44 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=Marge
+Margins=Marges
+TotalMargin=Marge total
+MarginOnProducts=Marge / Productes
+MarginOnServices=Marge / Serveis
+MarginRate=Marge sobre cost
+MarkRate=Marge sobre venda
+DisplayMarginRates=Mostrar els marges sobre cost
+DisplayMarkRates=Mostrar els marges sobre venda
+InputPrice=Introduir un preu
+margin=Gestió de marges
+margesSetup=Configuració de la gestió de marges
+MarginDetails=Detalls de marges
+ProductMargins=Marges per producte
+CustomerMargins=Marges per client
+SalesRepresentativeMargins=Marges per agent comercial
+UserMargins=Marges per usuari
+ProductService=Producte o servei
+AllProducts=Tots els productes i serveis
+ChooseProduct/Service=Tria el producte o servei
+ForceBuyingPriceIfNull=Forçar preu de cost/compra al preu de venda si no s'ha definit
+ForceBuyingPriceIfNullDetails=Si el preu de cost/compra no està definit, i aquesta opció en "ON", el marge serà zero en la línia (preu de cost/compra = preu de venda), en cas contrari ("OFF"), marge serà igual al suggerit per defecte.
+MARGIN_METHODE_FOR_DISCOUNT=Mètode de gestió de descomptes globals
+UseDiscountAsProduct=Com un producte
+UseDiscountAsService=Com un servei
+UseDiscountOnTotal=Sobre el total
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Indica si un descompte global es pren en compte com un producte, servei o només en el total a l'hora de calcular els marges.
+MARGIN_TYPE=Preu de cost suggerit per defecte pel càlcul de marge
+MargeType1=Marge en el millor preu de proveïdor
+MargeType2=Marge en Preu mitjà ponderat (PMP)
+MargeType3=Marge en preu de cost
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best supplier price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best supplier price if WAP not yet defined
+CostPrice=Preu de compra
+UnitCharges=Càrrega unitària
+Charges=Càrreges
+AgentContactType=Tipus de contacte comissionat
+AgentContactTypeDetails=Indica quin tipus de contacte (enllaçat a les factures) serà l'utilitzat per l'informe de marges per agent comercial
+rateMustBeNumeric=El marge ha de ser un valor numèric
+markRateShouldBeLesserThan100=El marge té que ser menor que 100
+ShowMarginInfos=Mostrar info de marges
+CheckMargins=Detall de marges
+MarginPerSaleRepresentativeWarning=L'informe de marge per usuari utilitza el vincle entre tercers i representants de vendes per calcular el marge de cada representant de venda. Com que algunes terceres parts no poden tenir cap representant de venda i algunes terceres parts poden estar vinculades a diverses, és possible que no s'incloguin alguns imports en aquest informe (si no hi ha representant de venda) i alguns poden aparèixer en diferents línies (per a cada representant de la venda).

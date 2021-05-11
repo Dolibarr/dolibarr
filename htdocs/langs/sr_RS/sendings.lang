@@ -1,0 +1,72 @@
+# Dolibarr language file - Source file is en_US - sendings
+RefSending=Ref. isporuke
+Sending=Isporuka
+Sendings=Isporuke
+AllSendings=Sve isporuke
+Shipment=Isporuka
+Shipments=Isporuke
+ShowSending=Prikaži isporuke
+Receivings=Računi isporuke
+SendingsArea=Oblast isporuka
+ListOfSendings=Lista isporuka
+SendingMethod=Način isporuke
+LastSendings=Latest %s shipments
+StatisticsOfSendings=Statistike isporuka
+NbOfSendings=Broj isporuka
+NumberOfShipmentsByMonth=Broj isporuka po mesecu
+SendingCard=Kartica isporuke
+NewSending=Nova isporuka
+CreateShipment=Kreiraj isporuku
+QtyShipped=Isporučena kol.
+QtyShippedShort=Qty ship.
+QtyPreparedOrShipped=Qty prepared or shipped
+QtyToShip=Kol. za isporuku
+QtyReceived=Primljena kol.
+QtyInOtherShipments=Qty in other shipments
+KeepToShip=Ostatak za isporuku
+KeepToShipShort=Remain
+OtherSendingsForSameOrder=Druge isporuke za ovu narudžbinu
+SendingsAndReceivingForSameOrder=Shipments and receipts for this order
+SendingsToValidate=Isporuke za potvrdu
+StatusSendingCanceled=Otkazano
+StatusSendingDraft=Nacrt
+StatusSendingValidated=Potvrđeno (proizvodi za isporuku ili već isporučeni)
+StatusSendingProcessed=Procesuirano
+StatusSendingDraftShort=Nacrt
+StatusSendingValidatedShort=Potvrđeno
+StatusSendingProcessedShort=Procesuirano
+SendingSheet=Ulica isporuke
+ConfirmDeleteSending=Are you sure you want to delete this shipment?
+ConfirmValidateSending=Are you sure you want to validate this shipment with reference <b>%s</b>?
+ConfirmCancelSending=Are you sure you want to cancel this shipment?
+DocumentModelMerou=Merou A5 model
+WarningNoQtyLeftToSend=Upozorenje, nema proizvoda koji čekaju na isporuku.
+StatsOnShipmentsOnlyValidated=Statistike se vrše samo na potvrđenim isporukama. Datum koji se koristi je datum potvrde isporuke (planirani datum isporuke nije uvek poznat)
+DateDeliveryPlanned=Planirani datum isporuke
+RefDeliveryReceipt=Ref delivery receipt
+StatusReceipt=Status delivery receipt
+DateReceived=Datum prijema isporuke
+SendShippingByEMail=Pošalji isporuku Email-om
+SendShippingRef=Predaja isporuke %s
+ActionsOnShipping=Događaji na isporuci
+LinkToTrackYourPackage=Link za praćenje Vašeg paketa
+ShipmentCreationIsDoneFromOrder=Trenutno se kreacije nove isporuke radi sa kartice narudžbine.
+ShipmentLine=Linija isporuke
+ProductQtyInCustomersOrdersRunning=Product quantity into open customer orders
+ProductQtyInSuppliersOrdersRunning=Product quantity into open purchase orders
+ProductQtyInShipmentAlreadySent=Product quantity from open customer order already sent
+ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from open supplier order already received
+NoProductToShipFoundIntoStock=Nema proizvoda za isporuku u magacin <b>%s</b>. Ispravite zalihu ili izaberite drugi magacin.
+WeightVolShort=Težina/Zapr.
+ValidateOrderFirstBeforeShipment=Morate prvo potvrditi porudžbinu pre nego omogućite formiranje isporuke.
+
+# Sending methods
+# ModelDocument
+DocumentModelTyphon=Kompletni model dokumenta za prijemnice isporuka (logo, ...)
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=Konstanta EXPEDITION_ADDON_NUMBER nije definisana
+SumOfProductVolumes=Suma količina proizvoda
+SumOfProductWeights=Suma težina proizvoda
+
+# warehouse details
+DetailWarehouseNumber= Detalji magacina
+DetailWarehouseFormat= T:%s (Kol : %d)

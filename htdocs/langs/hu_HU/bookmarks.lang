@@ -1,0 +1,20 @@
+# Dolibarr language file - Source file is en_US - marque pages
+AddThisPageToBookmarks=Aktuális oldal hozzáadása a könyvjelzőkhöz
+Bookmark=Könyvjelző
+Bookmarks=Könyvjelzők
+ListOfBookmarks=Könyvjelzők listája
+EditBookmarks=List/edit bookmarks
+NewBookmark=Új könyvjelző
+ShowBookmark=Könyvjelző mutatása
+OpenANewWindow=Nyisson meg egy új ablakban
+ReplaceWindow=Cserélje az aktuális ablakot
+BookmarkTargetNewWindowShort=Új ablak
+BookmarkTargetReplaceWindowShort=Aktuális ablak
+BookmarkTitle=Könyvjelzõ név
+UrlOrLink=URL elérési út
+BehaviourOnClick=Behaviour when a bookmark URL is selected
+CreateBookmark=Könyvjelző lértehozása
+SetHereATitleForLink=Állítsa be a címet a könyvjelzőhöz
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Használjon egy külső http URL-t vagy relatív URL Dolibarr
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Válassza ki, hogy a hivatkozott oldal új ablakban nyíljon meg vagy az eredetiben
+BookmarksManagement=Könyvjelzők kezelése

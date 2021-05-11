@@ -1,0 +1,36 @@
+# Dolibarr language file - Source file is en_US - resource
+MenuResourceIndex=Erőforrások
+MenuResourceAdd=Új erőforrás
+DeleteResource=Erőforrás törlése
+ConfirmDeleteResourceElement=Hagyja jóvá az elemhez tartozó erőforrás törlését
+NoResourceInDatabase=Nincs erőforrás az adatbázisban
+NoResourceLinked=Nincs kapcsolt erőforrás
+
+ResourcePageIndex=Erőforrás-lista
+ResourceSingular=Erőforrás
+ResourceCard=Erőforrás kártya
+AddResource=Erőforrás létrehozása
+ResourceFormLabel_ref=Erőforrás neve
+ResourceType=Erőforrás típusa
+ResourceFormLabel_description=Erőforrás leírása
+
+ResourcesLinkedToElement=Elemhez kapcsolt erőforrások 
+
+ShowResource=Mutassa meg az erőforrást
+
+ResourceElementPage=Erőforrások
+ResourceCreatedWithSuccess=Az erőforrás sikeresen létrehozva
+RessourceLineSuccessfullyDeleted=Az erőforrás vonal sikeresen törölve
+RessourceLineSuccessfullyUpdated=Az erőforrás vonal sikeresen frissítve
+ResourceLinkedWithSuccess=Az erőforrás kapcsolása sikeres
+
+ConfirmDeleteResource=Hagyja jóvá az erőforrás törlését
+RessourceSuccessfullyDeleted=Az erőforrás sikeresen törölve
+DictionaryResourceType=Erőforrás típusa
+
+SelectResource=Válasszon erőforrást
+
+IdResource=Id resource
+AssetNumber=Serial number
+ResourceTypeCode=Resource type code
+ImportDataset_resource_1=Erőforrások

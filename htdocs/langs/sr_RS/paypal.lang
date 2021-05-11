@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=Podešavanja modula PayPal
+PaypalDesc=Ovaj modul omogućava uplatu preko <a href="http://www.paypal.com" target="_blank">PayPal</a>-a od strane klijenata. Može biti korisna za besplatne uplate ili za uplate vezane za određene Dolibarr objekte (račun, narudžbina, ...)
+PaypalOrCBDoPayment=Pay with Paypal (Credit Card or Paypal)
+PaypalDoPayment=Uplati putem PayPal-a
+PAYPAL_API_SANDBOX=Test/sandbox mod
+PAYPAL_API_USER=API username
+PAYPAL_API_PASSWORD=API password
+PAYPAL_API_SIGNATURE=API signature
+PAYPAL_SSLVERSION=Curl SSL verzija
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Ponudi "integralno" plaćanje (kreditna kartca + PayPal) ili samo "PayPal"
+PaypalModeIntegral=Integralno
+PaypalModeOnlyPaypal=Samo PayPal
+ONLINE_PAYMENT_CSS_URL=Optionnal URL of CSS style sheet on online payment page
+ThisIsTransactionId=Ovo je ID transakcije: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Ubaci URL PayPal uplate prilikom slanja dokumenta putem mail-a
+YouAreCurrentlyInSandboxMode=You are currently in the %s "sandbox" mode
+NewOnlinePaymentReceived=New online payment received
+NewOnlinePaymentFailed=New online payment tried but failed
+ONLINE_PAYMENT_SENDEMAIL=Email obaveštenja nakon uplate (uspešne ili ne)
+ReturnURLAfterPayment=Povratni URL posle plaćanja
+ValidationOfOnlinePaymentFailed=Validation of online payment failed
+PaymentSystemConfirmPaymentPageWasCalledButFailed=Payment confirmation page was called by payment system returned an error
+SetExpressCheckoutAPICallFailed=Greška u pozivu SetExpressCheckout API.
+DoExpressCheckoutPaymentAPICallFailed=Greška u pozivu DoExpressCheckoutPayment API.
+DetailedErrorMessage=Detaljna poruka greške
+ShortErrorMessage=Kratka poruka greške
+ErrorCode=Kod greške
+ErrorSeverityCode=Kod ozbiljnosti greške
+OnlinePaymentSystem=Online payment system
+PaypalLiveEnabled=Paypal live enabled (otherwise test/sandbox mode)
+PaypalImportPayment=Import Paypal payments
+PostActionAfterPayment=Post actions after payments
+ARollbackWasPerformedOnPostActions=A rollback was performed on all Post actions. You must complete post actions manually if they are necessary.

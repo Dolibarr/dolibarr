@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - ldap
+YouMustChangePassNextLogon=<b>%</b>用戶密碼<b>%之S</b>必須改變對域。
+UserMustChangePassNextLogon=用戶必須更改密碼的域%s
+LDAPInformationsForThisContact=在此LDAP數據庫信息聯系
+LDAPInformationsForThisUser=LDAP數據庫中該用戶信息
+LDAPInformationsForThisGroup=在LDAP數據庫的資料本組
+LDAPInformationsForThisMember=在LDAP數據庫信息該會員
+LDAPInformationsForThisMemberType=Information in LDAP database for this member type
+LDAPAttributes=LDAP屬性
+LDAPCard=LDAP的卡
+LDAPRecordNotFound=記錄中找不到LDAP數據庫
+LDAPUsers=在LDAP用戶數據庫
+LDAPFieldStatus=地位
+LDAPFieldFirstSubscriptionDate=首先認購日期
+LDAPFieldFirstSubscriptionAmount=認購金額拳
+LDAPFieldLastSubscriptionDate=Latest subscription date
+LDAPFieldLastSubscriptionAmount=Latest subscription amount
+LDAPFieldSkype=Skype id
+LDAPFieldSkypeExample=Example : skypeName
+UserSynchronized=用戶同步
+GroupSynchronized=集團同步
+MemberSynchronized=會員同步
+MemberTypeSynchronized=Member type synchronized
+ContactSynchronized=聯系同步
+ForceSynchronize=力同步Dolibarr - &gt;的LDAP
+ErrorFailedToReadLDAP=無法讀取LDAP數據庫。檢查的LDAP模塊設置和數據庫獲取。
+PasswordOfUserInLDAP=Password of user in LDAP

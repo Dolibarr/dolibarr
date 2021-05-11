@@ -1,0 +1,10 @@
+# Dolibarr language file - Source file is en_US - languages
+LinkANewFile=Odkaz na nový soubor/dokument
+LinkedFiles=Odkaz na soubory a dokumenty
+NoLinkFound=Neregistrovaný odkaz
+LinkComplete=Soubor byl úspěšně propojen
+ErrorFileNotLinked=Soubor nemohl být propojen
+LinkRemoved=Odkaz %s byl odstraněn
+ErrorFailedToDeleteLink= Nepodařilo se odstranit odkaz '<b>%s</b>'
+ErrorFailedToUpdateLink= Nepodařilo se aktualizovat odkaz '<b>%s</b>'
+URLToLink=URL to link

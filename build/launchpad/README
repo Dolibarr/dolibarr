@@ -1,0 +1,156 @@
+README (English)
+##################################################
+Launchpad Package tools
+##################################################
+
+This directory contains files to explain how to publish
+a package onto LaunchPad
+
+
+# This is standard command to work on RPM packaging:
+#
+# To install all packagers tools:
+# sudo apt-get install bzr-builder bzr dpatch pbuilder debootstrap devscripts
+
+
+# Init local working env
+#----------------------------------
+
+- Create account on launchpad.org
+- Create Project
+- Link project to official SCM server
+- Upload SSH public key onto account
+- Upload you GPG sign key
+- Run from command line: 
+    bzr launchpad-login yourlogin
+    bzr whoami "Your Name <email@email.com>"
+    bzr whoami
+- Edit file ~/.bashrc to add
+DEBFULLNAME="<Your name>" 
+DEBEMAIL="<Your email address>" 
+- Create a Bazaar directory
+    mkdir bzr
+
+If you want to build/test package locally:
+- Create a file ~/.pbuilderrc with content
+    COMPONENTS="main universe multiverse restricted"
+- Create chroot ubuntu env
+    sudo pbuilder create [--distribution sid|squeeze]
+
+
+# Push/declare Dolibarr sources to Launchpad
+#----------------------------------
+- From Launchpad project (https://launchpad.net/dolibarr), register a series: 
+    Call it 'trunk' or 'stable'
+    Use branch (dev):
+    https://launchpad.net/~eldy/dolibarr/develop
+    https://launchpad.net/~eldy/dolibarr/stable
+    or 
+    Use URL pattern (stable):
+    For stable: http://www.dolibarr.org/files/lastbuild/package_debian-ubuntu/dolibarr_x.z.*.tar.gz
+    
+- For Dev, you can also add link serie to GIT HEAD.
+- For stable, you can init from command line
+	cd bzr/dolibarr-stable
+    bzr init
+    bzr add
+    bzr commit -m "Init"
+    bzr push lp:~yourlogin/dolibarr/stable
+
+- List of series are visible here: https://launchpad.net/dolibarr/+series
+
+# To update Dolibarr into launchpad (when remote repository for sources already exists)
+#----------------------------------
+	# create local repository
+	cd bzr
+	bzr branch lp:~yourlogin/dolibarr/[develop|stable] dolibarr-[dev|stable]
+    cd dolibarr-[dev|stable]
+    # Update
+    bzr update
+	-- Update files here: Remove all (except .bzr dir) and overwrite --
+    bzr status
+	bzr add *
+    bzr commit -m "Upstream version x.y"
+    bzr push
+
+
+
+# Init debian dir repository into launchpad (when repository for sources does not exist)
+#----------------------------------
+-  Create debian directory and upload it onto bzr branch lp:~yourlogin/+junk/debian-[dev|stable]
+    cd bzr
+    mkdir debian
+    cd debian
+    cp -pr dolibarr_root/debian bzr/debian
+    bzr init
+    bzr add
+    bzr commit -m "Init control files"
+    bzr push lp:~yourlogin/+junk/debian-[dev|stable]    (put here any branch name or just bzr push if into a known branch)
+- or download it from launchpad bazaar:
+    cd bzr
+    bzr branch lp:~yourlogin/+junk/debian-[dev|stable]
+
+# Get debian dir repository from launchpad (when repository for sources already exists)
+#----------------------------------
+	cd bzr
+	bzr branch lp:~yourlogin/+junk/debian-[dev|stable]
+
+# To update debian dir into launchpad (when repository for sources already exists)
+#----------------------------------
+	cd bzr
+	bzr branch lp:~yourlogin/+junk/debian-[dev|stable]
+    cd debian-[dev|stable]
+    bzr status
+	-- Update files here: Remove all (except .bzr dir) and overwrite. Restore version into the file changelog --
+    bzr commit -m "Description of change"
+    bzr push lp:~yourlogin/+junk/debian-[dev|stable]
+
+
+
+# Define a recipe into launchpad (a rule to build packages into a PPA)
+#----------------------------------
+- Create a file dolibarr-[beta|stable].recipe with content
+    cd bzr
+    vi dolibarr-[beta|stable].recipe
+    	For beta/dev:
+	    # bzr-builder format 0.3 deb-version {debupstream}-0~{revno}
+		lp:dolibarr
+		merge packaging lp:~yourlogin/+junk/debian-dev
+    	For stable:
+	    # bzr-builder format 0.3 deb-version {debupstream}-2~{revno}
+		lp:dolibarr/stable
+		merge packaging lp:~yourlogin/+junk/debian-stable
+- Run command
+    cd bzr
+    bzr dailydeb dolibarr-[beta|stable].recipe working-dir
+  This will create a directory "working-dir" with dolibarr sources and will add sources from ~yourlogin/+junk/debian-[dev|stable]
+- Test package sources
+    sudo pbuilder build <working-dir>/<project>_<version>.dsc
+
+List of recipes created
+https://code.launchpad.net/~eldy/+recipe/dolibarr-dev
+https://code.launchpad.net/~eldy/+recipe/dolibarr-stable
+
+    
+# To get/download package from PPA:
+#----------------------------------
+
+- Add signing key of the Launchpad repository:
+> gpg --keyserver keyserver.ubuntu.com --recv-key A38BF8FD
+> sudo apt-key add ~/.gnupg/pubring.gpg
+
+- Add Dolibarr Launchpad repository to your system setup by adding the two lines to /etc/apt/sources.list
+For the development snapshot version: 
+deb http://ppa.launchpad.net/yourlogin/dolibarr-dev/ubuntu precise main 
+deb-src http://ppa.launchpad.net/yourlogin/dolibarr-dev/ubuntu precise main 
+For the stable version:
+deb http://ppa.launchpad.net/yourlogin/dolibarr-stable/ubuntu precise main 
+deb-src http://ppa.launchpad.net/yourlogin/dolibarr-stable/ubuntu precise main 
+
+- Update your package cache:
+> apt-get update
+
+- Install Dolibarr: 
+> apt-get install dolibarr
+
+   

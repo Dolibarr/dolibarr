@@ -1,0 +1,20 @@
+# Dolibarr language file - Source file is en_US - marque pages
+AddThisPageToBookmarks=Add current page to bookmarks
+Bookmark=Bookmark
+Bookmarks=Đánh dấu
+ListOfBookmarks=Danh sách bookmark
+EditBookmarks=List/edit bookmarks
+NewBookmark=Bookmark mới
+ShowBookmark=Hiện dấu
+OpenANewWindow=Mở cửa sổ mới
+ReplaceWindow=Thay thế cửa sổ hiện tại
+BookmarkTargetNewWindowShort=Cửa sổ mới
+BookmarkTargetReplaceWindowShort=Cửa sổ hiện tại
+BookmarkTitle=Bookmark tiêu đề
+UrlOrLink=URL
+BehaviourOnClick=Behaviour when a bookmark URL is selected
+CreateBookmark=Tạo đánh dấu
+SetHereATitleForLink=Đặt tên cho bookmark
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Sử dụng một URL http bên ngoài hoặc một URL tương đối Dolibarr
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Chọn liên kết sẽ mở trong cửa sổ mới hay không
+BookmarksManagement=Quản lý bookmark

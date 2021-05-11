@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - ldap
+YouMustChangePassNextLogon=Κωδικός πρόσβασης για <b>%s</b> χρήστη στο <b>%s</b> Domain πρέπει να αλλάξει.
+UserMustChangePassNextLogon=Ο χρήστης πρέπει να αλλάξει τον κωδικό πρόσβασης για το %s Domain
+LDAPInformationsForThisContact=Πληροφορίες στο LDAP βάση δεδομένων για αυτήν την επαφή
+LDAPInformationsForThisUser=Πληροφορίες στη βάση δεδομένων LDAP για αυτό το χρήστη
+LDAPInformationsForThisGroup=Πληροφορίες στο LDAP βάση δεδομένων για αυτή την ομάδα
+LDAPInformationsForThisMember=Πληροφορίες στη βάση δεδομένων LDAP για αυτό το μέλος
+LDAPInformationsForThisMemberType=Information in LDAP database for this member type
+LDAPAttributes=LDAP χαρακτηριστικά
+LDAPCard=LDAP κάρτα
+LDAPRecordNotFound=Εγγραφή δεν βρέθηκε στην βάση δεδομένων LDAP
+LDAPUsers=Οι χρήστες στην βάση δεδομένων LDAP
+LDAPFieldStatus=Κατάσταση
+LDAPFieldFirstSubscriptionDate=Πρώτη ημερομηνία εγγραφής
+LDAPFieldFirstSubscriptionAmount=Πρώτο ποσό εγγραφής
+LDAPFieldLastSubscriptionDate=Latest subscription date
+LDAPFieldLastSubscriptionAmount=Latest subscription amount
+LDAPFieldSkype=Skype id
+LDAPFieldSkypeExample=Example : skypeName
+UserSynchronized=Συγχρονισμένος χρήστης
+GroupSynchronized=Συγχρονισμένη ομάδα
+MemberSynchronized=Συγχρονισμένο μέλος
+MemberTypeSynchronized=Member type synchronized
+ContactSynchronized=Επικοινωνία συγχρονισμένη
+ForceSynchronize=Δυναμικός συγχρονισμός Dolibarr -> LDAP
+ErrorFailedToReadLDAP=Αποτυχία ανάγνωσης LDAP βάση δεδομένων. Ελέγξτε LDAP εγκατάσταση module και την προσβασιμότητα της βάσης δεδομένων.
+PasswordOfUserInLDAP=Password of user in LDAP

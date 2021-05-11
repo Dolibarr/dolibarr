@@ -1,0 +1,31 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Cho vay
+Loans=Cho vay
+NewLoan=Cho vay mới
+ShowLoan=Hiện khoản cho vay
+PaymentLoan=Phương thức trả nợ
+LoanPayment=Phương thức trả nợ
+ShowLoanPayment=Hiện thị phương thức trả nợ
+LoanCapital=Vốn
+Insurance=Bảo hiểm
+Interest=Lãi suất
+Nbterms=Số năm vay vốn
+Term=Term
+LoanAccountancyCapitalCode=Accounting account capital
+LoanAccountancyInsuranceCode=Accounting account insurance
+LoanAccountancyInterestCode=Accounting account interest
+ConfirmDeleteLoan=Xác nhận xóa khoản vay này
+LoanDeleted=Khoản vay đã xóa thành công
+ConfirmPayLoan=Confirm classify paid this loan
+LoanPaid=Khoản vay đã trả
+ListLoanAssociatedProject=Danh sách vay vốn gắn với dự án này
+AddLoan=Create loan
+FinancialCommitment=Financial commitment
+InterestAmount=Lãi suất
+CapitalRemain=Capital remain
+# Admin
+ConfigLoan=Configuration of the module loan
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Accounting account capital by default
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Accounting account interest by default
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Accounting account insurance by default
+CreateCalcSchedule=Edit financial commitment

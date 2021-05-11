@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - mailmanspip
+MailmanSpipSetup=Mailman ve SPIP modülü Kurulumu
+MailmanTitle=Mailman liste postalama sistemi
+TestSubscribe=Mailman listelerine abonelik denemesi için
+TestUnSubscribe=Mailman listelerinden abonelik kaldırma denemesi
+MailmanCreationSuccess=Abonelik kaldırma denemesi başarıyla gerçekleştirildi
+MailmanDeletionSuccess=Abonelik kaldırma denemesi başarıyla gerçekleştirildi
+SynchroMailManEnabled=Bir Mailman güncellemesi yapılacaktır
+SynchroSpipEnabled=Bir Spip güncellemesi yapılacaktır
+DescADHERENT_MAILMAN_ADMINPW=Mailman yönetici parolası
+DescADHERENT_MAILMAN_URL=Mailman abonelik URL si
+DescADHERENT_MAILMAN_UNSUB_URL=Mailman abonelik kaldırma URL si
+DescADHERENT_MAILMAN_LISTS=Yeni üyelerin otomatik kayıt listesi(leri) (virgülle ayrılmış)
+SPIPTitle=SPIP İçerik Yönetim Sistemi
+DescADHERENT_SPIP_SERVEUR=SPIP Sunucusu
+DescADHERENT_SPIP_DB=SPIP veritabanı adı
+DescADHERENT_SPIP_USER=SPIP veritabanı kullanıcı adı
+DescADHERENT_SPIP_PASS=SPIP veritabanı parolası
+AddIntoSpip=SPIP e ekle
+AddIntoSpipConfirmation=Bu üyeyi SPIP e eklemek istediğinizden emin misiniz?
+AddIntoSpipError=Kullanıcı SPIP e eklenemedi
+DeleteIntoSpip=SPIP ten kaldır
+DeleteIntoSpipConfirmation=Bu üyeyi SPIP ten kaldırmak istediğinizden emin misiniz?
+DeleteIntoSpipError=Kullanıcı SPIP ten menedilemedi
+SPIPConnectionFailed=SPIP e bağlanılamadı
+SuccessToAddToMailmanList=%s kaydı Mailman %s listesine ya da SPIP tabanına başarıyla eklenmiştir
+SuccessToRemoveToMailmanList=%s kaydı Mailman %s listesinden ya da SPIP tabanından başarıyla kaldırılmıştır

@@ -1,0 +1,36 @@
+# Dolibarr language file - Source file is en_US - resource
+MenuResourceIndex=Resursai
+MenuResourceAdd=Naujas resursas
+DeleteResource=Panaikinti resursą
+ConfirmDeleteResourceElement=Patvirtinti resurso panaikinimą šiam elementui
+NoResourceInDatabase=Duomenų bazėje resurso nėra
+NoResourceLinked=Nėra susijusių resursų
+
+ResourcePageIndex=Resursų sąrašas
+ResourceSingular=Resursas
+ResourceCard=Resurso korelė
+AddResource=Sukurti resursą
+ResourceFormLabel_ref=Resurso pavadinimas
+ResourceType=Resurso tipas
+ResourceFormLabel_description=Resurso aprašymas
+
+ResourcesLinkedToElement=Resursai susiję su elementu
+
+ShowResource=Show resource
+
+ResourceElementPage=Elemento resursai
+ResourceCreatedWithSuccess=Resursas sėkmingai sukurtas
+RessourceLineSuccessfullyDeleted=Resurso eilutė sėkmingai panaikinta
+RessourceLineSuccessfullyUpdated=Resurso eilutė sėkmingai atnaujinta
+ResourceLinkedWithSuccess=Resursas sėkmingai susietas
+
+ConfirmDeleteResource=Patvirtinti resurso panaikinimą
+RessourceSuccessfullyDeleted=Resursas sėkmingai panaikintas
+DictionaryResourceType=Resursų tipas
+
+SelectResource=Pasirinkti resursą
+
+IdResource=Id resource
+AssetNumber=Serial number
+ResourceTypeCode=Resource type code
+ImportDataset_resource_1=Ištekliai

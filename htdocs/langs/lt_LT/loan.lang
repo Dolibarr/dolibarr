@@ -1,0 +1,31 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Paskola
+Loans=Paskolos
+NewLoan=Nauja paskola
+ShowLoan=Rodyti paskolą
+PaymentLoan=Paskolos apmokėjimas
+LoanPayment=Paskolos apmokėjimas
+ShowLoanPayment=Rodyti paskolos apmokėjimą
+LoanCapital=Kapitalas
+Insurance=Draudimas
+Interest=Palūkanos
+Nbterms=Sąlygos numeris
+Term=Term
+LoanAccountancyCapitalCode=Accounting account capital
+LoanAccountancyInsuranceCode=Accounting account insurance
+LoanAccountancyInterestCode=Accounting account interest
+ConfirmDeleteLoan=Patvirtinti šios paskolos panaikinimą
+LoanDeleted=Skola sėkmingai panaikinta 
+ConfirmPayLoan=Patvirtinti paskolos priskyrimą prie apmokėtų
+LoanPaid=Paskola grąžinta
+ListLoanAssociatedProject=List of loan associated with the project
+AddLoan=Create loan
+FinancialCommitment=Financial commitment
+InterestAmount=Palūkanos
+CapitalRemain=Capital remain
+# Admin
+ConfigLoan=Paskolos modulio konfigūracija
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Accounting account capital by default
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Accounting account interest by default
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Accounting account insurance by default
+CreateCalcSchedule=Edit financial commitment

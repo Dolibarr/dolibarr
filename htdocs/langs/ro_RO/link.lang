@@ -1,0 +1,10 @@
+# Dolibarr language file - Source file is en_US - languages
+LinkANewFile=Link  fişier/document nou
+LinkedFiles=Fişiere şi documente ataşate
+NoLinkFound=Niciun link inregistrat
+LinkComplete=Fişierul a fost ataşat cu succes
+ErrorFileNotLinked=Fişierul nu a putut fi ataşat
+LinkRemoved=Linkul %s a fost înlăturat
+ErrorFailedToDeleteLink= Eşec la înlăturarea  linkului '<b>%s</b>'
+ErrorFailedToUpdateLink= Eşec la modificarea linkului '<b>%s</b>'
+URLToLink=URL la link

@@ -1,0 +1,26 @@
+# Dolibarr language file - Source file is en_US - help
+CommunitySupport=Fórum/Wiki támogagtás
+EMailSupport=Email támogagtás
+RemoteControlSupport=Online Valós idejü / távoli támogatás
+OtherSupport=Más jellegü támogatás
+ToSeeListOfAvailableRessources=Kapcsolatba lépni / látni az elérhető erőforrásokat:
+HelpCenter=Segítség központ
+DolibarrHelpCenter=Dolibarr Segítség és Támogatási központ
+ToGoBackToDolibarr=Különben, kattintson <a href="%s">ide</a> a Dolibarr használatához
+TypeOfSupport=Támogatás forrása
+TypeSupportCommunauty=Közösség (ingyenes)
+TypeSupportCommercial=Üzleti
+TypeOfHelp=Típus
+NeedHelpCenter=Segítségre vagy támogatásra van szüksége?
+Efficiency=Hatékonyság
+TypeHelpOnly=Csak segítség
+TypeHelpDev=Segítség és fejlesztés
+TypeHelpDevForm=Segítség, fejlesztés és formálás
+ToGetHelpGoOnSparkAngels1=Egyes cégek gyors (időnként azonnali) segítséget tudnak nyújtani, azzal, hogy a gépe fölött átveszik az irányítást. Ilyen cégek listája a <b>%s</b> weboldalon található:
+ToGetHelpGoOnSparkAngels3=Ugyanakkor megtekintheti a Dolibarr oktatók listáját erre a gomra kattintva
+ToGetHelpGoOnSparkAngels2=Bizonyos esetekben nincs elérhető cég, változtassa meg a keresését "minden elérhető"-re. Több kérést tud így elküldeni.
+BackToHelpCenter=Más esetben, kattintson ide, hogy visszatérjen a <a href="%s">Segítség központ nyitólap</a>jára.
+LinkToGoldMember=Hívhatja az egyik előre kiválasztott az ön nyelvén (%s) tudó Dolibarr oktatót ha erre a Widget-re kattint (álltapot és maximális ár autómatikusan frissül):
+PossibleLanguages=Támogatott nyelvek
+SubscribeToFoundation=Segítse a Dolibarr projektet, iratkozzon fel az alapítványhoz
+SeeOfficalSupport=Hivatalos Dolibarr támogatás a saját nyelvén: <br><b><a href="%s" target="_blank">%s</a></b>

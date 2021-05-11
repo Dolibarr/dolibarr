@@ -1,0 +1,18 @@
+# Dolibarr language file - Source file is en_US - salaries
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Grootboekrekening voor medewerker derde partij
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=De toegewezen grootboekrekening welke is vastgelegd bij de medewerker, zal alleen gebruikt in de sub-boekhouding. Deze grootboekrekening zal worden gebruikt in de -boekhouding indien de toegewezen gebruikers grootboekrekening bij de medewerker niet is gedefinieerd.
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Standaard grootboekrekening voor salaris betalingen
+Salary=Salaris
+Salaries=Salarissen
+NewSalaryPayment=Nieuwe salarisbetaling
+SalaryPayment=Salarisbetaling
+SalariesPayments=Salarissen betalingen
+ShowSalaryPayment=Toon salarisbetaling
+THM=Gemiddeld uurtarief
+TJM=Gemiddeld dagtarief
+CurrentSalary=Huidig salaris
+THMDescription=Deze waarde kan worden gebruikt om de kosten te berekenen van de benodigde project-tijd. Werkt alleen indien de module Project is geactiveerd
+TJMDescription=Deze waarde is momenteel alleen voor informatie en wordt niet gebruikt in een berekening
+LastSalaries=Laatste %s salaris betalingen
+AllSalaries=Alle salarisbetalingen
+SalariesStatistics=Statistiques salaires

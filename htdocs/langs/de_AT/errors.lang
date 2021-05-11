@@ -1,0 +1,7 @@
+# Dolibarr language file - Source file is en_US - errors
+ErrorBadEMail=E-Mail %s ist ungültig
+ErrorBadUrl=Url %s ist ungültig
+ErrorRecordNotFound=Eintrag nicht gefunden.
+ErrorCashAccountAcceptsOnlyCashMoney=Dies ist ein Bargeldkonto (Kassa) und akzeptiert deshalb nur Bargeldtransaktionen.
+ErrorCustomerCodeAlreadyUsed=Diese Kunden Nr. ist bereits vergeben.
+WarningUntilDirRemoved=Diese Warnung bleibt so lange aktiv, wie dieses Verzeichnis existiert (nur für Administratoren).

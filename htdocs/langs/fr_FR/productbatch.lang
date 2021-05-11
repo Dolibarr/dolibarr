@@ -1,0 +1,24 @@
+# ProductBATCH language file - en_US - ProductBATCH
+ManageLotSerial=Utiliser les numéros de lots/série
+ProductStatusOnBatch=Oui (Lot/Série requis)
+ProductStatusNotOnBatch=Non (Lot/Série non utilisé)
+ProductStatusOnBatchShort=Oui
+ProductStatusNotOnBatchShort=Non
+Batch=Lot/Série
+atleast1batchfield=Date limite utilisation optimale, de consommation ou numéro de lot/série
+batch_number=Numéro de Lot/Série
+BatchNumberShort=Lot/Série
+EatByDate=DMD/DLUO
+SellByDate=DLC
+DetailBatchNumber=Détails Lot/Série
+printBatch=Lot/Série: %s
+printEatby=DMD/DLUO: %s
+printSellby=DLC: %s
+printQty=Qté: %d
+AddDispatchBatchLine=Ajouter une ligne pour la répartition par durée de conservation
+WhenProductBatchModuleOnOptionAreForced=Quand le module Lot/Série est activé, le mode de décrémentation automatique des stocks est forcé sur 'Décrémenter les stocks réel sur validation d'expédition' et le mode d'incrémentation automatique de stocks est forcé sur 'Incrémenter les stocks réels sur ventilation manuels dans les entrepôts' et ne peut pas être édité. Les autres options peuvent être définies comme vous le voulez.
+ProductDoesNotUseBatchSerial=Ce produit n'utilise pas les numéros de lot/série
+ProductLotSetup=Configuration du module lot/série
+ShowCurrentStockOfLot=Afficher le stock actuel pour le couple produit / lot
+ShowLogOfMovementIfLot=Afficher l'historique des mouvements de couple produit / lot
+StockDetailPerBatch=Stock détaillé par lot

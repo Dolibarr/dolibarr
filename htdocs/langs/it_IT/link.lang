@@ -1,0 +1,10 @@
+# Dolibarr language file - Source file is en_US - languages
+LinkANewFile=Collega un nuovo file/documento
+LinkedFiles=File e documenti collegati
+NoLinkFound=Nessun collegamento registrato
+LinkComplete=Il file è stato correttamente collegato
+ErrorFileNotLinked=Il file non può essere collegato
+LinkRemoved=Il collegamento %s è stato rimosso
+ErrorFailedToDeleteLink= Impossibile rimuovere il collegamento '<b>%s</b>'
+ErrorFailedToUpdateLink= Impossibile caricare il collegamento '<b>%s</b>'
+URLToLink=Indirizzo del link

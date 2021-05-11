@@ -1,0 +1,38 @@
+# Dolibarr language file - Source file is en_US - paybox
+PayBoxSetup=PayBox modul de configurare
+PayBoxDesc=Acest modul oferă pagini pentru a permite plata pe <a href="http://www.paybox.com" target="_blank">Paybox</a> de către clienţi. Acest lucru poate fi folosit pentru un cont gratuit sau plată pentru o plată de pe un anumit obiect Dolibarr (factură, pentru, ...)
+FollowingUrlAreAvailableToMakePayments=Ca urmare a URL-uri sunt disponibile pentru a oferi o pagină de la un client pentru a face o plată pe Dolibarr obiecte
+PaymentForm=Formă de plată
+WelcomeOnPaymentPage=Bine ati venit la serviciul de plată online
+ThisScreenAllowsYouToPay=Acest ecran vă permite de a face o plată online pentru %s.
+ThisIsInformationOnPayment=Acest lucru este de informatii cu privire la plata de a face
+ToComplete=Pentru a completa
+YourEMail=E-mail de confirmare de plată
+Creditor=Creditor
+PaymentCode=Cod Plata
+PayBoxDoPayment=Pay with Credit or Debit Card (Paybox)
+ToPay=Emite plata
+YouWillBeRedirectedOnPayBox=Veţi fi redirecţionat pe pagina Paybox securizat la intrare ai card de credit Informatii
+Continue=Următorul
+ToOfferALinkForOnlinePayment=URL-ul pentru plata %s
+ToOfferALinkForOnlinePaymentOnOrder=URL-ul pentru a oferi un %s plata online pentru o interfaţă de utilizator pentru
+ToOfferALinkForOnlinePaymentOnInvoice=URL-ul pentru a oferi un %s plata online interfaţă de utilizator pentru o factură
+ToOfferALinkForOnlinePaymentOnContractLine=URL-ul pentru a oferi un %s plata online interfaţă cu utilizatorul pentru un contract de linie
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL-ul pentru a oferi un %s plata online interfaţă de utilizator pentru o suma de liber
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL-ul pentru a oferi o plată %s interfata online pentru un abonament de membru
+YouCanAddTagOnUrl=Puteţi, de asemenea, să adăugaţi URL-ul parametru <b>& tag= <i>valoarea</i></b> la oricare dintre aceste URL-ul (necesar doar pentru liber de plată) pentru a adăuga propriul plată comentariu tag.
+SetupPayBoxToHavePaymentCreatedAutomatically=Configuraţi-vă PayBox cu <b>URL-ul %s</b> pentru a avea de plată a creat în mod automat atunci când validate de paybox.
+YourPaymentHasBeenRecorded=Această pagină confirmă faptul că plata dvs. a fost înregistrată. Mulţumesc.
+YourPaymentHasNotBeenRecorded=Sunteţi de plată nu a fost înregistrată şi pe tranzacţie a fost anulată. Mulţumesc.
+AccountParameter=Parametri Cont
+UsageParameter=Utilizarea parametrilor
+InformationToFindParameters=Ajutor pentru a găsi informaţiile dvs. de cont %s
+PAYBOX_CGI_URL_V2=URL-ul de Paybox modul CGI pentru plata
+VendorName=Numele vânzătorului
+CSSUrlForPaymentForm=CSS foaie de URL-ul de stil pentru forma de plată
+NewPayboxPaymentReceived=O nouă plată Paybox primită
+NewPayboxPaymentFailed=O plată nouă Paybox încercată dar eşuată
+PAYBOX_PAYONLINE_SENDEMAIL=Email pentru avertizare după o plată (realizată sau nu)
+PAYBOX_PBX_SITE=Valoare pentru PBX SITE
+PAYBOX_PBX_RANG=Valoare pentru PBX Rang
+PAYBOX_PBX_IDENTIFIANT=Valoare pentru PBX ID

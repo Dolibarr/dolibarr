@@ -1,0 +1,44 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=Marge
+Margins=Marges
+TotalMargin=Marge Totaal
+MarginOnProducts=Marge / Training
+MarginOnServices=Marge / Dienst
+MarginRate=Marge verhouding
+MarkRate=Markerings verhouding
+DisplayMarginRates=Toon Marge Verhouding
+DisplayMarkRates=Toon Markeringsverhouding
+InputPrice=Voer Prijs in
+margin=Winst marge management
+margesSetup=Winst marge management setup
+MarginDetails=Marge details
+ProductMargins=Product marge
+CustomerMargins=Klant marges
+SalesRepresentativeMargins=Vertegenwoordiger marges
+UserMargins=Gebruiker marges
+ProductService=Trainning of Dienst
+AllProducts=Alle Trainingen en Diensten
+ChooseProduct/Service=Kies Training of Dienst
+ForceBuyingPriceIfNull=Forceren inkoop/kostprijs naar verkoopprijs als dit niet is gedefinieerd
+ForceBuyingPriceIfNullDetails=If buying/cost price not defined, and this option "ON", margin will be zero on line (buying/cost price = selling price), otherwise ("OFF"), marge will be equal to suggested default.
+MARGIN_METHODE_FOR_DISCOUNT=Marge methode voor globale discounts
+UseDiscountAsProduct=Als een training
+UseDiscountAsService=Als een dienst
+UseDiscountOnTotal=Op subtotaal
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Definieert als een globale discount wordt behandelt als een training, een dienst, of alleen een subtotaal voor marge berekening.
+MARGIN_TYPE=Inkoop/kostprijs voorgesteld al standaard bij margeberekening
+MargeType1=Margin on Best vendor price
+MargeType2=Marge op gewogen inkoopprijs (GIP)
+MargeType3=Marge inkoopprijs
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best supplier price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best supplier price if WAP not yet defined
+CostPrice=Kostprijs
+UnitCharges=Unit toeslag
+Charges=Toeslag
+AgentContactType=Contact type used voor commissie
+AgentContactTypeDetails=Definiëren welk contact type (gekoppeld aan facturen) zal worden gebruikt voor het marge rapport per verkoop vertegenwoordiger
+rateMustBeNumeric=Tarief moet een numerieke waarde zijn
+markRateShouldBeLesserThan100=Markeer tarief moet lager zijn dan 100 zijn
+ShowMarginInfos=Toon marge info
+CheckMargins=Marge details
+MarginPerSaleRepresentativeWarning=The report of margin per user use the link between third parties and sale representatives to calculate the margin of each sale representative. Because some thirdparties may not have any ddiated sale representative and some thirdparties may be linked to several, some amounts may not be included into this report (if there is no sale representative) and some may appear on different lines (for each sale representative).

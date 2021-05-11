@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - ldap
+YouMustChangePassNextLogon=Salasana <b>käyttäjän %s verkkotunnuksen %s</b> on muuttunut.
+UserMustChangePassNextLogon=Käyttäjän on muutettava salasana verkkotunnuksen %s
+LDAPInformationsForThisContact=Tiedot LDAP-tietokannan tämä yhteystieto
+LDAPInformationsForThisUser=Tiedot LDAP-tietokannan tämän käyttäjän
+LDAPInformationsForThisGroup=Tiedot LDAP-tietokannan tähän ryhmään
+LDAPInformationsForThisMember=Tiedot LDAP-tietokannan tämä jäsen
+LDAPInformationsForThisMemberType=Information in LDAP database for this member type
+LDAPAttributes=LDAP-attribuutteja
+LDAPCard=LDAP-kortti
+LDAPRecordNotFound=Kirjataan ei löydy LDAP-tietokanta
+LDAPUsers=Käyttäjät LDAP-tietokanta
+LDAPFieldStatus=Tila
+LDAPFieldFirstSubscriptionDate=Ensimmäisen tilauksen päivämäärä
+LDAPFieldFirstSubscriptionAmount=Fist merkinnän määrästä
+LDAPFieldLastSubscriptionDate=Latest subscription date
+LDAPFieldLastSubscriptionAmount=Latest subscription amount
+LDAPFieldSkype=Skype id
+LDAPFieldSkypeExample=Example : skypeName
+UserSynchronized=Käyttäjän synkronoidaan
+GroupSynchronized=Ryhmän synkronoidaan
+MemberSynchronized=Jäsen synkronoidaan
+MemberTypeSynchronized=Member type synchronized
+ContactSynchronized=Yhteystiedot synkronoidaan
+ForceSynchronize=Force synkronointi Dolibarr -> LDAP
+ErrorFailedToReadLDAP=Lukeminen epäonnistui LDAP-tietokantaan. Tarkista LDAP-moduulin asennus ja tietokannan saavutettavuus.
+PasswordOfUserInLDAP=Password of user in LDAP

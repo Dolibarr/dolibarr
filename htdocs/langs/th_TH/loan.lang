@@ -1,0 +1,31 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=เงินกู้
+Loans=เงินให้กู้ยืม
+NewLoan=สินเชื่อใหม่
+ShowLoan=แสดงสินเชื่อ
+PaymentLoan=การชำระเงินสินเชื่อ
+LoanPayment=การชำระเงินสินเชื่อ
+ShowLoanPayment=แสดงการชำระเงินสินเชื่อ
+LoanCapital=เมืองหลวง
+Insurance=ประกันภัย
+Interest=ความสนใจ
+Nbterms=จำนวนของข้อตกลง
+Term=Term
+LoanAccountancyCapitalCode=Accounting account capital
+LoanAccountancyInsuranceCode=Accounting account insurance
+LoanAccountancyInterestCode=Accounting account interest
+ConfirmDeleteLoan=ยืนยันการลบเงินให้กู้ยืมนี้
+LoanDeleted=สินเชื่อที่ถูกลบประสบความสำเร็จ
+ConfirmPayLoan=ยืนยันการจำแนกจ่ายเงินให้กู้ยืมนี้
+LoanPaid=สินเชื่อการชำระเงิน
+ListLoanAssociatedProject=List of loan associated with the project
+AddLoan=Create loan
+FinancialCommitment=Financial commitment
+InterestAmount=ความสนใจ
+CapitalRemain=Capital remain
+# Admin
+ConfigLoan=การกำหนดค่าของเงินให้กู้ยืมโมดูล
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Accounting account capital by default
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Accounting account interest by default
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Accounting account insurance by default
+CreateCalcSchedule=Edit financial commitment

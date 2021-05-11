@@ -1,0 +1,72 @@
+# Dolibarr language file - Source file is en_US - sendings
+RefSending=المرجع. إرسال
+Sending=إرسال
+Sendings=الإرسال
+AllSendings=كل الشحنات
+Shipment=إرسال
+Shipments=شحنات
+ShowSending=مشاهدة الشحنات
+Receivings=Delivery Receipts
+SendingsArea=منطقة الإرسال
+ListOfSendings=قائمة الإرسال
+SendingMethod=طريقة إرسال
+LastSendings=Latest %s shipments
+StatisticsOfSendings=إحصاءات الإرسال
+NbOfSendings=عدد الإرسال
+NumberOfShipmentsByMonth=عدد الشحنات خلال الشهر
+SendingCard=بطاقة شحن
+NewSending=ارسال جديدة
+CreateShipment=إنشاء إرسال
+QtyShipped=الكمية المشحونة
+QtyShippedShort=Qty ship.
+QtyPreparedOrShipped=Qty prepared or shipped
+QtyToShip=لشحن الكمية
+QtyReceived=الكمية الواردة
+QtyInOtherShipments=Qty in other shipments
+KeepToShip=تبقى على السفينة
+KeepToShipShort=Remain
+OtherSendingsForSameOrder=الإرسال الأخرى لهذا النظام
+SendingsAndReceivingForSameOrder=Shipments and receipts for this order
+SendingsToValidate=للمصادقة على إرسال
+StatusSendingCanceled=ألغيت
+StatusSendingDraft=مسودة
+StatusSendingValidated=صادق (لشحن المنتجات أو شحنها بالفعل)
+StatusSendingProcessed=معالجة
+StatusSendingDraftShort=مسودة
+StatusSendingValidatedShort=صادق
+StatusSendingProcessedShort=معالجة
+SendingSheet=ورقة الشحن
+ConfirmDeleteSending=Are you sure you want to delete this shipment?
+ConfirmValidateSending=Are you sure you want to validate this shipment with reference <b>%s</b>?
+ConfirmCancelSending=Are you sure you want to cancel this shipment?
+DocumentModelMerou=Mérou A5 نموذج
+WarningNoQtyLeftToSend=تحذير ، لا تنتظر أن المنتجات المشحونة.
+StatsOnShipmentsOnlyValidated=الإحصاءات التي أجريت على شحنات التحقق من صحة فقط. التاريخ الذي يستخدم هو تاريخ المصادقة على شحنة (تاريخ التسليم مسوى لا يعرف دائما).
+DateDeliveryPlanned=التاريخ المحدد للتسليم
+RefDeliveryReceipt=Ref delivery receipt
+StatusReceipt=Status delivery receipt
+DateReceived=تلقى تاريخ التسليم
+SendShippingByEMail=ارسال شحنة عن طريق البريد الالكتروني
+SendShippingRef=تقديم شحنة٪ الصورة
+ActionsOnShipping=الأحداث على شحنة
+LinkToTrackYourPackage=رابط لتتبع الحزمة الخاصة بك
+ShipmentCreationIsDoneFromOrder=لحظة، ويتم إنشاء لشحنة جديدة من أجل بطاقة.
+ShipmentLine=خط الشحن
+ProductQtyInCustomersOrdersRunning=Product quantity into open customer orders
+ProductQtyInSuppliersOrdersRunning=Product quantity into open purchase orders
+ProductQtyInShipmentAlreadySent=Product quantity from open customer order already sent
+ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from open supplier order already received
+NoProductToShipFoundIntoStock=لا يوجد منتج للسفينة وجدت في <b>مستودع٪ الصورة.</b> الأسهم الصحيح أو العودة إلى اختيار مستودع آخر.
+WeightVolShort=Weight/Vol.
+ValidateOrderFirstBeforeShipment=You must first validate the order before being able to make shipments.
+
+# Sending methods
+# ModelDocument
+DocumentModelTyphon=أكمل نموذج لتسليم وثيقة من وثائق الإيصالات (logo...)
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER ثابت لم تحدد
+SumOfProductVolumes=مجموع أحجام المنتج
+SumOfProductWeights=مجموع الأوزان المنتج
+
+# warehouse details
+DetailWarehouseNumber= تفاصيل مستودع
+DetailWarehouseFormat= W:٪ ق (الكمية:٪ د)

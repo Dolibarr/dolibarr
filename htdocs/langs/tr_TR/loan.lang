@@ -1,0 +1,31 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Kredi
+Loans=Krediler
+NewLoan=Yeni Kredi
+ShowLoan=Kredi Göster
+PaymentLoan=Kredi ödemesi
+LoanPayment=Kredi ödemesi
+ShowLoanPayment=Kredi Ödemesi Göster
+LoanCapital=Sermaye
+Insurance=Sigorta
+Interest=Faiz
+Nbterms=Koşul sayısı
+Term=Term
+LoanAccountancyCapitalCode=Muhasebe hesabı sermayesi
+LoanAccountancyInsuranceCode=Muhasebe hesabı sigortası
+LoanAccountancyInterestCode=Muhasebe hesabı faiz oranı
+ConfirmDeleteLoan=Bu kredinin silinmesini onayla
+LoanDeleted=Kredi Başarıyla Silindi
+ConfirmPayLoan=Bu krediyi ödendi olarak sınıflandırmayı onayla
+LoanPaid=Kredi Ödendi
+ListLoanAssociatedProject=Proje ile ilişkili kredi listesi
+AddLoan=Kredi oluştur
+FinancialCommitment=Finansal taahhüt
+InterestAmount=Faiz
+CapitalRemain=Capital remain
+# Admin
+ConfigLoan=Kredi modülünün yapılandırılması
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Varsayılan muhasebe hesabı sermayesi
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Varsayılan muhasebe hesabı faiz oranı
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Varsayılan muhasebe hesabı sigortası
+CreateCalcSchedule=Edit financial commitment

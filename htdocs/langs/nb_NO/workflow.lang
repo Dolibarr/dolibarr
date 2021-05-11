@@ -1,0 +1,20 @@
+# Dolibarr language file - Source file is en_US - workflow
+WorkflowSetup=Oppsett av Arbeidsflyt-modulen 
+WorkflowDesc=Denne modulen er laget for å sette opp automatiske hendelser i programmet. Som standard er arbeidsflyt-modulen åpen (du kan gjøre ting i de rekkefølgen du ønsker). Du kan aktivere de automatiske hendelsene du vil.
+ThereIsNoWorkflowToModify=Det er ingen arbeidsflyt-modifikasjoner tilgjengelig med aktiverte moduler.
+# Autocreate
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Opprett en kundeordre automatisk etter at et tilbud er signert (ny ordre vil ha samme beløp som tilbud)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Opprett en kundefaktura automatisk etter at et tilbud er signert (ny faktura vil ha samme beløp som tilbud)
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Opprett automatisk en kundefaktura når en kontrakt er validert
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Opprett en kundefaktura automatisk etter at en kundeordre er stengt (ny faktura vil ha samme beløp som ordre)
+# Autoclassify customer proposal or order
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Klassifiser tilknyttede kildetilbud til fakturert(e) når kundeordren er satt til fakturert (og hvis beløpet av bestillingen er det samme som totalbeløpet av signerte koblede tilbud)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Klassifiser koblede kilde-tilbud som fakturert(t) når faktura er validert (og hvis fakturabeløpet er det samme som totalbeløpet av signerte tilbud)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Klassifiser koblede kilde-kundeordre som fakturert(t) når faktura er validert (og hvis fakturabeløpet er det samme som totalbeløpet av koblede ordrer)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Klassifiser koblede kilde-kundeordre som fakturert(t) når faktura er satt til betalt (og hvis fakturabeløpet er det samme som totalbeløpet av koblede ordrer)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Klassifiser koblet kilde-kundeordre til sendt når en forsendelse er validert (og hvis kvantitet som sendes av alle forsendelser, er det samme som i bestillingen som skal oppdateres)
+# Autoclassify supplier order
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Klassifiser tilsluttede kildeleverandørtilbud som fakturert når leverandørfaktura er validert (og hvis fakturabeløp er det samme som totalbeløp på koblede tilbud)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Klassifiser kildekjøpsordre (kjøpsordre) som fakturert når leverandørfakturaen er validert (og hvis fakturabeløp er det samme som totalbeløp på koblede ordre)
+AutomaticCreation=Automatisk opprettelse
+AutomaticClassification=Automatisk klassifisering

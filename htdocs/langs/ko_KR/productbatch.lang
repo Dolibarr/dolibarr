@@ -1,0 +1,24 @@
+# ProductBATCH language file - en_US - ProductBATCH
+ManageLotSerial=생산일련번호 사용
+ProductStatusOnBatch=예(생산일련번호필요)
+ProductStatusNotOnBatch=아니오(생산일련번호사용안함)
+ProductStatusOnBatchShort=예
+ProductStatusNotOnBatchShort=아니
+Batch=생산일련번호
+atleast1batchfield=소비기한 날짜 또는 판매기한 날짜 또는 일련번호
+batch_number=생산일련번호
+BatchNumberShort=일련번호
+EatByDate=소비기한 날짜
+SellByDate=판매기한 날짜
+DetailBatchNumber=생산일련번호 상세
+printBatch=생산일련번호: %s
+printEatby=소비기한: %s
+printSellby=판매기한: %s
+printQty=수량: %d
+AddDispatchBatchLine=Shelf Life 처리를 위한 줄 추가
+WhenProductBatchModuleOnOptionAreForced=When module Lot/Serial is on, automatic stock decrease  is forced to 'Decrease real stocks on shipping validation' and automatic increase mode is forced to 'Increase real stocks on manual dispatching into warehouses' and can't be edited. Other options can be defined as you want.
+ProductDoesNotUseBatchSerial=이제품은 일련번호를 사용하지 않음
+ProductLotSetup=일련번호 모듈 설정
+ShowCurrentStockOfLot=묶음제품 또는 일련번호별제품 현 재고보기
+ShowLogOfMovementIfLot=묶음제품 또는 일련번호별제품 이동기록 보기
+StockDetailPerBatch=일련번호별 재고내역

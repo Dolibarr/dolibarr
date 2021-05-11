@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - ldap
+YouMustChangePassNextLogon=Mật khẩu cho người <b>dùng% s</b> trên <b>miền% s</b> phải được thay đổi.
+UserMustChangePassNextLogon=Người dùng phải thay đổi mật khẩu trên các tên miền% s
+LDAPInformationsForThisContact=Thông tin trong cơ sở dữ liệu LDAP cho liên hệ này
+LDAPInformationsForThisUser=Thông tin trong cơ sở dữ liệu LDAP cho người dùng này
+LDAPInformationsForThisGroup=Thông tin trong cơ sở dữ liệu LDAP cho nhóm này
+LDAPInformationsForThisMember=Thông tin trong cơ sở dữ liệu LDAP của thành viên này
+LDAPInformationsForThisMemberType=Information in LDAP database for this member type
+LDAPAttributes=Thuộc tính LDAP
+LDAPCard=Thẻ LDAP
+LDAPRecordNotFound=Ghi lại không có trong cơ sở dữ liệu LDAP
+LDAPUsers=Người sử dụng trong cơ sở dữ liệu LDAP
+LDAPFieldStatus=Tình trạng
+LDAPFieldFirstSubscriptionDate=Ngày đăng ký đầu tiên
+LDAPFieldFirstSubscriptionAmount=Số lượng thuê bao đầu tiên
+LDAPFieldLastSubscriptionDate=Latest subscription date
+LDAPFieldLastSubscriptionAmount=Latest subscription amount
+LDAPFieldSkype=Skype id
+LDAPFieldSkypeExample=Example : skypeName
+UserSynchronized=Sử dụng đồng bộ
+GroupSynchronized=Nhóm đồng bộ
+MemberSynchronized=Thành viên đồng bộ
+MemberTypeSynchronized=Member type synchronized
+ContactSynchronized=Liên hệ đồng bộ
+ForceSynchronize=Lực lượng đồng bộ hóa Dolibarr -> LDAP
+ErrorFailedToReadLDAP=Không thể đọc cơ sở dữ liệu LDAP. Kiểm tra thiết lập mô-đun LDAP và khả năng tiếp cận cơ sở dữ liệu.
+PasswordOfUserInLDAP=Password of user in LDAP

@@ -1,0 +1,44 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=Margin
+Margins=Marginer
+TotalMargin=Totalmargin
+MarginOnProducts=Margin - Varer
+MarginOnServices=Margin - Tjenester
+MarginRate=Margin/påslag
+MarkRate=Dekningsbidrag
+DisplayMarginRates=Vis marginrater
+DisplayMarkRates=Vis dekningsbidrag
+InputPrice=Inngangspris
+margin=Håndtering av overskuddsmarginer
+margesSetup=Oppsett av overskuddsmargin-håndtering
+MarginDetails=Margindetaljer
+ProductMargins=Varemarginer
+CustomerMargins=Kundemarginer
+SalesRepresentativeMargins=Marginer for selgere
+UserMargins=Brukermarginer
+ProductService=Vare eller tjeneste
+AllProducts=Alle varer og tjenester
+ChooseProduct/Service=Velg vare eller tjenester
+ForceBuyingPriceIfNull=Tving innkjøps-/kostpris til utsalgspris hvis udefinert
+ForceBuyingPriceIfNullDetails=Hvis innkjøps-/kostpris ikke er definert, og denne opsjonen er "PÅ", vil margin bli satt til null på linjen (innkjøps-/kostpris = utsalgspris). Ellers ("AV") vil margin bli satt til foreslått standard.
+MARGIN_METHODE_FOR_DISCOUNT=Margin-metode for globale rabatter
+UseDiscountAsProduct=Som vare
+UseDiscountAsService=Som tjeneste
+UseDiscountOnTotal=Subtota
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Defineres om en global rabatt skal gjelde for et vare, en tjeneste, eller bare som en subtotal for margin-kalkulasjon
+MARGIN_TYPE=Foreslått innkjøps-/kostpris for utregning av margin
+MargeType1=Margin på beste leverandørpris
+MargeType2=Margin på gjennomsnittspris (Weighted Average Price - WAP)
+MargeType3=Marginer på kostpris
+MarginTypeDesc=* Margin på beste innkjøpspris = Salgspris - Beste leverandørpris på varekort - * Margin på vektet gjennomsnittlig pris (WAP) = Salgspris - WAP eller beste leverandørpris dersom WAP ennå ikke er definert <br> * Margin på kostpris = Salgspris - Kostpris på varekort eller WAP hvis kostpris ikke er definert, eller beste leverandørpris dersom WAP ennå ikke er definert
+CostPrice=Kostpris
+UnitCharges=Enhets-avgifter
+Charges=Avgifter
+AgentContactType=Kommersiell agent kontakttype
+AgentContactTypeDetails=Definer hvilken kontakttype (lenket til fakturaer) som skal brukes for margin-rapport for hver selger
+rateMustBeNumeric=Sats må ha en numerisk verdi
+markRateShouldBeLesserThan100=Dekningsbidrag skal være lavere enn 100
+ShowMarginInfos=Vis info om marginer
+CheckMargins=Margindetaljer
+MarginPerSaleRepresentativeWarning=Rapporten for margin per bruker, bruker koblingen mellom tredjeparter og salgsrepresentanter for å beregne marginen til hver salgsrepresentant. Fordi noen tredjeparter kanskje ikke har noen dedikert salgsrepresentant og noen tredjeparter kan være knyttet til flere, kan noen beløp bli utelatt i denne rapporten (hvis det ikke er salgsrepresentant), og noen kan vises på forskjellige linjer (for hver salgsrepresentant).

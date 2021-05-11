@@ -1,0 +1,20 @@
+# Dolibarr language file - Source file is en_US - workflow
+WorkflowSetup=Configurar módulo de fluxo de frabalho
+WorkflowDesc=Este módulo foi criado para modificar o comportamento das ações automáticas na aplicação. Por predefinição, o fluxo de trabalho está aberto (pode fazer as coisas na ordem que desejar). Pode ativar as ações automáticas em que está interessado.
+ThereIsNoWorkflowToModify=Não há modificações de fluxo de trabalho disponíveis para os módulos ativados.
+# Autocreate
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Criar automaticamente uma encomenda de cliente após a assinatura de um orçamento (a nova encomenda terá o mesmo valor que o orçamento)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automatically create a customer invoice after a commercial proposal is signed (new invoice will have same amount than proposal)
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Criar automaticamente uma fatura de cliente após a validação de um contrato
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automatically create a customer invoice after a customer order is closed (new invoice will have same amount than order)
+# Autoclassify customer proposal or order
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classifique o(s) orçamentos(s) associados como faturados quando uma encomenda de um cliente é classificada como faturada (e se a quantidade da encomenda for igual à quantidade total dos orçamentos assinados associados)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classifique os orçamentos de clientes vinculados como faturados quando a fatura do cliente é validada (e se o valor da fatura for igual ao montante total dos orçamentos, assinados, vinculados)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is validated (and if amount of the invoice is same than total amount of linked orders)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is set to paid (and if amount of the invoice is same than total amount of linked orders)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classifique a encomenda do cliente vinculada como enviada quando uma expedição é validada (e se a quantidade enviada por todas as expedições for idêntica à da encomenda a atualizar)
+# Autoclassify supplier order
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal(s) to billed when vendor invoice is validated (and if amount of the invoice is same than total amount of linked proposals)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source purchase order(s) to billed when vendor invoice is validated (and if amount of the invoice is same than total amount of linked orders)
+AutomaticCreation=Criação automática
+AutomaticClassification=Classificação automática

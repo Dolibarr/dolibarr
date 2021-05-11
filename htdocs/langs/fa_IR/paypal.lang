@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=راه اندازی ماژول پی پال
+PaypalDesc=این ماژول صفحات پیشنهاد به اجازه پرداخت <a href="http://www.paypal.com" target="_blank">پی پال</a> توسط مشتریان. این می تواند برای پرداخت رایگان و پرداخت در یک شیء خاص Dolibarr استفاده می شود (فاکتور، سفارش، ...)
+PaypalOrCBDoPayment=Pay with Paypal (Credit Card or Paypal)
+PaypalDoPayment=پرداخت با پی پال
+PAYPAL_API_SANDBOX=تست حالت / گودال ماسهبازی
+PAYPAL_API_USER=نام کاربری API
+PAYPAL_API_PASSWORD=رمز عبور API
+PAYPAL_API_SIGNATURE=امضا API
+PAYPAL_SSLVERSION=Curl SSL Version
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=ارائه پرداخت "جدایی ناپذیر" (کارت اعتباری + پی پال) و یا "پی پال" تنها
+PaypalModeIntegral=انتگرال
+PaypalModeOnlyPaypal=پی پال تنها
+ONLINE_PAYMENT_CSS_URL=Optionnal URL of CSS style sheet on online payment page
+ThisIsTransactionId=این شناسه از معامله <b>است:٪ s</b>
+PAYPAL_ADD_PAYMENT_URL=اضافه کردن آدرس از پرداخت پی پال زمانی که شما یک سند ارسال از طریق پست
+YouAreCurrentlyInSandboxMode=You are currently in the %s "sandbox" mode
+NewOnlinePaymentReceived=New online payment received
+NewOnlinePaymentFailed=New online payment tried but failed
+ONLINE_PAYMENT_SENDEMAIL=ایمیل پس از پرداخت برای هشدار دادن به (موفقیت یا نه)
+ReturnURLAfterPayment=URL بازگشت پس از پرداخت
+ValidationOfOnlinePaymentFailed=Validation of online payment failed
+PaymentSystemConfirmPaymentPageWasCalledButFailed=Payment confirmation page was called by payment system returned an error
+SetExpressCheckoutAPICallFailed=SetExpressCheckout API call failed.
+DoExpressCheckoutPaymentAPICallFailed=DoExpressCheckoutPayment API call failed.
+DetailedErrorMessage=Detailed Error Message
+ShortErrorMessage=Short Error Message
+ErrorCode=Error Code
+ErrorSeverityCode=Error Severity Code
+OnlinePaymentSystem=Online payment system
+PaypalLiveEnabled=Paypal live enabled (otherwise test/sandbox mode)
+PaypalImportPayment=Import Paypal payments
+PostActionAfterPayment=Post actions after payments
+ARollbackWasPerformedOnPostActions=A rollback was performed on all Post actions. You must complete post actions manually if they are necessary.

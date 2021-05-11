@@ -1,0 +1,12 @@
+README (English)
+--------------------------------
+
+This directory contains ruleset files to use to develop Dolibarr EPR & CRM.
+
+To install/upgrade phpcs:
+> sudo pear upgrade PHP_CodeSniffer
+
+Note with Eclipse: You must setup the PTI plugin of Eclipse into PHPCodeSniffer menu with:
+* tab value to 4
+* path of code sniffer standard to dev/codesniffer 
+

@@ -1,0 +1,5 @@
+# Dolibarr language file - Source file is en_US - externalsite
+ExternalSiteSetup=Postavljanje linkova na vanjske web stranice
+ExternalSiteURL=URL vanjske stranice
+ExternalSiteModuleNotComplete=Modul ExternalSite nije ispravno podešen.
+ExampleMyMenuEntry=Moj izbornik unos

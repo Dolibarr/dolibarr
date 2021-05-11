@@ -1,0 +1,132 @@
+
+/* ============================================================================== */
+/*  Demo                                                                          */
+/* ============================================================================== */
+
+a:hover {
+	text-decoration: none;
+}
+.demobox {
+	border: 1px solid #bbb;
+	border-radius: 8px;
+	-moz-border-radius: 8px;
+	min-height: 210px;
+}
+.demobox:hover {
+	border: 1px solid #bbb;
+	border-radius: 8px;
+	-moz-border-radius: 8px;
+	box-shadow: 2px 2px 8px #BBB; 
+}
+.CTable {
+	padding: 6px;
+	font-weight: normal;
+	color: #444444 !important;
+	
+	margin: 8px 0px 8px 2px;
+	
+	/*border: 1px solid #bbb;
+	border-radius: 8px;
+	-moz-border-radius: 8px;*/
+	
+	background: -webkit-linear-gradient(bottom, rgb(255,255,255) 85%, rgb(255,255,255) 100%);
+}
+.csscolumns {
+    margin-top: 6px;
+    margin-bottom: 5px;
+    -webkit-column-count: 2; /* Chrome, Safari, Opera */
+    -moz-column-count: 2; /* Firefox */
+    column-count: 2;
+    text-align: left;
+}
+.demomaxoveflow {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+@media only screen and (max-width: 840px)
+{
+	.csscolumns {
+		-webkit-column-count: 3; /* Chrome, Safari, Opera */
+	    -moz-column-count: 3; /* Firefox */
+	    column-count: 3;
+        text-align: left;
+	}
+}
+@media only screen and (max-width: 640px)
+{
+	.csscolumns {
+		-webkit-column-count: 2; /* Chrome, Safari, Opera */
+	    -moz-column-count: 2; /* Firefox */
+	    column-count: 2;
+        text-align: left;
+	}
+}
+@media only screen and (max-width: 420px)
+{
+	.demomaxoveflow {
+	    max-width: none !important;
+	    overflow: hidden;
+	    text-overflow: ellipsis;
+	}
+	.csscolumns {
+		-webkit-column-count: 1; /* Chrome, Safari, Opera */
+	    -moz-column-count: 1; /* Firefox */
+	    column-count: 1;
+        text-align: left;
+	}
+}
+
+
+/* For demo pages */
+.demobody {
+	line-height: 130%;
+	font-size: 150%;
+	text-align: center;
+}
+.demobantext {
+	max-width: 1024px;
+	text-align: center;
+	display: inline-block;
+}
+.demobanbox {
+    font-size: 90%;
+}
+img.demothumb {
+    /* box-shadow: 2px 2px 8px #BBB; */
+    margin-right: 20px;
+    margin-left: 10px;
+    width: 110px;
+}
+.demobackground {
+    background-image: url('dolibarr_demo_ban.jpg');
+    background-size: cover;
+    object-fit: contain;
+    height: 140px;
+    background-position-y: bottom;
+}
+
+
+@media only screen and (max-width: 767px)
+{
+    .demobody {
+    	line-height: 150% !important;
+        font-size: 100% !important;
+    }
+    .demobox {
+		min-height: 170px !important;
+	}
+    img.demothumb {
+        /* box-shadow: 1px 1px 4px #BBB; */
+        margin-right: 6px;
+        margin-left: 4px;
+        width: 80px;
+    }
+    .demobanbox {
+        font-size: 100%;
+    }
+    div#tr1profdemoall {
+        margin-left: 0px;
+        margin-right: 0px;
+    }
+}

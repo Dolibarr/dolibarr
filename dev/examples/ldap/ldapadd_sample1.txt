@@ -1,0 +1,14 @@
+# ldapadd_sample1.txt
+# ldapadd is into package ldap-utils on debian.
+#
+# Use this sample to add a dc "my-domain".
+# This is the first thing to create
+#
+# ldapadd -c -v -D cn=Manager,dc=my-domain,dc=com -W -f ldapadd_sample1.txt
+
+dn: dc=my-domain,dc=com
+objectclass: dcObject
+objectClass: organization
+objectClass: top
+dc: my-domain
+o: Mon organisation

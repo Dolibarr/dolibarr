@@ -1,0 +1,30 @@
+# Dolibarr language file - Source file is en_US - deliveries
+Delivery=Envío
+DeliveryRef=Ref. envío
+DeliveryCard=Ficha nota de recepción
+DeliveryOrder=Nota de recepción
+DeliveryDate=Fecha de entrega
+CreateDeliveryOrder=Generar nota de entrega
+DeliveryStateSaved=Estado de entrega guardado
+SetDeliveryDate=Indicar la fecha de entrega
+ValidateDeliveryReceipt=Validar la nota de entrega
+ValidateDeliveryReceiptConfirm=¿Está seguro de que desea validar esta entrega?
+DeleteDeliveryReceipt=Eliminar la nota de entrega
+DeleteDeliveryReceiptConfirm=¿Está seguro de querer eliminar la nota de entrega <b>%s</b>?
+DeliveryMethod=Método de envío
+TrackingNumber=Nº de seguimiento
+DeliveryNotValidated=Nota de recepción no validada
+StatusDeliveryCanceled=Anulado
+StatusDeliveryDraft=Borrador
+StatusDeliveryValidated=Recibido
+# merou PDF model
+NameAndSignature=Nombre y firma :
+ToAndDate=En___________________________________ a ____/_____/__________
+GoodStatusDeclaration=He recibido la mercancía en buen estado,
+Deliverer=Destinatario :
+Sender=Origen
+Recipient=Destinatario
+ErrorStockIsNotEnough=No hay suficiente stock
+Shippable=Enviable
+NonShippable=No enviable
+ShowReceiving=Mostrar nota de recepción

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<PADGEN_CML>
+	<AppVerInfo>PADGen 3.1.1.47</AppVerInfo>
+	<Company_Info>
+		<Company_Name>NLTechno</Company_Name>
+		<Address_1>11 Rue raymond Queneau</Address_1>
+		<Address_2 />
+		<City_Town>Rueil Malmaison</City_Town>
+		<State_Province />
+		<Zip_Postal_Code>92500</Zip_Postal_Code>
+		<Country>FRANCE</Country>
+		<Company_WebSite_URL>http://www.nltechno.com</Company_WebSite_URL>
+		<Contact_Info>
+			<Author_First_Name>NLTechno</Author_First_Name>
+			<Author_Last_Name>NLTechno</Author_Last_Name>
+			<Author_Email>dolibarr@nltechno.com</Author_Email>
+			<Contact_First_Name>NLTechno</Contact_First_Name>
+			<Contact_Last_Name>NLTechno</Contact_Last_Name>
+			<Contact_Email>dolibarr@nltechno.com</Contact_Email>
+		</Contact_Info>
+		<Support_Info>
+			<Sales_Email>dolibarr@nltechno.com</Sales_Email>
+			<Support_Email>dolibarr@nltechno.com</Support_Email>
+			<General_Email>dolibarr@nltechno.com</General_Email>
+			<Sales_Phone />
+			<Support_Phone />
+			<General_Phone />
+			<Fax_Phone />
+		</Support_Info>
+	</Company_Info>
+</PADGEN_CML>

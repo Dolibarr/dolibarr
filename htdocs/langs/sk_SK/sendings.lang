@@ -1,0 +1,72 @@
+# Dolibarr language file - Source file is en_US - sendings
+RefSending=Ref. zásielka
+Sending=Zásielka
+Sendings=Zásielky
+AllSendings=Všetky zásielky
+Shipment=Náklad
+Shipments=Zásielky
+ShowSending=Zobraziť zásielku
+Receivings=Dodacie listy
+SendingsArea=Zásielky oblasť
+ListOfSendings=Zoznam zásielok
+SendingMethod=Spôsob dopravy
+LastSendings=Najnovšie %s expedované
+StatisticsOfSendings=Štatistika zásielok
+NbOfSendings=Počet zásielok
+NumberOfShipmentsByMonth=Počet zásielok podľa mesiaca
+SendingCard=Zasielková karta
+NewSending=Nová zásielka
+CreateShipment=Vytvoriť zásielku
+QtyShipped=Odoslané množstvo
+QtyShippedShort=Qty ship.
+QtyPreparedOrShipped=Qty prepared or shipped
+QtyToShip=Množstvo na odoslanie
+QtyReceived=Prijaté množstvo
+QtyInOtherShipments=Qty in other shipments
+KeepToShip=Zostáva odoslať
+KeepToShipShort=Remain
+OtherSendingsForSameOrder=Ďalšie zásielky pre túto objednávku
+SendingsAndReceivingForSameOrder=Shipments and receipts for this order
+SendingsToValidate=Zásielky na overenie
+StatusSendingCanceled=Zrušený
+StatusSendingDraft=Návrh
+StatusSendingValidated=Overené (výrobky na odoslanie alebo už dodané)
+StatusSendingProcessed=Spracované
+StatusSendingDraftShort=Návrh
+StatusSendingValidatedShort=Overené
+StatusSendingProcessedShort=Spracované
+SendingSheet=Zásielkový hárok
+ConfirmDeleteSending=Určite chcete zmazať túto zásielku ?
+ConfirmValidateSending=Určite chcete overiť túto zásielku s odkazom <b>%s</b>?
+ConfirmCancelSending=Určite chcete zrušiť túto zásielku ?
+DocumentModelMerou=Mero A5 modelu
+WarningNoQtyLeftToSend=Varovanie: žiadny tovar majú byť dodané.
+StatsOnShipmentsOnlyValidated=Štatistiky vykonaná na zásielky iba overených. Dátum použité je dátum schválenia zásielky (plánovaný dátum dodania nie je vždy známe).
+DateDeliveryPlanned=Plánovaný dátum doručenia
+RefDeliveryReceipt=Ref delivery receipt
+StatusReceipt=Status delivery receipt
+DateReceived=Dátum doručenia obdržal
+SendShippingByEMail=Poslať zásielku EMail
+SendShippingRef=Podanie zásielky %s
+ActionsOnShipping=Udalosti na zásielky
+LinkToTrackYourPackage=Odkaz pre sledovanie balíkov
+ShipmentCreationIsDoneFromOrder=Pre túto chvíľu, je vytvorenie novej zásielky vykonať z objednávky karty.
+ShipmentLine=Zásielka linka
+ProductQtyInCustomersOrdersRunning=Product quantity into open customer orders
+ProductQtyInSuppliersOrdersRunning=Product quantity into open purchase orders
+ProductQtyInShipmentAlreadySent=Product quantity from open customer order already sent
+ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from open supplier order already received
+NoProductToShipFoundIntoStock=Produkt na odoslanie nenájdený v sklade <b>%s</b>. Upravte zásoby alebo chodte späť a vyberte iný sklad.
+WeightVolShort=Váha/Objem
+ValidateOrderFirstBeforeShipment=Najprv musíte overiť objednávku pred vytvorením zásielky.
+
+# Sending methods
+# ModelDocument
+DocumentModelTyphon=Viac Celý dokument model pre potvrdenie o doručení (logo. ..)
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=Konštantná EXPEDITION_ADDON_NUMBER nie je definované
+SumOfProductVolumes=Súčet objemov produktov
+SumOfProductWeights=Súčet hmotností produktov
+
+# warehouse details
+DetailWarehouseNumber= Detaily skladu
+DetailWarehouseFormat= Sklad:%s (Qty : %d)

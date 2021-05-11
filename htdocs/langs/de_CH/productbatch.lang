@@ -1,0 +1,7 @@
+# Dolibarr language file - Source file is en_US - productbatch
+Batch=Chg / Serie
+EatByDate=Verzehren-bis-Datum
+SellByDate=Verkaufen-bis-Datum
+DetailBatchNumber=Chg / Serie Details
+printBatch=Chg / Serie: %s
+AddDispatchBatchLine=Fügen Sie eine Zeile für Haltbarkeit Dispatching

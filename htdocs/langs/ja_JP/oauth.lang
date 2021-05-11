@@ -1,0 +1,30 @@
+# Dolibarr language file - Source file is en_US - oauth
+ConfigOAuth=Oauth 設定
+OAuthServices=OAuth サービス
+ManualTokenGeneration=手動トークン生成
+TokenManager=トークンマネージャー
+IsTokenGenerated=トークンは生成されましたか？
+NoAccessToken=アクセストークンはローカルデータベースに保存されていません
+HasAccessToken=トークンを生成し、ローカルデータベースに保存されました
+NewTokenStored=トークンを受け取り、保存しました
+ToCheckDeleteTokenOnProvider=ここをクリックすると %s OAuth プロバイダによって保存された承認を確認/削除します
+TokenDeleted=トークンを削除しました
+RequestAccess=ここをクリックすると、アクセスをリクエスト/更新し、新しいトークンを受け取って保存します
+DeleteAccess=ここをクリックするとトークンを削除します
+UseTheFollowingUrlAsRedirectURI=OAuth プロバイダで資格情報を作成するときに、次の URL をリダイレクト URI として使用します:
+ListOfSupportedOauthProviders=ここにOAuth2プロバイダが提供する資格情報を入力してください。 サポートされているOAuth2プロバイダのみがここに表示されます。 この設定は、OAuth2認証を必要とする他のモジュールで使用されることがあります。
+OAuthSetupForLogin=OAuth トークンを生成するページ
+SeePreviousTab=前のタブを表示
+OAuthIDSecret=OAuth ID とシークレット
+TOKEN_REFRESH=現在のトークンを更新
+TOKEN_EXPIRED=トークンの有効期限切れ
+TOKEN_EXPIRE_AT=トークンの有効期限
+TOKEN_DELETE=保存されたトークンを削除
+OAUTH_GOOGLE_NAME=OAuth Google サービス
+OAUTH_GOOGLE_ID=OAuth Google ID
+OAUTH_GOOGLE_SECRET=OAuth Google シークレット
+OAUTH_GOOGLE_DESC=<a class="notasortlink" href="https://console.developers.google.com/" target="_blank">このページ</a> に移動して、"資格情報" で、OAuth 資格情報を作成します
+OAUTH_GITHUB_NAME=OAuth GitHub サービス
+OAUTH_GITHUB_ID=OAuth GitHub ID
+OAUTH_GITHUB_SECRET=OAuth GitHub シークレット
+OAUTH_GITHUB_DESC=<a class="notasortlink" href="https://github.com/settings/developers" target="_blank">このページ</a> に移動して、"新しいアプリケーションを登録" で、OAuth 資格情報を作成します

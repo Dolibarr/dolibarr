@@ -1,0 +1,17 @@
+# Dolibarr language file - en_US - hrm
+# Admin
+HRM_EMAIL_EXTERNAL_SERVICE=Correu electrònic per prevenir serveis externs HRM
+Establishments=Establiments
+Establishment=Establiment
+NewEstablishment=Nou establiment
+DeleteEstablishment=Elimina l'establiment
+ConfirmDeleteEstablishment=Vols eliminar aquest establiment?
+OpenEtablishment=Obre l'establiment
+CloseEtablishment=Tanca l'establiment
+# Dictionary
+DictionaryDepartment=HRM - Llistat de departament
+DictionaryFunction=HRM - Llistat de funcions
+# Module
+Employees=Empleats
+Employee=Empleat
+NewEmployee=Nou empleat

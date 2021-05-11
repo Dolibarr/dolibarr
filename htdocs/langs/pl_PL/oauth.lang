@@ -1,0 +1,30 @@
+# Dolibarr language file - Source file is en_US - oauth
+ConfigOAuth=Konfiguracja Oauth
+OAuthServices=Usługi OAuth
+ManualTokenGeneration=Ręczne generowanie tokena
+TokenManager=Token manager
+IsTokenGenerated=Czy wygenerowano token?
+NoAccessToken=Brak tokenu zapisanego w lokalnej bazie danych
+HasAccessToken=Token wygenerowano i zapisano w lokalnej bazie danych
+NewTokenStored=Token odebrany i zapisany
+ToCheckDeleteTokenOnProvider=Click here to check/delete authorization saved by %s OAuth provider
+TokenDeleted=Token usunięto
+RequestAccess=Kliknij tutaj w celu wysłania zapotrzebowania/odnowienia dostępu i otrzymania nowego tokena.
+DeleteAccess=Kliknuj tutaj, aby usunąć token
+UseTheFollowingUrlAsRedirectURI=Użyj następującego adresu URL jako Przekierowanie URI podczas tworzenia poświadczeń dostawcy OAuth:
+ListOfSupportedOauthProviders=Enter here credential provided by your OAuth2 provider. Only supported OAuth2 providers are visible here. This setup may be used by other modules that need OAuth2 authentication.
+OAuthSetupForLogin=Strona do generowania tokena OAuth
+SeePreviousTab=See previous tab
+OAuthIDSecret=OAuth ID and Secret
+TOKEN_REFRESH=Reklamowe Odśwież Present
+TOKEN_EXPIRED=Token wygasł
+TOKEN_EXPIRE_AT=Token wygaśnie za
+TOKEN_DELETE=Usuń zachowany token
+OAUTH_GOOGLE_NAME=Usługa Google OAuth
+OAUTH_GOOGLE_ID=ID OAuth Google
+OAUTH_GOOGLE_SECRET=Oauth Google Secret
+OAUTH_GOOGLE_DESC=Go on <a class="notasortlink" href="https://console.developers.google.com/" target="_blank">this page</a> then "Credentials" to create Oauth credentials
+OAUTH_GITHUB_NAME=Serwis Oauth GitHub
+OAUTH_GITHUB_ID=Identyfikator Oauth GitHub 
+OAUTH_GITHUB_SECRET=Oauth GitHub Secret
+OAUTH_GITHUB_DESC=Go on <a class="notasortlink" href="https://github.com/settings/developers" target="_blank">this page</a> then "Register a new application" to create Oauth credentials

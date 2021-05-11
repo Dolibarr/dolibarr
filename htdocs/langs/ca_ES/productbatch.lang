@@ -1,0 +1,24 @@
+# ProductBATCH language file - en_US - ProductBATCH
+ManageLotSerial=Utilitzar numeració per lots/series
+ProductStatusOnBatch=Si (es necessita lot/serie)
+ProductStatusNotOnBatch=No (no s'utilitza lot/serie)
+ProductStatusOnBatchShort=Si
+ProductStatusNotOnBatchShort=No
+Batch=Lot/Serie
+atleast1batchfield=Data de caducitat o Data de venda o Lot/Numero de Serie
+batch_number=Número de Lot/Serie
+BatchNumberShort=Lot/Serie
+EatByDate=Data de caducitat
+SellByDate=Data límit de venda
+DetailBatchNumber=Detalls del lot/serie
+printBatch=Lot/Serie %s
+printEatby=Caducitat: %s
+printSellby=Límit venda: %s
+printQty=Quant.: %d
+AddDispatchBatchLine=Afegir una línia per despatx per caducitat
+WhenProductBatchModuleOnOptionAreForced=Quan el mòdul de Lots/Sèries està activat, la disminució d'estoc automàtica està forçada a 'Disminueix els estocs reals en la validació de l'enviament' i el mode d'increment d'estoc automàtic està forçat a 'Augmentar els estocs reals en l'enviament manual als magatzems' i no pot editar-se. Les altres opcions es poden definir com vulgueu.
+ProductDoesNotUseBatchSerial=Aquest producte no utilitza lot/número de sèrie
+ProductLotSetup=Configuració del mòdul lot/sèries
+ShowCurrentStockOfLot=Mostra l'estoc actual de la parella producte/lot
+ShowLogOfMovementIfLot=Mostra el registre de moviments de la parella producte/lot
+StockDetailPerBatch=Detalls del stock per lot

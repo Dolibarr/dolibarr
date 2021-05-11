@@ -1,0 +1,30 @@
+# Dolibarr language file - Source file is en_US - deliveries
+Delivery=Saadetis
+DeliveryRef=Ref Delivery
+DeliveryCard=Receipt card
+DeliveryOrder=Saateleht
+DeliveryDate=Kohaletoimetamise kuupäev
+CreateDeliveryOrder=Generate delivery receipt
+DeliveryStateSaved=Delivery state saved
+SetDeliveryDate=Määra saadetise kuupäev
+ValidateDeliveryReceipt=Kinnita vastuvõtu kinnitus
+ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt?
+DeleteDeliveryReceipt=Kustuta vastuvõtu kinnitus
+DeleteDeliveryReceiptConfirm=Are you sure you want to delete delivery receipt <b>%s</b>?
+DeliveryMethod=Tarneviis
+TrackingNumber=Jälgimiskood
+DeliveryNotValidated=Saadetis on kinnitamata
+StatusDeliveryCanceled=Tühistatud
+StatusDeliveryDraft=Mustand
+StatusDeliveryValidated=Vastu võetud
+# merou PDF model
+NameAndSignature=Nimi ja allkiri:
+ToAndDate=___________________________________ kuupäev "____" / _____ / __________
+GoodStatusDeclaration=Olen ülalloetletud kaubad vastavalt tellimusele kätte saanud,
+Deliverer=Toimetas kohale:
+Sender=Saatja
+Recipient=Vastuvõtja
+ErrorStockIsNotEnough=There's not enough stock
+Shippable=Shippable
+NonShippable=Not Shippable
+ShowReceiving=Show delivery receipt

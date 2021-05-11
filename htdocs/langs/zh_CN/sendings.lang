@@ -1,0 +1,72 @@
+# Dolibarr language file - Source file is en_US - sendings
+RefSending=运输编号
+Sending=运输
+Sendings=运输
+AllSendings=全部运输
+Shipment=运输
+Shipments=运输
+ShowSending=显示运输
+Receivings=送货单
+SendingsArea=出货区
+ListOfSendings=运输列表
+SendingMethod=运输方式
+LastSendings=最近的 %s 次出货
+StatisticsOfSendings=统计出货量
+NbOfSendings=出货数量
+NumberOfShipmentsByMonth=每月的出货数量
+SendingCard=运输信息卡
+NewSending=新建运输
+CreateShipment=创建货件
+QtyShipped=出货数量
+QtyShippedShort=Qty ship.
+QtyPreparedOrShipped=Qty prepared or shipped
+QtyToShip=出货数量
+QtyReceived=收到的数量
+QtyInOtherShipments=Qty in other shipments
+KeepToShip=Remain to ship
+KeepToShipShort=Remain
+OtherSendingsForSameOrder=这个订单的其他运输
+SendingsAndReceivingForSameOrder=Shipments and receipts for this order
+SendingsToValidate=运输验证
+StatusSendingCanceled=取消
+StatusSendingDraft=草稿
+StatusSendingValidated=验证（产品出货或已经出货）
+StatusSendingProcessed=加工
+StatusSendingDraftShort=草稿
+StatusSendingValidatedShort=验证
+StatusSendingProcessedShort=加工
+SendingSheet=运输表格
+ConfirmDeleteSending=Are you sure you want to delete this shipment?
+ConfirmValidateSending=Are you sure you want to validate this shipment with reference <b>%s</b>?
+ConfirmCancelSending=Are you sure you want to cancel this shipment?
+DocumentModelMerou=Merou A5 model
+WarningNoQtyLeftToSend=警告，没有产品等待装运。
+StatsOnShipmentsOnlyValidated=对运输进行统计验证。使用的数据的验证的装运日期(计划交货日期并不总是已知)。
+DateDeliveryPlanned=计划运输日期
+RefDeliveryReceipt=Ref delivery receipt
+StatusReceipt=Status delivery receipt
+DateReceived=交货日期收到
+SendShippingByEMail=通过电子邮件发送运输信息资料
+SendShippingRef=提交运输 %s
+ActionsOnShipping=运输活动
+LinkToTrackYourPackage=链接到追踪您的包裹
+ShipmentCreationIsDoneFromOrder=就目前而言，创建一个新的装运完成从订单信息卡。
+ShipmentLine=运输线路
+ProductQtyInCustomersOrdersRunning=Product quantity into open customer orders
+ProductQtyInSuppliersOrdersRunning=Product quantity into open purchase orders
+ProductQtyInShipmentAlreadySent=Product quantity from open customer order already sent
+ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from open supplier order already received
+NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
+WeightVolShort=重量/体积
+ValidateOrderFirstBeforeShipment=You must first validate the order before being able to make shipments.
+
+# Sending methods
+# ModelDocument
+DocumentModelTyphon=更多的送货单(logo. ..完整的文档模板)
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=没有定义的常数EXPEDITION_ADDON_NUMBER
+SumOfProductVolumes=产品总数
+SumOfProductWeights=产品总重
+
+# warehouse details
+DetailWarehouseNumber= 仓库明细
+DetailWarehouseFormat= 重量:%s (数量 : %d)

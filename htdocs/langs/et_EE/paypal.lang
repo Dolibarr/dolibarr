@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=PayPal mooduli seadistamine
+PaypalDesc=See moodul pakub lehti, mis võimaldavad <a href="http://www.paypal.com" target="_blank">PayPali</a> abil maksmist. Seda võib kasutada nii suvalise maksena kui maksena teatud Dolibarri objekti jaoks (arve, tellimus jne)
+PaypalOrCBDoPayment=Pay with Paypal (Credit Card or Paypal)
+PaypalDoPayment=Maksa Paypaliga
+PAYPAL_API_SANDBOX=Testimise/liivakasti režii
+PAYPAL_API_USER=API kasutajanimi
+PAYPAL_API_PASSWORD=API parool
+PAYPAL_API_SIGNATURE=API signatuur
+PAYPAL_SSLVERSION=Curl SSL Version
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Paku "terviklik" (krediitkaart + Paypal) või ainult "Paypal" makseviisi
+PaypalModeIntegral=Terviklik
+PaypalModeOnlyPaypal=Ainult PayPal
+ONLINE_PAYMENT_CSS_URL=Optionnal URL of CSS style sheet on online payment page
+ThisIsTransactionId=See on tehingu ID: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Lisa PayPali makse URL, kui dokument saadetakse postiga
+YouAreCurrentlyInSandboxMode=You are currently in the %s "sandbox" mode
+NewOnlinePaymentReceived=New online payment received
+NewOnlinePaymentFailed=New online payment tried but failed
+ONLINE_PAYMENT_SENDEMAIL=E-posti aadress pärast makset hoiatuse saatmiseks (õnnestus või mitte)
+ReturnURLAfterPayment=Return URL after payment
+ValidationOfOnlinePaymentFailed=Validation of online payment failed
+PaymentSystemConfirmPaymentPageWasCalledButFailed=Payment confirmation page was called by payment system returned an error
+SetExpressCheckoutAPICallFailed=SetExpressCheckout API call failed.
+DoExpressCheckoutPaymentAPICallFailed=DoExpressCheckoutPayment API call failed.
+DetailedErrorMessage=Detailed Error Message
+ShortErrorMessage=Short Error Message
+ErrorCode=Error Code
+ErrorSeverityCode=Error Severity Code
+OnlinePaymentSystem=Online payment system
+PaypalLiveEnabled=Paypal live enabled (otherwise test/sandbox mode)
+PaypalImportPayment=Import Paypal payments
+PostActionAfterPayment=Post actions after payments
+ARollbackWasPerformedOnPostActions=A rollback was performed on all Post actions. You must complete post actions manually if they are necessary.

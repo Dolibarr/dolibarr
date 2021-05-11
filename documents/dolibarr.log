@@ -1,0 +1,220 @@
+2019-07-23 14:55:53 DEBUG   ::1             - This is an already logged session. _SESSION['dol_login']=admin _SESSION['dol_entity']=1
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT u.rowid, u.lastname, u.firstname, u.employee, u.gender, u.birth, u.email, u.job, u.skype, u.signature, u.office_phone, u.office_fax, u.user_mobile, u.address, u.zip, u.town, u.fk_state as state_id, u.fk_country as country_id, u.admin, u.login, u.note, u.pass, u.pass_crypted, u.pass_temp, u.api_key, u.fk_soc, u.fk_socpeople, u.fk_member, u.fk_user, u.ldap_sid, u.statut, u.lang, u.entity, u.datec as datec, u.tms as datem, u.datelastlogin as datel, u.datepreviouslogin as datep, u.photo as photo, u.openid as openid, u.accountancy_code, u.thm, u.tjm, u.salary, u.salaryextra, u.weeklyhours, u.color, u.dateemployment, u.ref_int, u.ref_ext, u.default_range, u.default_c_exp_tax_cat, c.code as country_code, c.label as country, d.code_departement as state_code, d.nom as state FROM llx_user as u LEFT JOIN llx_c_country as c ON u.fk_country = c.rowid LEFT JOIN llx_c_departements as d ON u.fk_state = d.rowid WHERE u.entity IN (0, 1) AND u.login = 'admin' ORDER BY u.entity ASC
+2019-07-23 14:55:53 DEBUG   ::1             fetch_name_optionals_label elementtype=user
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired,param,pos,alwayseditable,perms,langs,list,fielddefault,fieldcomputed,entity,enabled FROM llx_extrafields WHERE entity IN (0,1) AND elementtype = 'user' ORDER BY pos
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT param, value FROM llx_user_param WHERE fk_user = 1 AND entity = 1
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT rowid, entity, type, page, param, value FROM llx_default_values WHERE entity IN (0,1) AND user_id IN (0, 1)
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT r.module, r.perms, r.subperms FROM llx_user_rights as ur, llx_rights_def as r WHERE r.id = ur.fk_id AND ur.entity = 1 AND ur.fk_user= 1 AND r.perms IS NOT NULL
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT r.module, r.perms, r.subperms FROM llx_usergroup_rights as gr, llx_usergroup_user as gu, llx_rights_def as r WHERE r.id = gr.fk_id AND gr.entity = 1 AND r.entity = 1 AND gr.fk_usergroup = gu.fk_usergroup AND gu.fk_user = 1 AND r.perms IS NOT NULL
+2019-07-23 14:55:53 DEBUG   ::1             --- Access to /dolibarr/htdocs/admin/modules.php - action=, massaction=
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT transkey, transvalue FROM llx_overwrite_trans where lang='en_US'
+2019-07-23 14:55:53 DEBUG   ::1             Menubase::menuLoad mymainmenu=home myleftmenu=setup type_user=0 menu_handler=eldy tabMenu size=0
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT m.rowid, m.type, m.module, m.fk_menu, m.fk_mainmenu, m.fk_leftmenu, m.url, m.titre, m.langs, m.perms, m.enabled, m.target, m.mainmenu, m.leftmenu, m.position FROM llx_menu as m WHERE m.entity IN (0,1) AND m.menu_handler IN ('eldy','all') AND m.usertype IN (0,2) ORDER BY m.position, m.rowid
+2019-07-23 14:55:53 DEBUG   ::1             Scan directory C:/wamp/www/dolibarr/htdocs/core/modules/ for module descriptor files (modXXX.class.php)
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT name, label, type, param, fieldcomputed, fielddefault FROM llx_extrafields WHERE elementtype = 'adherent' AND type != 'separate' AND entity IN (0, 1)
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT name, label, fieldrequired FROM llx_extrafields WHERE elementtype = 'adherent' AND entity IN (0,1)
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT code, label, description FROM llx_c_action_trigger ORDER by rang
+2019-07-23 14:55:53 DEBUG   ::1             Module modAsset not qualified
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT name, label, type, param FROM llx_extrafields WHERE elementtype = 'societe'
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT name, label, type, param FROM llx_extrafields WHERE elementtype = 'socpeople'
+2019-07-23 14:55:53 DEBUG   ::1             Module modCollab not qualified
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT name, label, type, param, fieldcomputed, fielddefault FROM llx_extrafields WHERE elementtype = 'commande' AND type != 'separate' AND entity IN (0, 1)
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT name, label, type, param, fieldcomputed, fielddefault FROM llx_extrafields WHERE elementtype = 'commandedet' AND type != 'separate' AND entity IN (0, 1)
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT name, label, type, param, fieldcomputed, fielddefault FROM llx_extrafields WHERE elementtype = 'product' AND type != 'separate' AND entity IN (0, 1)
+2019-07-23 14:55:53 DEBUG   ::1             Module modDav not qualified
+2019-07-23 14:55:53 DEBUG   ::1             User::load_parentof
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT fk_user as id_parent, rowid as id_son FROM llx_user WHERE fk_user <> 0 AND entity IN (0,1)
+2019-07-23 14:55:53 DEBUG   ::1             User::get_full_tree get user list
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT DISTINCT u.rowid, u.firstname, u.lastname, u.fk_user, u.fk_soc, u.login, u.email, u.gender, u.admin, u.statut, u.photo, u.entity FROM llx_user as u WHERE u.entity IN (0,1)
+2019-07-23 14:55:53 DEBUG   ::1             User::get_full_tree call to build_path_from_id_user
+2019-07-23 14:55:53 DEBUG   ::1             User::build_path_from_id_user id_user=1 protection=0
+2019-07-23 14:55:53 DEBUG   ::1             User::build_path_from_id_user id_user=2 protection=0
+2019-07-23 14:55:53 DEBUG   ::1             User::build_path_from_id_user id_user=3 protection=0
+2019-07-23 14:55:53 DEBUG   ::1             User::build_path_from_id_user id_user=4 protection=0
+2019-07-23 14:55:53 DEBUG   ::1             User::build_path_from_id_user id_user=5 protection=0
+2019-07-23 14:55:53 DEBUG   ::1             User::build_path_from_id_user id_user=6 protection=0
+2019-07-23 14:55:53 DEBUG   ::1             User::get_full_tree dol_sort_array
+2019-07-23 14:55:53 DEBUG   ::1             Build childid for id = 1
+2019-07-23 14:55:53 DEBUG   ::1             Module modDeplacement not qualified
+2019-07-23 14:55:53 DEBUG   ::1             Module modDocumentGeneration not qualified
+2019-07-23 14:55:53 DEBUG   ::1             Module modDynamicPrices not qualified
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT DISTINCT tc.rowid, tc.code, tc.libelle, tc.position FROM llx_c_type_contact as tc WHERE tc.element='commande' AND tc.source='external' ORDER BY position ASC, code
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT DISTINCT tc.rowid, tc.code, tc.libelle, tc.position FROM llx_c_type_contact as tc WHERE tc.element='commande' AND tc.source='external' ORDER BY position ASC, code
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT name, label, type, param, fieldcomputed, fielddefault FROM llx_extrafields WHERE elementtype = 'expedition' AND type != 'separate' AND entity IN (0, 1)
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT name, label, type, param, fieldcomputed, fielddefault FROM llx_extrafields WHERE elementtype = 'expeditiondet' AND type != 'separate' AND entity IN (0, 1)
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT name, label, type, param, fieldcomputed, fielddefault FROM llx_extrafields WHERE elementtype = 'facture' AND type != 'separate' AND entity IN (0, 1)
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT name, label, type, param, fieldcomputed, fielddefault FROM llx_extrafields WHERE elementtype = 'facturedet' AND type != 'separate' AND entity IN (0, 1)
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT name, label, type, param, fieldcomputed, fielddefault FROM llx_extrafields WHERE elementtype = 'product' AND type != 'separate' AND entity IN (0, 1)
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT name, label, type, param, fieldcomputed, fielddefault FROM llx_extrafields WHERE elementtype = 'facture' AND type != 'separate' AND entity IN (0, 1)
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT name, label, type, param FROM llx_extrafields WHERE elementtype = 'facture_fourn'
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT name, label, type, param FROM llx_extrafields WHERE elementtype = 'facture_fourn_det'
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT name, label, type, param FROM llx_extrafields WHERE elementtype = 'facture_fourn'
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT name, label, type, param FROM llx_extrafields WHERE elementtype = 'commande_fournisseur'
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT name, label, type, param FROM llx_extrafields WHERE elementtype = 'commande_fournisseurdet'
+2019-07-23 14:55:53 DEBUG   ::1             Module modHRM not qualified
+2019-07-23 14:55:53 DEBUG   ::1             Module modLabel not qualified
+2019-07-23 14:55:53 DEBUG   ::1             Module modModuleBuilder not qualified
+2019-07-23 14:55:53 DEBUG   ::1             useNPR
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT t.rowid FROM llx_c_tva as t, llx_c_country as c WHERE t.fk_pays = c.rowid AND c.code = 'TN' AND t.active = 1 AND t.recuperableonly = 1
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT name, label, type, param, fieldcomputed, fielddefault FROM llx_extrafields WHERE elementtype = 'product' AND type != 'separate' AND entity IN (0, 1)
+2019-07-23 14:55:53 DEBUG   ::1             useNPR
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT t.rowid FROM llx_c_tva as t, llx_c_country as c WHERE t.fk_pays = c.rowid AND c.code = 'TN' AND t.active = 1 AND t.recuperableonly = 1
+2019-07-23 14:55:53 DEBUG   ::1             useLocalTax
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT t.localtax1, t.localtax2 FROM llx_c_tva as t, llx_c_country as c WHERE t.fk_pays = c.rowid AND c.code = 'TN' AND t.active = 1 AND t.localtax1_type <> '0'
+2019-07-23 14:55:53 DEBUG   ::1             useLocalTax
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT t.localtax1, t.localtax2 FROM llx_c_tva as t, llx_c_country as c WHERE t.fk_pays = c.rowid AND c.code = 'TN' AND t.active = 1 AND t.localtax2_type <> '0'
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT name, label, fieldrequired FROM llx_extrafields WHERE elementtype = 'product' AND entity IN (0, 1)
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT name, label, type, param, fieldcomputed, fielddefault FROM llx_extrafields WHERE elementtype = 'projet' AND type != 'separate' AND entity IN (0, 1)
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT name, label, type, param, fieldcomputed, fielddefault FROM llx_extrafields WHERE elementtype = 'projet_task' AND type != 'separate' AND entity IN (0, 1)
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT name, label, fieldrequired FROM llx_extrafields WHERE elementtype = 'projet_task' AND entity IN (0,1)
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT name, label, type, param, fieldcomputed, fielddefault FROM llx_extrafields WHERE elementtype = 'propal' AND type != 'separate' AND entity IN (0, 1)
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT name, label, type, param, fieldcomputed, fielddefault FROM llx_extrafields WHERE elementtype = 'propaldet' AND type != 'separate' AND entity IN (0, 1)
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT name, label, type, param, fieldcomputed, fielddefault FROM llx_extrafields WHERE elementtype = 'product' AND type != 'separate' AND entity IN (0, 1)
+2019-07-23 14:55:53 DEBUG   ::1             Module modReceiptPrinter not qualified
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT name, label, type, param, fieldcomputed, fielddefault FROM llx_extrafields WHERE elementtype = 'resource' AND type != 'separate' AND entity IN (0, 1)
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT name, label, fieldrequired FROM llx_extrafields WHERE elementtype = 'resource' AND entity IN (0,1)
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT name, label, type FROM llx_extrafields WHERE elementtype = 'product'
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT name, label, fieldrequired FROM llx_extrafields WHERE elementtype = 'product' AND entity IN (0,1)
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT name, label, type, param, fieldcomputed, fielddefault FROM llx_extrafields WHERE elementtype = 'societe' AND type != 'separate' AND entity IN (0, 1)
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT name, label, type, param, fieldcomputed, fielddefault FROM llx_extrafields WHERE elementtype = 'socpeople' AND type != 'separate' AND entity IN (0, 1)
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT name, label, type, param, fieldcomputed, fielddefault FROM llx_extrafields WHERE elementtype = 'societe' AND type != 'separate' AND entity IN (0, 1)
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT name, label, fieldrequired FROM llx_extrafields WHERE elementtype = 'societe' AND entity IN (0,1)
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT name, label, fieldrequired FROM llx_extrafields WHERE elementtype = 'socpeople' AND entity IN (0,1)
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT name, label, type, param, fieldcomputed, fielddefault FROM llx_extrafields WHERE elementtype = 'product' AND type != 'separate' AND entity IN (0, 1)
+2019-07-23 14:55:53 DEBUG   ::1             Module modTicket not qualified
+2019-07-23 14:55:53 DEBUG   ::1             sql=SELECT name, label, fieldrequired FROM llx_extrafields WHERE elementtype = 'user' AND entity IN (0,1)
+2019-07-23 14:55:53 DEBUG   ::1             Module modWebServicesClient not qualified
+2019-07-23 14:55:53 DEBUG   ::1             Module modWebsite not qualified
+2019-07-23 14:55:53 DEBUG   ::1             --- End access to /dolibarr/htdocs/admin/modules.php
+2019-07-23 14:56:03 DEBUG   ::1             - This is an already logged session. _SESSION['dol_login']=admin _SESSION['dol_entity']=1
+2019-07-23 14:56:03 DEBUG   ::1             sql=SELECT u.rowid, u.lastname, u.firstname, u.employee, u.gender, u.birth, u.email, u.job, u.skype, u.signature, u.office_phone, u.office_fax, u.user_mobile, u.address, u.zip, u.town, u.fk_state as state_id, u.fk_country as country_id, u.admin, u.login, u.note, u.pass, u.pass_crypted, u.pass_temp, u.api_key, u.fk_soc, u.fk_socpeople, u.fk_member, u.fk_user, u.ldap_sid, u.statut, u.lang, u.entity, u.datec as datec, u.tms as datem, u.datelastlogin as datel, u.datepreviouslogin as datep, u.photo as photo, u.openid as openid, u.accountancy_code, u.thm, u.tjm, u.salary, u.salaryextra, u.weeklyhours, u.color, u.dateemployment, u.ref_int, u.ref_ext, u.default_range, u.default_c_exp_tax_cat, c.code as country_code, c.label as country, d.code_departement as state_code, d.nom as state FROM llx_user as u LEFT JOIN llx_c_country as c ON u.fk_country = c.rowid LEFT JOIN llx_c_departements as d ON u.fk_state = d.rowid WHERE u.entity IN (0, 1) AND u.login = 'admin' ORDER BY u.entity ASC
+2019-07-23 14:56:03 DEBUG   ::1             fetch_name_optionals_label elementtype=user
+2019-07-23 14:56:03 DEBUG   ::1             sql=SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired,param,pos,alwayseditable,perms,langs,list,fielddefault,fieldcomputed,entity,enabled FROM llx_extrafields WHERE entity IN (0,1) AND elementtype = 'user' ORDER BY pos
+2019-07-23 14:56:03 DEBUG   ::1             sql=SELECT param, value FROM llx_user_param WHERE fk_user = 1 AND entity = 1
+2019-07-23 14:56:03 DEBUG   ::1             sql=SELECT rowid, entity, type, page, param, value FROM llx_default_values WHERE entity IN (0,1) AND user_id IN (0, 1)
+2019-07-23 14:56:03 DEBUG   ::1             sql=SELECT r.module, r.perms, r.subperms FROM llx_user_rights as ur, llx_rights_def as r WHERE r.id = ur.fk_id AND ur.entity = 1 AND ur.fk_user= 1 AND r.perms IS NOT NULL
+2019-07-23 14:56:03 DEBUG   ::1             sql=SELECT r.module, r.perms, r.subperms FROM llx_usergroup_rights as gr, llx_usergroup_user as gu, llx_rights_def as r WHERE r.id = gr.fk_id AND gr.entity = 1 AND r.entity = 1 AND gr.fk_usergroup = gu.fk_usergroup AND gu.fk_user = 1 AND r.perms IS NOT NULL
+2019-07-23 14:56:03 DEBUG   ::1             --- Access to /dolibarr/htdocs/admin/syslog.php - action=, massaction=
+2019-07-23 14:56:03 DEBUG   ::1             sql=SELECT transkey, transvalue FROM llx_overwrite_trans where lang='en_US'
+2019-07-23 14:56:03 DEBUG   ::1             Menubase::menuLoad mymainmenu=home myleftmenu=setup type_user=0 menu_handler=eldy tabMenu size=0
+2019-07-23 14:56:03 DEBUG   ::1             sql=SELECT m.rowid, m.type, m.module, m.fk_menu, m.fk_mainmenu, m.fk_leftmenu, m.url, m.titre, m.langs, m.perms, m.enabled, m.target, m.mainmenu, m.leftmenu, m.position FROM llx_menu as m WHERE m.entity IN (0,1) AND m.menu_handler IN ('eldy','all') AND m.usertype IN (0,2) ORDER BY m.position, m.rowid
+2019-07-23 14:56:04 DEBUG   ::1             admin.lib::dolibarr_get_const
+2019-07-23 14:56:04 DEBUG   ::1             sql=SELECT value as value FROM llx_const WHERE name = 'SYSLOG_FACILITY' AND entity = 0
+2019-07-23 14:56:04 DEBUG   ::1             admin.lib::dolibarr_get_const
+2019-07-23 14:56:04 DEBUG   ::1             sql=SELECT value as value FROM llx_const WHERE name = 'SYSLOG_FILE' AND entity = 0
+2019-07-23 14:56:04 DEBUG   ::1             --- End access to /dolibarr/htdocs/admin/syslog.php
+2019-07-23 14:56:10 DEBUG   ::1             - This is an already logged session. _SESSION['dol_login']=admin _SESSION['dol_entity']=1
+2019-07-23 14:56:10 DEBUG   ::1             sql=SELECT u.rowid, u.lastname, u.firstname, u.employee, u.gender, u.birth, u.email, u.job, u.skype, u.signature, u.office_phone, u.office_fax, u.user_mobile, u.address, u.zip, u.town, u.fk_state as state_id, u.fk_country as country_id, u.admin, u.login, u.note, u.pass, u.pass_crypted, u.pass_temp, u.api_key, u.fk_soc, u.fk_socpeople, u.fk_member, u.fk_user, u.ldap_sid, u.statut, u.lang, u.entity, u.datec as datec, u.tms as datem, u.datelastlogin as datel, u.datepreviouslogin as datep, u.photo as photo, u.openid as openid, u.accountancy_code, u.thm, u.tjm, u.salary, u.salaryextra, u.weeklyhours, u.color, u.dateemployment, u.ref_int, u.ref_ext, u.default_range, u.default_c_exp_tax_cat, c.code as country_code, c.label as country, d.code_departement as state_code, d.nom as state FROM llx_user as u LEFT JOIN llx_c_country as c ON u.fk_country = c.rowid LEFT JOIN llx_c_departements as d ON u.fk_state = d.rowid WHERE u.entity IN (0, 1) AND u.login = 'admin' ORDER BY u.entity ASC
+2019-07-23 14:56:10 DEBUG   ::1             fetch_name_optionals_label elementtype=user
+2019-07-23 14:56:10 DEBUG   ::1             sql=SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired,param,pos,alwayseditable,perms,langs,list,fielddefault,fieldcomputed,entity,enabled FROM llx_extrafields WHERE entity IN (0,1) AND elementtype = 'user' ORDER BY pos
+2019-07-23 14:56:10 DEBUG   ::1             sql=SELECT param, value FROM llx_user_param WHERE fk_user = 1 AND entity = 1
+2019-07-23 14:56:10 DEBUG   ::1             sql=SELECT rowid, entity, type, page, param, value FROM llx_default_values WHERE entity IN (0,1) AND user_id IN (0, 1)
+2019-07-23 14:56:10 DEBUG   ::1             sql=SELECT r.module, r.perms, r.subperms FROM llx_user_rights as ur, llx_rights_def as r WHERE r.id = ur.fk_id AND ur.entity = 1 AND ur.fk_user= 1 AND r.perms IS NOT NULL
+2019-07-23 14:56:10 DEBUG   ::1             sql=SELECT r.module, r.perms, r.subperms FROM llx_usergroup_rights as gr, llx_usergroup_user as gu, llx_rights_def as r WHERE r.id = gr.fk_id AND gr.entity = 1 AND r.entity = 1 AND gr.fk_usergroup = gu.fk_usergroup AND gu.fk_user = 1 AND r.perms IS NOT NULL
+2019-07-23 14:56:10 DEBUG   ::1             --- Access to /dolibarr/htdocs/admin/modules.php - action=, massaction=
+2019-07-23 14:56:10 DEBUG   ::1             sql=SELECT transkey, transvalue FROM llx_overwrite_trans where lang='en_US'
+2019-07-23 14:56:10 DEBUG   ::1             Menubase::menuLoad mymainmenu=home myleftmenu=setup type_user=0 menu_handler=eldy tabMenu size=0
+2019-07-23 14:56:10 DEBUG   ::1             sql=SELECT m.rowid, m.type, m.module, m.fk_menu, m.fk_mainmenu, m.fk_leftmenu, m.url, m.titre, m.langs, m.perms, m.enabled, m.target, m.mainmenu, m.leftmenu, m.position FROM llx_menu as m WHERE m.entity IN (0,1) AND m.menu_handler IN ('eldy','all') AND m.usertype IN (0,2) ORDER BY m.position, m.rowid
+2019-07-23 14:56:10 DEBUG   ::1             Scan directory C:/wamp/www/dolibarr/htdocs/core/modules/ for module descriptor files (modXXX.class.php)
+2019-07-23 14:56:10 DEBUG   ::1             sql=SELECT name, label, type, param, fieldcomputed, fielddefault FROM llx_extrafields WHERE elementtype = 'adherent' AND type != 'separate' AND entity IN (0, 1)
+2019-07-23 14:56:10 DEBUG   ::1             sql=SELECT name, label, fieldrequired FROM llx_extrafields WHERE elementtype = 'adherent' AND entity IN (0,1)
+2019-07-23 14:56:10 DEBUG   ::1             sql=SELECT code, label, description FROM llx_c_action_trigger ORDER by rang
+2019-07-23 14:56:10 DEBUG   ::1             Module modAsset not qualified
+2019-07-23 14:56:10 DEBUG   ::1             sql=SELECT name, label, type, param FROM llx_extrafields WHERE elementtype = 'societe'
+2019-07-23 14:56:10 DEBUG   ::1             sql=SELECT name, label, type, param FROM llx_extrafields WHERE elementtype = 'socpeople'
+2019-07-23 14:56:10 DEBUG   ::1             Module modCollab not qualified
+2019-07-23 14:56:10 DEBUG   ::1             sql=SELECT name, label, type, param, fieldcomputed, fielddefault FROM llx_extrafields WHERE elementtype = 'commande' AND type != 'separate' AND entity IN (0, 1)
+2019-07-23 14:56:10 DEBUG   ::1             sql=SELECT name, label, type, param, fieldcomputed, fielddefault FROM llx_extrafields WHERE elementtype = 'commandedet' AND type != 'separate' AND entity IN (0, 1)
+2019-07-23 14:56:10 DEBUG   ::1             sql=SELECT name, label, type, param, fieldcomputed, fielddefault FROM llx_extrafields WHERE elementtype = 'product' AND type != 'separate' AND entity IN (0, 1)
+2019-07-23 14:56:10 DEBUG   ::1             Module modDav not qualified
+2019-07-23 14:56:10 DEBUG   ::1             User::load_parentof
+2019-07-23 14:56:10 DEBUG   ::1             sql=SELECT fk_user as id_parent, rowid as id_son FROM llx_user WHERE fk_user <> 0 AND entity IN (0,1)
+2019-07-23 14:56:10 DEBUG   ::1             User::get_full_tree get user list
+2019-07-23 14:56:10 DEBUG   ::1             sql=SELECT DISTINCT u.rowid, u.firstname, u.lastname, u.fk_user, u.fk_soc, u.login, u.email, u.gender, u.admin, u.statut, u.photo, u.entity FROM llx_user as u WHERE u.entity IN (0,1)
+2019-07-23 14:56:10 DEBUG   ::1             User::get_full_tree call to build_path_from_id_user
+2019-07-23 14:56:10 DEBUG   ::1             User::build_path_from_id_user id_user=1 protection=0
+2019-07-23 14:56:10 DEBUG   ::1             User::build_path_from_id_user id_user=2 protection=0
+2019-07-23 14:56:10 DEBUG   ::1             User::build_path_from_id_user id_user=3 protection=0
+2019-07-23 14:56:10 DEBUG   ::1             User::build_path_from_id_user id_user=4 protection=0
+2019-07-23 14:56:10 DEBUG   ::1             User::build_path_from_id_user id_user=5 protection=0
+2019-07-23 14:56:10 DEBUG   ::1             User::build_path_from_id_user id_user=6 protection=0
+2019-07-23 14:56:10 DEBUG   ::1             User::get_full_tree dol_sort_array
+2019-07-23 14:56:10 DEBUG   ::1             Build childid for id = 1
+2019-07-23 14:56:10 DEBUG   ::1             Module modDeplacement not qualified
+2019-07-23 14:56:10 DEBUG   ::1             Module modDocumentGeneration not qualified
+2019-07-23 14:56:10 DEBUG   ::1             Module modDynamicPrices not qualified
+2019-07-23 14:56:10 DEBUG   ::1             sql=SELECT DISTINCT tc.rowid, tc.code, tc.libelle, tc.position FROM llx_c_type_contact as tc WHERE tc.element='commande' AND tc.source='external' ORDER BY position ASC, code
+2019-07-23 14:56:10 DEBUG   ::1             sql=SELECT DISTINCT tc.rowid, tc.code, tc.libelle, tc.position FROM llx_c_type_contact as tc WHERE tc.element='commande' AND tc.source='external' ORDER BY position ASC, code
+2019-07-23 14:56:10 DEBUG   ::1             sql=SELECT name, label, type, param, fieldcomputed, fielddefault FROM llx_extrafields WHERE elementtype = 'expedition' AND type != 'separate' AND entity IN (0, 1)
+2019-07-23 14:56:11 DEBUG   ::1             sql=SELECT name, label, type, param, fieldcomputed, fielddefault FROM llx_extrafields WHERE elementtype = 'expeditiondet' AND type != 'separate' AND entity IN (0, 1)
+2019-07-23 14:56:11 DEBUG   ::1             sql=SELECT name, label, type, param, fieldcomputed, fielddefault FROM llx_extrafields WHERE elementtype = 'facture' AND type != 'separate' AND entity IN (0, 1)
+2019-07-23 14:56:11 DEBUG   ::1             sql=SELECT name, label, type, param, fieldcomputed, fielddefault FROM llx_extrafields WHERE elementtype = 'facturedet' AND type != 'separate' AND entity IN (0, 1)
+2019-07-23 14:56:11 DEBUG   ::1             sql=SELECT name, label, type, param, fieldcomputed, fielddefault FROM llx_extrafields WHERE elementtype = 'product' AND type != 'separate' AND entity IN (0, 1)
+2019-07-23 14:56:11 DEBUG   ::1             sql=SELECT name, label, type, param, fieldcomputed, fielddefault FROM llx_extrafields WHERE elementtype = 'facture' AND type != 'separate' AND entity IN (0, 1)
+2019-07-23 14:56:11 DEBUG   ::1             sql=SELECT name, label, type, param FROM llx_extrafields WHERE elementtype = 'facture_fourn'
+2019-07-23 14:56:11 DEBUG   ::1             sql=SELECT name, label, type, param FROM llx_extrafields WHERE elementtype = 'facture_fourn_det'
+2019-07-23 14:56:11 DEBUG   ::1             sql=SELECT name, label, type, param FROM llx_extrafields WHERE elementtype = 'facture_fourn'
+2019-07-23 14:56:11 DEBUG   ::1             sql=SELECT name, label, type, param FROM llx_extrafields WHERE elementtype = 'commande_fournisseur'
+2019-07-23 14:56:11 DEBUG   ::1             sql=SELECT name, label, type, param FROM llx_extrafields WHERE elementtype = 'commande_fournisseurdet'
+2019-07-23 14:56:11 DEBUG   ::1             Module modHRM not qualified
+2019-07-23 14:56:11 DEBUG   ::1             Module modLabel not qualified
+2019-07-23 14:56:11 DEBUG   ::1             Module modModuleBuilder not qualified
+2019-07-23 14:56:11 DEBUG   ::1             useNPR
+2019-07-23 14:56:11 DEBUG   ::1             sql=SELECT t.rowid FROM llx_c_tva as t, llx_c_country as c WHERE t.fk_pays = c.rowid AND c.code = 'TN' AND t.active = 1 AND t.recuperableonly = 1
+2019-07-23 14:56:11 DEBUG   ::1             sql=SELECT name, label, type, param, fieldcomputed, fielddefault FROM llx_extrafields WHERE elementtype = 'product' AND type != 'separate' AND entity IN (0, 1)
+2019-07-23 14:56:11 DEBUG   ::1             useNPR
+2019-07-23 14:56:11 DEBUG   ::1             sql=SELECT t.rowid FROM llx_c_tva as t, llx_c_country as c WHERE t.fk_pays = c.rowid AND c.code = 'TN' AND t.active = 1 AND t.recuperableonly = 1
+2019-07-23 14:56:11 DEBUG   ::1             useLocalTax
+2019-07-23 14:56:11 DEBUG   ::1             sql=SELECT t.localtax1, t.localtax2 FROM llx_c_tva as t, llx_c_country as c WHERE t.fk_pays = c.rowid AND c.code = 'TN' AND t.active = 1 AND t.localtax1_type <> '0'
+2019-07-23 14:56:11 DEBUG   ::1             useLocalTax
+2019-07-23 14:56:11 DEBUG   ::1             sql=SELECT t.localtax1, t.localtax2 FROM llx_c_tva as t, llx_c_country as c WHERE t.fk_pays = c.rowid AND c.code = 'TN' AND t.active = 1 AND t.localtax2_type <> '0'
+2019-07-23 14:56:11 DEBUG   ::1             sql=SELECT name, label, fieldrequired FROM llx_extrafields WHERE elementtype = 'product' AND entity IN (0, 1)
+2019-07-23 14:56:11 DEBUG   ::1             sql=SELECT name, label, type, param, fieldcomputed, fielddefault FROM llx_extrafields WHERE elementtype = 'projet' AND type != 'separate' AND entity IN (0, 1)
+2019-07-23 14:56:11 DEBUG   ::1             sql=SELECT name, label, type, param, fieldcomputed, fielddefault FROM llx_extrafields WHERE elementtype = 'projet_task' AND type != 'separate' AND entity IN (0, 1)
+2019-07-23 14:56:11 DEBUG   ::1             sql=SELECT name, label, fieldrequired FROM llx_extrafields WHERE elementtype = 'projet_task' AND entity IN (0,1)
+2019-07-23 14:56:11 DEBUG   ::1             sql=SELECT name, label, type, param, fieldcomputed, fielddefault FROM llx_extrafields WHERE elementtype = 'propal' AND type != 'separate' AND entity IN (0, 1)
+2019-07-23 14:56:11 DEBUG   ::1             sql=SELECT name, label, type, param, fieldcomputed, fielddefault FROM llx_extrafields WHERE elementtype = 'propaldet' AND type != 'separate' AND entity IN (0, 1)
+2019-07-23 14:56:11 DEBUG   ::1             sql=SELECT name, label, type, param, fieldcomputed, fielddefault FROM llx_extrafields WHERE elementtype = 'product' AND type != 'separate' AND entity IN (0, 1)
+2019-07-23 14:56:11 DEBUG   ::1             Module modReceiptPrinter not qualified
+2019-07-23 14:56:11 DEBUG   ::1             sql=SELECT name, label, type, param, fieldcomputed, fielddefault FROM llx_extrafields WHERE elementtype = 'resource' AND type != 'separate' AND entity IN (0, 1)
+2019-07-23 14:56:11 DEBUG   ::1             sql=SELECT name, label, fieldrequired FROM llx_extrafields WHERE elementtype = 'resource' AND entity IN (0,1)
+2019-07-23 14:56:11 DEBUG   ::1             sql=SELECT name, label, type FROM llx_extrafields WHERE elementtype = 'product'
+2019-07-23 14:56:11 DEBUG   ::1             sql=SELECT name, label, fieldrequired FROM llx_extrafields WHERE elementtype = 'product' AND entity IN (0,1)
+2019-07-23 14:56:11 DEBUG   ::1             sql=SELECT name, label, type, param, fieldcomputed, fielddefault FROM llx_extrafields WHERE elementtype = 'societe' AND type != 'separate' AND entity IN (0, 1)
+2019-07-23 14:56:11 DEBUG   ::1             sql=SELECT name, label, type, param, fieldcomputed, fielddefault FROM llx_extrafields WHERE elementtype = 'socpeople' AND type != 'separate' AND entity IN (0, 1)
+2019-07-23 14:56:11 DEBUG   ::1             sql=SELECT name, label, type, param, fieldcomputed, fielddefault FROM llx_extrafields WHERE elementtype = 'societe' AND type != 'separate' AND entity IN (0, 1)
+2019-07-23 14:56:11 DEBUG   ::1             sql=SELECT name, label, fieldrequired FROM llx_extrafields WHERE elementtype = 'societe' AND entity IN (0,1)
+2019-07-23 14:56:11 DEBUG   ::1             sql=SELECT name, label, fieldrequired FROM llx_extrafields WHERE elementtype = 'socpeople' AND entity IN (0,1)
+2019-07-23 14:56:11 DEBUG   ::1             sql=SELECT name, label, type, param, fieldcomputed, fielddefault FROM llx_extrafields WHERE elementtype = 'product' AND type != 'separate' AND entity IN (0, 1)
+2019-07-23 14:56:11 DEBUG   ::1             Module modTicket not qualified
+2019-07-23 14:56:11 DEBUG   ::1             sql=SELECT name, label, fieldrequired FROM llx_extrafields WHERE elementtype = 'user' AND entity IN (0,1)
+2019-07-23 14:56:11 DEBUG   ::1             Module modWebServicesClient not qualified
+2019-07-23 14:56:11 DEBUG   ::1             Module modWebsite not qualified
+2019-07-23 14:56:11 DEBUG   ::1             --- End access to /dolibarr/htdocs/admin/modules.php
+2019-07-23 14:56:14 DEBUG   ::1             - This is an already logged session. _SESSION['dol_login']=admin _SESSION['dol_entity']=1
+2019-07-23 14:56:14 DEBUG   ::1             sql=SELECT u.rowid, u.lastname, u.firstname, u.employee, u.gender, u.birth, u.email, u.job, u.skype, u.signature, u.office_phone, u.office_fax, u.user_mobile, u.address, u.zip, u.town, u.fk_state as state_id, u.fk_country as country_id, u.admin, u.login, u.note, u.pass, u.pass_crypted, u.pass_temp, u.api_key, u.fk_soc, u.fk_socpeople, u.fk_member, u.fk_user, u.ldap_sid, u.statut, u.lang, u.entity, u.datec as datec, u.tms as datem, u.datelastlogin as datel, u.datepreviouslogin as datep, u.photo as photo, u.openid as openid, u.accountancy_code, u.thm, u.tjm, u.salary, u.salaryextra, u.weeklyhours, u.color, u.dateemployment, u.ref_int, u.ref_ext, u.default_range, u.default_c_exp_tax_cat, c.code as country_code, c.label as country, d.code_departement as state_code, d.nom as state FROM llx_user as u LEFT JOIN llx_c_country as c ON u.fk_country = c.rowid LEFT JOIN llx_c_departements as d ON u.fk_state = d.rowid WHERE u.entity IN (0, 1) AND u.login = 'admin' ORDER BY u.entity ASC
+2019-07-23 14:56:14 DEBUG   ::1             fetch_name_optionals_label elementtype=user
+2019-07-23 14:56:14 DEBUG   ::1             sql=SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired,param,pos,alwayseditable,perms,langs,list,fielddefault,fieldcomputed,entity,enabled FROM llx_extrafields WHERE entity IN (0,1) AND elementtype = 'user' ORDER BY pos
+2019-07-23 14:56:14 DEBUG   ::1             sql=SELECT param, value FROM llx_user_param WHERE fk_user = 1 AND entity = 1
+2019-07-23 14:56:14 DEBUG   ::1             sql=SELECT rowid, entity, type, page, param, value FROM llx_default_values WHERE entity IN (0,1) AND user_id IN (0, 1)
+2019-07-23 14:56:14 DEBUG   ::1             sql=SELECT r.module, r.perms, r.subperms FROM llx_user_rights as ur, llx_rights_def as r WHERE r.id = ur.fk_id AND ur.entity = 1 AND ur.fk_user= 1 AND r.perms IS NOT NULL
+2019-07-23 14:56:14 DEBUG   ::1             sql=SELECT r.module, r.perms, r.subperms FROM llx_usergroup_rights as gr, llx_usergroup_user as gu, llx_rights_def as r WHERE r.id = gr.fk_id AND gr.entity = 1 AND r.entity = 1 AND gr.fk_usergroup = gu.fk_usergroup AND gu.fk_user = 1 AND r.perms IS NOT NULL
+2019-07-23 14:56:14 DEBUG   ::1             --- Access to /dolibarr/htdocs/admin/modules.php - action=reset, massaction=
+2019-07-23 14:56:14 DEBUG   ::1             sql=SELECT transkey, transvalue FROM llx_overwrite_trans where lang='en_US'
+2019-07-23 14:56:14 DEBUG   ::1             Menubase::menuLoad mymainmenu=home myleftmenu=setup type_user=0 menu_handler=eldy tabMenu size=0
+2019-07-23 14:56:14 DEBUG   ::1             sql=SELECT m.rowid, m.type, m.module, m.fk_menu, m.fk_mainmenu, m.fk_leftmenu, m.url, m.titre, m.langs, m.perms, m.enabled, m.target, m.mainmenu, m.leftmenu, m.position FROM llx_menu as m WHERE m.entity IN (0,1) AND m.menu_handler IN ('eldy','all') AND m.usertype IN (0,2) ORDER BY m.position, m.rowid
+2019-07-23 14:56:14 DEBUG   ::1             BEGIN Transaction
+2019-07-23 14:56:14 DEBUG   ::1              modSyslog::_unactive
+2019-07-23 14:56:14 DEBUG   ::1              sql=DELETE FROM llx_const WHERE name = 'MAIN_MODULE_SYSLOG' AND entity IN (0, 0)
+2019-07-23 14:56:14 DEBUG   ::1              modSyslog::delete_tabs
+2019-07-23 14:56:14 DEBUG   ::1              sql=DELETE FROM llx_const WHERE name like 'MAIN_MODULE_SYSLOG_TABS_%' AND entity = 1
+2019-07-23 14:56:14 DEBUG   ::1              modSyslog::delete_cronjobs
+2019-07-23 14:56:14 DEBUG   ::1              sql=DELETE FROM llx_cronjob WHERE module_name = 'syslog' AND entity = 1 AND test = '1'
+2019-07-23 14:56:14 DEBUG   ::1              modSyslog::delete_permissions
+2019-07-23 14:56:14 DEBUG   ::1              sql=DELETE FROM llx_rights_def WHERE module = 'syslog' AND entity = 1
+2019-07-23 14:56:14 DEBUG   ::1              modSyslog::delete_menus
+2019-07-23 14:56:14 DEBUG   ::1              sql=DELETE FROM llx_menu WHERE module = 'syslog' AND entity = 1
+2019-07-23 14:56:14 DEBUG   ::1              modSyslog::delete_dirs
+2019-07-23 14:56:14 DEBUG   ::1              sql=DELETE FROM llx_const WHERE name LIKE 'MAIN_MODULE_SYSLOG_DIR_%' AND entity = 1
+2019-07-23 14:56:14 DEBUG   ::1             COMMIT Transaction
+2019-07-23 14:56:14 DEBUG   ::1             --- End access to /dolibarr/htdocs/admin/modules.php

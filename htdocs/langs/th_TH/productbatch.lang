@@ -1,0 +1,24 @@
+# ProductBATCH language file - en_US - ProductBATCH
+ManageLotSerial=การใช้งานจำนวนมาก / หมายเลขซีเรีย
+ProductStatusOnBatch=ใช่ (มาก / อนุกรมที่จำเป็น)
+ProductStatusNotOnBatch=ไม่ (มาก / อนุกรมไม่ได้ใช้)
+ProductStatusOnBatchShort=ใช่
+ProductStatusNotOnBatchShort=ไม่
+Batch=ล็อต/ลำดับ
+atleast1batchfield=กินตามวันที่หรือขายโดยวันที่หรือ Lot / หมายเลข Serial
+batch_number=Lot / หมายเลข Serial
+BatchNumberShort=จัดสรร / อนุกรม
+EatByDate=กินตามวันที่
+SellByDate=ขายตามวันที่
+DetailBatchNumber=จัดสรร / รายละเอียดอนุกรม
+printBatch=จัดสรร / อนุกรม:% s
+printEatby=กินโดย:% s
+printSellby=ขายโดย:% s
+printQty=จำนวน:% d
+AddDispatchBatchLine=เพิ่มบรรทัดสำหรับอายุการเก็บรักษาการฝึกอบรม
+WhenProductBatchModuleOnOptionAreForced=When module Lot/Serial is on, automatic stock decrease  is forced to 'Decrease real stocks on shipping validation' and automatic increase mode is forced to 'Increase real stocks on manual dispatching into warehouses' and can't be edited. Other options can be defined as you want.
+ProductDoesNotUseBatchSerial=ผลิตภัณฑ์นี้ไม่ได้ใช้มาก / หมายเลขซีเรีย
+ProductLotSetup=Setup of module lot/serial
+ShowCurrentStockOfLot=Show current stock for couple product/lot
+ShowLogOfMovementIfLot=Show log of movements for couple product/lot
+StockDetailPerBatch=Stock detail per lot

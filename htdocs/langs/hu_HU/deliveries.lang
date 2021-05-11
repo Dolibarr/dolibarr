@@ -1,0 +1,30 @@
+# Dolibarr language file - Source file is en_US - deliveries
+Delivery=Kézbesítés
+DeliveryRef=Szállító ref.
+DeliveryCard=Receipt card
+DeliveryOrder=Szállítólevél
+DeliveryDate=Kézbesítés dátuma
+CreateDeliveryOrder=Generate delivery receipt
+DeliveryStateSaved=Szállítási állapot mentve
+SetDeliveryDate=Szállítási dátum beállítása
+ValidateDeliveryReceipt=Szállítási bizonylat hitelesítése
+ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt?
+DeleteDeliveryReceipt=Átvételi elismervény törlése
+DeleteDeliveryReceiptConfirm=Are you sure you want to delete delivery receipt <b>%s</b>?
+DeliveryMethod=Szállítási mód
+TrackingNumber=Nyomonkövetési szám
+DeliveryNotValidated=A szállítás nincs jóváhagyva
+StatusDeliveryCanceled=Visszavonva
+StatusDeliveryDraft=Piszkozat
+StatusDeliveryValidated=Kézbesítve
+# merou PDF model
+NameAndSignature=Név és aláírás :
+ToAndDate=Címzett___________________________________ dátum ____/_____/__________
+GoodStatusDeclaration=A fenti termékeket kifogástalan minőségben átvettem,
+Deliverer=Szállító :
+Sender=Küldő
+Recipient=Címzett
+ErrorStockIsNotEnough=Nincs elég raktáron
+Shippable=Szállítható
+NonShippable=Nem szállítható
+ShowReceiving=Mutassa az átvételi elismervényt

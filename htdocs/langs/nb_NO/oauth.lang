@@ -1,0 +1,30 @@
+# Dolibarr language file - Source file is en_US - oauth
+ConfigOAuth=Oauth Konfigurasjon
+OAuthServices=OAuth tjenester
+ManualTokenGeneration=Manuell nøkkelgenerering
+TokenManager=Nøkkelhåndterer
+IsTokenGenerated=Er nøkkel generert?
+NoAccessToken=Ingen adgangsnøkkel lagret i lokal database
+HasAccessToken=En nøkkel ble generert og lagret i lokal database
+NewTokenStored=Nøkkel mottatt og lagret
+ToCheckDeleteTokenOnProvider=Klikk her for å hake av/slette autorisasjon lagret av %s OAuth-leverandør
+TokenDeleted=Nøkkel slettet
+RequestAccess=Klikk her for forespørsel/fornyet adgang og motta ny nøkkel
+DeleteAccess=Klikk her for å slette nøkkel
+UseTheFollowingUrlAsRedirectURI=Bruk følgende URL som redirect-URL når du lager din legitimasjon hos din OAuth tilbyder
+ListOfSupportedOauthProviders=Legg inn opplysninger fra din OAuth2-leverandør. Kun supporterte OAuth2-leverandører vises her. Dette oppsettet kan bli brukt av andre moduler som trenger OAuth2-autentisering
+OAuthSetupForLogin=Side for å generere en OAuth-nøkkel
+SeePreviousTab=Se forrige fane
+OAuthIDSecret=OAuth ID og hemmelig spørsmål
+TOKEN_REFRESH=Nøkkeloppfriskning tilstede
+TOKEN_EXPIRED=Nøkkel utgått
+TOKEN_EXPIRE_AT=Nøkkel utgår
+TOKEN_DELETE=Slett lagret nøkkel
+OAUTH_GOOGLE_NAME=Oauth Google service
+OAUTH_GOOGLE_ID=Oauth Google ID
+OAUTH_GOOGLE_SECRET=Oauth Google Secret
+OAUTH_GOOGLE_DESC=Gå til <a class="notasortlink" href="https://console.developers.google.com/" target="_blank">denne siden</a> velg"Credentials" for å opprette Oauth credentials
+OAUTH_GITHUB_NAME=Oauth GitHub service
+OAUTH_GITHUB_ID=Oauth GitHub ID
+OAUTH_GITHUB_SECRET=Oauth GitHub Secret
+OAUTH_GITHUB_DESC=Gå til <a class="notasortlink" href="https://github.com/settings/developers" target="_blank">denne siden</a> velg "Register a new application" for å opprette Oauth credentials

@@ -1,0 +1,38 @@
+# Dolibarr language file - Source file is en_US - paybox
+PayBoxSetup=Oppsett av PayBox-modul 
+PayBoxDesc=Denne modulen setter oppmulighet for betaling på <a href="http://www.paybox.com" target="_blank">Paybox</a> av kunder. Dette kan brukes for gratis betaling eller for betaling på et bestemt Dolibarr objekt (faktura, ordre, ...)
+FollowingUrlAreAvailableToMakePayments=Følgende nettadresser er tilgjengelige for kundene til å foreta betalinger for Dolibarr objekter
+PaymentForm=Betalingskjema
+WelcomeOnPaymentPage=Velkommen på våre elektroniske betalingstjenester
+ThisScreenAllowsYouToPay=I detteskjermbildet kan du foreta en online betaling til %s.
+ThisIsInformationOnPayment=Betalingsinformasjon
+ToComplete=For å fullføre
+YourEMail=E-post for betalingsbekreftelsen
+Creditor=Kreditor
+PaymentCode=Betalingskode
+PayBoxDoPayment=Betal med kredit- eller debet-kort (Paybox)
+ToPay=Utfør betaling
+YouWillBeRedirectedOnPayBox=Du vil bli omdirigert til den sikrede Paybox siden for innlegging av kredittkortinformasjon
+Continue=Neste
+ToOfferALinkForOnlinePayment=URL for %s betaling
+ToOfferALinkForOnlinePaymentOnOrder=URL for å tilby et %s brukergrensesnitt for online betaling av kundeordre
+ToOfferALinkForOnlinePaymentOnInvoice=URL for å tilby et %s brukergrensesnitt for online betaling av kundefaktura
+ToOfferALinkForOnlinePaymentOnContractLine=URL for å tilby et %s brukergrensesnitt for online betaling av en kontraktlinje
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL for å tilby et %s brukergrensesnitt for online betaling av et fribeløp beløp
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL for å tilby et %s brukergrensesnitt for online betaling av medlemsabonnement
+YouCanAddTagOnUrl=Du kan også legge til URL-parameter <b>&tag=<i>verdier</i></b> til noen av disse URLene (kreves kun ved betaling av fribeløp) for å legge til dine egne merknader til betalingen kommentar.
+SetupPayBoxToHavePaymentCreatedAutomatically=Oppsett av din PayBox med url <b>%s</b> for å få betaling opprettet automatisk når  den er validert av paybox.
+YourPaymentHasBeenRecorded=Denne siden bekrefter at din betaling er registrert. Takk.
+YourPaymentHasNotBeenRecorded=Din betaling ble ikke registrert og transaksjonen har blitt kansellert.
+AccountParameter=Kontoparametre
+UsageParameter=Parametre for bruk
+InformationToFindParameters=Hjelp til å finne din %s kontoinformasjon
+PAYBOX_CGI_URL_V2=Url til PAYBOX CGI-modul for betaling
+VendorName=Navn på leverandøren
+CSSUrlForPaymentForm=URL til CSS-stilark for betalingsskjema
+NewPayboxPaymentReceived=Ny Paybox-betaling mottatt
+NewPayboxPaymentFailed=Ny Paybox-betaling forsøkt, men feilet
+PAYBOX_PAYONLINE_SENDEMAIL=Epost for varling etter betaling (vellykket eller feilet)
+PAYBOX_PBX_SITE=Verdi for PBX SITE
+PAYBOX_PBX_RANG=Verdi for PBX Rang
+PAYBOX_PBX_IDENTIFIANT=Verdi for PBX ID

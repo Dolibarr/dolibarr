@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - ldap
+YouMustChangePassNextLogon=رمز عبور برای <b> کاربر از٪ s </ B> در دامنه <b> از٪ s </ b> باید تغییر کند.
+UserMustChangePassNextLogon=کاربر باید رمز عبور بر روی دامنه را تغییر دهد %s
+LDAPInformationsForThisContact=اطلاعات در پایگاه داده LDAP برای این مخاطب
+LDAPInformationsForThisUser=اطلاعات در پایگاه داده LDAP برای این کاربر
+LDAPInformationsForThisGroup=اطلاعات در پایگاه داده LDAP برای این گروه
+LDAPInformationsForThisMember=اطلاعات در پایگاه داده LDAP برای این عضو
+LDAPInformationsForThisMemberType=Information in LDAP database for this member type
+LDAPAttributes=ویژگی های LDAP
+LDAPCard=کارت LDAP
+LDAPRecordNotFound=رکورد در پایگاه داده LDAP یافت نشد
+LDAPUsers=کاربران در پایگاه داده LDAP
+LDAPFieldStatus=وضعیت
+LDAPFieldFirstSubscriptionDate=تاریخ اولین عضویت
+LDAPFieldFirstSubscriptionAmount=اولین مبلغ آبونمان
+LDAPFieldLastSubscriptionDate=Latest subscription date
+LDAPFieldLastSubscriptionAmount=Latest subscription amount
+LDAPFieldSkype=Skype id
+LDAPFieldSkypeExample=Example : skypeName
+UserSynchronized=تعریف کاربر
+GroupSynchronized=تعریف گروه
+MemberSynchronized=تعریف کاربران
+MemberTypeSynchronized=Member type synchronized
+ContactSynchronized=تعریف تماس
+ForceSynchronize=هماهنگ سازی نیروی Dolibarr -> LDAP
+ErrorFailedToReadLDAP=برای خواندن پایگاه داده LDAP شکست خورده است. LDAP راه اندازی ماژول و دسترسی به پایگاه داده را بررسی کنید.
+PasswordOfUserInLDAP=Password of user in LDAP

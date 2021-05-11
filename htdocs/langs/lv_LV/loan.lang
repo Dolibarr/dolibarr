@@ -1,0 +1,31 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Aizdevums
+Loans=Aizdevumi
+NewLoan=Jauns kredīts
+ShowLoan=Rādīt aizdevumu
+PaymentLoan=Aizdevuma maksājums
+LoanPayment=Aizdevuma maksājums
+ShowLoanPayment=Rādīt aizdevuma maksājumu
+LoanCapital=Kapitāls
+Insurance=Apdrošināšana
+Interest=Interese
+Nbterms=Number of terms
+Term=Termiņš
+LoanAccountancyCapitalCode=Accounting account capital
+LoanAccountancyInsuranceCode=Accounting account insurance
+LoanAccountancyInterestCode=Accounting account interest
+ConfirmDeleteLoan=Apstipriniet aizdevuma dzēšanu
+LoanDeleted=Aizdevums veiksmīgi dzēsts
+ConfirmPayLoan=Confirm classify paid this loan
+LoanPaid=Loan Paid
+ListLoanAssociatedProject=Ar projektu saistīto aizdevumu saraksts
+AddLoan=Izveidot aizdevumu
+FinancialCommitment=Finanšu saistības
+InterestAmount=Interese
+CapitalRemain=Kapitāls paliek
+# Admin
+ConfigLoan=Configuration of the module loan
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Grāmatvedības konta kapitāls pēc noklusējuma
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Grāmatvedības konta procenti pēc noklusējuma
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Grāmatvedības konta apdrošināšana pēc noklusējuma
+CreateCalcSchedule=Rediģēt finansiālās saistības

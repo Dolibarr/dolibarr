@@ -1,0 +1,44 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=Marginal
+Margins=Marginaler
+TotalMargin=Summa marginal
+MarginOnProducts=Marginal / Produkter
+MarginOnServices=Marginal / Tjänster
+MarginRate=Marginalsats
+MarkRate=Markera sats
+DisplayMarginRates=Visa marginalsatser
+DisplayMarkRates=Display markera hastigheter
+InputPrice=Inpris
+margin=Hantering av vinstmarginaler
+margesSetup=Inställningar för vinstmarginalhantering
+MarginDetails=Marginaldetaljer
+ProductMargins=Produktmarginaler
+CustomerMargins=Kundmarginaler
+SalesRepresentativeMargins=Återförsäljares marginaler
+UserMargins=User margins
+ProductService=Produkt eller tjänst
+AllProducts=Alla produkter och tjänster
+ChooseProduct/Service=Välj produkt eller tjänst
+ForceBuyingPriceIfNull=Force buying/cost price to selling price if not defined
+ForceBuyingPriceIfNullDetails=If buying/cost price not defined, and this option "ON", margin will be zero on line (buying/cost price = selling price), otherwise ("OFF"), marge will be equal to suggested default.
+MARGIN_METHODE_FOR_DISCOUNT=Marginalmetod för globala rabatter
+UseDiscountAsProduct=Som produkt
+UseDiscountAsService=Som tjänst
+UseDiscountOnTotal=På delsumma
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Definierar om en global rabatt behandlas som en produkt, en tjänst, eller bara på delsumman för beräkning marginal.
+MARGIN_TYPE=Buying/Cost price suggested by default for margin calculation
+MargeType1=Margin on Best vendor price
+MargeType2=Margin on Weighted Average Price (WAP)
+MargeType3=Margin on Cost Price
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best supplier price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best supplier price if WAP not yet defined
+CostPrice=Kostnadspris
+UnitCharges=Enhetsladdningar
+Charges=Avgifter
+AgentContactType=Handelsagent kontakttyp
+AgentContactTypeDetails=Definiera vad kontakttyp (länkad på fakturor) kommer att användas för marginalrapport per försäljning representant
+rateMustBeNumeric=Betyg måste vara ett numeriskt värde
+markRateShouldBeLesserThan100=Mark takt bör vara lägre än 100
+ShowMarginInfos=Visa marginal information
+CheckMargins=Margins detail
+MarginPerSaleRepresentativeWarning=The report of margin per user use the link between third parties and sale representatives to calculate the margin of each sale representative. Because some thirdparties may not have any ddiated sale representative and some thirdparties may be linked to several, some amounts may not be included into this report (if there is no sale representative) and some may appear on different lines (for each sale representative).

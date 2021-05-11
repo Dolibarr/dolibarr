@@ -1,0 +1,24 @@
+# ProductBATCH language file - en_US - ProductBATCH
+ManageLotSerial=使用批号/序列号
+ProductStatusOnBatch=是 (必须使用批号/序列号)
+ProductStatusNotOnBatch=否 (不使用批号/序列号)
+ProductStatusOnBatchShort=是
+ProductStatusNotOnBatchShort=否
+Batch=批号/序列号
+atleast1batchfield=保质期或销售日期或批号/序列号
+batch_number=批号/序列号码
+BatchNumberShort=批号/序列号
+EatByDate=保质期
+SellByDate=销售日期
+DetailBatchNumber=批号/序列号详细
+printBatch=批号/序列号: %s
+printEatby=食用日期: %s
+printSellby=销售日期: %s
+printQty=数量: %d
+AddDispatchBatchLine=添加一个用于货架寿命调度
+WhenProductBatchModuleOnOptionAreForced=When module Lot/Serial is on, automatic stock decrease  is forced to 'Decrease real stocks on shipping validation' and automatic increase mode is forced to 'Increase real stocks on manual dispatching into warehouses' and can't be edited. Other options can be defined as you want.
+ProductDoesNotUseBatchSerial=此产品不使用批号/序列号
+ProductLotSetup=Setup of module lot/serial
+ShowCurrentStockOfLot=Show current stock for couple product/lot
+ShowLogOfMovementIfLot=Show log of movements for couple product/lot
+StockDetailPerBatch=Stock detail per lot

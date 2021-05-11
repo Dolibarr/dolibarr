@@ -1,0 +1,19 @@
+# Dolibarr language file - Source file is en_US - install
+PHPSupportCurl=Ce PHP supporte Curl.
+ErrorPHPDoesNotSupportCurl=Votre installation PHP ne prend pas en charge Curl.
+AdminLoginCreatedSuccessfuly=Connexion administrateur Dolibarr '<b>%s</b>' créé avec succès.
+FailedToCreateAdminLogin=Impossible de créer un compte administrateur Dolibarr.
+WarningUpgrade=Attention:\nEst-ce que vous avez effectué une sauvegarde de la base de données d'abord?\nCeci est très recommandé: par exemple, en raison de certains bogues dans les systèmes de bases de données (par exemple mysql version 5.5.40 / 41/42/43), certaines données ou tables peuvent être perdues au cours de ce processus, il est donc fortement recommandé de disposer d'un Déversement complet de votre base de données avant de commencer la migration.\n\nCliquez sur OK pour commencer le processus de migration ...
+KeepDefaultValuesWamp=Comme vous utilisez l'assistant d'installation Dolibarr depuis DoliWamp, les valeurs proposées aux paramètres sont déjà optimisées. Ne les modifier qu'en connaissance de cause.
+KeepDefaultValuesDeb=Comme vous utilisez l'assistant d'installation Dolibarr depuis un paquet Linux ou BSD (Ubuntu, Debian, Fedora, …), les valeurs proposées aux paramètres sont déjà optimisées. Seul le mot de passe du propriétaire de la base de données à créer est à renseigner. Ne modifiez les autres informations qu'en connaissance de cause.
+KeepDefaultValuesMamp=Comme vous utilisez l'assistant d'installation Dolibarr depuis DoliMamp, les valeurs proposées aux paramètres sont déjà optimisées. Ne les modifiez qu'en connaissance de cause.
+KeepDefaultValuesProxmox=Comme vous utilisez l'assistant d'installation Dolibarr depuis une machine virtuelle Proxmox, les valeurs proposées aux paramètres sont déjà optimisées. Ne les modifiez qu'en connaissance de cause.
+UpgradeExternalModule=Exécuter un processus de mise à niveau dédié des modules externes
+MigrationSuccessfullUpdate=Mise à niveau réussie
+MigrationContractsEmptyDatesUpdateSuccess=Contrat de correction de date d'emtpy effectué avec succès
+MigrationContractsIncoherentCreationDateUpdateSuccess=Correction mauvaise valeur de la date de création du contrat effectuée avec succès
+MigrationBankTransfertsUpdate=Mettre à jour les liens entre la saisie bancaire et un virement bancaire
+MigrationRemiseEntity=Mise à jour de la valeur du champ de l'entité de llx_societe_remise
+MigrationRemiseExceptEntity=Valeur du champ d'entité de mise à jour de llx_societe_remise_except
+MigrationReloadModule=Recharger module %s
+ErrorFoundDuringMigration=Des erreurs ont été signalées lors du processus de migration, alors la prochaine étape n'est pas disponible. Pour ignorer les erreurs, vous pouvez <a href="%s"> cliquer ici </a>, mais l'application ou certaines fonctionnalités peuvent ne pas fonctionner correctement jusqu'à ce qu'elles soient corrigées.

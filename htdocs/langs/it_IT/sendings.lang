@@ -1,0 +1,72 @@
+# Dolibarr language file - Source file is en_US - sendings
+RefSending=Rif. spedizione
+Sending=Spedizione
+Sendings=Spedizioni
+AllSendings=Tutte le spedizioni
+Shipment=Spedizione
+Shipments=Spedizioni
+ShowSending=Mostra le spedizioni
+Receivings=Ricevuta di consegna
+SendingsArea=Sezione spedizioni
+ListOfSendings=Elenco delle spedizioni
+SendingMethod=Metodo di invio
+LastSendings=Ultime %s spedizioni
+StatisticsOfSendings=Statistiche spedizioni
+NbOfSendings=Numero di spedizioni
+NumberOfShipmentsByMonth=Numero di spedizioni per mese
+SendingCard=Scheda spedizione
+NewSending=Nuova spedizione
+CreateShipment=Crea una spedizione
+QtyShipped=Quantità spedita
+QtyShippedShort=Qtà spedizione.
+QtyPreparedOrShipped=Q.ta preparata o spedita
+QtyToShip=Quantità da spedire
+QtyReceived=Quantità ricevuta
+QtyInOtherShipments=Q.ta in altre spedizioni
+KeepToShip=Ancora da spedire
+KeepToShipShort=Rimanente
+OtherSendingsForSameOrder=Altre Spedizioni per questo ordine
+SendingsAndReceivingForSameOrder=Spedizioni e ricezioni per questo ordini
+SendingsToValidate=Spedizione da convalidare
+StatusSendingCanceled=Annullato
+StatusSendingDraft=Bozza
+StatusSendingValidated=Convalidata (prodotti per la spedizione o già spediti)
+StatusSendingProcessed=Processato
+StatusSendingDraftShort=Bozza
+StatusSendingValidatedShort=Convalidata
+StatusSendingProcessedShort=Processato
+SendingSheet=Documento di spedizione
+ConfirmDeleteSending=Sei sicuro di voler eliminare questa spedizione?
+ConfirmValidateSending=Sei sicuro di voler convalidare questa spedizioni con il riferimento <b>%s</b>?
+ConfirmCancelSending=Sei sicuro di voler eliminar questa spedizione?
+DocumentModelMerou=Merou modello A5
+WarningNoQtyLeftToSend=Attenzione, non sono rimasti prodotti per la spedizione.
+StatsOnShipmentsOnlyValidated=Statistiche calcolate solo sulle spedizioni convalidate. La data è quella di conferma spedizione (la data di consegna prevista non è sempre conosciuta).
+DateDeliveryPlanned=Data prevista di consegna
+RefDeliveryReceipt=Rif. ricevuta di consegna
+StatusReceipt=Stato ricevuta di consegna
+DateReceived=Data di consegna ricevuto
+SendShippingByEMail=Invia spedizione via EMail
+SendShippingRef=Invio della spedizione %s
+ActionsOnShipping=Acions sulla spedizione
+LinkToTrackYourPackage=Link a monitorare il tuo pacchetto
+ShipmentCreationIsDoneFromOrder=Per il momento, la creazione di una nuova spedizione viene effettuata dalla scheda dell'ordine.
+ShipmentLine=Filiera di spedizione
+ProductQtyInCustomersOrdersRunning=Product quantity into open customer orders
+ProductQtyInSuppliersOrdersRunning=Product quantity into open purchase orders
+ProductQtyInShipmentAlreadySent=Quantità prodotto dall'ordine cliente aperto già inviato
+ProductQtyInSuppliersShipmentAlreadyRecevied=Quantità prodotto dall'ordine fornitore aperto già ricevuto
+NoProductToShipFoundIntoStock=Nessun prodotto da spedire presente all'interno del magazzino <b>%s</b>
+WeightVolShort=Peso/Vol.
+ValidateOrderFirstBeforeShipment=È necessario convalidare l'ordine prima di poterlo spedire 
+
+# Sending methods
+# ModelDocument
+DocumentModelTyphon=Modello più completo di documento per le ricevute di consegna (logo. ..)
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER costante non definita
+SumOfProductVolumes=Totale volume prodotti
+SumOfProductWeights=Totale peso prodotti
+
+# warehouse details
+DetailWarehouseNumber= Dettagli magazzino
+DetailWarehouseFormat= Peso:%s (Qtà : %d)

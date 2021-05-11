@@ -1,0 +1,19 @@
+# Dolibarr language file - Source file is en_US - loan
+NewLoan=Novo empréstimo
+ShowLoan=Mostrar empréstimo
+PaymentLoan=Pagamento de empréstimo
+LoanPayment=Pagamento de empréstimo
+ShowLoanPayment=Mostrar pagamento de empréstimo
+Interest=Juro
+LoanAccountancyCapitalCode=Capital contabilístico
+LoanAccountancyInsuranceCode=Seguro contabilístico
+LoanAccountancyInterestCode=Interesse contabilístico
+ConfirmDeleteLoan=Confirme a exclusão deste empréstimo
+LoanDeleted=Empréstimo excluído com sucesso
+ConfirmPayLoan=Confirmar este empréstimo como pago
+LoanPaid=Empréstimo pago
+ListLoanAssociatedProject=Lista de empréstimos associados ao projeto
+InterestAmount=Juro
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Capital contabilístico por padrão
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Interesse contabilístico por padrão
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Seguro contabilístico por padrão

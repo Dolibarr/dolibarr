@@ -1,0 +1,83 @@
+# Dolibarr language file - Source file is en_US - cron
+# About page
+# Right
+Permission23101 = Leggi processo pianificato
+Permission23102 = Crea / Aggiornamento processo pianificato
+Permission23103 = Elimina processo pianificato
+Permission23104 = Esegui processo pianificato
+# Admin
+CronSetup= Impostazione delle azioni pianificate
+URLToLaunchCronJobs=URL per controllare ed eseguire i processi in cron
+OrToLaunchASpecificJob=O per lanciare un processo specifico
+KeyForCronAccess=Chiave di sicurezza per l'URL che lancia i processi pianificati
+FileToLaunchCronJobs=Riga di comando per controllare e lanciare i processi pianificati in cron
+CronExplainHowToRunUnix=In ambienti Unix per lanciare il comando ogni 5 minuti dovresti usare la seguente riga di crontab
+CronExplainHowToRunWin=In ambienti Microsoft(tm) Windows per lanciare il comando ogni 5 minuti dovresti usare le operazioni pianificate
+CronMethodDoesNotExists=La classe %s non contiene alcune metodo %s
+CronJobDefDesc=I profili cron sono definiti nel file di descrizione del modulo. Quando il modulo viene attivao, vengono caricati e resi disponivbili permettendoti di amministrare i processi dal menu strumenti amministrazione %s.
+CronJobProfiles=Lista dei profili cron predefiniti
+# Menu
+EnabledAndDisabled=Attivato e disattivato
+# Page list
+CronLastOutput=Output dell'ultimo avvio
+CronLastResult=Ultimo codice risultato
+CronCommand=Comando
+CronList=Processi pianificati
+CronDelete=Cancella i processi pianificati
+CronConfirmDelete=Vuoi davvero eliminare questi processi pianificati?
+CronExecute=Esegui i processi pianificati
+CronConfirmExecute=Vuoi davvero eseguire ora i processi pianificati?
+CronInfo=Il modulo di programmazione permette di pianificare l'esecuzione automatica dei processi. Essi possono anche essere lanciati manualmente.
+CronTask=Processo
+CronNone=Nessuno
+CronDtStart=Non prima
+CronDtEnd=Non dopo
+CronDtNextLaunch=Prossima esecuzione
+CronDtLastLaunch=Data di inizio dell'ultima esecuzione
+CronDtLastResult=Data di termine ultima esecuzione
+CronFrequency=Frequenza
+CronClass=Classe
+CronMethod=Metodo
+CronModule=Modulo
+CronNoJobs=Nessun processo registrato
+CronPriority=Priorità
+CronLabel=Titolo
+CronNbRun=Num. lancio
+CronMaxRun=Numero massimo di lanci
+CronEach=Ogni
+JobFinished=Processo eseguito e completato
+#Page card
+CronAdd= Aggiungi processo
+CronEvery=Esegui ogni processo
+CronObject=Istanza/Oggetto da creare
+CronArgs=Parametri
+CronSaveSucess=Salvataggio corretto
+CronNote=Commento
+CronFieldMandatory=Il campo %s è obbligatorio
+CronErrEndDateStartDt=La data di fine non può essere precedente a quella di inizio
+StatusAtInstall=Stato all'installazione del modulo
+CronStatusActiveBtn=Abilita
+CronStatusInactiveBtn=Disattiva
+CronTaskInactive=Questo processo è disabilitato
+CronId=Id
+CronClassFile=Nome file con classe
+CronModuleHelp=Name of Dolibarr module directory (also work with external Dolibarr module). <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/<u>product</u>/class/product.class.php, the value for module is<br><i>product</i>
+CronClassFileHelp=The relative path and file name to load (path is relative to web server root directory). <BR> For exemple to call the fetch method of Dolibarr Product object htdocs/product/class/<u>product.class.php</u>, the value for class file name is<br><i>product/class/product.class.php</i>
+CronObjectHelp=The object name to load. <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for class file name is<br><i>Product</i>
+CronMethodHelp=The object method to launch. <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for method is<br><i>fetch</i>
+CronArgsHelp=The method arguments. <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for paramters can be<br><i>0, ProductRef</i>
+CronCommandHelp=Il comando da eseguire sul sistema
+CronCreateJob=Crea nuovo processo programmato
+CronFrom=Da
+# Info
+# Common
+CronType=Tipo di processo
+CronType_method=Metodo di chiamata di una classe PHP
+CronType_command=Comando da shell
+CronCannotLoadClass=Non posso caricare la classe %s (per usare la classe %s)
+CronCannotLoadObject=Il file di classe %s è stato caricato, ma all'interno l'oggetto %s non è presente
+UseMenuModuleToolsToAddCronJobs=Vai nel menu "Home - Strumenti di amministrazione - Processi pianificati" per visualizzare e modificare i processi pianificati.
+JobDisabled=Processo disabilitato
+MakeLocalDatabaseDumpShort=Backup del database locale
+MakeLocalDatabaseDump=Create a local database dump. Parameters are: compression ('gz' or 'bz' or 'none'), backup type ('mysql' or 'pgsql'), 1, 'auto' or filename to build, number of backup files to keep
+WarningCronDelayed=Attenzione, per motivi di performance, qualunque sia la data della prossima esecuzione dei processi attivi, i tuoi processi possono essere ritardati di un massimo di %s ore prima di essere eseguiti

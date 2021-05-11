@@ -1,0 +1,36 @@
+# Dolibarr language file - Source file is en_US - resource
+MenuResourceIndex=Kaynaklar
+MenuResourceAdd=Yeni kaynaklar
+DeleteResource=Kaynak sil
+ConfirmDeleteResourceElement=Bu öğe için kaynağı silmeyi onayla
+NoResourceInDatabase=Veritabanında kaynak yok
+NoResourceLinked=Bağlantılı kaynak yok
+
+ResourcePageIndex=Kaynak listesi
+ResourceSingular=Kaynak
+ResourceCard=Kaynak kartı
+AddResource=Bir kaynak oluştur
+ResourceFormLabel_ref=Kaynak adı
+ResourceType=Kaynak türü
+ResourceFormLabel_description=Kaynak açıklaması
+
+ResourcesLinkedToElement=Öğeye bağlantılı kaynaklar
+
+ShowResource=Kaynak göster
+
+ResourceElementPage=Öğe kaynağı
+ResourceCreatedWithSuccess=Kaynak oluşturma başarılı
+RessourceLineSuccessfullyDeleted=Kaynak satır silinmesi başarılı
+RessourceLineSuccessfullyUpdated=Kaynak satır güncellemesi başarılı
+ResourceLinkedWithSuccess=Kaynak bağlantılama başarılı
+
+ConfirmDeleteResource=Bu kaynağı silmeyi onayla
+RessourceSuccessfullyDeleted=Kaynak silme başarılı
+DictionaryResourceType=Kaynak türleri
+
+SelectResource=Kaynak seç
+
+IdResource=Id kaynağı
+AssetNumber=Seri numarası
+ResourceTypeCode=Kaynak türü kodu
+ImportDataset_resource_1=Kaynaklar

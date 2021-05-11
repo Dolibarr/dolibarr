@@ -1,0 +1,83 @@
+# Dolibarr language file - Source file is en_US - cron
+# About page
+# Right
+Permission23101 = Pročitaj planirani posao
+Permission23102 = Kreiraj/promjeni planirani posao
+Permission23103 = Obriši planirani posao
+Permission23104 = Pokreni planirani posao
+# Admin
+CronSetup= Postavljanje upravljanja planiranih poslova
+URLToLaunchCronJobs=URL to check and launch qualified cron jobs
+OrToLaunchASpecificJob=Ili za provjeru i pokretanje specifičnog posla
+KeyForCronAccess=Sigurnosni ključ za URL za pokretanje cron zadataka
+FileToLaunchCronJobs=Command line to check and launch qualified cron jobs
+CronExplainHowToRunUnix=U Unix okolini potrebno je korisititi sljedeći crontab unos za pokretanje komande svakih 5 minuta
+CronExplainHowToRunWin=Na Microsoft(tm) Windows okolini možete koristiti Scheduled task alate za pokretanje komandi svakih 5 minuta
+CronMethodDoesNotExists=Klasa %s ne sadrži niti jednu %s metodu
+CronJobDefDesc=Cron job profiles are defined into the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
+CronJobProfiles=List of predefined cron job profiles
+# Menu
+EnabledAndDisabled=Omogući i onemogući
+# Page list
+CronLastOutput=Latest run output
+CronLastResult=Latest result code
+CronCommand=Komanda
+CronList=Planirani poslovi
+CronDelete=Obriši planirane zadatke
+CronConfirmDelete=Are you sure you want to delete these scheduled jobs?
+CronExecute=Pokreni planirani posao
+CronConfirmExecute=Are you sure you want to execute these scheduled jobs now?
+CronInfo=Scheduled job module allows to schedule jobs to execute them automatically. Jobs can also be started manually.
+CronTask=Posao
+CronNone=Nijedan
+CronDtStart=Ne prije
+CronDtEnd=Ne nakon
+CronDtNextLaunch=Slijedeće pokretanje
+CronDtLastLaunch=Početni datum zadnjeg pokretanja
+CronDtLastResult=Datum završetka zadnjeg pokretanja
+CronFrequency=Učestalost
+CronClass=Klasa
+CronMethod=Metoda
+CronModule=Modul
+CronNoJobs=Nema registriranih poslova
+CronPriority=Prioritet
+CronLabel=Oznaka
+CronNbRun=Br. pokretanja
+CronMaxRun=Max number launch
+CronEach=Svakih
+JobFinished=Posao pokrenut i završen
+#Page card
+CronAdd= Dodaj poslove
+CronEvery=Izvrši posao svaki
+CronObject=Instanca/Objekt za kreiranje
+CronArgs=Parametri
+CronSaveSucess=Uspješno spremljeno
+CronNote=Komentar
+CronFieldMandatory=Polja %s su obavezna
+CronErrEndDateStartDt=Datum kraja ne može biti prije datuma početka
+StatusAtInstall=Status at module installation
+CronStatusActiveBtn=Omogući
+CronStatusInactiveBtn=Onemogući
+CronTaskInactive=Ovaj posao je onemogućen
+CronId=ID
+CronClassFile=Filename with class
+CronModuleHelp=Name of Dolibarr module directory (also work with external Dolibarr module). <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/<u>product</u>/class/product.class.php, the value for module is<br><i>product</i>
+CronClassFileHelp=The relative path and file name to load (path is relative to web server root directory). <BR> For exemple to call the fetch method of Dolibarr Product object htdocs/product/class/<u>product.class.php</u>, the value for class file name is<br><i>product/class/product.class.php</i>
+CronObjectHelp=The object name to load. <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for class file name is<br><i>Product</i>
+CronMethodHelp=The object method to launch. <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for method is<br><i>fetch</i>
+CronArgsHelp=The method arguments. <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for paramters can be<br><i>0, ProductRef</i>
+CronCommandHelp=Sistemska komanda za pokretanje
+CronCreateJob=Kreiraj novi planirani posao
+CronFrom=Od
+# Info
+# Common
+CronType=Tip posla
+CronType_method=Call method of a PHP Class
+CronType_command=Shell command
+CronCannotLoadClass=Cannot load class file %s (to use class %s)
+CronCannotLoadObject=Class file %s was loaded, but object %s was not found into it
+UseMenuModuleToolsToAddCronJobs=Idite na izbornik "Home - Admin tools - Scheduled jobs" za prikaz i uređivanje planiranih poslova.
+JobDisabled=Posao onemogućen
+MakeLocalDatabaseDumpShort=Lakalni backup baze
+MakeLocalDatabaseDump=Create a local database dump. Parameters are: compression ('gz' or 'bz' or 'none'), backup type ('mysql' or 'pgsql'), 1, 'auto' or filename to build, number of backup files to keep
+WarningCronDelayed=Attention, for performance purpose, whatever is next date of execution of enabled jobs, your jobs may be delayed to a maximum of %s hours, before being run.

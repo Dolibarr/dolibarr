@@ -1,0 +1,83 @@
+# Dolibarr language file - Source file is en_US - cron
+# About page
+# Right
+Permission23101 = Les planlagt jobb
+Permission23102 = Opprett/endre planlagt jobb
+Permission23103 = Slett planlagt jobb
+Permission23104 = Utfør planlagt jobb
+# Admin
+CronSetup= Administrasjon av planlagte oppgaver
+URLToLaunchCronJobs=URL for å sjekke og kjøre kvalifiserte cron-jobber
+OrToLaunchASpecificJob=eller for å sjekke og kjøre en spesifikk jobb
+KeyForCronAccess=Sikkerhetsnøkkel for URL for å starte cronjobber
+FileToLaunchCronJobs=Kommandolinje for å sjekke og starte kvalifiserte cron-jobber
+CronExplainHowToRunUnix=I Unix-miljøer bør du bruke følgende crontab-oppføring for å kjøre kommandolinje hvert 5. minutt
+CronExplainHowToRunWin=I Microsoft(tm) Windows-miljø kan du bruke planlagte oppgaver-verktøyet for å kjøre kommandolinje hvert 5. minutt
+CronMethodDoesNotExists=Klasse %s inneholder ingen metode %s
+CronJobDefDesc=Cronjobbprofiler er definert i modulbeskrivelsesfilen. Når modulen er aktivert, er de lastet og tilgjengelig slik at du kan administrere jobbene fra administrasjonsmenyen %s.
+CronJobProfiles=Liste over forhåndsdefinerte cronjobbprofiler
+# Menu
+EnabledAndDisabled=Aktivert og deaktivert
+# Page list
+CronLastOutput=Siste kjøreresultat
+CronLastResult=Siste resultatkode
+CronCommand=Kommando
+CronList=Planlagte jobber
+CronDelete=Slett planlagte jobber
+CronConfirmDelete=Er du sikker på at du vil slette disse planlagte jobbene?
+CronExecute=Start planlagt jobb
+CronConfirmExecute=Er du sikker på at du vil kjøre disse planlagte jobbene nå?
+CronInfo=Planlagt jobb -modul gjør det mulig å planlegge jobber for å utføre dem automatisk. Jobber kan også startes manuelt.
+CronTask=Jobb
+CronNone=Ingen
+CronDtStart=Ikke før
+CronDtEnd=Ikke etter
+CronDtNextLaunch=Neste kjøring
+CronDtLastLaunch=Startdato for forrige utførelse
+CronDtLastResult=Sluttdato for forrige utførelse
+CronFrequency=Frekvens
+CronClass=Klasse
+CronMethod=Metode
+CronModule=Modul
+CronNoJobs=Ingen registrerte jobber
+CronPriority=Prioritet
+CronLabel=Etikett
+CronNbRun=Antall starter
+CronMaxRun=Max number launch
+CronEach=Alle
+JobFinished=Jobb startet og fullført
+#Page card
+CronAdd= Legg til jobber
+CronEvery=Kjør jobb hver
+CronObject=Objekt å opprette
+CronArgs=Parametre
+CronSaveSucess=Lagring vellykket
+CronNote=Kommentar
+CronFieldMandatory=Feltene %s er obligatoriske
+CronErrEndDateStartDt=Sluttdato kan ikke være før startdato
+StatusAtInstall=Status for modulinstallasjon
+CronStatusActiveBtn=Aktiver
+CronStatusInactiveBtn=Deaktiver
+CronTaskInactive=Denne jobben er deaktivert
+CronId=ID
+CronClassFile=Filnavn med klasse
+CronModuleHelp=Navn på Dolibarr-modulkatalogen (virker også med ekstern Dolibarr-modul). <BR> For eksempel å anrope hente-metoden for Dolibarr Product objektet/htdocs/<u>product</u>/class/product.class.php, er verdien for modulen<br><i> produkt </i>
+CronClassFileHelp=Den relative banen og filnavnet som skal lastes (banen er i forhold til webserverens rotkatalog). <BR> For eksempel å anrope hente-metoden for Dolibarr Product objekt htdocs/product/class/<u> product.class.php</u>, er verdien for klassefilnavnet<br><i> produkt/class/product.class.php</i>
+CronObjectHelp=Objektnavnet som skal lastes inn. <BR> For eksempel å anrope hente-metoden for Dolibarr Produkt-objektet /htdocs/product/class/product.class.php, er verdien for klassefilnavnet <br> <i> Product </i>
+CronMethodHelp=Objektmetoden som skal kjøres. <BR> For eksempel å anrope hente-metoden for Dolibarr Product objektet /htdocs/product/class/product.class.php, er verdien for metoden <br> <i> hent </i>
+CronArgsHelp=Metodeargumenter. <BR> For eksempel å anrope hente-metoden for Dolibarr Product objektet /htdocs/product/class/product.class.php, kan verdien for parametre være <br><i> 0, ProductRef </i>
+CronCommandHelp=System kommandolinje som skal kjøres
+CronCreateJob=Opprett ny planlagt jobb
+CronFrom=Fra
+# Info
+# Common
+CronType=Jobbtype
+CronType_method=Anropsmetode for en PHP-klasse
+CronType_command=Shell kommando
+CronCannotLoadClass=Kan ikke laste klassefil %s (for å bruke klasse %s)
+CronCannotLoadObject=Klassefil %s ble lastet, men objektet %s ble ikke funnet i den
+UseMenuModuleToolsToAddCronJobs=Gå til menyen "Hjem - Administrative verktøy - Planlagte jobber" for å se og endre planlagte jobber
+JobDisabled=Jobb deaktivert
+MakeLocalDatabaseDumpShort=Backup av lokal database
+MakeLocalDatabaseDump=Create a local database dump. Parameters are: compression ('gz' or 'bz' or 'none'), backup type ('mysql' or 'pgsql'), 1, 'auto' or filename to build, number of backup files to keep
+WarningCronDelayed=NB, for ytelsesformål, uansett neste utførelsesdato for aktiverte jobber, kan jobbene dine forsinkes til maksimalt %s timer før de kjøres.

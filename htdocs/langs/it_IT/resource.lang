@@ -1,0 +1,36 @@
+# Dolibarr language file - Source file is en_US - resource
+MenuResourceIndex=Risorse
+MenuResourceAdd=Nuova risorsa
+DeleteResource=Elimina risorsa
+ConfirmDeleteResourceElement=Conferma l'eliminazione della risorsa da questo elemento
+NoResourceInDatabase=Nessuna risorsa nel database
+NoResourceLinked=Nessuna risorsa collegata
+
+ResourcePageIndex=Elenco delle risorse
+ResourceSingular=Risorsa
+ResourceCard=Scheda risorsa
+AddResource=Crea una risorsa
+ResourceFormLabel_ref=Nome della risorsa
+ResourceType=Tipo di risorsa
+ResourceFormLabel_description=Descrizione della risorsa
+
+ResourcesLinkedToElement=Risorse collegate all'elemento
+
+ShowResource=Mostra risorsa
+
+ResourceElementPage=Risorse dell'elemento
+ResourceCreatedWithSuccess=Risorsa creata con successo
+RessourceLineSuccessfullyDeleted=Riga di risorsa eliminata correttamente
+RessourceLineSuccessfullyUpdated=Riga di risorsa aggiornata correttamente
+ResourceLinkedWithSuccess=Risorsa collegata con successo
+
+ConfirmDeleteResource=Conferma l'eliminazione di questa risorsa
+RessourceSuccessfullyDeleted=Risorsa eliminata con successo
+DictionaryResourceType=Tipo di risorse
+
+SelectResource=Seleziona risorsa
+
+IdResource=ID risorsa
+AssetNumber=Numero seriale
+ResourceTypeCode=Codice tipo risorsa
+ImportDataset_resource_1=Risorse

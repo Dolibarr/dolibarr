@@ -1,0 +1,38 @@
+# Dolibarr language file - Source file is en_US - paybox
+PayBoxSetup=PayBox ติดตั้งโมดูล
+PayBoxDesc=หน้าเสนอโมดูลนี้จะอนุญาตให้มีการชำระเงินใน <a href="http://www.paybox.com" target="_blank">Paybox</a> จากลูกค้า นี้สามารถใช้สำหรับการชำระเงินฟรีหรือการชำระเงินบนวัตถุโดยเฉพาะอย่างยิ่ง Dolibarr (ใบแจ้งหนี้การสั่งซื้อ ... )
+FollowingUrlAreAvailableToMakePayments=URL ต่อไปนี้จะพร้อมที่จะให้หน้าให้กับลูกค้าที่จะทำให้การชำระเงินบนวัตถุ Dolibarr
+PaymentForm=รูปแบบการชำระเงิน
+WelcomeOnPaymentPage=ยินดีต้อนรับในการให้บริการการชำระเงินออนไลน์ของเรา
+ThisScreenAllowsYouToPay=หน้าจอนี้จะช่วยให้คุณสามารถชำระเงินออนไลน์ไปยัง% s
+ThisIsInformationOnPayment=นี้เป็นข้อมูลเกี่ยวกับการชำระเงินที่จะทำ
+ToComplete=ให้เสร็จสมบูรณ์
+YourEMail=ส่งอีเมล์ถึงจะได้รับการยืนยันการชำระเงิน
+Creditor=เจ้าหนี้
+PaymentCode=รหัสการชำระเงิน
+PayBoxDoPayment=Pay with Credit or Debit Card (Paybox)
+ToPay=การชำระเงินทำ
+YouWillBeRedirectedOnPayBox=คุณจะถูกเปลี่ยนเส้นทางในหน้า Paybox การรักษาความปลอดภัยในการป้อนข้อมูลบัตรเครดิต
+Continue=ถัดไป
+ToOfferALinkForOnlinePayment=สำหรับการชำระเงิน URL% s
+ToOfferALinkForOnlinePaymentOnOrder=URL ที่จะนำเสนอส่วนติดต่อผู้ใช้การชำระเงินออนไลน์ s% สำหรับการสั่งซื้อของลูกค้า
+ToOfferALinkForOnlinePaymentOnInvoice=URL ที่จะนำเสนอส่วนติดต่อผู้ใช้การชำระเงินออนไลน์% s สำหรับใบแจ้งหนี้ลูกค้า
+ToOfferALinkForOnlinePaymentOnContractLine=URL ที่จะนำเสนอส่วนติดต่อผู้ใช้การชำระเงินออนไลน์% s สำหรับสายสัญญา
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL ที่จะนำเสนอส่วนติดต่อผู้ใช้การชำระเงินออนไลน์ s% สำหรับจำนวนเงินที่ฟรี
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL ที่จะนำเสนอส่วนติดต่อผู้ใช้การชำระเงินออนไลน์% s สำหรับการสมัครสมาชิก
+YouCanAddTagOnUrl=นอกจากนี้คุณยังสามารถเพิ่มพารามิเตอร์ URL <b>และแท็ก = <i>ค่าใด</i></b> ๆ ของ URL เหล่านั้น (ที่จำเป็นเท่านั้นสำหรับการชำระเงินฟรี) เพื่อเพิ่มแท็กความคิดเห็นการชำระเงินของคุณเอง
+SetupPayBoxToHavePaymentCreatedAutomatically=ติดตั้ง PayBox <b>ของคุณด้วยสมาชิก% s</b> จะมีการชำระเงินที่สร้างขึ้นโดยอัตโนมัติเมื่อมีการตรวจสอบโดย paybox
+YourPaymentHasBeenRecorded=หน้านี้ยืนยันว่าชำระเงินของคุณได้รับการบันทึก ขอบคุณ
+YourPaymentHasNotBeenRecorded=ชำระเงินที่คุณยังไม่ได้รับการบันทึกไว้และได้รับการยกเลิกการทำธุรกรรม ขอบคุณ
+AccountParameter=พารามิเตอร์บัญชี
+UsageParameter=พารามิเตอร์การใช้งาน
+InformationToFindParameters=ช่วยในการหาข้อมูลเกี่ยวกับบัญชีของคุณ s%
+PAYBOX_CGI_URL_V2=url ของ Paybox โมดูล CGI สำหรับการชำระเงิน
+VendorName=ชื่อของผู้ขาย
+CSSUrlForPaymentForm=รูปแบบ CSS url ของแผ่นสำหรับรูปแบบการชำระเงิน
+NewPayboxPaymentReceived=การชำระเงิน Paybox ใหม่ที่ได้รับ
+NewPayboxPaymentFailed=การชำระเงิน Paybox ใหม่พยายาม แต่ล้มเหลว
+PAYBOX_PAYONLINE_SENDEMAIL=อีเมลเตือนหลังจากการชำระเงิน (ความสำเร็จหรือความล้มเหลว)
+PAYBOX_PBX_SITE=ราคาเว็บไซต์ PBX
+PAYBOX_PBX_RANG=ราคา PBX รัง
+PAYBOX_PBX_IDENTIFIANT=ราคา PBX ID

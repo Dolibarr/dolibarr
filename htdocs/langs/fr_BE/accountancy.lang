@@ -1,0 +1,9 @@
+# Dolibarr language file - Source file is en_US - accountancy
+ConfigAccountingExpert=Configuration du module de compta expert
+Processing=Exécution
+Lineofinvoice=Lignes de facture
+Doctype=Type de document
+ErrorDebitCredit=Débit et crédit ne peuvent pas être non-nuls en même temps
+TotalMarge=Marge de ventes totale
+Selectmodelcsv=Sélectionnez un modèle d'export
+Modelcsv_normal=Export classique

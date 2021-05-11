@@ -1,0 +1,31 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Заем
+Loans=Заеми
+NewLoan=Нов Заем
+ShowLoan=Показване на Заем
+PaymentLoan=Плащане на Заем
+LoanPayment=Плащане на Заем
+ShowLoanPayment=Показване на плащането на Заем
+LoanCapital=Капитал
+Insurance=Застраховка
+Interest=Лихва
+Nbterms=Number of terms
+Term=Term
+LoanAccountancyCapitalCode=Accounting account capital
+LoanAccountancyInsuranceCode=Accounting account insurance
+LoanAccountancyInterestCode=Accounting account interest
+ConfirmDeleteLoan=Потвърдете изтриването на този заем
+LoanDeleted=Заемът е изтрит успешно
+ConfirmPayLoan=Confirm classify paid this loan
+LoanPaid=Заем Платен
+ListLoanAssociatedProject=List of loan associated with the project
+AddLoan=Create loan
+FinancialCommitment=Financial commitment
+InterestAmount=Лихва
+CapitalRemain=Capital remain
+# Admin
+ConfigLoan=Конфигурация на модула заем
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Accounting account capital by default
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Accounting account interest by default
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Accounting account insurance by default
+CreateCalcSchedule=Edit financial commitment

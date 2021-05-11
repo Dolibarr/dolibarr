@@ -1,0 +1,36 @@
+# Dolibarr language file - Source file is en_US - resource
+MenuResourceIndex=资源
+MenuResourceAdd=新的资源
+DeleteResource=删除资源
+ConfirmDeleteResourceElement=确认从这个元素中删除资源
+NoResourceInDatabase=数据库中无资源
+NoResourceLinked=无资源链接
+
+ResourcePageIndex=资源列表
+ResourceSingular=资源
+ResourceCard=资源信息卡
+AddResource=新建资源
+ResourceFormLabel_ref=资源名称
+ResourceType=资源类别
+ResourceFormLabel_description=资源描述
+
+ResourcesLinkedToElement=资源链接到元素
+
+ShowResource=显示资源
+
+ResourceElementPage=元素资源
+ResourceCreatedWithSuccess=资源成功创建
+RessourceLineSuccessfullyDeleted=资源明细成功删除
+RessourceLineSuccessfullyUpdated=资源明细成功更新
+ResourceLinkedWithSuccess=资源链接成功
+
+ConfirmDeleteResource=确认删除这个资源
+RessourceSuccessfullyDeleted=资源成功删除
+DictionaryResourceType=资源类别
+
+SelectResource=请选择资源
+
+IdResource=Id resource
+AssetNumber=Serial number
+ResourceTypeCode=Resource type code
+ImportDataset_resource_1=资源

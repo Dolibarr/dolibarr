@@ -1,0 +1,20 @@
+README (English)
+##################################################
+This directory is dedicated to APS package building
+##################################################
+
+Docs for APS format 1.1:
+http://www.apsstandard.org/r/doc/aps-format-1.1-packaging-guide/index.htm
+
+Docs for APS format 1.2 (need APP-LIST.xml):
+http://www.apsstandard.org/r/doc/aps-format-1.2-packaging-guide/index.htm
+
+
+To check an APS package on Debian:
+* Install libgdiplus with 
+apt-get install libgdiplus
+* Install apslint.exe (http://www.apsstandard.org/r/doc/aps-format-1.2-packaging-guide/57414.htm)
+tar -xvf xxxx.tgz 
+* Go into directory of apslint and run command
+mono ./apslint.exe '/media/DATA/Mes Developpements/dolibarr/build/dolibarr-3.1.0-dev.app.zip' 
+

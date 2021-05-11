@@ -1,0 +1,20 @@
+# Dolibarr language file - Source file is en_US - marque pages
+AddThisPageToBookmarks=Tilføj denne side til bogmærker
+Bookmark=Bookmark
+Bookmarks=Bogmærker
+ListOfBookmarks=Liste over bogmærker
+EditBookmarks=List/edit bookmarks
+NewBookmark=Nyt bogmærke
+ShowBookmark=Vis bogmærke
+OpenANewWindow=Åbn et nyt vindue
+ReplaceWindow=Erstat aktuelle vindue
+BookmarkTargetNewWindowShort=Nyt vindue
+BookmarkTargetReplaceWindowShort=Aktuelle vindue
+BookmarkTitle=Bogmærketitel
+UrlOrLink=URL
+BehaviourOnClick=Adfærd på klikker på URL
+CreateBookmark=Opret bogmærke
+SetHereATitleForLink=Set her en titel til bogmærke
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Brug en ekstern http URL eller en relativ Dolibarr URL
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if linked page must open in new window or not
+BookmarksManagement=Bogmærker forvaltning

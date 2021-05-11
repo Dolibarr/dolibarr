@@ -1,0 +1,72 @@
+# Dolibarr language file - Source file is en_US - sendings
+RefSending=Ref. transporten
+Sending=Sändning
+Sendings=Transporter
+AllSendings=All Shipments
+Shipment=Sändning
+Shipments=Transporter
+ShowSending=Show Shipments
+Receivings=Delivery Receipts
+SendingsArea=Transporter område
+ListOfSendings=Lista över transporter
+SendingMethod=Frakt metod
+LastSendings=Latest %s shipments
+StatisticsOfSendings=Statistik för transporter
+NbOfSendings=Antal transporter
+NumberOfShipmentsByMonth=Antal leveranser per månad
+SendingCard=Fraktkort
+NewSending=Ny leverans
+CreateShipment=Skapa leverans
+QtyShipped=Antal sändas
+QtyShippedShort=Qty ship.
+QtyPreparedOrShipped=Qty prepared or shipped
+QtyToShip=Antal till-fartyg
+QtyReceived=Antal mottagna
+QtyInOtherShipments=Qty in other shipments
+KeepToShip=Remain to ship
+KeepToShipShort=Remain
+OtherSendingsForSameOrder=Andra sändningar för denna beställning
+SendingsAndReceivingForSameOrder=Shipments and receipts for this order
+SendingsToValidate=Transporter för att validera
+StatusSendingCanceled=Annullerad
+StatusSendingDraft=Förslag
+StatusSendingValidated=Validerad (produkter till ett fartyg eller som redan sänts)
+StatusSendingProcessed=Bearbetade
+StatusSendingDraftShort=Förslag
+StatusSendingValidatedShort=Validerad
+StatusSendingProcessedShort=Bearbetade
+SendingSheet=Packsedel
+ConfirmDeleteSending=Are you sure you want to delete this shipment?
+ConfirmValidateSending=Are you sure you want to validate this shipment with reference <b>%s</b>?
+ConfirmCancelSending=Are you sure you want to cancel this shipment?
+DocumentModelMerou=Merou A5-modellen
+WarningNoQtyLeftToSend=Varning, att inga produkter väntar sändas.
+StatsOnShipmentsOnlyValidated=Statistik utförda på försändelser endast valideras. Datum som används är datum för godkännandet av leveransen (planerat leveransdatum är inte alltid känt).
+DateDeliveryPlanned=Planned date of delivery
+RefDeliveryReceipt=Ref delivery receipt
+StatusReceipt=Status delivery receipt
+DateReceived=Datum leverans fick
+SendShippingByEMail=Skicka leverans via e-post
+SendShippingRef=Inlämning av leveransen %s
+ActionsOnShipping=Evenemang på leverans
+LinkToTrackYourPackage=Länk till spåra ditt paket
+ShipmentCreationIsDoneFromOrder=För närvarande är skapandet av en ny leverans sker från ordern kortet.
+ShipmentLine=Transport linje
+ProductQtyInCustomersOrdersRunning=Product quantity into open customer orders
+ProductQtyInSuppliersOrdersRunning=Product quantity into open purchase orders
+ProductQtyInShipmentAlreadySent=Product quantity from open customer order already sent
+ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from open supplier order already received
+NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
+WeightVolShort=Weight/Vol.
+ValidateOrderFirstBeforeShipment=You must first validate the order before being able to make shipments.
+
+# Sending methods
+# ModelDocument
+DocumentModelTyphon=Mer komplett dokument modell för leverans intäkter (logo. ..)
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=Konstant EXPEDITION_ADDON_NUMBER definieras inte
+SumOfProductVolumes=Summan av produktvolymer
+SumOfProductWeights=Summan av produktvikter
+
+# warehouse details
+DetailWarehouseNumber= Lagerinformation
+DetailWarehouseFormat= W:%s (Antal : %d)

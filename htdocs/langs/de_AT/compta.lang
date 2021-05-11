@@ -1,0 +1,18 @@
+# Dolibarr language file - Source file is en_US - compta
+TaxModuleSetupToModifyRules=Die Einstellungen zur Berechnung finden Sie in den entsprechenden <a href="%s">Modul-Einstellungen</a>
+OptionModeTrueDesc=In diesem Modus erfolgt die Umsatzberechnung über Zahlungseingänge (Zahlungsdatum).<br>Die Gültigkeit der Daten ist nur bei der Überprüfung der Zu- und Abgänge auf den Konten durch Rechnungen gewährleistet.
+VATReportBuildWithOptionDefinedInModule=Ausgewiesenen Beträge sind hier anhand von Regeln Tax Modul Setup definiert.
+RemainingAmountPayment=Leistende Zahlung übrig:
+VATCollected=Eingehobene MwSt.
+MenuSpecialExpenses=Steuern, Sozialbeiträge und Dividenden
+AnnualSummaryDueDebtMode=Die Jahresbilanz der Einnahmen/Ausgaben im Modus<b>%sForderungen-Verbindlichkeiten%s</b> meldet <b>Kameralistik</b>.
+AnnualSummaryInputOutputMode=Die Jahresbilanz der Einnahmen/Ausgaben im Modus <b>%sEinkünfte-Ausgaben%s</b> meldet <b>Ist-Besteuerung</b>.
+VATReportByCustomersInInputOutputMode=Bericht zur vereinnahmten und bezahlten MwSt. nach Kunden (Steuerbeleg)
+ProposalStats=Statistik über die Vorschläge
+OrderStats=Statistiken über Bestellungen
+InvoiceStats=Statistik auf Rechnungen
+SellsJournal=Vertrieb Journal
+PurchasesJournal=Käufe Journal
+DescSellsJournal=Vertrieb Journal
+DescPurchasesJournal=Käufe Journal
+LinkedOrder==> Bestellung

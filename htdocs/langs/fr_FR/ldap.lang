@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - ldap
+YouMustChangePassNextLogon=Le mot de passe de <b>%s</b> sur le domaine <b>%s</b> doit être modifié.
+UserMustChangePassNextLogon=L'utilisateur doit modifier son mot de passe sur le domaine %s
+LDAPInformationsForThisContact=Informations en base LDAP pour ce contact
+LDAPInformationsForThisUser=Informations en base LDAP pour cet utilisateur
+LDAPInformationsForThisGroup=Informations en base LDAP pour ce groupe
+LDAPInformationsForThisMember=Informations en base LDAP pour ce membre
+LDAPInformationsForThisMemberType=Informations dans la base de données LDAP pour ce type d'adhérent
+LDAPAttributes=Attributs LDAP
+LDAPCard=Fiche LDAP
+LDAPRecordNotFound=Enregistrement non trouvé dans la base LDAP
+LDAPUsers=Utilisateurs en base LDAP
+LDAPFieldStatus=Statut
+LDAPFieldFirstSubscriptionDate=Date de première adhésion
+LDAPFieldFirstSubscriptionAmount=Montant première adhésion
+LDAPFieldLastSubscriptionDate=Date de dernière adhésion
+LDAPFieldLastSubscriptionAmount=Montant dernière adhésion
+LDAPFieldSkype=Identifiant Skype
+LDAPFieldSkypeExample=Exemple : skypeName
+UserSynchronized=Utilisateur synchronisé
+GroupSynchronized=Groupe synchronisé
+MemberSynchronized=Adhérent synchronisé
+MemberTypeSynchronized=Type d'adhérent synchronisé
+ContactSynchronized=Contact synchronisé
+ForceSynchronize=Forcer synchro Dolibarr -> LDAP
+ErrorFailedToReadLDAP=Échec de la lecture de l'annuaire LDAP. Vérifier la configuration du module LDAP et l'accessibilité de l'annuaire.
+PasswordOfUserInLDAP=Mot de passe utilisateur dans LDAP

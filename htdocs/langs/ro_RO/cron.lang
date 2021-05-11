@@ -1,0 +1,83 @@
+# Dolibarr language file - Source file is en_US - cron
+# About page
+# Right
+Permission23101 = Citeste Job programat
+Permission23102 = Creare/Modificare job programat
+Permission23103 = Şterge Job programat
+Permission23104 = Execută Job programat
+# Admin
+CronSetup= Setare Managementul joburilor programate
+URLToLaunchCronJobs=URL to check and launch qualified cron jobs
+OrToLaunchASpecificJob=Sau pentru a verifica și  a lansa un anumit job
+KeyForCronAccess=Cheie de securitate pentru URL de lansare a joburilor cron
+FileToLaunchCronJobs=Command line to check and launch qualified cron jobs
+CronExplainHowToRunUnix=Pe mediul Unix veţi  utiliza instrumentul crontab pentru a  rula urmatoarea  linia de comanda la fiecare 5 minute
+CronExplainHowToRunWin=Pe mediul Microsoft(tm) Windows puteţi utiliza instrumentul Scheduled task pentru a rula linia de comanda la fiecare 5 minute
+CronMethodDoesNotExists= Clasa %s nu conține metoda %s
+CronJobDefDesc=Cron job profiles are defined into the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
+CronJobProfiles=List of predefined cron job profiles
+# Menu
+EnabledAndDisabled=Activat și dezactivat
+# Page list
+CronLastOutput=Latest run output
+CronLastResult=Latest result code
+CronCommand=Comandă
+CronList=Joburi programate
+CronDelete=Şterge Joburi programate
+CronConfirmDelete=Are you sure you want to delete these scheduled jobs?
+CronExecute=Launch scheduled job
+CronConfirmExecute=Are you sure you want to execute these scheduled jobs now?
+CronInfo=Scheduled job module allows to schedule jobs to execute them automatically. Jobs can also be started manually.
+CronTask=Job
+CronNone=Niciunul
+CronDtStart=Dată începere
+CronDtEnd=Data de final
+CronDtNextLaunch=Urmatoarea execuţie
+CronDtLastLaunch=Ultima rulare
+CronDtLastResult=Data ultimei  rulări
+CronFrequency=Frecvenţă
+CronClass=Clasa
+CronMethod=Metoda
+CronModule=Modulul
+CronNoJobs=Niciun job înregistrat
+CronPriority=Prioritate
+CronLabel=Etichetă
+CronNbRun=Nr. lansări
+CronMaxRun=Max number launch
+CronEach=Fiecare
+JobFinished=Job lansat şi terminat
+#Page card
+CronAdd= Adaugă joburi
+CronEvery=Executa fiecare job
+CronObject=Instanţă/Obiect de creat
+CronArgs=Parametri
+CronSaveSucess=Salvare cu succes
+CronNote=Comenteaza
+CronFieldMandatory=Câmpurile %s sunt obligatorii
+CronErrEndDateStartDt=Data de sfârşit nu poate fi înaintea datei de început
+StatusAtInstall=Status at module installation
+CronStatusActiveBtn=Activare
+CronStatusInactiveBtn=Dezactivare
+CronTaskInactive=Acest post este dezactivat
+CronId=Id
+CronClassFile=Filename with class
+CronModuleHelp=Name of Dolibarr module directory (also work with external Dolibarr module). <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/<u>product</u>/class/product.class.php, the value for module is<br><i>product</i>
+CronClassFileHelp=The relative path and file name to load (path is relative to web server root directory). <BR> For exemple to call the fetch method of Dolibarr Product object htdocs/product/class/<u>product.class.php</u>, the value for class file name is<br><i>product/class/product.class.php</i>
+CronObjectHelp=The object name to load. <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for class file name is<br><i>Product</i>
+CronMethodHelp=The object method to launch. <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for method is<br><i>fetch</i>
+CronArgsHelp=The method arguments. <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for paramters can be<br><i>0, ProductRef</i>
+CronCommandHelp=Linia de comandă de sistem pentru a executa.
+CronCreateJob=Creare job programat
+CronFrom=De la
+# Info
+# Common
+CronType=Tip job
+CronType_method=Call method of a PHP Class
+CronType_command=Comandă shell
+CronCannotLoadClass=Cannot load class file %s (to use class %s)
+CronCannotLoadObject=Class file %s was loaded, but object %s was not found into it
+UseMenuModuleToolsToAddCronJobs=Intrați în meniul ''Acasă - Module Instrumente - Joburi programate'' pentru a vedea și edita job-urile programate.
+JobDisabled=Job dezactivat
+MakeLocalDatabaseDumpShort=Backup local baza de date
+MakeLocalDatabaseDump=Create a local database dump. Parameters are: compression ('gz' or 'bz' or 'none'), backup type ('mysql' or 'pgsql'), 1, 'auto' or filename to build, number of backup files to keep
+WarningCronDelayed=Attention, for performance purpose, whatever is next date of execution of enabled jobs, your jobs may be delayed to a maximum of %s hours, before being run.

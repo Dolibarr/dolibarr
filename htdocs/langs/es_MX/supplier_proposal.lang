@@ -1,0 +1,4 @@
+# Dolibarr language file - Source file is en_US - supplier_proposal
+CommRequests=Solicitudes de precios
+SupplierProposalStatusClosed=Cerrada
+SupplierProposalStatusClosedShort=Cerrada

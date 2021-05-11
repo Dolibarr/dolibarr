@@ -1,0 +1,10 @@
+# Dolibarr language file - Source file is en_US - languages
+LinkANewFile=Luo uusi linkki tiedostoon/dokumenttiin
+LinkedFiles=Linkitetyt tiedostot ja dokumentit
+NoLinkFound=Rekisteröityjä linkkejä ei ole
+LinkComplete=Tiedosto on linkitetty onnistuneesti
+ErrorFileNotLinked=Tiedostoa ei voitu linkittää
+LinkRemoved=%s linkki on poistettu
+ErrorFailedToDeleteLink= Linkin '<b>%s</b>' poisto ei onnistunut
+ErrorFailedToUpdateLink= Linkin '<b>%s</b>' päivitys ei onnistunut
+URLToLink=URL linkiksi

@@ -1,0 +1,14 @@
+# Dolibarr language file - Source file is en_US - printing
+MenuDirectPrinting=Direct Printing opdrachten
+ListDrivers=Lijst van beschikbare drivers
+PrintTestDesc=Beschikbare printers
+TargetedPrinter=Doelprinter
+PRINTGCP_INFO=Google OAuth API instellingen
+PRINTGCP_AUTHLINK=Authentificatie
+GCP_State=Printer Status
+GCP_connectionStatus=Online Status
+PRINTIPP_PASSWORD=Paswoord
+NoDefaultPrinterDefined=Geen standaard printer gevonden
+DirectPrintingJobsDesc=Deze pagina toont afdrukopdrachten voor de beschikbare printers.
+GoogleAuthNotConfigured=Google OAuth instellen is nog niet voltooid. Activeer de OAuth module en geef een Google ID/Secret in.
+GoogleAuthConfigured=Google OAuth gegevens werden in de instellingen van de OAuth module teruggevonden.

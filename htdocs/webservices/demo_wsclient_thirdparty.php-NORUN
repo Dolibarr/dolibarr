@@ -1,0 +1,228 @@
+<?php
+/* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2012 Florian Henry  <florian.henry@open-concept.pro>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ *       \file       htdocs/webservices/demo_wsclient_thirdparty.php
+ *       \brief      Demo page to make a client call to Dolibarr WebServices "server_other"
+ */
+
+// This is to make Dolibarr working with Plesk
+set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
+
+require_once '../master.inc.php';
+require_once NUSOAP_PATH.'/nusoap.php';		// Include SOAP
+
+$WS_DOL_URL = DOL_MAIN_URL_ROOT.'/webservices/server_thirdparty.php';
+//$WS_DOL_URL = 'http://localhost:8080/';	// If not a page, should end with /
+$WS_METHOD_GETTHIRDSPARTY  = 'getThirdParty';
+$WS_METHOD_CREATETHIRDSPARTY = 'createThirdParty';
+$WS_METHOD_UPDATETHIRDSPARTY = 'updateThirdParty';
+$WS_METHOD_GETTHIRDSPARTYLIST = 'getListOfThirdParties';
+$ns='http://www.dolibarr.org/ns/';
+
+//Chosse action to do
+//$action='get';
+//$action='create';
+//$action='update';
+$action='getList';
+
+
+// Set the WebService URL
+dol_syslog("Create nusoap_client for URL=".$WS_DOL_URL);
+$soapclient = new nusoap_client($WS_DOL_URL);
+if ($soapclient)
+{
+	$soapclient->soap_defencoding='UTF-8';
+	$soapclient->decodeUTF8(false);
+}
+
+// Call the WebService method and store its result in $result.
+$authentication=array(
+    'dolibarrkey'=>$conf->global->WEBSERVICES_KEY,
+    'sourceapplication'=>'DEMO',
+    'login'=>'admin',
+    'password'=>'changeme',
+    'entity'=>'');
+
+
+// Test URL
+if ($action=='get')
+{
+    $parameters = array('authentication'=>$authentication,'id'=>1,'name'=>'','ref_ext'=>'');
+    dol_syslog("Call method ".$WS_METHOD_GETTHIRDSPARTY);
+    $result = $soapclient->call($WS_METHOD_GETTHIRDSPARTY,$parameters,$ns,'');
+    if (! $result)
+    {
+    	print $soapclient->error_str;
+    	print "<br>\n\n";
+    	print $soapclient->request;
+    	print "<br>\n\n";
+    	print $soapclient->response;
+    	exit;
+    }
+}
+
+// Test URL
+if ($action=='getList')
+{
+    $filterthirdparty=array('category'=>'3');
+    $parameters = array('authentication'=>$authentication,$filterthirdparty);
+    dol_syslog("Call method ".$WS_METHOD_GETTHIRDSPARTYLIST);
+    $result = $soapclient->call($WS_METHOD_GETTHIRDSPARTYLIST,$parameters,$ns,'');
+    if (! $result)
+    {
+        print $soapclient->error_str;
+        print "<br>\n\n";
+        print $soapclient->request;
+        print "<br>\n\n";
+        print $soapclient->response;
+        exit;
+    }
+}
+
+// Test URL
+if ($action=='create')
+{
+	$newthirdparty=array(
+	'ref'=>'Test WS Create Client',
+	'ref_ext'=>'WS0001',
+	'fk_user_author'=>'1',
+	'status'=>'1',
+	'client'=>'1',
+	'supplier'=>'0',
+	'address'=>'Adresse customer',
+	'zip'=>'75000',
+	'town'=>'Paris',
+	'country_id'=>'1',//France
+	'customer_code'=>'-1',//Generate code regarding module configuration 
+	'supplier_code'=>'0',
+	'phone'=>'0141414141',
+	'fax'=>'0121212121',
+	'email'=>'webtest1@test.fr',
+	'url'=>' www.test.fr',
+	'profid1'=>'1111111',
+	'profid2'=>'222222',
+	'profid3'=>'333333',
+	'profid4'=>'44444',
+	'profid5'=>'55555',
+	'profid6'=>'66666',
+	'capital'=>'3000',
+	'vat_used'=>'0',
+	'vat_number'=>''
+	//,'options_attr1'=>'Attr1 balbal', //Extra field exemple where field code is attr1
+	//'options_attr2'=>'Attr2 balbal' //Extra field exemple where field code is attr2
+	);
+	
+	
+	$parameters = array('authentication'=>$authentication,'thirdparty'=>$newthirdparty);
+	dol_syslog("Call method ".$WS_METHOD_CREATETHIRDSPARTY);
+	$result = $soapclient->call($WS_METHOD_CREATETHIRDSPARTY,$parameters,$ns,'');
+	if (! $result)
+	{
+		print $soapclient->error_str;
+		print "<br>\n\n";
+		print $soapclient->request;
+		print "<br>\n\n";
+		print $soapclient->response;
+		exit;
+	}
+}
+
+// Test URL
+if ($action=='update')
+{
+	$thirdparty=array(
+	'id'=>'1',
+	'ref'=>'Test WS Create Client',
+	'ref_ext'=>'WS0001',
+	'fk_user_mod'=>'1',
+	'status'=>'1',
+	'client'=>'1',
+	'supplier'=>'0',
+	'address'=>'Adresse customer',
+	'zip'=>'75000',
+	'town'=>'Paris',
+	'country_id'=>'1',//France
+	'customer_code'=>'-1',//Generate code regarding module configuration
+	'supplier_code'=>'0',
+	'phone'=>'0141414141',
+	'fax'=>'0121212121',
+	'email'=>'webtest1@test.fr',
+	'url'=>' www.test.fr',
+	'profid1'=>'1111111',
+	'profid2'=>'222222',
+	'profid3'=>'333333',
+	'profid4'=>'44444',
+	'profid5'=>'55555',
+	'profid6'=>'66666',
+	'capital'=>'3000',
+	'vat_used'=>'0',
+	'vat_number'=>''
+	//,'options_attr1'=>'Attr1 balbal', //Extra field exemple where field code is attr1
+	//'options_attr2'=>'Attr2 balbal' //Extra field exemple where field code is attr2
+	);
+
+
+	$parameters = array('authentication'=>$authentication,'thirdparty'=>$thirdparty);
+	dol_syslog("Call method ".$WS_METHOD_UPDATETHIRDSPARTY);
+	$result = $soapclient->call($WS_METHOD_UPDATETHIRDSPARTY,$parameters,$ns,'');
+	if (! $result)
+	{
+		print $soapclient->error_str;
+		print "<br>\n\n";
+		print $soapclient->request;
+		print "<br>\n\n";
+		print $soapclient->response;
+		exit;
+	}
+}
+
+
+/*
+ * View
+ */
+
+header("Content-type: text/html; charset=utf8");
+print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">'."\n";
+echo '<html>'."\n";
+echo '<head>';
+echo '<title>WebService Test: '.$WS_METHOD.'</title>';
+echo '</head>'."\n";
+
+echo '<body>'."\n";
+echo 'NUSOAP_PATH='.NUSOAP_PATH.'<br>';
+
+echo "<h2>Request:</h2>";
+echo '<h4>Function</h4>';
+echo $WS_METHOD;
+echo '<h4>SOAP Message</h4>';
+echo '<pre>' . htmlspecialchars($soapclient->request, ENT_QUOTES) . '</pre>';
+
+echo '<hr>';
+
+echo "<h2>Response:</h2>";
+echo '<h4>Result</h4>';
+echo '<pre>';
+print_r($result);
+echo '</pre>';
+echo '<h4>SOAP Message</h4>';
+echo '<pre>' . htmlspecialchars($soapclient->response, ENT_QUOTES) . '</pre>';
+
+echo '</body>'."\n";
+echo '</html>'."\n";
+?>

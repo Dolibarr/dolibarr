@@ -1,0 +1,20 @@
+# Dolibarr language file - Source file is en_US - marque pages
+AddThisPageToBookmarks=Mevcut sayfayı yer imlerine ekle
+Bookmark=Yer imi
+Bookmarks=Yer imleri
+ListOfBookmarks=Yer imi listesi
+EditBookmarks=Yer imlerini listele/düzenle
+NewBookmark=Yeni yer imi
+ShowBookmark=Yer imine bakın
+OpenANewWindow=Yeni bir pencere açılsın
+ReplaceWindow=Geçerli pencerede görüntülensin
+BookmarkTargetNewWindowShort=Yeni pencerede
+BookmarkTargetReplaceWindowShort=Geçerli pencerede
+BookmarkTitle=Yer imi başlığı
+UrlOrLink=İnternet Adresi
+BehaviourOnClick=Bir yer imi URL'si seçildiğindeki davranış
+CreateBookmark=Yer imi ekleyin
+SetHereATitleForLink=Yer iminin başlığını yazın
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Dış http ya da bağıl Dolibarr İnternet adresi kullanın
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Bağlantılı sayfanın yeni bir pencerede açılıp açılmayacağını seçin
+BookmarksManagement=Yer imi yönetimi

@@ -1,0 +1,20 @@
+# Dolibarr language file - Source file is en_US - multicurrency
+MultiCurrency=Multi-devise
+ErrorAddRateFail=Erreur lors de l'ajout du taux
+ErrorAddCurrencyFail=Erreur lors de l'ajout de la devise
+ErrorDeleteCurrencyFail=Erreur de suppression
+multicurrency_syncronize_error=Erreur de synchronisation %s
+MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE=Utilisez la date du document pour trouver le taux de change, au lieu d'utiliser dernier taux connu
+multicurrency_useOriginTx=Quand un objet est créé à partir d'un autre, garder le taux original de l'objet source (sinon utiliser le dernier taux connu)
+CurrencyLayerAccount=API CurrencyLayer
+CurrencyLayerAccount_help_to_synchronize=Vous devez créer un compte sur leur site web pour pouvoir utiliser cette fonctionnalité.<br />Obtenez votre <b>Clé API</b><br />Si vous utilisez un compte gratuit, vous ne pouvez pas changer la <b>devise source</b>(USD par défaut)<br />Mais si votre devise principale n'est pas USD, vous pouvez utiliser une <b>devise source alternative</b> pour forcer votre devise principale<br /><br /> Vous êtes limité à 1000 synchronisations par mois.
+multicurrency_appId=Clé API
+multicurrency_appCurrencySource=Devise source
+multicurrency_alternateCurrencySource=Devise du document source
+CurrenciesUsed=Devises utilisées
+CurrenciesUsed_help_to_add=Ajoutez les différentes devises et taux dont vous avez besoin sur vos <b>propositions commerciales</b>,<b>commandes</b>, etc.
+rate=taux
+MulticurrencyReceived=Reçu, devise originale
+MulticurrencyRemainderToTake=Montant restant, devise originale
+MulticurrencyPaymentAmount=Montant du règlement (devise d'origine)
+AmountToOthercurrency=Montant destination (en devise du compte de réception)

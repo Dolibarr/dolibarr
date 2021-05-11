@@ -1,0 +1,26 @@
+# Dolibarr language file - Source file is en_US - help
+CommunitySupport=Forum / Wiki stuðning
+EMailSupport=Tölvupóst stuðning
+RemoteControlSupport=Online rauntíma / fjarlægur styðja
+OtherSupport=Annar stuðningur
+ToSeeListOfAvailableRessources=Til að hafa samband / sjá lista yfir auðlindir:
+HelpCenter=Hjálparmiðstöð AdWords
+DolibarrHelpCenter=Dolibarr aðstoð og stuðning sent
+ToGoBackToDolibarr=Annars skaltu smella <a href="%s">hér til að nota Dolibarr</a>
+TypeOfSupport=Heimild stuðning
+TypeSupportCommunauty=Samfélag (frítt)
+TypeSupportCommercial=Auglýsing
+TypeOfHelp=Tegund
+NeedHelpCenter=Need help or support?
+Efficiency=Nýtni
+TypeHelpOnly=Hjálp aðeins
+TypeHelpDev=Hjálp + Development
+TypeHelpDevForm=Hjálp + Þróun + Myndun
+ToGetHelpGoOnSparkAngels1=Sum fyrirtæki geta afla a fljótur (stundum strax) og skilvirkari netinu styðja með því að taka stjórn á tölvunni þinni. Slík framreiðslu má finna <b>á %s </b> vefur staður:
+ToGetHelpGoOnSparkAngels3=Þú getur líka farið til lista yfir alla tiltæka þjálfarar fyrir Dolibarr, því að smella á hnappinn
+ToGetHelpGoOnSparkAngels2=Stundum er ekkert fyrirtæki sem til eru um þessar mundir þú gera leitina, hugsa svo til að breyta síu til að leita að "allar upplýsingar". Þú verður að vera fær um að senda fleiri beiðnir.
+BackToHelpCenter=Annars skaltu smella hér til að fara <a href="%s">til baka til að hjálpa miðstöð heimasíðu</a> .
+LinkToGoldMember=Þú getur hringt í einn þjálfara preselected eftir Dolibarr fyrir þitt tungumál ( %s ) með því að smella Búnaður hans (staða og hámarksverð eru sjálfkrafa uppfærðar):
+PossibleLanguages=Styður tungumálum
+SubscribeToFoundation=Help Dolibarr project, subscribe to the foundation
+SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>

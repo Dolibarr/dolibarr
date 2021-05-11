@@ -1,0 +1,17 @@
+# Dolibarr language file - Source file is en_US - supplier_proposal
+SupplierProposal=Vendor commercial quotes
+SupplierProposalsDraft=Draft vendor quotes
+SupplierProposalArea=Vendor Quotes area
+SupplierProposalShort=Vendor quote
+SupplierProposals=Vendor quotes
+SupplierProposalsShort=Vendor quotes
+SupplierProposalRefFournNotice=Before closing as "Accepted", think of obtaining suppliers references.
+CopyAskFrom=Create a price request by copying an existing request
+ConfirmReOpenAsk=Are you sure you want to reopen the price request <b>%s</b>?
+ActionsOnSupplierProposal=Actions on price request
+DocModelAuroreDescription=A complete request example (logo...)
+DefaultModelSupplierProposalCreate=Default template creation
+ListOfSupplierProposals=List of vendor quotes requested
+ListSupplierProposalsAssociatedProject=List of vendor quotes associated with project
+SupplierProposalsToClose=Vendor quotes to close
+SupplierProposalsToProcess=Vendor quotes to process

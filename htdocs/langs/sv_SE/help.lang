@@ -1,0 +1,26 @@
+# Dolibarr language file - Source file is en_US - help
+CommunitySupport=Forum / Wiki stöd
+EMailSupport=E-postmeddelanden stöd
+RemoteControlSupport=Online realtid / fjärrsupport
+OtherSupport=Annat stöd
+ToSeeListOfAvailableRessources=För att kontakta / se tillgängliga resurser:
+HelpCenter=Hjälpcenter
+DolibarrHelpCenter=Dolibarr Hjälp-och supportcenter
+ToGoBackToDolibarr=Annars klickar du på <a href="%s">att här använda Dolibarr</a>
+TypeOfSupport=Källa till stöd
+TypeSupportCommunauty=Gemenskapen (gratis)
+TypeSupportCommercial=Kommersiella
+TypeOfHelp=Typ
+NeedHelpCenter=Need help or support?
+Efficiency=Effektivitet
+TypeHelpOnly=Hjälp endast
+TypeHelpDev=Hjälp + Utveckling
+TypeHelpDevForm=Hjälp + Utveckling + Formation
+ToGetHelpGoOnSparkAngels1=Vissa företag kan ge en snabb (ibland omedelbart) och effektivare online support genom att ta kontroll över din dator. Sådana medhjälpare finns på <b>%s</b> webbplats:
+ToGetHelpGoOnSparkAngels3=Du kan också gå till listan över alla tillgängliga bussar för Dolibarr, för detta, klicka på knappen
+ToGetHelpGoOnSparkAngels2=Ibland finns det inget företag finns tillgängliga då du gör din sökning, så tänk att byta filter till för &quot;alla tillgängliga&quot;. Du kommer att kunna skicka fler förfrågningar.
+BackToHelpCenter=Annars, här klickar du gå <a href="%s">tillbaka för att hjälpa hemsida centrum</a> .
+LinkToGoldMember=Du kan ringa en av de tränare förvalda genom Dolibarr för ditt språk (%s) genom att klicka på hans Widget (status och högsta pris uppdateras automatiskt):
+PossibleLanguages=Språk som stöds
+SubscribeToFoundation=Hjälp Dolibarr projektet, prenumerera på stiftelsen
+SeeOfficalSupport=För officiell Dolibarr support på ditt språk: <br><b><a href="%s" target="_blank">%s</a></b>

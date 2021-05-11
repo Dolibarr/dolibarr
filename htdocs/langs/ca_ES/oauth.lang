@@ -1,0 +1,30 @@
+# Dolibarr language file - Source file is en_US - oauth
+ConfigOAuth=Configuració Oauth
+OAuthServices=Serveis de OAuth
+ManualTokenGeneration=Generació manual de tokens
+TokenManager=Gestor de tokens
+IsTokenGenerated=S'ha generat el token?
+NoAccessToken=No es pot accedir al token desat en la base de dades local
+HasAccessToken=S'ha generat un token i s'ha desat en la base de dades local
+NewTokenStored=Token rebut i desat
+ToCheckDeleteTokenOnProvider=Fes clic aqui per comprovar/eliminar l'autorització desada pel proveïdor OAuth %s
+TokenDeleted=Token eliminat
+RequestAccess=Clica aquí per demanar/renovar l'accés i rebre un nou token per desar
+DeleteAccess=Faci clic aquí per eliminar token
+UseTheFollowingUrlAsRedirectURI=Utilitza la següent URL com a URI de redirecció quan es crea la teva credencial en el teu proveïdor OAuth:
+ListOfSupportedOauthProviders=Entra les credencials donades pel teu proveïdor OAuth2. Només es poden veure proveïdors que suporten OAuth2. Aquesta configuració es pot utilitzar per altres mòduls que necessiten autenticació OAuth2.
+OAuthSetupForLogin=Pàgina per generar un token OAuth
+SeePreviousTab=Veure la pestanya anterior
+OAuthIDSecret=OAuth ID i Secret
+TOKEN_REFRESH=Refresc present de token
+TOKEN_EXPIRED=Token expirat
+TOKEN_EXPIRE_AT=El token expira el
+TOKEN_DELETE=Elimina el token desat
+OAUTH_GOOGLE_NAME=Servei OAuth de Google
+OAUTH_GOOGLE_ID=Id OAuth de Google
+OAUTH_GOOGLE_SECRET=Secret OAuth de Google
+OAUTH_GOOGLE_DESC=Ves a <a class="notasortlink" href="https://console.developers.google.com/" target="_blank">aquesta pàgina</a>, i després a "Credentials" per crear les credencials OAuth
+OAUTH_GITHUB_NAME=Servei OAuth de GitHub
+OAUTH_GITHUB_ID=Id OAuth de GitHub
+OAUTH_GITHUB_SECRET=Secret OAuth de GitHub
+OAUTH_GITHUB_DESC=Ves a<a class="notasortlink" href="https://github.com/settings/developers" target="_blank">aquesta pàgina</a>, i després a "Registra una nova aplicació" per crear les credencials OAuth

@@ -1,0 +1,24 @@
+# ProductBATCH language file - en_US - ProductBATCH
+ManageLotSerial=Use lot/serial number
+ProductStatusOnBatch=Yes (lot/serial required)
+ProductStatusNotOnBatch=No (lot/serial not used)
+ProductStatusOnBatchShort=Áno
+ProductStatusNotOnBatchShort=Nie
+Batch=Lot/Serial
+atleast1batchfield=Eat-by date or Sell-by date or Lot/Serial number
+batch_number=Lot/Serial number
+BatchNumberShort=Lot/Serial
+EatByDate=Eat-by date
+SellByDate=Sell-by date
+DetailBatchNumber=Lot/Serial details
+printBatch=Lot/Serial: %s
+printEatby=Eat-by: %s
+printSellby=Sell-by: %s
+printQty=Qty: %d
+AddDispatchBatchLine=Add a line for Shelf Life dispatching
+WhenProductBatchModuleOnOptionAreForced=When module Lot/Serial is on, automatic stock decrease  is forced to 'Decrease real stocks on shipping validation' and automatic increase mode is forced to 'Increase real stocks on manual dispatching into warehouses' and can't be edited. Other options can be defined as you want.
+ProductDoesNotUseBatchSerial=This product does not use lot/serial number
+ProductLotSetup=Setup of module lot/serial
+ShowCurrentStockOfLot=Show current stock for couple product/lot
+ShowLogOfMovementIfLot=Show log of movements for couple product/lot
+StockDetailPerBatch=Stock detail per lot

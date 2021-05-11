@@ -1,0 +1,10 @@
+# Dolibarr language file - Source file is en_US - languages
+LinkANewFile=Salinkot jaunu failu/dokumentu
+LinkedFiles=Salinkotie faili un dokumenti
+NoLinkFound=Nav reģistrētas saites
+LinkComplete=Fails veiksmīgi salinkots
+ErrorFileNotLinked=Failu nevar salinkot
+LinkRemoved=Saite %s tika dzēsta
+ErrorFailedToDeleteLink= Kļūda dzēšot saiti '<b>%s</b>'
+ErrorFailedToUpdateLink= Kļūda atjaunojot saiti '<b>%s</b>'
+URLToLink=URL to link

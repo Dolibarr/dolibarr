@@ -1,0 +1,535 @@
+/* Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2006		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2007-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+.survey_invitation
+{
+	color: #445566;
+	font-weight: bold;
+}
+
+.corps {
+font-family: "Lucida Grande",Verdana,Arial,sans-serif;
+font-size: 14px;
+margin: auto;
+padding: 20px;
+overflow-x: auto;
+border: 2px solid #999999;
+background-color: #fff;
+box-shadow: 2px 2px 2px #F5F5F5;
+-moz-border-radius: 10px;
+border-radius: 10px;
+}
+
+
+.index_date, .index_sondage {
+float: left;
+width: 50%;
+text-align: center;
+}
+
+.orange {
+color: #fef4e9;
+border: solid 1px #da7c0c;
+background: #f78d1d;
+background: -webkit-gradient(linear, left top, left bottom, from(#faa51a), to(#f47a20));
+background: -moz-linear-gradient(top, #faa51a, #f47a20);
+filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#faa51a', endColorstr='#f47a20');
+margin-left: 4px;
+margin-right: 4px;
+}
+.orange:active {
+color: #fcd3a5;
+background: -webkit-gradient(linear, left top, left bottom, from(#f47a20), to(#faa51a));
+background: -moz-linear-gradient(top, #f47a20, #faa51a);
+filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f47a20', endColorstr='#faa51a');
+}
+.orange:hover {
+background: #f47c20;
+background: -webkit-gradient(linear, left top, left bottom, from(#f88e11), to(#f06015));
+background: -moz-linear-gradient(top, #f88e11, #f06015);
+filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f88e11', endColorstr='#f06015');
+}
+
+
+.blue {
+color: #d9eef7;
+border: solid 1px #0076a3;
+background: #0095cd;
+background: -webkit-gradient(linear, left top, left bottom, from(#00adee), to(#0078a5));
+background: -moz-linear-gradient(top, #00adee, #0078a5);
+filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00adee', endColorstr='#0078a5');
+margin-left: 4px;
+margin-right: 4px;
+}
+.blue:active {
+color: #80bed6;
+background: -webkit-gradient(linear, left top, left bottom, from(#0078a5), to(#00adee));
+background: -moz-linear-gradient(top, #0078a5, #00adee);
+filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#0078a5', endColorstr='#00adee');
+}
+.blue:hover {
+background: #007ead;
+background: -webkit-gradient(linear, left top, left bottom, from(#0095cc), to(#00678e));
+background: -moz-linear-gradient(top, #0095cc, #00678e);
+filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#0095cc', endColorstr='#00678e');
+}
+
+
+/*
+==========================================================================
+
+Université de Strasbourg - Direction Informatique
+Auteur : Guilhem BORGHESI
+Création : Février 2008
+
+borghesi@unistra.fr
+
+Ce logiciel est régi par la licence CeCILL-B soumise au droit français et
+respectant les principes de diffusion des logiciels libres. Vous pouvez
+utiliser, modifier et/ou redistribuer ce programme sous les conditions
+de la licence CeCILL-B telle que diffusée par le CEA, le CNRS et l'INRIA 
+sur le site "http://www.cecill.info".
+
+Le fait que vous puissiez accéder à cet en-tête signifie que vous avez 
+pris connaissance de la licence CeCILL-B, et que vous en avez accepté les
+termes. Vous pouvez trouver une copie de la licence dans le fichier LICENCE.
+
+==========================================================================
+
+Université de Strasbourg - Direction Informatique
+Author : Guilhem BORGHESI
+Creation : Feb 2008
+
+borghesi@unistra.fr
+
+This software is governed by the CeCILL-B license under French law and
+abiding by the rules of distribution of free software. You can  use, 
+modify and/ or redistribute the software under the terms of the CeCILL-B
+license as circulated by CEA, CNRS and INRIA at the following URL
+"http://www.cecill.info". 
+
+The fact that you are presently reading this means that you have had
+knowledge of the CeCILL-B license and that you accept its terms. You can
+find a copy of this license in the file LICENSE.
+
+==========================================================================
+*/
+
+/*
+Le fichier style.css est le fichier de style de studs. Il se trouve à la racine 
+du répertoire studs. Il contient toutes les mises en forme des fichiers PHP
+de Studs.
+*/
+/*bandeau de titre*/
+div.bandeau{ 
+	line-height:35px;
+	text-align:center;
+	background-color: #0b419b;
+	color:white;
+	vertical-align:middle;
+	font-size:35px;
+	font-family:arial, sans-serif;
+	padding:8px; 
+	height:35px;
+	position:static;
+	top:6px;
+	left:6px;
+	right:6px;
+
+}
+div.logo{ 
+	height:64px;
+	float:right;
+	top:8px;
+	right:8px;
+	margin-left: 0;
+	margin-right:0; 
+	margin-bottom:auto;
+}
+/*Sous bandeau avec bouton de navigation*/
+div.bandeautitre{ 
+	height:17px;
+	font-size:14px;
+	font-weight:bold;
+	text-align:center;
+	vertical-align:middle;
+	font-family:arial, sans-serif;
+ 	padding:3px; 
+	position:static;
+	top:57px;
+	left:6px;
+	right:6px;
+} 
+div.sousbandeau{ 
+	height:17px;
+	background-color: #DDDDDD;
+	font-size:11px;
+	color:black;
+	vertical-align:middle;
+	font-family:arial, sans-serif;
+	padding:3px;
+	position:static;
+	top:80px;
+	left:6px;
+	right:6px;
+}
+/*bandeau de pied*/
+div.surbandeaupied{ 
+	background-color: #0077DD;
+	position:absolute;
+	bottom:30px;
+	left:6px;
+	right:6px; 
+	height:6px;
+}
+div.bandeaupied{ 
+	text-align:center;
+	background-color: #0b419b;
+	color:white;
+	font-size:11px;
+	font-family:arial, sans-serif;
+	padding:6px;
+	position:fixed;
+	bottom:6px;
+	left:6px;
+	right:6px; 
+	margin:2px;
+}
+div.surbandeaupiedmobile{ 
+	background-color: #0077DD;
+	position:static; 
+	bottom:32px;
+	left:6px;
+	right:6px; 
+	height:6px;
+}
+div.bandeaupiedmobile{ 
+	text-align:center;
+	background-color: #0b419b;
+	color:white;
+	font-size:11px;
+	font-family:arial, sans-serif;
+	padding:6px; 
+	position:static; 
+}
+/*les boutons se trouvant dans le sousbandeau*/
+div.sousbandeau a, div.sousbandeau span.sousbandeaulangue a {
+ 	background-color: #0b419b; 
+	height:16px;
+	padding: 2px 6px 2px 6px;
+	vertical-align:middle;
+	text-align:center;
+	margin-left:10px;
+	margin-right:10px;
+	font-family:arial, sans-serif;
+	color:white;
+	font-size:10px;
+	text-decoration:none;
+}
+span.sousbandeaulangue {
+	margin-left:6px;
+	margin-right:6px;
+	float:right;
+}
+/*corps de la page index.php*/
+div.corps{ 
+	font-size:12px;
+	font-family:arial, sans-serif;
+	position:static;
+	padding:15px;
+}
+div.corps  table{
+	font-family:arial, sans-serif;
+	font-size:12px;	
+	font-weight:bold;
+}
+div.corpscentre{ 
+	font-size:12px;
+	font-family:arial, sans-serif;
+	text-align:center;
+	position:absolute;
+	top:150px;
+	margin-right:10%;
+	margin-left:10%;
+	width:80%;
+}
+/*affichage des jours*/
+div.jourschoisis {
+	background-color: #DDD;
+	padding:10px;
+	text-align: center;
+	position:static;
+	left:700px;
+	top:170px;
+	font-size:12px;
+	width:100%;
+}
+/*presenation des pages*/
+div.bodydate {
+	padding:10px;
+	font-family:arial, sans-serif;
+	font-size:12px;	
+	text-align:center;
+	position:static;
+	top:330px;
+	left:20px;
+	right:20px;
+}
+div.bodydate table{
+	font-family:arial, sans-serif;
+	font-size:12px;	
+	font-weight:bold;
+}
+/*cadre de commentaires*/
+div.presentationdate {
+	width:100%;
+	font-family:arial, sans-serif;
+	text-align:center;
+	font-size:12px;	
+	border-top:1px solid;
+	border-bottom:1px solid;
+	border-left: none;
+	border-right: none;
+	border-color:#969696;
+	position:static;
+	top:110px;
+	margin-top:10px;
+}
+div.presentationdatefin {
+	width:40%;
+	padding:10px;
+	font-family:arial, sans-serif;
+	text-align:center;
+	font-size:12px;
+    border: 1px solid;
+    margin-top: 10px;
+	margin-left: 30%;
+    margin-right: 30%; 
+	position:static;
+}
+/*cadre principal de studs.php*/
+div.cadre {
+	padding:10px; 
+	font-family:arial, sans-serif;
+	font-size:12px;	
+	position:static;
+	top:235px;
+	text-align:center;
+	margin:0 auto;
+}
+/*la table des résultats dans l'affichage de sondage*/
+div.cadre table.resultats {
+	text-align: center;
+	margin:0 auto;
+}
+td.nom {
+	min-width: 160px;
+}
+td.vide {
+	min-width: 60px;
+}
+div.cadre td {
+	height:21px;
+}
+/*case de tableau OK dans affichage de sondage*/
+div.cadre td.ok {
+	background-color: #66FF99; 
+	font-size:12px;	
+	text-align:center;
+}
+/*Case de tableau NON dans affichage de sondage*/
+div.cadre td.non {
+	background-color: #FF7777; 
+	min-width: 60px;
+}
+/*Case de tableau VIDE dans affichage de sondage*/
+div.cadre td.vide {
+	background-color: #DDDDDD; 
+	text-align:center;
+}
+/*Case de tableau contenant les noms dans affichage de sondage*/
+div.cadre td.nom {
+	background-color: #DDDDDD; 
+	font-size:12px;	 
+	text-align:center;
+}
+div.cadre td.casevide {
+	background-color: white; 
+	text-align:center;
+}
+/*les cases contenant les sommes de chaque colonne dans l'affichage de calendrier*/
+div.cadre td.somme {
+	font-weight:  bold;
+	font-size:14px; 
+}
+
+/*Case de tableau SUJET dans affichage de sondage*/
+div.cadre td.sujet, div.cadre td.jour, div.cadre td.heure {
+	border: 2px;
+	background-color: #DDDDDD; 
+	font-size:14px;
+	padding:1px 5px;
+}
+
+div.cadre td.annee {
+	border: 2px;
+	background-color: #969696; 
+	font-weight: bold;
+	font-size:14px;
+	padding:1px 5px;
+}
+div.cadre td.mois {
+	border: 2px;
+	background-color: #C0C0C0; 
+	font-weight: bold;
+	font-size:14px;
+	padding:1px 5px;
+}
+
+/*affichage du calendrier*/
+div.calendrier {
+	padding:10px;
+	background-color: #AAA;
+	width:490px;
+	font-size:12px;
+	font-family:arial, sans-serif;
+    margin-left: 30%;
+    margin-right: 30%;
+	position:static;
+}
+/*jour de la semaine dans calendrier*/
+div.calendrier td.joursemaine {
+	width:65px;
+	text-align: center;
+	font-family:arial, sans-serif;
+	font-size:14px;
+	border: 2px;
+	background-color: white; 
+}
+div.calendrier td.jourwe {
+	width:65px;
+	text-align: center;
+	font-family:arial, sans-serif;
+	font-size:14px;
+	border: 2px;
+	background-color: #C0C0C0; 
+}
+/*jour avant le premier jour du mois dans calendrier*/
+div.calendrier td.avant {
+	width:65px;
+	text-align: center;
+	border: 2px;
+	font-family:arial, sans-serif;
+	font-size:13px;
+	background-color: #DDDDDD; 
+}
+/*jour libre dans calendrier*/
+div.calendrier td.libre {
+	width:65px;
+	text-align: center;
+	border: 2px;
+	background-color: #66FF99; 
+}
+/*jour deja selectionné dans calendrier*/
+div.calendrier td.choisi {
+	width:65px;
+	text-align: center;
+	border: 2px;
+	background-color: #0077DD; 
+}
+/* Le paragraphe de fin */
+p.affichageresultats{
+	text-align: center;
+	font-family:arial, sans-serif;
+	font-size:13px;
+}
+
+div.comment{
+	width:100%;
+}
+
+div.comment span.usercomment{
+	font-weight:bold;
+}
+
+a.affichageexport{
+	text-align: center;
+	font-family:arial, sans-serif;
+	font-size:10px;
+	margin-left:10px;
+	text-decoration: none;
+}
+div.titregestionadmin{
+	text-align: center;
+	font-weight:bold;
+	font-size:18px;
+	padding:10px;
+}
+
+
+.bouton {
+	width: 65px;
+	border:0;
+	padding:0 0 0 0;
+	margin:0;
+	cursor:pointer;
+	font-family:arial, sans-serif;
+	font-size:13px;
+}
+/*les boutons pour choisir un jour non selectionné*/
+.ON {
+    background-color: #BBBBCC;
+}
+
+/*les boutons pour deselectionner un jour deja choisi*/
+.OFF {
+    background-color: #AAFFAA;
+}
+
+div.nouveau_sondage a {
+    text-decoration: none;
+}
+div.nouveau_sondage span img {
+    vertical-align: middle;
+    border: 0;
+}
+div.nouveau_sondage span {
+    margin-left: 20px;
+}
+
+div.error, div.addcomment {
+    text-align:center;
+    border: 1px;
+    font-family: arial, sans-serif;
+    font-size: 13px;
+}
+ul.exports {
+    text-align:center;
+    list-style-type : none ;
+}
+li.error {
+    color: red;
+}
+
+.half {
+    -moz-transform:scale(0.5);
+    -webkit-transform:scale(0.5);
+    transform:scale(0.5);
+}

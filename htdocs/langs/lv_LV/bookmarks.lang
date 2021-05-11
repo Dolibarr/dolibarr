@@ -1,0 +1,20 @@
+# Dolibarr language file - Source file is en_US - marque pages
+AddThisPageToBookmarks=Add current page to bookmarks
+Bookmark=Grāmatzīme
+Bookmarks=Grāmatzīmes
+ListOfBookmarks=Saraksts grāmatzīmes
+EditBookmarks=List/edit bookmarks
+NewBookmark=Jauna grāmatzīme
+ShowBookmark=Rādīt grāmatzīmi
+OpenANewWindow=Atvērt jaunu logu
+ReplaceWindow=Aizstāt pašreizējo logu
+BookmarkTargetNewWindowShort=Jauns logs
+BookmarkTargetReplaceWindowShort=Pašreizējais logs
+BookmarkTitle=Grāmatzīme titulu
+UrlOrLink=URL
+BehaviourOnClick=Behaviour when a bookmark URL is selected
+CreateBookmark=Izveidot grāmatzīmi
+SetHereATitleForLink=Uzstādīt grāmatzīmes nosaukumu
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Izmantojiet ārējo http URL vai relatīvo Dolibarr URL
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if linked page must open in new window or not
+BookmarksManagement=Grāmatzīmju vadība

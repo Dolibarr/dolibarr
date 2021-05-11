@@ -1,0 +1,16 @@
+# Dolibarr language file - Source file is en_US - orders
+OrderToProcess=Te verwerken bestelling
+NewOrder=Nieuwe bestelling
+MakeOrder=Bestelling ingeven
+CustomersOrdersRunning=Lopende klantenbestellingen
+CustomersOrdersAndOrdersLines=Klantenbestellingen en bestellijnen
+OrdersToBill=Afgeleverde bestellingen
+OrdersInProcess=Bestellingen in uitvoering
+OrdersToProcess=Nog te verwerken klantenbestellingen
+StatusOrderDraftShort=Ontwerp bestelling
+StatusOrderSentShort=In uitvoering
+StatusOrderDelivered=Geleverd
+StatusOrderDeliveredShort=Geleverd
+UnvalidateOrder=Maak validatie bestelling ongedaan
+OrderReopened=Bestelling %s heropend
+SecondApprovalAlreadyDone=Tweede controle reeds uitgevoerd

@@ -1,0 +1,12 @@
+# This is an example of multitail setup file you can use to analyze dolibarr log files.
+# Usage: multitail -cS dolibarr documents/dolibarr.log
+colorscheme:dolibarr
+bright:1
+cs_re:yellow,red:.*EMERG.*
+cs_re:white,red:.*ALERT.*
+cs_re:green,red:.*CRIT.*
+cs_re:red:.*ERR.*
+cs_re:white,yellow:.*WARNING.*
+cs_re:green,yellow:.*NOTICE.*
+cs_re:green:.*INFO.*
+cs_re:white:.*DEBUG.*

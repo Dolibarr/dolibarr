@@ -1,0 +1,30 @@
+# Dolibarr language file - Source file is en_US - deliveries
+Delivery=Toimitus
+DeliveryRef=Toimitusviite
+DeliveryCard=Kuittikortti
+DeliveryOrder=Toimitusvahvistus
+DeliveryDate=Toimituspäivä
+CreateDeliveryOrder=Luo toimituskuitti
+DeliveryStateSaved=Toimituksen tila tallennettu
+SetDeliveryDate=Aseta toimitus päivämäärä
+ValidateDeliveryReceipt=Validate toimituksen vastaanottamisen
+ValidateDeliveryReceiptConfirm=Haluatko varmasti vahvistaa tämän toimituskuitin?
+DeleteDeliveryReceipt=Poista toimituskuitti
+DeleteDeliveryReceiptConfirm=Haluatko varmasti poistaa toimituskuitin <b>%s</b>?
+DeliveryMethod=Toimitustapa
+TrackingNumber=Seurantanumero
+DeliveryNotValidated=Toimitus ei validoitu
+StatusDeliveryCanceled=Peruttu
+StatusDeliveryDraft=Luonnos
+StatusDeliveryValidated=Vastaanotetut
+# merou PDF model
+NameAndSignature=Nimi ja allekirjoitus:
+ToAndDate=To___________________________________ on ____ / _____ / __________
+GoodStatusDeclaration=Ovat saaneet tavarat edellä hyvässä kunnossa,
+Deliverer=Deliverer:
+Sender=Sender
+Recipient=Edunsaajavaltiot
+ErrorStockIsNotEnough=Varaston saldo ei riitä
+Shippable=Toimitettavissa
+NonShippable=Ei toimitettavissa
+ShowReceiving=Näytä toimituskuitti

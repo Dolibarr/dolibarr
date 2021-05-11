@@ -1,0 +1,31 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Laina
+Loans=Lainat
+NewLoan=Uusi laina
+ShowLoan=Näytä laina
+PaymentLoan=Lainan lyhennys
+LoanPayment=Lainan lyhennys
+ShowLoanPayment=Näyt lainanlyhennys
+LoanCapital=Pääkaupunki
+Insurance=Vakuutus
+Interest=Korko
+Nbterms=Kausien lukumäärä
+Term=Term
+LoanAccountancyCapitalCode=Kirjanpitotili pääoma
+LoanAccountancyInsuranceCode=Kirjanpitotili vakuutukset
+LoanAccountancyInterestCode=Kirjanpitotili korot
+ConfirmDeleteLoan=Vahvista lainan poisto
+LoanDeleted=Laina poistettu onnistuneesti
+ConfirmPayLoan=Vahvista tämän lainan maksu
+LoanPaid=Laina maksettu
+ListLoanAssociatedProject=Tämän projektin lainat
+AddLoan=Create loan
+FinancialCommitment=Financial commitment
+InterestAmount=Korko
+CapitalRemain=Capital remain
+# Admin
+ConfigLoan=Configuration of the module loan
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Accounting account capital by default
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Accounting account interest by default
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Accounting account insurance by default
+CreateCalcSchedule=Edit financial commitment

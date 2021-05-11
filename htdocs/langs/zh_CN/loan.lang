@@ -1,0 +1,31 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=贷款
+Loans=贷款
+NewLoan=新贷款
+ShowLoan=显示贷款
+PaymentLoan=贷款付款
+LoanPayment=贷款付款
+ShowLoanPayment=显示支付贷款
+LoanCapital=注册资金
+Insurance=保险
+Interest=利率
+Nbterms=一些条款
+Term=Term
+LoanAccountancyCapitalCode=Accounting account capital
+LoanAccountancyInsuranceCode=Accounting account insurance
+LoanAccountancyInterestCode=Accounting account interest
+ConfirmDeleteLoan=确认删除本贷款
+LoanDeleted=成功删除贷款
+ConfirmPayLoan=确认支付本贷款
+LoanPaid=贷款已支付
+ListLoanAssociatedProject=List of loan associated with the project
+AddLoan=Create loan
+FinancialCommitment=Financial commitment
+InterestAmount=利率
+CapitalRemain=Capital remain
+# Admin
+ConfigLoan=货款模块设置
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Accounting account capital by default
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Accounting account interest by default
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Accounting account insurance by default
+CreateCalcSchedule=Edit financial commitment

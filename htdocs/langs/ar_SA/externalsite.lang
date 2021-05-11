@@ -1,0 +1,5 @@
+# Dolibarr language file - Source file is en_US - externalsite
+ExternalSiteSetup=إعداد رابط لموقع خارجي
+ExternalSiteURL=رابط للموقع الخارجي 
+ExternalSiteModuleNotComplete=لم يتم تهيئة نموذج الموقع الخارجي بصورة صحيحة.
+ExampleMyMenuEntry=مُدخل قائمتي

@@ -1,0 +1,36 @@
+# Dolibarr language file - Source file is en_US - resource
+MenuResourceIndex=Tài nguyên
+MenuResourceAdd=Tạo tài nguyên
+DeleteResource=Xóa tài nguyên
+ConfirmDeleteResourceElement=Xác nhận xóa tài nguyên này
+NoResourceInDatabase=Chưa có tài nguyên trong cơ sở dữ liệu
+NoResourceLinked=Chưa có tài nguyên được liên kết
+
+ResourcePageIndex=Danh sách tài nguyên
+ResourceSingular=Tài nguyên
+ResourceCard=Thẻ tài nguyên
+AddResource=Tạo tài nguyên
+ResourceFormLabel_ref=Tên tài nguyên
+ResourceType=Loại tài nguyên
+ResourceFormLabel_description=Mô tả tài nguyên
+
+ResourcesLinkedToElement=Tài nguyên được liên kết tới các thành phần
+
+ShowResource=Show resource
+
+ResourceElementPage=Các tài nguyên thành tố
+ResourceCreatedWithSuccess=Đã tạo tài nguyên thành công
+RessourceLineSuccessfullyDeleted=Đầu mối tài nguyên đã được xóa thành công
+RessourceLineSuccessfullyUpdated=Đầu mối tài nguyên đã được cập nhật thành công
+ResourceLinkedWithSuccess=Liên kết tài nguyên thành công
+
+ConfirmDeleteResource=Xác nhận xóa tài nguyên này
+RessourceSuccessfullyDeleted=Đã xóa tài nguyên thành công
+DictionaryResourceType=Loại tài nguyên
+
+SelectResource=Chọn tài nguyên
+
+IdResource=Id resource
+AssetNumber=Serial number
+ResourceTypeCode=Resource type code
+ImportDataset_resource_1=Tài nguyên

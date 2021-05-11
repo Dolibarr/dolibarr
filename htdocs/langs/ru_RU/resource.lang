@@ -1,0 +1,36 @@
+# Dolibarr language file - Source file is en_US - resource
+MenuResourceIndex=Ресурсы
+MenuResourceAdd=Новый ресурс
+DeleteResource=Удалить ресурс
+ConfirmDeleteResourceElement=Подтвердите удаление ресурса для этого элемента
+NoResourceInDatabase=Нет ресурсов в базе данных
+NoResourceLinked=Нет связанных ресурсов
+
+ResourcePageIndex=Список ресурсов
+ResourceSingular=Ресурс
+ResourceCard=Карточка ресурса
+AddResource=Создать ресурс
+ResourceFormLabel_ref=Имя ресурса
+ResourceType=Тип ресурса
+ResourceFormLabel_description=Описание ресурса
+
+ResourcesLinkedToElement=Ресурс связан с элементом
+
+ShowResource=Показать ресурс
+
+ResourceElementPage=Элемент ресурсов
+ResourceCreatedWithSuccess=Ресурс успешно создан
+RessourceLineSuccessfullyDeleted=Ресурс успешно удалён
+RessourceLineSuccessfullyUpdated=Ресурс успешно обновлён
+ResourceLinkedWithSuccess=Связь ресурса установлена успешно
+
+ConfirmDeleteResource=Подтвердите удаление ресурса
+RessourceSuccessfullyDeleted=Ресурс успешно удалён
+DictionaryResourceType=Тип ресурсов
+
+SelectResource=Выберете ресурс
+
+IdResource=Ресурс Id
+AssetNumber=Серийный номер
+ResourceTypeCode=Код типа ресурса
+ImportDataset_resource_1=Ресурсы

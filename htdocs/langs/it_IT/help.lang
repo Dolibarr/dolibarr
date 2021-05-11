@@ -1,0 +1,26 @@
+# Dolibarr language file - Source file is en_US - help
+CommunitySupport=Forum/Wiki di supporto
+EMailSupport=Email assistenza
+RemoteControlSupport=Assistenza online
+OtherSupport=Altre forme di assistenza
+ToSeeListOfAvailableRessources=Per contattare/vedere le risorse disponibili:
+HelpCenter=Centro assistenza
+DolibarrHelpCenter=Centro assistenza e supporto Dolibarr
+ToGoBackToDolibarr=Clicca <a href="%s">qui</a> per tornare ad usare Dolibarr
+TypeOfSupport=Tipi di assistenza
+TypeSupportCommunauty=Comunità (gratuito)
+TypeSupportCommercial=Commerciale
+TypeOfHelp=Tipo di aiuto
+NeedHelpCenter=Hai bisogno di aiuto o di supporto?
+Efficiency=Efficienza
+TypeHelpOnly=Solo aiuto
+TypeHelpDev=Guida per lo sviluppo
+TypeHelpDevForm=Aiuto per lo Sviluppo e la Formazione
+ToGetHelpGoOnSparkAngels1=Alcune aziende possono fornire un supporto online più veloce (a volte immediato) prendendo il controllo del computer. Tali aiuti possono essere trovati sul sito <b>web %s:</b>
+ToGetHelpGoOnSparkAngels3=È inoltre possibile accedere alla lista di tutti i servizi di supporto per Dolibarr. Clicca sul pulsante.
+ToGetHelpGoOnSparkAngels2=Può accadere che alcune aziende non siano disponibili al momento della ricerca. Usa il filtro "tutte le disponibilità" per poter inviare più richieste.
+BackToHelpCenter=In caso contrario, clicca <a href="%s">qui</a> per tornare al centro assistenza e supporto.
+LinkToGoldMember=È possibile chiamare uno dei servizi preselezionati da Dolibarr per la propria lingua ( %s) cliccando sul relativo Widget (stato e prezzo massimo vengono aggiornati automaticamente):
+PossibleLanguages=Lingue supportate
+SubscribeToFoundation=Aiuta il progetto Dolibarr, iscriviti alla fondazione
+SeeOfficalSupport=Per vedere le pagine ufficiali di aiuto su Dolibarr nella tua lingua: <br><b><a href="%s" target="_blank">%s</a></b>

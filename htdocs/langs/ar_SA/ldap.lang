@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - ldap
+YouMustChangePassNextLogon=كلمة السر للمستخدم <b>٪</b> على النطاق <b>ق ق ٪</b> ويجب أن يتغير.
+UserMustChangePassNextLogon=يجب على المستخدم تغيير كلمة المرور على المجال ق ٪
+LDAPInformationsForThisContact=المعلومات في قاعدة البيانات LDAP لهذا الاتصال
+LDAPInformationsForThisUser=المعلومات في قاعدة البيانات LDAP لهذا المستخدم
+LDAPInformationsForThisGroup=المعلومات في قاعدة البيانات LDAP لهذه المجموعة
+LDAPInformationsForThisMember=المعلومات في قاعدة البيانات LDAP لهذا العضو
+LDAPInformationsForThisMemberType=Information in LDAP database for this member type
+LDAPAttributes=LDAP الصفات
+LDAPCard=بطاقة LDAP
+LDAPRecordNotFound=سجل غير موجود في قاعدة البيانات LDAP
+LDAPUsers=المستخدمين في قاعدة البيانات LDAP
+LDAPFieldStatus=حالة
+LDAPFieldFirstSubscriptionDate=أول موعد الاكتتاب
+LDAPFieldFirstSubscriptionAmount=قبضة مبلغ الاشتراك
+LDAPFieldLastSubscriptionDate=Latest subscription date
+LDAPFieldLastSubscriptionAmount=Latest subscription amount
+LDAPFieldSkype=Skype id
+LDAPFieldSkypeExample=Example : skypeName
+UserSynchronized=وتزامن المستخدم
+GroupSynchronized=مجموعة متزامنة
+MemberSynchronized=عضو متزامنة
+MemberTypeSynchronized=Member type synchronized
+ContactSynchronized=وتزامن الاتصال
+ForceSynchronize=واكبت قوة Dolibarr --> LDAP
+ErrorFailedToReadLDAP=فشل في قراءة قاعدة البيانات LDAP. LDAP وحدة التحقق من الإعداد ، وإمكانية الوصول إلى قاعدة البيانات.
+PasswordOfUserInLDAP=Password of user in LDAP

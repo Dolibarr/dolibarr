@@ -1,0 +1,9 @@
+# Dolibarr language file - Source file is en_US - link
+LinkANewFile=Vincular um novo arquivo/documento
+LinkedFiles=Arquivos vinculados e documentos
+NoLinkFound=Não há links registrados
+LinkComplete=O arquivo foi associada com sucesso
+ErrorFileNotLinked=O arquivo não pôde ser vinculado
+ErrorFailedToDeleteLink=Falha ao remover link '<b>%s</b>'
+ErrorFailedToUpdateLink=Falha ao atualizar link '<b>%s</b>'
+URLToLink=URL para link

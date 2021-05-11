@@ -1,0 +1,24 @@
+# ProductBATCH language file - en_US - ProductBATCH
+ManageLotSerial=Använd batch/serie-nummer
+ProductStatusOnBatch=Ja (batch/sere-nummer krävs)
+ProductStatusNotOnBatch=Nej (batch/serie-nummer används ej)
+ProductStatusOnBatchShort=Ja
+ProductStatusNotOnBatchShort=Nej
+Batch=Batch/Serie
+atleast1batchfield=Bäst före-datum eller Batch/Serie-nummer
+batch_number=Batch/Serie-nummer
+BatchNumberShort=Batch/Serie
+EatByDate=Bäst före-datum
+SellByDate=Bäst före-datum
+DetailBatchNumber=Batch/Serie detaljer
+printBatch=Batch/Serie: %s
+printEatby=Äter med:%s
+printSellby=Sälj-med :%s
+printQty=Antal: %d
+AddDispatchBatchLine=Lägg en linje för Hållbarhet avsändning
+WhenProductBatchModuleOnOptionAreForced=When module Lot/Serial is on, automatic stock decrease  is forced to 'Decrease real stocks on shipping validation' and automatic increase mode is forced to 'Increase real stocks on manual dispatching into warehouses' and can't be edited. Other options can be defined as you want.
+ProductDoesNotUseBatchSerial=Denna produkt använder ej batch/serie-nummer
+ProductLotSetup=Inställning av batch/serie modul
+ShowCurrentStockOfLot=Visa aktuellt lager för sammansatt produkt/parti
+ShowLogOfMovementIfLot=Visa statestik för sammansatt produkt/parti
+StockDetailPerBatch=Detaljlager för parti

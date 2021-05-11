@@ -1,0 +1,30 @@
+# Dolibarr language file - Source file is en_US - deliveries
+Delivery=Παράδοση
+DeliveryRef=Ref Delivery
+DeliveryCard=Receipt card
+DeliveryOrder=Παράδοση παραγγελίας
+DeliveryDate=Ημερ. παράδοσης
+CreateDeliveryOrder=Generate delivery receipt
+DeliveryStateSaved=Αποθηκεύτηκε η κατάσταση παράδοσης
+SetDeliveryDate=Ορισμός ημερ. αποστολής
+ValidateDeliveryReceipt=Επικύρωση παράδοσης παραλαβής
+ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt?
+DeleteDeliveryReceipt=Διαγραφή αποδεικτικού παράδοσης
+DeleteDeliveryReceiptConfirm=Are you sure you want to delete delivery receipt <b>%s</b>?
+DeliveryMethod=Μέθοδος παράδοσης
+TrackingNumber=Αριθμός παρακολούθησης
+DeliveryNotValidated=Η παράδοση δεν επικυρώνονται
+StatusDeliveryCanceled=Ακυρώθηκε
+StatusDeliveryDraft=Πρόχειρο
+StatusDeliveryValidated=Παραλήφθηκε
+# merou PDF model
+NameAndSignature=Όνομα και υπογραφή :
+ToAndDate=Σε ___________________________________ στις ____/_____/__________
+GoodStatusDeclaration=Παραδόθηκαν τα παραπάνω σε καλή κατάσταση
+Deliverer=Διανομέας :
+Sender=Αποστολέας
+Recipient=Παραλήπτης
+ErrorStockIsNotEnough=Δεν υπάρχει αρκετό απόθεμα
+Shippable=Για Αποστολή
+NonShippable=Δεν αποστέλλονται
+ShowReceiving=Show delivery receipt

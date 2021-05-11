@@ -1,0 +1,44 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=利润
+Margins=利润空间
+TotalMargin=总利润
+MarginOnProducts=利润 / 产品
+MarginOnServices=利润 / 服务
+MarginRate=利润率
+MarkRate=标记税率
+DisplayMarginRates=显示利润率
+DisplayMarkRates=显示mark rates
+InputPrice=输入价格
+margin=利润和利润率管理
+margesSetup=盈利利润管理设置
+MarginDetails=利润明细
+ProductMargins=产品利润
+CustomerMargins=客户利润
+SalesRepresentativeMargins=Sales representative margins
+UserMargins=用户利润
+ProductService=产品或服务
+AllProducts=全部产品和服务
+ChooseProduct/Service=选择产品或服务
+ForceBuyingPriceIfNull=如期尚未定义则强制设定买入/成本价格为销售价格
+ForceBuyingPriceIfNullDetails=如果未定义买入/成本价格, 这个选项 "ON", 显示为零 (即买入/成本价格 = 销售价格), 除些之外 ("OFF"), 显示建议的默认值.
+MARGIN_METHODE_FOR_DISCOUNT=全局纯利润计算方法
+UseDiscountAsProduct=作为产品
+UseDiscountAsService=作为服务
+UseDiscountOnTotal=在小计
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Defines if a global discount is treated as a product, a service, or only on subtotal for margin calculation.
+MARGIN_TYPE=Buying/Cost price suggested by default for margin calculation
+MargeType1=Margin on Best vendor price
+MargeType2=加权平均价差 (WAP)
+MargeType3=成本价格保证金
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best supplier price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best supplier price if WAP not yet defined
+CostPrice=成本价
+UnitCharges=费用单位
+Charges=费用
+AgentContactType=商业代理联络类型
+AgentContactTypeDetails=Define what contact type (linked on invoices) will be used for margin report per sale representative
+rateMustBeNumeric=税率必须为数字值
+markRateShouldBeLesserThan100=Mark rate 将低于 100
+ShowMarginInfos=显示利润信息
+CheckMargins=利润明细
+MarginPerSaleRepresentativeWarning=The report of margin per user use the link between third parties and sale representatives to calculate the margin of each sale representative. Because some thirdparties may not have any ddiated sale representative and some thirdparties may be linked to several, some amounts may not be included into this report (if there is no sale representative) and some may appear on different lines (for each sale representative).

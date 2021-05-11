@@ -1,0 +1,31 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Lån
+Loans=Lån
+NewLoan=Nytt lån
+ShowLoan=Vis lån
+PaymentLoan=Nedbetaling på lån
+LoanPayment=Nedbetaling på lån
+ShowLoanPayment=Vis nedbetaling på lån
+LoanCapital=Kapital
+Insurance=Forsikring
+Interest=Rente
+Nbterms=Antall terminer
+Term=Term
+LoanAccountancyCapitalCode=Regnskapskonto kapital
+LoanAccountancyInsuranceCode=Regnskapskonto forsikring
+LoanAccountancyInterestCode=Regnskapskonto rente
+ConfirmDeleteLoan=Bekreft sletting av dette lånet
+LoanDeleted=Lånet ble slettet
+ConfirmPayLoan=Bekreft at dette lånet er klassifisert som betalt
+LoanPaid=Lån nedbetalt
+ListLoanAssociatedProject=Liste over lån tilknyttet prosjektet
+AddLoan=Opprett lån
+FinancialCommitment=Finansiell forpliktelse
+InterestAmount=Rente
+CapitalRemain=Capital remain
+# Admin
+ConfigLoan=Oppset av lån-modulen
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Standard regnskapskonto kapital
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Standard regnskapskonto  rente
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Standard regnskapskonto forsikring
+CreateCalcSchedule=Rediger økonomisk forpliktelse

@@ -1,0 +1,44 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=Περιθώριο
+Margins=Περιθώρια
+TotalMargin=Συνολικό Περιθώριο
+MarginOnProducts=Περιθώριο / Προϊόντα
+MarginOnServices=Περιθώριο / Υπηρεσίες
+MarginRate=Περιθώριο επί της %
+MarkRate=Ποσοστό Κέρδους
+DisplayMarginRates=Εμφάνιση ποσοστό κέρδους
+DisplayMarkRates=Εμφάνιση σημειωμένων τιμών
+InputPrice=Εισαγωγή τιμής
+margin=Διαχείριση των ποσοστών κέρδους
+margesSetup=Ρύθμιση της διαχείρισης ποσοστών κέρδους
+MarginDetails=Λεπτομέρειες Περιθωρίων
+ProductMargins=Περιθώρια προϊόντος
+CustomerMargins=Περιθώρια πελατών
+SalesRepresentativeMargins=Περιθώρια αντιπρόσωπου πωλήσεων
+UserMargins=Περιθώρια χρήστη
+ProductService=Προϊόν ή Υπηρεσία
+AllProducts=Όλα τα προϊόντα και οι υπηρεσίες
+ChooseProduct/Service=Επιλέξτε προϊόν ή υπηρεσία
+ForceBuyingPriceIfNull=Force buying/cost price to selling price if not defined
+ForceBuyingPriceIfNullDetails=If buying/cost price not defined, and this option "ON", margin will be zero on line (buying/cost price = selling price), otherwise ("OFF"), marge will be equal to suggested default.
+MARGIN_METHODE_FOR_DISCOUNT=Μέθοδος ποσοστού για της γενικές εκπτώσεις
+UseDiscountAsProduct=Ως προϊόν
+UseDiscountAsService=Ως υπηρεσία
+UseDiscountOnTotal=Στο υποσύνολο
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Καθορίζει αν η συνολική έκπτωση που θεωρείται ως ένα προϊόν, μια υπηρεσία, ή μόνον επί του υποσυνόλου για τον υπολογισμό του περιθωρίου κέρδους.
+MARGIN_TYPE=Buying/Cost price suggested by default for margin calculation
+MargeType1=Margin on Best vendor price
+MargeType2=Margin on Weighted Average Price (WAP)
+MargeType3=Περιθώριο στην τιμή κόστους
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best supplier price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best supplier price if WAP not yet defined
+CostPrice=Τιμή κόστους
+UnitCharges=Χρεώσεων
+Charges=Επιβαρύνσεις
+AgentContactType=Εμπορικός αντιπρόσωπος τύπο επαφής
+AgentContactTypeDetails=Ορίστε τι τύπος επαφής (που συνδέεται στα τιμολόγια)  θα χρησιμοποιηθεί για την έκθεση περιθώριο κέρδους ανά πώληση εκπρόσωπου
+rateMustBeNumeric=Βαθμολογήστε πρέπει να είναι μια αριθμητική τιμή
+markRateShouldBeLesserThan100=Το ποσοστό πρέπει να είναι χαμηλότερη από 100
+ShowMarginInfos=Δείτε πληροφορίες για τα περιθώρια
+CheckMargins=Margins detail
+MarginPerSaleRepresentativeWarning=The report of margin per user use the link between third parties and sale representatives to calculate the margin of each sale representative. Because some thirdparties may not have any ddiated sale representative and some thirdparties may be linked to several, some amounts may not be included into this report (if there is no sale representative) and some may appear on different lines (for each sale representative).

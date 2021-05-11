@@ -1,0 +1,20 @@
+# Dolibarr language file - Source file is en_US - marque pages
+AddThisPageToBookmarks=Add current page to bookmarks
+Bookmark=Laster-marka
+Bookmarks=Laster-markak
+ListOfBookmarks=Laster-marken zerrenda
+EditBookmarks=List/edit bookmarks
+NewBookmark=Laster-marka berria
+ShowBookmark=Erakutsi laster-marka
+OpenANewWindow=Leiho berria irekia
+ReplaceWindow=Oraingo leihoa ordezkatu
+BookmarkTargetNewWindowShort=Leiho berria
+BookmarkTargetReplaceWindowShort=Oraingo leihoa
+BookmarkTitle=Laster-markaren izenburua
+UrlOrLink=URL
+BehaviourOnClick=Behaviour when a bookmark URL is selected
+CreateBookmark=Laster-marka sortu
+SetHereATitleForLink=Laster-markaren izenburua ezarri
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Use an external http URL or a relative Dolibarr URL
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if linked page must open in new window or not
+BookmarksManagement=Laster-marken kudeaketa

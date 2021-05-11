@@ -1,0 +1,72 @@
+# Dolibarr language file - Source file is en_US - sendings
+RefSending=Réf. expédition
+Sending=Expédition
+Sendings=Expéditions
+AllSendings=Toutes les expéditions
+Shipment=Expédition
+Shipments=Expéditions
+ShowSending=Afficher Expéditions
+Receivings=Bons de réceptions
+SendingsArea=Espace expéditions
+ListOfSendings=Liste des expéditions
+SendingMethod=Méthode d'expédition
+LastSendings=Les %s dernières expéditions
+StatisticsOfSendings=Statistiques des expéditions
+NbOfSendings=Nombre d'expéditions
+NumberOfShipmentsByMonth=Nombre d'expéditions par mois
+SendingCard=Fiche expédition
+NewSending=Nouvelle expédition
+CreateShipment=Créer expédition
+QtyShipped=Qté. expédiée
+QtyShippedShort=Qté exp.
+QtyPreparedOrShipped=Quantité préparée ou envoyée
+QtyToShip=Qté. à expédier
+QtyReceived=Qté. reçue
+QtyInOtherShipments=Qté dans les autres expéditions
+KeepToShip=Reste à expédier
+KeepToShipShort=Reste
+OtherSendingsForSameOrder=Autres expéditions pour cette commande
+SendingsAndReceivingForSameOrder=Expéditions et réceptions pour cette commande
+SendingsToValidate=Expéditions à valider
+StatusSendingCanceled=Annulée
+StatusSendingDraft=Brouillon
+StatusSendingValidated=Validée (produits à envoyer ou envoyés)
+StatusSendingProcessed=Traitée
+StatusSendingDraftShort=Brouillon
+StatusSendingValidatedShort=Validée
+StatusSendingProcessedShort=Traitée
+SendingSheet=Fiche expédition
+ConfirmDeleteSending=Êtes-vous sûr de vouloir supprimer cette expédition ?
+ConfirmValidateSending=Êtes-vous sûr de vouloir valider cette expédition sous la référence <b>%s</b>?
+ConfirmCancelSending=Êtes-vous sûr de vouloir annuler cette expédition ?
+DocumentModelMerou=Modèle Merou A5
+WarningNoQtyLeftToSend=Alerte, aucun produit en attente d'expédition.
+StatsOnShipmentsOnlyValidated=Statistiques effectuées sur les expéditions validées uniquement. La date prise en compte est la date de validation (la date de prévision de livraison n'étant pas toujours renseignée).
+DateDeliveryPlanned=Date prévue de livraison
+RefDeliveryReceipt=Ref bon de réception
+StatusReceipt=Status du bon de réception
+DateReceived=Date de réception réelle
+SendShippingByEMail=Envoyer bon d'expédition par email
+SendShippingRef=Envoi du bordereau d'expédition %s
+ActionsOnShipping=Événements sur l'expédition
+LinkToTrackYourPackage=Lien pour le suivi de votre colis
+ShipmentCreationIsDoneFromOrder=Pour le moment, la création d'une nouvelle expédition se fait depuis la fiche commande.
+ShipmentLine=Ligne d'expédition
+ProductQtyInCustomersOrdersRunning=Quantité de produit en commandes client ouvertes
+ProductQtyInSuppliersOrdersRunning=Quantité de produit en commandes fournisseur ouvertes
+ProductQtyInShipmentAlreadySent=Quantité de produit en commande client ouverte déjà expédiée
+ProductQtyInSuppliersShipmentAlreadyRecevied=Quantité de produit déjà reçu en commandes fournisseur ouvertes
+NoProductToShipFoundIntoStock=Aucun produit à expédier n'a été trouver dans l'entrepôt <b>%s</b>. Corrigez l'inventaire ou retourner choisir un autre entrepôt.
+WeightVolShort=Poids/vol.
+ValidateOrderFirstBeforeShipment=Vous devez d'abord valider la commande pour pouvoir créer une expédition.
+
+# Sending methods
+# ModelDocument
+DocumentModelTyphon=Modèle de bon de réception/livraison complet (logo…)
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constante EXPEDITION_ADDON_NUMBER non définie
+SumOfProductVolumes=Somme des volumes des produits
+SumOfProductWeights=Somme des poids des produits
+
+# warehouse details
+DetailWarehouseNumber= Détail de l'entrepôt
+DetailWarehouseFormat= W:%s (Qté : %d)

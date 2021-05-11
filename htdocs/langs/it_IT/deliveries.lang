@@ -1,0 +1,30 @@
+# Dolibarr language file - Source file is en_US - deliveries
+Delivery=Consegna
+DeliveryRef=Rif. consegna
+DeliveryCard=Scheda ricevuta di consegna
+DeliveryOrder=Ordine di consegna
+DeliveryDate=Data di consegna
+CreateDeliveryOrder=Genera la ricevuta di consegna
+DeliveryStateSaved=Stato di consegna salvato
+SetDeliveryDate=Imposta la data di spedizione
+ValidateDeliveryReceipt=Convalida la ricevuta di consegna
+ValidateDeliveryReceiptConfirm=Vuoi davvero convalidare la ricevuta di consegna?
+DeleteDeliveryReceipt=Eliminare ricevuta di consegna
+DeleteDeliveryReceiptConfirm=Vuoi davvero eliminare la ricevuta di consegna <b>%s</b>?
+DeliveryMethod=Metodo di consegna
+TrackingNumber=Numero di tracking
+DeliveryNotValidated=Consegna non convalidata
+StatusDeliveryCanceled=Annullata
+StatusDeliveryDraft=Bozza
+StatusDeliveryValidated=Ricevuta
+# merou PDF model
+NameAndSignature=Nome e firma:
+ToAndDate=A___________________________________ il ____/_____/__________
+GoodStatusDeclaration=Dichiaro di aver ricevuto le merci di cui sopra in buone condizioni,
+Deliverer=Chi consegna:
+Sender=Mittente
+Recipient=Destinatario
+ErrorStockIsNotEnough=Non ci sono sufficienti scorte
+Shippable=Disponibile per spedizione
+NonShippable=Non disponibile per spedizione
+ShowReceiving=Mostra ricevuta di consegna

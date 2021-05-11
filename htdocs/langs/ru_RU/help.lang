@@ -1,0 +1,26 @@
+# Dolibarr language file - Source file is en_US - help
+CommunitySupport=Поддержка через Форум/Wiki
+EMailSupport=Поддержка по email
+RemoteControlSupport=Поддержка через Интернет в реальном времени/удаленно
+OtherSupport=Другие виды поддержки
+ToSeeListOfAvailableRessources=Связаться/Смотреть имеющиеся ресурсы:
+HelpCenter=Справочный центр
+DolibarrHelpCenter=Центр справки и поддержки Dolibarr
+ToGoBackToDolibarr=В противном случае, нажмите <a href="%s">здесь, чтобы использовать Dolibarr</a>
+TypeOfSupport=Источник поддержки
+TypeSupportCommunauty=Сообщество (бесплатно)
+TypeSupportCommercial=Коммерческая
+TypeOfHelp=Тип
+NeedHelpCenter=Need help or support?
+Efficiency=Эффективность
+TypeHelpOnly=Только справка
+TypeHelpDev=Справка + Разработка
+TypeHelpDevForm=Справка + Разработка + Создание
+ToGetHelpGoOnSparkAngels1=Некоторые компании могут обеспечить быструю (иногда неотложную) и более эффективную онлайн поддержку путем удаленного управления компьютером. Такие помощники могут быть найдены на веб-сайте <b>%s</b>:
+ToGetHelpGoOnSparkAngels3=Вы также можете перейти к списку всех доступных тренеров Dolibarr, для этого нажмите на кнопку
+ToGetHelpGoOnSparkAngels2=Иногда, нет доступной в данный момент компании, удовлетворяющей вашему поиски. Попробуйте изменить фильтр поиска на "все доступные", так Вы сможете отправить больше заявок.
+BackToHelpCenter=В противном случае, нажмите здесь, чтобы вернуться <a href="%s">обратно к главной странице Справочного центра</a>.
+LinkToGoldMember=Вы можете позвонить одному из отобранных тренеров Dolibarr на вашем языке (%s), выбрав его Виджет (статус и максимальная цена звонка обновляются автоматически):
+PossibleLanguages=Поддерживаемые языки
+SubscribeToFoundation=Help Dolibarr project, subscribe to the foundation
+SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>

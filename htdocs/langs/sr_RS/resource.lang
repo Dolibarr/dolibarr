@@ -1,0 +1,36 @@
+# Dolibarr language file - Source file is en_US - resource
+MenuResourceIndex=Resursi
+MenuResourceAdd=Novi resurs
+DeleteResource=Obriši resurs
+ConfirmDeleteResourceElement=Potvrdi brisanje resursa za ovaj element
+NoResourceInDatabase=Nema resursa u bazi.
+NoResourceLinked=Nema povezanih resursa
+
+ResourcePageIndex=Lista resursa
+ResourceSingular=Resurs
+ResourceCard=Kartica resursa
+AddResource=Kreiraj resurs
+ResourceFormLabel_ref=Ime resursa
+ResourceType=Tip resursa
+ResourceFormLabel_description=Opis resursa
+
+ResourcesLinkedToElement=Resursi vezani za elemenat
+
+ShowResource=Prikaži resurs
+
+ResourceElementPage=Resursi elementa
+ResourceCreatedWithSuccess=Resurs uspešno kreiran
+RessourceLineSuccessfullyDeleted=Linija resursa uspešno obrisana
+RessourceLineSuccessfullyUpdated=Linija resursa uspešno ažurirana
+ResourceLinkedWithSuccess=Resurs uspešno povezan
+
+ConfirmDeleteResource=Potvrdi brisanje ovog resursa
+RessourceSuccessfullyDeleted=Resurs uspešno obrisan
+DictionaryResourceType=Tip resursa
+
+SelectResource=Izbor resursa
+
+IdResource=ID broj resursa
+AssetNumber=Serijski broj
+ResourceTypeCode=Kod tipa resursa
+ImportDataset_resource_1=Resursi

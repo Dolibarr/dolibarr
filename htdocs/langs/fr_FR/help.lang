@@ -1,0 +1,26 @@
+# Dolibarr language file - Source file is en_US - help
+CommunitySupport=Assistance Forums et Wiki
+EMailSupport=Assistance par email
+RemoteControlSupport=Assistance en ligne temps réel
+OtherSupport=Autres type d'assistance
+ToSeeListOfAvailableRessources=Pour contacter/voir les ressources disponibles :
+HelpCenter=Centre d'assistance
+DolibarrHelpCenter=Centre d'assistance Dolibarr
+ToGoBackToDolibarr=Sinon cliquez <a href="%s">ici pour utiliser Dolibarr</a>
+TypeOfSupport=Source de l'assistance
+TypeSupportCommunauty=Communautaire (gratuit)
+TypeSupportCommercial=Commercial
+TypeOfHelp=Type
+NeedHelpCenter=Besoin d'assistance ou aide ?
+Efficiency=Efficacité
+TypeHelpOnly=Aide uniquement
+TypeHelpDev=Aide+Développement
+TypeHelpDevForm=Aide+Développement+Formation
+ToGetHelpGoOnSparkAngels1=Certaines sociétés ou indépendants offrent un service d'assistance très rapide (parfois immédiat) et encore plus efficace grâce à la possibilité de prise de contrôle à distance de votre ordinateur pour mieux diagnostiquer et résoudre vos problèmes. Une telle aide peut être trouvée sur la bourse des accompagnateurs de <b>%s</b>.
+ToGetHelpGoOnSparkAngels3=Vous pouvez aussi accéder à la <b>liste complète de tous les accompagnants possibles</b>, pour cela cliquez sur le bouton
+ToGetHelpGoOnSparkAngels2=Parfois, aucun intervenant n'est disponible au moment de votre recherche, aussi pensez à modifier vos critères de recherche en indiquant "Toutes disponibilités". Vous pourrez alors prendre contact en différé.
+BackToHelpCenter=Sinon, cliquez ici pour <a href="%s">retourner au centre d'assistance</a>.
+LinkToGoldMember=Vous pouvez appeler immédiatement un des quelques accompagnateurs présélectionnés par Dolibarr pour votre langue (%s) en cliquant son Widget (disponibilité et tarif maximum sont rafraîchis automatiquement):
+PossibleLanguages=Langues disponibles
+SubscribeToFoundation=Aidez le projet Dolibarr, adhérez à l'association Dolibarr
+SeeOfficalSupport=Pour un accompagnement officiel Dolibarr dans votre langue : <br><b><a href="%s" target="_blank">%s</a></b>

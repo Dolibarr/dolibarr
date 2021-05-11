@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - ecm
+ECMNbOfDocs=Nb de documents dans l'annuaire
+ECMSectionManual=Annuaire manuel
+ECMSectionAuto=Annuaire automatique
+ECMSectionsManual=Arbre manuel
+ECMSectionsAuto=Arbre automatique
+ECMAddSection=Ajouter un répertoire
+ECMCreationDate=Date création
+ECMAreaDesc2=* Les répertoires automatiques sont remplis automatiquement lors de l'ajout de documents à partir d'une carte d'un élément. <br> * Les répertoires manuels peuvent être utilisés pour enregistrer des documents non liés à un élément particulier.
+ECMSectionWasRemoved=Le répertoire <b>%s</b> a été supprimé.
+ECMSectionOfDocuments=Répertoires de documents
+ECMDocsBySocialContributions=Documents liés aux impôts sociaux ou fiscaux
+ECMDocsByThirdParties=Documents liés à des tiers
+ECMDocsByProposals=Documents liés aux propositions
+ECMDocsByOrders=Documents liés aux commandes clients
+ECMDocsByContracts=Documents liés aux contrats
+ECMDocsByInvoices=Documents liés aux factures des clients
+ECMDocsByProducts=Documents liés aux produits
+ECMDocsByProjects=Documents liés à des projets
+ECMDocsByUsers=Documents liés aux utilisateurs
+ECMDocsByInterventions=Documents liés aux interventions
+ECMDocsByExpenseReports=Documents liés aux rapports de dépenses
+ShowECMSection=Afficher le répertoire
+DeleteSection=Supprimer le répertoire
+ConfirmDeleteSection=Pouvez-vous confirmer que vous souhaitez supprimer le répertoire <b>%s</b>?
+ECMDirectoryForFiles=Répertoire relatif des fichiers
+ECMFileManager=Gestionnaire de fichiers

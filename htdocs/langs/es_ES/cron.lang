@@ -1,0 +1,83 @@
+# Dolibarr language file - Source file is en_US - cron
+# About page
+# Right
+Permission23101 = Consultar Tarea programada
+Permission23102 = Crear/actualizar Tarea programada
+Permission23103 = Borrar Tarea Programada
+Permission23104 = Ejecutar Taraea programada
+# Admin
+CronSetup= Configuración del módulo Programador
+URLToLaunchCronJobs=URL para combrobar y ejecutar tareas
+OrToLaunchASpecificJob=O para ejecutar una tarea en concreto
+KeyForCronAccess=Clave para la URL para ejecutar tareas Cron
+FileToLaunchCronJobs=Comando para ejecutar tareas Cron
+CronExplainHowToRunUnix=En entornos Unix se debe utilizar la siguiente entrada crontab para ejecutar el comando cada 5 minutos
+CronExplainHowToRunWin=En entornos Microsoft (tm) Windows, puede utilizar las herramienta  tareas programadas para ejecutar el comando cada 5 minutos
+CronMethodDoesNotExists=La clase %s no contiene ningún método %s
+CronJobDefDesc=Los perfiles de trabajo de Cron se definen en el archivo descriptor del módulo. Cuando el módulo está activado, se cargan y están disponibles para que pueda administrar los trabajos desde el menú de herramientas de administración %s.
+CronJobProfiles=Lista de perfiles de trabajos cron predefinidos
+# Menu
+EnabledAndDisabled=Habilitado y deshabilitado
+# Page list
+CronLastOutput=Salida última ejecución
+CronLastResult=Resultado último código
+CronCommand=Comando
+CronList=Tareas programadas
+CronDelete=Borrar tareas programadas
+CronConfirmDelete=¿Está seguro de querer eliminar esta tarea programada?
+CronExecute=Ejecutar tarea programada
+CronConfirmExecute=¿Está seguro de querer ejecutar esta tarea programada ahora?
+CronInfo=Tareas programadas le permite ejecutar tareas que han sido programadas. Las tareas también pueden iniciarse manualmente.
+CronTask=Tarea
+CronNone=Ninguna
+CronDtStart=No antes de
+CronDtEnd=No después de
+CronDtNextLaunch=Sig. ejec.
+CronDtLastLaunch=Fecha de inicio de la última ejecución
+CronDtLastResult=Fecha final de la última ejecución
+CronFrequency=Frecuencia
+CronClass=Clase
+CronMethod=Metodo
+CronModule=Modulo
+CronNoJobs=Sin trabajos registrados
+CronPriority=Prioridad
+CronLabel=Etiqueta
+CronNbRun=Núm. ejec.
+CronMaxRun=Max number launch
+CronEach=Toda(s)
+JobFinished=Tareas lanzadas y finalizadas
+#Page card
+CronAdd= Tarea Nueva
+CronEvery=Ejecutar la tarea cada
+CronObject=Instancia/Objeto a crear
+CronArgs=Parametros
+CronSaveSucess=Guardado correctamente
+CronNote=Comentario
+CronFieldMandatory=campos %s son obligatorios
+CronErrEndDateStartDt=La fecha de finalizacion no puede ser anterior a la fecha de inicio
+StatusAtInstall=Estado en la instalación del módulo
+CronStatusActiveBtn=Activo
+CronStatusInactiveBtn=Inactivo
+CronTaskInactive=Esta tarea esta inactiva
+CronId=Id
+CronClassFile=Nombre de archivo con clase
+CronModuleHelp=Nombre del directorio del módulo Dolibarr (también funciona con módulos externos). <BR> Por ejemplo, para realizar un fetch del objeto Product /htdocs/<u>product</u>/class/product.class.php, el valor del módulo es <i>product</i>
+CronClassFileHelp=El nombre del archivo a cargar (la ruta es relativa al directorio raiz del servidor web). <BR> Por ejemplo para realizar un fetch del objeto Product /htdocs/product/class/<u>product.class.php</u>, el valor del nombre del archivo de la clase es <i>product.class.php</i>
+CronObjectHelp=El nombre del objeto a cargar. <BR> Por ejemplo para realizar un fetch del objeto Product /htdocs/product/class/product.class.php, el valor del nombre de la clase es <i>Product</i>
+CronMethodHelp=El método del objeto a lanzar. <BR> Por ejemplo para realizar un fetch del objeto Product /htdocs/product/class/product.class.php, el valor del método es <i>fecth</i>
+CronArgsHelp=Los argumentos del método. <BR> Por ejemplo para realizar un fetch del objeto Product /htdocs/product/class/product.class.php, los valores pueden ser <i>0, ProductRef</i>
+CronCommandHelp=El comando en línea del sistema a ejecutar.
+CronCreateJob=Crear nueva tarea programada
+CronFrom=De
+# Info
+# Common
+CronType=Tipo de tarea
+CronType_method=Llamar a un método de clase Dolibarr
+CronType_command=Comando Shell
+CronCannotLoadClass=No se puede cargar el archivo de la clase %s (para usar la clase %s)
+CronCannotLoadObject=El archivo de la clase %s ha sido cargado, pero no se ha encontrado en ella el objeto %s
+UseMenuModuleToolsToAddCronJobs=Vaya al menú "Inicio - Utilidades administración - Tareas programadas" para ver y editar tareas programadas.
+JobDisabled=Tarea desactivada
+MakeLocalDatabaseDumpShort=Copia local de la base de datos
+MakeLocalDatabaseDump=Create a local database dump. Parameters are: compression ('gz' or 'bz' or 'none'), backup type ('mysql' or 'pgsql'), 1, 'auto' or filename to build, number of backup files to keep
+WarningCronDelayed=Atención: para mejorar el rendimiento, cualquiera que sea la próxima fecha de ejecución de las tareas activas, sus tareas pueden retrasarse un máximo de %s horas antes de ejecutarse

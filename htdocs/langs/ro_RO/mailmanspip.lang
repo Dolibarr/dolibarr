@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - mailmanspip
+MailmanSpipSetup=Setare Modul Mailman şi SPIP
+MailmanTitle=Sistem mailing list Mailman
+TestSubscribe=Pentru testare inscriere la listele Mailman
+TestUnSubscribe=Pentru testarea dezabonarii la listele Mailman
+MailmanCreationSuccess=Testul de abonare a fost executat cu succes
+MailmanDeletionSuccess=Testul de dezabonare a fost executat cu succes
+SynchroMailManEnabled=O actualizare Mailman a fost realizată
+SynchroSpipEnabled=O actualizare Spip a fost realizată
+DescADHERENT_MAILMAN_ADMINPW=Parolă administrator Mailman
+DescADHERENT_MAILMAN_URL=URL pentru abonare Mailman
+DescADHERENT_MAILMAN_UNSUB_URL=URL pentru dezabonare Mailman
+DescADHERENT_MAILMAN_LISTS=Lista(e) pentru inscrierea automata a noilor mebrii ( separate de virgula)
+SPIPTitle=SPIP Content Management System
+DescADHERENT_SPIP_SERVEUR=SPIP Server
+DescADHERENT_SPIP_DB=Nume bază de date SPIP
+DescADHERENT_SPIP_USER=Login  bază de date SPIP
+DescADHERENT_SPIP_PASS=Parolă  bază de date SPIP
+AddIntoSpip=Adaugă în SPIP
+AddIntoSpipConfirmation=Sunteti sigur ca doriti adaugarea acestui membru in SPIP ?
+AddIntoSpipError=Eşuare la adăugarea utilizatorului în SPIP
+DeleteIntoSpip=Înlătură din SPIP
+DeleteIntoSpipConfirmation=Sunteti sigur ca doriti stergerea acestui membru din SPIP ?
+DeleteIntoSpipError=Esec la stergere utilizator din SPIP
+SPIPConnectionFailed=Eşuare la conectatrea SPIP
+SuccessToAddToMailmanList=%s a fost adăugată cu succes la lista de posta %s sau la baza de date SPIP
+SuccessToRemoveToMailmanList=%s eliminat cu succes de pe lista de posta %s sau baza de date SPIP

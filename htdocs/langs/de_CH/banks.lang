@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - banks
+FinancialAccount=Finanzkonto
+BankAccounts=Kontenübersicht
+AccountRef=Konto-Referenz
+AccountLabel=Kontobezeichnung
+CashAccount=Kasse
+BankBalanceBefore=Bilanz vor
+BankBalanceAfter=Bilanz nach
+AllTime=Vom start
+Reconciliation=Zahlungsabgleich
+RIB=Kontonummer
+AccountType=Kontoart
+AccountCard=Konto-Karte
+Conciliable=Ausgleichsfähig
+StatusAccountOpened=Offen
+SupplierInvoicePayment=Lieferantenzahlung
+WithdrawalPayment=Entnahme Zahlung
+BankTransfers=Kontentransfer
+BankChecksToReceipt=Checks die auf Einlösung warten
+PaymentDateUpdateSucceeded=Zahlungsdatum erfolgreich aktualisiert
+InputReceiptNumber=Wählen Sie den Kontoauszug  der mit der Zahlungs übereinstimmt. Verwenden Sie einen sortierbaren numerischen Wert: YYYYMM oder YYYYMMDD
+EventualyAddCategory=Wenn möglich Kategorie angeben, worin die Daten eingeordnet werden
+DefaultRIB=Standart Bankkonto-Nummer
+RejectCheck=Überprüfung zurückgewiesen
+RejectCheckDate=Datum die Überprüfung wurde zurückgewiesen
+CheckRejected=Überprüfung zurückgewiesen
+CheckRejectedAndInvoicesReopened=Überprüfung zurückgewiesen und Rechnungen wieder geöffnet

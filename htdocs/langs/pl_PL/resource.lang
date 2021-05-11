@@ -1,0 +1,36 @@
+# Dolibarr language file - Source file is en_US - resource
+MenuResourceIndex=Zasoby
+MenuResourceAdd=Nowe zasoby
+DeleteResource=Usuń zasoby
+ConfirmDeleteResourceElement=Potwierdź usunięcie zasobów dla tego elementu
+NoResourceInDatabase=Brak zasobów w bazie danych
+NoResourceLinked=Brak podliknowanych zasobów
+
+ResourcePageIndex=Lista zasobów
+ResourceSingular=Zasoby
+ResourceCard=Karta zasobów
+AddResource=Utwórz zasoby
+ResourceFormLabel_ref=Nazwa zasobów
+ResourceType=Typ zasobów
+ResourceFormLabel_description=Opis zasobów
+
+ResourcesLinkedToElement=Zasaby połączone z elementem
+
+ShowResource=Pokaż źródło
+
+ResourceElementPage=Element zasobów
+ResourceCreatedWithSuccess=Zasoby poprawnie utworzone
+RessourceLineSuccessfullyDeleted=Linia zasobów poprawnie usunięta
+RessourceLineSuccessfullyUpdated=Linia zasobów poprawnie uaktualniona
+ResourceLinkedWithSuccess=Zasoby podlinkowane poprawnie
+
+ConfirmDeleteResource=Potwierdź by usunąć te zasoby
+RessourceSuccessfullyDeleted=Zasoby usunięte poprawnie
+DictionaryResourceType=Typ zasobów
+
+SelectResource=Wybierz zasoby
+
+IdResource=Identyfikator zasobów
+AssetNumber=Numer seryjny
+ResourceTypeCode=Kod rodzaju zasobów
+ImportDataset_resource_1=Zasoby

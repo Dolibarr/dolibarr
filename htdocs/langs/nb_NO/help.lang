@@ -1,0 +1,26 @@
+# Dolibarr language file - Source file is en_US - help
+CommunitySupport=Forum/Wiki-support
+EMailSupport=Epostsupport
+RemoteControlSupport=Online support
+OtherSupport=Annen support
+ToSeeListOfAvailableRessources=For å se tilgjengelige ressurser:
+HelpCenter=Brukerstøtte
+DolibarrHelpCenter=Dolibarr hjelp og support
+ToGoBackToDolibarr=Ellers, klikk <a href="%s">her for å bruke Dolibarr</a>
+TypeOfSupport=Kilde til support
+TypeSupportCommunauty=Brukergruppe (gratis)
+TypeSupportCommercial=Kommersiell
+TypeOfHelp=Type
+NeedHelpCenter=Trenger du support?
+Efficiency=Effektivitet
+TypeHelpOnly=Kun hjelp
+TypeHelpDev=Hjelp + Utvikling
+TypeHelpDevForm=Hjelp + utvikling + Dannelse
+ToGetHelpGoOnSparkAngels1=Noen selskaper kan gi en rask (av og til umiddelbar) og mer effektiv online-support ved å ta kontroll over datamaskinen. Slik hjelp kan bli funnet på <b>%s</b> nettsted:
+ToGetHelpGoOnSparkAngels3=Du kan også gå til listen over alle tilgjengelig support for Dolibarr. For dette, klikk på knappen
+ToGetHelpGoOnSparkAngels2=Noen ganger er det ingen selskap tilgjengelig når du søker. Endre filteret for å se etter "alle tilgjengelige". Du vil da kunne sende flere forespørsler.
+BackToHelpCenter=Ellers, klikk her for å gå <a href="%s">tilbake til hjemmesiden for brukerstøtte</a> .
+LinkToGoldMember=Du kan ringe forhåndsvalgt support fra Dolibarr for ditt språk (%s) ved å klikke dennes Widget (status og maksimumspris blir automatisk oppdatert):
+PossibleLanguages=Støttede språk
+SubscribeToFoundation=Hjelp Dolibarr prosjektet, gi en donasjon
+SeeOfficalSupport=For offisiell Dolibarr support på ditt språk: <br><b><a href="%s" target="_blank">%s</a></b>

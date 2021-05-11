@@ -1,0 +1,38 @@
+# Dolibarr language file - Source file is en_US - paybox
+PayBoxSetup=PayBox mooduli seadistamine
+PayBoxDesc=See moodul võimaldab klientidel makseid sooritada <a href="http://www.paybox.com" target="_blank">Payboxi</a> lehel. Seda võib kasutada tavalise maksena või maksena teatud Dolibarri objektidel (arved, tellimused jne)
+FollowingUrlAreAvailableToMakePayments=Dolibarri objektide põhjal maksete sooritamiseks on klientidele pakkuda järgnevate lehtede URLid:
+PaymentForm=Maksmise vorm
+WelcomeOnPaymentPage=Tere tulemast meie online makseteenusesse
+ThisScreenAllowsYouToPay=See ekraan võimaldab teil teha online-makseid üksusele %s.
+ThisIsInformationOnPayment=See on makse sooritamise info
+ToComplete=Lõpuni viia
+YourEMail=E-posti aadress makse kinnituse saamiseks
+Creditor=Kreeditor
+PaymentCode=Makse kood
+PayBoxDoPayment=Pay with Credit or Debit Card (Paybox)
+ToPay=Soorita makse
+YouWillBeRedirectedOnPayBox=Teid suunatakse turvalisele Payboxi lehele krediitkaardi info sisestamiseks
+Continue=Järgmine
+ToOfferALinkForOnlinePayment=Makse %s URL
+ToOfferALinkForOnlinePaymentOnOrder=Müügitellimuse eest maksmiseks kasutatava %s online makseteenuse URL
+ToOfferALinkForOnlinePaymentOnInvoice=Müügiarve eest maksmiseks kasutatava %s online makseteenuse URL
+ToOfferALinkForOnlinePaymentOnContractLine=Lepingu rea eest maksmiseks kasutatava %s online makseteenuse URL
+ToOfferALinkForOnlinePaymentOnFreeAmount=Vaba rea eest maksmiseks kasutatava %s online makseteenuse URL
+ToOfferALinkForOnlinePaymentOnMemberSubscription=Liikmemaksu eest maksmiseks kasutatava %s online makseteenuse URL
+YouCanAddTagOnUrl=Samuti võid lisa URL parameetri <b>&tag=<i>value</i></b> igale nendest URLidest (nõutud vaid vaba makse jaoks) oma loodud makse kommentaari sildi jaoks.
+SetupPayBoxToHavePaymentCreatedAutomatically=Seadista oma PayBox URLiga <b>%s</b> makse automaatseks loomiseks, kui PayBox on selle kinnitanud.
+YourPaymentHasBeenRecorded=See lehekülg kinnitab, et makse on registreeritud. Täname!
+YourPaymentHasNotBeenRecorded=Makset ei ole registreeritud ja tehing on tühistatud. Täname!
+AccountParameter=Konto parameetrid
+UsageParameter=Kasutamise parameetrid
+InformationToFindParameters=Abi %s konto info leidmiseks
+PAYBOX_CGI_URL_V2=Maksmiseks kasutatava Payboxi CGI mooduli URL
+VendorName=Müüja nim
+CSSUrlForPaymentForm=Maksmise vormi CSS stiililehtede URL
+NewPayboxPaymentReceived=Uus Payboxi makse vastu võetud
+NewPayboxPaymentFailed=Uut Payboxi makset prooviti sooritada, kuid see ebaõnnestus
+PAYBOX_PAYONLINE_SENDEMAIL=E-posti aadress, kuhu saadetakse sõnum pärast makset (õnnestus või mitte)
+PAYBOX_PBX_SITE=Value for PBX SITE
+PAYBOX_PBX_RANG=Value for PBX Rang
+PAYBOX_PBX_IDENTIFIANT=Value for PBX ID

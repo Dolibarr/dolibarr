@@ -1,0 +1,24 @@
+# ProductBATCH language file - en_US - ProductBATCH
+ManageLotSerial=Использовать номер партии/серийный номер
+ProductStatusOnBatch=Да (требуется серийный номер/номер партии)
+ProductStatusNotOnBatch=Нет (серийный номер/номер партии не используется)
+ProductStatusOnBatchShort=Да
+ProductStatusNotOnBatchShort=Нет
+Batch=Партии/серийный номер
+atleast1batchfield=Дата уплаты или дата продажи или Лот / Серийный номер
+batch_number=номер партии/серийный номер
+BatchNumberShort=Партии/серийный номер
+EatByDate=Дата окончания срока годности
+SellByDate=Дата продажи
+DetailBatchNumber=Детали номера партии/серийного номера
+printBatch=номер партии/серийный номер: %s
+printEatby=Дата окончания срока годности: %s
+printSellby=Дата продажи: %s
+printQty=Кол-во:%d
+AddDispatchBatchLine=Добавить строку Срока годности
+WhenProductBatchModuleOnOptionAreForced=Когда модуль Lot / Serial включен, автоматическое снижение запасов вынуждено «Уменьшить реальные запасы при проверке отгрузки», а автоматический режим увеличения принудительно «Увеличивает реальные запасы при ручной диспетчеризации на склады» и не может быть отредактирован. Другие параметры могут быть определены так, как вы хотите.
+ProductDoesNotUseBatchSerial=Этот продукт не использует лот / серийный номер
+ProductLotSetup=Настройка лота / серийного модуля
+ShowCurrentStockOfLot=Показать текущий запас для пары товара / лота
+ShowLogOfMovementIfLot=Показать журнал движений для пары product / lot
+StockDetailPerBatch=Детальная информация о лоте

@@ -1,0 +1,38 @@
+# Dolibarr language file - Source file is en_US - paybox
+PayBoxSetup=Paybox modulio nustatymas
+PayBoxDesc=Šis modulis siūlo puslapius, leidžiančius mokėjimą <a href="http://www.paybox.com" target="_blank">Paybox</a> klientams. Tai gali būti naudojama nemokamam mokėjimui arba  tam tikram specifiniam Dolibarr mokėjimui (sąskaitos-faktūros, užskymas, ...)
+FollowingUrlAreAvailableToMakePayments=Sekantys URL siūlo puslapį klientui Dolibarr objektų mokėjimui
+PaymentForm=Mokėjimo forma
+WelcomeOnPaymentPage=Sveiki atvykę į mūsų interneto mokėjimo paslaugą
+ThisScreenAllowsYouToPay=Šis ekranas leidžia atlikti internetinį mokėjimą į %s
+ThisIsInformationOnPayment=Tai informacija apie reikalingą atlikti mokėjimą
+ToComplete=Užbaigti
+YourEMail=E-paštas mokėjimo patvirtinimo gavimui
+Creditor=Kreditorius
+PaymentCode=Mokėjimo kodas
+PayBoxDoPayment=Pay with Credit or Debit Card (Paybox)
+ToPay=Atlikti mokėjimą
+YouWillBeRedirectedOnPayBox=Būsite nukreipti į saugų Paybox puslapį kredito kortelės informacijos įvedimui
+Continue=Kitas
+ToOfferALinkForOnlinePayment=URL %s mokėjimui
+ToOfferALinkForOnlinePaymentOnOrder=URL siūlo %s interneto mokėjimui vartotojo sąsają kliento užsakymui
+ToOfferALinkForOnlinePaymentOnInvoice=URL siūlo %s interneto mokėjimui vartotojo sąsają kliento sąskaitai-faktūrai
+ToOfferALinkForOnlinePaymentOnContractLine=URL siūlo %s interneto mokėjimui vartotojo sąsają sutarties eilutei.
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL siūlo %s interneto mokėjimui vartotojo sąsaja nemokamam kiekiui.
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL pasiūlymui %s interneto mokėjimui vartotojo sąsają nario pasirašymui.
+YouCanAddTagOnUrl=Taip pat galite pridėti URL parametrą <b>&tag=<i>value</i></b> į bet kurį URL (reikalingas tik nemokamam mokėjimui) pridėti nuosavo mokėjimo komentaro žymę.
+SetupPayBoxToHavePaymentCreatedAutomatically=Nustatyti savo Paybox su URL <b>%s</b>, kad mokėjimas būtų sukuriamas automatiškai, kai patvirtintas per PayBox.
+YourPaymentHasBeenRecorded=Šis puslapis patvirtina, kad jūsų mokėjimas buvo užregistruotas. Ačiū.
+YourPaymentHasNotBeenRecorded=Mokėjimas nebuvo įregistruotas ir operacija buvo atšaukta. Ačiū.
+AccountParameter=Sąskaitos parametrai
+UsageParameter=Naudojimo parametrai
+InformationToFindParameters=Padėti rasti savo %s sąskaitos informaciją
+PAYBOX_CGI_URL_V2=Paybox CGI modulio mokėjimams URL
+VendorName=Paravėjo vardas
+CSSUrlForPaymentForm=CSS stiliaus lapo URL mokėjimo formai
+NewPayboxPaymentReceived=Naujas Paybox gautas mokėjimas
+NewPayboxPaymentFailed=Naujas Paybox mokėjimo bandymas, bet nepavykęs
+PAYBOX_PAYONLINE_SENDEMAIL=E-laiškas įspėjimui po apmokėjimo (sėkmingas ar ne)
+PAYBOX_PBX_SITE=Value for PBX SITE
+PAYBOX_PBX_RANG=Value for PBX Rang
+PAYBOX_PBX_IDENTIFIANT=Value for PBX ID

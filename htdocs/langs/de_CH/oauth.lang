@@ -1,0 +1,2 @@
+# Dolibarr language file - Source file is en_US - oauth
+ListOfSupportedOauthProviders=Geben sie hier die OAuth2 Zugangsdaten ein. Nur unterstützte OAuth2 Anbieter sind hier sichtbar. Diese Einstellungen könne von anderen Modulen verwendet werden.

@@ -1,0 +1,10 @@
+README (English)
+##################################################
+Building PAD files
+##################################################
+
+This directory contains files and docs used to build
+PAD files for Dolibarr and DoliWamp.
+PAD files are files to describe a software to submit
+easily its description in one way to several software
+directories.

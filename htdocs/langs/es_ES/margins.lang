@@ -1,0 +1,44 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=Margen
+Margins=Márgenes
+TotalMargin=Margen total
+MarginOnProducts=Margen / Productos
+MarginOnServices=Margen / Servicios
+MarginRate=Margen sobre coste
+MarkRate=Margen sobre venta
+DisplayMarginRates=Mostrar el margen sobre costes
+DisplayMarkRates=Mostrar el margen sobre ventas
+InputPrice=Introducir un precio
+margin=Gestión de márgenes
+margesSetup=Configuración de la gestión de márgenes
+MarginDetails=Detalles de márgenes realizados
+ProductMargins=Márgenes por producto
+CustomerMargins=Márgenes por cliente
+SalesRepresentativeMargins=Margenes por comercial
+UserMargins=Márgenes del usuario
+ProductService=Producto o servicio
+AllProducts=Todos los productos y servicios
+ChooseProduct/Service=Elija el producto o servicio
+ForceBuyingPriceIfNull=Forzar precio de compra/coste al precio de venta si no se define
+ForceBuyingPriceIfNullDetails=Si el precio de compra/coste no se ha definido, y esta opción está activada, el margen será cero en la línea (precio de compra/coste = precio de venta), de lo contrario el margen será igual al sugerido por defecto.
+MARGIN_METHODE_FOR_DISCOUNT=Método de gestión de descuentos globales
+UseDiscountAsProduct=Como un producto
+UseDiscountAsService=Como un servicio
+UseDiscountOnTotal=Sobre el total
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Indica si un descuento global se toma en cuenta como un producto, servicio o sólo en el total a la hora de calcular los márgenes.
+MARGIN_TYPE=Precio compra/coste sugerido por defecto por el cálculo de márgenes
+MargeType1=Margen en Mejor Precio Proveedor
+MargeType2=Margen en Precio Medio Ponderado (PMP)
+MargeType3=Margen en Precio de coste
+MarginTypeDesc=* Margen en mejor precio de compra = Precio de venta - Mejor precio de proveedor definido en la ficha del producto<br>* Margen en Precio promedio ponderado (PMP) = Precio de venta - Precio Medio Ponderado del producto (PMP), o mejor precio de proveedor si PMP aún no está definido <br > * Margen en precio de coste = Precio de venta - precio de coste definido en la ficha del producto o PMP si el precio de coste no está definido, o mejor precio de proveedor si PMP aún no está definido
+CostPrice=Precio de compra
+UnitCharges=Carga unitaria
+Charges=Cargas
+AgentContactType=Tipo de contacto comisionado
+AgentContactTypeDetails=Indique qué tipo de contacto (enlazado a las facturas) será el utilizado para el informe de márgenes de agentes comerciales
+rateMustBeNumeric=El margen  debe ser un valor numérico
+markRateShouldBeLesserThan100=El margen tiene que ser menor que 100
+ShowMarginInfos=Mostrar info de márgenes
+CheckMargins=Detalles de márgenes
+MarginPerSaleRepresentativeWarning=El informe de margen por usuario usa el enlace entre terceros y comerciales para calcular el margen de cada usuario. Debido a que algunos terceros pueden no estar vinculados a un comercial y algunos terceros pueden estar relacionados con varios usuarios, algunos márgenes pueden no aparecer en este informe o podrá aparecer en varias líneas diferentes.

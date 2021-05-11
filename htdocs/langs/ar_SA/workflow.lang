@@ -1,0 +1,20 @@
+# Dolibarr language file - Source file is en_US - workflow
+WorkflowSetup=إعداد وحدة تدفق العمل
+WorkflowDesc=تم تصميم هذه الوحدة لتعديل سلوك الإجراءات التلقائية إلى التطبيق. افتراضيا، سير العمل مفتوح (يمكنك القيام بالأشياء بالترتيب الذي تريده). يمكنك تفعيل الإجراءات التلقائية التي تهمك.
+ThereIsNoWorkflowToModify=لا توجد تعديلات على سير العمل متوفرة مع الوحدات النشطة.
+# Autocreate
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=إنشاء طلب عميل تلقائيا بعد التوقيع على اقتراح تجاري (سيكون الطلب الجديد بنفس المبلغ من الاقتراح)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=إنشاء فاتورة العملاء تلقائيا بعد التوقيع على اقتراح تجاري (سيكون للفاتورة الجديدة نفس المبلغ من الاقتراح)
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=إنشاء فاتورة العميل تلقائيا بعد التحقق من صحة العقد
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=إنشاء فاتورة العميل تلقائيا بعد إغلاق طلب العميل (فاتورة جديدة سيكون لها نفس المبلغ من النظام)
+# Autoclassify customer proposal or order
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=تصنيف اقتراح (مقترحات) المصدر المرتبط بالفوترة عند تعيين طلب العميل على الفاتورة (وإذا كان مقدار الطلب هو نفسه من إجمالي مبلغ الاقتراحات المرتبطة التي تم توقيعها)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=تصنيف مقترح (مقترحات) المصدر المرتبط بالفوترة عندما يتم التحقق من صحة فاتورة العميل (وإذا كان مبلغ الفاتورة هو نفسه من إجمالي مبلغ الاقتراحات المرتبطة التي تم توقيعها)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=تصنيف طلب (أوامر) العميل المصدر المرتبط بالفوترة عندما يتم التحقق من صحة فاتورة العميل (وإذا كان مبلغ الفاتورة هو نفسه من إجمالي مبلغ الطلبات المرتبطة)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=تصنيف طلب (أوامر) العميل المصدر المرتبط إلى الفاتورة عندما يتم تعيين فاتورة العميل على الدفع (وإذا كان مبلغ الفاتورة هو نفسه من إجمالي مبلغ الطلبات المرتبطة)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=تصنيف مرتبط النظام العميل المصدر لشحنها عندما يتم التحقق من صحة الشحنة (وإذا الكمية التي يتم شحنها من قبل جميع الشحنات هو نفسه كما في الأمر لتحديث)
+# Autoclassify supplier order
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal(s) to billed when vendor invoice is validated (and if amount of the invoice is same than total amount of linked proposals)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source purchase order(s) to billed when vendor invoice is validated (and if amount of the invoice is same than total amount of linked orders)
+AutomaticCreation=إنشاء تلقائي
+AutomaticClassification=التصنيف التلقائي

@@ -1,0 +1,379 @@
+/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+ * Copyright (C) 2009-2017 Laurent Destailleur  <eldy@users.sourceforge.net> 
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+
+body {
+	font-size:14px;
+	font-family: roboto,arial,tahoma,verdana,helvetica;
+	/* background: #fcfcfc; */
+	margin: 15px 30px 10px;
+}
+
+table.main-inside {
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-bottom: 10px;
+	margin-bottom: 10px;
+	margin-top: 10px;
+	color: #000000;
+	border-top: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+	line-height: 22px;
+}
+
+table.main {
+	padding-left: 6px;
+	padding-right: 6px;
+	padding-top: 12px;
+	padding-bottom: 12px;
+	background-color: #fff;
+}
+
+div.titre {
+	padding: 5px 5px 5px 5px;
+	margin: 0 0 0 0;
+}
+
+span.titre {
+	font-size: 90%;
+	font-weight: bold;
+	background: #FFFFFF;
+	color: #444;
+	border: 1px solid #bbb;
+	padding: 10px 10px 10px 10px;
+	margin: 0 0 10px 10px;
+}
+
+div.soustitre {
+	font-size: 15px;
+	font-weight: bold;
+	color: #4965B3;
+	padding: 0 1.2em 0.5em 2em;
+	margin: 1.2em 1.2em 1.2em 1.2em;
+	border-bottom: 1px solid #999;
+	border-right: 1px solid #999;
+	text-align: right;
+}
+
+.minwidth100 { min-width: 100px; }
+.minwidth200 { min-width: 200px; }
+.minwidth300 { min-width: 300px; }
+.minwidth400 { min-width: 400px; }
+.minwidth500 { min-width: 500px; }
+.minwidth50imp  { min-width: 50px !important; }
+.minwidth100imp { min-width: 100px !important; }
+.minwidth200imp { min-width: 200px !important; }
+.minwidth300imp { min-width: 300px !important; }
+.minwidth400imp { min-width: 400px !important; }
+.minwidth500imp { min-width: 500px !important; }
+
+
+/* Force values for small screen 570 */
+@media only screen and (max-width: 570px)
+{
+	body {
+		margin: 15px 4px 4px;
+	}
+	
+	input, input[type=text], input[type=password], select, textarea     { 
+		min-width: 20px; 
+    	min-height: 1.4em;
+    	line-height: 1.4em;
+    	padding: .4em .1em;
+    	border: 1px solid #BBB;
+    	/* max-width: inherit; why this ? */
+     }
+     
+    .hideonsmartphone { display: none; }
+    .noenlargeonsmartphone { width : 50px !important; display: inline !important; }
+    .maxwidthonsmartphone { max-width: 100px; }
+    .maxwidth50onsmartphone { max-width: 40px; }
+    .maxwidth75onsmartphone { max-width: 50px; }
+    .maxwidth100onsmartphone { max-width: 70px; }
+    .maxwidth150onsmartphone { max-width: 120px; }
+    .maxwidth200onsmartphone { max-width: 200px; }
+    .maxwidth300onsmartphone { max-width: 300px; }
+    .maxwidth400onsmartphone { max-width: 400px; }
+	.minwidth50imp  { min-width: 50px !important; }
+    .minwidth100imp { min-width: 50px !important; }
+    .minwidth200imp { min-width: 50px !important; }
+    .minwidth300imp { min-width: 50px !important; }
+    .minwidth400imp { min-width: 50px !important; }
+    .minwidth500imp { min-width: 50px !important; }
+
+	table.main {
+    	padding-left: 0;
+    	padding-right: 0;
+	}
+	
+	table.main-inside {
+		padding-left: 1px;
+		padding-right: 1px;
+		line-height: 20px;
+	}
+	
+	span.titre {
+	    font-size: 90%;
+	    font-weight: normal;
+	    background: #FFFFFF;
+	    color: #444;
+	    border: 1px solid #999;
+	    padding: 5px 5px 5px 5px;
+	    margin: 0 0 0 4px;
+	}
+}
+
+
+input:disabled
+{
+	background: #FDFDFD;
+	border: 1px solid #ACBCBB;
+	padding: 0 0 0 0;
+	margin: 0 0 0 0;
+	color: #AAA !important;
+	cursor: not-allowed !important; 
+}
+
+input[type=submit] {
+	border-color: #c5c5c5;
+	border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
+	display: inline-block;
+	padding: 4px 14px;
+	margin-bottom: 0;
+	text-align: center;
+	cursor: pointer;
+	color: #333333;
+	text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+	background-color: #f5f5f5;
+	background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
+	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
+	background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
+	background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
+	background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
+	background-repeat: repeat-x;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#ffe6e6e6', GradientType=0);
+	border-color: #e6e6e6 #e6e6e6 #bfbfbf;
+	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+	filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+	border: 1px solid #bbbbbb;
+	border-bottom-color: #a2a2a2;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	-webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+	-moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+input:focus, textarea:focus, button:focus, select:focus {
+    box-shadow: 0 0 4px #8091BF;
+}
+input[type=text], input[type=password] {
+    border: 1px solid #ACBCBB;
+    padding: 4px;
+}
+select {
+    padding: 4px;
+    background-color: #fff;
+}
+input[type=text]:focus, input[type=password]:focus, textarea:focus, select:focus {
+    border: 1px solid #ACBCBB;
+	box-shadow: 0 0 5px #C091AF;
+}
+input:-webkit-autofill {
+    background: #FBFFEA none !important;
+    -webkit-box-shadow: 0 0 0 50px #FBFFEA inset;
+}
+
+table.listofchoices, tr.listofchoices, td.listofchoices {
+	border-collapse: collapse;
+    padding: 4px;
+    color: #000000;
+	border: 1px solid #ccc !important;
+	line-height: 18px;
+}
+
+tr.listofchoices {
+    height: 42px;	
+}
+.listofchoicesdesc {
+	color: #999 !important;
+}
+.blinkwait {
+	font-weight: bold;
+	text-decoration:blink !important;	
+}
+
+.installchoices table tr td  {
+	margin-left: 2px;
+	margin-right: 2px;
+	border-bottom: 1px solid #999;
+	border-right: 1px solid #999;
+	color: #000000;
+}
+
+/* OK */
+div.ok {
+	color: #114466;
+}
+font.ok {
+	color: #114466;
+}
+
+/* Warning */
+div.warning {
+	color: #777711;
+}
+font.warning {
+	color: #777711;
+}
+
+/* Error */
+div.error {
+	color: #550000;
+	font-weight: bold;
+	padding: 0.2em 0.2em 0.2em 0;
+	margin: 0.5em 0 0.5em 0;
+}
+font.error {
+	color: #550000;
+	font-weight: bold;
+}
+
+/* Next button */
+div.nextbutton {
+	text-align: center;
+	margin-top: 10px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-right: 10px;
+}
+
+
+div.header {
+	background-color: #dcdff4;
+	border-bottom: solid black 1px;
+	padding-left: 5px;
+	text-align: center;
+}
+
+a:link,a:visited,a:active {
+	text-decoration:none;
+}
+a:hover {
+	text-decoration:underline;
+}
+
+a.titre {
+	text-decoration:none;
+}
+
+
+div.comment {
+	text-decoration:none;
+	color:black;
+}
+
+h3 {
+	margin-top: 20px;
+	font-size:16px;
+	font-weight: normal;
+	color: rgb(100,60,20);
+	/* text-shadow: 1px 1px 1px #c0c0c0; */
+}
+
+tr.bg1 {
+	background-color: #E5E5E5;
+}
+
+tr.bg2 {
+	background-color: #B5C5C5;
+}
+
+/* Class for parameters key and value */
+td.label {
+	color: #5945A3;
+	padding: 5px 5px 5px 5px;
+	margin: 0 0 0 0;
+	border-bottom: 1px solid #CCCCDB;
+}
+
+/* Class for parameters example */
+td.comment {
+	color: black;
+	padding: 5px 5px 5px 5px;
+	margin: 0 0 0 0;
+	text-decoration:none;
+	font-size: 12px;
+	border-bottom: 1px solid #CCCCDB;
+}
+
+.install
+{
+	border: 1px solid #999;
+	padding: 4px 4px 4px 4px;
+}
+
+div.visible {
+    display: block;
+}
+
+div.hidden {
+    display: none;
+}
+
+ul {
+	margin: 0;
+	padding-top: 0;
+	padding-bottom: 0;
+}
+
+
+.button {
+    background: #fcfcfc;
+    border: 1px solid #e0e0e0;
+    padding: 0.3em 0.7em;
+    margin: 0 0.5em;
+    -moz-border-radius: 5px 5px 5px 5px;
+    -webkit-border-radius: 5px 5px 5px 5px;
+    border-radius: 5px 5px 5px 5px;
+    -moz-box-shadow: 2px 2px 3px #ddd;
+    -webkit-box-shadow: 2px 2px 3px #ddd;
+    box-shadow: 2px 2px 3px #ddd;
+}
+a.button:hover {
+    text-decoration:none;
+}
+
+.choiceselected {
+	background-color: #dfd;
+	background-repeat: repeat-x;
+	background-position: top left;
+}
+
+.center {
+    text-align: center;
+}
+
+.valignmiddle {
+	vertical-align: middle;
+}
+
+.valigntextbottom {
+	vertical-align: text-bottom;
+}
+

@@ -1,0 +1,25 @@
+# Dolibarr language file - Source file is en_US - companies
+ConfirmDeleteContact=Está seguro de borrar este contacto y todas la información relacionada?
+ParentCompany=Sede principal
+Subsidiaries=Sucursales
+RegisteredOffice=Domicilio principal
+State=Departamento
+PhonePerso=Teléf. personal
+No_Email=Rechazar correos de cadena
+VATIsUsed=Sujeto a IVA
+VATIsNotUsed=No sujeto a IVA
+ProfId1AT=Id prof. 1 (USt.-IdNr)
+ProfId2AT=Id prof. 2 (USt.-Nr)
+ProfId3AT=Id prof. 3 (Handelsregister-Nr.)
+ProfId2CO=Identificación (CC, NIT, CE)
+ProfId3CO=CIIU
+CompanyHasCreditNote=Este cliente tiene <b>%s %s</b> anticipos disponibles
+NoContactForAnyProposal=Este contacto no es contacto de ningúna cotización
+VATIntraCheckDesc=El link <b>%s</b> permite consultar al servicio RUES el NIT. Se requiere acceso a internet para que el servicio funcione
+VATIntraCheckURL=http://www.rues.org.co/RUES_Web/Consultas#tabs-3
+VATIntraCheckableOnEUSite=Verificar en la web
+VATIntraManualCheck=Puede también realizar una verificación manual en la web <a href="%s" target="_blank">%s</a>
+ExportDataset_company_2=Contactos de terceros y atributos
+ConfirmDeleteFile=¿Está seguro que quiere eliminar este archivo?
+ThirdPartiesArea=Área Terceros
+ManagingDirectors=Administrador(es) (CEO, gerente, director, presidente, etc.)

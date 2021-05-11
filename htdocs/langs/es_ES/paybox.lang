@@ -1,0 +1,38 @@
+# Dolibarr language file - Source file is en_US - paybox
+PayBoxSetup=Configuración módulo PayBox
+PayBoxDesc=Este módulo ofrece una página  de pago a través del proveedor <a href="http://www.paybox.com" target="_blank">Paybox</a> para realizar cualquier pago o un pago en relación con un objeto Dolibarr (facturas, pedidos ...)
+FollowingUrlAreAvailableToMakePayments=Las siguientes URL están disponibles para permitir a un cliente efectuar un pago
+PaymentForm=Formulario de pago
+WelcomeOnPaymentPage=Bienvenido a nuestros servicios de pago en línea
+ThisScreenAllowsYouToPay=Esta pantalla le permite hacer su pago en línea destinado a %s.
+ThisIsInformationOnPayment=Aquí está la información sobre el pago a realizar
+ToComplete=A completar
+YourEMail=E-Mail de confirmación de pago
+Creditor=Beneficiario
+PaymentCode=Código de pago
+PayBoxDoPayment=Pago con tarjeta de crédito o débito (Paybox)
+ToPay=Emitir pago
+YouWillBeRedirectedOnPayBox=Va a ser redirigido a la página segura de  Paybox para indicar su tarjeta de crédito
+Continue=Continuar
+ToOfferALinkForOnlinePayment=URL de pago %s
+ToOfferALinkForOnlinePaymentOnOrder=URL que ofrece una interfaz de pago en línea %s basada en el importe de un pedido de cliente
+ToOfferALinkForOnlinePaymentOnInvoice=URL que ofrece una interfaz de pago en línea %s basada en el importe de una factura a client
+ToOfferALinkForOnlinePaymentOnContractLine=URL que ofrece una interfaz de pago en línea %s basada en el importe de una línea de contrato
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL que ofrece una interfaz de pago en línea %s basada en un importe libre
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL que ofrece una interfaz de pago en línea %s basada en la cotización de un miembro
+YouCanAddTagOnUrl=También puede añadir el parámetro url <b>&tag=<i>value</i></b>  para cualquiera de estas direcciones (obligatorio solamente para el pago libre) para ver su propio código de comentario de pago.
+SetupPayBoxToHavePaymentCreatedAutomatically=Configure su url PayBox <b>%s</b> para que el pago se cree automáticamente al validar.
+YourPaymentHasBeenRecorded=Esta página confirma que su pago se ha registrado correctamente. Gracias.
+YourPaymentHasNotBeenRecorded=Su pago no ha sido registrado y la transacción ha sido anulada. Gracias.
+AccountParameter=Parámetros de la cuenta
+UsageParameter=Parámetros de uso
+InformationToFindParameters=Información para encontrar a su configuración de cuenta %s
+PAYBOX_CGI_URL_V2=Url del módulo CGI Paybox de pago
+VendorName=Nombre del vendedor
+CSSUrlForPaymentForm=Url de la hoja de estilo CSS para el formulario de pago
+NewPayboxPaymentReceived=Nuevo pago Paybox recibido
+NewPayboxPaymentFailed=Nuevo intento de pago Paybox sin éxito
+PAYBOX_PAYONLINE_SENDEMAIL=E-Mail a avisar en caso de pago (con éxito o no)
+PAYBOX_PBX_SITE=Valor para PBX SITE
+PAYBOX_PBX_RANG=valor para PBX Rang
+PAYBOX_PBX_IDENTIFIANT=Valor para PBX ID

@@ -1,0 +1,12 @@
+# Dolibarr language file - Source file is en_US - users
+UserCard=Benutzer-Karte
+GroupCard=Gruppe-Karte
+LastUsersCreated=%s neueste Benutzer
+LinkToCompanyContact=Mit Geschäftspartner/Kontakt verknüpfen
+LinkedToDolibarrThirdParty=Mit Geschäftspartner verknüpft
+CreateDolibarrThirdParty=Neuen Geschäftspartner erstellen
+PermissionInheritedFromAGroup=Berechtigung durch eine Gruppenzugehörigkeit gererbt.
+UserWillBeInternalUser=Erstellter Benutzer ist intern (mit keinem bestimmten Geschäftspartner verknüpft)
+UserWillBeExternalUser=Erstellter Benutzer ist extern (mit einem bestimmten Geschäftspartner verknüpft)
+NameToCreate=Name des neuen Geschäftspartners
+DisabledInMonoUserMode=Im Wartungsmodus deaktiviert
