@@ -7,7 +7,8 @@ English Dolibarr ChangeLog
 
 For users:
 ----------
-NEW: Feature to make inventories
+NEW: Module Recruitement to follow application to job positions is now stable.
+NEW: Feature to make Stock Inventories
 NEW: Several security issues after a second private bug hunting campaign. 
 NEW: Add a security center page with all information and advices related to the security of your instance 
 NEW: Add a performance center page with all information and advices related to the performance of your instance 
