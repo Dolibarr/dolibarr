@@ -132,7 +132,9 @@ class box_factures_imp extends ModeleBoxes
 
 				while ($line < $num) {
 					$objp = $this->db->fetch_object($result);
+
 					$datelimite = $this->db->jdate($objp->datelimite);
+
 					$facturestatic->id = $objp->facid;
 					$facturestatic->ref = $objp->ref;
 					$facturestatic->type = $objp->type;
