@@ -1445,8 +1445,9 @@ if (!empty($conf->projet->enabled)) {
 	$formproject = new FormProjets($db);
 }
 
+$title = $langs->trans('Proposal')." - ".$langs->trans('Card');
 $help_url = 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos|DE:Modul_Angebote';
-llxHeader('', $langs->trans('Proposal'), $help_url);
+llxHeader('', $title, $help_url);
 
 $now = dol_now();
 
