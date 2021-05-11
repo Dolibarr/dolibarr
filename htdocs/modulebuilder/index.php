@@ -1521,7 +1521,7 @@ if ($dirins && $action == 'generatepackage') {
 
 	$arrayversion = explode('.', $moduleobj->version, 3);
 	if (count($arrayversion)) {
-		$FILENAMEZIP = "module_".$modulelowercase.'-'.$arrayversion[0].($arrayversion[1] ? '.'.$arrayversion[1] : '').($arrayversion[2] ? '.'.$arrayversion[2] : '').'.zip';
+		$FILENAMEZIP = "module_".$modulelowercase.'-'.$arrayversion[0].(empty($arrayversion[1]) ? '.0' : '.'.$arrayversion[1]).($arrayversion[2] ? '.'.$arrayversion[2] : '').'.zip';
 
 		$dirofmodule = dol_buildpath($modulelowercase, 0).'/bin';
 		$outputfilezip = $dirofmodule.'/'.$FILENAMEZIP;
@@ -3022,7 +3022,7 @@ if ($module == 'initmodule') {
 				print '<input type="hidden" name="tabobj" value="'.dol_escape_htmltag($tabobj).'">';
 
 				print '<div class="div-table-responsive">';
-				print '<table class="noborder">';
+				print '<table class="noborder small">';
 
 				print '<tr class="liste_titre">';
 				print_liste_field_titre("Type", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
@@ -3044,51 +3044,51 @@ if ($module == 'initmodule') {
 						print '<tr class="oddeven">';
 
 						print '<td>';
-						print $menu['type'];
+						print dol_escape_htmltag($menu['type']);
 						print '</td>';
 
 						print '<td>';
-						print $menu['fk_menu'];
+						print dol_escape_htmltag($menu['fk_menu']);
 						print '</td>';
 
 						print '<td>';
-						print $menu['titre'];
+						print dol_escape_htmltag($menu['titre']);
 						print '</td>';
 
 						print '<td>';
-						print $menu['mainmenu'];
+						print dol_escape_htmltag($menu['mainmenu']);
 						print '</td>';
 
 						print '<td>';
-						print $menu['leftmenu'];
+						print dol_escape_htmltag($menu['leftmenu']);
+						print '</td>';
+
+						print '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($menu['url']).'">';
+						print dol_escape_htmltag($menu['url']);
 						print '</td>';
 
 						print '<td>';
-						print $menu['url'];
+						print dol_escape_htmltag($menu['langs']);
 						print '</td>';
 
 						print '<td>';
-						print $menu['langs'];
+						print dol_escape_htmltag($menu['position']);
+						print '</td>';
+
+						print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($menu['enabled']).'">';
+						print dol_escape_htmltag($menu['enabled']);
+						print '</td>';
+
+						print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($menu['perms']).'">';
+						print dol_escape_htmltag($menu['perms']);
 						print '</td>';
 
 						print '<td>';
-						print $menu['position'];
-						print '</td>';
-
-						print '<td>';
-						print $menu['enabled'];
-						print '</td>';
-
-						print '<td>';
-						print $menu['perms'];
-						print '</td>';
-
-						print '<td>';
-						print $menu['target'];
+						print dol_escape_htmltag($menu['target']);
 						print '</td>';
 
 						print '<td class="right">';
-						print $menu['user'];
+						print dol_escape_htmltag($menu['user']);
 						print '</td>';
 
 						print '</tr>';
@@ -3447,7 +3447,7 @@ if ($module == 'initmodule') {
 						print '</tr>';
 					}
 				} else {
-					print '<tr><td><span class="fa fa-file-o"></span> '.$langs->trans("NoWidget");
+					print '<tr><td><span class="fa fa-file-o"></span> '.$langs->trans("WidgetFile").' : <span class="opacitymedium">'.$langs->trans("NoWidget").'</span>';
 					print '</td><td><a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=initwidget&format=php">'.img_picto('Generate', 'generate', 'class="paddingleft"').'</a>';
 					print '</td></tr>';
 				}
@@ -3792,7 +3792,7 @@ if ($module == 'initmodule') {
 				print $outputfiledoc;
 				print '</a>';
 				print '</strong>';
-				print ' ('.$langs->trans("GeneratedOn").' '.dol_print_date(dol_filemtime($outputfiledoc), 'dayhour').')';
+				print ' <span class="opacitymedium">('.$langs->trans("GeneratedOn").' '.dol_print_date(dol_filemtime($outputfiledoc), 'dayhour').')</span>';
 			}
 			print '</strong><br>';
 
@@ -3806,7 +3806,7 @@ if ($module == 'initmodule') {
 				print $outputfiledocpdf;
 				print '</a>';
 				print '</strong>';
-				print ' ('.$langs->trans("GeneratedOn").' '.dol_print_date(dol_filemtime($outputfiledocpdf), 'dayhour').')';
+				print ' <span class="opacitymedium">('.$langs->trans("GeneratedOn").' '.dol_print_date(dol_filemtime($outputfiledocpdf), 'dayhour').')</span>';
 			}
 			print '</strong><br>';
 
@@ -3860,7 +3860,7 @@ if ($module == 'initmodule') {
 
 			$arrayversion = explode('.', $moduleobj->version, 3);
 			if (count($arrayversion)) {
-				$FILENAMEZIP = "module_".$modulelowercase.'-'.$arrayversion[0].'.'.$arrayversion[1].($arrayversion[2] ? ".".$arrayversion[2] : "").".zip";
+				$FILENAMEZIP = "module_".$modulelowercase.'-'.$arrayversion[0].(empty($arrayversion[1]) ? '.0' : '.'.$arrayversion[1]).($arrayversion[2] ? ".".$arrayversion[2] : '').".zip";
 				$outputfilezip = dol_buildpath($modulelowercase, 0).'/bin/'.$FILENAMEZIP;
 			}
 
@@ -3872,7 +3872,7 @@ if ($module == 'initmodule') {
 			} else {
 				$relativepath = $modulelowercase.'/bin/'.$FILENAMEZIP;
 				print '<strong><a href="'.DOL_URL_ROOT.'/document.php?modulepart=packages&file='.urlencode($relativepath).'">'.$outputfilezip.'</a></strong>';
-				print ' ('.$langs->trans("GeneratedOn").' '.dol_print_date(dol_filemtime($outputfilezip), 'dayhour').')';
+				print ' <span class="opacitymedium">('.$langs->trans("GeneratedOn").' '.dol_print_date(dol_filemtime($outputfilezip), 'dayhour').')</span>';
 			}
 			print '</strong><br>';
 
