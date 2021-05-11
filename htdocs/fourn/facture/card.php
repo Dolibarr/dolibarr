@@ -2701,7 +2701,7 @@ if ($action == 'create') {
 				$facavoir->fetch($id);
 				$invoicecredits[] = $facavoir->getNomUrl(1);
 			}
-			print ' ('.$langs->transnoentities("InvoiceHasAvoir") . implode(',', $invoicecredits) . ')';
+			print ' ('.$langs->transnoentities("InvoiceHasAvoir") . (count($invoicecredits) ? ' ' : '') . implode(',', $invoicecredits) . ')';
 		}
 		if (isset($facidnext) && $facidnext > 0) {
 			$facthatreplace = new FactureFournisseur($db);
