@@ -374,6 +374,9 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 			} elseif ($feature == 'salaries')
 			{
 				if (!$user->rights->salaries->delete) $deleteok = 0;
+			} elseif ($feature == 'payment_supplier')
+			{
+				if (!$user->rights->fournisseur->facture->creer) { $deleteok = 0; }
 			} elseif (!empty($feature2))							// This is for permissions on 2 levels
 			{
 				foreach ($feature2 as $subfeature)
