@@ -117,6 +117,26 @@ $permissiondellink = $user->rights->reception->creer; // Used by the include of 
 
 $date_delivery = dol_mktime(GETPOST('date_deliveryhour', 'int'), GETPOST('date_deliverymin', 'int'), 0, GETPOST('date_deliverymonth', 'int'), GETPOST('date_deliveryday', 'int'), GETPOST('date_deliveryyear', 'int'));
 
+$object = new Reception($db);
+if ($id > 0 || !empty($ref)) {
+	$object->fetch($id, $ref);
+	$object->fetch_thirdparty();
+
+	if (!empty($object->origin)) {
+		$origin = $object->origin;
+
+		$object->fetch_origin();
+		$typeobject = $object->origin;
+	}
+
+	// Linked documents
+	if ($origin == 'order_supplier' && $object->$typeobject->id && (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled))) {
+		$origin_id = $object->$typeobject->id;
+		$objectsrc = new CommandeFournisseur($db);
+		$objectsrc->fetch($object->$typeobject->id);
+	}
+}
+
 // Security check
 $socid = '';
 if ($user->socid) {
@@ -124,13 +144,10 @@ if ($user->socid) {
 }
 
 if ($origin == 'reception') {
-	$result = restrictedArea($user, $origin, $id);
+	$result = restrictedArea($user, 'reception', $id);
 } else {
-	$result = restrictedArea($user, 'reception');
-	if ($origin == 'supplierorder') {
-		if (empty($user->rights->fournisseur->commande->lire) && empty($user->rights->fournisseur->commande->read)) {
-			accessforbidden();
-		}
+	if ($origin == 'supplierorder' || $origin == 'order_supplier') {
+		$result = restrictedArea($user, 'fournisseur', $origin_id, 'commande_fournisseur', 'commande');
 	} elseif (empty($user->rights->{$origin}->lire) && empty($user->rights->{$origin}->read)) {
 		accessforbidden();
 	}
@@ -150,14 +167,12 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	if ($cancel) {
 		$action = '';
-		$object->fetch($id); // show reception also after canceling modification
 	}
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be include, not include_once
 
 	// Reopen
 	if ($action == 'reopen' && $user->rights->reception->creer) {
-		$object->fetch($id);
 		$result = $object->reOpen();
 	}
 
@@ -192,7 +207,6 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'setref_supplier') {
-		$result = $object->fetch($id);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -328,8 +342,6 @@ if (empty($reshook)) {
 				$sellby = "dluo".$i;
 				$batch = "batch".$i;
 
-				$timeFormat = '%d/%m/%Y';
-
 				if (GETPOST($qty, 'int') > 0 || (GETPOST($qty, 'int') == 0 && $conf->global->RECEPTION_GETS_ALL_ORDER_PRODUCTS)) {
 					$ent = "entl".$i;
 
@@ -353,7 +365,6 @@ if (empty($reshook)) {
 					$sellby = GETPOST($sellby, 'alpha');
 					$eatbydate = str_replace('/', '-', $eatby);
 					$sellbydate = str_replace('/', '-', $sellby);
-
 
 					$ret = $object->addline($entrepot_id, GETPOST($idl, 'int'), GETPOST($qty, 'int'), $array_options[$i], GETPOST($comment, 'alpha'), strtotime($eatbydate), strtotime($sellbydate), GETPOST($batch, 'alpha'));
 					if ($ret < 0) {
@@ -531,14 +542,12 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 		}
 	} elseif ($action == 'classifybilled') {
-		$object->fetch($id);
 		$result = $object->setBilled();
 		if ($result >= 0) {
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit();
 		}
 	} elseif ($action == 'classifyclosed') {
-		$object->fetch($id);
 		$result = $object->setClosed();
 		if ($result >= 0) {
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
@@ -546,7 +555,6 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'deleteline' && !empty($line_id)) {
 		// delete a line
-		$object->fetch($id);
 		$lines = $object->lines;
 		$line = new CommandeFournisseurDispatch($db);
 
@@ -958,6 +966,7 @@ if ($action == 'create') {
 			if ($numAsked) {
 				print '<tr class="liste_titre">';
 				print '<td>'.$langs->trans("Description").'</td>';
+				print '<td>'.$langs->trans("Comment").'</td>';
 				print '<td class="center">'.$langs->trans("QtyOrdered").'</td>';
 				print '<td class="center">'.$langs->trans("QtyReceived").'</td>';
 				print '<td class="center">'.$langs->trans("QtyToReceive");
@@ -1056,18 +1065,22 @@ if ($action == 'create') {
 					print "</td>\n";
 				}
 
+				// Comment
+				//$defaultcomment = 'Line create from order line id '.$line->id;
+				$defaultcomment = '';
+				print '<td>';
+				print '<input type="text" class="maxwidth100" name="comment'.$indiceAsked.'" value="'.$defaultcomment.'">';
+				print '</td>';
+
 				// Qty
 				print '<td class="center">'.$line->qty;
-				print '<input type="hidden" name="fk_commandefournisseurdet'.$indiceAsked.'" value=\''.$line->id.'\' />';
-				print '<textarea style="display:none;"  name="comment'.$indiceAsked.'" >'.$line->desc.'</textarea>';
+				print '<input type="hidden" name="fk_commandefournisseurdet'.$indiceAsked.'" value="'.$line->id.'">';
 				print '<input name="qtyasked'.$indiceAsked.'" id="qtyasked'.$indiceAsked.'" type="hidden" value="'.$line->qty.'">';
 				print '</td>';
 				$qtyProdCom = $line->qty;
 
 				// Qty already received
 				print '<td class="center">';
-
-
 				$quantityDelivered = $object->receptions[$line->id];
 				print $quantityDelivered;
 				print '<input name="qtydelivered'.$indiceAsked.'" id="qtydelivered'.$indiceAsked.'" type="hidden" value="'.$quantityDelivered.'">';
@@ -1137,8 +1150,8 @@ if ($action == 'create') {
 							print '<td colspan="3"></td>';
 						}
 					}
-					print "</tr>\n";
 				}
+				print "</tr>\n";
 
 				//Display lines extrafields
 				if (is_array($extralabelslines) && count($extralabelslines) > 0) {
@@ -1321,7 +1334,6 @@ if ($action == 'create') {
 		}
 		$morehtmlref .= '</div>';
 
-		$object->picto = 'sending';
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
 
@@ -1329,7 +1341,7 @@ if ($action == 'create') {
 		print '<div class="fichehalfleft">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border centpercent">';
+		print '<table class="border centpercent tableforfield">';
 
 		// Linked documents
 		if ($typeobject == 'commande' && $object->$typeobject->id && !empty($conf->commande->enabled)) {
@@ -1493,11 +1505,11 @@ if ($action == 'create') {
 		print '<div class="ficheaddleft">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border centpercent">';
+		print '<table class="border centpercent tableforfield">';
 
 		// Reception method
 		print '<tr><td height="10">';
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print '<table class="nobordernopadding centpercent"><tr><td>';
 		print $langs->trans('ReceptionMethod');
 		print '</td>';
 
@@ -1584,7 +1596,7 @@ if ($action == 'create') {
 		// Product/Service
 		print '<td>'.$langs->trans("Products").'</td>';
 		// Comment
-		print '<td>'.$langs->trans("Description").'</td>';
+		print '<td>'.$langs->trans("Comment").'</td>';
 		// Qty
 		print '<td class="center">'.$langs->trans("QtyOrdered").'</td>';
 		if ($origin && $origin_id > 0) {
@@ -1747,9 +1759,9 @@ if ($action == 'create') {
 			}
 
 			if ($action == 'editline' && $lines[$i]->id == $line_id) {
-				print '<td><textarea name="comment'.$line_id.'" id="comment'.$line_id.'" /> '.$lines[$i]->comment.'</textarea></td>';
+				print '<td><input name="comment'.$line_id.'" id="comment'.$line_id.'" value="'.dol_escape_htmltag($lines[$i]->comment).'"></td>';
 			} else {
-				print '<td style="white-space: pre-wrap;max-width: 200px;" >'.$lines[$i]->comment.'</td>';
+				print '<td style="white-space: pre-wrap; max-width: 200px;">'.dol_escape_htmltag($lines[$i]->comment).'</td>';
 			}
 
 
@@ -1778,7 +1790,7 @@ if ($action == 'create') {
 							$htmltext = $langs->trans("DateValidation").' : '.(empty($receptionline_var['date_valid']) ? $langs->trans("Draft") : dol_print_date($receptionline_var['date_valid'], 'dayhour'));
 							if (!empty($conf->stock->enabled) && $receptionline_var['warehouse'] > 0) {
 								$warehousestatic->fetch($receptionline_var['warehouse']);
-								$htmltext .= '<br>'.$langs->trans("From").' : '.$warehousestatic->getNomUrl(1);
+								$htmltext .= '<br>'.$langs->trans("From").' : '.$warehousestatic->getNomUrl(1, '', 0, 1);
 							}
 							print ' '.$form->textwithpicto('', $htmltext, 1);
 						}

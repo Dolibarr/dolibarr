@@ -1043,13 +1043,15 @@ class Reception extends CommonObject
 				$line = new CommandeFournisseurDispatch($this->db);
 				$line->fetch($obj->rowid);
 				$line->fetch_product();
-				$sql_commfourndet = 'SELECT qty, ref,  label, tva_tx, vat_src_code, subprice, multicurrency_subprice, remise_percent FROM llx_commande_fournisseurdet WHERE rowid='.$line->fk_commandefourndet;
+				$sql_commfourndet = 'SELECT qty, ref,  label, description, tva_tx, vat_src_code, subprice, multicurrency_subprice, remise_percent';
+				$sql_commfourndet .= ' FROM '.MAIN_DB_PREFIX.'commande_fournisseurdet';
+				$sql_commfourndet .= ' WHERE rowid = '.((int) $line->fk_commandefourndet);
 				$resql_commfourndet = $this->db->query($sql_commfourndet);
 				if (!empty($resql_commfourndet)) {
 					$obj = $this->db->fetch_object($resql_commfourndet);
 					$line->qty_asked = $obj->qty;
-					$line->description = $line->comment;
-					$line->desc = $line->comment;
+					$line->description = $obj->description;
+					$line->desc = $obj->description;
 					$line->tva_tx = $obj->tva_tx;
 					$line->vat_src_code = $obj->vat_src_code;
 					$line->subprice = $obj->subprice;
@@ -1060,6 +1062,7 @@ class Reception extends CommonObject
 				} else {
 					$line->qty_asked = 0;
 					$line->description = '';
+					$line->desc = '';
 					$line->label = $obj->label;
 				}
 
