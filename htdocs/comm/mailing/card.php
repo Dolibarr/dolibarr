@@ -201,6 +201,13 @@ if (empty($reshook))
 
 						// Array of possible substitutions (See also file mailing-send.php that should manage same substitutions)
 						$substitutionarray['__ID__'] = $obj->source_id;
+						if ($obj->source_type == "thirdparty") {
+							$thirdpartystatic = new Societe($db);
+							$thirdpartystatic->fetch($obj->source_id);
+
+							$substitutionarray['__THIRDPARTY_CUSTOMER_CODE__'] = $thirdpartystatic->code_client;
+							$substitutionarray['__THIRDPARTY_CUSTOMER_CODE_WITHOUT_PREFIX__'] = substr($thirdpartystatic->code_client, 1);
+						}
 						$substitutionarray['__EMAIL__'] = $obj->email;
 						$substitutionarray['__LASTNAME__'] = $obj->lastname;
 						$substitutionarray['__FIRSTNAME__'] = $obj->firstname;
