@@ -193,7 +193,7 @@ if ($object->id > 0) {
 			$facavoir->fetch($facid);
 			$invoicecredits[] = $facavoir->getNomUrl(1);
 		}
-		print ' ('.$langs->transnoentities("InvoiceHasAvoir") . implode(',', $invoicecredits) . ')';
+		print ' ('.$langs->transnoentities("InvoiceHasAvoir") . (count($invoicecredits) ? ' ' : '') . implode(',', $invoicecredits) . ')';
 	}
 	/*
 	if ($facidnext > 0) {
