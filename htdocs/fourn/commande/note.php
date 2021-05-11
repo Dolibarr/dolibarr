@@ -48,6 +48,8 @@ $result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'com
 $object = new CommandeFournisseur($db);
 $object->fetch($id, $ref);
 
+$hookmanager->initHooks(array('ordersuppliercardnote'));
+
 $permissionnote = ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer); // Used by the include of actions_setnotes.inc.php
 
 

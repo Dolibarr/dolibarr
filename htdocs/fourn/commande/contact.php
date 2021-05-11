@@ -45,6 +45,7 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
+$hookmanager->initHooks(array('ordersuppliercardcontact'));
 
 $object = new CommandeFournisseur($db);
 

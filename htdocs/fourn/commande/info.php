@@ -78,6 +78,7 @@ if (!$user->rights->fournisseur->commande->lire) {
 	accessforbidden();
 }
 
+$hookmanager->initHooks(array('ordersuppliercardinfo'));
 
 
 
