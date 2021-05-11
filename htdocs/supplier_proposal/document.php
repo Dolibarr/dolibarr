@@ -36,7 +36,7 @@ if (!empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 // Load translation files required by the page
-$langs->loadLangs(array('compta', 'other'));
+$langs->loadLangs(array('compta', 'supplier_proposal', 'other'));
 
 $action		= GETPOST('action', 'alpha');
 $confirm	= GETPOST('confirm', 'alpha');
@@ -80,8 +80,9 @@ if ($object->id > 0) {
 /*
  * View
  */
-
-llxHeader('', $langs->trans('CommRequest'), 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur');
+$title = $langs->trans('CommRequest')." - ".$langs->trans('Documents');
+$help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
+llxHeader('', $title, $help_url);
 
 $form = new Form($db);
 

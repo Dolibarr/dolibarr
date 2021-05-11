@@ -72,12 +72,12 @@ if ($action == 'set_default') {
 } elseif ($action == 'setdoc') {
 	// Set default model
 	if (dolibarr_set_const($db, "MEMBER_ADDON_PDF_ODT", $value, 'chaine', 0, '', $conf->entity)) {
-		// La constante qui a ete lue en avant du nouveau set
-		// on passe donc par une variable pour avoir un affichage coherent
+		// The constant that was read ahead of the new set
+		// we therefore go through a variable to have a consistent display
 		$conf->global->MEMBER_ADDON_PDF_ODT = $value;
 	}
 
-	// On active le modele
+	// We activate the model
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
 		$ret = addDocumentModel($value, $type, $label, $scandir);
@@ -317,7 +317,7 @@ $helptext .= '__YEAR__, __MONTH__, __DAY__';
 form_constantes($constantes, 0, $helptext);
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-// Defini tableau def des modeles
+// Defined model definition table
 $def = array();
 $sql = "SELECT nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."document_model";
