@@ -2955,12 +2955,12 @@ if ($action == 'create') {
 
 	// when payment condition is empty (means not override by payment condition form a other object, like third-party), try to use default value
 	if (empty($cond_reglement_id)) {
-		$cond_reglement_id = GETPOST("cond_reglement_id");
+		$cond_reglement_id = GETPOST("cond_reglement_id", 'int');
 	}
 
 	// when payment mode is empty (means not override by payment mode form a other object, like third-party), try to use default value
 	if (empty($mode_reglement_id)) {
-		$mode_reglement_id = GETPOST("mode_reglement_id");
+		$mode_reglement_id = GETPOST("mode_reglement_id", 'int');
 	}
 
 	if (!empty($soc->id)) {
@@ -3563,12 +3563,9 @@ if ($action == 'create') {
 
 	// Bank Account
 	if (!empty($conf->banque->enabled)) {
-		if (GETPOSTISSET('fk_account')) {
-			$fk_account = GETPOST('fk_account', 'int');
-		}
-
 		print '<tr><td>'.$langs->trans('BankAccount').'</td><td colspan="2">';
-		print img_picto('', 'bank_account', 'class="paddingrightonly"').$form->select_comptes($fk_account, 'fk_account', 0, '', 1, '', 0, '', 1);
+		$fk_account = GETPOST('fk_account', 'int');
+		print img_picto('', 'bank_account', 'class="paddingrightonly"').$form->select_comptes(($fk_account < 0 ? '' : $fk_account), 'fk_account', 0, '', 1, '', 0, '', 1);
 		print '</td></tr>';
 	}
 

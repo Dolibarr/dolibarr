@@ -294,7 +294,7 @@ function dol_shutdown()
 }
 
 /**
- * Return true if we are in a context of submitting the parameter $paramname
+ * Return true if we are in a context of submitting the parameter $paramname from a POST of a form.
  *
  * @param 	string	$paramname		Name or parameter to test
  * @return 	boolean					True if we have just submit a POST or GET request with the parameter provided (even if param is empty)
