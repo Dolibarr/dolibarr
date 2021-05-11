@@ -203,7 +203,7 @@ if ($id > 0 || !empty($ref)) {
 				$facavoir->fetch($facid);
 				$invoicecredits[] = $facavoir->getNomUrl(1);
 			}
-			print ' ('.$langs->transnoentities("InvoiceHasAvoir") . implode(',', $invoicecredits) . ')';
+			print ' ('.$langs->transnoentities("InvoiceHasAvoir") . (count($invoicecredits) ? ' ' : '') . implode(',', $invoicecredits) . ')';
 		}
 		if ($facidnext > 0) {
 			$facthatreplace = new FactureFournisseur($db);
