@@ -39,6 +39,8 @@ if (!$user->admin) {
 	accessforbidden();
 }
 
+$error = 0;
+
 
 /*
  * Actions
@@ -57,7 +59,8 @@ if ($action == 'update') {
 	$amount = GETPOST('MEMBER_NEWFORM_AMOUNT');
 	$editamount = GETPOST('MEMBER_NEWFORM_EDITAMOUNT');
 	$payonline = GETPOST('MEMBER_NEWFORM_PAYONLINE');
-	$forcetype = GETPOST('MEMBER_NEWFORM_FORCETYPE');
+	$forcetype = GETPOST('MEMBER_NEWFORM_FORCETYPE', 'int');
+	$forcemorphy = GETPOST('MEMBER_NEWFORM_FORCEMORPHY', 'aZ09');
 
 	$res = dolibarr_set_const($db, "MEMBER_ENABLE_PUBLIC", $public, 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "MEMBER_NEWFORM_AMOUNT", $amount, 'chaine', 0, '', $conf->entity);
@@ -67,6 +70,11 @@ if ($action == 'update') {
 		$res = dolibarr_del_const($db, "MEMBER_NEWFORM_FORCETYPE", $conf->entity);
 	} else {
 		$res = dolibarr_set_const($db, "MEMBER_NEWFORM_FORCETYPE", $forcetype, 'chaine', 0, '', $conf->entity);
+	}
+	if ($forcemorphy == '-1') {
+		$res = dolibarr_del_const($db, "MEMBER_NEWFORM_FORCEMORPHY", $conf->entity);
+	} else {
+		$res = dolibarr_set_const($db, "MEMBER_NEWFORM_FORCEMORPHY", $forcemorphy, 'chaine', 0, '', $conf->entity);
 	}
 
 	if (!($res > 0)) {
