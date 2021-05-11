@@ -4479,7 +4479,11 @@ class Product extends CommonObject
 		}
 		if (! empty($conf->fournisseur->enabled))
 		{
-			$result=$this->load_stats_commande_fournisseur(0, '3,4', 1);
+			if (!empty($conf->global->SUPPLIER_ORDER_STATUS_FOR_VIRTUAL_STOCK)){
+				$result=$this->load_stats_commande_fournisseur(0, $conf->global->SUPPLIER_ORDER_STATUS_FOR_VIRTUAL_STOCK, 1);
+			} else {
+				$result=$this->load_stats_commande_fournisseur(0, '1,2,3,4', 1);
+			}
 			if ($result < 0) dol_print_error($this->db, $this->error);
 			$stock_commande_fournisseur=$this->stats_commande_fournisseur['qty'];
 
