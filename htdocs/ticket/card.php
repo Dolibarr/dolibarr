@@ -212,14 +212,14 @@ if (empty($reshook)) {
 				}
 
 				// Auto assign user
-				if ($conf->global->TICKET_AUTO_ASSIGN_USER_CREATE) {
+				if (!empty($conf->global->TICKET_AUTO_ASSIGN_USER_CREATE)) {
 					$result = $object->assignUser($user, $user->id, 1);
 					$object->add_contact($user->id, "SUPPORTTEC", 'internal');
 				}
 
 				// Auto assign contrat
 				$contractid = 0;
-				if ($conf->global->TICKET_AUTO_ASSIGN_CONTRACT_CREATE) {
+				if (!empty($conf->global->TICKET_AUTO_ASSIGN_CONTRACT_CREATE)) {
 					$contrat = new Contrat($db);
 					$contrat->socid = $object->fk_soc;
 					$list = $contrat->getListOfContracts();
@@ -234,7 +234,7 @@ if (empty($reshook)) {
 				}
 
 				// Auto create fiche intervention
-				if ($conf->global->TICKET_AUTO_CREATE_FICHINTER_CREATE) {
+				if (!empty($conf->global->TICKET_AUTO_CREATE_FICHINTER_CREATE)) {
 					$fichinter = new Fichinter($db);
 					$fichinter->socid = $object->fk_soc;
 					$fichinter->fk_project = $projectid;
