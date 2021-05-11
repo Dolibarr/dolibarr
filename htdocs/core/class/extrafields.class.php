@@ -9,7 +9,7 @@
  * Copyright (C) 2015       Charles-Fr BENKE        <charles.fr@benke.fr>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -676,8 +676,7 @@ class ExtraFields
 			}
 			$field_desc = array('type'=>$typedb, 'value'=>$lengthdb, 'null'=>($required ? 'NOT NULL' : 'NULL'), 'default'=>$default);
 
-			if (is_object($hookmanager))
-			{
+			if (is_object($hookmanager)) {
 				$hookmanager->initHooks(array('extrafieldsdao'));
 				$parameters = array('field_desc'=>&$field_desc, 'table'=>$table, 'attr_name'=>$attrname, 'label'=>$label, 'type'=>$type, 'length'=>$length, 'unique'=>$unique, 'required'=>$required, 'pos'=>$pos, 'param'=>$param, 'alwayseditable'=>$alwayseditable, 'perms'=>$perms, 'list'=>$list, 'help'=>$help, 'default'=>$default, 'computed'=>$computed, 'entity'=>$entity, 'langfile'=>$langfile, 'enabled'=>$enabled, 'totalizable'=>$totalizable, 'printable'=>$printable);
 				$reshook = $hookmanager->executeHooks('updateExtrafields', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
