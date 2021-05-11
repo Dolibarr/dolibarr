@@ -1792,7 +1792,7 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 			$ecmfile->src_object_type = $object->table_element;
 		}
 
-		if(!empty($conf->global->MAIN_FORCE_SHARING_ON_ANY_UPLOADED_FILE) && $conf->global->MAIN_FORCE_SHARING_ON_ANY_UPLOADED_FILE=='1'){
+		if (!empty($conf->global->MAIN_FORCE_SHARING_ON_ANY_UPLOADED_FILE) && $conf->global->MAIN_FORCE_SHARING_ON_ANY_UPLOADED_FILE=='1') {
 			$setsharekey = 1;
 		}
 		if ($setsharekey) {
