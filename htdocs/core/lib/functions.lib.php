@@ -3511,7 +3511,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'generic', 'home', 'hrm', 'members', 'products', 'invoicing',
 				'partnership', 'payment', 'pencil-ruler', 'preview', 'project', 'projectpub', 'projecttask', 'refresh', 'salary', 'shipment', 'supplier_invoice', 'technic', 'ticket',
 				'error', 'warning',
-				'recruitmentcandidature', 'recruitmentjobposition', 'resource',
+				'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'resource',
 				'shapes', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
 				'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda',
 				'uncheck', 'user-cog', 'website', 'workstation',
@@ -3598,7 +3598,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			if (in_array($pictowithouttext, array('conferenceorbooth', 'collab', 'eventorganization', 'holiday', 'info', 'project', 'workstation'))) {
 				$morecss = 'em088';
 			}
-			if (in_array($pictowithouttext, array('intervention', 'payment', 'loan', 'partnership', 'stock', 'technic'))) {
+			if (in_array($pictowithouttext, array('asset', 'intervention', 'payment', 'loan', 'partnership', 'stock', 'technic'))) {
 				$morecss = 'em080';
 			}
 

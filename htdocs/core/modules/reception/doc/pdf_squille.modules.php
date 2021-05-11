@@ -388,6 +388,18 @@ class pdf_squille extends ModelePdfReception
 					// Description of product line
 					$curX = $this->posxdesc - 1;
 
+					// The desc of line is not store into reception, so we force it to the value of product.
+					/*
+					if (empty($object->lines[0]->desc)) {
+						// TODO We must get value from fk_commendefourndet
+						$sqldesc = 'SELECT description FROM '.MAIN_DB_PREFIX.' WHERE rowid = '.((int) $object->lines[0]->fk_commandefourndet);
+						$resqldesc = $this->db->query($sqldesc);
+						if ($resqldesc) {
+							$objdesc = $this->db->fetch_object($resqldesc);
+							$object->lines[0]->desc = $objdesc->description;
+						}
+					}*/
+
 					$pdf->startTransaction();
 					pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->posxpicture - $curX, 3, $curX, $curY, $hideref, $hidedesc);
 
